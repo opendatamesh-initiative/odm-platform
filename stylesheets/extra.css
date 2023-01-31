@@ -1,0 +1,26 @@
+:root > * {
+  --wave-darker-color: var(--md-primary-fg-color--dark);
+  --md-primary-fg-color--light: #ff867f;
+  --md-primary-fg-color--dark:  #c50e29;
+  --md-primary-fg-color: #ff5252;
+  --md-accent-fg-color: #006064;
+  --md-accent-fg-color--light: #428e92;
+  --md-accent-fg-color--dark: #00363a;
+  --md-typeset-a-color: var(--md-primary-fg-color--dark);
+}
+
+
+
+.md-grid {
+  max-width: 90%;
+}
+
+::selection {
+  background: var(--md-accent-fg-color--light); /* WebKit/Blink Browsers */
+  color: white
+}
+
+::-moz-selection {
+  background: var(--md-accent-fg-color--light); /* Gecko Browsers */
+  color: white
+}

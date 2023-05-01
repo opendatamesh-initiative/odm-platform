@@ -1,0 +1,49 @@
+############################################
+# Spring, JPA, DB and Flyway configurations
+############################################
+spring:
+  # Profile
+  profile: docker
+  # JPA
+  jpa:
+    hibernate:
+      ddl-auto: validate #or none
+      show-sql: true
+      naming.physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
+    database-platform: ${SPRING_DATABASE_DIALECT}
+  # DB
+  datasource:
+    url: ${DATABASE_URL}
+    driverClassName: ${SPRING_DATABASE_DRIVER}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: true
+  # FlyWay
+  # More: https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html#appendix.application-properties.data-migration
+  flyway:
+    #enabled: false # To disable it
+    url: ${DATABASE_URL}
+    user: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+    schemas: ${FLYWAY_SCHEMA} #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
+    locations: classpath:db/migration/${FLYWAY_SCRIPTS_DIR}
+    clean-on-validation-error: true
+
+############################################
+# Others configurations
+############################################
+policyserviceaddress: http://172.17.0.1:4242
+metaserviceaddress: http://172.17.0.1:8084
+
+skippolicyservice: true
+skipmetaservice: true

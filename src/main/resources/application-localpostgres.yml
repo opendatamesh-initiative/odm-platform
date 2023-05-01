@@ -1,0 +1,48 @@
+policyserviceaddress: http://localhost:4242
+metaserviceaddress: http://localhost:8084
+
+skippolicyservice: true
+skipmetaservice: true
+
+spring:
+  profile: localpostgres
+##########################
+# JPA configuration
+##########################
+#FLyWay (none: execute migrations - validate: validate migrations before execution - old was: create-drop)
+#spring.jpa.hibernate.ddl-auto: validate # not working at the moment due to validation not looking for schema
+  jpa:
+    hibernate:
+      ddl-auto: none
+      show-sql: true
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
+        dialect: org.hibernate.dialect.PostgreSQL95Dialect # Or PostgreSQLDialect
+        globally_quoted_identifiers: true
+        default_schema: PUBLIC
+  datasource:
+    url: jdbc:postgresql://localhost:5432/mydb
+    username: db
+    password: admin
+  h2:
+    console:
+      enabled: false
+##########################
+# FlyWay configuration
+# More: https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html#appendix.application-properties.data-migration
+##########################
+#spring.flyway.enabled:false # To disable
+  flyway:
+    url: jdbc:postgresql://localhost:5432/mydb
+    user: db
+    password: admin
+    #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
+    schemas: flyway
+    locations: classpath:db/migration/postgres
+    clean-on-validation-error: true

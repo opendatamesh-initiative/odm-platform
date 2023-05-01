@@ -1,0 +1,17 @@
+# MySql 5.7 Docker image
+services:
+  db:
+    image: mysql:8
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'mydb'
+      MYSQL_USER: 'db'
+      MYSQL_PASSWORD: 'admin'
+      MYSQL_ROOT_PASSWORD: 'admin'
+    ports:
+      - published: 3306
+        target: 3306
+    expose:
+      - 3306
+    network_mode: "host"
+version: '3.3'

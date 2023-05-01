@@ -1,0 +1,398 @@
+{
+  "dataProductDescriptor": "2.0.0",
+  "info": {
+    "fullyQualifiedName": "urn:dpds:it.quantyca:dataproducts:SampleDomain:dp-SampleDP:1",
+    "entityType": "dataproduct",
+    "name": "dp-SampleDP",
+    "version": "1.0.0",
+    "displayName": "Trip Execution",
+    "description": "Gestione dei viaggi necessari ad eseguire il trasporto della merce dalla sorgente alla destinazione",
+    "domain": "SampleDomain",
+    "owner": {
+      "id": "john.doe@company-xyz.com",
+      "name": "John Doe"
+    },
+    "contactPoints": [
+      {
+        "name": "Support Team Mail",
+        "description": "The mail address of to the team that give support on this product",
+        "channel": "email",
+        "address": "trip-execution-support@company-xyz.com"
+      },
+      {
+        "name": "Issue Tracker",
+        "description": "The address of the issue tracker associated to this product",
+        "channel": "web",
+        "address": "https://readmine.company-xyz.com/trip-execution"
+      }
+    ]
+  },
+  "interfaceComponents": {
+    "inputPorts": [
+      {
+        "fullyQualifiedName": "urn:dpds:it.quantyca:dataproducts:SampleDP:1:inputports:tmsTripCDC",
+        "entityType": "inputport",
+        "name": "tmsTripCDC",
+        "version": "1.0.0",
+        "displayName": "tms Trip CDC",
+        "description": "input port 1 of data product",
+        "componentGroup": "gruppoA",
+        "promises": {
+          "platform": "onprem:milan-1",
+          "servicesType": "rest-services",
+          "api": {
+            "specification": "specification for API of input port 1",
+            "definition": {}
+          },
+          "deprecationPolicy": {
+            "description": "deprecationPolicy for input port 1",
+            "externalDocs": {
+              "description": "external doc description for deprecationPolicy of input port 1",
+              "mediaType": "text/html",
+              "$href": "http://fakeurl1"
+            }
+          },
+          "slo": {
+            "description": "slo for input port 1",
+            "externalDocs": {
+              "description": "external doc description for slo of input port 1",
+              "mediaType": "text/html",
+              "$href": "http://fakeurl1"
+            }
+          }
+        },
+        "expectations": {
+          "audience": {
+            "description": "audience for input port 1",
+            "externalDocs": {
+              "description": "external doc description for audience of input port 1",
+              "mediaType": "text/html",
+              "$href": "http://fakeurl1"
+            }
+          },
+          "usage": {
+            "description": "usage for input port 1",
+            "externalDocs": {
+                "description": "external doc description for audience of input port 1",
+                "mediaType": "text/html",
+                "$href": "http://fakeurl1"
+              }
+          }
+        },
+        "contracts": {
+          "termsAndConditions": {
+            "description": "termsAndConditions for input port 1",
+            "externalDocs": {
+              "description": "external doc description for termsAndConditions of input port 1",
+              "mediaType": "text/html",
+              "$href": "http://fakeurl1"
+            }
+          },
+          "billingPolicy": {
+            "description": "billingPolicy for input port 1",
+            "externalDocs": {
+              "description": "external doc description for billingPolicy of input port 1",
+              "mediaType": "text/html",
+              "$href": "http://fakeurl1"
+            }
+          },
+          "sla": {
+            "description": "sla for input port 1",
+            "externalDocs": {
+              "description": "external doc description for sla of input port 1",
+              "mediaType": "text/html",
+              "$href": "http://fakeurl1"
+            }
+          }
+        },
+        "tags": [
+          "tag1",
+          "tag2",
+          "tag3"
+        ],
+        "externalDocs": {
+          "description": "external doc description for input port 1",
+          "mediaType": "text/html",
+          "$href": "http://fakeurl1"
+        }
+      },
+      {
+        "fullyQualifiedName": "urn:dpds:it.quantyca:dataproducts:SampleDP:1:inputports:input-port-2",
+        "entityType": "inputport",
+        "name": "input-port2",
+        "version": "1.0.0",
+        "displayName": "input port 2",
+        "description": "input port 2 of data product",
+        "componentGroup": "gruppoB",
+        "promises": {
+          "platform": "aws:eu-south-1",
+          "servicesType": "streaming-services",
+          "api": {
+            "specification": "specification for API of input port 2",
+            "definition": {}
+          },
+          "deprecationPolicy": {
+            "description": "deprecationPolicy for input port 2",
+            "externalDocs": {
+              "description": "external doc description for deprecationPolicy of input port 2",
+              "mediaType": "text/html",
+              "$href": "http://fakeurl1"
+            }
+          },
+          "slo": {
+            "description": "slo for input port 2",
+            "externalDocs": {
+              "description": "external doc description for slo of input port 2",
+              "mediaType": "text/html",
+              "$href": "http://fakeurl1"
+            }
+          }
+        },
+        "expectations": {
+          "audience": {
+            "description": "audience for input port 2",
+            "externalDocs": {
+              "description": "external doc description for audience of input port 2",
+              "mediaType": "text/html",
+              "$href": "http://fakeurl1"
+            }
+          },
+          "usage": {
+            "description": "usage for input port 2",
+            "externalDocs": {
+              "description": "external doc description for usage of input port 2",
+              "mediaType": "text/html",
+              "$href": "http://fakeurl1"
+            }
+          }
+        },
+        "contracts": {
+          "termsAndConditions": {
+            "description": "termsAndConditions for input port 2",
+            "externalDocs": {
+              "description": "external doc description for termsAndConditions of input port 2",
+              "mediaType": "text/html",
+              "$href": "http://fakeurl1"
+            }
+          },
+          "billingPolicy": {
+            "description": "billingPolicy for input port 2",
+            "externalDocs": {
+              "description": "external doc description for billingPolicy of input port 2",
+              "mediaType": "text/html",
+              "$href": "http://fakeurl1"
+            }
+          },
+          "sla": {
+            "description": "sla for input port 2",
+            "externalDocs": {
+              "description": "external doc description for sla of input port 2",
+              "mediaType": "text/html",
+              "$href": "http://fakeurl1"
+            }
+          }
+        },
+        "tags": [
+          "tag2",
+          "tag4"
+        ],
+        "externalDocs": {
+          "description": "external doc description for input port 2",
+          "mediaType": "text/html",
+          "$href": "http://fakeurl1"
+        }
+      }
+    ],
+    "outputPorts": [
+      {
+        "fullyQualifiedName": "urn:dpds:it.quantyca:dataproducts:SampleDP:1:outputports:output-port-1",
+        "entityType": "outputport",
+        "name": "output-port1",
+        "version": "1.0.0",
+        "displayName": "output port 1",
+        "description": "output port 1 of data product",
+        "componentGroup": "gruppoA",
+        "promises": {
+          "platform": "aws:eu-south-1",
+          "servicesType": "rest-services",
+          "api": {
+            "specification": "specification for API of output port 1",
+            "definition": {}
+          },
+          "deprecationPolicy": {
+            "description": "deprecationPolicy for output port 1",
+            "externalDocs": {
+              "description": "external doc description for deprecationPolicy of output port 1",
+              "mediaType": "text/html",
+              "$href": "http://fakeurl1"
+            }
+          },
+          "slo": {
+            "description": "slo for output port 1",
+            "externalDocs": {
+              "description": "external doc description for slo of output port 1",
+              "mediaType": "text/html",
+              "$href": "http://fakeurl1"
+            }
+          }
+        },
+        "expectations": {
+          "audience": {
+            "description": "audience for output port 1",
+            "externalDocs": {
+              "description": "external doc description for audience of input port 1",
+              "mediaType": "text/html",
+              "$href": "http://fakeurl1"
+            }
+          },
+          "usage": {
+            "description": "usage for output port 1",
+            "externalDocs": {
+              "description": "external doc description for audience of input port 1",
+              "mediaType": "text/html",
+              "$href": "http://fakeurl1"
+            }
+          }
+        },
+        "contracts": {
+          "termsAndConditions": {
+            "description": "termsAndConditions for output port 1",
+            "externalDocs": {
+              "description": "external doc description for termsAndConditions of output port 1",
+              "mediaType": "text/html",
+              "$href": "http://fakeurl1"
+            }
+          },
+          "billingPolicy": {
+            "description": "billingPolicy for output port 1",
+            "externalDocs": {
+              "description": "external doc description for billingPolicy of output port 1",
+              "mediaType": "text/html",
+              "$href": "http://fakeurl1"
+            }
+          },
+          "sla": {
+            "description": "sla for output port 1",
+            "externalDocs": {
+              "description": "external doc description for sla of output port 1",
+              "mediaType": "text/html",
+              "$href": "http://fakeurl1"
+            }
+          }
+        },
+        "tags": [
+          "tag1",
+          "tag2",
+          "tag3"
+        ],
+        "externalDocs": {
+          "description": "external doc description for output port 1",
+          "mediaType": "text/html",
+          "$href": "http://fakeurl1"
+        }
+      }
+    ]
+  },
+  "internalComponents": {
+    "applicationComponents": [
+      {
+        "fullyQualifiedName": "urn:dpds:it.quantyca:dataproducts:SampleDP:1:applications:modelNormalizationJob",
+        "entityType": "application",
+        "name": "modelNormalizationJob",
+        "version": "1.1.0",
+        "displayName": "model Normalization Job",
+        "description": "internal app 1 of data product",
+        "buildInfo": {
+          "service": {
+            "description": "Build Service URL",
+            "mediaType": "application/json",
+            "$href": "http://192.168.1.9:8082/api/v1/planes/utility/integration-services/builds"
+          },
+          "template": {},
+          "configurations": {
+            "mediaType": "application/json",
+            "$href": "https://raw.githubusercontent.com/Giandom/tf-data-product-example/main/azure-pipelines-CI.config"
+          }          
+        },
+        "deployInfo": {
+          "service": {
+            "description": "Deploy Service URL",
+            "mediaType": "application/json",
+            "$href": "http://192.168.1.9:8083/api/v1/planes/utility/integration-services/deployments"
+          },
+          "template": {},
+          "configurations": {
+            "mediaType": "application/json",
+            "$href": "https://raw.githubusercontent.com/Giandom/tf-data-product-example/main/azure-pipelines-CD.config"
+          }
+        },
+        
+        "consumesFrom": [],
+        "providesTo": [],
+        "dependsOn": [
+          "urn:dpds:it.quantyca:dataproducts:SampleDP:1:infrastructure:stagingArea"
+        ],
+        "componentGroup": "gruppoB",
+        "tags": [
+          "tag1",
+          "tag5"
+        ],
+        "externalDocs": {
+          "description": "external doc description for internal-app-1",
+          "mediaType": "text/html",
+          "$href": "http://fakeurl1"
+        }
+      }
+    ],
+    "infrastructuralComponents": [
+      {
+        "fullyQualifiedName": "urn:dpds:it.quantyca:dataproducts:SampleDP:1:infrastructure:stagingArea",
+        "entityType": "infrastructure",
+        "name": "stagingArea",
+        "version": "1.1.0",
+        "displayName": "staging area",
+        "description": "infrastructure component 1 of data product",
+        "platform": "TBD",
+        "infrastructureType": "storage-resource",
+        
+        "provisionInfo": {
+          "service": {
+            "description": "Provision Service URL",
+            "mediaType": "application",
+            "$href": "http://192.168.1.9:8081/api/v1/planes/utility/provision-services/runs"
+          },
+          "template": {
+            "description": "Github Template",
+            "mediaType": "text",
+            "$href": "https://github.com/Giandom/tf-data-product-example.git"
+          },
+          "configurations": {
+            "description": "Github Conf",
+            "mediaType": "text",
+            "$href": "https://raw.githubusercontent.com/Giandom/tf-data-product-example/main/example.conf"
+          }
+        },        
+        "dependsOn": [],
+        "componentGroup": "gruppoC",
+        "tags": [
+          "tag2",
+          "tag4"
+        ],
+        "externalDocs": {
+          "description": "external doc description for infra-component-1",
+          "mediaType": "text/html",
+          "$href": "http://fakeurl1"
+        }
+      }
+    ]
+  },
+  "components": {
+    "inputPorts": {},
+    "outputPorts": {},
+    "discoveryPorts": {},
+    "observabilityPorts": {},
+    "controlPorts": {},
+    "applicationComponents": {},
+    "infrastructuralComponents": {}
+  }
+}

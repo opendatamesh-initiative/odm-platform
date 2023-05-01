@@ -1,0 +1,24 @@
+# Spring Boot App - NOT WORKING
+version: '3.3'
+services:
+  # Spring boot app
+  app:
+    container_name: "${APP_NAME}"
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SPRING_PROFILES_ACTIVE: "${SPRING_PROFILES_ACTIVE}"
+        APP_NAME: "${APP_NAME}"
+        JAVA_OPTS: "${JAVA_OPTS}"
+        DATABASE_URL: "${DATABASE_URL}"
+        DATABASE_USERNAME: "${DATABASE_USERNAME}"
+        DATABASE_PASSWORD: "${DATABASE_PASSWORD}"
+        SPRING_DATABASE_DIALECT: "${SPRING_DATABASE_DIALECT}"
+        SPRING_DATABASE_DRIVER: "${SPRING_DATABASE_DRIVER}"
+        FLYWAY_SCHEMA: "${FLYWAY_SCHEMA}"
+        FLYWAY_SCRIPTS_DIR: "${FLYWAY_SCRIPTS_DIR}"
+    restart: on-failure
+    env_file: .env
+    ports:
+      - "${SPRING_LOCAL_PORT}:${SPRING_DOCKER_PORT}"

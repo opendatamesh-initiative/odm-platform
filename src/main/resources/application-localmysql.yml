@@ -1,0 +1,48 @@
+policyserviceaddress: http://localhost:4242
+metaserviceaddress: http://localhost:8084
+
+skippolicyservice: true
+skipmetaservice: true
+
+spring:
+  profile: localmysql
+##########################
+# JPA configuration
+##########################
+#Old
+#spring.jpa.hibernate.ddl-auto = create-drop
+#FLyWay (none: execute migrations - validate: validate migrations before execution)
+#spring.jpa.hibernate.ddl-auto = none
+  jpa:
+    hibernate:
+      ddl-auto: none #validate #errors on scripts
+      show-sql: true
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+  datasource:
+    url: jdbc:mysql://localhost:3306/mydb?useSSL=false
+    driverClassName: com.mysql.cj.jdbc.Driver
+    username: db
+    password: admin
+  h2:
+    console:
+      enabled: false
+  ##########################
+  # FlyWay configuration
+  # More: https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html#appendix.application-properties.data-migration
+  ##########################
+  flyway:
+    #enabled: false # To disable
+    url: jdbc:mysql://localhost:3306/mydb
+    user: "db"
+    password: "admin"
+    locations: classpath:db/migration/mysql
+    #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
+    #schemas: flyway # not working
+    clean-on-validation-error: true

@@ -1,0 +1,115 @@
+{
+    "asyncapi": "2.5.0",
+    "info": {
+        "title": "Trip Status Streaming API",
+        "version": "1.0.0",
+        "description": "This API exposes all events related to `Trip` entity"
+    },
+    "servers": {
+        "development": {
+            "url": "https://company-xyz.com/platform/dev/confluent-cloud",
+            "description": "Confluent Cloud DEV bootstrap server",
+            "protocol": "kafka",
+            "protocolVersion": "latest",
+            "bindings": {
+                "kafka": {
+                    "schemaRegistryUrl": "https://company-xyz.com/platform/dev/confluent-schema-registry",
+                    "schemaRegistryVendor": "confluent"
+                }
+            }
+        },
+        "production": {
+            "url": "https://company-xyz.com/platform/prod/confluent-cloud",
+            "description": "Confluent Cloud PRODUCTION bootstrap server",
+            "protocol": "kafka",
+            "protocolVersion": "latest",
+            "bindings": {
+                "kafka": {
+                    "schemaRegistryUrl": "https://company-xyz.com/platform/prod/confluent-schema-registry",
+                    "schemaRegistryVendor": "confluent"
+                }
+            }
+        }
+    },
+    "defaultContentType": "avro/binary",
+    "channels": {
+        "transportmng.tripexecution.devents.status": {
+            "description": "This topic contains all the *domain events* related to `Trip` entity",
+            "subscribe": {
+                "operationId": "readTripStatusEvents",
+                "security": [
+                    {
+                        "apiKey": []
+                    }
+                ],
+                "message": {
+                    "messageId": "tripStatusEvent",
+                    "contentType": "avro/binary",
+                    "schemaFormat": "application/vnd.apache.avro",
+                    "payload": {
+                        "$ref": "https://github.com/opendatamesh-initiative/odm-specification-dpdescriptor/blob/main/examples/tripexecution/ports/trip-events-oport-status-change-schema.avsc"
+                    },
+                    "bindings": {
+                        "kafka": {
+                            "schemaIdPayloadEncoding": "confluent",
+                            "schemaLookupStrategy": "TopicIdStrategy",
+                            "key": {
+                                "type": "string",
+                                "enum": ["id"]
+                            }
+                        }
+                    }
+                }
+            }, 
+            "bindings": {
+                "kafka": {
+                    "partitions": 20,
+                    "replicas": 3
+                }
+            }
+        }, "transportmng.tripexecution.devents.position": {
+            "description": "This topic contains all the *domain events* related position tracking of `Trip` entity",
+            "subscribe": {
+                "operationId": "readTripPositionEvents",
+                "security": [
+                    {
+                        "apiKey": []
+                    }
+                ],
+                "message": {
+                    "messageId": "tripPositionEvent",
+                    "contentType": "avro/binary",
+                    "schemaFormat": "application/vnd.apache.avro",
+                    "payload": {
+                        "$ref": "https://github.com/opendatamesh-initiative/odm-specification-dpdescriptor/blob/main/examples/tripexecution/ports/trip-events-oport-position-notification-schema.avsc"
+                    },
+                    "bindings": {
+                        "kafka": {
+                            "schemaIdPayloadEncoding": "confluent",
+                            "schemaLookupStrategy": "TopicIdStrategy",
+                            "key": {
+                                "type": "string",
+                                "enum": ["id"]
+                            }
+                        }
+                    }
+                }
+            }, 
+            "bindings": {
+                "kafka": {
+                    "partitions": 20,
+                    "replicas": 3
+                }
+            }
+        }
+        
+    },
+    "components": {
+        "securitySchemes": {
+            "apiKey": {
+                "type": "apiKey",
+                "in": "user"
+            }
+        }
+    }
+}

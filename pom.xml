@@ -29,11 +29,11 @@ License.
         <relativePath /> <!-- lookup parent from repository -->
     </parent>
 
-    <groupId>org.opendatamesh.dpexperience</groupId>
-    <artifactId>odm-dpexperience-service</artifactId>
-    <name>odm-dpexperience-service</name>
-    <description>Open Data Mesh Data Product Experience Service</description>
-    <version>0.0.1-SNAPSHOT</version>
+    <groupId>org.opendatamesh.platform.pp.services</groupId>
+    <artifactId>odm-platform-pp</artifactId>
+    <name>ODM Platform Product Plane</name>
+    <description>Open Data Mesh Platform's product plane services</description>
+    <version>1.0.0</version>
     <url>https://bitbucket.org/quantyca/odm-plane-dpexperience-services/</url>
 
     <!--

@@ -1,4 +1,4 @@
-# Open Data Mesh Platfor Product Plane
+# Open Data Mesh Platform Product Plane
 
 Open Data Mesh Platform is a platform that manages the full lifecycle of a data product from deployment to retirement. It use the [Data Product Descriptor Specification](https://dpds.opendatamesh.org/) to to create, deploy and operate data product containers in a mesh architecture. This repository contains the services exposed by the platform product plane.
 
@@ -32,6 +32,7 @@ java -jar target/odm-platform-pp-1.0.0.jar
 Alternatively, it's possible to use a IDE like IntelliJ to import and run the application.
 
 ## Run in docker
+<<<<<<< HEAD
 ### Docker
 The project could be built and executed through its Dockerfile. 
 In this scenario, only the Spring project will be executed, a MySQL DB or a PostgreSQL DB must be reachable for the application to run correctly.

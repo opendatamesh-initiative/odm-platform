@@ -33,5 +33,5 @@ springdoc:
 ##########################
 spring:
   profiles:
-    active: ${SPRING_PROFILES_ACTIVE}
+    active: localpostgres #${SPRING_PROFILES_ACTIVE}
 # Set spring profiles adding ENV variable SPRING_PROFILES_ACTIVE to run configurations

@@ -4,9 +4,6 @@ metaserviceaddress: http://localhost:8084
 skippolicyservice: true
 skipmetaservice: true
 
-spring:
-  profile: dev
-
 ##########################
 # Server configuration
 ##########################
@@ -20,6 +17,8 @@ server:
   servlet:
     context-path: /api/v1/pp/
 
+spring:
+  profile: dev
 ##########################
 # JPA configuration
 ##########################

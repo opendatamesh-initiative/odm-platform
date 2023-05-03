@@ -6,20 +6,6 @@ skipmetaservice: true
 
 spring:
   profile: localpostgres
-
-##########################
-# Server configuration
-##########################
-app:
-  workdir:
-
-server:
-  port: 8585
-  error:
-    include-message: always
-  servlet:
-    context-path: /api/v1/pp/
-
 ##########################
 # JPA configuration
 ##########################
@@ -60,3 +46,16 @@ server:
     schemas: flyway
     locations: classpath:db/migration/postgres
     clean-on-validation-error: true
+
+##########################
+# Server configuration
+##########################
+app:
+  workdir:
+
+server:
+  port: 8585
+  error:
+    include-message: always
+  servlet:
+    context-path: /api/v1/pp/

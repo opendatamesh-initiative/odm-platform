@@ -64,11 +64,11 @@ It's possible to override several arguments to control, adding them to the previ
 The full list of *build_arg* possible is:
 * SPRING_PROFILES_ACTIVE
 * SPRING_LOCAL_PORT
+* JAVA_OPTS
 * DATABASE_URL
-* DATABASE_PORT
 * DATABASE_USERNAME
 * DATABASE_PASSWORD
-* FLYWAY_SCHEMA 
+* FLYWAY_SCHEMA
 * FLYWAY_SCRIPTS_DIR (could be: *h2*, *postgres* or *mysql*)
 * H2_CONSOLE_ENABLED (override it only if the desired DB is an embedded H2) 
 * H2_CONSOLE_PATH (override it only if the desired DB is an embedded H2)

@@ -1,17 +1,4 @@
 ##########################
-# Server configuration
-##########################
-app:
-  workdir:
-
-server:
-  port: 8585
-  error:
-    include-message: always
-  servlet:
-    context-path: /api/v1/pp/
-
-##########################
 # Logging configuration
 ##########################
 logging:
@@ -46,6 +33,5 @@ springdoc:
 ##########################
 spring:
   profiles:
-    #active: ${SPRING_PROFILES_ACTIVE}
-    active: dev
+    active: ${SPRING_PROFILES_ACTIVE}
 # Set spring profiles adding ENV variable SPRING_PROFILES_ACTIVE to run configurations

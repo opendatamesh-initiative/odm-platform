@@ -1,3 +1,16 @@
+##########################
+# Server configuration
+##########################
+app:
+  workdir:
+
+server:
+  port: ${SPRING_LOCAL_PORT}
+  error:
+    include-message: always
+  servlet:
+    context-path: /api/v1/pp/
+
 ############################################
 # Spring, JPA, DB and Flyway configurations
 ############################################
@@ -7,25 +20,27 @@ spring:
   # JPA
   jpa:
     hibernate:
-      ddl-auto: validate #or none
+      ddl-auto: none #or validate
       show-sql: true
-      naming.physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     properties:
       hibernate:
         jdbc:
           lob:
             non_contextual_creation: true
-    database-platform: ${SPRING_DATABASE_DIALECT}
+        globally_quoted_identifiers: true
+        default_schema: PUBLIC
   # DB
   datasource:
     url: ${DATABASE_URL}
-    driverClassName: ${SPRING_DATABASE_DRIVER}
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
   h2:
     console:
-      enabled: true
-      path: /h2-console
+      enabled: ${H2_CONSOLE_ENABLED}
+      path: /${H2_CONSOLE_PATH}
       settings:
         web-allow-others: true
   # FlyWay

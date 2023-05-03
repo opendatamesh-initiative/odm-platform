@@ -6,6 +6,20 @@ skipmetaservice: true
 
 spring:
   profile: localpostgres
+
+##########################
+# Server configuration
+##########################
+app:
+  workdir:
+
+server:
+  port: 8585
+  error:
+    include-message: always
+  servlet:
+    context-path: /api/v1/pp/
+
 ##########################
 # JPA configuration
 ##########################

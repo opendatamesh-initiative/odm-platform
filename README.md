@@ -1,4 +1,4 @@
-# Open Data Mesh Platfor Product Plane
+# Open Data Mesh Platform Product Plane
 
 Open Data Mesh Platform is a platform that manages the full lifecycle of a data product from deployment to retirement. It use the [Data Product Descriptor Specification](https://dpds.opendatamesh.org/) to to create, deploy and operate data product containers in a mesh architecture. This repository contains the services exposed by the platform product plane.
 

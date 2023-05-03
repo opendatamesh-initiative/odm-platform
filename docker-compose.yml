@@ -12,6 +12,8 @@ services:
     env_file: .env
     ports:
       - "${DATABASE_PORT}:${DATABASE_PORT}"
+    volumes:
+      - postgres:/var/lib/postgresql/data:rw
     network_mode: host
   # Spring boot app
   app:
@@ -24,7 +26,6 @@ services:
       args:
         SPRING_PROFILES_ACTIVE: "docker"
         SPRING_LOCAL_PORT: "${SPRING_LOCAL_PORT}"
-        APP_NAME: "odm-dpexperience-service"
         JAVA_OPTS: ""
         DATABASE_URL:  "jdbc:postgresql://localhost:5432/odmpdb" #:${DATABASE_PORT}/${DATABASE_NAME}/"
         DATABASE_USERNAME: "${DATABASE_USERNAME}"

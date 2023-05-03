@@ -27,9 +27,9 @@ spring:
         globally_quoted_identifiers: true
         default_schema: PUBLIC
   datasource:
-    url: jdbc:postgresql://localhost:5432/mydb
-    username: db
-    password: admin
+    url: jdbc:postgresql://localhost:5432/odmpdb
+    username: usr
+    password: pwd
   h2:
     console:
       enabled: false
@@ -39,9 +39,9 @@ spring:
 ##########################
 #spring.flyway.enabled:false # To disable
   flyway:
-    url: jdbc:postgresql://localhost:5432/mydb
-    user: db
-    password: admin
+    url: jdbc:postgresql://localhost:5432/odmpdb
+    user: usr
+    password: pwd
     #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
     schemas: flyway
     locations: classpath:db/migration/postgres

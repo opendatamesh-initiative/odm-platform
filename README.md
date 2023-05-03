@@ -41,13 +41,23 @@ Clone the repository, move to the project root folder and build the image throug
 docker build -t odm-dpexperience-service . --build-arg DATABASE_URL=<DATABASE_URL> --build-arg DATABASE_USERNAME=<DATABASE_USERNAME> --build-arg DATABASE_PASSWORD=<DATABASE_PASSWORD>
 ```
 where:
-* DATABASE_URL: the JDBC string connection for the desired DB (e.g. *jdbc:postgresql://localhost:5432/mydb*)
+* DATABASE_URL: the JDBC string connection for the desired DB (e.g. *jdbc:postgresql://localhost:5432/odmpdb*)
 * DATABASE_USERNAME, DATABASE_PASSWORD: desired credentials
 
 Then, execute it:
 ```
 docker run --name odm-dpexperience-service -p 8585:8585 -d odm-dpexperience-service
 ```
+
+If the DB is running on *localhost*, add *--network=host* as a parameter for the *build* command and *--net host* for the *exec* command.
+```
+docker build -t odm-dpexperience-service . --network=host --build-arg DATABASE_URL=<DATABASE_URL> --build-arg DATABASE_USERNAME=<DATABASE_USERNAME> --build-arg DATABASE_PASSWORD=<DATABASE_PASSWORD>
+docker run --name odm-dpexperience-service --net host -p 8585:8585 -d odm-dpexperience-service
+```
+
+It's possible to find tested docker-compose version of MySQL and PostgreSQL DBs under:
+* *src/main/resources/mysql*
+* *src/main/resources/postgres*
 
 It's possible to override several arguments to control, adding them to the previous commands, in order to obtain more control of the project.
 The full list of *build_arg* possible is:

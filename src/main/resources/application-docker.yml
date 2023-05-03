@@ -34,7 +34,7 @@ spring:
         default_schema: PUBLIC
   # DB
   datasource:
-    url: ${DATABASE_URL}
+    url: ${DATABASE_URL}?allowPublicKeyRetrieval=true&useSSL=false
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
   h2:
@@ -47,7 +47,7 @@ spring:
   # More: https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html#appendix.application-properties.data-migration
   flyway:
     #enabled: false # To disable it
-    url: ${DATABASE_URL}
+    url: ${DATABASE_URL}?allowPublicKeyRetrieval=true&useSSL=false
     user: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
     schemas: ${FLYWAY_SCHEMA} #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA

@@ -29,12 +29,15 @@ ENV H2_CONSOLE_PATH ${H2_CONSOLE_PATH}
 
 RUN mvn clean install -DskipTests -Dactive.profile=$SPRING_PROFILES_ACTIVE
 
+RUN ls
+RUN ls /workspace/app
+RUN find . -name *.jar
+
 # Stage 2
 FROM openjdk:11-jre-slim
 
 RUN apt-get update && apt-get install -y wget gpg lsb-release zip curl
 
-ARG APP_NAME=odm-dpexperience-service
 ARG SPRING_PROFILES_ACTIVE=docker
 ARG SPRING_LOCAL_PORT=8585
 ARG JAVA_OPTS
@@ -47,20 +50,19 @@ ARG H2_CONSOLE_ENABLED=false
 ARG H2_CONSOLE_PATH=h2-console
 ENV SPRING_PROFILES_ACTIVE ${SPRING_PROFILES_ACTIVE}
 ENV SPRING_LOCAL_PORT ${SPRING_LOCAL_PORT}
-ENV APP_NAME ${APP_NAME}
 ENV JAVA_OPTS ${JAVA_OPTS}
 ENV DATABASE_URL ${DATABASE_URL}
 ENV DATABASE_USERNAME ${DATABASE_USERNAME}
 ENV DATABASE_PASSWORD ${DATABASE_PASSWORD}
-ENV SPRING_DATABASE_DIALECT ${SPRING_DATABASE_DIALECT}
-ENV SPRING_DATABASE_DRIVER ${SPRING_DATABASE_DRIVER}
 ENV FLYWAY_SCHEMA ${FLYWAY_SCHEMA}
 ENV FLYWAY_SCRIPTS_DIR ${FLYWAY_SCRIPTS_DIR}
 ENV H2_CONSOLE_ENABLED ${H2_CONSOLE_ENABLED}
 ENV H2_CONSOLE_PATH ${H2_CONSOLE_PATH}
 
-COPY --from=build  /workspace/app/target/$APP_NAME-*.jar /app/
+COPY --from=build  /workspace/app/target/odm-platform-pp-*.jar /app/
 
 RUN ln -s -f /usr/share/zoneinfo/Europe/Rome /etc/localtime
 
-CMD java $JAVA_OPTS -jar /app/$APP_NAME-*.jar --spring.profiles.active=$SPRING_PROFILES_ACTIVE
+CMD java $JAVA_OPTS -jar /app/odm-platform-pp-*.jar --spring.profiles.active=$SPRING_PROFILES_ACTIVE
+
+EXPOSE $SPRING_LOCAL_PORT

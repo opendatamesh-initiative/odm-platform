@@ -1,16 +1,24 @@
-policyserviceaddress: http://localhost:4242
-metaserviceaddress: http://localhost:8084
+##########################
+# Server configuration
+##########################
+app:
+  workdir:
 
-skippolicyservice: true
-skipmetaservice: true
+server:
+  port: 8585
+  error:
+    include-message: always
+  servlet:
+    context-path: /api/v1/pp/
 
+
+############################################
+# Spring, JPA, DB and Flyway configurations
+############################################
 spring:
+  # Profile
   profile: localpostgres
-##########################
-# JPA configuration
-##########################
-#FLyWay (none: execute migrations - validate: validate migrations before execution - old was: create-drop)
-#spring.jpa.hibernate.ddl-auto: validate # not working at the moment due to validation not looking for schema
+  # JPA
   jpa:
     hibernate:
       ddl-auto: none
@@ -26,23 +34,32 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQL95Dialect # Or PostgreSQLDialect
         globally_quoted_identifiers: true
         default_schema: PUBLIC
+  # DB
   datasource:
-    url: jdbc:postgresql://localhost:5432/mydb
-    username: db
-    password: admin
+    url: jdbc:postgresql://localhost:5432/odmpdb
+    username: usr
+    password: pwd
   h2:
     console:
       enabled: false
-##########################
-# FlyWay configuration
-# More: https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html#appendix.application-properties.data-migration
-##########################
-#spring.flyway.enabled:false # To disable
+  # FlyWay configuration
+  # More: https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html#appendix.application-properties.data-migration
   flyway:
-    url: jdbc:postgresql://localhost:5432/mydb
-    user: db
-    password: admin
+    #enabled: false # To disable
+    url: jdbc:postgresql://localhost:5432/odmpdb
+    user: usr
+    password: pwd
     #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
     schemas: flyway
     locations: classpath:db/migration/postgres
     clean-on-validation-error: true
+
+
+##############################
+# Policy Module configuration
+##############################
+policyserviceaddress: http://localhost:4242
+metaserviceaddress: http://localhost:8084
+
+skippolicyservice: true
+skipmetaservice: true

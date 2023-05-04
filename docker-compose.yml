@@ -1,24 +1,48 @@
-# Spring Boot App - NOT WORKING
 version: '3.3'
+
 services:
-  # Spring boot app
+
+  # Postgresql 11 DB
+  PostgreSQL:
+    environment:
+      - POSTGRES_DB=${DATABASE_NAME}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRES_USER=${DATABASE_USERNAME}
+    image: postgres:11-alpine
+    env_file: .env
+    ports:
+      - "${DATABASE_PORT}:${DATABASE_PORT}"
+    volumes:
+      - postgres:/var/lib/postgresql/data:rw
+    healthcheck:
+      test: [ "CMD", "pg_isready -U postgres" ]
+      interval: 3s
+      timeout: 5s
+      retries: 5
+
+  # Spring Boot app
   app:
-    container_name: "${APP_NAME}"
+    container_name: "odm-dpexperience-service"
+    depends_on:
+      - PostgreSQL
     build:
       context: .
       dockerfile: Dockerfile
       args:
-        SPRING_PROFILES_ACTIVE: "${SPRING_PROFILES_ACTIVE}"
-        APP_NAME: "${APP_NAME}"
-        JAVA_OPTS: "${JAVA_OPTS}"
-        DATABASE_URL: "${DATABASE_URL}"
+        SPRING_PROFILES_ACTIVE_BUILD: "dev"
+        SPRING_PROFILES_ACTIVE: "docker"
+        SPRING_LOCAL_PORT: "${SPRING_LOCAL_PORT}"
+        JAVA_OPTS: ""
+        DATABASE_URL: "jdbc:postgresql://PostgreSQL:${DATABASE_PORT}/${DATABASE_NAME}"
         DATABASE_USERNAME: "${DATABASE_USERNAME}"
         DATABASE_PASSWORD: "${DATABASE_PASSWORD}"
-        SPRING_DATABASE_DIALECT: "${SPRING_DATABASE_DIALECT}"
-        SPRING_DATABASE_DRIVER: "${SPRING_DATABASE_DRIVER}"
-        FLYWAY_SCHEMA: "${FLYWAY_SCHEMA}"
-        FLYWAY_SCRIPTS_DIR: "${FLYWAY_SCRIPTS_DIR}"
-    restart: on-failure
+        FLYWAY_SCHEMA: "flyway"
+        FLYWAY_SCRIPTS_DIR: "postgres"
+        H2_CONSOLE_ENABLED: "false"
+        H2_CONSOLE_PATH: "h2-console"
     env_file: .env
     ports:
       - "${SPRING_LOCAL_PORT}:${SPRING_DOCKER_PORT}"
+
+volumes:
+  postgres:

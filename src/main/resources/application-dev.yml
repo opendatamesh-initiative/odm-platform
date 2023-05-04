@@ -1,9 +1,3 @@
-policyserviceaddress: http://localhost:4242
-metaserviceaddress: http://localhost:8084
-
-skippolicyservice: true
-skipmetaservice: true
-
 ##########################
 # Server configuration
 ##########################
@@ -17,15 +11,14 @@ server:
   servlet:
     context-path: /api/v1/pp/
 
+
+############################################
+# Spring, JPA, DB and Flyway configurations
+############################################
 spring:
+  # Profile
   profile: dev
-##########################
-# JPA configuration
-##########################
-#Old
-#spring.jpa.hibernate.ddl-auto = create-drop
-#FLyWay (none: execute migrations - validate: validate migrations before execution)
-#spring.jpa.hibernate.ddl-auto = none
+  # JPA configuration
   jpa:
     hibernate:
       ddl-auto: validate
@@ -38,9 +31,9 @@ spring:
           lob:
             non_contextual_creation: true
     database-platform: org.hibernate.dialect.H2Dialect
+  # DB
   datasource:
-    #url: jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE;DB_CLOSE_DELAY=-1;
-    url: jdbc:h2:mem:testdb;
+    url: jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE;DB_CLOSE_DELAY=-1;
     driverClassName: org.h2.Driver
     username: sa
     password:
@@ -48,10 +41,8 @@ spring:
     console:
       enabled: true
       path: /h2-console
-##########################
-# FlyWay configuration
-# More: https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html#appendix.application-properties.data-migration
-##########################
+  # FlyWay configuration
+  # More: https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html#appendix.application-properties.data-migration
   flyway:
     #enabled: false # To disable
     url: jdbc:h2:mem:testdb
@@ -61,3 +52,13 @@ spring:
     schemas: flyway
     locations: classpath:db/migration/h2
     clean-on-validation-error: true
+
+
+##############################
+# Policy Module configuration
+##############################
+policyserviceaddress: http://localhost:4242
+metaserviceaddress: http://localhost:8084
+
+skippolicyservice: true
+skipmetaservice: true

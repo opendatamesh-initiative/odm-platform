@@ -54,9 +54,10 @@ spring:
     locations: classpath:db/migration/${FLYWAY_SCRIPTS_DIR}
     clean-on-validation-error: true
 
-############################################
-# Others configurations
-############################################
+
+##############################
+# Policy Module configuration
+##############################
 policyserviceaddress: http://172.17.0.1:4242
 metaserviceaddress: http://172.17.0.1:8084
 

@@ -9,15 +9,13 @@ import javax.persistence.*;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.opendatamesh.platform.pp.api.exceptions.InternalServerException;
-import org.opendatamesh.platform.pp.api.exceptions.OpenDataMeshAPIStandardError;
 
 import lombok.Data;
 
 
 @Data
 @Entity(name = "DataProductVersion")
-@Table(name = "DPDS_DATA_PRODUCT_VERSIONS", schema="PUBLIC")
+@Table(name = "DPDS_DATA_PRODUCT_VERSIONS")
 @IdClass(DataProductVersionId.class)
 public class DataProductVersion implements Cloneable, Serializable {
 

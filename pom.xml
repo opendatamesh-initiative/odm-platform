@@ -33,7 +33,7 @@ License.
     <artifactId>odm-platform-pp</artifactId>
     <name>ODM Platform Product Plane</name>
     <description>Open Data Mesh Platform's product plane services</description>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <url>https://bitbucket.org/quantyca/odm-plane-dpexperience-services/</url>
 
     <!--
@@ -249,6 +249,7 @@ License.
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<version>2.3.3.RELEASE</version>
 				<configuration>
+                    <classifier>exec</classifier>
 					<wait>1000</wait>
 					<maxAttempts>180</maxAttempts>
 				</configuration>

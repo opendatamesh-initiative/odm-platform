@@ -1,18 +1,8 @@
-policyserviceaddress: http://localhost:4242
-metaserviceaddress: http://localhost:8084
-
-skippolicyservice: true
-skipmetaservice: true
-
 spring:
   profile: localmysql
 ##########################
 # JPA configuration
 ##########################
-#Old
-#spring.jpa.hibernate.ddl-auto = create-drop
-#FLyWay (none: execute migrations - validate: validate migrations before execution)
-#spring.jpa.hibernate.ddl-auto = none
   jpa:
     hibernate:
       ddl-auto: none #validate #errors on scripts
@@ -46,3 +36,9 @@ spring:
     #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
     #schemas: flyway # not working
     clean-on-validation-error: true
+
+policyserviceaddress: http://localhost:4242
+metaserviceaddress: http://localhost:8084
+
+skippolicyservice: true
+skipmetaservice: true

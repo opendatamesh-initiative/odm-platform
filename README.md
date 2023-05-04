@@ -2,7 +2,6 @@
 
 Open Data Mesh Platform is a platform that manages the full lifecycle of a data product from deployment to retirement. It use the [Data Product Descriptor Specification](https://dpds.opendatamesh.org/) to to create, deploy and operate data product containers in a mesh architecture. This repository contains the services exposed by the platform product plane.
 
-
 # Run it
 
 ## Prerequisites
@@ -32,7 +31,7 @@ java -jar target/odm-platform-pp-1.0.0.jar
 Alternatively, it's possible to use a IDE like IntelliJ to import and run the application.
 
 ## Run in docker
-<<<<<<< HEAD
+
 ### Docker
 The project could be built and executed through its Dockerfile. 
 In this scenario, only the Spring project will be executed, a MySQL DB or a PostgreSQL DB must be reachable for the application to run correctly.
@@ -69,9 +68,16 @@ The full list of *build_arg* possible is:
 * DATABASE_USERNAME
 * DATABASE_PASSWORD
 * FLYWAY_SCHEMA
-* FLYWAY_SCRIPTS_DIR (could be: *h2*, *postgres* or *mysql*)
-* H2_CONSOLE_ENABLED (override it only if the desired DB is an embedded H2) 
-* H2_CONSOLE_PATH (override it only if the desired DB is an embedded H2)
+* FLYWAY_SCRIPTS_DIR
+    * could only be *h2*, *postgres* or *mysql*
+    * specify which SQL files use to start the DB
+* H2_CONSOLE_ENABLED (override it only if the desired DB is an embedded H2)
+    * could be *true*, *false* (default *false*)
+    * override it only if the desired DB is embedded H2
+* H2_CONSOLE_PATH
+    * default *h2-console*
+    * specify it only if H2_CONSOLE_ENABLED=true
+    * override it only if the desired DB is an embedded H2
 
 ### docker-compose
 The project and a default embedded PostgreSQL DB could be executed through docker-compose.

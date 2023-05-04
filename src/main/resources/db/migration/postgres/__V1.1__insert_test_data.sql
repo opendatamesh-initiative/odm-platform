@@ -1,3 +1,6 @@
+-- Disabled, developed only for testing purpose
+-- To re-enable it rename the file V<version>__<migration-name>.sql instead of __V<version>__<migration-name>.sql
+
 INSERT INTO "PUBLIC"."DPDS_DATA_PRODUCTS" VALUES
 ('849aba17-9244-34b0-8de1-315a6bf10e12', NULL, 'sampleDomain', 'urn:dpds:it.quantyca:dataproducts:sampleDomain:tripExecution');
 

@@ -11,18 +11,21 @@ The project requires the following dependencies:
 * Maven 3.8.6
 
 ## Run locally
+
+### Clone repository
 Clone the repository and move to the project root folder
 
 ```
 git clone git@github.com:opendatamesh-initiative/odm-platform-pp-services.git
 cd odm-platform-pp-services
 ```
-
+### Compile project
 Compile the project:
 ```
 mvn clean install
 ```
 
+### Run application
 Run the application:
 ```
 java -jar target/odm-platform-pp-1.0.0.jar 
@@ -32,6 +35,7 @@ Alternatively, it's possible to use a IDE like IntelliJ to import and run the ap
 
 ## Run with Docker
 
+### Clone repository
 Clone the repository and move to the project root folder
 
 ```
@@ -40,15 +44,17 @@ cd odm-platform-pp-services
 ```
 
 Here you can find the following two Dockerfiles:
-* **Dockerfile:** This file creates a docker image containing the application built from the code present on the Git repository;
-* **Dokerfile.local:** This file creates an image containing the application by directly copying it from the build executed locally (i.e. from `target` folder).
+* `Dockerfile`: This file creates a docker image containing the application built from the code present on the Git repository;
+* `Dockerfile.local`: This file creates an image containing the application by directly copying it from the build executed locally (i.e. from `target` folder).
 
+### Compile project
 If you decide to create the Docker image using the second Dockerfile (i.e. `Dokerfile.local`), you need to first execute the build locally by running the following command: 
 
 ```bash
 mvn clean install
 ```
 
+### Run database
 The image generated from both Dockerfiles contains only the application. It requires a database to run properly. The supported databases are MySql and Postgres. If you do not already have a database available, you can create one by running the following commands:
 
 *MySql*
@@ -72,7 +78,7 @@ docker logs odmp-mysql-db
 ```
 docker logs odmp-mysql-db
 ```
-
+### Build image
 Build the Docker image of the application and run it. 
 
 *Note: Before executing the following commands change properly the value of arguments `DATABASE_USERNAME`, `DATABASE_PASSWORD` and `DATABASE_URL`. Reported commands already contains right argument values if you have created the database using the commands above.*
@@ -86,6 +92,8 @@ docker build -t odmp-mysql-app . -f Dockerfile.local --build-arg DATABASE_URL=jd
 ```
 docker build -t odmp-postgres-app . -f Dockerfile.local --build-arg DATABASE_URL=jdbc:postgresql://localhost:5432/odmpdb --build-arg DATABASE_USERNAME=postgres --build-arg DATABASE_PASSWORD=postgres --build-arg FLYWAY_SCRIPTS_DIR=postgres
 ```
+
+### Run application
 Run the Docker image. 
 
 *Note: Before executing the following commands remove the argument `--net host` if the database is not running on `localhost`*

@@ -30,8 +30,12 @@ Run the application:
 ```
 java -jar target/odm-platform-pp-1.0.0.jar 
 ```
-
-Alternatively, it's possible to use a IDE like IntelliJ to import and run the application.
+### Stop application
+To stop the application type CTRL+C or just close the shell. To start it again re-execute the following command:
+```
+java -jar target/odm-platform-pp-1.0.0.jar 
+```
+*Note: The application run in this way uses an in-memory instance of the H2 database. For this reason, the data is lost every time the application is terminated. On the next restart, the database is recreated from scratch.*
 
 ## Run with Docker
 
@@ -59,12 +63,17 @@ The image generated from both Dockerfiles contains only the application. It requ
 
 *MySql*
 ```
-docker run --name odmp-mysql-db -d -p 3306:3306  -e MYSQL_DATABASE=odmpdb -e MYSQL_ROOT_PASSWORD=root mysql:8
+docker run --name odmp-mysql-db -d -p 3306:3306  \
+   -e MYSQL_DATABASE=odmpdb \
+   -e MYSQL_ROOT_PASSWORD=root mysql:8
 ```
 
 *Postgres*
 ```
-docker run --name odmp-postgres-db -d -p 5432:5432  -e POSTGRES_DB=odmpdb -e POSTGRES_PASSWORD=postgres postgres:11-alpine
+docker run --name odmp-postgres-db -d -p 5432:5432  \
+   -e POSTGRES_DB=odmpdb \
+   -e POSTGRES_PASSWORD=postgres \
+   postgres:11-alpine
 ```
 
 Check that the database has started correctly:
@@ -81,16 +90,26 @@ docker logs odmp-mysql-db
 ### Build image
 Build the Docker image of the application and run it. 
 
-*Note: Before executing the following commands change properly the value of arguments `DATABASE_USERNAME`, `DATABASE_PASSWORD` and `DATABASE_URL`. Reported commands already contains right argument values if you have created the database using the commands above.*
+*Before executing the following commands: 
+* change properly the value of arguments `DATABASE_USERNAME`, `DATABASE_PASSWORD` and `DATABASE_URL`. Reported commands already contains right argument values if you have created the database using the commands above.
+* remove the option `-f Dockerfile.local` if you want to build the application from code taken from repository*
 
 **MySql**
 ```
-docker build -t odmp-mysql-app . -f Dockerfile.local --build-arg DATABASE_URL=jdbc:mysql://localhost:3306/odmpdb --build-arg DATABASE_USERNAME=root --build-arg DATABASE_PASSWORD=root --build-arg FLYWAY_SCRIPTS_DIR=mysql
+docker build -t odmp-mysql-app . -f Dockerfile.local \
+   --build-arg DATABASE_URL=jdbc:mysql://localhost:3306/odmpdb \
+   --build-arg DATABASE_USERNAME=root \
+   --build-arg DATABASE_PASSWORD=root \
+   --build-arg FLYWAY_SCRIPTS_DIR=mysql
 ```
 
 **Postgres**
 ```
-docker build -t odmp-postgres-app . -f Dockerfile.local --build-arg DATABASE_URL=jdbc:postgresql://localhost:5432/odmpdb --build-arg DATABASE_USERNAME=postgres --build-arg DATABASE_PASSWORD=postgres --build-arg FLYWAY_SCRIPTS_DIR=postgres
+docker build -t odmp-postgres-app . -f Dockerfile.local \
+   --build-arg DATABASE_URL=jdbc:postgresql://localhost:5432/odmpdb \
+   --build-arg DATABASE_USERNAME=postgres \
+   --build-arg DATABASE_PASSWORD=postgres \
+   --build-arg FLYWAY_SCRIPTS_DIR=postgres
 ```
 
 ### Run application
@@ -108,7 +127,26 @@ docker run --name odmp-mysql-app -p 8585:8585 --net host odmp-mysql-app
 docker run --name ododmp-postgres-appmp -p 8585:8585 --net host odmp-postgres-app
 ```
 
+### Stop application
 
+*Before executing the following commands: 
+* chenage the instance name to `odmp-postgres-app` if you are using postgres and not mysql*
+```
+docker stop odmp-mysql-app
+docker stop odmp-mysql-db
+```
+To restart a stopped application execute the following commands:
+
+```
+docker start odmp-mysql-db
+docker start odmp-mysql-app
+
+```
+To remove a stopped application to rebuild it from scratch execute the following commands :
+```
+docker rm odmp-mysql-app
+docker rm odmp-mysql-db
+```
 
 ## Run with Docker Compose
 
@@ -148,9 +186,26 @@ SPRING_DOCKER_PORT=8585
 DATABASE_NAME=odmpdb
 DATABASE_USERNAME=usr
 DATABASE_PASSWORD=pwd
+
 ```
 
 Then, execute the following command:
 ```
 docker-compose up
 ```
+
+# Test it
+
+## REST services
+
+You can invoke REST endpoints through *OpenAPI UI* available at the following url:
+
+* [http://localhost:8585/api/v1/pp/swagger-ui/index.html](http://localhost:8585/api/v1/pp/swagger-ui/index.html)
+
+## Database 
+
+If the application is running using an in memory instance of H2 database you can check the database content through H2 Web Console available at the following url:
+
+* [http://localhost:8585/api/v1/pp/swagger-ui/index.html](http://localhost:8585/api/v1/pp/h2-console)
+
+In all cases you can also use your favourite sql client providing the proper connection parameters

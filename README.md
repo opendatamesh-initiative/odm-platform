@@ -15,24 +15,27 @@ The project requires the following dependencies:
 ### Clone repository
 Clone the repository and move to the project root folder
 
-```
+```bash
 git clone git@github.com:opendatamesh-initiative/odm-platform-pp-services.git
 cd odm-platform-pp-services
 ```
 ### Compile project
 Compile the project:
-```
+
+```bash
 mvn clean install
 ```
 
 ### Run application
 Run the application:
-```
+
+```bash
 java -jar target/odm-platform-pp-1.0.0.jar 
 ```
 ### Stop application
 To stop the application type CTRL+C or just close the shell. To start it again re-execute the following command:
-```
+
+```bash
 java -jar target/odm-platform-pp-1.0.0.jar 
 ```
 *Note: The application run in this way uses an in-memory instance of the H2 database. For this reason, the data is lost every time the application is terminated. On the next restart, the database is recreated from scratch.*
@@ -42,7 +45,7 @@ java -jar target/odm-platform-pp-1.0.0.jar
 ### Clone repository
 Clone the repository and move to the project root folder
 
-```
+```bash
 git clone git@github.com:opendatamesh-initiative/odm-platform-pp-services.git
 cd odm-platform-pp-services
 ```
@@ -61,15 +64,16 @@ mvn clean install
 ### Run database
 The image generated from both Dockerfiles contains only the application. It requires a database to run properly. The supported databases are MySql and Postgres. If you do not already have a database available, you can create one by running the following commands:
 
-*MySql*
-```
+**MySql**
+```bash
 docker run --name odmp-mysql-db -d -p 3306:3306  \
    -e MYSQL_DATABASE=odmpdb \
-   -e MYSQL_ROOT_PASSWORD=root mysql:8
+   -e MYSQL_ROOT_PASSWORD=root \
+   mysql:8
 ```
 
-*Postgres*
-```
+**Postgres**
+```bash
 docker run --name odmp-postgres-db -d -p 5432:5432  \
    -e POSTGRES_DB=odmpdb \
    -e POSTGRES_PASSWORD=postgres \
@@ -78,13 +82,13 @@ docker run --name odmp-postgres-db -d -p 5432:5432  \
 
 Check that the database has started correctly:
 
-*MySql*
-```
+**MySql**
+```bash
 docker logs odmp-mysql-db
 ```
 
 *Postgres*
-```
+```bash
 docker logs odmp-mysql-db
 ```
 ### Build image
@@ -95,7 +99,7 @@ Build the Docker image of the application and run it.
 * remove the option `-f Dockerfile.local` if you want to build the application from code taken from repository*
 
 **MySql**
-```
+```bash
 docker build -t odmp-mysql-app . -f Dockerfile.local \
    --build-arg DATABASE_URL=jdbc:mysql://localhost:3306/odmpdb \
    --build-arg DATABASE_USERNAME=root \
@@ -104,7 +108,7 @@ docker build -t odmp-mysql-app . -f Dockerfile.local \
 ```
 
 **Postgres**
-```
+```bash
 docker build -t odmp-postgres-app . -f Dockerfile.local \
    --build-arg DATABASE_URL=jdbc:postgresql://localhost:5432/odmpdb \
    --build-arg DATABASE_USERNAME=postgres \
@@ -118,81 +122,41 @@ Run the Docker image.
 *Note: Before executing the following commands remove the argument `--net host` if the database is not running on `localhost`*
 
 **MySql**
-```
+```bash
 docker run --name odmp-mysql-app -p 8585:8585 --net host odmp-mysql-app
 ```
 
 **Postgres**
-```
+```bash
 docker run --name ododmp-postgres-appmp -p 8585:8585 --net host odmp-postgres-app
 ```
 
 ### Stop application
 
 *Before executing the following commands: 
-* chenage the instance name to `odmp-postgres-app` if you are using postgres and not mysql*
-```
+* chenage the instance name to `odmp-postgres-app` if you are using postgres and not mysql *
+
+```bash
 docker stop odmp-mysql-app
 docker stop odmp-mysql-db
 ```
 To restart a stopped application execute the following commands:
 
-```
+```bash
 docker start odmp-mysql-db
 docker start odmp-mysql-app
+```
 
-```
 To remove a stopped application to rebuild it from scratch execute the following commands :
-```
+
+```bash
 docker rm odmp-mysql-app
 docker rm odmp-mysql-db
 ```
 
 ## Run with Docker Compose
 
-
-It's possible to find tested docker-compose version of MySQL and PostgreSQL DBs under:
-* *src/main/resources/mysql*
-* *src/main/resources/postgres*
-
-It's possible to override several arguments to control, adding them to the previous commands, in order to obtain more control of the project.
-The full list of *build_arg* possible is:
-* SPRING_PROFILES_ACTIVE
-* SPRING_LOCAL_PORT
-* JAVA_OPTS
-* DATABASE_URL
-* DATABASE_USERNAME
-* DATABASE_PASSWORD
-* FLYWAY_SCHEMA
-* FLYWAY_SCRIPTS_DIR
-    * could only be *h2*, *postgres* or *mysql*
-    * specify which SQL files use to start the DB
-* H2_CONSOLE_ENABLED (override it only if the desired DB is an embedded H2)
-    * could be *true*, *false* (default *false*)
-    * override it only if the desired DB is embedded H2
-* H2_CONSOLE_PATH
-    * default *h2-console*
-    * specify it only if H2_CONSOLE_ENABLED=true
-    * override it only if the desired DB is an embedded H2
-
-### docker-compose
-The project and a default embedded PostgreSQL DB could be executed through docker-compose.
-
-Clone the repository, move to the project root folder and create a *.env* file similar to this:
-```
-DATABASE_PORT=5432
-SPRING_LOCAL_PORT=8585
-SPRING_DOCKER_PORT=8585
-DATABASE_NAME=odmpdb
-DATABASE_USERNAME=usr
-DATABASE_PASSWORD=pwd
-
-```
-
-Then, execute the following command:
-```
-docker-compose up
-```
+TBD
 
 # Test it
 

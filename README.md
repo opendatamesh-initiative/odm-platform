@@ -30,7 +30,68 @@ java -jar target/odm-platform-pp-1.0.0.jar
 
 Alternatively, it's possible to use a IDE like IntelliJ to import and run the application.
 
-## Run in docker
+## Run with Docker
+
+Clone the repository and move to the project root folder
+
+```
+git clone git@github.com:opendatamesh-initiative/odm-platform-pp-services.git
+cd odm-platform-pp-services
+```
+
+Here you will find the following two Dockerfiles:
+* Dokerfile: This file creates a docker image containing the application built from the code present on the Git repository;
+* Dokerfile.local: This file creates an image containing the application by directly copying it from the build executed locally (i.e. from `target` folder).
+
+If you decide to create the docker image using the second Dockerfile, you need to first execute the build locally by running the following command: 
+
+```bash
+mvn clean install
+```
+
+The image generated from both Dockerfiles needs to be able to access an external database. The supported databases are MySql and Postgres. If you do not already have a database available, you can create one by running the following commands:
+
+*MySql*
+```
+docker run --name odmp-mysql-db -d -p 3306:3306  -e MYSQL_DATABASE=odmpdb -e MYSQL_ROOT_PASSWORD=root mysql:8
+```
+
+*Postgres*
+```
+docker run --name odmp-postgres-db -d -p 5432:5432  -e POSTGRES_DB=odmpdb -e POSTGRES_PASSWORD=postgres postgres:11-alpine
+```
+
+Check that the database has started correctly:
+
+*MySql*
+```
+docker logs odmp-mysql-db
+```
+
+*Postgres*
+```
+docker logs odmp-mysql-db
+```
+
+Build the Docker image of the application and run it:
+
+*MySql*
+```
+docker build -t odmp-mysql-app . -f Dockerfile.local --build-arg DATABASE_URL=jdbc:mysql://localhost:3306/odmpdb --build-arg DATABASE_USERNAME=root --build-arg DATABASE_PASSWORD=root --build-arg FLYWAY_SCRIPTS_DIR=mysql
+
+docker run --name odmp-mysql-app -p 8585:8585 --net host odmp-mysql-app
+```
+
+*Postgres*
+```
+docker build -t odmp-postgres-app . -f Dockerfile.local --build-arg DATABASE_URL=jdbc:postgresql://localhost:5432/odmpdb --build-arg DATABASE_USERNAME=postgres --build-arg DATABASE_PASSWORD=postgres --build-arg FLYWAY_SCRIPTS_DIR=postgres
+
+docker run --name ododmp-postgres-appmp -p 8585:8585 --net host odmp-postgres-app
+```
+
+
+
+
 
 ```
 docker run --name odmp-mysql-db -d -p 3306:3306  -e MYSQL_DATABASE=odmpdb -e MYSQL_ROOT_PASSWORD=root mysql:8

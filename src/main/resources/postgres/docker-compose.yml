@@ -2,16 +2,14 @@
 services:
   postgres:
     environment:
-      POSTGRES_DB: mydb
-      POSTGRES_PASSWORD: admin
-      POSTGRES_USER: db
+      POSTGRES_DB: odmpdb
+      POSTGRES_PASSWORD: pwd
+      POSTGRES_USER: usr
     image: postgres:11-alpine
     ports:
-      - published: 5432
-        target: 5432
-    network_mode: "host"
-    #volumes:
-    #  - postgres:/var/lib/postgresql/data:rw
+      - "5432:5432"
+    volumes:
+      - postgres:/var/lib/postgresql/data:rw
 version: '3.3'
 volumes:
-  postgres: {}
+  postgres:

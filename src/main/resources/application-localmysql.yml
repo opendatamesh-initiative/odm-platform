@@ -1,8 +1,24 @@
+##########################
+# Server configuration
+##########################
+app:
+  workdir:
+
+server:
+  port: 8585
+  error:
+    include-message: always
+  servlet:
+    context-path: /api/v1/pp/
+
+
+############################################
+# Spring, JPA, DB and Flyway configurations
+############################################
 spring:
+  # Profile
   profile: localmysql
-##########################
-# JPA configuration
-##########################
+  # JPA
   jpa:
     hibernate:
       ddl-auto: none #validate #errors on scripts
@@ -15,6 +31,7 @@ spring:
           lob:
             non_contextual_creation: true
     database-platform: org.hibernate.dialect.MySQL8Dialect
+  # DB
   datasource:
     url: jdbc:mysql://localhost:3306/mydb?useSSL=false
     driverClassName: com.mysql.cj.jdbc.Driver
@@ -23,10 +40,8 @@ spring:
   h2:
     console:
       enabled: false
-  ##########################
   # FlyWay configuration
   # More: https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html#appendix.application-properties.data-migration
-  ##########################
   flyway:
     #enabled: false # To disable
     url: jdbc:mysql://localhost:3306/mydb
@@ -37,6 +52,10 @@ spring:
     #schemas: flyway # not working
     clean-on-validation-error: true
 
+
+##############################
+# Policy Module configuration
+##############################
 policyserviceaddress: http://localhost:4242
 metaserviceaddress: http://localhost:8084
 

@@ -32,24 +32,6 @@ Alternatively, it's possible to use a IDE like IntelliJ to import and run the ap
 
 ## Run in docker
 
-```
-docker run --name odmp-mysql-db -d -p 3306:3306  -e MYSQL_DATABASE=odmpdb -e MYSQL_ROOT_PASSWORD=root mysql:8
-                    
-
-docker build -t odmp-mysql-app . -f Dockerfile.local --build-arg DATABASE_URL=jdbc:mysql://localhost:3306/odmpdb --build-arg DATABASE_USERNAME=root --build-arg DATABASE_PASSWORD=root --build-arg FLYWAY_SCRIPTS_DIR=mysql
-
-docker run --name odmp-mysql-app -p 8585:8585 --net host odmp-mysql-app
-```
-
-```
-docker run --name odmp-postgres-db -d -p 5432:5432  -e POSTGRES_DB=odmpdb -e POSTGRES_PASSWORD=postgres postgres:11-alpine
-
-docker build -t odmp-postgres-app . -f Dockerfile.local --build-arg DATABASE_URL=jdbc:postgresql://localhost:5432/odmpdb --build-arg DATABASE_USERNAME=postgres --build-arg DATABASE_PASSWORD=postgres --build-arg FLYWAY_SCRIPTS_DIR=postgres
-
-docker run --name ododmp-postgres-appmp -p 8585:8585 --net host odmp-postgres-app
-
-```
-
 ### Docker
 The project could be built and executed through its Dockerfile. 
 In this scenario, only the Spring project will be executed, a MySQL DB or a PostgreSQL DB must be reachable for the application to run correctly.

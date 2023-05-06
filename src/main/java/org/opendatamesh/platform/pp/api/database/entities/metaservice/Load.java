@@ -12,8 +12,8 @@ import org.opendatamesh.platform.pp.api.resources.v1.metaservice.LoadStatus;
 import java.util.Date;
 import java.util.Objects;
 
-@Entity(name = "load")
-@Table( name = "load" )
+@Entity(name = "Load")
+@Table( name = "DPDS_LOADS", schema="PUBLIC")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Load {
     @Id

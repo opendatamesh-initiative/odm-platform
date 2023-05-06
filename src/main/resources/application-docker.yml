@@ -1,3 +1,16 @@
+##########################
+# Server configuration
+##########################
+app:
+  workdir:
+
+server:
+  port: ${SPRING_LOCAL_PORT}
+  error:
+    include-message: always
+  servlet:
+    context-path: /api/v1/pp/
+
 ############################################
 # Spring, JPA, DB and Flyway configurations
 ############################################
@@ -7,41 +20,45 @@ spring:
   # JPA
   jpa:
     hibernate:
-      ddl-auto: validate #or none
+      ddl-auto: validate
       show-sql: true
-      naming.physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     properties:
       hibernate:
         jdbc:
           lob:
             non_contextual_creation: true
-    database-platform: ${SPRING_DATABASE_DIALECT}
+        globally_quoted_identifiers: true
+        default_schema: PUBLIC
   # DB
   datasource:
-    url: ${DATABASE_URL}
-    driverClassName: ${SPRING_DATABASE_DRIVER}
+    url: ${DATABASE_URL}?allowPublicKeyRetrieval=true&useSSL=false
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
   h2:
     console:
-      enabled: true
-      path: /h2-console
+      enabled: ${H2_CONSOLE_ENABLED}
+      path: /${H2_CONSOLE_PATH}
       settings:
         web-allow-others: true
   # FlyWay
   # More: https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html#appendix.application-properties.data-migration
   flyway:
     #enabled: false # To disable it
-    url: ${DATABASE_URL}
+    url: ${DATABASE_URL}?allowPublicKeyRetrieval=true&useSSL=false
     user: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
-    schemas: ${FLYWAY_SCHEMA} #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
+    schemas: ${FLYWAY_SCHEMA} 
+    #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
     locations: classpath:db/migration/${FLYWAY_SCRIPTS_DIR}
     clean-on-validation-error: true
 
-############################################
-# Others configurations
-############################################
+
+##############################
+# Policy Module configuration
+##############################
 policyserviceaddress: http://172.17.0.1:4242
 metaserviceaddress: http://172.17.0.1:8084
 

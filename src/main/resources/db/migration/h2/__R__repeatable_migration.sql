@@ -1,4 +1,6 @@
 -- see https://flywaydb.org/documentation/tutorials/repeatable
+-- Disabled, developed only for testing purpose
+-- To re-enable it rename the file R__<migration-name>.sql instead of __R__<migration-name>.sql
 
 DROP VIEW IF EXISTS "TEST_VIEW";
 

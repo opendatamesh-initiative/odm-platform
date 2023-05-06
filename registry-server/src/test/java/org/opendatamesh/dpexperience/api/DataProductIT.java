@@ -8,10 +8,10 @@ import java.util.UUID;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.opendatamesh.platform.pp.api.core.DataProductDescriptor;
-import org.opendatamesh.platform.pp.api.exceptions.OpenDataMeshAPIStandardError;
-import org.opendatamesh.platform.pp.api.resources.v1.ErrorRes;
-import org.opendatamesh.platform.pp.api.resources.v1.dataproduct.DataProductResource;
+import org.opendatamesh.platform.pp.registry.core.DataProductDescriptor;
+import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
+import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
+import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DataProductResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

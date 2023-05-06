@@ -6,9 +6,9 @@ import java.util.UUID;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.opendatamesh.platform.pp.api.core.DataProductDescriptor;
-import org.opendatamesh.platform.pp.api.resources.v1.dataproduct.DataProductResource;
-import org.opendatamesh.platform.pp.api.resources.v1.dataproduct.InfrastructuralComponentResource;
+import org.opendatamesh.platform.pp.registry.core.DataProductDescriptor;
+import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DataProductResource;
+import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.InfrastructuralComponentResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;

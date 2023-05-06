@@ -10,11 +10,11 @@ import java.nio.file.Paths;
 import javax.annotation.PostConstruct;
 
 import org.junit.runner.RunWith;
-import org.opendatamesh.platform.pp.api.OpenDataMeshApp;
-import org.opendatamesh.platform.pp.api.database.entities.sharedres.Definition;
-import org.opendatamesh.platform.pp.api.exceptions.OpenDataMeshAPIStandardError;
-import org.opendatamesh.platform.pp.api.resources.v1.ErrorRes;
-import org.opendatamesh.platform.pp.api.resources.v1.dataproduct.DataProductResource;
+import org.opendatamesh.platform.pp.registry.OpenDataMeshApp;
+import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Definition;
+import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
+import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
+import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DataProductResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

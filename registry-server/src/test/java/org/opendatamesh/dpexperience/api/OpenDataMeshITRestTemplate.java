@@ -6,9 +6,9 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.UUID;
 
-import org.opendatamesh.platform.pp.api.core.DataProductDescriptor;
-import org.opendatamesh.platform.pp.api.database.entities.sharedres.Definition;
-import org.opendatamesh.platform.pp.api.resources.v1.dataproduct.DataProductResource;
+import org.opendatamesh.platform.pp.registry.core.DataProductDescriptor;
+import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Definition;
+import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DataProductResource;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;

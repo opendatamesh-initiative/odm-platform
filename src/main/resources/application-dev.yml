@@ -11,9 +11,8 @@ server:
   servlet:
     context-path: /api/v1/pp/
 
-
 ############################################
-# Spring, JPA, DB and Flyway configurations
+# Spring configurations
 ############################################
 spring:
   # Profile
@@ -49,7 +48,7 @@ spring:
     user: sa
     password:
     #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
-    schemas: flyway
+    #schemas: flyway
     locations: classpath:db/migration/h2
     clean-on-validation-error: true
 

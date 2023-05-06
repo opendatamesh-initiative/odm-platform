@@ -1,4 +1,12 @@
 ##########################
+# Active profile
+##########################
+spring:
+  profiles:
+    active: dev
+
+
+##########################
 # Logging configuration
 ##########################
 logging:
@@ -18,21 +26,16 @@ logging:
             planes:
               dpexperience.*: DEBUG
 
+
 ##########################
-# Other configuration
+# Doc configuration
 ##########################
-skippolicyservice: true
-skipmetaservice: true
-#For sorting endpoints alphabetically
 springdoc:
   swagger-ui:
     operationsSorter: alpha
 
-##########################
-# Active profile
-##########################
-spring:
-  profiles:
-    active: dev
-    #active: ${SPRING_PROFILES_ACTIVE}
-# Set spring profiles adding ENV variable SPRING_PROFILES_ACTIVE to run configurations
+
+
+
+
+

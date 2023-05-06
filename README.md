@@ -39,17 +39,17 @@ git clone git@github.com:opendatamesh-initiative/odm-platform-pp-services.git
 cd odm-platform-pp-services
 ```
 
-Here you will find the following two Dockerfiles:
-* Dokerfile: This file creates a docker image containing the application built from the code present on the Git repository;
-* Dokerfile.local: This file creates an image containing the application by directly copying it from the build executed locally (i.e. from `target` folder).
+Here you can find the following two Dockerfiles:
+* **Dockerfile:** This file creates a docker image containing the application built from the code present on the Git repository;
+* **Dokerfile.local:** This file creates an image containing the application by directly copying it from the build executed locally (i.e. from `target` folder).
 
-If you decide to create the docker image using the second Dockerfile, you need to first execute the build locally by running the following command: 
+If you decide to create the Docker image using the second Dockerfile (i.e. `Dokerfile.local`), you need to first execute the build locally by running the following command: 
 
 ```bash
 mvn clean install
 ```
 
-The image generated from both Dockerfiles needs to be able to access an external database. The supported databases are MySql and Postgres. If you do not already have a database available, you can create one by running the following commands:
+The image generated from both Dockerfiles contains only the application. It requires a database to run properly. The supported databases are MySql and Postgres. If you do not already have a database available, you can create one by running the following commands:
 
 *MySql*
 ```
@@ -73,66 +73,37 @@ docker logs odmp-mysql-db
 docker logs odmp-mysql-db
 ```
 
-Build the Docker image of the application and run it:
+Build the Docker image of the application and run it. 
 
-*MySql*
+*Note: Before executing the following commands change properly the value of arguments `DATABASE_USERNAME`, `DATABASE_PASSWORD` and `DATABASE_URL`. Reported commands already contains right argument values if you have created the database using the commands above.*
+
+**MySql**
 ```
 docker build -t odmp-mysql-app . -f Dockerfile.local --build-arg DATABASE_URL=jdbc:mysql://localhost:3306/odmpdb --build-arg DATABASE_USERNAME=root --build-arg DATABASE_PASSWORD=root --build-arg FLYWAY_SCRIPTS_DIR=mysql
+```
 
+**Postgres**
+```
+docker build -t odmp-postgres-app . -f Dockerfile.local --build-arg DATABASE_URL=jdbc:postgresql://localhost:5432/odmpdb --build-arg DATABASE_USERNAME=postgres --build-arg DATABASE_PASSWORD=postgres --build-arg FLYWAY_SCRIPTS_DIR=postgres
+```
+Run the Docker image. 
+
+*Note: Before executing the following commands remove the argument `--net host` if the database is not running on `localhost`*
+
+**MySql**
+```
 docker run --name odmp-mysql-app -p 8585:8585 --net host odmp-mysql-app
 ```
 
-*Postgres*
+**Postgres**
 ```
-docker build -t odmp-postgres-app . -f Dockerfile.local --build-arg DATABASE_URL=jdbc:postgresql://localhost:5432/odmpdb --build-arg DATABASE_USERNAME=postgres --build-arg DATABASE_PASSWORD=postgres --build-arg FLYWAY_SCRIPTS_DIR=postgres
-
 docker run --name ododmp-postgres-appmp -p 8585:8585 --net host odmp-postgres-app
 ```
 
 
 
+## Run with Docker Compose
 
-
-```
-docker run --name odmp-mysql-db -d -p 3306:3306  -e MYSQL_DATABASE=odmpdb -e MYSQL_ROOT_PASSWORD=root mysql:8
-                    
-
-docker build -t odmp-mysql-app . -f Dockerfile.local --build-arg DATABASE_URL=jdbc:mysql://localhost:3306/odmpdb --build-arg DATABASE_USERNAME=root --build-arg DATABASE_PASSWORD=root --build-arg FLYWAY_SCRIPTS_DIR=mysql
-
-docker run --name odmp-mysql-app -p 8585:8585 --net host odmp-mysql-app
-```
-
-```
-docker run --name odmp-postgres-db -d -p 5432:5432  -e POSTGRES_DB=odmpdb -e POSTGRES_PASSWORD=postgres postgres:11-alpine
-
-docker build -t odmp-postgres-app . -f Dockerfile.local --build-arg DATABASE_URL=jdbc:postgresql://localhost:5432/odmpdb --build-arg DATABASE_USERNAME=postgres --build-arg DATABASE_PASSWORD=postgres --build-arg FLYWAY_SCRIPTS_DIR=postgres
-
-docker run --name ododmp-postgres-appmp -p 8585:8585 --net host odmp-postgres-app
-
-```
-
-### Docker
-The project could be built and executed through its Dockerfile. 
-In this scenario, only the Spring project will be executed, a MySQL DB or a PostgreSQL DB must be reachable for the application to run correctly.
-
-Clone the repository, move to the project root folder and build the image through the following commands:
-```
-docker build -t odm-dpexperience-service . --build-arg DATABASE_URL=<DATABASE_URL> --build-arg DATABASE_USERNAME=<DATABASE_USERNAME> --build-arg DATABASE_PASSWORD=<DATABASE_PASSWORD>
-```
-where:
-* DATABASE_URL: the JDBC string connection for the desired DB (e.g. *jdbc:postgresql://localhost:5432/odmpdb*)
-* DATABASE_USERNAME, DATABASE_PASSWORD: desired credentials
-
-Then, execute it:
-```
-docker run --name odm-dpexperience-service -p 8585:8585 -d odm-dpexperience-service
-```
-
-If the DB is running on *localhost*, add *--network=host* as a parameter for the *build* command and *--net host* for the *exec* command.
-```
-docker build -t odm-dpexperience-service . --network=host --build-arg DATABASE_URL=<DATABASE_URL> --build-arg DATABASE_USERNAME=<DATABASE_USERNAME> --build-arg DATABASE_PASSWORD=<DATABASE_PASSWORD>
-docker run --name odm-dpexperience-service --net host -p 8585:8585 -d odm-dpexperience-service
-```
 
 It's possible to find tested docker-compose version of MySQL and PostgreSQL DBs under:
 * *src/main/resources/mysql*

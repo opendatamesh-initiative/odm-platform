@@ -92,7 +92,6 @@ public class DefinitionIT extends OpenDataMeshIT {
 
         // TEST 4: create a Definition without name and version properties and verify the response
         Definition definitionRes4 = createDefinitionMissingNameAndVersion();
-        System.out.println(definitionRes4);
         assertThat(definitionRes4.getId()).isEqualTo(4);
         assertThat(definitionRes4.getName()).isEqualTo("cf9e4b59-af4f-3254-aa44-c7259a7249c9");
         assertThat(definitionRes4.getVersion()).isEqualTo("1.0.0");
@@ -122,8 +121,6 @@ public class DefinitionIT extends OpenDataMeshIT {
         ResponseEntity<DefinitionResource[]> getDefinitionResponse = rest.readAllDefinitions();
         DefinitionResource[] definitionResources = getDefinitionResponse.getBody();
         verifyResponseEntity(getDefinitionResponse, HttpStatus.OK, true);
-
-        System.out.println(definitionResources[0]);
 
         assertThat(getDefinitionResponse.getBody().length).isEqualTo(4);
         assertThat(definitionResources[0].getContent()).isEqualTo("Content of test definition");

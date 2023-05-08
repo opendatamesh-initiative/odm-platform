@@ -46,6 +46,10 @@ public abstract class OpenDataMeshIT {
     protected final String RESOURCE_DP1 = "src/test/resources/test/dataproduct-descriptor/dp1.json";
     protected final String RESOURCE_DP1_V1 = "src/test/resources/test/dataproduct-descriptor/dp1-v1.json";
     protected final String RESOURCE_DP1_V1_API1 = "src/test/resources/test/dataproduct-descriptor/dp1-v1-api1.json";
+    protected final String RESOURCE_DEF1_V1 = "src/test/resources/test/definition/def1.json";
+    protected final String RESOURCE_DEF1_NOVERSION = "src/test/resources/test/definition/def1-missing-version.json";
+    protected final String RESOURCE_DEF1_NONAME = "src/test/resources/test/definition/def1-missing-name.json";
+    protected final String RESOURCE_DEF1_NONAME_NOVERSION = "src/test/resources/test/definition/def2-missing-name-version.json";
 
     @Autowired
     protected ObjectMapper mapper;
@@ -109,6 +113,42 @@ public abstract class OpenDataMeshIT {
         verifyResponseEntity(postProductVersionApiResponse, HttpStatus.CREATED, true);
 
         return postProductVersionApiResponse.getBody();
+    }
+
+    protected Definition createDefinition1() throws IOException {
+        ResponseEntity<Definition> postDefinition = rest.createDefinition(
+                RESOURCE_DEF1_V1
+        );
+        verifyResponseEntity(postDefinition, HttpStatus.CREATED, true);
+
+        return postDefinition.getBody();
+    }
+
+    protected Definition createDefinitionMissingVersion() throws IOException {
+        ResponseEntity<Definition> postDefinition = rest.createDefinition(
+                RESOURCE_DEF1_NOVERSION
+        );
+        verifyResponseEntity(postDefinition, HttpStatus.CREATED, true);
+
+        return postDefinition.getBody();
+    }
+
+    protected Definition createDefinitionMissingName() throws IOException {
+        ResponseEntity<Definition> postDefinition = rest.createDefinition(
+                RESOURCE_DEF1_NONAME
+        );
+        verifyResponseEntity(postDefinition, HttpStatus.CREATED, true);
+
+        return postDefinition.getBody();
+    }
+
+    protected Definition createDefinitionMissingNameAndVersion() throws IOException {
+        ResponseEntity<Definition> postDefinition = rest.createDefinition(
+                RESOURCE_DEF1_NONAME_NOVERSION
+        );
+        verifyResponseEntity(postDefinition, HttpStatus.CREATED, true);
+
+        return postDefinition.getBody();
     }
 
     // ======================================================================================

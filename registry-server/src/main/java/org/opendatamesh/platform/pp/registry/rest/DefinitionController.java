@@ -110,7 +110,7 @@ public class DefinitionController {
     ) throws Exception {
         if(definition == null) {
             throw new BadRequestException(
-                OpenDataMeshAPIStandardError.SC400_10_PRODUCT_IS_EMPTY,
+                OpenDataMeshAPIStandardError.SC400_08_STDDEF_IS_EMPTY,
                 "Definition cannot be empty");
         }
         

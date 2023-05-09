@@ -43,7 +43,7 @@ java -jar registry-server/target/odm-platform-pp-registry-server-1.0.0.jar
 ## Run with Docker
 
 ### Clone repository
-Clone the repository and move to the project root folder
+Clone the repository and move it to the project root folder
 
 ```bash
 git clone git@github.com:opendatamesh-initiative/odm-platform-pp-services.git

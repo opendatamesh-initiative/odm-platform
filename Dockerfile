@@ -58,7 +58,7 @@ ENV FLYWAY_SCRIPTS_DIR ${FLYWAY_SCRIPTS_DIR}
 ENV H2_CONSOLE_ENABLED ${H2_CONSOLE_ENABLED}
 ENV H2_CONSOLE_PATH ${H2_CONSOLE_PATH}
 
-COPY --from=build  /workspace/app/target/odm-platform-pp-*.jar /app/
+COPY --from=build  /workspace/app/registry-server/target/odm-platform-pp-*.jar /app/
 
 RUN ln -s -f /usr/share/zoneinfo/Europe/Rome /etc/localtime
 

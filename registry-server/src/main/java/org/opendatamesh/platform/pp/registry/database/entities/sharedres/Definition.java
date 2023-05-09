@@ -17,7 +17,6 @@ import lombok.Data;
 @Entity(name = "Definition")
 @Table(name = "DPDS_DEFINITIONS", schema="PUBLIC")
 public class Definition {
-
     @Id
     @Column(name = "ID")
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -66,7 +65,6 @@ public class Definition {
             this.specificationVersion = standardDefinition.getSpecificationVersion();
             this.content = standardDefinition.getDefinition().getRawContent();
         }
-
         
     }
     

@@ -46,6 +46,8 @@ public class DefinitionIT extends OpenDataMeshIT {
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDefinitionCreate() throws IOException {
 
+        cleanState();
+
         ResponseEntity<Definition> postProductResponse = null;
 
         // TEST 1: create a Definition with all properties and verify the response
@@ -113,6 +115,8 @@ public class DefinitionIT extends OpenDataMeshIT {
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDefinitionReadAll() throws IOException {
 
+        cleanState();
+
         createDefinition1();
         createDefinitionMissingVersion();
         createDefinitionMissingName();
@@ -133,6 +137,8 @@ public class DefinitionIT extends OpenDataMeshIT {
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDefinitionSearch() throws IOException {
+
+        cleanState();
 
         createDefinition1();
         createDefinitionMissingVersion();
@@ -167,9 +173,11 @@ public class DefinitionIT extends OpenDataMeshIT {
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDefinitionReadOne() throws IOException {
 
-        createDefinition1();
+        cleanState();
 
-        ResponseEntity<DefinitionResource> getDefinitionResponse = rest.readOneDefinition("1");
+        Definition definitionResource = createDefinition1();
+
+        ResponseEntity<DefinitionResource> getDefinitionResponse = rest.readOneDefinition(definitionResource.getId());
         DefinitionResource definitionRes = getDefinitionResponse.getBody();
 
         verifyResponseEntity(getDefinitionResponse, HttpStatus.OK, true);
@@ -201,8 +209,11 @@ public class DefinitionIT extends OpenDataMeshIT {
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDefinitionDelete() throws IOException {
 
-        createDefinition1();
-        ResponseEntity<Void> getDefinitionResponse = rest.deleteDefinition("1");
+        cleanState();
+
+        Definition definitionResource = createDefinition1();
+
+        ResponseEntity<Void> getDefinitionResponse = rest.deleteDefinition(definitionResource.getId());
         verifyResponseEntity(getDefinitionResponse, HttpStatus.OK, false);
 
     }
@@ -218,6 +229,8 @@ public class DefinitionIT extends OpenDataMeshIT {
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDefinitionCreationError400Errors() throws IOException {
+
+        cleanState();
 
         HttpEntity<DefinitionResource> entity = null;
         ResponseEntity<ErrorRes> errorResponse = null;
@@ -241,6 +254,8 @@ public class DefinitionIT extends OpenDataMeshIT {
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDefinitionCreateError422Errors() throws IOException {
+
+        cleanState();
 
         HttpEntity<DefinitionResource> entity = null;
         ResponseEntity<ErrorRes> errorResponse = null;
@@ -276,12 +291,14 @@ public class DefinitionIT extends OpenDataMeshIT {
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDefinitionDeleteError400Errors() {
-        // TODO - exists?m
+        // TODO - exists?
     }
 
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDefinitionDeleteError404Errors() {
+
+        cleanState();
 
         ResponseEntity<ErrorRes> errorResponse = null;
 
@@ -329,5 +346,18 @@ public class DefinitionIT extends OpenDataMeshIT {
     // ----------------------------------------
     // Verify test resources
     // ----------------------------------------
+
+    // ----------------------------------------
+    // Clean state for each test: empty DB
+    // ----------------------------------------
+    private void cleanState() {
+
+        ResponseEntity<DefinitionResource[]> getDefinitionResponse = rest.readAllDefinitions();
+        DefinitionResource[] definitionResources = getDefinitionResponse.getBody();
+        for (DefinitionResource definitionResource : definitionResources) {
+            rest.deleteDefinition(definitionResource.getId());
+        }
+
+    }
 
 }

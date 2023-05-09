@@ -247,7 +247,7 @@ public class OpenDataMeshITRestTemplate extends TestRestTemplate {
                 DefinitionResource[].class);
     }
 
-    public ResponseEntity<DefinitionResource> readOneDefinition(String definitionId) {
+    public ResponseEntity<DefinitionResource> readOneDefinition(Long definitionId) {
         return getForEntity(
                 apiUrlOfItem(RoutesV1.DEFINITIONS),
                 DefinitionResource.class,
@@ -255,7 +255,7 @@ public class OpenDataMeshITRestTemplate extends TestRestTemplate {
         );
     }
 
-    public ResponseEntity<Void> deleteDefinition(String definitionId) {
+    public ResponseEntity<Void> deleteDefinition(Long definitionId) {
         return exchange(
                 apiUrlOfItem(RoutesV1.DEFINITIONS),
                 HttpMethod.DELETE,

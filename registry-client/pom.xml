@@ -23,19 +23,18 @@ License.
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.opendatamesh.platform.pp.services</groupId>
+        <groupId>org.opendatamesh</groupId>
         <artifactId>odm-platform-pp</artifactId>
         <version>1.0.0</version>
         <relativePath>../</relativePath>
     </parent>
 
-    <groupId>org.opendatamesh.platform.pp.services.registry.client</groupId>
+    <groupId>org.opendatamesh</groupId>
     <artifactId>odm-platform-pp-registry-client</artifactId>
     <name>ODM Platform Registry Client</name>
     <description>Open Data Mesh Platform's registry service client</description>
     <version>1.0.0</version>
-    <url>https://bitbucket.org/quantyca/odm-plane-dpexperience-services/</url>
-
+   
 
     <licenses>
         <license>
@@ -44,11 +43,6 @@ License.
         </license>
     </licenses>
 
-    <scm>
-        <connection>scm:git:git@github.com:opendatamesh-initiative/odm-plane-dpexperience-services</connection>
-        <developerConnection>scm:git:git@github.com:opendatamesh-initiative/odm-plane-dpexperience-services</developerConnection>
-        <url>scm:git:git@github.com:opendatamesh-initiative/odm-plane-dpexperience-services</url>
-    </scm>
 
     <developers>
         <developer>
@@ -59,6 +53,7 @@ License.
         </developer>
     </developers>
 
+   <!-- TODO -->
     <!-- SEE https://maven.apache.org/repository/guide-central-repository-upload.html -->
     <!-- SEE https://central.sonatype.org/publish/publish-guide/ -->
     <!--

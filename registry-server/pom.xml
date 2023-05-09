@@ -23,13 +23,13 @@ License.
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.opendatamesh.platform.pp.services</groupId>
+        <groupId>org.opendatamesh</groupId>
         <artifactId>odm-platform-pp</artifactId>
         <version>1.0.0</version>
         <relativePath>../</relativePath>
     </parent>
 
-    <groupId>org.opendatamesh.platform.pp.services.registry.server</groupId>
+    <groupId>org.opendatamesh</groupId>
     <artifactId>odm-platform-pp-registry-server</artifactId>
     <name>ODM Platform Registry Server</name>
     <description>Open Data Mesh Platform's registry service server</description>
@@ -197,7 +197,7 @@ License.
         </dependency>
 
         <dependency>
-            <groupId>org.opendatamesh.platform.pp.services.registry.client</groupId>
+            <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-pp-registry-client</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>

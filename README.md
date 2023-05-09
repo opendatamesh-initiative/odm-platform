@@ -30,13 +30,13 @@ mvn clean install
 Run the application:
 
 ```bash
-java -jar target/odm-platform-pp-1.0.0.jar 
+java -jar registry-server/target/odm-platform-pp-registry-server-1.0.0.jar
 ```
 ### Stop application
 To stop the application type CTRL+C or just close the shell. To start it again re-execute the following command:
 
 ```bash
-java -jar target/odm-platform-pp-1.0.0.jar 
+java -jar registry-server/target/odm-platform-pp-registry-server-1.0.0.jar
 ```
 *Note: The application run in this way uses an in-memory instance of the H2 database. For this reason, the data is lost every time the application is terminated. On the next restart, the database is recreated from scratch.*
 

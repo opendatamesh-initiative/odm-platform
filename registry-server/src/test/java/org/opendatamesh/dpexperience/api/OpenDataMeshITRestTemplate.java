@@ -108,7 +108,7 @@ public class OpenDataMeshITRestTemplate extends TestRestTemplate {
             definitionResource = objectMapper.readValue(docContent, DefinitionResource.class);
         }
 
-        entity = new HttpEntity<DefinitionResource>(definitionResource, headers);
+        entity = new HttpEntity<>(definitionResource, headers);
 
         return entity;
     }
@@ -231,7 +231,7 @@ public class OpenDataMeshITRestTemplate extends TestRestTemplate {
 
     public ResponseEntity<Definition> createDefinition(
             String filePath) throws IOException {
-        HttpEntity<String> entity = getVersionFileAsHttpEntity(filePath);
+        HttpEntity<DefinitionResource> entity = getDefinitionAsHttpEntity(filePath);
 
         ResponseEntity<Definition> postDefinitionResponse = postForEntity(
                 apiUrl(RoutesV1.DEFINITIONS),

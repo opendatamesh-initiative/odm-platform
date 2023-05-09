@@ -9,7 +9,7 @@ public enum OpenDataMeshAPIStandardError {
     SC400_05_INVALID_URILIST ("40005", "Invalid uri-list"),
     SC400_06_INVALID_PORTTYPE ("40006", "Invalid port type"),
     SC400_07_PRODUCT_ID_IS_EMPTY ("40007", "Product id is empty"),
-    SC400_08_STDDEF_IS_EMPTY ("40008", "Data product is empty"),
+    SC400_08_STDDEF_IS_EMPTY ("40008", "Standard definition is empty"),
     SC400_09_STDDEF_ID_IS_EMPTY ("40009", "Standard definition id is empty"),
     SC400_10_PRODUCT_IS_EMPTY ("40010", "Data product is empty"),
     SC400_11_PRODUCT_VERSION_NUMBER_IS_EMPTY ("40011", "Data product version number is empty"),

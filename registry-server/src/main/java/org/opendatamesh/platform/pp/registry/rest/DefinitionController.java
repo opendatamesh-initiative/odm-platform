@@ -88,26 +88,32 @@ public class DefinitionController {
             )
         ),
         @ApiResponse(
+                responseCode = "400",
+                description = "[Bad Request](https://www.rfc-editor.org/rfc/rfc9110.html#name-400-bad-request)"
+                        + "\r\n - Error Code 40008 - Standard Definition is empty",
+                content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
+        ),
+        @ApiResponse(
             responseCode = "422", 
             description = "[Unprocessable Content](https://www.rfc-editor.org/rfc/rfc9110.html#name-422-unprocessable-content)"
-            + "\r\n - Error Code 42208 - Definition document is invalid"
-            + "\r\n - Error Code 42209 - Definition already exists",
+            + "\r\n - Error Code 42206 - Definition already exists"
+            + "\r\n - Error Code 42208 - Definition document is invalid",
             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
         ),
          @ApiResponse(
             responseCode = "500", 
             description = "[Internal Server Error](https://www.rfc-editor.org/rfc/rfc9110.html#name-500-internal-server-error)"
-            + "\r\n - Error Code 50001 - Error in the backend database"
-            + "\r\n - Error Code 50002 - Error in in the backend service", 
+            + "\r\n - Error Code 50000 - Error in the backend service"
+            + "\r\n - Error Code 50001 - Error in in the backend database",
             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
         )
     })
-    public DefinitionResource createataDefinition( 
+    public DefinitionResource createDefinition(
         @Parameter( 
             description = "A definition object", 
             required = true)
         @Valid @RequestBody(required=false)  Definition definition
-    ) throws Exception {
+    ) {
         if(definition == null) {
             throw new BadRequestException(
                 OpenDataMeshAPIStandardError.SC400_08_STDDEF_IS_EMPTY,
@@ -121,6 +127,7 @@ public class DefinitionController {
     // ----------------------------------------
     // READ All definitions
     // ----------------------------------------
+
     @GetMapping
     @ResponseStatus(HttpStatus.OK) 
     @Operation(
@@ -135,6 +142,12 @@ public class DefinitionController {
                 mediaType = "application/json", 
                 schema = @Schema(implementation = DefinitionResource.class)
             )
+        ),
+        @ApiResponse(
+                responseCode = "500",
+                description = "[Internal Server Error](https://www.rfc-editor.org/rfc/rfc9110.html#name-500-internal-server-error)"
+                        + "\r\n - Error Code 50001 - Error in in the backend database",
+                content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
         )
     })
     public List<DefinitionResource> readAllDefinitions(
@@ -168,8 +181,6 @@ public class DefinitionController {
     // READ Definition
     // ----------------------------------------
 
-    // TODO add all error responses
-
     @GetMapping(
         value = "/{id}"
     )
@@ -186,6 +197,12 @@ public class DefinitionController {
                 mediaType = "application/json", 
                 schema = @Schema(implementation = DefinitionResource.class)
             )
+        ),
+        @ApiResponse(
+                responseCode = "404",
+                description = "[Not Found](https://www.rfc-editor.org/rfc/rfc9110.html#name-404-not-found)"
+                        + "\r\n - Error Code 40403 - Standard Definition not found",
+                content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
         )
     })
     public DefinitionResource readOneDefinition(
@@ -212,13 +229,26 @@ public class DefinitionController {
 
      @DeleteMapping(
         value = "/{id}"
-    )
-    @ResponseStatus(HttpStatus.OK)
-    @Operation(
-        summary = "Delete the specified definition",
-        description = "Delete the data product identified by the input `id` and all its associated versions"
-        
-    )
+     )
+     @ResponseStatus(HttpStatus.OK)
+     @Operation(
+             summary = "Delete the specified definition",
+             description = "Delete the data product identified by the input `id` and all its associated versions"
+     )
+     @ApiResponses(value = {
+             @ApiResponse(
+                     responseCode = "404",
+                     description = "[Not Found](https://www.rfc-editor.org/rfc/rfc9110.html#name-404-not-found)"
+                             + "\r\n - Error Code 40403 - Standard Definition not found",
+                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
+             ),
+             @ApiResponse(
+                     responseCode = "500",
+                     description = "[Internal Server Error](https://www.rfc-editor.org/rfc/rfc9110.html#name-500-internal-server-error)"
+                             + "\r\n - Error Code 50001 - Error in in the backend database",
+                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
+             )
+     })
     public void deleteDefinition(
         @Parameter(description = "Identifier of the definition")
         @PathVariable Long id

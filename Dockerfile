@@ -66,6 +66,7 @@ COPY --from=build  /workspace/app/target/odm-platform-pp-registry-server-*.jar /
 #./registry-client/target/odm-platform-pp-registry-client-1.0.0-exec.jar
 #./registry-client/target/odm-platform-pp-registry-client-1.0.0.jar
 #./registry-server/target/odm-platform-pp-registry-server-1.0.0.jar
+COPY --from=build  /workspace/app/registry-server/target/odm-platform-pp-*.jar /app/
 
 RUN ln -s -f /usr/share/zoneinfo/Europe/Rome /etc/localtime
 

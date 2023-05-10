@@ -27,4 +27,4 @@ ENV H2_CONSOLE_ENABLED ${H2_CONSOLE_ENABLED}
 ENV H2_CONSOLE_PATH ${H2_CONSOLE_PATH}
 
 EXPOSE 8081
-ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS  -Dspring.profiles.active=$SPRING_PROFILES_ACTIVE $SPRING_PROPS -jar /odm-platform-pp-1.0.0-exec.jar" ]
+ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS  -Dspring.profiles.active=$SPRING_PROFILES_ACTIVE $SPRING_PROPS -jar /registry-server/target/odm-platform-pp-registry-server-1.0.0.jar" ]

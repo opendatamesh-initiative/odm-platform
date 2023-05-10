@@ -11,7 +11,7 @@ services:
     image: postgres:11-alpine
     env_file: .env
     ports:
-      - "${DATABASE_PORT}:${DATABASE_PORT}"
+      - "${DATABASE_PORT}:5432"
     volumes:
       - postgres:/var/lib/postgresql/data:rw
     healthcheck:
@@ -31,7 +31,7 @@ services:
       args:
         SPRING_PROFILES_ACTIVE_BUILD: "dev"
         SPRING_PROFILES_ACTIVE: "docker"
-        SPRING_LOCAL_PORT: "${SPRING_LOCAL_PORT}"
+        SPRING_PORT: "${SPRING_PORT}"
         JAVA_OPTS: ""
         DATABASE_URL: "jdbc:postgresql://PostgreSQL:${DATABASE_PORT}/${DATABASE_NAME}"
         DATABASE_USERNAME: "${DATABASE_USERNAME}"
@@ -42,7 +42,7 @@ services:
         H2_CONSOLE_PATH: "h2-console"
     env_file: .env
     ports:
-      - "${SPRING_LOCAL_PORT}:${SPRING_DOCKER_PORT}"
+      - "${SPRING_PORT}:${SPRING_PORT}"
 
 volumes:
   postgres:

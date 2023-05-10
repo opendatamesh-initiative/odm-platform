@@ -4,8 +4,6 @@ FROM maven:3-openjdk-11-slim as build
 WORKDIR /workspace/app
 
 COPY pom.xml .
-#COPY src src
-#COPY scripts/redoc-static-html-gen.sh scripts/redoc-static-html-gen.sh
 COPY registry-client/pom.xml registry-client/pom.xml
 COPY registry-client/src registry-client/src
 COPY registry-server/pom.xml registry-server/pom.xml

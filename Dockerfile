@@ -61,16 +61,10 @@ ENV FLYWAY_SCRIPTS_DIR ${FLYWAY_SCRIPTS_DIR}
 ENV H2_CONSOLE_ENABLED ${H2_CONSOLE_ENABLED}
 ENV H2_CONSOLE_PATH ${H2_CONSOLE_PATH}
 
-COPY --from=build  /workspace/app/target/odm-platform-pp-registry-client-*.jar /app/
-COPY --from=build  /workspace/app/target/odm-platform-pp-registry-server-*.jar /app/
-#./registry-client/target/odm-platform-pp-registry-client-1.0.0-exec.jar
-#./registry-client/target/odm-platform-pp-registry-client-1.0.0.jar
-#./registry-server/target/odm-platform-pp-registry-server-1.0.0.jar
 COPY --from=build  /workspace/app/registry-server/target/odm-platform-pp-*.jar /app/
 
 RUN ln -s -f /usr/share/zoneinfo/Europe/Rome /etc/localtime
 
-CMD java $JAVA_OPTS -jar /app/odm-platform-pp-registry-client*.jar --spring.profiles.active=$SPRING_PROFILES_ACTIVE
 CMD java $JAVA_OPTS -jar /app/odm-platform-pp-registry-server*.jar --spring.profiles.active=$SPRING_PROFILES_ACTIVE
 
 EXPOSE $SPRING_LOCAL_PORT

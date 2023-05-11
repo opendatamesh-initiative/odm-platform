@@ -1,9 +1,10 @@
 FROM openjdk:17-alpine
 VOLUME /tmp
-ADD /target/odm-platform-pp-1.0.0-exec.jar ./
+ADD /registry-client/target/odm-platform-pp-registry-client-1.0.0-exec.jar ./
+COPY /registry-server/target/odm-platform-pp-registry-server-1.0.0.jar ./application.jar
 
 ARG SPRING_PROFILES_ACTIVE=docker
-ARG SPRING_LOCAL_PORT=8585
+ARG SPRING_PORT=8585
 ARG SPRING_PROPS
 ARG JAVA_OPTS
 ARG DATABASE_URL=jdbc:mysql://localhost:3306/odmpdb
@@ -15,7 +16,7 @@ ARG H2_CONSOLE_ENABLED=false
 ARG H2_CONSOLE_PATH=h2-console
 
 ENV SPRING_PROFILES_ACTIVE ${SPRING_PROFILES_ACTIVE}
-ENV SPRING_LOCAL_PORT ${SPRING_LOCAL_PORT}
+ENV SPRING_PORT ${SPRING_PORT}
 ENV SPRING_PROPS ${SPRING_PROPS}
 ENV JAVA_OPTS ${JAVA_OPTS}
 ENV DATABASE_URL ${DATABASE_URL}
@@ -27,4 +28,4 @@ ENV H2_CONSOLE_ENABLED ${H2_CONSOLE_ENABLED}
 ENV H2_CONSOLE_PATH ${H2_CONSOLE_PATH}
 
 EXPOSE 8081
-ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS  -Dspring.profiles.active=$SPRING_PROFILES_ACTIVE $SPRING_PROPS -jar /registry-server/target/odm-platform-pp-registry-server-1.0.0.jar" ]
+ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS  -Dspring.profiles.active=$SPRING_PROFILES_ACTIVE $SPRING_PROPS -jar ./application.jar" ]

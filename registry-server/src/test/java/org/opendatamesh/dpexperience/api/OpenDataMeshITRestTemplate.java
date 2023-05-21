@@ -169,6 +169,21 @@ public class OpenDataMeshITRestTemplate extends TestRestTemplate {
         return postProductResponse;
     }
 
+    public ResponseEntity<DataProductResource> updateDataProduct(
+            String filePath) throws IOException {
+
+        HttpEntity<DataProductResource> entity = getProductDocumentAsHttpEntity(filePath);
+
+        ResponseEntity<DataProductResource> putProductResponse = exchange(
+                apiUrl(RoutesV1.DATA_PRODUCTS, "/"),
+                HttpMethod.PUT,
+                entity,
+                DataProductResource.class
+        );
+
+        return putProductResponse;
+    }
+
     public ResponseEntity<DataProductResource[]> readAllDataProducts() {
         return getForEntity(
                 apiUrl(RoutesV1.DATA_PRODUCTS),

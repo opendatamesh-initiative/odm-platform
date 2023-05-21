@@ -282,13 +282,27 @@ public class DataProductService {
     // UPDATE
     // ======================================================================================
     
-    public DataProduct updateDataProduct(String id, String domain, String description) {
-        DataProduct dataProduct = null;
-        
-        dataProduct = readDataProduct(id);
-        
-        if(domain != null) dataProduct.setDomain(domain);
-        if(description != null) dataProduct.setDescription(description);
+    public DataProduct updateDataProduct(DataProduct dataProduct) {
+
+        if(dataProduct == null) {
+            throw new InternalServerException(
+                    OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
+                    "Data product object cannot be null");
+        }
+
+        if(!StringUtils.hasText(dataProduct.getFullyQualifiedName())) {
+            throw new UnprocessableEntityException(
+                    OpenDataMeshAPIStandardError.SC422_07_PRODUCT_IS_INVALID,
+                    "Data product fullyQualifiedName property cannot be empty");
+        }
+
+        DataProduct oldDataProduct = searchDataProductsByFQN(dataProduct.getFullyQualifiedName());
+        if(oldDataProduct == null) {
+            throw new NotFoundException(
+                    OpenDataMeshAPIStandardError.SC404_01_PRODUCT_NOT_FOUND,
+                    "Data product [" + dataProduct.getFullyQualifiedName() + "] doesn't exists");
+        }
+        dataProduct.setId(oldDataProduct.getId());
 
         try {
             dataProduct = saveDataProduct(dataProduct);

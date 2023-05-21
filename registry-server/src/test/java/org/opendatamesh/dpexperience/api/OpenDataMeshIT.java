@@ -39,6 +39,7 @@ public abstract class OpenDataMeshIT {
     protected Logger logger = LoggerFactory.getLogger("OpenDataMeshIT.class");
 
     protected final String RESOURCE_DP1 = "src/test/resources/test/dataproduct-descriptor/dp1.json";
+    protected final String RESOURCE_DP1_UPD = "src/test/resources/test/dataproduct-descriptor/dp1-updated.json";
     protected final String RESOURCE_DP1_V1 = "src/test/resources/test/dataproduct-descriptor/dp1-v1.json";
     protected final String RESOURCE_DP1_V1_API1 = "src/test/resources/test/dataproduct-descriptor/dp1-v1-api1.json";
     protected final String RESOURCE_DEF1_V1 = "src/test/resources/test/definition/def1.json";
@@ -91,6 +92,14 @@ public abstract class OpenDataMeshIT {
         verifyResponseEntity(postProductResponse, HttpStatus.CREATED, true);
 
         return postProductResponse.getBody();
+
+    }
+
+    protected DataProductResource updateDataProduct1() throws IOException {
+        ResponseEntity<DataProductResource> putProductResponse = rest.updateDataProduct(RESOURCE_DP1_UPD);
+        verifyResponseEntity(putProductResponse, HttpStatus.OK, true);
+
+        return putProductResponse.getBody();
 
     }
 

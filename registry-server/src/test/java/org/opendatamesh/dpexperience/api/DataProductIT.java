@@ -129,12 +129,24 @@ public class DataProductIT extends OpenDataMeshIT {
     // ----------------------------------------
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    public void testDataProductUpdate() {
-        // TODO
+    public void testDataProductUpdate() throws IOException {
+
+        ResponseEntity<DataProductResource> postProductResponse = null;
+
+        createDataProduct1();
+        DataProductResource dataProductRes = updateDataProduct1();
+
+        // TEST 1: create first data product
+        assertThat(dataProductRes.getId())
+                .isEqualTo(UUID.nameUUIDFromBytes("urn:dpds:it.quantyca:dataproducts:sampleDomain:tripExecution".getBytes()).toString());
+        assertThat(dataProductRes.getFullyQualifiedName()).isEqualTo("urn:dpds:it.quantyca:dataproducts:sampleDomain:tripExecution");
+        assertThat(dataProductRes.getDescription()).isEqualTo("This is prod-1 - updated");
+        assertThat(dataProductRes.getDomain()).isEqualTo("Disney - updated");
+
     }
 
     // ----------------------------------------
-    // UPDATE Data product
+    // DELETE Data product
     // ----------------------------------------
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)

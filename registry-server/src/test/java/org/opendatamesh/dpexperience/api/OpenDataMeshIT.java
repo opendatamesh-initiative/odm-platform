@@ -1,14 +1,9 @@
 package org.opendatamesh.dpexperience.api;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
-import javax.annotation.PostConstruct;
-
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.runner.RunWith;
 import org.opendatamesh.platform.pp.registry.OpenDataMeshApp;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Definition;
@@ -19,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,10 +21,11 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.annotation.PostConstruct;
+import java.io.IOException;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = { OpenDataMeshApp.class })
@@ -44,8 +39,13 @@ public abstract class OpenDataMeshIT {
     protected Logger logger = LoggerFactory.getLogger("OpenDataMeshIT.class");
 
     protected final String RESOURCE_DP1 = "src/test/resources/test/dataproduct-descriptor/dp1.json";
+    protected final String RESOURCE_DP1_UPD = "src/test/resources/test/dataproduct-descriptor/dp1-updated.json";
     protected final String RESOURCE_DP1_V1 = "src/test/resources/test/dataproduct-descriptor/dp1-v1.json";
     protected final String RESOURCE_DP1_V1_API1 = "src/test/resources/test/dataproduct-descriptor/dp1-v1-api1.json";
+    protected final String RESOURCE_DEF1_V1 = "src/test/resources/test/definition/def1.json";
+    protected final String RESOURCE_DEF1_NOVERSION = "src/test/resources/test/definition/def1-missing-version.json";
+    protected final String RESOURCE_DEF1_NONAME = "src/test/resources/test/definition/def1-missing-name.json";
+    protected final String RESOURCE_DEF1_NONAME_NOVERSION = "src/test/resources/test/definition/def2-missing-name-version.json";
 
     @Autowired
     protected ObjectMapper mapper;
@@ -95,6 +95,14 @@ public abstract class OpenDataMeshIT {
 
     }
 
+    protected DataProductResource updateDataProduct1() throws IOException {
+        ResponseEntity<DataProductResource> putProductResponse = rest.updateDataProduct(RESOURCE_DP1_UPD);
+        verifyResponseEntity(putProductResponse, HttpStatus.OK, true);
+
+        return putProductResponse.getBody();
+
+    }
+
     protected String createDataProduct1Version1(String dataProduct1Id) throws IOException {
         ResponseEntity<String> postProductVersionResponse = rest.createDataProductVersion(
                 dataProduct1Id, RESOURCE_DP1_V1);
@@ -109,6 +117,42 @@ public abstract class OpenDataMeshIT {
         verifyResponseEntity(postProductVersionApiResponse, HttpStatus.CREATED, true);
 
         return postProductVersionApiResponse.getBody();
+    }
+
+    protected Definition createDefinition1() throws IOException {
+        ResponseEntity<Definition> postDefinition = rest.createDefinition(
+                RESOURCE_DEF1_V1
+        );
+        verifyResponseEntity(postDefinition, HttpStatus.CREATED, true);
+
+        return postDefinition.getBody();
+    }
+
+    protected Definition createDefinitionMissingVersion() throws IOException {
+        ResponseEntity<Definition> postDefinition = rest.createDefinition(
+                RESOURCE_DEF1_NOVERSION
+        );
+        verifyResponseEntity(postDefinition, HttpStatus.CREATED, true);
+
+        return postDefinition.getBody();
+    }
+
+    protected Definition createDefinitionMissingName() throws IOException {
+        ResponseEntity<Definition> postDefinition = rest.createDefinition(
+                RESOURCE_DEF1_NONAME
+        );
+        verifyResponseEntity(postDefinition, HttpStatus.CREATED, true);
+
+        return postDefinition.getBody();
+    }
+
+    protected Definition createDefinitionMissingNameAndVersion() throws IOException {
+        ResponseEntity<Definition> postDefinition = rest.createDefinition(
+                RESOURCE_DEF1_NONAME_NOVERSION
+        );
+        verifyResponseEntity(postDefinition, HttpStatus.CREATED, true);
+
+        return postDefinition.getBody();
     }
 
     // ======================================================================================

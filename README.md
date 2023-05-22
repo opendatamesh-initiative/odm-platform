@@ -23,7 +23,7 @@ cd odm-platform-pp-services
 Compile the project:
 
 ```bash
-mvn clean install
+mvn clean install -Dspring-boot.run.arguments="--SPRING_PROFILES_ACTIVE=dev"
 ```
 
 ### Run application
@@ -58,7 +58,7 @@ Here you can find the following two Dockerfiles:
 If you decide to create the Docker image using the second Dockerfile (i.e. `Dokerfile.local`), you need to first execute the build locally by running the following command: 
 
 ```bash
-mvn clean install
+mvn clean install -Dspring-boot.run.arguments="--SPRING_PROFILES_ACTIVE=dev"
 ```
 
 ### Run database
@@ -156,7 +156,52 @@ docker rm odmp-mysql-db
 
 ## Run with Docker Compose
 
-TBD
+### Clone repository
+Clone the repository and move it to the project root folder
+
+```bash
+git clone git@github.com:opendatamesh-initiative/odm-platform-pp-services.git
+cd odm-platform-pp-services
+```
+
+### Build image
+Build the docker-compose images of the application and a default PostgreSQL DB.
+
+Before building it, create a `.env` file in the root directory of the project similar to the following one:
+```.dotenv
+DATABASE_NAME=odmpdb
+DATABASE_PASSWORD=pwd
+DATABASE_USERNAME=usr
+DATABASE_PORT=5432
+SPRING_PORT=8585
+```
+
+Then, build the docker-compose file:
+```bash
+docker-compose build
+```
+
+### Run application
+Run the docker-compose images.
+```bash
+docker-compose up
+```
+
+### Stop application
+Stop the docker-compose images
+```bash
+docker-compose down
+```
+To restart a stopped application execute the following commands:
+
+```bash
+docker-compose up
+```
+
+To rebuild it from scratch execute the following commands :
+```bash
+docker-compose build --no-cache
+```
 
 # Test it
 
@@ -170,6 +215,6 @@ You can invoke REST endpoints through *OpenAPI UI* available at the following ur
 
 If the application is running using an in memory instance of H2 database you can check the database content through H2 Web Console available at the following url:
 
-* [http://localhost:8585/api/v1/pp/swagger-ui/index.html](http://localhost:8585/api/v1/pp/h2-console)
+* [http://localhost:8585/api/v1/pp/h2-console](http://localhost:8585/api/v1/pp/h2-console)
 
 In all cases you can also use your favourite sql client providing the proper connection parameters

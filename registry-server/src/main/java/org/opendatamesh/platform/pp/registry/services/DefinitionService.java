@@ -49,7 +49,7 @@ public class DefinitionService {
         }
 
         if (!StringUtils.hasText(definition.getContent())) {
-            throw new InternalServerException(
+            throw new UnprocessableEntityException(
                     OpenDataMeshAPIStandardError.SC422_08_DEFINITION_DOC_SYNTAX_IS_INVALID,
                     "Definition content property cannot be empty");
         }

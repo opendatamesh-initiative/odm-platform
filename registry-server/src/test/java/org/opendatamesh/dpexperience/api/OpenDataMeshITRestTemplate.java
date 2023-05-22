@@ -4,11 +4,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.opendatamesh.platform.pp.registry.core.DataProductDescriptor;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Definition;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DataProductResource;
+import org.opendatamesh.platform.pp.registry.resources.v1.shared.DefinitionResource;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -91,6 +93,26 @@ public class OpenDataMeshITRestTemplate extends TestRestTemplate {
         return entity;
     }
 
+    HttpEntity<DefinitionResource> getDefinitionAsHttpEntity(String file)
+            throws IOException {
+
+        HttpEntity<DefinitionResource> entity = null;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        DefinitionResource definitionResource = null;
+        if(file != null) {
+            String docContent = readFile(file);
+            definitionResource = objectMapper.readValue(docContent, DefinitionResource.class);
+        }
+
+        entity = new HttpEntity<>(definitionResource, headers);
+
+        return entity;
+    }
+
     HttpEntity<String> getObjectAsHttpEntity(Object o) throws IOException {
         String json = objectMapper.writeValueAsString(o);
         HttpHeaders headers = new HttpHeaders();
@@ -145,6 +167,21 @@ public class OpenDataMeshITRestTemplate extends TestRestTemplate {
                 DataProductResource.class);
 
         return postProductResponse;
+    }
+
+    public ResponseEntity<DataProductResource> updateDataProduct(
+            String filePath) throws IOException {
+
+        HttpEntity<DataProductResource> entity = getProductDocumentAsHttpEntity(filePath);
+
+        ResponseEntity<DataProductResource> putProductResponse = exchange(
+                apiUrl(RoutesV1.DATA_PRODUCTS, "/"),
+                HttpMethod.PUT,
+                entity,
+                DataProductResource.class
+        );
+
+        return putProductResponse;
     }
 
     public ResponseEntity<DataProductResource[]> readAllDataProducts() {
@@ -209,13 +246,96 @@ public class OpenDataMeshITRestTemplate extends TestRestTemplate {
 
     public ResponseEntity<Definition> createDefinition(
             String filePath) throws IOException {
-        HttpEntity<String> entity = getVersionFileAsHttpEntity(filePath);
+        HttpEntity<DefinitionResource> entity = getDefinitionAsHttpEntity(filePath);
 
         ResponseEntity<Definition> postDefinitionResponse = postForEntity(
-                apiUrl(RoutesV1.DATA_PRODUCTS),
+                apiUrl(RoutesV1.DEFINITIONS),
                 entity,
                 Definition.class);
 
         return postDefinitionResponse;
     }
+
+    public ResponseEntity<DefinitionResource[]> readAllDefinitions() {
+        return getForEntity(
+                apiUrl(RoutesV1.DEFINITIONS),
+                DefinitionResource[].class);
+    }
+
+    public ResponseEntity<DefinitionResource> readOneDefinition(Long definitionId) {
+        return getForEntity(
+                apiUrlOfItem(RoutesV1.DEFINITIONS),
+                DefinitionResource.class,
+                definitionId
+        );
+    }
+
+    public ResponseEntity<Void> deleteDefinition(Long definitionId) {
+        return exchange(
+                apiUrlOfItem(RoutesV1.DEFINITIONS),
+                HttpMethod.DELETE,
+                null,
+                Void.class,
+                definitionId
+        );
+    }
+
+    public ResponseEntity<DefinitionResource[]> searchDefinitions(
+            Optional<String> name,
+            Optional<String> version,
+            Optional<String> type,
+            Optional<String> specification,
+            Optional<String> specificationVersion
+    ) {
+
+        Boolean firstParam = true;
+        String urlExtensions = "";
+        if (name.isPresent()) {
+            if(firstParam) {
+                urlExtensions = urlExtensions + "?";
+                firstParam = false;
+            }
+            urlExtensions = urlExtensions + "name=" + name.get();
+        }
+        if (version.isPresent()) {
+            if (firstParam) {
+                urlExtensions = urlExtensions + "?";
+                firstParam = false;
+            } else {
+                urlExtensions = urlExtensions + "&";
+            }
+            urlExtensions = urlExtensions + "version=" + version.get();
+        }
+        if (type.isPresent()) {
+            if (firstParam) {
+                urlExtensions = urlExtensions + "?";
+                firstParam = false;
+            } else {
+                urlExtensions = urlExtensions + "&";
+            }
+            urlExtensions = urlExtensions + "type=" + type.get();
+        }
+        if (specification.isPresent()) {
+            if (firstParam) {
+                urlExtensions = urlExtensions + "?";
+                firstParam = false;
+            } else {
+                urlExtensions = urlExtensions + "&";
+            }
+            urlExtensions = urlExtensions + "specification=" + specification.get();
+        }
+        if (specificationVersion.isPresent()) {
+            if (firstParam) {
+                urlExtensions = urlExtensions + "?";
+            } else {
+                urlExtensions = urlExtensions + "&";
+            }
+            urlExtensions = urlExtensions + "specificationVersion=" + specificationVersion.get();
+        }
+
+        return getForEntity(
+                apiUrl(RoutesV1.DEFINITIONS, urlExtensions),
+                DefinitionResource[].class);
+    }
+
 }

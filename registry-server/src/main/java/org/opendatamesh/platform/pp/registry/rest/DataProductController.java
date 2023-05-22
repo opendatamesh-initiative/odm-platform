@@ -243,25 +243,57 @@ public class DataProductController
     // the required test on input and throw exception in needed 
 
     @PutMapping(
-        value = "/{id}"
+        consumes = { "application/vnd.odmp.v1+json", "application/vnd.odmp+json", "application/json"}
     )
     @ResponseStatus(HttpStatus.OK)
     @Operation(
-        summary = "Update the data product identified by the input `id`",
-        description = "Update the `domain` of data product identified by the input `id`"
+        summary = "Update a data product",
+        description = "Update the provided data product"
     )
-    public DataProductResource updateProductDomain(
-        @Parameter(description = "Identifier of the data product")
-        @PathVariable String id,
-        @Parameter(description = "The updated value of `domain` property")
-        @RequestParam(required = true, name = "domain") String domain
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Data product updated",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = DataProductResource.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "[Not Found](https://www.rfc-editor.org/rfc/rfc9110.html#name-404-not-found)"
+                            + "\r\n - Error Code 40401 - Data Product not found",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
+            ),
+            @ApiResponse(
+                    responseCode = "422",
+                    description = "[Unprocessable Content](https://www.rfc-editor.org/rfc/rfc9110.html#name-422-unprocessable-content)"
+                            + "\r\n - Error Code 42207 - Data product is invalid",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "[Internal Server Error](https://www.rfc-editor.org/rfc/rfc9110.html#name-500-internal-server-error)"
+                            + "\r\n - Error Code 50001 - Error in the backend database"
+                            + "\r\n - Error Code 50002 - Error in in the backend service",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
+            )
+    })
+    public DataProductResource updateProduct(
+        @Parameter(
+                description = "A data product object",
+                required = true)
+        @Valid @RequestBody(required=false)  DataProductResource dataProductRes
     ) throws Exception {
 
-        if(domain == null)
+        if(dataProductRes == null)
             throw new BadRequestException(
-                OpenDataMeshAPIStandardError.SC400_03_DOMAIN_IS_EMPTY,
-                "Domain is empty");
-        DataProduct dataProduct = dataProductService.updateDataProduct(id, domain, null);
+                OpenDataMeshAPIStandardError.SC400_10_PRODUCT_IS_EMPTY,
+                "Domain is empty"
+            );
+
+        DataProduct dataProduct = dataProductMapper.toEntity(dataProductRes);
+        dataProduct = dataProductService.updateDataProduct(dataProduct);
 
         return dataProductMapper.toResource(dataProduct);
     }

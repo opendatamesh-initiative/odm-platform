@@ -1,0 +1,11 @@
+{
+  "name": "definition1",
+  "status": "OK",
+  "displayName": "testdef1",
+  "description": "test definition",
+  "type": "definition",
+  "specification": "spec",
+  "specificationVersion": "1.0",
+  "contentMediaType": "plain/text",
+  "content": "Content of test definition"
+}

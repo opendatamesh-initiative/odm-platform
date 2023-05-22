@@ -3,6 +3,8 @@ package org.opendatamesh.dpexperience.api;
 public enum RoutesV1 {
 
     DATA_PRODUCTS("/api/v1/pp/products"),
+
+    DEFINITIONS("/api/v1/pp/definitions"),
     
     DATA_PRODUCTS_UPLOADS("/api/v1/pp/products/uploads"),
     

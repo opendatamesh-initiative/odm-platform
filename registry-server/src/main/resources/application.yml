@@ -3,7 +3,7 @@
 ##########################
 spring:
   profiles:
-    active: ${SPRING_PROFILES_ACTIVE}
+    active: dev
 
 ##########################
 # Logging configuration

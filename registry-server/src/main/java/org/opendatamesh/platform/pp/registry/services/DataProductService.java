@@ -42,8 +42,7 @@ import com.networknt.schema.ValidationMessage;
 
 @Service
 public class DataProductService {
-    
-    
+
     @Autowired
     private DataProductVersionService dataProductVersionService;
 

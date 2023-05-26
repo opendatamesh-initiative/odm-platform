@@ -16,6 +16,8 @@ public class EventNotifier {
         this.observers.remove(observer);
     }
 
+    public List<Observer> getObservers() { return this.observers; }
+
     public void notifyEvent(EventResource event) {
         for (Observer observer : this.observers) {
             observer.notify(event);

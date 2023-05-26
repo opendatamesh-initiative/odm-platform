@@ -18,7 +18,6 @@ public class MetaServiceProxy {
     @Value("${skipmetaservice}")
     private String skipmetaservice;
 
-
     @Value("${metaserviceaddress}")
     private String metaserviceaddress;
 
@@ -27,29 +26,41 @@ public class MetaServiceProxy {
 
     private static final Logger logger = LoggerFactory.getLogger(MetaServiceProxy.class);
 
-
     public MetaServiceProxy() {}
 
     public void postEventToMetaService(EventResource event) {
+
         if(skipmetaservice.equals("true")){
             logger.debug("Skipping meta service");
             return;
         }
+
         NotificationResource notification = new NotificationResource();
         notification.setEvent(event);
-        ResponseEntity<NotificationResource> responseEntity = restTemplate
-                .postForEntity(
-                        metaserviceaddress + "/api/v1/up/metaservice/notifications",
-                        notification,
-                        NotificationResource.class
-                );
-        if(responseEntity.getStatusCode().is2xxSuccessful()){
-            notification = responseEntity.getBody();
-            logger.debug("Successfuly loaded information to Meta service system: " + notification.toString());
-        } else {
+
+        try {
+
+            ResponseEntity<NotificationResource> responseEntity = restTemplate
+                    .postForEntity(
+                            metaserviceaddress + "/api/v1/up/metaservice/notifications",
+                            notification,
+                            NotificationResource.class
+                    );
+
+            if(responseEntity.getStatusCode().is2xxSuccessful()){
+                notification = responseEntity.getBody();
+                logger.debug("Successfuly loaded information to Meta service system: " + notification.toString());
+            } else {
+                throw new BadGatewayException(
+                        OpenDataMeshAPIStandardError.SC502_05_META_SERVICE_ERROR,
+                        "An error occurred while comunicating with the metaService");
+            }
+
+        } catch (Exception e) {
             throw new BadGatewayException(
                     OpenDataMeshAPIStandardError.SC502_05_META_SERVICE_ERROR,
-                    "An error occurred while comunicating with the metaService");
+                    "metaService not reachable"
+            );
         }
     }
 }

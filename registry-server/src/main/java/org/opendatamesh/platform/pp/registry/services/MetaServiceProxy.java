@@ -30,11 +30,6 @@ public class MetaServiceProxy {
 
     public void postEventToMetaService(EventResource event) {
 
-        if(skipmetaservice.equals("true")){
-            logger.debug("Skipping meta service");
-            return;
-        }
-
         NotificationResource notification = new NotificationResource();
         notification.setEvent(event);
 

@@ -99,6 +99,20 @@ public class DataProductVersionService {
                 "An error occured in the backend database while saving version [" + dataProductVersion.getInfo().getVersionNumber() + "] of data product [" + dataProductVersion.getDataProduct().getId() + "]",
                 t);
         }
+
+        try {
+            EventResource eventResource = new EventResource(
+                    EventType.DATA_PRODUCT_VERSION_CREATED,
+                    dataProductVersion.getDataProductId(),
+                    dataProductVersion.toString(),
+                    null
+            );
+            eventNotifier.notifyEvent(eventResource);
+        } catch (Throwable t) {
+            throw new BadGatewayException(
+                    OpenDataMeshAPIStandardError.SC502_05_META_SERVICE_ERROR,
+                    "Impossible to upload data product version to metaService", t);
+        }
        
         return dataProductVersion;
     }
@@ -319,13 +333,22 @@ public class DataProductVersionService {
                 "An error occured in the backend database while deleting data product version",
                 t);
         }
-        EventResource eventResource = new EventResource(
-                EventType.DATA_PRODUCT_VERSION_DELETED,
-                dataProductVersion.getDataProductId(),
-                null,
-                dataProductVersion.toString()
-        );
-        eventNotifier.notifyEvent(eventResource);
+
+        try {
+            //metaServiceProxy.uploadDataProductVersion(dataProductVersion);
+            EventResource eventResource = new EventResource(
+                    EventType.DATA_PRODUCT_VERSION_DELETED,
+                    dataProductVersion.getDataProductId(),
+                    dataProductVersion.toString(),
+                    null
+            );
+            eventNotifier.notifyEvent(eventResource);
+        } catch (Throwable t) {
+            throw new BadGatewayException(
+                    OpenDataMeshAPIStandardError.SC502_05_META_SERVICE_ERROR,
+                    "Impossible to upload data product version to metaService", t);
+        }
+
     }
 
    

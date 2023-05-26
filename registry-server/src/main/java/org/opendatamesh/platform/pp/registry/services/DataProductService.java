@@ -120,6 +120,20 @@ public class DataProductService {
                 "An error occured in the backend database while saving data product [" + dataProduct.getFullyQualifiedName() + "]",
                 t);
         }
+
+        try {
+            EventResource eventResource = new EventResource(
+                    EventType.DATA_PRODUCT_CREATED,
+                    dataProduct.getId(),
+                    null,
+                    dataProduct.toString()
+            );
+            eventNotifier.notifyEvent(eventResource);
+        } catch (Throwable t) {
+            throw new BadGatewayException(
+                    OpenDataMeshAPIStandardError.SC502_05_META_SERVICE_ERROR,
+                    "Impossible to upload data product to metaService", t);
+        }
        
         return dataProduct;
     }
@@ -316,6 +330,20 @@ public class DataProductService {
                 t);
         }
 
+        try {
+            EventResource eventResource = new EventResource(
+                    EventType.DATA_PRODUCT_UPDATED,
+                    dataProduct.getId(),
+                    oldDataProduct.toString(),
+                    dataProduct.toString()
+            );
+            eventNotifier.notifyEvent(eventResource);
+        } catch (Throwable t) {
+            throw new BadGatewayException(
+                    OpenDataMeshAPIStandardError.SC502_05_META_SERVICE_ERROR,
+                    "Impossible to upload data product version to metaService", t);
+        }
+
         return dataProduct;
     }
 
@@ -335,6 +363,21 @@ public class DataProductService {
                 "An error occured in the backend database while deleting data product",
                 t);
         }
+
+        try {
+            EventResource eventResource = new EventResource(
+                    EventType.DATA_PRODUCT_DELETED,
+                    dataProduct.getId(),
+                    dataProduct.toString(),
+                    null
+            );
+            eventNotifier.notifyEvent(eventResource);
+        } catch (Throwable t) {
+            throw new BadGatewayException(
+                    OpenDataMeshAPIStandardError.SC502_05_META_SERVICE_ERROR,
+                    "Impossible to upload data product to metaService", t);
+        }
+
     }
 
 
@@ -453,12 +496,11 @@ public class DataProductService {
         dataProductVersion = dataProductVersionService.createDataProductVersion(dataProductVersion, false);
       
         try {
-            //metaServiceProxy.uploadDataProductVersion(dataProductVersion);
             EventResource eventResource = new EventResource(
                     EventType.DATA_PRODUCT_VERSION_CREATED,
                     dataProductVersion.getDataProductId(),
-                    dataProductVersion.toString(),
-                    null
+                    null,
+                    dataProductVersion.toString()
             );
             eventNotifier.notifyEvent(eventResource);
         } catch (Throwable t) {

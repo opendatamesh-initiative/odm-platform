@@ -57,10 +57,7 @@ public class DataProductService {
     private DataProductMapper dataProductMapper;
 
     @Autowired
-    private EventNotifier eventNotifier;
-
-    @Autowired
-    private MetaServiceObserver metaServiceObserver;
+    EventNotifier eventNotifier;
     
     // TODO call policy service when a data product is modified
     @Autowired
@@ -68,9 +65,7 @@ public class DataProductService {
 
     private static final Logger logger = LoggerFactory.getLogger(DataProductService.class);
 
-    public DataProductService() {
-        eventNotifier.addObserver(metaServiceObserver);
-    }
+    public DataProductService() { }
 
     // ======================================================================================
     // CREATE

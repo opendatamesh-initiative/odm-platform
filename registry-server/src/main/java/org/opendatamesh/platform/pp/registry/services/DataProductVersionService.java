@@ -45,19 +45,14 @@ public class DataProductVersionService {
     ObjectMapper objectMapper;
 
     @Autowired
-    private EventNotifier eventNotifier;
+    EventNotifier eventNotifier;
 
-    @Autowired
-    private MetaServiceObserver metaServiceObserver;
-    
     @Autowired
     private PolicyServiceProxy policyServiceProxy;
 
     private static final Logger logger = LoggerFactory.getLogger(DataProductVersionService.class);
 
-    public DataProductVersionService() {
-        eventNotifier.addObserver(metaServiceObserver);
-    }
+    public DataProductVersionService() { }
 
     // ======================================================================================
     // CREATE

@@ -11,6 +11,8 @@ import java.util.UUID;
 
 import javax.persistence.criteria.Predicate;
 
+import org.opendatamesh.notification.EventResource;
+import org.opendatamesh.notification.EventType;
 import org.opendatamesh.platform.pp.registry.core.DataProductDescriptor;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataProduct;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataProductVersion;
@@ -24,6 +26,8 @@ import org.opendatamesh.platform.pp.registry.exceptions.UnprocessableEntityExcep
 import org.opendatamesh.platform.pp.registry.exceptions.core.ParseException;
 import org.opendatamesh.platform.pp.registry.exceptions.core.UnresolvableReferenceException;
 import org.opendatamesh.platform.pp.registry.resources.v1.mappers.DataProductMapper;
+import org.opendatamesh.platform.pp.registry.resources.v1.observers.EventNotifier;
+import org.opendatamesh.platform.pp.registry.resources.v1.observers.metaservice.MetaServiceObserver;
 import org.opendatamesh.platform.pp.registry.resources.v1.policyservice.PolicyName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,8 +42,7 @@ import com.networknt.schema.ValidationMessage;
 
 @Service
 public class DataProductService {
-    
-    
+
     @Autowired
     private DataProductVersionService dataProductVersionService;
 
@@ -51,9 +54,9 @@ public class DataProductService {
 
     @Autowired
     private DataProductMapper dataProductMapper;
-    
+
     @Autowired
-    private MetaServiceProxy metaServiceProxy;
+    EventNotifier eventNotifier;
     
     // TODO call policy service when a data product is modified
     @Autowired
@@ -61,9 +64,7 @@ public class DataProductService {
 
     private static final Logger logger = LoggerFactory.getLogger(DataProductService.class);
 
-    public DataProductService() {
-
-    }
+    public DataProductService() { }
 
     // ======================================================================================
     // CREATE
@@ -117,6 +118,20 @@ public class DataProductService {
                 OpenDataMeshAPIStandardError.SC500_01_DATABASE_ERROR,
                 "An error occured in the backend database while saving data product [" + dataProduct.getFullyQualifiedName() + "]",
                 t);
+        }
+
+        try {
+            EventResource eventResource = new EventResource(
+                    EventType.DATA_PRODUCT_CREATED,
+                    dataProduct.getId(),
+                    null,
+                    dataProduct.toString()
+            );
+            eventNotifier.notifyEvent(eventResource);
+        } catch (Throwable t) {
+            throw new BadGatewayException(
+                    OpenDataMeshAPIStandardError.SC502_05_META_SERVICE_ERROR,
+                    "Impossible to upload data product to metaService", t);
         }
        
         return dataProduct;
@@ -314,6 +329,20 @@ public class DataProductService {
                 t);
         }
 
+        try {
+            EventResource eventResource = new EventResource(
+                    EventType.DATA_PRODUCT_UPDATED,
+                    dataProduct.getId(),
+                    oldDataProduct.toString(),
+                    dataProduct.toString()
+            );
+            eventNotifier.notifyEvent(eventResource);
+        } catch (Throwable t) {
+            throw new BadGatewayException(
+                    OpenDataMeshAPIStandardError.SC502_05_META_SERVICE_ERROR,
+                    "Impossible to upload data product version to metaService", t);
+        }
+
         return dataProduct;
     }
 
@@ -333,6 +362,21 @@ public class DataProductService {
                 "An error occured in the backend database while deleting data product",
                 t);
         }
+
+        try {
+            EventResource eventResource = new EventResource(
+                    EventType.DATA_PRODUCT_DELETED,
+                    dataProduct.getId(),
+                    dataProduct.toString(),
+                    null
+            );
+            eventNotifier.notifyEvent(eventResource);
+        } catch (Throwable t) {
+            throw new BadGatewayException(
+                    OpenDataMeshAPIStandardError.SC502_05_META_SERVICE_ERROR,
+                    "Impossible to upload data product to metaService", t);
+        }
+
     }
 
 
@@ -451,7 +495,13 @@ public class DataProductService {
         dataProductVersion = dataProductVersionService.createDataProductVersion(dataProductVersion, false);
       
         try {
-            metaServiceProxy.uploadDataProductVersion(dataProductVersion);
+            EventResource eventResource = new EventResource(
+                    EventType.DATA_PRODUCT_VERSION_CREATED,
+                    dataProductVersion.getDataProductId(),
+                    null,
+                    dataProductVersion.toString()
+            );
+            eventNotifier.notifyEvent(eventResource);
         } catch (Throwable t) {
             throw new BadGatewayException(
                 OpenDataMeshAPIStandardError.SC502_05_META_SERVICE_ERROR,

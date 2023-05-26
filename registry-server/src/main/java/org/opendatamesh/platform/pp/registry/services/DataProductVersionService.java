@@ -4,6 +4,8 @@ package org.opendatamesh.platform.pp.registry.services;
 import java.util.List;
 import java.util.Optional;
 
+import org.opendatamesh.notification.EventResource;
+import org.opendatamesh.notification.EventType;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataProductVersion;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.Port;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.ReferenceObject;
@@ -16,6 +18,8 @@ import org.opendatamesh.platform.pp.registry.exceptions.InternalServerException;
 import org.opendatamesh.platform.pp.registry.exceptions.NotFoundException;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.exceptions.UnprocessableEntityException;
+import org.opendatamesh.platform.pp.registry.resources.v1.observers.EventNotifier;
+import org.opendatamesh.platform.pp.registry.resources.v1.observers.metaservice.MetaServiceObserver;
 import org.opendatamesh.platform.pp.registry.resources.v1.policyservice.PolicyName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,16 +45,14 @@ public class DataProductVersionService {
     ObjectMapper objectMapper;
 
     @Autowired
-    private MetaServiceProxy metaServiceProxy;
-    
+    EventNotifier eventNotifier;
+
     @Autowired
     private PolicyServiceProxy policyServiceProxy;
 
     private static final Logger logger = LoggerFactory.getLogger(DataProductVersionService.class);
 
-    public DataProductVersionService() {
-
-    }
+    public DataProductVersionService() { }
 
     // ======================================================================================
     // CREATE
@@ -96,6 +98,20 @@ public class DataProductVersionService {
                 OpenDataMeshAPIStandardError.SC500_01_DATABASE_ERROR,
                 "An error occured in the backend database while saving version [" + dataProductVersion.getInfo().getVersionNumber() + "] of data product [" + dataProductVersion.getDataProduct().getId() + "]",
                 t);
+        }
+
+        try {
+            EventResource eventResource = new EventResource(
+                    EventType.DATA_PRODUCT_VERSION_CREATED,
+                    dataProductVersion.getDataProductId(),
+                    dataProductVersion.toString(),
+                    null
+            );
+            eventNotifier.notifyEvent(eventResource);
+        } catch (Throwable t) {
+            throw new BadGatewayException(
+                    OpenDataMeshAPIStandardError.SC502_05_META_SERVICE_ERROR,
+                    "Impossible to upload data product version to metaService", t);
         }
        
         return dataProductVersion;
@@ -317,8 +333,22 @@ public class DataProductVersionService {
                 "An error occured in the backend database while deleting data product version",
                 t);
         }
-       
-        metaServiceProxy.deleteDataProductVersion(dataProductVersion);
+
+        try {
+            //metaServiceProxy.uploadDataProductVersion(dataProductVersion);
+            EventResource eventResource = new EventResource(
+                    EventType.DATA_PRODUCT_VERSION_DELETED,
+                    dataProductVersion.getDataProductId(),
+                    dataProductVersion.toString(),
+                    null
+            );
+            eventNotifier.notifyEvent(eventResource);
+        } catch (Throwable t) {
+            throw new BadGatewayException(
+                    OpenDataMeshAPIStandardError.SC502_05_META_SERVICE_ERROR,
+                    "Impossible to upload data product version to metaService", t);
+        }
+
     }
 
    

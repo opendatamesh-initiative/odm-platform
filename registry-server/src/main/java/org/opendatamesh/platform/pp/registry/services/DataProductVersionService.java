@@ -4,6 +4,8 @@ package org.opendatamesh.platform.pp.registry.services;
 import java.util.List;
 import java.util.Optional;
 
+import org.opendatamesh.notification.EventResource;
+import org.opendatamesh.notification.EventType;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataProductVersion;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.Port;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.ReferenceObject;
@@ -16,6 +18,8 @@ import org.opendatamesh.platform.pp.registry.exceptions.InternalServerException;
 import org.opendatamesh.platform.pp.registry.exceptions.NotFoundException;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.exceptions.UnprocessableEntityException;
+import org.opendatamesh.platform.pp.registry.resources.v1.observers.EventNotifier;
+import org.opendatamesh.platform.pp.registry.resources.v1.observers.metaservice.MetaServiceObserver;
 import org.opendatamesh.platform.pp.registry.resources.v1.policyservice.PolicyName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +45,10 @@ public class DataProductVersionService {
     ObjectMapper objectMapper;
 
     @Autowired
-    private MetaServiceProxy metaServiceProxy;
+    private EventNotifier eventNotifier;
+
+    @Autowired
+    private MetaServiceObserver metaServiceObserver;
     
     @Autowired
     private PolicyServiceProxy policyServiceProxy;
@@ -49,7 +56,7 @@ public class DataProductVersionService {
     private static final Logger logger = LoggerFactory.getLogger(DataProductVersionService.class);
 
     public DataProductVersionService() {
-
+        eventNotifier.addObserver(metaServiceObserver);
     }
 
     // ======================================================================================
@@ -317,8 +324,13 @@ public class DataProductVersionService {
                 "An error occured in the backend database while deleting data product version",
                 t);
         }
-       
-        metaServiceProxy.deleteDataProductVersion(dataProductVersion);
+        EventResource eventResource = new EventResource(
+                EventType.DATA_PRODUCT_VERSION_DELETED,
+                dataProductVersion.getDataProductId(),
+                null,
+                dataProductVersion.toString()
+        );
+        eventNotifier.notifyEvent(eventResource);
     }
 
    

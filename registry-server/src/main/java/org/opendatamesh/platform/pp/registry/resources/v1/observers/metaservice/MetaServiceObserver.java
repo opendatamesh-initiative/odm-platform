@@ -1,15 +1,19 @@
 package org.opendatamesh.platform.pp.registry.resources.v1.observers.metaservice;
 
 import lombok.Data;
+import org.opendatamesh.notification.EventResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.observers.Observer;
+import org.opendatamesh.platform.pp.registry.services.MetaServiceProxy;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Data
 public class MetaServiceObserver implements Observer {
 
-    private String prop;
+    @Autowired
+    private MetaServiceProxy metaServiceProxy;
 
     @Override
-    public void update(Object o) {
-        this.setProp((String) o);
+    public void notify(EventResource event) {
+        metaServiceProxy.postEventToMetaService(event);
     }
 }

@@ -1,11 +1,14 @@
 package org.opendatamesh.platform.pp.registry.resources.v1.observers;
 
+import org.opendatamesh.notification.EventResource;
+import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class ObserverRegistry {
-
-    private String prop;
+@Service
+public class EventNotifier {
+    private EventResource event;
     private List<Observer> observers = new ArrayList<>();
 
     public void addObserver(Observer observer) {
@@ -16,10 +19,10 @@ public class ObserverRegistry {
         this.observers.remove(observer);
     }
 
-    public void setProp(String prop) {
-        this.prop = prop;
+    public void notifyEvent(EventResource event) {
+        this.event = event;
         for (Observer observer : this.observers) {
-            observer.update(this.prop);
+            observer.notify(this.event);
         }
     }
 

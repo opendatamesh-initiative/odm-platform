@@ -123,7 +123,7 @@ public class DataProductService {
         try {
             EventResource eventResource = new EventResource(
                     EventType.DATA_PRODUCT_CREATED,
-                    dataProduct.getId(),
+                    uuid,
                     null,
                     dataProduct.toString()
             );

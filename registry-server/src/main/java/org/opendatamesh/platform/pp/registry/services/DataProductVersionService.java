@@ -104,7 +104,7 @@ public class DataProductVersionService {
             EventResource eventResource = new EventResource(
                     EventType.DATA_PRODUCT_VERSION_CREATED,
                     dataProductVersion.getDataProductId(),
-                    dataProductVersion.toString(),
+                    dataProductVersion.toEventString(),
                     null
             );
             eventNotifier.notifyEvent(eventResource);
@@ -339,7 +339,7 @@ public class DataProductVersionService {
             EventResource eventResource = new EventResource(
                     EventType.DATA_PRODUCT_VERSION_DELETED,
                     dataProductVersion.getDataProductId(),
-                    dataProductVersion.toString(),
+                    dataProductVersion.toEventString(),
                     null
             );
             eventNotifier.notifyEvent(eventResource);

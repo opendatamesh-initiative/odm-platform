@@ -7,6 +7,8 @@ import java.util.List;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -98,4 +100,10 @@ public class DataProductVersion implements Cloneable, Serializable {
     public DataProductVersion clone() throws CloneNotSupportedException {
         return (DataProductVersion) super.clone();
     }
+
+    public String toEventString() throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.writeValueAsString(this);
+    }
+
 }

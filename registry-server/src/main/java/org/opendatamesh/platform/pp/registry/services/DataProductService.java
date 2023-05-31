@@ -125,7 +125,7 @@ public class DataProductService {
                     EventType.DATA_PRODUCT_CREATED,
                     dataProduct.getId(),
                     null,
-                    dataProduct.toString()
+                    dataProduct.toEventString()
             );
             eventNotifier.notifyEvent(eventResource);
         } catch (Throwable t) {
@@ -333,8 +333,8 @@ public class DataProductService {
             EventResource eventResource = new EventResource(
                     EventType.DATA_PRODUCT_UPDATED,
                     dataProduct.getId(),
-                    oldDataProduct.toString(),
-                    dataProduct.toString()
+                    oldDataProduct.toEventString(),
+                    dataProduct.toEventString()
             );
             eventNotifier.notifyEvent(eventResource);
         } catch (Throwable t) {
@@ -367,7 +367,7 @@ public class DataProductService {
             EventResource eventResource = new EventResource(
                     EventType.DATA_PRODUCT_DELETED,
                     dataProduct.getId(),
-                    dataProduct.toString(),
+                    dataProduct.toEventString(),
                     null
             );
             eventNotifier.notifyEvent(eventResource);
@@ -499,7 +499,7 @@ public class DataProductService {
                     EventType.DATA_PRODUCT_VERSION_CREATED,
                     dataProductVersion.getDataProductId(),
                     null,
-                    dataProductVersion.toString()
+                    dataProductVersion.toEventString()
             );
             eventNotifier.notifyEvent(eventResource);
         } catch (Throwable t) {

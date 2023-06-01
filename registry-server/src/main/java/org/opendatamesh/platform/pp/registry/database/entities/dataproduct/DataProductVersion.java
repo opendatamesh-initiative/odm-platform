@@ -1,18 +1,14 @@
 package org.opendatamesh.platform.pp.registry.database.entities.dataproduct;
 
+import lombok.Data;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import javax.persistence.*;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-
-import lombok.Data;
 
 
 @Data
@@ -99,11 +95,6 @@ public class DataProductVersion implements Cloneable, Serializable {
 
     public DataProductVersion clone() throws CloneNotSupportedException {
         return (DataProductVersion) super.clone();
-    }
-
-    public String toEventString() throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.writeValueAsString(this);
     }
 
 }

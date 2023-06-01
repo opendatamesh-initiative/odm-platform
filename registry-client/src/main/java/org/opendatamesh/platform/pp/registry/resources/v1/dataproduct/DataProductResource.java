@@ -2,6 +2,8 @@ package org.opendatamesh.platform.pp.registry.resources.v1.dataproduct;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 
 @Data
@@ -19,4 +21,9 @@ public class DataProductResource {
 
     @JsonProperty("domain")
     private String domain;
+
+    public String toEventString() throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.writeValueAsString(this);
+    }
 }

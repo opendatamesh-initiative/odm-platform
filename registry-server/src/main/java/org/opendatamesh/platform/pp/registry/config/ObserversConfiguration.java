@@ -28,7 +28,7 @@ public class ObserversConfiguration {
         EventNotifier eventNotifier = new EventNotifier();
 
         // Add observers
-        if(skipmetaservice.equals(true)) {
+        if(skipmetaservice.equals("true")) {
             logger.debug("Skipping meta service");
         } else {
             eventNotifier.addObserver(metaServiceObserver);

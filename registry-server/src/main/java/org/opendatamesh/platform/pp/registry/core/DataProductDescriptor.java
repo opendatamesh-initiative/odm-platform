@@ -312,10 +312,6 @@ public class DataProductDescriptor {
         }
     }
 
-    
-
-
-
     private String fetchURI(URI uri) throws IOException {
 
         String content = "";

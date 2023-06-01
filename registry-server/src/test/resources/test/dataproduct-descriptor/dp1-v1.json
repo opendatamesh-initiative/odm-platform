@@ -56,6 +56,8 @@
           },
           "deprecationPolicy": {
             "description": "deprecationPolicy for input port 1",
+            "x-dp-prop-1": "custom-prop1-value",
+            "x-dp-prop-2": "custom-prop2-value",
             "externalDocs": {
               "description": "external doc description for deprecationPolicy of input port 1",
               "mediaType": "text/html",

@@ -1,12 +1,12 @@
 package org.opendatamesh.platform.pp.registry.database.entities.dataproduct;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.UUID;
-
-import javax.persistence.*;
 
 
 @Data
@@ -57,10 +57,5 @@ public class DataProduct {
         this.id = id;
         this.fullyQualifiedName = fullyQualifiedName;
         this.domain = domain;
-    }
-
-    public String toEventString() throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.writeValueAsString(this);
     }
 }

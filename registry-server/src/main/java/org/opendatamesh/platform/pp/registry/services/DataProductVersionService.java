@@ -18,6 +18,7 @@ import org.opendatamesh.platform.pp.registry.exceptions.InternalServerException;
 import org.opendatamesh.platform.pp.registry.exceptions.NotFoundException;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.exceptions.UnprocessableEntityException;
+import org.opendatamesh.platform.pp.registry.resources.v1.mappers.DataProductMapper;
 import org.opendatamesh.platform.pp.registry.resources.v1.observers.EventNotifier;
 import org.opendatamesh.platform.pp.registry.resources.v1.observers.metaservice.MetaServiceObserver;
 import org.opendatamesh.platform.pp.registry.resources.v1.policyservice.PolicyName;
@@ -43,6 +44,9 @@ public class DataProductVersionService {
 
     @Autowired
     ObjectMapper objectMapper;
+
+    @Autowired
+    private DataProductMapper dataProductMapper;
 
     @Autowired
     EventNotifier eventNotifier;
@@ -104,8 +108,8 @@ public class DataProductVersionService {
             EventResource eventResource = new EventResource(
                     EventType.DATA_PRODUCT_VERSION_CREATED,
                     dataProductVersion.getDataProductId(),
-                    dataProductVersion.toEventString(),
-                    null
+                    null,
+                    dataProductMapper.toResource(dataProductVersion).toEventString()
             );
             eventNotifier.notifyEvent(eventResource);
         } catch (Throwable t) {
@@ -339,7 +343,7 @@ public class DataProductVersionService {
             EventResource eventResource = new EventResource(
                     EventType.DATA_PRODUCT_VERSION_DELETED,
                     dataProductVersion.getDataProductId(),
-                    dataProductVersion.toEventString(),
+                    dataProductMapper.toResource(dataProductVersion).toEventString(),
                     null
             );
             eventNotifier.notifyEvent(eventResource);

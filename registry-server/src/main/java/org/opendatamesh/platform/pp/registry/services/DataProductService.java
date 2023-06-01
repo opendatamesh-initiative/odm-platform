@@ -1,34 +1,20 @@
 package org.opendatamesh.platform.pp.registry.services;
 
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-
-import javax.persistence.criteria.Predicate;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.networknt.schema.ValidationMessage;
 import org.opendatamesh.notification.EventResource;
 import org.opendatamesh.notification.EventType;
 import org.opendatamesh.platform.pp.registry.core.DataProductDescriptor;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataProduct;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataProductVersion;
 import org.opendatamesh.platform.pp.registry.database.repositories.DataProductRepository;
-import org.opendatamesh.platform.pp.registry.exceptions.BadGatewayException;
-import org.opendatamesh.platform.pp.registry.exceptions.BadRequestException;
-import org.opendatamesh.platform.pp.registry.exceptions.InternalServerException;
-import org.opendatamesh.platform.pp.registry.exceptions.NotFoundException;
-import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
-import org.opendatamesh.platform.pp.registry.exceptions.UnprocessableEntityException;
+import org.opendatamesh.platform.pp.registry.exceptions.*;
 import org.opendatamesh.platform.pp.registry.exceptions.core.ParseException;
 import org.opendatamesh.platform.pp.registry.exceptions.core.UnresolvableReferenceException;
 import org.opendatamesh.platform.pp.registry.resources.v1.mappers.DataProductMapper;
 import org.opendatamesh.platform.pp.registry.resources.v1.observers.EventNotifier;
-import org.opendatamesh.platform.pp.registry.resources.v1.observers.metaservice.MetaServiceObserver;
-import org.opendatamesh.platform.pp.registry.resources.v1.policyservice.PolicyName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,9 +22,10 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.networknt.schema.ValidationMessage;
+import javax.persistence.criteria.Predicate;
+import java.io.IOException;
+import java.net.URI;
+import java.util.*;
 
 @Service
 public class DataProductService {
@@ -125,7 +112,7 @@ public class DataProductService {
                     EventType.DATA_PRODUCT_CREATED,
                     dataProduct.getId(),
                     null,
-                    dataProduct.toString()
+                    dataProductMapper.toResource(dataProduct).toEventString()
             );
             eventNotifier.notifyEvent(eventResource);
         } catch (Throwable t) {
@@ -333,8 +320,8 @@ public class DataProductService {
             EventResource eventResource = new EventResource(
                     EventType.DATA_PRODUCT_UPDATED,
                     dataProduct.getId(),
-                    oldDataProduct.toString(),
-                    dataProduct.toString()
+                    dataProductMapper.toResource(oldDataProduct).toEventString(),
+                    dataProductMapper.toResource(dataProduct).toEventString()
             );
             eventNotifier.notifyEvent(eventResource);
         } catch (Throwable t) {
@@ -367,7 +354,7 @@ public class DataProductService {
             EventResource eventResource = new EventResource(
                     EventType.DATA_PRODUCT_DELETED,
                     dataProduct.getId(),
-                    dataProduct.toString(),
+                    dataProductMapper.toResource(dataProduct).toEventString(),
                     null
             );
             eventNotifier.notifyEvent(eventResource);
@@ -493,20 +480,6 @@ public class DataProductService {
         }
 
         dataProductVersion = dataProductVersionService.createDataProductVersion(dataProductVersion, false);
-      
-        try {
-            EventResource eventResource = new EventResource(
-                    EventType.DATA_PRODUCT_VERSION_CREATED,
-                    dataProductVersion.getDataProductId(),
-                    null,
-                    dataProductVersion.toString()
-            );
-            eventNotifier.notifyEvent(eventResource);
-        } catch (Throwable t) {
-            throw new BadGatewayException(
-                OpenDataMeshAPIStandardError.SC502_05_META_SERVICE_ERROR,
-                "Impossible to upload data product version to metaService", t);
-        }
 
         return dataProductVersion;
     }

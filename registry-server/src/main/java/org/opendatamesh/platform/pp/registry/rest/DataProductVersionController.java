@@ -161,7 +161,7 @@ public class DataProductVersionController
         if(!StringUtils.hasText(descriptorContent)) {
             throw new BadRequestException(
                 OpenDataMeshAPIStandardError.SC400_01_DESCRIPTOR_IS_EMPTY,
-                "Input descriptor document cannot be emty");
+                "Input descriptor document cannot be empty");
         }
         String serverUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
         DataProductVersion dataProductVersion = dataProductService.addDataProductVersion(descriptorContent, false, serverUrl);

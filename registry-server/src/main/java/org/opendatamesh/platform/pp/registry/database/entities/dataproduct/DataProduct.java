@@ -2,9 +2,11 @@ package org.opendatamesh.platform.pp.registry.database.entities.dataproduct;
 
 import lombok.Data;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.UUID;
-
-import javax.persistence.*;
 
 
 @Data

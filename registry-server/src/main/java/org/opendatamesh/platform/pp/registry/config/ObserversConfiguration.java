@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 public class ObserversConfiguration {
 
     @Value("${skipmetaservice}")
-    private String skipmetaservice;
+    private Boolean skipmetaservice;
 
     @Autowired
     MetaServiceObserver metaServiceObserver;

@@ -7,12 +7,21 @@ import com.networknt.schema.ValidationMessage;
 import org.opendatamesh.notification.EventResource;
 import org.opendatamesh.notification.EventType;
 import org.opendatamesh.platform.pp.registry.core.DataProductDescriptor;
+import org.opendatamesh.platform.pp.registry.core.DataProductDescriptorBuilder;
+import org.opendatamesh.platform.pp.registry.core.DataProductDescriptorSource;
+import org.opendatamesh.platform.pp.registry.core.exceptions.BuildException;
+import org.opendatamesh.platform.pp.registry.core.exceptions.FetchException;
+import org.opendatamesh.platform.pp.registry.core.exceptions.ParseException;
+import org.opendatamesh.platform.pp.registry.core.exceptions.UnresolvableReferenceException;
+import org.opendatamesh.platform.pp.registry.core.exceptions.ValidationException;
+import org.opendatamesh.platform.pp.registry.core.resolvers.StandardDefinitionsResolver;
+import org.opendatamesh.platform.pp.registry.core.resolvers.ExternalReferencesResolver;
+import org.opendatamesh.platform.pp.registry.core.resolvers.InternalReferencesResolver;
+import org.opendatamesh.platform.pp.registry.core.resolvers.ReadOnlyPropertiesResolver;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataProduct;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataProductVersion;
 import org.opendatamesh.platform.pp.registry.database.repositories.DataProductRepository;
 import org.opendatamesh.platform.pp.registry.exceptions.*;
-import org.opendatamesh.platform.pp.registry.exceptions.core.ParseException;
-import org.opendatamesh.platform.pp.registry.exceptions.core.UnresolvableReferenceException;
 import org.opendatamesh.platform.pp.registry.resources.v1.mappers.DataProductMapper;
 import org.opendatamesh.platform.pp.registry.resources.v1.observers.EventNotifier;
 import org.slf4j.Logger;
@@ -485,132 +494,123 @@ public class DataProductService {
     }
 
     private DataProductVersion descriptorToDataProductVersion(String descriptorContent, String serverUrl) {
-        DataProductDescriptor descriptor = new DataProductDescriptor(descriptorContent);
-        return descriptorToDataProductVersion(descriptor, serverUrl);
+       
+        DataProductDescriptorSource descriptorSource = new DataProductDescriptorSource(descriptorContent);
+        return descriptorToDataProductVersion(descriptorSource, serverUrl);
     }
 
     private DataProductVersion descriptorToDataProductVersion(URI descriptorUri, String serverUrl) {
-        DataProductDescriptor descriptor = new DataProductDescriptor(descriptorUri);
-        descriptor.setObjectMapper(objectMapper);
-       
-        try {
-            descriptor.loadContent();
-        } catch (IOException e) {
-            throw new UnprocessableEntityException(
-                OpenDataMeshAPIStandardError.SC422_01_DESCRIPTOR_URI_IS_INVALID,
-                "Provided URI cannot be fatched [" + descriptorUri + "]", e);
-        }
-        return descriptorToDataProductVersion(descriptor, serverUrl);
+        DataProductDescriptorSource descriptorSource = new DataProductDescriptorSource(descriptorUri);
+        return descriptorToDataProductVersion(descriptorSource, serverUrl);        
     }
 
-    private DataProductVersion descriptorToDataProductVersion(DataProductDescriptor descriptor, String serverUrl) {
+    private DataProductVersion descriptorToDataProductVersion(DataProductDescriptorSource descriptorSource, String serverUrl) {
         DataProductVersion dataProductVersion = null;
-       
-        descriptor.setObjectMapper(objectMapper);
-        descriptor.setTargetURL(serverUrl);
-        
-        resolveAllReferencesAndValidate(descriptor);
 
-        try{
-            descriptor.addReadOnlyProperties();
-        } catch(Throwable t) {
-            throw new InternalServerException(
-                OpenDataMeshAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
-                "An error occured in the backend descriptor processor while adding read only properties");
-        }
+        DataProductDescriptorBuilder descriptorBuilder = 
+            new DataProductDescriptorBuilder(descriptorSource, objectMapper, serverUrl);
        
-        try{
-            descriptor.resolveStandardDefinitionObjects();
-        } catch(Throwable t) {
-            throw new InternalServerException(
-                OpenDataMeshAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
-                "An error occured in the backend descriptor processor while resolving standard definitions");
+        DataProductDescriptor descriptor = null;
+        try {
+            descriptor = descriptorBuilder.build(true);
+        } catch (BuildException e) {
+            handleBuildException(e);
         }
-       
+     
         dataProductVersion = dataProductMapper.toEntity(descriptor.getParsedContent());
         dataProductVersion.setDataProductId(dataProductVersion.getInfo().getDataProductId());
         dataProductVersion.setVersionNumber(dataProductVersion.getInfo().getVersionNumber());
         return dataProductVersion;
     }
 
-    private void resolveAllReferencesAndValidate(DataProductDescriptor descriptor) {
-       
-        Set<ValidationMessage> errors;
+    private void handleBuildException(BuildException e) {
+        switch(e.getStage()) {
+            case LOAD_ROOT_DOC:
+                handleLoadRootDocException(e);
+                break;
+            case RESOLVE_EXTERNAL_REFERENCES:
+                handleResolveExternalResourceException(e);
+                break;
+            case RESOLVE_INTERNAL_REFERENCES:
+                handleResolveInternalResourceException(e);
+                break;
+            case RESOLVE_READ_ONLY_PROPERTIES:
+                throw new InternalServerException(
+                    OpenDataMeshAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
+            "An error occured in the backend descriptor processor while adding read only properties");
+            case RESOLVE_STANDARD_DEFINITIONS:
+                throw new InternalServerException(
+                    OpenDataMeshAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
+            "An error occured in the backend descriptor processor while resolving standard definitions");
+            default:
+              throw new InternalServerException(
+                    OpenDataMeshAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
+                    "An error occured in the backend descriptor processor while adding read only properties");
+          }
+    }
 
-        try {
-            errors = descriptor.validateSchema();
-        } catch (JsonProcessingException e) {
+    private void handleLoadRootDocException(BuildException e) {
+
+        if(e.getCause() instanceof FetchException) {
+            throw new UnprocessableEntityException(
+                OpenDataMeshAPIStandardError.SC422_01_DESCRIPTOR_URI_IS_INVALID,
+                "Provided URI cannot be fatched [" + ((FetchException)e.getCause()).getUri() + "]", e);
+        } else if(e.getCause() instanceof ParseException) {
             throw new UnprocessableEntityException(
                 OpenDataMeshAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
-                "Descriptor document it's not a valid JSON document", e);
-        }
-        if (!errors.isEmpty()) {
+                "Descriptor document it's not a valid JSON document", e);    
+        } else if(e.getCause() instanceof ValidationException) {
             throw new UnprocessableEntityException(
                 OpenDataMeshAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
-                "Descriptor document does not comply with DPDS. The following validation errors has been found during validation [" + errors.toString() + "]");
-        }
+                "Descriptor document does not comply with DPDS. The following validation errors has been found during validation [" + ((ValidationException)e.getCause()).getErrors().toString() + "]");    
+        } else {
+            throw new InternalServerException(
+                OpenDataMeshAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
+                "An unexpected exception occured while loading root document");
+        }  
+    }
 
-        try {
-            descriptor.resolveExternalReferences();
-        } catch (UnresolvableReferenceException e) {
+    private void handleResolveExternalResourceException(BuildException e) {
+
+        if(e.getCause() instanceof UnresolvableReferenceException) {
             throw new UnprocessableEntityException(
                 OpenDataMeshAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
                 "Descriptor document contains unresolvable external references: " + e.getMessage());
-        } catch (ParseException e) {
-            // if this exception occurs there is a bug. We have already validated the doc without exception
-            // So we cannot have a parsing exception here.
-            e.printStackTrace();
-            throw new InternalServerException(
-                OpenDataMeshAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
-                "An unexpected parsing exception occured while resolving external references");
-        }
-       
-        try {
-            errors = descriptor.validateSchema();
-        } catch (JsonProcessingException e) {
+        } else if(e.getCause() instanceof ParseException) {
             throw new UnprocessableEntityException(
                 OpenDataMeshAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
                 "Descriptor document referentiates external resources that are not valid JSON documents", e);
-        }
-        if (!errors.isEmpty()) {
+        } else if(e.getCause() instanceof ValidationException) {
             throw new UnprocessableEntityException(
                 OpenDataMeshAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
-                "Descriptor document does not comply with DPDS. The following validation errors has been found during validation of external references [" + errors.toString() + "]");
-        }
+                "Descriptor document does not comply with DPDS. The following validation errors has been found during validation of external references [" + ((ValidationException)e.getCause()).getErrors().toString() + "]");
+        } else {
+            throw new InternalServerException(
+                OpenDataMeshAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
+                "An unexpected exception occured while resolving external references");
+        }  
+    }
 
-        try {
-            descriptor.resolveInternalReferences();
-        } catch (UnresolvableReferenceException e) {
+    private void handleResolveInternalResourceException(BuildException e) {
+
+        if(e.getCause() instanceof UnresolvableReferenceException) {
             throw new UnprocessableEntityException(
                 OpenDataMeshAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
                 "Descriptor document contains unresolvable internal references");
-        } catch (ParseException e) {
-            // if this exception occurs there is a bug. We have already validated the doc without exception
-            // So we cannot have a parsing exception here.
-            throw new InternalServerException(
-                OpenDataMeshAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
-                "An unexpected parsing exception occurred while resolving internal references");
-        }
-        
-        try {
-            errors = descriptor.validateSchema();
-        } catch (JsonProcessingException e) {
+        } else if(e.getCause() instanceof ParseException) {
             throw new UnprocessableEntityException(
                 OpenDataMeshAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
                 "Descriptor document that referentiates internal resources that are not valid JSON documents", e);
-        }
-        if (!errors.isEmpty()) {
+        } else if(e.getCause() instanceof ValidationException) {
             throw new UnprocessableEntityException(
                 OpenDataMeshAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
-                "Descriptor document does not comply with DPDS. The following validation errors has been found during internal reference validation [" + errors.toString() + "]");
-        }
-
-        try {
-            descriptor.parseContent();
-        } catch (ParseException e) {
+                "Descriptor document does not comply with DPDS. The following validation errors has been found during internal reference validation [" + ((ValidationException)e.getCause()).getErrors().toString() + "]");
+        } else {
             throw new InternalServerException(
                 OpenDataMeshAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
-                "An unexpected parsing exception occured while finalize references resolution");
-        }
+                "An unexpected exception occured while resolving internal references");
+        }  
     }
+
+   
 }

@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.pp.registry.exceptions.core;
+package org.opendatamesh.platform.pp.registry.core.exceptions;
 
 public class ParseException extends Exception{
     

@@ -10,6 +10,7 @@ import java.util.UUID;
 import org.opendatamesh.platform.pp.registry.core.DataProductDescriptor;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Definition;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DataProductResource;
+import org.opendatamesh.platform.pp.registry.resources.v1.shared.DataProductSourceRes;
 import org.opendatamesh.platform.pp.registry.resources.v1.shared.DefinitionResource;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
@@ -238,6 +239,21 @@ public class OpenDataMeshITRestTemplate extends TestRestTemplate {
                 HttpMethod.DELETE, null,
                 String.class,
                 dataProductId, dataProductVersionNumber);
+    }
+
+    public ResponseEntity<String> uploadDataProductVersion(
+            String uri) throws IOException {
+              
+        DataProductSourceRes dataProductSourceRes = new DataProductSourceRes();
+        dataProductSourceRes.setUri(uri);
+        HttpEntity<String> entity = getObjectAsHttpEntity(dataProductSourceRes);
+
+        ResponseEntity<String> postUploadResponse = postForEntity(
+                apiUrl(RoutesV1.DATA_PRODUCTS_UPLOADS),
+                entity,
+                String.class);
+
+        return postUploadResponse;
     }
 
     // ----------------------------------------

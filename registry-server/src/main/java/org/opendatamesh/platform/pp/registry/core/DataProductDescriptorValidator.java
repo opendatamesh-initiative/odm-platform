@@ -4,6 +4,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Set;
 
+import org.opendatamesh.platform.pp.registry.core.exceptions.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -42,13 +43,18 @@ public class DataProductDescriptorValidator {
         }
     }
 
-    public Set<ValidationMessage> validateSchema(JsonNode descriptor) {
-        Set<ValidationMessage> errors = dpdsSchema.validate(descriptor);   
+    public Set<ValidationMessage> validateSchema(JsonNode jsonNode) {
+        Set<ValidationMessage> errors = dpdsSchema.validate(jsonNode);   
         return errors;
     }
 
-    public Set<ValidationMessage> validateSchema(String descriptor) throws JsonProcessingException {
-        JsonNode jsonNode = objectMapper.readTree(descriptor);
+    public Set<ValidationMessage> validateSchema(String rawContent) throws ParseException {
+        JsonNode jsonNode;
+        try {
+            jsonNode = objectMapper.readTree(rawContent);
+        } catch (Throwable t) {
+            throw new ParseException("Descriptor document it's not a valid JSON document", t);
+        } 
         return validateSchema(jsonNode);
     }
 }

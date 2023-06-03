@@ -8,13 +8,13 @@ import javax.validation.Valid;
 
 import org.opendatamesh.platform.pp.registry.core.DataProductDescriptor;
 import org.opendatamesh.platform.pp.registry.core.DataProductDescriptorValidator;
+import org.opendatamesh.platform.pp.registry.core.exceptions.ParseException;
+import org.opendatamesh.platform.pp.registry.core.exceptions.UnresolvableReferenceException;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataProductVersion;
 import org.opendatamesh.platform.pp.registry.exceptions.BadRequestException;
 import org.opendatamesh.platform.pp.registry.exceptions.InternalServerException;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.exceptions.UnprocessableEntityException;
-import org.opendatamesh.platform.pp.registry.exceptions.core.ParseException;
-import org.opendatamesh.platform.pp.registry.exceptions.core.UnresolvableReferenceException;
 import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DataProductVersionResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.EntityType;

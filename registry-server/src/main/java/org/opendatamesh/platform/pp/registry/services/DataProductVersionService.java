@@ -92,7 +92,7 @@ public class DataProductVersionService {
         } catch (Throwable t) {
             throw new InternalServerException(
                 OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
-                    "An internal processing error occured while saving API");
+                    "An internal processing error occured while saving API", t);
         }
 
         try {
@@ -144,15 +144,18 @@ public class DataProductVersionService {
     }
 
     private Definition saveApiDefinition(Port port) throws JsonMappingException, JsonProcessingException {
-        StandardDefinition standardDefinition = port.getPromises().getApi();
+        
+        if(port.getPromises() == null) return null;
+        if(port.getPromises().getApi() == null) return null;
+        
         StandardDefinition api = port.getPromises().getApi();
         Definition apiDefinition = null;
             
         // Api is created first to obtain the id used after for replacing api definition content with a reference url
         try {
-            if(StringUtils.hasText(standardDefinition.getName()) 
-                && StringUtils.hasText(standardDefinition.getVersion())) {
-                    apiDefinition = definitionService.searchDefinition(standardDefinition.getName(), standardDefinition.getVersion());
+            if(StringUtils.hasText(api.getName()) 
+                && StringUtils.hasText(api.getVersion())) {
+                    apiDefinition = definitionService.searchDefinition(api.getName(), api.getVersion());
             
             }
             if(apiDefinition == null) {
@@ -167,9 +170,9 @@ public class DataProductVersionService {
         }
             
         // Once we have the api id we replace the definition content with a reference url
-        String ref = standardDefinition.getDefinition().getRef();
+        String ref = api.getDefinition().getRef();
         ref = ref.replaceAll("\\{apiId\\}", "" + apiDefinition.getId());
-        standardDefinition.getDefinition().setRef(ref);
+        api.getDefinition().setRef(ref);
              
         ObjectNode portObject = (ObjectNode)objectMapper.readTree(port.getRawContent());
         ObjectNode standardDefinitionContent = (ObjectNode)portObject.at("/promises/api/definition");

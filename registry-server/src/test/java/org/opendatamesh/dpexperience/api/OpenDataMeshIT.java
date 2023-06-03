@@ -47,6 +47,8 @@ public abstract class OpenDataMeshIT {
     protected final String RESOURCE_DEF1_NONAME = "src/test/resources/test/definition/def1-missing-name.json";
     protected final String RESOURCE_DEF1_NONAME_NOVERSION = "src/test/resources/test/definition/def2-missing-name-version.json";
 
+    protected final String RESOURCE_DPS_URI = "https://raw.githubusercontent.com/opendatamesh-initiative/odm-specification-dpdescriptor/main/examples/tripexecution/data-product-descriptor.json";
+        
     @Autowired
     protected ObjectMapper mapper;
 
@@ -111,6 +113,14 @@ public abstract class OpenDataMeshIT {
         return postProductVersionResponse.getBody();
     }
 
+    protected String uploadDataProductVersion() throws IOException {
+        ResponseEntity<String> uploadProductVersionResponse = rest.uploadDataProductVersion(
+            RESOURCE_DPS_URI);
+        verifyResponseEntity(uploadProductVersionResponse, HttpStatus.CREATED, true);
+
+        return uploadProductVersionResponse.getBody();
+    }
+
     protected Definition createDataProduct1Version1Api1() throws IOException {
         ResponseEntity<Definition> postProductVersionApiResponse = rest.createDefinition(
                 RESOURCE_DP1_V1);
@@ -118,6 +128,8 @@ public abstract class OpenDataMeshIT {
 
         return postProductVersionApiResponse.getBody();
     }
+
+    
 
     protected Definition createDefinition1() throws IOException {
         ResponseEntity<Definition> postDefinition = rest.createDefinition(

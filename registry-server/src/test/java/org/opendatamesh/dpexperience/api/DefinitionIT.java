@@ -160,8 +160,6 @@ public class DefinitionIT extends OpenDataMeshIT {
         DefinitionResource[] definitionResources = getDefinitionResponse.getBody();
         verifyResponseEntity(getDefinitionResponse, HttpStatus.OK, true);
 
-        System.out.println(definitionResources[0]);
-
         assertThat(getDefinitionResponse.getBody().length).isEqualTo(2);
         assertThat(definitionResources[0].getContent()).isEqualTo("Content of test definition");
         assertThat(definitionResources[1].getContent()).isEqualTo("Content of test definition 2");

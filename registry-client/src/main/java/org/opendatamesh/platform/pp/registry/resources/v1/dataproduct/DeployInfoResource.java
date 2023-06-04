@@ -13,31 +13,19 @@ import java.util.Map;
 public class DeployInfoResource {
 
     @JsonProperty("service")
-    private ExternalResourceResource service;
+    private ReferenceObjectResource service;
 
     @JsonProperty("template")
-    private ExternalResourceResource template;
+    private ReferenceObjectResource template;
 
     @JsonProperty("configurations")
     private Map<String, Object> configurations;
 
-    public DeployInfoResource() {
-        service= new ExternalResourceResource();
-        template = new ExternalResourceResource();
-        configurations = new HashMap<>();
-    }
+    public DeployInfoResource() {}
 
-    public DeployInfoResource(ExternalResourceResource service, ExternalResourceResource template, Map<String, Object> configurations) {
+    public DeployInfoResource(ReferenceObjectResource service, ReferenceObjectResource template, Map<String, Object> configurations) {
         this.service = service;
         this.template = template;
         this.configurations = configurations;
-    }
-
-    public ExternalResourceResource getService() {
-        return service;
-    }
-
-    public void setService(ExternalResourceResource service) {
-        this.service = service;
     }
 }

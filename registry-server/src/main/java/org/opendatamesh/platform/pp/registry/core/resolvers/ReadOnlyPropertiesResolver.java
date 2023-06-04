@@ -29,7 +29,7 @@ public class ReadOnlyPropertiesResolver implements PropertiesResolver {
 
         addReadOnlyPropertiesToInfo();
         
-        //addReadOnlyPropertiesToComponents(parsedContent.getInterfaceComponents().getInputPorts(), EntityType.inputport);
+        addReadOnlyPropertiesToComponents(parsedContent.getInterfaceComponents().getInputPorts(), EntityType.inputport);
         addReadOnlyPropertiesToComponents(parsedContent.getInterfaceComponents().getOutputPorts(), EntityType.outputport);
         addReadOnlyPropertiesToComponents(parsedContent.getInterfaceComponents().getDiscoveryPorts(), EntityType.discoveryport);
         addReadOnlyPropertiesToComponents(parsedContent.getInterfaceComponents().getObservabilityPorts(), EntityType.observabilityport);

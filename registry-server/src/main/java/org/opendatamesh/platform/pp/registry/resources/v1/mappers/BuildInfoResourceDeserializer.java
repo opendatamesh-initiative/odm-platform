@@ -36,11 +36,11 @@ public class BuildInfoResourceDeserializer extends StdDeserializer<BuildInfoReso
 
             jp2 = node.get("service").traverse();
             jp2.nextToken();
-            ExternalResourceResource serviceRef = ctxt.readValue(jp2, ExternalResourceResource.class);
+            ReferenceObjectResource serviceRef = ctxt.readValue(jp2, ReferenceObjectResource.class);
 
             jp2 = node.get("template").traverse();
             jp2.nextToken();
-            ExternalResourceResource templateRef = ctxt.readValue(jp2, ExternalResourceResource.class);
+            ReferenceObjectResource templateRef = ctxt.readValue(jp2, ReferenceObjectResource.class);
 
             jp2 = node.get("configurations").traverse();
             jp2.nextToken();

@@ -31,7 +31,7 @@ public class StandardDefinitionsResolver {
             return;
         }
 
-        //resolveStandardDefinitionObjects( parsedContent.getInterfaceComponents().getInputPorts() );
+        resolveStandardDefinitionObjects( parsedContent.getInterfaceComponents().getInputPorts() );
         resolveStandardDefinitionObjects( parsedContent.getInterfaceComponents().getOutputPorts() );
         resolveStandardDefinitionObjects( parsedContent.getInterfaceComponents().getDiscoveryPorts() );
         resolveStandardDefinitionObjects( parsedContent.getInterfaceComponents().getObservabilityPorts() );
@@ -88,7 +88,7 @@ public class StandardDefinitionsResolver {
                 port.getPromises().getApi().getDefinition().setRef(apiDefinitionRef);
                 try {
                     String rawContent = objectMapper.writeValueAsString(portObject);
-                    System.out.println("+ \n" + rawContent);
+                    //System.out.println("+ \n" + rawContent);
                     port.setRawContent(rawContent);
                 } catch (JsonProcessingException e) {
                     throw new ParseException("Impossible serialize descriptor", e);

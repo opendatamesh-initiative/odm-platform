@@ -12,10 +12,10 @@ import java.util.Map;
 public class BuildInfoResource {
 
     @JsonProperty("service")
-    private ExternalResourceResource service;
+    private ReferenceObjectResource service;
 
     @JsonProperty("template")
-    private ExternalResourceResource template;
+    private ReferenceObjectResource template;
 
     @JsonProperty("configurations")
     private Map<String, Object> configurations;
@@ -23,7 +23,7 @@ public class BuildInfoResource {
     public BuildInfoResource() {
         
     }
-    public BuildInfoResource(ExternalResourceResource service, ExternalResourceResource template, Map<String, Object> configurations) {
+    public BuildInfoResource(ReferenceObjectResource service, ReferenceObjectResource template, Map<String, Object> configurations) {
         this.service = service;
         this.template = template;
         this.configurations = configurations;

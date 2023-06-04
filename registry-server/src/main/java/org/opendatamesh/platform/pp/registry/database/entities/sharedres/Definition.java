@@ -55,9 +55,7 @@ public class Definition {
     public Definition() {}
 
     public Definition(String type, StandardDefinition standardDefinition) {
-        this.description = standardDefinition.getDescription();
-
-        if(standardDefinition != null) {
+       if(standardDefinition != null) {
             this.name = standardDefinition.getName();
             this.version = standardDefinition.getVersion();
             this.description = standardDefinition.getDescription();

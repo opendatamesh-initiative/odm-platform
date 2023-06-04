@@ -88,7 +88,6 @@ public class StandardDefinitionsResolver {
                 port.getPromises().getApi().getDefinition().setRef(apiDefinitionRef);
                 try {
                     String rawContent = objectMapper.writeValueAsString(portObject);
-                    //System.out.println("+ \n" + rawContent);
                     port.setRawContent(rawContent);
                 } catch (JsonProcessingException e) {
                     throw new ParseException("Impossible serialize descriptor", e);

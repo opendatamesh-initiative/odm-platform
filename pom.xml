@@ -30,10 +30,10 @@ License.
     </parent>
 
     <groupId>org.opendatamesh</groupId>
-    <artifactId>odm-platform-pp</artifactId>
-    <name>ODM Platform Product Plane</name>
+    <artifactId>odm-platform</artifactId>
+    <name>ODM Platform</name>
    
-    <description>Open Data Mesh Platform's product plane services</description>
+    <description>Open Data Mesh Platform</description>
     <version>1.0.0</version>
     <url>https://github.com/opendatamesh-initiative/odm-platform-pp-services</url>
     <packaging>pom</packaging>
@@ -111,13 +111,17 @@ License.
         <java.version>11</java.version>
         <maven.compiler.target>11</maven.compiler.target>
         <maven.compiler.source>11</maven.compiler.source>
-        <registry.mainclass>org.opendatamesh.platform.pp.registry.OpenDataMeshApp</registry.mainclass>
+        <platform.mainclass>
+            org.opendatamesh.platform.pp.registry.OpenDataMeshApp
+        </platform.mainclass>
     </properties>
 
 
     <modules>
         <module>registry-client</module>
         <module>registry-server</module>
+
+        <module>utility-plane-services</module>
     </modules>
 
 </project>

@@ -1,0 +1,46 @@
+server:
+  port: 8595
+  error:
+    include-message: always
+  servlet:
+    context-path: /api/v1/up/metaservice/
+
+spring:
+  profile: localpostgres
+  jpa:
+    hibernate:
+      ddl-auto: validate
+      show-sql: true
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
+        globally_quoted_identifiers: true
+        default_schema: PUBLIC
+  datasource:
+    url: jdbc:postgresql://localhost:49156/postgres
+    username: postgres
+    password: my-secret-password
+  flyway:
+    enabled: true
+    url: jdbc:postgresql://localhost:49156/postgres
+    user: postgres
+    password: my-secret-password
+    #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
+    schemas: public
+    locations: classpath:db/migration/postgres
+    clean-on-validation-error: true
+
+##########################
+# Other configuration
+##########################
+blindata:
+  url: http://localhost:3000
+  user: "owner"
+  password: "owner123"
+  tenantUUID: "fc8dbadb-83b9-4c4a-baec-fc5a5f91f98b"
+  roleUuid: "777f0307-bf30-4f70-92a4-f0cf3bc3f436"

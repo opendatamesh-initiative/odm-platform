@@ -1,0 +1,25 @@
+##########################
+# Spring profile
+##########################
+spring:
+  profiles:
+    active: dev
+
+##########################
+# Logging configuration
+##########################
+logging:
+  level:
+    org:
+      apache:
+        http: INFO
+    httpclient:
+      wire: INFO
+    opendatamesh.platform.up.metaservice.api.*: DEBUG
+
+##########################
+# Doc configuration
+##########################
+springdoc:
+  swagger-ui:
+    operationsSorter: alpha

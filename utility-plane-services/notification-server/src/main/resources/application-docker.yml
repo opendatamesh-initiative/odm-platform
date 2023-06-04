@@ -1,0 +1,65 @@
+##########################
+# Server configuration
+##########################
+app:
+  workdir:
+
+server:
+  port: ${SPRING_PORT}
+  error:
+    include-message: always
+  servlet:
+    context-path: /api/v1/up/metaservice/
+
+############################################
+# Spring configurations
+############################################
+
+spring:
+  # Profile
+  profile: docker
+  # JPA configuration
+  jpa:
+    hibernate:
+      ddl-auto: validate
+      show-sql: true
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
+        globally_quoted_identifiers: true
+        default_schema: PUBLIC
+  # DB
+  datasource:
+    url: ${DATABASE_URL}?allowPublicKeyRetrieval=true&useSSL=false
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+  h2:
+    console:
+      enabled: ${H2_CONSOLE_ENABLED}
+      path: /${H2_CONSOLE_PATH}
+  # FlyWay configuration
+  # More: https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html#appendix.application-properties.data-migration
+  flyway:
+    enabled: true
+    url: ${DATABASE_URL}?allowPublicKeyRetrieval=true&useSSL=false
+    user: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+    #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
+    schemas: ${FLYWAY_SCHEMA}
+    locations: classpath:db/migration/${FLYWAY_SCRIPTS_DIR}
+    clean-on-validation-error: true
+
+##########################
+# Blindata configuration
+##########################
+blindata:
+  url: ${BLINDATA_URL}
+  user: ${BLINDATA_USER}
+  password: ${BLINDATA_PWD}
+  tenantUUID: ${BLINDATA_TENANT}
+  roleUuid: ${BLINDATA_ROLE}

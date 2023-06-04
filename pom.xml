@@ -118,9 +118,7 @@ License.
 
 
     <modules>
-        <module>registry-client</module>
-        <module>registry-server</module>
-
+        <module>product-plane-services</module>
         <module>utility-plane-services</module>
     </modules>
 

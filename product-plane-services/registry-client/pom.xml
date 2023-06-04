@@ -24,7 +24,7 @@ License.
 
     <parent>
         <groupId>org.opendatamesh</groupId>
-        <artifactId>odm-platform</artifactId>
+        <artifactId>odm-platform-pp-services</artifactId>
         <version>1.0.0</version>
         <relativePath>../</relativePath>
     </parent>

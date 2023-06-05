@@ -51,7 +51,7 @@ public class BuildInfoResourceDeserializer extends StdDeserializer<BuildInfoReso
             infoResource.setTemplate(templateRef);
             infoResource.setConfigurations(configurationsRef);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println(e.getMessage() + "\n ops");
         }
         return infoResource;
     }

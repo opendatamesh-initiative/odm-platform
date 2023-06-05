@@ -6,14 +6,11 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.opendatamesh.platform.pp.registry.core.DataProductDescriptor;
+import org.opendatamesh.platform.pp.registry.core.DataProductVersionMapper;
 import org.opendatamesh.platform.pp.registry.core.exceptions.ParseException;
-import org.opendatamesh.platform.pp.registry.core.exceptions.UnresolvableReferenceException;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.ComponentResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DataProductVersionResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.EntityType;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 public class ReadOnlyPropertiesResolver implements PropertiesResolver {
     DataProductDescriptor descriptor;
@@ -48,7 +45,7 @@ public class ReadOnlyPropertiesResolver implements PropertiesResolver {
         
         Map<String, Map> rootEntityProperties;
         try {
-            rootEntityProperties = descriptor.getObjectMapper().readValue(rawContent, HashMap.class);
+            rootEntityProperties = DataProductVersionMapper.getMapper().readValue(rawContent, HashMap.class);
         } catch (Throwable t) {
             throw new ParseException("Impossible to parse descriptor raw cantent", t);
         }
@@ -64,7 +61,7 @@ public class ReadOnlyPropertiesResolver implements PropertiesResolver {
 
         rootEntityProperties.put("info", infoObjectProperties);
         try {
-            parsedContent.setRawContent(descriptor.getObjectMapper().writeValueAsString(rootEntityProperties));
+            parsedContent.setRawContent(DataProductVersionMapper.getMapper().writeValueAsString(rootEntityProperties));
         } catch (Throwable t) {
             throw new ParseException("Impossible serialize descriptor", t);
         }
@@ -76,7 +73,7 @@ public class ReadOnlyPropertiesResolver implements PropertiesResolver {
         for(ComponentResource component : components) {
             Map componentProperties;
             try {
-                componentProperties = descriptor.getObjectMapper().readValue(component.getRawContent(), HashMap.class);
+                componentProperties = DataProductVersionMapper.getMapper().readValue(component.getRawContent(), HashMap.class);
             } catch (Throwable t) {
                 throw new ParseException("Impossible to parse component raw cantent", t);
             }
@@ -90,7 +87,7 @@ public class ReadOnlyPropertiesResolver implements PropertiesResolver {
             componentProperties.put("id", uuid);
             
             try {
-                component.setRawContent(descriptor.getObjectMapper().writeValueAsString(componentProperties));
+                component.setRawContent(DataProductVersionMapper.getMapper().writeValueAsString(componentProperties));
             } catch (Throwable t) {
                 throw new ParseException("Impossible serialize component", t);
             }

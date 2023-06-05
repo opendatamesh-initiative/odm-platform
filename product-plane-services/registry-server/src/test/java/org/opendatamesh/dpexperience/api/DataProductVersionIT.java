@@ -16,6 +16,7 @@ import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardE
 import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DataProductResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.InfrastructuralComponentResource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -41,6 +42,7 @@ public class DataProductVersionIT extends OpenDataMeshIT {
 
     InfrastructuralComponentResource infrastructuralComponent;
 
+    @Autowired
     ObjectMapper objectMapper;
 
     @Value("${policyserviceaddress}")
@@ -52,7 +54,7 @@ public class DataProductVersionIT extends OpenDataMeshIT {
 
     @Before
     public void setup() {
-        objectMapper = DataProductDescriptor.buildObjectMapper();
+        //objectMapper = DataProductDescriptor.buildObjectMapper();
         /*
          * mockServer =
          * MockRestServiceServer.bindTo(restTemplate).ignoreExpectOrder(true).build();

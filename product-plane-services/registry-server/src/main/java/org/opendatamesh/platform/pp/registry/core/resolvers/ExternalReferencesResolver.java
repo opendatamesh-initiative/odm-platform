@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.List;
 
 import org.opendatamesh.platform.pp.registry.core.DataProductDescriptor;
+import org.opendatamesh.platform.pp.registry.core.DataProductVersionMapper;
 import org.opendatamesh.platform.pp.registry.core.exceptions.ParseException;
 import org.opendatamesh.platform.pp.registry.core.exceptions.UnresolvableReferenceException;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.ComponentResource;
@@ -23,13 +24,14 @@ public class ExternalReferencesResolver implements PropertiesResolver{
         DataProductVersionResource parsedContent =  descriptor.getParsedContent();
 
         if (parsedContent.getInterfaceComponents() != null) {
+            resolveExternalReferences(parsedContent.getInterfaceComponents().getInputPorts(), 
+                    EntityType.inputport);
             resolveExternalReferences(parsedContent.getInterfaceComponents().getOutputPorts(),
                     EntityType.outputport);
-            resolveExternalReferences(parsedContent.getInterfaceComponents().getInputPorts(), EntityType.inputport);
-            resolveExternalReferences(parsedContent.getInterfaceComponents().getObservabilityPorts(),
-                    EntityType.observabilityport);
             resolveExternalReferences(parsedContent.getInterfaceComponents().getDiscoveryPorts(),
                     EntityType.discoveryport);
+            resolveExternalReferences(parsedContent.getInterfaceComponents().getObservabilityPorts(),
+                    EntityType.observabilityport);
             resolveExternalReferences(parsedContent.getInterfaceComponents().getControlPorts(),
                     EntityType.controlport);
         }
@@ -65,7 +67,7 @@ public class ExternalReferencesResolver implements PropertiesResolver{
         try {
             URI uri = new URI(ref).normalize();
             String content = descriptor.getSource().fetchResource(uri);
-            resolvedComponent = (E) descriptor.getObjectMapper().readValue(content, component.getClass());
+            resolvedComponent = (E) DataProductVersionMapper.getMapper().readValue(content, component.getClass());
             resolvedComponent.setRawContent(content);
         } catch (Exception e) {
             throw new UnresolvableReferenceException(

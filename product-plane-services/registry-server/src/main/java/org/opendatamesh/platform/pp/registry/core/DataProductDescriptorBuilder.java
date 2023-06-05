@@ -11,9 +11,9 @@ import org.opendatamesh.platform.pp.registry.core.resolvers.ExternalReferencesRe
 import org.opendatamesh.platform.pp.registry.core.resolvers.InternalReferencesResolver;
 import org.opendatamesh.platform.pp.registry.core.resolvers.ReadOnlyPropertiesResolver;
 import org.opendatamesh.platform.pp.registry.core.resolvers.StandardDefinitionsResolver;
+import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DataProductVersionResource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.networknt.schema.ValidationMessage;
 
 import lombok.Data;
@@ -22,17 +22,23 @@ import lombok.Data;
 public class DataProductDescriptorBuilder {
 
     DataProductDescriptor descriptor;
+    DataProductVersionMapper mapper;
+    
+    private String targetURL;
 
-    public DataProductDescriptorBuilder(DataProductDescriptorSource source, ObjectMapper objectMapper, String serverUrl) {
-        this.descriptor = new DataProductDescriptor(source);
-        this.descriptor.setObjectMapper(objectMapper);
-        this.descriptor.setTargetURL(serverUrl);
+    public DataProductDescriptorBuilder(DataProductDescriptorSource source, String serverUrl) {
+        descriptor = new DataProductDescriptor(source);
+        setTargetURL(serverUrl);
+        mapper = DataProductVersionMapper.getMapper();
     }
 
     public DataProductDescriptorBuilder validateSchema() throws ParseException, ValidationException {
         Set<ValidationMessage> errors;
-        errors = descriptor.validateSchema();
-       
+
+        // TODO validate against the right schema version
+        DataProductDescriptorValidator schemaValidator = new DataProductDescriptorValidator();
+        errors = schemaValidator.validateSchema(descriptor.getParsedContent().getRawContent(false));
+        
         if (!errors.isEmpty()) {
             throw new ValidationException("Descriptor document does not comply with DPDS. The following validation errors has been found during validation [" + errors.toString() + "]", errors);
         }
@@ -42,12 +48,14 @@ public class DataProductDescriptorBuilder {
 
     public DataProductDescriptorBuilder buildRootDoc(boolean validate) throws BuildException {
         try {
-            descriptor.setRawContent(descriptor.getSource().fetchRootDoc());
-            descriptor.parseContent();
+            String rawContent = descriptor.getSource().fetchRootDoc();
+            DataProductVersionResource parsedContent = mapper.readValue(rawContent, DataProductVersionResource.class);
+            parsedContent.setRawContent(rawContent);
+            descriptor.setParsedContent(parsedContent);;
             if(validate) {
                 validateSchema();
             }
-        } catch (FetchException | ParseException | ValidationException e) {
+        } catch (FetchException | ParseException | ValidationException | JsonProcessingException e) {
             throw new BuildException("Impossible to build root descriptor document",
                 BuildException.Stage.LOAD_ROOT_DOC, e);
         }
@@ -83,7 +91,7 @@ public class DataProductDescriptorBuilder {
     public DataProductDescriptorBuilder buildStandardDefinition() throws BuildException {
               
         try {
-            StandardDefinitionsResolver.resolve(descriptor);
+            StandardDefinitionsResolver.resolve(descriptor, targetURL);
         } catch (UnresolvableReferenceException | ParseException e) {
             throw new BuildException("Impossible to build standard definitions",
                 BuildException.Stage.RESOLVE_STANDARD_DEFINITIONS, e);

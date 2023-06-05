@@ -11,6 +11,7 @@ import org.opendatamesh.platform.pp.registry.core.DataProductDescriptor;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DataProductResource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,11 +26,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 public class DataProductIT extends OpenDataMeshIT {
 
+    @Autowired
     ObjectMapper objectMapper;
 
     @Before
     public void setup() {
-        objectMapper = DataProductDescriptor.buildObjectMapper();
+        //objectMapper = DataProductDescriptor.buildObjectMapper();
     }
 
     // ======================================================================================

@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.parallel.Execution;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
@@ -25,12 +26,14 @@ import org.springframework.test.annotation.DirtiesContext.MethodMode;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 public class UploadIT extends OpenDataMeshIT {
+    
+    @Autowired
     ObjectMapper objectMapper;
     
 
     @Before
     public void setup() {
-        objectMapper = DataProductDescriptor.buildObjectMapper();
+        //objectMapper = DataProductDescriptor.buildObjectMapper();
     }
 
     // ----------------------------------------

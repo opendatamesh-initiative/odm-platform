@@ -3,6 +3,7 @@ package org.opendatamesh.platform.pp.registry.core.resolvers;
 import java.util.List;
 
 import org.opendatamesh.platform.pp.registry.core.DataProductDescriptor;
+import org.opendatamesh.platform.pp.registry.core.DataProductVersionMapper;
 import org.opendatamesh.platform.pp.registry.core.exceptions.ParseException;
 import org.opendatamesh.platform.pp.registry.core.exceptions.UnresolvableReferenceException;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.ComponentResource;
@@ -13,9 +14,11 @@ import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.EntityType
 public class InternalReferencesResolver implements PropertiesResolver{
 
     DataProductDescriptor descriptor;
+    DataProductVersionMapper mapper;
 
     public InternalReferencesResolver(DataProductDescriptor descriptor) {
         this.descriptor = descriptor;
+        mapper = DataProductVersionMapper.getMapper();
     }
 
     @Override
@@ -42,9 +45,8 @@ public class InternalReferencesResolver implements PropertiesResolver{
                     parsedContent.getComponents(), EntityType.infrastructure);
         }
 
-        descriptor.setParsedContent(parsedContent);
-        descriptor.setRawContent(descriptor.getParsedContentAsString());
-        ;
+        //descriptor.setParsedContent(parsedContent);
+        //descriptor.setRawContent(mapper.getParsedContentAsString(descriptor.getParsedContent(), false));
     }
 
     private <E extends ComponentResource> void resolveInternalReferences(List<E> components,

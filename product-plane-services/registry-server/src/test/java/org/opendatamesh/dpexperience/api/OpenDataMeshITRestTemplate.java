@@ -12,6 +12,7 @@ import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Definit
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DataProductResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.shared.DataProductSourceRes;
 import org.opendatamesh.platform.pp.registry.resources.v1.shared.DefinitionResource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -26,11 +27,11 @@ public class OpenDataMeshITRestTemplate extends TestRestTemplate {
     protected String host = "localhost";
     protected String port = "80";
 
+    @Autowired
     private ObjectMapper objectMapper;
 
     public OpenDataMeshITRestTemplate() {
-        super();
-        objectMapper = DataProductDescriptor.buildObjectMapper();
+        //objectMapper = DataProductDescriptor.buildObjectMapper();
     }
 
     public void setHost(String host) {

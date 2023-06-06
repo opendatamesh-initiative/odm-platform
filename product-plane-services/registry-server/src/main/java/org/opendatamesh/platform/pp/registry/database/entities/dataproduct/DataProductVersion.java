@@ -13,7 +13,7 @@ import java.util.List;
 
 @Data
 @Entity(name = "DataProductVersion")
-@Table(name = "DPDS_DATA_PRODUCT_VERSIONS")
+@Table(name = "DPDS_DATA_PRODUCT_VERSIONS", schema="PUBLIC")
 @IdClass(DataProductVersionId.class)
 public class DataProductVersion implements Cloneable, Serializable {
 

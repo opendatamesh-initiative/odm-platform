@@ -123,7 +123,7 @@ public class DataProductController
             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
         )
     })
-    public DataProductResource createataProduct( 
+    public DataProductResource createDataProduct(
         @Parameter( 
             description = "A data product object", 
             required = true)

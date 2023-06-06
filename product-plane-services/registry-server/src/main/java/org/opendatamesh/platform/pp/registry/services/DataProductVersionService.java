@@ -1,26 +1,20 @@
 package org.opendatamesh.platform.pp.registry.services;
 
 
-import java.util.List;
-import java.util.Optional;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.opendatamesh.notification.EventResource;
 import org.opendatamesh.notification.EventType;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataProductVersion;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.Port;
-import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.ReferenceObject;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.StandardDefinition;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Definition;
 import org.opendatamesh.platform.pp.registry.database.repositories.DataProductVersionRepository;
-import org.opendatamesh.platform.pp.registry.exceptions.BadGatewayException;
-import org.opendatamesh.platform.pp.registry.exceptions.BadRequestException;
-import org.opendatamesh.platform.pp.registry.exceptions.InternalServerException;
-import org.opendatamesh.platform.pp.registry.exceptions.NotFoundException;
-import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
-import org.opendatamesh.platform.pp.registry.exceptions.UnprocessableEntityException;
+import org.opendatamesh.platform.pp.registry.exceptions.*;
 import org.opendatamesh.platform.pp.registry.resources.v1.mappers.DataProductMapper;
 import org.opendatamesh.platform.pp.registry.resources.v1.observers.EventNotifier;
-import org.opendatamesh.platform.pp.registry.resources.v1.observers.metaservice.MetaServiceObserver;
 import org.opendatamesh.platform.pp.registry.resources.v1.policyservice.PolicyName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,10 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DataProductVersionService {
@@ -131,7 +123,7 @@ public class DataProductVersionService {
             saveApiDefinitions(dataProductVersion.getInterfaceComponents().getOutputPorts());
             saveApiDefinitions(dataProductVersion.getInterfaceComponents().getDiscoveryPorts());
             saveApiDefinitions(dataProductVersion.getInterfaceComponents().getObservabilityPorts());
-            saveApiDefinitions(dataProductVersion.getInterfaceComponents().getControlPorts());           
+            saveApiDefinitions(dataProductVersion.getInterfaceComponents().getControlPorts());
         }
     }
 
@@ -156,7 +148,6 @@ public class DataProductVersionService {
             if(StringUtils.hasText(api.getName()) 
                 && StringUtils.hasText(api.getVersion())) {
                     apiDefinition = definitionService.searchDefinition(api.getName(), api.getVersion());
-            
             }
             if(apiDefinition == null) {
                 apiDefinition = definitionService.createDefinition(new Definition("API", api));

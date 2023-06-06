@@ -9,6 +9,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import lombok.Data;
 
@@ -22,35 +25,28 @@ public class InternalComponentsResource extends ComponentContainerResource{
     @JsonProperty("infrastructuralComponents")
     private List<InfrastructuralComponentResource> infrastructuralComponents = new ArrayList<InfrastructuralComponentResource>();
 
-    public void replaceInfrastructuralComponent(InfrastructuralComponentResource oldDefinition,
-            InfrastructuralComponentResource newDefinition) {
-        this.infrastructuralComponents.remove(oldDefinition);
-        this.infrastructuralComponents.add(newDefinition);
-    }
 
-    public void replaceApplicationComponent(ApplicationComponentResource oldDefinition,
-            ApplicationComponentResource newDefinition) {
-        this.applicationComponents.remove(oldDefinition);
-        this.applicationComponents.add(newDefinition);
-    }
+    public void setRawContent(ObjectNode internalComponentNodes) throws JsonProcessingException {
+       
 
-    @JsonIgnore
-    public void setRawContent(HashMap<String, List> map) throws JsonProcessingException {
-        if (map.containsKey("applicationComponents")) {
-            setRawContent(applicationComponents, map.get("applicationComponents"));
+        ArrayNode applicationComponentNodes = (ArrayNode)internalComponentNodes.get("applicationComponents");
+        if (applicationComponentNodes != null) {
+            setRawContent(applicationComponents, applicationComponentNodes);
         }
 
-        if (map.containsKey("infrastructuralComponents")) {
-            setRawContent(infrastructuralComponents, map.get("infrastructuralComponents"));
+        ArrayNode infrastructuralComponentNodes = (ArrayNode)internalComponentNodes.get("infrastructuralComponents");
+        if (infrastructuralComponentNodes != null) {
+            setRawContent(infrastructuralComponents, infrastructuralComponentNodes);
         }
     }
 
     @JsonIgnore
-    public HashMap<String, List> getRawContent() throws JsonProcessingException {
-        HashMap<String, List> internalComponentsRawProperties = new HashMap<String, List>();
-        internalComponentsRawProperties.put("applicationComponents", getRawContent(applicationComponents));
-        internalComponentsRawProperties.put("infrastructuralComponents", getRawContent(infrastructuralComponents));
-        return internalComponentsRawProperties;
+    public ObjectNode getRawContent() throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode internalComponentsNode = mapper.createObjectNode();
+        internalComponentsNode.set("applicationComponents", getRawContent(applicationComponents));
+        internalComponentsNode.set("infrastructuralComponents", getRawContent(infrastructuralComponents));
+        return internalComponentsNode;
     }
 
    

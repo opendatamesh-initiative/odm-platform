@@ -2,18 +2,18 @@ package org.opendatamesh.platform.pp.registry.resources.v1.dataproduct;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import lombok.Data;
 
@@ -55,57 +55,67 @@ public class InterfaceComponentsResource extends ComponentContainerResource{
     }
 
     @JsonIgnore
-    public void setRawContent(HashMap<String, List> map) throws JsonProcessingException {
+    public void setRawContent(ObjectNode interfaceComponentsNode) throws JsonProcessingException {
+        ArrayNode componentNodes = null;
         
-        if (map.containsKey("inputPorts")) {
-            setRawContent(inputPorts, map.get("inputPorts"));
+        componentNodes = (ArrayNode)interfaceComponentsNode.get("inputPorts");
+        if (componentNodes != null) {
+            setRawContent(inputPorts, componentNodes);
         }
 
-        if (map.containsKey("outputPorts")) {
-            setRawContent(outputPorts, map.get("outputPorts"));
+        componentNodes = (ArrayNode)interfaceComponentsNode.get("outputPorts");
+        if (componentNodes != null) {
+            setRawContent(outputPorts, componentNodes);
+        }
+      
+
+        componentNodes = (ArrayNode)interfaceComponentsNode.get("controlPorts");
+        if (componentNodes != null) {
+            setRawContent(controlPorts, componentNodes);
         }
 
-        if (map.containsKey("controlPorts")) {
-            setRawContent(controlPorts, map.get("controlPorts"));
+        componentNodes = (ArrayNode)interfaceComponentsNode.get("discoveryPorts");
+        if (componentNodes != null) {
+            setRawContent(discoveryPorts, componentNodes);
         }
 
-        if (map.containsKey("discoveryPorts")) {
-            setRawContent(discoveryPorts, map.get("discoveryPorts"));
-        }
-        if (map.containsKey("observabilityPorts")) {
-            setRawContent(observabilityPorts, map.get("observabilityPorts"));
+        componentNodes = (ArrayNode)interfaceComponentsNode.get("observabilityPorts");
+        if (componentNodes != null) {
+            setRawContent(observabilityPorts, componentNodes);
         }
     }
 
     @JsonIgnore
-    public  HashMap<String, List> getRawContent() throws JsonProcessingException {
+    public  ObjectNode getRawContent() throws JsonProcessingException {
         return getRawContent( new HashSet<EntityType>(Arrays.asList( EntityType.values())) );
     }
 
     @JsonIgnore
-    public  HashMap<String, List> getRawContent(EntityType inludedPortType) throws JsonProcessingException {
+    public  ObjectNode getRawContent(EntityType inludedPortType) throws JsonProcessingException {
         return getRawContent( new HashSet<EntityType>(Arrays.asList( new EntityType[] {inludedPortType} )) );
     }
 
     @JsonIgnore
-    public  HashMap<String, List> getRawContent(Set<EntityType> inludedPortTypes) throws JsonProcessingException {
-        HashMap<String, List> interfaceComponentsRawProperties = new HashMap<String, List>();
-
+    public  ObjectNode getRawContent(Set<EntityType> inludedPortTypes) throws JsonProcessingException {
+       
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode interfaceComponentNodes = mapper.createObjectNode();
+       
         if(inludedPortTypes.contains(EntityType.inputport))
-            interfaceComponentsRawProperties.put("inputPorts", getRawContent(inputPorts));
-        
+            interfaceComponentNodes.set("inputPorts", getRawContent(inputPorts));
+    
         if(inludedPortTypes.contains(EntityType.outputport))
-            interfaceComponentsRawProperties.put("outputPorts", getRawContent(outputPorts));
+            interfaceComponentNodes.set("outputPorts", getRawContent(outputPorts));
 
         if(inludedPortTypes.contains(EntityType.controlport))
-            interfaceComponentsRawProperties.put("controlPorts", getRawContent(controlPorts));
+            interfaceComponentNodes.set("controlPorts", getRawContent(controlPorts));
 
         if(inludedPortTypes.contains(EntityType.discoveryport))
-            interfaceComponentsRawProperties.put("discoveryPorts", getRawContent(discoveryPorts));
+            interfaceComponentNodes.set("discoveryPorts", getRawContent(discoveryPorts));
 
         if(inludedPortTypes.contains(EntityType.observabilityport))
-            interfaceComponentsRawProperties.put("observabilityPorts", getRawContent(observabilityPorts));
+            interfaceComponentNodes.set("observabilityPorts", getRawContent(observabilityPorts));
 
-       return interfaceComponentsRawProperties;
+        return interfaceComponentNodes;
     }
 }

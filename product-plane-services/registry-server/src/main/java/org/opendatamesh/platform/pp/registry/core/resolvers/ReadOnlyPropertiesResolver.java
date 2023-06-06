@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.opendatamesh.platform.pp.registry.core.DataProductDescriptor;
+import org.opendatamesh.platform.pp.registry.core.DataProductVersionSource;
 import org.opendatamesh.platform.pp.registry.core.DataProductVersionMapper;
 import org.opendatamesh.platform.pp.registry.core.exceptions.ParseException;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.ComponentResource;
@@ -13,16 +13,17 @@ import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DataProduc
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.EntityType;
 
 public class ReadOnlyPropertiesResolver implements PropertiesResolver {
-    DataProductDescriptor descriptor;
+    DataProductVersionResource dataProductVersionRes;
+    DataProductVersionSource source;
 
-    public ReadOnlyPropertiesResolver(DataProductDescriptor descriptor) {
-        this.descriptor = descriptor;
+    public ReadOnlyPropertiesResolver(DataProductVersionResource descriptor, DataProductVersionSource source) {
+        this.dataProductVersionRes = descriptor;
     }
 
     @Override
     public void resolve() throws ParseException {
        
-        DataProductVersionResource parsedContent = descriptor.getParsedContent();
+        DataProductVersionResource parsedContent = dataProductVersionRes;
 
         addReadOnlyPropertiesToInfo();
         
@@ -39,8 +40,8 @@ public class ReadOnlyPropertiesResolver implements PropertiesResolver {
     private void addReadOnlyPropertiesToInfo() throws ParseException {
         String fqn, uuid;
 
-        DataProductVersionResource parsedContent = descriptor.getParsedContent();
-        String rawContent = descriptor.getParsedContent().getRawContent();
+        DataProductVersionResource parsedContent = dataProductVersionRes;
+        String rawContent = dataProductVersionRes.getRawContent();
 
         
         Map<String, Map> rootEntityProperties;
@@ -94,8 +95,8 @@ public class ReadOnlyPropertiesResolver implements PropertiesResolver {
         }
     }
 
-    public static void resolve(DataProductDescriptor descriptor) throws ParseException {
-        ReadOnlyPropertiesResolver resolver = new ReadOnlyPropertiesResolver(descriptor);
+    public static void resolve(DataProductVersionResource dataProductVersionRes, DataProductVersionSource source) throws ParseException {
+        ReadOnlyPropertiesResolver resolver = new ReadOnlyPropertiesResolver(dataProductVersionRes, source);
         resolver.resolve();
     }
 }

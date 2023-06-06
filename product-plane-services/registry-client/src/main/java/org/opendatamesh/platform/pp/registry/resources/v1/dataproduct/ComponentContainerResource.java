@@ -1,36 +1,38 @@
 package org.opendatamesh.platform.pp.registry.resources.v1.dataproduct;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public abstract class ComponentContainerResource {
-    @JsonIgnore
-    public void setRawContent(List<? extends ComponentResource> components, List<HashMap> componentsRawProperties) throws JsonProcessingException {
+
+    public void setRawContent(List<? extends ComponentResource> components, ArrayNode componentNodes) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
-        for (int i = 0; i < componentsRawProperties.size(); i++) {
-            HashMap<String, List> componentRawProperties = componentsRawProperties.get(i);
-            String rawContent = objectMapper.writeValueAsString(componentRawProperties);
+        for (int i = 0; i < componentNodes.size(); i++) {
+            JsonNode componentNode = componentNodes.get(i);
+            String rawContent = objectMapper.writeValueAsString(componentNode);
             components.get(i).setRawContent(rawContent);
         }
     }
 
     @JsonIgnore
-    public List<HashMap> getRawContent(List<? extends ComponentResource> components) throws JsonProcessingException  {
+    public ArrayNode getRawContent(List<? extends ComponentResource> components) throws JsonProcessingException  {
         ObjectMapper objectMapper = new ObjectMapper();
 
-        List<HashMap> componentsRawProperties = new ArrayList();
+        ArrayNode componentNodes = objectMapper.createArrayNode();
         for (ComponentResource component : components) {
             String componentRawContent = component.getRawContent();
-            HashMap<String, List> componetRawProperties = objectMapper.readValue(componentRawContent, HashMap.class);
-            componentsRawProperties.add(componetRawProperties);
+            ObjectNode componetNode = (ObjectNode)objectMapper.readTree(componentRawContent);
+            componentNodes.add(componetNode);
         }
 
-        return componentsRawProperties;
+        return componentNodes;
     }
 
 }

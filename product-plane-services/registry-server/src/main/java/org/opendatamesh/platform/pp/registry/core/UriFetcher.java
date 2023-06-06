@@ -6,7 +6,7 @@ import java.net.URI;
 
 import org.opendatamesh.platform.pp.registry.core.exceptions.FetchException;
 
-public class UriFetcher implements DataProductDescriptorSource.Fetcher {
+public class UriFetcher implements DataProductVersionSource.Fetcher {
 
     URI baseUri;
     

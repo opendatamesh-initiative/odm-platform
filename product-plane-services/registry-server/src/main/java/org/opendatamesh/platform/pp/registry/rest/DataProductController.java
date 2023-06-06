@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.opendatamesh.platform.pp.registry.core.DataProductDescriptorValidator;
+import org.opendatamesh.platform.pp.registry.core.DataProductVersionValidator;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataProduct;
 import org.opendatamesh.platform.pp.registry.exceptions.BadRequestException;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
@@ -61,7 +61,7 @@ public class DataProductController
     private DataProductMapper dataProductMapper;
 
     @Autowired
-    DataProductDescriptorValidator dataProductDescriptorValidator;
+    DataProductVersionValidator dataProductDescriptorValidator;
 
     @Autowired
     ObjectMapper objectMapper;

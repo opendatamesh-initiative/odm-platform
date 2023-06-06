@@ -6,9 +6,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.networknt.schema.ValidationMessage;
 import org.opendatamesh.notification.EventResource;
 import org.opendatamesh.notification.EventType;
-import org.opendatamesh.platform.pp.registry.core.DataProductDescriptor;
-import org.opendatamesh.platform.pp.registry.core.DataProductDescriptorBuilder;
-import org.opendatamesh.platform.pp.registry.core.DataProductDescriptorSource;
+import org.opendatamesh.platform.pp.registry.core.CoreApp;
+import org.opendatamesh.platform.pp.registry.core.DataProductVersionBuilder;
+import org.opendatamesh.platform.pp.registry.core.DataProductVersionSource;
 import org.opendatamesh.platform.pp.registry.core.exceptions.BuildException;
 import org.opendatamesh.platform.pp.registry.core.exceptions.FetchException;
 import org.opendatamesh.platform.pp.registry.core.exceptions.ParseException;
@@ -22,6 +22,7 @@ import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataP
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataProductVersion;
 import org.opendatamesh.platform.pp.registry.database.repositories.DataProductRepository;
 import org.opendatamesh.platform.pp.registry.exceptions.*;
+import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DataProductVersionResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.mappers.DataProductMapper;
 import org.opendatamesh.platform.pp.registry.resources.v1.observers.EventNotifier;
 import org.slf4j.Logger;
@@ -495,29 +496,29 @@ public class DataProductService {
 
     private DataProductVersion descriptorToDataProductVersion(String descriptorContent, String serverUrl) {
        
-        DataProductDescriptorSource descriptorSource = new DataProductDescriptorSource(descriptorContent);
+        DataProductVersionSource descriptorSource = new DataProductVersionSource(descriptorContent);
         return descriptorToDataProductVersion(descriptorSource, serverUrl);
     }
 
     private DataProductVersion descriptorToDataProductVersion(URI descriptorUri, String serverUrl) {
-        DataProductDescriptorSource descriptorSource = new DataProductDescriptorSource(descriptorUri);
+        DataProductVersionSource descriptorSource = new DataProductVersionSource(descriptorUri);
         return descriptorToDataProductVersion(descriptorSource, serverUrl);        
     }
 
-    private DataProductVersion descriptorToDataProductVersion(DataProductDescriptorSource descriptorSource, String serverUrl) {
+    private DataProductVersion descriptorToDataProductVersion(DataProductVersionSource descriptorSource, String serverUrl) {
         DataProductVersion dataProductVersion = null;
 
-        DataProductDescriptorBuilder descriptorBuilder = 
-            new DataProductDescriptorBuilder(descriptorSource, serverUrl);
+        DataProductVersionBuilder descriptorBuilder = 
+            new DataProductVersionBuilder(descriptorSource, serverUrl);
        
-        DataProductDescriptor descriptor = null;
+        DataProductVersionResource descriptor = null;
         try {
             descriptor = descriptorBuilder.build(true);
         } catch (BuildException e) {
             handleBuildException(e);
         }
      
-        dataProductVersion = dataProductMapper.toEntity(descriptor.getParsedContent());
+        dataProductVersion = dataProductMapper.toEntity(descriptor);
         dataProductVersion.setDataProductId(dataProductVersion.getInfo().getDataProductId());
         dataProductVersion.setVersionNumber(dataProductVersion.getInfo().getVersionNumber());
         return dataProductVersion;

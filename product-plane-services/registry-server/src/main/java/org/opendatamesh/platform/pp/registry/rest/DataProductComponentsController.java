@@ -6,8 +6,8 @@ import java.util.Set;
 
 import javax.validation.Valid;
 
-import org.opendatamesh.platform.pp.registry.core.DataProductDescriptor;
-import org.opendatamesh.platform.pp.registry.core.DataProductDescriptorValidator;
+import org.opendatamesh.platform.pp.registry.core.CoreApp;
+import org.opendatamesh.platform.pp.registry.core.DataProductVersionValidator;
 import org.opendatamesh.platform.pp.registry.core.exceptions.ParseException;
 import org.opendatamesh.platform.pp.registry.core.exceptions.UnresolvableReferenceException;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataProductVersion;
@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.networknt.schema.ValidationMessage;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -64,7 +65,7 @@ public class DataProductComponentsController
     private DataProductMapper dataProductMapper;
 
     @Autowired
-    DataProductDescriptorValidator dataProductDescriptorValidator;
+    DataProductVersionValidator dataProductDescriptorValidator;
 
     @Autowired
     ObjectMapper objectMapper;
@@ -157,13 +158,13 @@ public class DataProductComponentsController
 
         switch (format) {
            case "normalized": //parsed=deserialized and then serialized again
-            HashMap<String, List> interfaceComponentsRawProperties = null;
+            ObjectNode interfaceComponentsNpde = null;
             if(entityType != null) {
-                interfaceComponentsRawProperties = dataProductVersionResource.getInterfaceComponents().getRawContent(entityType);
+                interfaceComponentsNpde = dataProductVersionResource.getInterfaceComponents().getRawContent(entityType);
             } else {
-                interfaceComponentsRawProperties = dataProductVersionResource.getInterfaceComponents().getRawContent();
+                interfaceComponentsNpde = dataProductVersionResource.getInterfaceComponents().getRawContent();
             }
-            return objectMapper.writeValueAsString(interfaceComponentsRawProperties);
+            return objectMapper.writeValueAsString(interfaceComponentsNpde);
            case "canonical": //normalized + semantic equalization
                 return objectMapper.writeValueAsString(dataProductVersionResource.getInterfaceComponents());
         }

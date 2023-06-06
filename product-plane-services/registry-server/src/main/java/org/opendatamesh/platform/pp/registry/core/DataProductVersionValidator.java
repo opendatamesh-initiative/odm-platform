@@ -16,7 +16,7 @@ import com.networknt.schema.SpecVersion.VersionFlag;
 import com.networknt.schema.ValidationMessage;
 
 @Component
-public class DataProductDescriptorValidator {
+public class DataProductVersionValidator {
 
     @Autowired
     ObjectMapper mapper;
@@ -25,7 +25,7 @@ public class DataProductDescriptorValidator {
 
     public static final String SCHEMA_URI = "https://raw.githubusercontent.com/opendatamesh-initiative/odm-specification-dpdescriptor/main/schemas/v1.0.0-DRAFT/schema.json";
 
-    public DataProductDescriptorValidator() {
+    public DataProductVersionValidator() {
         mapper = new ObjectMapper();
         JsonSchemaFactory factory = JsonSchemaFactory.getInstance(VersionFlag.V202012);
         

@@ -9,6 +9,7 @@ import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardE
 import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.InfrastructuralComponentResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.shared.DefinitionResource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -27,11 +28,12 @@ public class DefinitionIT extends OpenDataMeshIT {
 
     InfrastructuralComponentResource infrastructuralComponent;
 
+    @Autowired
     ObjectMapper objectMapper;
 
     @Before
     public void setup() {
-        objectMapper = DataProductDescriptor.buildObjectMapper();
+        //objectMapper = DataProductDescriptor.buildObjectMapper();
     }
 
     // ======================================================================================

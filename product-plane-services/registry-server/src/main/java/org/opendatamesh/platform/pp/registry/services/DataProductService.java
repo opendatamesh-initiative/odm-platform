@@ -508,7 +508,7 @@ public class DataProductService {
         DataProductVersion dataProductVersion = null;
 
         DataProductDescriptorBuilder descriptorBuilder = 
-            new DataProductDescriptorBuilder(descriptorSource, objectMapper, serverUrl);
+            new DataProductDescriptorBuilder(descriptorSource, serverUrl);
        
         DataProductDescriptor descriptor = null;
         try {

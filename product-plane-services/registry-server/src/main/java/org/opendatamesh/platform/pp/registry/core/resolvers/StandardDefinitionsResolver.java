@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.List;
 
 import org.opendatamesh.platform.pp.registry.core.DataProductDescriptor;
+import org.opendatamesh.platform.pp.registry.core.DataProductVersionMapper;
 import org.opendatamesh.platform.pp.registry.core.exceptions.ParseException;
 import org.opendatamesh.platform.pp.registry.core.exceptions.UnresolvableReferenceException;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DataProductVersionResource;
@@ -17,9 +18,11 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class StandardDefinitionsResolver {
 
     DataProductDescriptor descriptor;
+    private String targetURL;
 
-    public StandardDefinitionsResolver(DataProductDescriptor descriptor) {
+    public StandardDefinitionsResolver(DataProductDescriptor descriptor, String targetURL) {
         this.descriptor = descriptor;
+        this.targetURL = targetURL;
     }
 
     // Note: to be called after component resolution
@@ -40,7 +43,7 @@ public class StandardDefinitionsResolver {
 
     private void resolveStandardDefinitionObjects(List<PortResource> ports) throws UnresolvableReferenceException, ParseException {
        
-        ObjectMapper objectMapper = descriptor.getObjectMapper();
+        ObjectMapper objectMapper = DataProductVersionMapper.getMapper();
         if (ports == null || ports.isEmpty()) {
             return;
         }
@@ -67,7 +70,7 @@ public class StandardDefinitionsResolver {
                                 e);
                     }
                     
-                    apiDefinitionRef = descriptor.getTargetURL() + "/definitions/{apiId}";
+                    apiDefinitionRef = targetURL + "/definitions/{apiId}";
                     apiDefinitionObject.put("$ref", apiDefinitionRef);
                     port.getPromises().getApi().getDefinition().setOriginalRef("ref");
                 } else  { // inline
@@ -77,7 +80,7 @@ public class StandardDefinitionsResolver {
                     } catch (JsonProcessingException e) {
                         throw new ParseException("Impossible serialize api definition", e);
                     }
-                    apiDefinitionRef = descriptor.getTargetURL() + "/definitions/{apiId}";
+                    apiDefinitionRef = targetURL+ "/definitions/{apiId}";
                     ObjectNode apiObject = (ObjectNode)portObject.at("/promises/api");
                     apiObject.remove("definition");
                     apiDefinitionObject =  apiObject.putObject("definition");
@@ -98,8 +101,8 @@ public class StandardDefinitionsResolver {
     }
 
 
-    public static void resolve(DataProductDescriptor descriptor) throws UnresolvableReferenceException, ParseException  {
-        StandardDefinitionsResolver resolver = new StandardDefinitionsResolver(descriptor);
+    public static void resolve(DataProductDescriptor descriptor, String targetURL) throws UnresolvableReferenceException, ParseException  {
+        StandardDefinitionsResolver resolver = new StandardDefinitionsResolver(descriptor, targetURL);
         resolver.resolve();
     }
 }

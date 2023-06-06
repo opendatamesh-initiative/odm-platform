@@ -1,8 +1,6 @@
 package org.opendatamesh.platform.pp.registry.core.resolvers;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import org.opendatamesh.platform.pp.registry.core.DataProductVersionSource;
@@ -12,12 +10,16 @@ import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.ComponentR
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DataProductVersionResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.EntityType;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 public class ReadOnlyPropertiesResolver implements PropertiesResolver {
     DataProductVersionResource dataProductVersionRes;
     DataProductVersionSource source;
+    
 
-    public ReadOnlyPropertiesResolver(DataProductVersionResource descriptor, DataProductVersionSource source) {
-        this.dataProductVersionRes = descriptor;
+    public ReadOnlyPropertiesResolver(DataProductVersionResource dataProductVersionRes, DataProductVersionSource source) {
+        this.dataProductVersionRes = dataProductVersionRes;
     }
 
     @Override
@@ -27,6 +29,7 @@ public class ReadOnlyPropertiesResolver implements PropertiesResolver {
 
         addReadOnlyPropertiesToInfo();
         
+        
         addReadOnlyPropertiesToComponents(parsedContent.getInterfaceComponents().getInputPorts(), EntityType.inputport);
         addReadOnlyPropertiesToComponents(parsedContent.getInterfaceComponents().getOutputPorts(), EntityType.outputport);
         addReadOnlyPropertiesToComponents(parsedContent.getInterfaceComponents().getDiscoveryPorts(), EntityType.discoveryport);
@@ -35,65 +38,74 @@ public class ReadOnlyPropertiesResolver implements PropertiesResolver {
 
         addReadOnlyPropertiesToComponents(parsedContent.getInternalComponents().getApplicationComponents(), EntityType.application);
         addReadOnlyPropertiesToComponents(parsedContent.getInternalComponents().getInfrastructuralComponents(), EntityType.infrastructure);
+        
     }
 
     private void addReadOnlyPropertiesToInfo() throws ParseException {
         String fqn, uuid;
 
-        DataProductVersionResource parsedContent = dataProductVersionRes;
-        String rawContent = dataProductVersionRes.getRawContent();
+        ObjectMapper mapper = DataProductVersionMapper.getMapper();
 
-        
-        Map<String, Map> rootEntityProperties;
+        String rawContent = dataProductVersionRes.getRawContent(true);
+        ObjectNode rootNode = null;
         try {
-            rootEntityProperties = DataProductVersionMapper.getMapper().readValue(rawContent, HashMap.class);
+            rootNode = (ObjectNode)mapper.readTree(rawContent);
         } catch (Throwable t) {
             throw new ParseException("Impossible to parse descriptor raw cantent", t);
         }
-        Map infoObjectProperties = rootEntityProperties.get("info");
-        
-        parsedContent.getInfo().setEntityType(EntityType.dataproduct.toString()); 
-        infoObjectProperties.put("entityType", EntityType.dataproduct.toString());
+        ObjectNode infoNode = (ObjectNode)rootNode.get("info");
 
-        fqn = parsedContent.getInfo().getFullyQualifiedName();
+        // Set field "entityType"
+        dataProductVersionRes.getInfo().setEntityType(EntityType.dataproduct.toString()); 
+        infoNode.put("entityType", EntityType.dataproduct.toString());
+
+        // Set field "id"
+        fqn = dataProductVersionRes.getInfo().getFullyQualifiedName();
         uuid = UUID.nameUUIDFromBytes(fqn.getBytes()).toString();
-        parsedContent.getInfo().setDataProductId(uuid);
-        infoObjectProperties.put("id", uuid);
+        dataProductVersionRes.getInfo().setDataProductId(uuid);
+        infoNode.put("id", uuid);
 
-        rootEntityProperties.put("info", infoObjectProperties);
+        rootNode.set("info", infoNode);
         try {
-            parsedContent.setRawContent(DataProductVersionMapper.getMapper().writeValueAsString(rootEntityProperties));
+            dataProductVersionRes.setRawContent(mapper.writeValueAsString(rootNode));
         } catch (Throwable t) {
             throw new ParseException("Impossible serialize descriptor", t);
         }
-
     }
 
     private void addReadOnlyPropertiesToComponents(List<? extends ComponentResource> components, EntityType entityType) throws ParseException  {
         String fqn, uuid;
+
+        ObjectMapper mapper = DataProductVersionMapper.getMapper();
+
+     
         for(ComponentResource component : components) {
-            Map componentProperties;
+            ObjectNode componentNode;
             try {
-                componentProperties = DataProductVersionMapper.getMapper().readValue(component.getRawContent(), HashMap.class);
+                componentNode = (ObjectNode)mapper.readTree(component.getRawContent());
             } catch (Throwable t) {
                 throw new ParseException("Impossible to parse component raw cantent", t);
             }
             
+            // Set field "entityType"
             component.setEntityType(entityType);
-            componentProperties.put("entityType", entityType);
+            componentNode.put("entityType", entityType.toString());
             
+            // Set field "id"
             fqn = (String)component.getFullyQualifiedName();
             uuid = UUID.nameUUIDFromBytes(fqn.getBytes()).toString();
             component.setId(uuid);
-            componentProperties.put("id", uuid);
+            componentNode.put("id", uuid);
             
             try {
-                component.setRawContent(DataProductVersionMapper.getMapper().writeValueAsString(componentProperties));
+                component.setRawContent(mapper.writeValueAsString(componentNode));
             } catch (Throwable t) {
                 throw new ParseException("Impossible serialize component", t);
             }
+            
         }
     }
+    
 
     public static void resolve(DataProductVersionResource dataProductVersionRes, DataProductVersionSource source) throws ParseException {
         ReadOnlyPropertiesResolver resolver = new ReadOnlyPropertiesResolver(dataProductVersionRes, source);

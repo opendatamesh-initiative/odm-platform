@@ -97,6 +97,7 @@ public class DataProductVersionIT extends OpenDataMeshIT {
         // alredy done in DataProductIT
 
         String descriptorContent = createDataProduct1Version1(dataProduct1Res.getId());
+        System.out.println(descriptorContent);
         verifyBasicContent(descriptorContent);
     }
 

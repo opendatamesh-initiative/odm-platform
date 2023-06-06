@@ -70,26 +70,6 @@ public class DataProductVersionResource implements Cloneable {
         } catch  (Exception e) {
             e.printStackTrace();
         }
-
-        /* 
-
-        HashMap<String, HashMap> map;
-        try {
-            map = objectMapper.readValue(content, HashMap.class);
-            if(map.get("interfaceComponents") != null) {
-                interfaceComponents.setRawContent(map.get("interfaceComponents"));
-                map.remove("interfaceComponents");
-            }
-            
-            if(map.get("internalComponents") != null) {
-                internalComponents.setRawContent(map.get("internalComponents"));
-                map.remove("internalComponents");
-            }
-            rawContent = objectMapper.writeValueAsString(map);
-        } catch  (Exception e) {
-            e.printStackTrace();
-        }
-        */
     }
 
     @JsonIgnore
@@ -110,7 +90,7 @@ public class DataProductVersionResource implements Cloneable {
         try {
             ObjectNode rootNode = (ObjectNode)objectMapper.readTree(rawContent);
             rootNode.set("interfaceComponents", interfaceComponents.getRawContent());
-            rootNode.set("internalComponents", interfaceComponents.getRawContent());
+            rootNode.set("internalComponents", internalComponents.getRawContent());
             
             content = objectMapper.writeValueAsString(rootNode);
         } catch (Exception e) {

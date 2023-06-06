@@ -11,6 +11,7 @@ import org.opendatamesh.platform.pp.registry.core.resolvers.ExternalReferencesRe
 import org.opendatamesh.platform.pp.registry.core.resolvers.InternalReferencesResolver;
 import org.opendatamesh.platform.pp.registry.core.resolvers.ReadOnlyPropertiesResolver;
 import org.opendatamesh.platform.pp.registry.core.resolvers.StandardDefinitionsResolver;
+import org.opendatamesh.platform.pp.registry.core.resolvers.TemplatesResolver;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DataProductVersionResource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -88,6 +89,20 @@ public class DataProductVersionBuilder {
         return this;
     }
 
+    public DataProductVersionBuilder buildTemplates() throws BuildException {
+        
+        try {
+            TemplatesResolver.resolve(dataProductDescriptorRes, source, targetURL);
+        } catch (UnresolvableReferenceException | ParseException e) {
+            throw new BuildException("Impossible to build template properties",
+                BuildException.Stage.RESOLVE_TEMPLATE_PROPERTIES, e);
+        }
+       
+        return this;
+    }
+
+    
+
     public DataProductVersionBuilder buildStandardDefinition() throws BuildException {
               
         try {
@@ -119,7 +134,8 @@ public class DataProductVersionBuilder {
             .buildExternalReferences(validate)
             .buildInternalReferences(validate)
             .buildReadOnlyProperties()
-            .buildStandardDefinition();
+            .buildStandardDefinition()
+            .buildTemplates();
         return dataProductDescriptorRes;
     } 
 }

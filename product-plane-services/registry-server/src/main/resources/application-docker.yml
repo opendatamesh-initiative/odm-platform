@@ -59,8 +59,8 @@ spring:
 ##############################
 # Policy Module configuration
 ##############################
-policyserviceaddress: http://172.17.0.1:4242
+policyserviceaddress: http://${POLICYSERVICE_HOSTNAME}:${POLICYSERVICE_PORT}  #172.17.0.1:4242
 metaserviceaddress: http://${METASERVICE_HOSTNAME}:${METASERVICE_PORT}
 
-skippolicyservice: true
+skippolicyservice: ${SKIPE_POLICYSERVICE}
 skipmetaservice: ${SKIP_METASERVICE}

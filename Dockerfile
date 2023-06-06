@@ -70,7 +70,7 @@ ENV SKIP_METASERVICE ${SKIP_METASERVICE}
 ENV METASERVICE_HOSTNAME ${METASERVICE_HOSTNAME}
 ENV METASERVICE_PORT ${METASERVICE_PORT}
 
-COPY --from=build  /workspace/app/odm-platform-pp-services/registry-server/target/odm-platform-pp-*.jar /app/
+COPY --from=build  /workspace/app/odm-platform-pp-services/product-plane-services/registry-server/target/odm-platform-pp-*.jar /app/
 
 RUN ln -s -f /usr/share/zoneinfo/Europe/Rome /etc/localtime
 

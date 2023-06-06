@@ -23,7 +23,7 @@ cd odm-platform-pp-services
 Compile the project:
 
 ```bash
-mvn clean install -Dspring-boot.run.arguments="--SPRING_PROFILES_ACTIVE=dev"
+mvn clean install
 ```
 
 ### Run application

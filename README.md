@@ -165,7 +165,7 @@ cd odm-platform-pp-services
 ```
 
 ### Build image
-Build the docker-compose images of the application and a default PostgreSQL DB.
+Build the docker-compose images of the application and a default PostgreSQL DB (v11.0).
 
 Before building it, create a `.env` file in the root directory of the project similar to the following one:
 ```.dotenv

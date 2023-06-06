@@ -58,7 +58,7 @@ Here you can find the following two Dockerfiles:
 If you decide to create the Docker image using the second Dockerfile (i.e. `Dokerfile.local`), you need to first execute the build locally by running the following command: 
 
 ```bash
-mvn clean install -Dspring-boot.run.arguments="--SPRING_PROFILES_ACTIVE=dev"
+mvn clean install
 ```
 
 ### Run database

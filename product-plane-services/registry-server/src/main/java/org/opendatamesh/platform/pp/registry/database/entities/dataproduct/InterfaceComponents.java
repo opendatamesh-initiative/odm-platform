@@ -23,7 +23,7 @@ public class InterfaceComponents {
             @JoinColumn(name = "DATA_PRODUCT_ID"),
             @JoinColumn(name = "VERSION")
     })
-    @Where(clause = "ENTITY_TYPE = 'inputport'")
+    @Where(clause = "\"ENTITY_TYPE\" = 'inputport'")
     private List<Port> inputPorts = new ArrayList<Port>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -33,7 +33,7 @@ public class InterfaceComponents {
             @JoinColumn(name = "DATA_PRODUCT_ID"),
             @JoinColumn(name = "VERSION")
     })
-    @Where(clause = "ENTITY_TYPE = 'outputport'")
+    @Where(clause = "\"ENTITY_TYPE\" = 'outputport'")
     private List<Port> outputPorts = new ArrayList<Port>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -43,7 +43,7 @@ public class InterfaceComponents {
             @JoinColumn(name = "DATA_PRODUCT_ID"),
             @JoinColumn(name = "VERSION")
     })
-    @Where(clause = "ENTITY_TYPE = 'discoveryport'")
+    @Where(clause = "\"ENTITY_TYPE\" = 'discoveryport'")
     private List<Port> discoveryPorts = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -53,7 +53,7 @@ public class InterfaceComponents {
             @JoinColumn(name = "DATA_PRODUCT_ID"),
             @JoinColumn(name = "VERSION")
     })
-    @Where(clause = "ENTITY_TYPE = 'observabilityport'")
+    @Where(clause = "\"ENTITY_TYPE\" = 'observabilityport'")
     private List<Port> observabilityPorts = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -63,7 +63,7 @@ public class InterfaceComponents {
             @JoinColumn(name = "DATA_PRODUCT_ID"),
             @JoinColumn(name = "VERSION")
     })
-    @Where(clause = "ENTITY_TYPE = 'controlport'")
+    @Where(clause = "\"ENTITY_TYPE\" = 'controlport'")
     private List<Port> controlPorts = new ArrayList<>();
 
    

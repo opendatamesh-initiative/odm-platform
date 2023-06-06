@@ -20,17 +20,18 @@ spring:
   profile: localpostgres
   # JPA
   jpa:
+    show-sql: true
     hibernate:
-      ddl-auto: none
-      show-sql: true
+      ddl-auto: validate #none
       naming:
-        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+        #implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     properties:
       hibernate:
         jdbc:
           lob:
             non_contextual_creation: true
+        format_sql: true
         dialect: org.hibernate.dialect.PostgreSQL95Dialect # Or PostgreSQLDialect
         globally_quoted_identifiers: true
         default_schema: PUBLIC

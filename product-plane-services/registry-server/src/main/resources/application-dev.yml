@@ -60,4 +60,4 @@ policyserviceaddress: http://localhost:4242
 metaserviceaddress: http://localhost:8595 #8084
 
 skippolicyservice: true
-skipmetaservice: true
+skipmetaservice: false #true

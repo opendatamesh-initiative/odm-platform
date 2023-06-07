@@ -62,5 +62,5 @@ spring:
 policyserviceaddress: http://${POLICYSERVICE_HOSTNAME}:${POLICYSERVICE_PORT}  #172.17.0.1:4242
 metaserviceaddress: http://${METASERVICE_HOSTNAME}:${METASERVICE_PORT}
 
-skippolicyservice: ${SKIPE_POLICYSERVICE}
+skippolicyservice: ${SKIP_POLICYSERVICE}
 skipmetaservice: ${SKIP_METASERVICE}

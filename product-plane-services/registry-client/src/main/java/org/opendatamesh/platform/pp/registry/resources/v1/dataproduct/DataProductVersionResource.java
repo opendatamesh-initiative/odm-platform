@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import lombok.Data;
 
@@ -15,7 +17,7 @@ import java.util.List;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DataProductVersionResource implements Cloneable{
+public class DataProductVersionResource implements Cloneable {
 
     @JsonProperty("dataProductDescriptor")
     private String dataProductDescriptor;
@@ -41,13 +43,6 @@ public class DataProductVersionResource implements Cloneable{
     @JsonIgnore
     private String rawContent;
 
-    public DataProductVersionResource() {
-    }
-
-    public DataProductVersionResource(InfoResource info) {
-        this.info = info;
-    }
-
     public DataProductVersionResource clone() throws CloneNotSupportedException
     {
         return (DataProductVersionResource) super.clone();
@@ -56,20 +51,22 @@ public class DataProductVersionResource implements Cloneable{
 
     @JsonIgnore
     public void setRawContent(String content) {
-        HashMap<String, HashMap> map;
+        
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            map = objectMapper.readValue(content, HashMap.class);
-            if(map.get("interfaceComponents") != null) {
-                interfaceComponents.setRawContent(map.get("interfaceComponents"));
-                map.remove("interfaceComponents");
+            ObjectNode rootNode = (ObjectNode)objectMapper.readTree(content);
+            ObjectNode interfaceComponentsNode = (ObjectNode)rootNode.get("interfaceComponents");
+            if(interfaceComponentsNode != null) {
+                interfaceComponents.setRawContent(interfaceComponentsNode);
+                rootNode.remove("interfaceComponents");
             }
             
-            if(map.get("internalComponents") != null) {
-                internalComponents.setRawContent(map.get("internalComponents"));
-                map.remove("internalComponents");
+            ObjectNode internalComponentsNode = (ObjectNode)rootNode.get("internalComponents");
+            if(internalComponentsNode != null) {
+                internalComponents.setRawContent(internalComponentsNode);
+                rootNode.remove("internalComponents");
             }
-            rawContent = objectMapper.writeValueAsString(map);
+            rawContent = objectMapper.writeValueAsString(rootNode);
         } catch  (Exception e) {
             e.printStackTrace();
         }
@@ -89,15 +86,13 @@ public class DataProductVersionResource implements Cloneable{
         } 
 
         ObjectMapper objectMapper = new ObjectMapper();
+        
         try {
-            LinkedHashMap descriptorProperties = new LinkedHashMap();
-            HashMap rootEntityProperties = objectMapper.readValue(rawContent, HashMap.class);
-            descriptorProperties.put("dataProductDescriptor", rootEntityProperties.get("dataProductDescriptor"));
-            descriptorProperties.put("info", rootEntityProperties.get("info"));
-            descriptorProperties.put("interfaceComponents", interfaceComponents.getRawContent());
-            descriptorProperties.put("internalComponents", internalComponents.getRawContent());
+            ObjectNode rootNode = (ObjectNode)objectMapper.readTree(rawContent);
+            rootNode.set("interfaceComponents", interfaceComponents.getRawContent());
+            rootNode.set("internalComponents", internalComponents.getRawContent());
             
-            content = objectMapper.writeValueAsString(descriptorProperties);
+            content = objectMapper.writeValueAsString(rootNode);
         } catch (Exception e) {
             e.printStackTrace();
         }

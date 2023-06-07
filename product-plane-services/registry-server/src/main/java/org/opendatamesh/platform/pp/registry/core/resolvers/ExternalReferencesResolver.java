@@ -3,7 +3,7 @@ package org.opendatamesh.platform.pp.registry.core.resolvers;
 import java.net.URI;
 import java.util.List;
 
-import org.opendatamesh.platform.pp.registry.core.DataProductDescriptor;
+import org.opendatamesh.platform.pp.registry.core.DataProductVersionSource;
 import org.opendatamesh.platform.pp.registry.core.DataProductVersionMapper;
 import org.opendatamesh.platform.pp.registry.core.exceptions.ParseException;
 import org.opendatamesh.platform.pp.registry.core.exceptions.UnresolvableReferenceException;
@@ -13,15 +13,17 @@ import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.EntityType
 
 public class ExternalReferencesResolver implements PropertiesResolver{
 
-    DataProductDescriptor descriptor;
+    DataProductVersionResource dataProductVersionRes;
+    DataProductVersionSource source;
 
-    public ExternalReferencesResolver(DataProductDescriptor descriptor) {
-        this.descriptor = descriptor;
+    public ExternalReferencesResolver(DataProductVersionResource dataProductVersionRes, DataProductVersionSource source) {
+        this.dataProductVersionRes = dataProductVersionRes;
+        this.source = source;
     }
 
     @Override
     public void resolve() throws UnresolvableReferenceException, ParseException {
-        DataProductVersionResource parsedContent =  descriptor.getParsedContent();
+        DataProductVersionResource parsedContent =  dataProductVersionRes;
 
         if (parsedContent.getInterfaceComponents() != null) {
             resolveExternalReferences(parsedContent.getInterfaceComponents().getInputPorts(), 
@@ -66,7 +68,7 @@ public class ExternalReferencesResolver implements PropertiesResolver{
 
         try {
             URI uri = new URI(ref).normalize();
-            String content = descriptor.getSource().fetchResource(uri);
+            String content = source.fetchResource(uri);
             resolvedComponent = (E) DataProductVersionMapper.getMapper().readValue(content, component.getClass());
             resolvedComponent.setRawContent(content);
         } catch (Exception e) {
@@ -77,8 +79,8 @@ public class ExternalReferencesResolver implements PropertiesResolver{
         return resolvedComponent;
     }
 
-    public static void resolve(DataProductDescriptor descriptor) throws UnresolvableReferenceException, ParseException {
-        ExternalReferencesResolver resolver = new ExternalReferencesResolver(descriptor);
+    public static void resolve(DataProductVersionResource dataProductVersionRes, DataProductVersionSource source) throws UnresolvableReferenceException, ParseException {
+        ExternalReferencesResolver resolver = new ExternalReferencesResolver(dataProductVersionRes, source);
         resolver.resolve();
     }
 }

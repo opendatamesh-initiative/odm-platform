@@ -1,7 +1,7 @@
 package org.opendatamesh.dpexperience.api;
 
 import org.junit.jupiter.api.parallel.ExecutionMode;
-import org.opendatamesh.platform.pp.registry.core.DataProductDescriptor;
+import org.opendatamesh.platform.pp.registry.core.CoreApp;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DataProductResource;
 
 import java.io.IOException;

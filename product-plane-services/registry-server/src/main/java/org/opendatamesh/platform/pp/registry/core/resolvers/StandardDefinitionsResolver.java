@@ -3,7 +3,7 @@ package org.opendatamesh.platform.pp.registry.core.resolvers;
 import java.net.URI;
 import java.util.List;
 
-import org.opendatamesh.platform.pp.registry.core.DataProductDescriptor;
+import org.opendatamesh.platform.pp.registry.core.DataProductVersionSource;
 import org.opendatamesh.platform.pp.registry.core.DataProductVersionMapper;
 import org.opendatamesh.platform.pp.registry.core.exceptions.ParseException;
 import org.opendatamesh.platform.pp.registry.core.exceptions.UnresolvableReferenceException;
@@ -17,18 +17,20 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class StandardDefinitionsResolver {
 
-    DataProductDescriptor descriptor;
+    DataProductVersionResource dataProductVersionRes;
+    DataProductVersionSource source;
     private String targetURL;
 
-    public StandardDefinitionsResolver(DataProductDescriptor descriptor, String targetURL) {
-        this.descriptor = descriptor;
+    public StandardDefinitionsResolver(DataProductVersionResource dataProductVersionRes, DataProductVersionSource source, String targetURL) {
+        this.dataProductVersionRes = dataProductVersionRes;
+        this.source = source;
         this.targetURL = targetURL;
     }
 
     // Note: to be called after component resolution
     public void resolve() throws UnresolvableReferenceException, ParseException  {
         
-        DataProductVersionResource parsedContent = descriptor.getParsedContent();
+        DataProductVersionResource parsedContent = dataProductVersionRes;
 
         if (parsedContent.getInterfaceComponents() == null) {
             return;
@@ -63,7 +65,7 @@ public class StandardDefinitionsResolver {
                     String ref = apiDefinitionObject.get("$ref").asText();
                     try {
                         URI uri = new URI(ref).normalize();
-                        apiDefinitionContent =   descriptor.getSource().fetchResource(uri);
+                        apiDefinitionContent =   source.fetchResource(uri);
                     } catch (Exception e) {
                         throw new UnresolvableReferenceException(
                                 "Impossible to resolve external reference [" + ref + "]",
@@ -101,8 +103,8 @@ public class StandardDefinitionsResolver {
     }
 
 
-    public static void resolve(DataProductDescriptor descriptor, String targetURL) throws UnresolvableReferenceException, ParseException  {
-        StandardDefinitionsResolver resolver = new StandardDefinitionsResolver(descriptor, targetURL);
+    public static void resolve(DataProductVersionResource dataProductVersionRes,  DataProductVersionSource source, String targetURL) throws UnresolvableReferenceException, ParseException  {
+        StandardDefinitionsResolver resolver = new StandardDefinitionsResolver(dataProductVersionRes, source, targetURL);
         resolver.resolve();
     }
 }

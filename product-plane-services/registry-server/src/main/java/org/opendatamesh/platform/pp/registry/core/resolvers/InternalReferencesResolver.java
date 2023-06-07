@@ -2,7 +2,7 @@ package org.opendatamesh.platform.pp.registry.core.resolvers;
 
 import java.util.List;
 
-import org.opendatamesh.platform.pp.registry.core.DataProductDescriptor;
+import org.opendatamesh.platform.pp.registry.core.DataProductVersionSource;
 import org.opendatamesh.platform.pp.registry.core.DataProductVersionMapper;
 import org.opendatamesh.platform.pp.registry.core.exceptions.ParseException;
 import org.opendatamesh.platform.pp.registry.core.exceptions.UnresolvableReferenceException;
@@ -13,18 +13,20 @@ import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.EntityType
 
 public class InternalReferencesResolver implements PropertiesResolver{
 
-    DataProductDescriptor descriptor;
+    DataProductVersionResource dataProductVersionRes;
+    DataProductVersionSource source;
     DataProductVersionMapper mapper;
 
-    public InternalReferencesResolver(DataProductDescriptor descriptor) {
-        this.descriptor = descriptor;
+    public InternalReferencesResolver(DataProductVersionResource dataProductVersionRes, DataProductVersionSource source) {
+        this.dataProductVersionRes = dataProductVersionRes;
+        this.source = source;
         mapper = DataProductVersionMapper.getMapper();
     }
 
     @Override
     public void resolve() throws ParseException, UnresolvableReferenceException {
 
-        DataProductVersionResource parsedContent = descriptor.getParsedContent();
+        DataProductVersionResource parsedContent = dataProductVersionRes;
 
         if (parsedContent.getInterfaceComponents() != null) {
             resolveInternalReferences(parsedContent.getInterfaceComponents().getOutputPorts(),
@@ -72,8 +74,8 @@ public class InternalReferencesResolver implements PropertiesResolver{
         }
     }
 
-    public static void resolve(DataProductDescriptor descriptor) throws ParseException, UnresolvableReferenceException {
-        InternalReferencesResolver resolver = new InternalReferencesResolver(descriptor);
+    public static void resolve(DataProductVersionResource dataProductVersionRes, DataProductVersionSource source)  throws ParseException, UnresolvableReferenceException {
+        InternalReferencesResolver resolver = new InternalReferencesResolver(dataProductVersionRes, source);
         resolver.resolve();
     }
 }

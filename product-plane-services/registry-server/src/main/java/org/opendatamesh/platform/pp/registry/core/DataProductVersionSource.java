@@ -8,7 +8,7 @@ import org.opendatamesh.platform.pp.registry.core.exceptions.FetchException;
 import lombok.Data;
 
 @Data
-public class DataProductDescriptorSource {
+public class DataProductVersionSource {
     
     private URI rootDocURI;
     private URI rootDocBaseURI;
@@ -16,11 +16,11 @@ public class DataProductDescriptorSource {
     private String rootDocContent;
     private Fetcher fetcher;
     
-    public DataProductDescriptorSource(String descriptorContent) {
+    public DataProductVersionSource(String descriptorContent) {
         rootDocContent = descriptorContent;
     }
 
-    public DataProductDescriptorSource(URI descriptorUri) {
+    public DataProductVersionSource(URI descriptorUri) {
         rootDocURI = descriptorUri.normalize();
         String path = rootDocURI.getPath();
         String scheme = rootDocURI.getScheme();

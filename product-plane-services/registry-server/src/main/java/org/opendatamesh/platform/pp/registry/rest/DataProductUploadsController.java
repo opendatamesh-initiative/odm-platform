@@ -5,7 +5,7 @@ import java.net.URISyntaxException;
 
 import javax.validation.Valid;
 
-import org.opendatamesh.platform.pp.registry.core.DataProductDescriptorValidator;
+import org.opendatamesh.platform.pp.registry.core.DataProductVersionValidator;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataProductVersion;
 import org.opendatamesh.platform.pp.registry.exceptions.BadRequestException;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
@@ -58,7 +58,7 @@ public class DataProductUploadsController
     private DataProductMapper dataProductMapper;
 
     @Autowired
-    DataProductDescriptorValidator dataProductDescriptorValidator;
+    DataProductVersionValidator dataProductDescriptorValidator;
 
     @Autowired
     ObjectMapper objectMapper;

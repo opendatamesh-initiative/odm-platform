@@ -11,6 +11,7 @@ import org.opendatamesh.platform.pp.registry.core.resolvers.ExternalReferencesRe
 import org.opendatamesh.platform.pp.registry.core.resolvers.InternalReferencesResolver;
 import org.opendatamesh.platform.pp.registry.core.resolvers.ReadOnlyPropertiesResolver;
 import org.opendatamesh.platform.pp.registry.core.resolvers.StandardDefinitionsResolver;
+import org.opendatamesh.platform.pp.registry.core.resolvers.TemplatesResolver;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DataProductVersionResource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -19,25 +20,26 @@ import com.networknt.schema.ValidationMessage;
 import lombok.Data;
 
 @Data
-public class DataProductDescriptorBuilder {
+public class DataProductVersionBuilder {
 
-    DataProductDescriptor descriptor;
+    DataProductVersionSource source;
+    DataProductVersionResource dataProductDescriptorRes;
     DataProductVersionMapper mapper;
     
     private String targetURL;
 
-    public DataProductDescriptorBuilder(DataProductDescriptorSource source, String serverUrl) {
-        descriptor = new DataProductDescriptor(source);
-        setTargetURL(serverUrl);
+    public DataProductVersionBuilder(DataProductVersionSource source, String serverUrl) {
+        this.source = source;
+        this.targetURL = serverUrl;
         mapper = DataProductVersionMapper.getMapper();
     }
 
-    public DataProductDescriptorBuilder validateSchema() throws ParseException, ValidationException {
+    public DataProductVersionBuilder validateSchema() throws ParseException, ValidationException {
         Set<ValidationMessage> errors;
 
         // TODO validate against the right schema version
-        DataProductDescriptorValidator schemaValidator = new DataProductDescriptorValidator();
-        errors = schemaValidator.validateSchema(descriptor.getParsedContent().getRawContent(false));
+        DataProductVersionValidator schemaValidator = new DataProductVersionValidator();
+        errors = schemaValidator.validateSchema(dataProductDescriptorRes.getRawContent(false));
         
         if (!errors.isEmpty()) {
             throw new ValidationException("Descriptor document does not comply with DPDS. The following validation errors has been found during validation [" + errors.toString() + "]", errors);
@@ -46,12 +48,11 @@ public class DataProductDescriptorBuilder {
         return this;
     }
 
-    public DataProductDescriptorBuilder buildRootDoc(boolean validate) throws BuildException {
+    public DataProductVersionBuilder buildRootDoc(boolean validate) throws BuildException {
         try {
-            String rawContent = descriptor.getSource().fetchRootDoc();
-            DataProductVersionResource parsedContent = mapper.readValue(rawContent, DataProductVersionResource.class);
-            parsedContent.setRawContent(rawContent);
-            descriptor.setParsedContent(parsedContent);;
+            String rawContent = source.fetchRootDoc();
+            dataProductDescriptorRes = mapper.readValue(rawContent, DataProductVersionResource.class);
+            dataProductDescriptorRes.setRawContent(rawContent);
             if(validate) {
                 validateSchema();
             }
@@ -63,9 +64,9 @@ public class DataProductDescriptorBuilder {
         return this;
     }
 
-    public DataProductDescriptorBuilder buildExternalReferences(boolean validate) throws BuildException {
+    public DataProductVersionBuilder buildExternalReferences(boolean validate) throws BuildException {
         try {
-            ExternalReferencesResolver.resolve(descriptor);
+            ExternalReferencesResolver.resolve(dataProductDescriptorRes, source);
             if(validate) {
                 validateSchema();
             }
@@ -76,10 +77,10 @@ public class DataProductDescriptorBuilder {
         return this;
     }
 
-    public DataProductDescriptorBuilder buildReadOnlyProperties() throws BuildException {
+    public DataProductVersionBuilder buildReadOnlyProperties() throws BuildException {
         
         try {
-            ReadOnlyPropertiesResolver.resolve(descriptor);
+            ReadOnlyPropertiesResolver.resolve(dataProductDescriptorRes, source);
         } catch (ParseException e) {
             throw new BuildException("Impossible to build read only properties",
                 BuildException.Stage.RESOLVE_READ_ONLY_PROPERTIES, e);
@@ -88,10 +89,24 @@ public class DataProductDescriptorBuilder {
         return this;
     }
 
-    public DataProductDescriptorBuilder buildStandardDefinition() throws BuildException {
+    public DataProductVersionBuilder buildTemplates() throws BuildException {
+        
+        try {
+            TemplatesResolver.resolve(dataProductDescriptorRes, source, targetURL);
+        } catch (UnresolvableReferenceException | ParseException e) {
+            throw new BuildException("Impossible to build template properties",
+                BuildException.Stage.RESOLVE_TEMPLATE_PROPERTIES, e);
+        }
+       
+        return this;
+    }
+
+    
+
+    public DataProductVersionBuilder buildStandardDefinition() throws BuildException {
               
         try {
-            StandardDefinitionsResolver.resolve(descriptor, targetURL);
+            StandardDefinitionsResolver.resolve(dataProductDescriptorRes, source, targetURL);
         } catch (UnresolvableReferenceException | ParseException e) {
             throw new BuildException("Impossible to build standard definitions",
                 BuildException.Stage.RESOLVE_STANDARD_DEFINITIONS, e);
@@ -101,9 +116,9 @@ public class DataProductDescriptorBuilder {
         return this;
     }
    
-    public DataProductDescriptorBuilder buildInternalReferences(boolean validate) throws BuildException {
+    public DataProductVersionBuilder buildInternalReferences(boolean validate) throws BuildException {
         try {
-            InternalReferencesResolver.resolve(descriptor);
+            InternalReferencesResolver.resolve(dataProductDescriptorRes, source);
             if(validate) {
                 validateSchema();
             }
@@ -114,14 +129,13 @@ public class DataProductDescriptorBuilder {
         return this;
     }
 
-    public DataProductDescriptor build(boolean validate) throws BuildException  {
+    public DataProductVersionResource build(boolean validate) throws BuildException  {
         buildRootDoc(true)
             .buildExternalReferences(validate)
             .buildInternalReferences(validate)
             .buildReadOnlyProperties()
-            .buildStandardDefinition();
-        return descriptor;
-    }
-
-    
+            .buildStandardDefinition()
+            .buildTemplates();
+        return dataProductDescriptorRes;
+    } 
 }

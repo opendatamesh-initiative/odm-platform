@@ -128,13 +128,13 @@ docker run --name odmp-mysql-app -p 8585:8585 --net host odmp-mysql-app
 
 **Postgres**
 ```bash
-docker run --name ododmp-postgres-appmp -p 8585:8585 --net host odmp-postgres-app
+docker run --name odmp-postgres-app -p 8585:8585 --net host odmp-postgres-app
 ```
 
 ### Stop application
 
 *Before executing the following commands: 
-* chenage the instance name to `odmp-postgres-app` if you are using postgres and not mysql *
+* change the instance name to `odmp-postgres-app` if you are using postgres and not mysql *
 
 ```bash
 docker stop odmp-mysql-app

@@ -4,7 +4,8 @@ FROM maven:3-openjdk-11-slim as build
 WORKDIR /workspace/app
 
 RUN apt-get update
-RUN apt-get -y install git
+RUN apt-get -y install git npm
+RUN npm i -g redoc-cli
 RUN git clone https://github.com/opendatamesh-initiative/odm-platform-pp-services.git
 
 WORKDIR /workspace/app/odm-platform-pp-services
@@ -14,8 +15,7 @@ RUN mvn clean install -DskipTests
 # Stage 2
 FROM openjdk:11-jre-slim
 
-RUN apt-get update && apt-get install -y wget gpg lsb-release zip curl npm
-RUN npm i -g redoc-cli
+RUN apt-get update && apt-get install -y wget gpg lsb-release zip curl
 
 ARG SPRING_PROFILES_ACTIVE=docker
 ARG SPRING_PORT=8585

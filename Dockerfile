@@ -14,7 +14,8 @@ RUN mvn clean install -DskipTests
 # Stage 2
 FROM openjdk:11-jre-slim
 
-RUN apt-get update && apt-get install -y wget gpg lsb-release zip curl
+RUN apt-get update && apt-get install -y wget gpg lsb-release zip curl npm
+RUN npm i -g redoc-cli
 
 ARG SPRING_PROFILES_ACTIVE=docker
 ARG SPRING_PORT=8585

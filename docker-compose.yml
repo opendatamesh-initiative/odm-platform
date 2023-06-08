@@ -29,7 +29,6 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        SPRING_PROFILES_ACTIVE_BUILD: "dev"
         SPRING_PROFILES_ACTIVE: "docker"
         SPRING_PORT: "${SPRING_PORT}"
         JAVA_OPTS: ""

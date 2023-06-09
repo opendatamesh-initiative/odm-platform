@@ -16,7 +16,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class MappersConfiguration {
     @Bean
-    @Qualifier("objectMapper")
     public ObjectMapper myObjectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setSerializationInclusion(Include.NON_EMPTY);

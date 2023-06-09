@@ -54,7 +54,6 @@ public abstract class OpenDataMeshIT {
     protected final String RESOURCE_DPS_URI = "https://raw.githubusercontent.com/opendatamesh-initiative/odm-specification-dpdescriptor/main/examples/tripexecution/data-product-descriptor.json";
         
     @Autowired
-    @Qualifier("objectMapper")
     protected ObjectMapper mapper;
 
     @PostConstruct

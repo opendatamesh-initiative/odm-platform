@@ -274,28 +274,9 @@ public class TemplateIT extends OpenDataMeshIT {
 
     }
 
-    // ----------------------------------------
-    // OTHER ...
-    // ----------------------------------------
-    @Test
-    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-    public void testTemplateMediaTypeErrors() {
-        // TODO test the acceptable media types for create endpoint - exists?
-        // TODO test one wrong media type for create endpoint - exists?
-    }
-
-    // ======================================================================================
-    // PRIVATE METHODS
-    // ======================================================================================
 
     // ----------------------------------------
-    // Create test resources
-    // ----------------------------------------
-
-    // TODO: ...as needed
-
-    // ----------------------------------------
-    // Verify test resources
+    // UTILS
     // ----------------------------------------
 
     // ----------------------------------------

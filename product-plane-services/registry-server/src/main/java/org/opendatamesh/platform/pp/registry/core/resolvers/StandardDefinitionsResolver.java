@@ -4,7 +4,8 @@ import java.net.URI;
 import java.util.List;
 
 import org.opendatamesh.platform.pp.registry.core.DataProductVersionSource;
-import org.opendatamesh.platform.pp.registry.core.DataProductVersionMapper;
+import org.opendatamesh.platform.pp.registry.core.ObjectMapperFactory;
+import org.opendatamesh.platform.pp.registry.core.DataProductVersionSerializer;
 import org.opendatamesh.platform.pp.registry.core.exceptions.ParseException;
 import org.opendatamesh.platform.pp.registry.core.exceptions.UnresolvableReferenceException;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DataProductVersionResource;
@@ -20,11 +21,14 @@ public class StandardDefinitionsResolver {
     DataProductVersionResource dataProductVersionRes;
     DataProductVersionSource source;
     private String targetURL;
+    ObjectMapper mapper;
 
     public StandardDefinitionsResolver(DataProductVersionResource dataProductVersionRes, DataProductVersionSource source, String targetURL) {
         this.dataProductVersionRes = dataProductVersionRes;
         this.source = source;
         this.targetURL = targetURL;
+        this.mapper = ObjectMapperFactory.JSON_MAPPER;
+        
     }
 
     // Note: to be called after component resolution
@@ -45,14 +49,13 @@ public class StandardDefinitionsResolver {
 
     private void resolveStandardDefinitionObjects(List<PortResource> ports) throws UnresolvableReferenceException, ParseException {
        
-        ObjectMapper objectMapper = DataProductVersionMapper.getMapper();
         if (ports == null || ports.isEmpty()) {
             return;
         }
         for(PortResource port: ports) {
             JsonNode portObject = null;
             try {
-                portObject = objectMapper.readTree(port.getRawContent());
+                portObject = mapper.readTree(port.getRawContent());
             } catch (JsonProcessingException e) {
                 throw new ParseException("Impossible to parse descriptor raw cantent", e);
             }
@@ -78,7 +81,7 @@ public class StandardDefinitionsResolver {
                 } else  { // inline
                     // set apiDefinitionObject as raw content of reference object
                     try {
-                        apiDefinitionContent = objectMapper.writeValueAsString(apiDefinitionObject);
+                        apiDefinitionContent = mapper.writeValueAsString(apiDefinitionObject);
                     } catch (JsonProcessingException e) {
                         throw new ParseException("Impossible serialize api definition", e);
                     }
@@ -92,7 +95,7 @@ public class StandardDefinitionsResolver {
                 port.getPromises().getApi().getDefinition().setRawContent(apiDefinitionContent);
                 port.getPromises().getApi().getDefinition().setRef(apiDefinitionRef);
                 try {
-                    String rawContent = objectMapper.writeValueAsString(portObject);
+                    String rawContent = mapper.writeValueAsString(portObject);
                     port.setRawContent(rawContent);
                 } catch (JsonProcessingException e) {
                     throw new ParseException("Impossible serialize descriptor", e);

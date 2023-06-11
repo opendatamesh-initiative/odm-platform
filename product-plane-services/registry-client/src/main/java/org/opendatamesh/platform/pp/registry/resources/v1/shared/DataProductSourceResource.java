@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DataProductSourceRes {
+public class DataProductSourceResource {
     @JsonProperty("uri")
     private String uri;    
 }

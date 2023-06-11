@@ -4,7 +4,8 @@ import java.util.List;
 import java.util.UUID;
 
 import org.opendatamesh.platform.pp.registry.core.DataProductVersionSource;
-import org.opendatamesh.platform.pp.registry.core.DataProductVersionMapper;
+import org.opendatamesh.platform.pp.registry.core.ObjectMapperFactory;
+import org.opendatamesh.platform.pp.registry.core.DataProductVersionSerializer;
 import org.opendatamesh.platform.pp.registry.core.exceptions.ParseException;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.ComponentResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DataProductVersionResource;
@@ -16,10 +17,12 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class ReadOnlyPropertiesResolver implements PropertiesResolver {
     DataProductVersionResource dataProductVersionRes;
     DataProductVersionSource source;
-    
+    ObjectMapper mapper;
 
     public ReadOnlyPropertiesResolver(DataProductVersionResource dataProductVersionRes, DataProductVersionSource source) {
         this.dataProductVersionRes = dataProductVersionRes;
+        this.mapper = ObjectMapperFactory.JSON_MAPPER;
+
     }
 
     @Override
@@ -43,8 +46,6 @@ public class ReadOnlyPropertiesResolver implements PropertiesResolver {
 
     private void addReadOnlyPropertiesToInfo() throws ParseException {
         String fqn, uuid;
-
-        ObjectMapper mapper = DataProductVersionMapper.getMapper();
 
         String rawContent = dataProductVersionRes.getRawContent(true);
         ObjectNode rootNode = null;
@@ -76,9 +77,6 @@ public class ReadOnlyPropertiesResolver implements PropertiesResolver {
     private void addReadOnlyPropertiesToComponents(List<? extends ComponentResource> components, EntityType entityType) throws ParseException  {
         String fqn, uuid;
 
-        ObjectMapper mapper = DataProductVersionMapper.getMapper();
-
-     
         for(ComponentResource component : components) {
             ObjectNode componentNode;
             try {

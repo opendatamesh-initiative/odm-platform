@@ -13,8 +13,11 @@ import org.opendatamesh.platform.pp.registry.core.resolvers.ReadOnlyPropertiesRe
 import org.opendatamesh.platform.pp.registry.core.resolvers.StandardDefinitionsResolver;
 import org.opendatamesh.platform.pp.registry.core.resolvers.TemplatesResolver;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DataProductVersionResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.networknt.schema.ValidationMessage;
 
 import lombok.Data;
@@ -24,14 +27,15 @@ public class DataProductVersionBuilder {
 
     DataProductVersionSource source;
     DataProductVersionResource dataProductDescriptorRes;
-    DataProductVersionMapper mapper;
     
     private String targetURL;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DataProductVersionBuilder.class);
+    
 
     public DataProductVersionBuilder(DataProductVersionSource source, String serverUrl) {
         this.source = source;
         this.targetURL = serverUrl;
-        mapper = DataProductVersionMapper.getMapper();
     }
 
     public DataProductVersionBuilder validateSchema() throws ParseException, ValidationException {
@@ -51,7 +55,7 @@ public class DataProductVersionBuilder {
     public DataProductVersionBuilder buildRootDoc(boolean validate) throws BuildException {
         try {
             String rawContent = source.fetchRootDoc();
-            dataProductDescriptorRes = mapper.readValue(rawContent, DataProductVersionResource.class);
+            dataProductDescriptorRes = ObjectMapperFactory.getRightMapper(rawContent).readValue(rawContent, DataProductVersionResource.class);
             dataProductDescriptorRes.setRawContent(rawContent);
             if(validate) {
                 validateSchema();
@@ -138,4 +142,7 @@ public class DataProductVersionBuilder {
             .buildTemplates();
         return dataProductDescriptorRes;
     } 
+
+
+    
 }

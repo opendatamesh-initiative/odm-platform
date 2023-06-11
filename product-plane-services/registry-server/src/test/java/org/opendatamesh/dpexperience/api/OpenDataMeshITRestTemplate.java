@@ -10,7 +10,7 @@ import java.util.UUID;
 import org.opendatamesh.platform.pp.registry.core.CoreApp;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Definition;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DataProductResource;
-import org.opendatamesh.platform.pp.registry.resources.v1.shared.DataProductSourceRes;
+import org.opendatamesh.platform.pp.registry.resources.v1.shared.DataProductSourceResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.shared.DefinitionResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -245,7 +245,7 @@ public class OpenDataMeshITRestTemplate extends TestRestTemplate {
     public ResponseEntity<String> uploadDataProductVersion(
             String uri) throws IOException {
               
-        DataProductSourceRes dataProductSourceRes = new DataProductSourceRes();
+        DataProductSourceResource dataProductSourceRes = new DataProductSourceResource();
         dataProductSourceRes.setUri(uri);
         HttpEntity<String> entity = getObjectAsHttpEntity(dataProductSourceRes);
 

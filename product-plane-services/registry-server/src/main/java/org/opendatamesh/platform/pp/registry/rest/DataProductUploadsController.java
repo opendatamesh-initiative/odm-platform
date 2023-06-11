@@ -12,7 +12,7 @@ import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardE
 import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DataProductVersionResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.mappers.DataProductMapper;
-import org.opendatamesh.platform.pp.registry.resources.v1.shared.DataProductSourceRes;
+import org.opendatamesh.platform.pp.registry.resources.v1.shared.DataProductSourceResource;
 import org.opendatamesh.platform.pp.registry.services.DataProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -129,7 +129,7 @@ public class DataProductUploadsController
         @Parameter( 
             description = "A data product descriptor source", 
             required = true)
-        @Valid @RequestBody(required=false)  DataProductSourceRes dataProductSourceRes
+        @Valid @RequestBody(required=false)  DataProductSourceResource dataProductSourceRes
     ) {
         URI descriptorUri = null;
         try {

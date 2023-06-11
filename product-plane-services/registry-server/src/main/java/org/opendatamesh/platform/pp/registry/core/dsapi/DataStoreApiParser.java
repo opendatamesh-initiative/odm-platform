@@ -8,9 +8,10 @@ import java.util.List;
 import org.opendatamesh.platform.pp.registry.core.UriFetcher;
 import org.opendatamesh.platform.pp.registry.core.exceptions.FetchException;
 import org.opendatamesh.platform.pp.registry.core.exceptions.ParseException;
+import org.opendatamesh.platform.pp.registry.resources.v1.shared.DataServiceApiEndpointResource;
+import org.opendatamesh.platform.pp.registry.resources.v1.shared.DataServiceApiResource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -18,18 +19,24 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.Data;
 
 @Data
-public class DataStoreApi {
+public class DataStoreApiParser {
 
     URI baseUri;
-    String rawContent;
-
-    public DataStoreApi(URI baseUri, String rawContent) {
+    
+    public DataStoreApiParser(URI baseUri) {
         this.baseUri = baseUri;
-        this.rawContent = rawContent;
     }
 
-    public List<String> getTableSchemas() throws ParseException, FetchException {
-        List<String> schemas = new ArrayList<String>();
+    public DataServiceApiResource parse(String rawContent) throws ParseException, FetchException {
+        DataServiceApiResource api = new DataServiceApiResource();
+        api.setBaseUri(baseUri);
+        api.setRawContent(rawContent);
+        api.setEndpoints( extractEndpoints(rawContent) );
+        return api;
+    }
+
+    private List<DataServiceApiEndpointResource> extractEndpoints(String rawContent) throws ParseException, FetchException {
+        List<DataServiceApiEndpointResource> endpoints = new ArrayList<DataServiceApiEndpointResource>();
 
         ObjectMapper mapper = new ObjectMapper();
         try {
@@ -38,15 +45,31 @@ public class DataStoreApi {
             if(!apiNode.at("/schema/tables").isMissingNode()){
                 ArrayNode tables = (ArrayNode)apiNode.at("/schema/tables");
                 for(int i = 0; i < tables.size(); i++) {
-                    String tableSchema = null;
+                    DataServiceApiEndpointResource endpoint;
+                    String name = null, mediaType = null, tableSchema = null;
                     ObjectNode table = (ObjectNode)tables.get(i);
+                    if(table.get("name") != null) {
+                        name = table.get("name").asText();
+                    } else {
+                        name = "endpoint-" + (i+1);
+                    }
                     if(!table.at("/definition/$ref").isMissingNode()) {
                         UriFetcher fetcher = new UriFetcher(baseUri);
                         tableSchema = fetcher.fetch(new URI(table.at("/definition/$ref").asText()));
                     } else {
                         tableSchema = mapper.writeValueAsString(table.at("/definition"));
                     }
-                    schemas.add(tableSchema);
+
+                    if(!table.at("/definition/mediaType").isMissingNode()) {
+                        mediaType = table.at("/definition/mediaType").asText();
+                    } else {
+                        mediaType = "application/json";
+                    }
+                    endpoint = new DataServiceApiEndpointResource();
+                    endpoint.setName(name);
+                    endpoint.setMediaType(mediaType);
+                    endpoint.setSchema(tableSchema);
+                    endpoints.add(endpoint);
                 }
             }
         } catch (JsonProcessingException e) {
@@ -54,6 +77,6 @@ public class DataStoreApi {
         } catch (URISyntaxException e) {
             throw new ParseException("Impossible to parse api definition", e);
         }
-        return schemas;
+        return endpoints;
     }
 }

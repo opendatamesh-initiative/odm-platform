@@ -3,7 +3,8 @@ package org.opendatamesh.platform.pp.registry.core.resolvers;
 import java.util.List;
 
 import org.opendatamesh.platform.pp.registry.core.DataProductVersionSource;
-import org.opendatamesh.platform.pp.registry.core.DataProductVersionMapper;
+import org.opendatamesh.platform.pp.registry.core.ObjectMapperFactory;
+import org.opendatamesh.platform.pp.registry.core.DataProductVersionSerializer;
 import org.opendatamesh.platform.pp.registry.core.exceptions.ParseException;
 import org.opendatamesh.platform.pp.registry.core.exceptions.UnresolvableReferenceException;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.ComponentResource;
@@ -11,16 +12,18 @@ import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.Components
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DataProductVersionResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.EntityType;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class InternalReferencesResolver implements PropertiesResolver{
 
     DataProductVersionResource dataProductVersionRes;
     DataProductVersionSource source;
-    DataProductVersionMapper mapper;
+    ObjectMapper mapper;
 
     public InternalReferencesResolver(DataProductVersionResource dataProductVersionRes, DataProductVersionSource source) {
         this.dataProductVersionRes = dataProductVersionRes;
         this.source = source;
-        mapper = DataProductVersionMapper.getMapper();
+        this.mapper = ObjectMapperFactory.JSON_MAPPER;
     }
 
     @Override

@@ -4,21 +4,26 @@ import java.net.URI;
 import java.util.List;
 
 import org.opendatamesh.platform.pp.registry.core.DataProductVersionSource;
-import org.opendatamesh.platform.pp.registry.core.DataProductVersionMapper;
+import org.opendatamesh.platform.pp.registry.core.ObjectMapperFactory;
+import org.opendatamesh.platform.pp.registry.core.DataProductVersionSerializer;
 import org.opendatamesh.platform.pp.registry.core.exceptions.ParseException;
 import org.opendatamesh.platform.pp.registry.core.exceptions.UnresolvableReferenceException;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.ComponentResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DataProductVersionResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.EntityType;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class ExternalReferencesResolver implements PropertiesResolver{
 
     DataProductVersionResource dataProductVersionRes;
     DataProductVersionSource source;
+    ObjectMapper mapper;
 
     public ExternalReferencesResolver(DataProductVersionResource dataProductVersionRes, DataProductVersionSource source) {
         this.dataProductVersionRes = dataProductVersionRes;
         this.source = source;
+        this.mapper = ObjectMapperFactory.JSON_MAPPER;
     }
 
     @Override
@@ -69,7 +74,7 @@ public class ExternalReferencesResolver implements PropertiesResolver{
         try {
             URI uri = new URI(ref).normalize();
             String content = source.fetchResource(uri);
-            resolvedComponent = (E) DataProductVersionMapper.getMapper().readValue(content, component.getClass());
+            resolvedComponent = (E) mapper.readValue(content, component.getClass());
             resolvedComponent.setRawContent(content);
         } catch (Exception e) {
             throw new UnresolvableReferenceException(

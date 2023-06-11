@@ -4,7 +4,8 @@ import java.net.URI;
 import java.util.List;
 
 import org.opendatamesh.platform.pp.registry.core.DataProductVersionSource;
-import org.opendatamesh.platform.pp.registry.core.DataProductVersionMapper;
+import org.opendatamesh.platform.pp.registry.core.ObjectMapperFactory;
+import org.opendatamesh.platform.pp.registry.core.DataProductVersionSerializer;
 import org.opendatamesh.platform.pp.registry.core.exceptions.ParseException;
 import org.opendatamesh.platform.pp.registry.core.exceptions.UnresolvableReferenceException;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.InfrastructuralComponent;
@@ -32,7 +33,7 @@ public class TemplatesResolver {
         this.dataProductVersionRes = dataProductVersionRes;
         this.source = source;
         this.targetURL = targetURL;
-        mapper = DataProductVersionMapper.getMapper();
+        this.mapper = ObjectMapperFactory.JSON_MAPPER;
     }
 
     // Note: to be called after component resolution

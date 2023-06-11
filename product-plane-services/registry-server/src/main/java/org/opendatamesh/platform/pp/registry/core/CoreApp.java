@@ -6,11 +6,13 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
-import org.opendatamesh.platform.pp.registry.core.dsapi.DataStoreApi;
+import org.opendatamesh.platform.pp.registry.core.dsapi.DataStoreApiParser;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DataProductVersionResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.PortResource;
+import org.opendatamesh.platform.pp.registry.resources.v1.shared.DataServiceApiResource;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.WebApplicationType;
@@ -41,20 +43,21 @@ public class CoreApp implements CommandLineRunner {
         DataProductVersionResource dataProductVerionRes = null;
         dataProductVerionRes = builder.build(true);
 
-        // String rawContent =
-        // descriptor.getParsedContent().getComponentRawContentOrdered(false);
-        DataProductVersionMapper mapper = DataProductVersionMapper.getMapper();
-        String rawContent = mapper.getRawContent(dataProductVerionRes, false);
-        JsonNode jsonNode = mapper.readTree(rawContent);
-        String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonNode);
-        System.out.println(json);
+        DataProductVersionSerializer serializer = new DataProductVersionSerializer();
+        String rawContent = serializer.serialize(dataProductVerionRes, "canonical", "yaml", true);
+        System.out.println(rawContent);
 
         List<PortResource> outputPorts = dataProductVerionRes.getInterfaceComponents().getOutputPorts();
         for(PortResource outputPort : outputPorts) {
-            String apiRawContent = outputPort.getPromises().getApi().getDefinition().getRawContent();
-            DataStoreApi dataStoreApi = new DataStoreApi(dataProductVersionSource.getRootDocBaseURI(), apiRawContent);
-        
-            System.out.println("\n\n====\n" + outputPort.getFullyQualifiedName() + "\n====\n\n" + dataStoreApi.getTableSchemas());
+            if(outputPort.getPromises().getApi().getSpecification().equalsIgnoreCase("datastoreApi")) {
+                String apiRawContent = outputPort.getPromises().getApi().getDefinition().getRawContent();
+                DataStoreApiParser dataStoreApiParser = new DataStoreApiParser(dataProductVersionSource.getRootDocBaseURI());
+                DataServiceApiResource api = dataStoreApiParser.parse(apiRawContent);
+                System.out.println("\n\n====\n" + outputPort.getFullyQualifiedName() + "\n====\n\n" +  api.getEndpoints());
+            } else {
+                System.out.println("\n\n====\n" + outputPort.getFullyQualifiedName() + "\n====\n\n" + outputPort.getPromises().getApi().getSpecification() + " not supported");
+            }
+            
         }
     }
 }

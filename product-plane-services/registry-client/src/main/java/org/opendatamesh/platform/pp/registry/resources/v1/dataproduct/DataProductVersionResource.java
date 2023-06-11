@@ -11,8 +11,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.Data;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 @Data
@@ -70,59 +68,6 @@ public class DataProductVersionResource implements Cloneable {
         } catch  (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    @JsonIgnore
-    public String getRawContent()  {
-       return getRawContent(true);
-    }
-
-    @JsonIgnore
-    public String getRawContent(boolean rootOnly)  {
-        String content = null;
-
-        if(rootOnly == true) {
-            return this.rawContent;
-        } 
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        
-        try {
-            ObjectNode rootNode = (ObjectNode)objectMapper.readTree(rawContent);
-            rootNode.set("interfaceComponents", interfaceComponents.getRawContent());
-            rootNode.set("internalComponents", internalComponents.getRawContent());
-            
-            content = objectMapper.writeValueAsString(rootNode);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-       
-        return content;
-    }
-
-    @JsonIgnore
-    public String getComponentRawContent(boolean rootOnly)  {
-        String content = null;
-
-        if(rootOnly == true) {
-            return this.rawContent;
-        } 
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            LinkedHashMap descriptorProperties = new LinkedHashMap();
-            HashMap rootEntityProperties = objectMapper.readValue(rawContent, HashMap.class);
-            descriptorProperties.put("dataProductDescriptor", rootEntityProperties.get("dataProductDescriptor"));
-            descriptorProperties.put("info", rootEntityProperties.get("info"));
-            descriptorProperties.put("interfaceComponents", interfaceComponents.getRawContent());
-            descriptorProperties.put("internalComponents", internalComponents.getRawContent());
-            
-            content = objectMapper.writeValueAsString(descriptorProperties);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-       
-        return content;
     }
 
     public String toEventString() throws JsonProcessingException {

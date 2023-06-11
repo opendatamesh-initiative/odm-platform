@@ -22,7 +22,6 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -56,7 +55,7 @@ public class DataProductVersionSerializer {
             mapper = ObjectMapperFactory.JSON_MAPPER;
         }
 
-        if (form.equalsIgnoreCase("normal")) {
+        if (form.equalsIgnoreCase("normalized")) {
             result = serializeToNormalForm(dataProductVersionRes, mapper, prettyPrint);
         } else {
             result = serializeToCanonicalForm(dataProductVersionRes, false, mapper, prettyPrint);
@@ -89,7 +88,7 @@ public class DataProductVersionSerializer {
         String result = null;
         ObjectNode resultRootNode = null;
 
-        String rootRawContent = dataProductVersion.getRawContent(true);
+        String rootRawContent = dataProductVersion.getRawContent();
 
         ObjectNode rootNode = (ObjectNode) ObjectMapperFactory.getRightMapper(rootRawContent).readTree(rootRawContent);
 

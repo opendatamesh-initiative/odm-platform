@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.opendatamesh.platform.pp.registry.core.DataProductVersionSerializer;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataProductVersion;
 import org.opendatamesh.platform.pp.registry.exceptions.BadRequestException;
 import org.opendatamesh.platform.pp.registry.exceptions.InternalServerException;
@@ -32,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ServerErrorException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -166,7 +168,17 @@ public class DataProductVersionController
         String serverUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
         DataProductVersion dataProductVersion = dataProductService.addDataProductVersion(descriptorContent, false, serverUrl);
         DataProductVersionResource dataProductVersionResource = dataProductMapper.toResource(dataProductVersion);
-        return dataProductVersionResource.getRawContent(false);
+        
+        DataProductVersionSerializer serializer = new DataProductVersionSerializer();
+        String serailizedContent = null;
+        try {
+            serailizedContent = serializer.serialize(dataProductVersionResource, "canonical", "json", true);
+        } catch (JsonProcessingException e) {
+           throw new InternalServerException(
+            OpenDataMeshAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
+            "Impossible to serialize data product version raw content", e);
+        }
+        return serailizedContent;
     }
 
     // ----------------------------------------
@@ -311,23 +323,17 @@ public class DataProductVersionController
         
         DataProductVersion dataProductVersion = dataProductVersionService.readDataProductVersion(id, version);;
         DataProductVersionResource dataProductVersionResource = dataProductMapper.toResource(dataProductVersion);
-        String descriptorContent = null;
-        if(format == null) format = "normalized";
-        switch (format) {
-            case "normalized": //parsed=deserialized and then serialized again
-                descriptorContent = dataProductVersionResource.getRawContent(false);
-                break;
-            case "canonical": //normalized + semantic equalization
-                try {
-                    descriptorContent =  objectMapper.writeValueAsString(dataProductVersionResource);
-                } catch (JsonProcessingException e) {
-                    throw new InternalServerException(
-                        OpenDataMeshAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
-                        "Error in the backend descriptor processor");
-                }
-                break;
+        if(format == null) format = "canonical";
+        DataProductVersionSerializer serializer = new DataProductVersionSerializer();
+        String serailizedContent = null;
+        try {
+            serailizedContent = serializer.serialize(dataProductVersionResource, format, "json", true);
+        } catch (JsonProcessingException e) {
+           throw new InternalServerException(
+            OpenDataMeshAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
+            "Impossible to serialize data product version raw content", e);
         }
-        return descriptorContent;
+        return serailizedContent;
     }
 
     // ----------------------------------------

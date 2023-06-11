@@ -5,9 +5,11 @@ import java.net.URISyntaxException;
 
 import javax.validation.Valid;
 
+import org.opendatamesh.platform.pp.registry.core.DataProductVersionSerializer;
 import org.opendatamesh.platform.pp.registry.core.DataProductVersionValidator;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataProductVersion;
 import org.opendatamesh.platform.pp.registry.exceptions.BadRequestException;
+import org.opendatamesh.platform.pp.registry.exceptions.InternalServerException;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DataProductVersionResource;
@@ -28,6 +30,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -142,7 +145,16 @@ public class DataProductUploadsController
         String serverUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
         DataProductVersion dataProductVersion = dataProductService.addDataProductVersion(descriptorUri, true, serverUrl);
         DataProductVersionResource dataProductVersionResource = dataProductMapper.toResource(dataProductVersion);
-        return dataProductVersionResource.getRawContent(false);
+        DataProductVersionSerializer serializer = new DataProductVersionSerializer();
+        String serailizedContent = null;
+        try {
+            serailizedContent = serializer.serialize(dataProductVersionResource, "canonical", "json", true);
+        } catch (JsonProcessingException e) {
+           throw new InternalServerException(
+            OpenDataMeshAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
+            "Impossible to serialize data product version raw content", e);
+        }
+        return serailizedContent;
     }
 
     /*

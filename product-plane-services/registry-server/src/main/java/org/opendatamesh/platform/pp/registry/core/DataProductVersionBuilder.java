@@ -43,7 +43,16 @@ public class DataProductVersionBuilder {
 
         // TODO validate against the right schema version
         DataProductVersionValidator schemaValidator = new DataProductVersionValidator();
-        errors = schemaValidator.validateSchema(dataProductDescriptorRes.getRawContent(false));
+
+        DataProductVersionSerializer serializer = new DataProductVersionSerializer();
+        String serailizedContent = null;
+
+        try {
+            serailizedContent = serializer.serialize(dataProductDescriptorRes, "canonical", "json", false);
+        } catch (JsonProcessingException e) {
+           throw new ParseException("Impossible to serialize data product version raw content", e);
+        }
+        errors = schemaValidator.validateSchema(serailizedContent);
         
         if (!errors.isEmpty()) {
             throw new ValidationException("Descriptor document does not comply with DPDS. The following validation errors has been found during validation [" + errors.toString() + "]", errors);

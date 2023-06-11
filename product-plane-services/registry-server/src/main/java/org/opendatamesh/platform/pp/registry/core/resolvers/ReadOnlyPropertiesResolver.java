@@ -47,7 +47,7 @@ public class ReadOnlyPropertiesResolver implements PropertiesResolver {
     private void addReadOnlyPropertiesToInfo() throws ParseException {
         String fqn, uuid;
 
-        String rawContent = dataProductVersionRes.getRawContent(true);
+        String rawContent = dataProductVersionRes.getRawContent();
         ObjectNode rootNode = null;
         try {
             rootNode = (ObjectNode)mapper.readTree(rawContent);

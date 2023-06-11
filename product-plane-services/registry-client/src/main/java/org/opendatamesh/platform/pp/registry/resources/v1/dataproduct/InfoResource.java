@@ -1,5 +1,6 @@
 package org.opendatamesh.platform.pp.registry.resources.v1.dataproduct;
 
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -41,6 +42,11 @@ public class InfoResource implements Cloneable {
 
     @JsonProperty("contactPoints")
     private List<ContactPointResource> contactPoints = new ArrayList<>();
+
+    @JsonAnySetter
+    public void ignored(String name, Object value) {
+        System.out.println(name + " : " + value + " : " + value.getClass().getName());
+    }
 
     public InfoResource() {
     }

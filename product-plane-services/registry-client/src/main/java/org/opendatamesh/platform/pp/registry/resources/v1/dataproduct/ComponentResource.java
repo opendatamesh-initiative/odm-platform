@@ -4,7 +4,7 @@ import lombok.Data;
 
 import java.util.Date;
 
-
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -44,6 +44,11 @@ public class ComponentResource {
 
     @JsonIgnore
     protected String rawContent;
+
+    @JsonAnySetter
+    public void ignored(String name, Object value) {
+        System.out.println(name + " : " + value + " : " + value.getClass().getName());
+    }
 
     @JsonIgnore
     protected Date createdAt;

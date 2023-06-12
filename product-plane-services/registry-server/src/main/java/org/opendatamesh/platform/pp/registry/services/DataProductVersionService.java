@@ -7,10 +7,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.opendatamesh.notification.EventResource;
 import org.opendatamesh.notification.EventType;
-import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataProductVersion;
-import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.Port;
-import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.StandardDefinition;
+import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.*;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Definition;
+import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Template;
 import org.opendatamesh.platform.pp.registry.database.repositories.DataProductVersionRepository;
 import org.opendatamesh.platform.pp.registry.exceptions.*;
 import org.opendatamesh.platform.pp.registry.resources.v1.mappers.DataProductMapper;
@@ -32,7 +31,10 @@ public class DataProductVersionService {
     private DataProductVersionRepository dataProductVersionRepository;
 
     @Autowired
-    private  DefinitionService definitionService; 
+    private  DefinitionService definitionService;
+
+    @Autowired
+    private TemplateService templateService;
 
     @Autowired
     ObjectMapper objectMapper;
@@ -86,6 +88,14 @@ public class DataProductVersionService {
                 OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
                     "An internal processing error occured while saving API", t);
         }
+
+        /*try {
+            saveTemplates(dataProductVersion);
+        } catch (Throwable t) {
+            throw new InternalServerException(
+                    OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
+                    "An internal processing error occured while saving API", t);
+        }*/
 
         try {
             dataProductVersion = saveDataProductVersion(dataProductVersion);
@@ -174,6 +184,84 @@ public class DataProductVersionService {
         
         return apiDefinition;
     }
+
+    private void saveTemplates(DataProductVersion dataProductVersion) throws JsonProcessingException {
+        if( dataProductVersion!= null && dataProductVersion.getInternalComponents() != null) {
+            saveInfrastructuralComponentTemplates(dataProductVersion.getInternalComponents().getInfrastructuralComponents());
+            saveApplicationComponentTemplates(dataProductVersion.getInternalComponents().getApplicationComponents());
+        }
+    }
+
+    private void saveInfrastructuralComponentTemplates(List<InfrastructuralComponent> components) {
+        if(components == null || components.size() == 0) return;
+
+        ExternalResource template = null;
+
+        for(InfrastructuralComponent component: components) {
+            template = component.getProvisionInfo().getTemplate();
+            saveTemplate(template, component.getId(), component.getFullyQualifiedName());
+        }
+    }
+
+    private void saveApplicationComponentTemplates(List<ApplicationComponent> components) {
+        if(components == null || components.size() == 0) return;
+
+        ExternalResource buildTemplate;
+        ExternalResource deployTemplate = null;
+
+        for(ApplicationComponent component : components) {
+            buildTemplate = component.getBuildInfo().getTemplate();
+            saveTemplate(buildTemplate, component.getId(), component.getFullyQualifiedName());
+            deployTemplate = component.getDeployInfo().getTemplate();
+            saveTemplate(deployTemplate, component.getId(), component.getFullyQualifiedName());
+        }
+    }
+
+    private Template saveTemplate(ExternalResource template, String componentId, String componentName) {
+
+        if(template == null) return null;
+
+        Template templateEntity = null;
+
+        try {
+            if(StringUtils.hasText(templateEntity.getMediaType())
+                    && StringUtils.hasText(templateEntity.getHref())) {
+                templateEntity = templateService.searchTemplate(templateEntity.getMediaType(), templateEntity.getHref());
+            }
+            if(templateEntity == null) {
+                templateEntity = templateService.createTemplate(
+                        new Template(
+                                template.getDescription(),
+                                template.getMediaType(),
+                                template.getHref()
+                        )
+                );
+            }
+
+        } catch(Throwable t) {
+            throw new InternalServerException(
+                    OpenDataMeshAPIStandardError.SC500_01_DATABASE_ERROR,
+                    "An error occured in the backend database while saving template of component [" +  componentName + "]",
+                    t);
+        }
+
+        // Once we have the api id we replace the definition content with a reference url
+        /*String ref = api.getDefinition().getRef();
+        ref = ref.replaceAll("\\{apiId\\}", "" + apiDefinition.getId());
+        api.getDefinition().setRef(ref);
+
+        ObjectNode portObject = (ObjectNode)objectMapper.readTree(port.getRawContent());
+        ObjectNode standardDefinitionContent = (ObjectNode)portObject.at("/promises/api/definition");
+        standardDefinitionContent.put("$ref", ref);
+        port.setRawContent( objectMapper.writeValueAsString(portObject));
+
+        port.getPromises().setApiId(apiDefinition.getId());
+
+        return apiDefinition;*/
+
+        return null;
+    }
+
 
 
     // ======================================================================================

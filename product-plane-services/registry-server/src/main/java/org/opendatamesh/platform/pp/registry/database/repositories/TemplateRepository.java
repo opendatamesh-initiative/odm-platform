@@ -14,12 +14,16 @@ public interface TemplateRepository extends JpaRepository<Template, Long>, JpaSp
 
     class Specs {
         static public Specification<Template> hasMatch(
-                String mediaType
+                String mediaType,
+                String href
         ) {
             return (root, query, criteriaBuilder) -> {
                 List<Predicate> predicates = new ArrayList<>();
                 if (mediaType != null) {
                     predicates.add(criteriaBuilder.equal(root.get("mediaType"), mediaType));
+                }
+                if (href != null) {
+                    predicates.add(criteriaBuilder.equal(root.get("href"), href));
                 }
                 return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
             };

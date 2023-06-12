@@ -1,5 +1,6 @@
 package org.opendatamesh.platform.pp.registry.services;
 
+import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Definition;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Template;
 import org.opendatamesh.platform.pp.registry.database.repositories.ComponentTemplateRepository;
 import org.opendatamesh.platform.pp.registry.database.repositories.TemplateRepository;
@@ -180,12 +181,49 @@ public class TemplateService {
         return template;
     }
 
+    /**
+     * @return The template identified by mediaType and href. Null if not exists
+     */
+    public Template searchTemplate(
+            String mediaType,
+            String href) {
+        Template template = null;
+        List<Template> templates = searchTemplates(mediaType, href);
+        if (templates == null || templates.size() == 0) {
+            template = null;
+        } else if (templates.size() == 1) {
+            template = templates.get(0);
+        } else {
+            throw new InternalServerException(
+                    OpenDataMeshAPIStandardError.SC500_01_DATABASE_ERROR,
+                    "An error occured in the backend database while searching definitions");
+        }
+
+        return template;
+    }
+
     public List<Template> searchTemplates(
             String mediaType
     ) {
         List<Template> templateSearchResults = null;
         try {
-            templateSearchResults = findTemplates(mediaType);
+            templateSearchResults = findTemplates(mediaType, null);
+        } catch (Throwable t) {
+            throw new InternalServerException(
+                    OpenDataMeshAPIStandardError.SC500_01_DATABASE_ERROR,
+                    "An error occured in the backend database while searching definitions",
+                    t);
+        }
+        return templateSearchResults;
+    }
+
+    public List<Template> searchTemplates(
+            String mediaType,
+            String href
+    ) {
+        List<Template> templateSearchResults = null;
+        try {
+            templateSearchResults = findTemplates(mediaType, href);
         } catch (Throwable t) {
             throw new InternalServerException(
                     OpenDataMeshAPIStandardError.SC500_01_DATABASE_ERROR,
@@ -196,10 +234,11 @@ public class TemplateService {
     }
 
     private List<Template> findTemplates(
-            String mediaType
+            String mediaType,
+            String href
     ) {
         return templateRepository.findAll(
-                TemplateRepository.Specs.hasMatch(mediaType)
+                TemplateRepository.Specs.hasMatch(mediaType, href)
         );
     }
 

@@ -3,7 +3,6 @@ package org.opendatamesh.platform.pp.registry.resources.v1.mappers;
 import java.io.IOException;
 import java.util.Map;
 
-import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.ExternalResourceResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.ProvisionInfoResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.ReferenceObjectResource;
 
@@ -12,6 +11,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import org.opendatamesh.platform.pp.registry.resources.v1.shared.TemplateResource;
 
 public class ProvisionInfoResourceDeserializer extends StdDeserializer<ProvisionInfoResource> {
 
@@ -40,7 +40,12 @@ public class ProvisionInfoResourceDeserializer extends StdDeserializer<Provision
 
             jp2 = node.get("template").traverse();
             jp2.nextToken();
-            ReferenceObjectResource templateRef = ctxt.readValue(jp2, ReferenceObjectResource.class);
+            TemplateResource templateResource = ctxt.readValue(jp2, TemplateResource.class);
+            ReferenceObjectResource templateRef = new ReferenceObjectResource();
+            templateRef.setDescription(templateResource.getDescription());
+            templateRef.setRawContent(templateResource.toRawContentString());
+            //ReferenceObjectResource templateRef = ctxt.readValue(jp2, ReferenceObjectResource.class);
+
 
             jp2 = node.get("configurations").traverse();
             jp2.nextToken();

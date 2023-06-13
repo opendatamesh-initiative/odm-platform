@@ -89,13 +89,13 @@ public class DataProductVersionService {
                     "An internal processing error occured while saving API", t);
         }
 
-        /*try {
+        try {
             saveTemplates(dataProductVersion);
         } catch (Throwable t) {
             throw new InternalServerException(
                     OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
                     "An internal processing error occured while saving API", t);
-        }*/
+        }
 
         try {
             dataProductVersion = saveDataProductVersion(dataProductVersion);
@@ -188,7 +188,7 @@ public class DataProductVersionService {
     private void saveTemplates(DataProductVersion dataProductVersion) throws JsonProcessingException {
         if( dataProductVersion!= null && dataProductVersion.getInternalComponents() != null) {
             saveInfrastructuralComponentTemplates(dataProductVersion.getInternalComponents().getInfrastructuralComponents());
-            saveApplicationComponentTemplates(dataProductVersion.getInternalComponents().getApplicationComponents());
+            //saveApplicationComponentTemplates(dataProductVersion.getInternalComponents().getApplicationComponents());
         }
     }
 

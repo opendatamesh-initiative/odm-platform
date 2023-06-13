@@ -24,6 +24,7 @@ public class Promises {
     //@JoinColumn(name = "API_ID", referencedColumnName = "ID")
     @Column(name = "API_ID")
     protected Long apiId;
+
     @Transient
     protected StandardDefinition api;
 

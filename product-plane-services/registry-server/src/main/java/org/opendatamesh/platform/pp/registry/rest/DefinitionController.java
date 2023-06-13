@@ -58,7 +58,7 @@ public class DefinitionController {
     private static final Logger logger = LoggerFactory.getLogger(DefinitionController.class);
 
     public DefinitionController() { 
-        logger.debug("Standard definitions controller succesfully started");
+        logger.debug("Standard definitions controller successfully started");
     }
 
     // ======================================================================================

@@ -5,6 +5,8 @@ public enum RoutesV1 {
     DATA_PRODUCTS("/api/v1/pp/products"),
 
     DEFINITIONS("/api/v1/pp/definitions"),
+
+    TEMPLATES("/api/v1/pp/templates"),
     
     DATA_PRODUCTS_UPLOADS("/api/v1/pp/products/uploads"),
     

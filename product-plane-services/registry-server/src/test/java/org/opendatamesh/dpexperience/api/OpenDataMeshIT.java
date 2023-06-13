@@ -10,9 +10,11 @@ import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Definit
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DataProductResource;
+import org.opendatamesh.platform.pp.registry.resources.v1.shared.TemplateResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
@@ -46,6 +48,8 @@ public abstract class OpenDataMeshIT {
     protected final String RESOURCE_DEF1_NOVERSION = "src/test/resources/test/definition/def1-missing-version.json";
     protected final String RESOURCE_DEF1_NONAME = "src/test/resources/test/definition/def1-missing-name.json";
     protected final String RESOURCE_DEF1_NONAME_NOVERSION = "src/test/resources/test/definition/def2-missing-name-version.json";
+    protected final String RESOURCE_TEMPLATE_1 = "src/test/resources/test/template/template1.json";
+    protected final String RESOURCE_TEMPLATE_2 = "src/test/resources/test/template/template2.json";
 
     protected final String RESOURCE_DPS_URI = "https://raw.githubusercontent.com/opendatamesh-initiative/odm-specification-dpdescriptor/main/examples/tripexecution/data-product-descriptor.json";
         
@@ -54,7 +58,7 @@ public abstract class OpenDataMeshIT {
 
     @PostConstruct
     public final void init() {
-        rest = new OpenDataMeshITRestTemplate();
+        rest = new OpenDataMeshITRestTemplate(mapper);
         rest.setPort(port);
         HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
         // requestFactory.setConnectTimeout(30000);
@@ -129,8 +133,6 @@ public abstract class OpenDataMeshIT {
         return postProductVersionApiResponse.getBody();
     }
 
-    
-
     protected Definition createDefinition1() throws IOException {
         ResponseEntity<Definition> postDefinition = rest.createDefinition(
                 RESOURCE_DEF1_V1
@@ -165,6 +167,23 @@ public abstract class OpenDataMeshIT {
         verifyResponseEntity(postDefinition, HttpStatus.CREATED, true);
 
         return postDefinition.getBody();
+    }
+
+    protected TemplateResource createTemplate1() throws IOException {
+        ResponseEntity<TemplateResource> postTemplate = rest.createTemplate(
+                RESOURCE_TEMPLATE_1
+        );
+        verifyResponseEntity(postTemplate, HttpStatus.CREATED, true);
+        return postTemplate.getBody();
+    }
+
+    protected TemplateResource createTemplate2() throws IOException {
+        ResponseEntity<TemplateResource> postTemplate = rest.createTemplate(
+                RESOURCE_TEMPLATE_2
+        );
+        verifyResponseEntity(postTemplate, HttpStatus.CREATED, true);
+
+        return postTemplate.getBody();
     }
 
     // ======================================================================================

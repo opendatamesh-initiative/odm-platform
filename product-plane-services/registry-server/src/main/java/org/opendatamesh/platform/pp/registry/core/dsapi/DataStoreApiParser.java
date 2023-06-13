@@ -9,7 +9,7 @@ import org.opendatamesh.platform.pp.registry.core.UriFetcher;
 import org.opendatamesh.platform.pp.registry.core.exceptions.FetchException;
 import org.opendatamesh.platform.pp.registry.core.exceptions.ParseException;
 import org.opendatamesh.platform.pp.registry.resources.v1.shared.DataServiceApiEndpointResource;
-import org.opendatamesh.platform.pp.registry.resources.v1.shared.DataServiceApiResource;
+import org.opendatamesh.platform.pp.registry.resources.v1.shared.ApiResource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,8 +27,8 @@ public class DataStoreApiParser {
         this.baseUri = baseUri;
     }
 
-    public DataServiceApiResource parse(String rawContent) throws ParseException, FetchException {
-        DataServiceApiResource api = new DataServiceApiResource();
+    public ApiResource parse(String rawContent) throws ParseException, FetchException {
+        ApiResource api = new ApiResource();
         api.setBaseUri(baseUri);
         api.setRawContent(rawContent);
         api.setEndpoints( extractEndpoints(rawContent) );

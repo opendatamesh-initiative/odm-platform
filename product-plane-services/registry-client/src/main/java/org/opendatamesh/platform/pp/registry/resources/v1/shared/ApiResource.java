@@ -10,7 +10,7 @@ import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DataServiceApiResource {
+public class ApiResource {
     @JsonProperty("baseUri")
     URI baseUri;
     

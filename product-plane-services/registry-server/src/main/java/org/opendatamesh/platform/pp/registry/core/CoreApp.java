@@ -1,18 +1,14 @@
 package org.opendatamesh.platform.pp.registry.core;
 
-import java.io.File;
 import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 
+import org.opendatamesh.platform.pp.registry.core.asyncapi.AsyncApiParser;
 import org.opendatamesh.platform.pp.registry.core.dsapi.DataStoreApiParser;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DataProductVersionResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.PortResource;
-import org.opendatamesh.platform.pp.registry.resources.v1.shared.DataServiceApiResource;
+import org.opendatamesh.platform.pp.registry.resources.v1.shared.ApiResource;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.WebApplicationType;
@@ -52,9 +48,14 @@ public class CoreApp implements CommandLineRunner {
             if(outputPort.getPromises().getApi().getSpecification().equalsIgnoreCase("datastoreApi")) {
                 String apiRawContent = outputPort.getPromises().getApi().getDefinition().getRawContent();
                 DataStoreApiParser dataStoreApiParser = new DataStoreApiParser(dataProductVersionSource.getRootDocBaseURI());
-                DataServiceApiResource api = dataStoreApiParser.parse(apiRawContent);
+                ApiResource api = dataStoreApiParser.parse(apiRawContent);
                 System.out.println("\n\n====\n" + outputPort.getFullyQualifiedName() + "\n====\n\n" +  api.getEndpoints());
-            } else {
+            } else if(outputPort.getPromises().getApi().getSpecification().equalsIgnoreCase("asyncApi")){
+                String apiRawContent = outputPort.getPromises().getApi().getDefinition().getRawContent();
+                AsyncApiParser asyncApiParser = new AsyncApiParser(dataProductVersionSource.getRootDocBaseURI());
+                ApiResource api = asyncApiParser.parse(apiRawContent);
+                System.out.println("\n\n====\n" + outputPort.getFullyQualifiedName() + "\n====\n\n" +  api.getEndpoints());
+            }else {
                 System.out.println("\n\n====\n" + outputPort.getFullyQualifiedName() + "\n====\n\n" + outputPort.getPromises().getApi().getSpecification() + " not supported");
             }
             

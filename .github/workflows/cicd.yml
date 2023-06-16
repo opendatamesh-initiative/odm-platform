@@ -1,0 +1,11 @@
+name: ${{ github.repository }} CI/CD Pipeline
+run-name: Trigger on commit ${{ github.sha }}
+on: [push]
+jobs:
+  First-Job: # TODO: change name
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Job triggered by a ${{ github.event_name }} event on ${{ github.ref }} branch."
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - run: echo "Job status is ${{ job.status }}."

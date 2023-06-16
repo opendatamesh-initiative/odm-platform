@@ -1,4 +1,4 @@
-name: ${{ github.repository }} CI/CD Pipeline
+name: odm-platform CI/CD Pipeline
 run-name: Trigger on commit ${{ github.sha }}
 on: [push]
 jobs:

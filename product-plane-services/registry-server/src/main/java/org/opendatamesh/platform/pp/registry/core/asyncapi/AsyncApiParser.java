@@ -15,7 +15,6 @@ import org.opendatamesh.platform.pp.registry.resources.v1.shared.DataServiceApiE
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class AsyncApiParser {

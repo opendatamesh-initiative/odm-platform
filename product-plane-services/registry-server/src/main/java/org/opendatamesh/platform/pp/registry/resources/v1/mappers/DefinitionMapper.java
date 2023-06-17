@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.mapstruct.Mapper;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Definition;
-import org.opendatamesh.platform.pp.registry.resources.v1.shared.DefinitionResource;
+import org.opendatamesh.platform.pp.registry.resources.v1.DefinitionResource;
 
 @Mapper(componentModel = "spring")
 public interface DefinitionMapper { 

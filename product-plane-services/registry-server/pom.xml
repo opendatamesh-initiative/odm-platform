@@ -199,14 +199,14 @@ License.
         <!-- Internal -->
         <dependency>
             <groupId>org.opendatamesh</groupId>
-            <artifactId>odm-platform-pp-registry-client</artifactId>
+            <artifactId>odm-platform-core-dpds</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>org.opendatamesh</groupId>
-            <artifactId> odm-platform-pp-core</artifactId>
+            <artifactId>odm-platform-pp-registry-client</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>

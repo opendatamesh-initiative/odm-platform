@@ -4,15 +4,13 @@ package org.opendatamesh.platform.pp.registry.rest;
 
 import javax.validation.Valid;
 
-import org.opendatamesh.platform.core.DataProductVersionValidator;
-
+import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
+import org.opendatamesh.platform.core.dpds.model.EntityTypeDPDS;
+import org.opendatamesh.platform.core.dpds.model.InterfaceComponentsDPDS;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataProductVersion;
 import org.opendatamesh.platform.pp.registry.exceptions.BadRequestException;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
-import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DataProductVersionResource;
-import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.EntityType;
-import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.InterfaceComponentsResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.mappers.DataProductMapper;
 import org.opendatamesh.platform.pp.registry.services.DataProductVersionService;
 import org.slf4j.Logger;
@@ -89,7 +87,7 @@ public class DataProductComponentsController
             description = "TODO: the api definition", 
             content = @Content(
                 mediaType = "application/json", 
-                schema = @Schema(implementation = InterfaceComponentsResource.class))
+                schema = @Schema(implementation = InterfaceComponentsDPDS.class))
         ),
         @ApiResponse(
             responseCode = "400", 
@@ -119,11 +117,11 @@ public class DataProductComponentsController
        
     ) throws JsonProcessingException  {
         
-        EntityType entityType;
+        EntityTypeDPDS entityType;
         if(portType == null) {
             entityType = null;
         } else {
-            entityType = EntityType.get(portType);
+            entityType = EntityTypeDPDS.get(portType);
             if(entityType == null || !entityType.isPort()){
                 throw new BadRequestException(
                     OpenDataMeshAPIStandardError.SC400_06_INVALID_PORTTYPE,
@@ -144,20 +142,20 @@ public class DataProductComponentsController
         }
 
         DataProductVersion dataProductVersion = dataProductVersionService.readDataProductVersion(id, version);
-        DataProductVersionResource dataProductVersionResource = dataProductMapper.toResource(dataProductVersion);
+        DataProductVersionDPDS dataProductVersionDPDS = dataProductMapper.toResource(dataProductVersion);
        
 
         switch (format) {
            case "normalized": //parsed=deserialized and then serialized again
             ObjectNode interfaceComponentsNpde = null;
             if(entityType != null) {
-                interfaceComponentsNpde = dataProductVersionResource.getInterfaceComponents().getRawContent(entityType);
+                interfaceComponentsNpde = dataProductVersionDPDS.getInterfaceComponents().getRawContent(entityType);
             } else {
-                interfaceComponentsNpde = dataProductVersionResource.getInterfaceComponents().getRawContent();
+                interfaceComponentsNpde = dataProductVersionDPDS.getInterfaceComponents().getRawContent();
             }
             return objectMapper.writeValueAsString(interfaceComponentsNpde);
            case "canonical": //normalized + semantic equalization
-                return objectMapper.writeValueAsString(dataProductVersionResource.getInterfaceComponents());
+                return objectMapper.writeValueAsString(dataProductVersionDPDS.getInterfaceComponents());
         }
         throw new BadRequestException(
             OpenDataMeshAPIStandardError.SC400_04_INVALID_FORMAT,

@@ -2,7 +2,7 @@ package org.opendatamesh.platform.pp.registry.database.entities.dataproduct;
 
 import javax.persistence.*;
 
-import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.EntityType;
+import org.opendatamesh.platform.core.dpds.model.EntityTypeDPDS;
 
 import lombok.Data;
 
@@ -21,7 +21,7 @@ public class Component {
 
     @Enumerated(EnumType.STRING)
     @Column(name="ENTITY_TYPE")
-    protected EntityType entityType;
+    protected EntityTypeDPDS entityType;
 
     @Column(name="NAME")
     protected String name;

@@ -8,9 +8,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Definition;
-import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DataProductResource;
-import org.opendatamesh.platform.pp.registry.resources.v1.shared.DataProductSourceResource;
-import org.opendatamesh.platform.pp.registry.resources.v1.shared.DefinitionResource;
+import org.opendatamesh.platform.pp.registry.resources.v1.DataProductResource;
+import org.opendatamesh.platform.pp.registry.resources.v1.DataProductSourceResource;
+import org.opendatamesh.platform.pp.registry.resources.v1.DefinitionResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;

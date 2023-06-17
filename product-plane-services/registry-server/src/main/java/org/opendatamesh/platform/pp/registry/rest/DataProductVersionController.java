@@ -6,14 +6,14 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-import org.opendatamesh.platform.core.serde.DataProductVersionSerializer;
+import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
+import org.opendatamesh.platform.core.dpds.serde.DataProductVersionSerializer;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataProductVersion;
 import org.opendatamesh.platform.pp.registry.exceptions.BadRequestException;
 import org.opendatamesh.platform.pp.registry.exceptions.InternalServerException;
 import org.opendatamesh.platform.pp.registry.exceptions.NotFoundException;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
-import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DataProductVersionResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.mappers.DataProductMapper;
 import org.opendatamesh.platform.pp.registry.services.DataProductService;
 import org.opendatamesh.platform.pp.registry.services.DataProductVersionService;
@@ -106,7 +106,7 @@ public class DataProductVersionController
             responseCode = "201", 
             description = "[Created](https://www.rfc-editor.org/rfc/rfc9110.html#name-201-created)"
             + "\r\n - Data product version created", 
-            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = DataProductVersionResource.class))
+            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = DataProductVersionDPDS.class))
         }),
         @ApiResponse(
             responseCode = "400", 
@@ -167,12 +167,12 @@ public class DataProductVersionController
         }
         String serverUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
         DataProductVersion dataProductVersion = dataProductService.addDataProductVersion(descriptorContent, false, serverUrl);
-        DataProductVersionResource dataProductVersionResource = dataProductMapper.toResource(dataProductVersion);
+        DataProductVersionDPDS dataProductVersionDPDS = dataProductMapper.toResource(dataProductVersion);
         
         DataProductVersionSerializer serializer = new DataProductVersionSerializer();
         String serailizedContent = null;
         try {
-            serailizedContent = serializer.serialize(dataProductVersionResource, "canonical", "json", true);
+            serailizedContent = serializer.serialize(dataProductVersionDPDS, "canonical", "json", true);
         } catch (JsonProcessingException e) {
            throw new InternalServerException(
             OpenDataMeshAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
@@ -262,7 +262,7 @@ public class DataProductVersionController
             description = "The descriptor document that describe the spcified data product version", 
             content = @Content(
                 mediaType = "application/json", 
-                schema = @Schema(implementation = DataProductVersionResource.class))
+                schema = @Schema(implementation = DataProductVersionDPDS.class))
         ),
         @ApiResponse(
             responseCode = "400", 
@@ -322,12 +322,12 @@ public class DataProductVersionController
         }
         
         DataProductVersion dataProductVersion = dataProductVersionService.readDataProductVersion(id, version);;
-        DataProductVersionResource dataProductVersionResource = dataProductMapper.toResource(dataProductVersion);
+        DataProductVersionDPDS dataProductVersionDPDS = dataProductMapper.toResource(dataProductVersion);
         if(format == null) format = "canonical";
         DataProductVersionSerializer serializer = new DataProductVersionSerializer();
         String serailizedContent = null;
         try {
-            serailizedContent = serializer.serialize(dataProductVersionResource, format, "json", true);
+            serailizedContent = serializer.serialize(dataProductVersionDPDS, format, "json", true);
         } catch (JsonProcessingException e) {
            throw new InternalServerException(
             OpenDataMeshAPIStandardError.SC500_02_DESCRIPTOR_ERROR,

@@ -3,11 +3,11 @@ package org.opendatamesh.dpexperience.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
+import org.opendatamesh.platform.core.dpds.model.InfrastructuralComponentDPDS;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Definition;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
+import org.opendatamesh.platform.pp.registry.resources.v1.DefinitionResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
-import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.InfrastructuralComponentResource;
-import org.opendatamesh.platform.pp.registry.resources.v1.shared.DefinitionResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -25,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 public class DefinitionIT extends OpenDataMeshIT {
 
-    InfrastructuralComponentResource infrastructuralComponent;
+    InfrastructuralComponentDPDS infrastructuralComponent;
 
     @Autowired
     ObjectMapper objectMapper;

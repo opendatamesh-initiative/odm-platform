@@ -4,18 +4,23 @@ package org.opendatamesh.platform.pp.registry.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.notification.EventResource;
 import org.opendatamesh.notification.EventType;
-import org.opendatamesh.platform.core.DataProductVersionBuilder;
-import org.opendatamesh.platform.core.DataProductVersionSource;
-import org.opendatamesh.platform.core.exceptions.BuildException;
-import org.opendatamesh.platform.core.exceptions.FetchException;
-import org.opendatamesh.platform.core.exceptions.ParseException;
-import org.opendatamesh.platform.core.exceptions.UnresolvableReferenceException;
-import org.opendatamesh.platform.core.exceptions.ValidationException;
+import org.opendatamesh.platform.core.dpds.DataProductVersionBuilder;
+import org.opendatamesh.platform.core.dpds.DataProductVersionSource;
+import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
+import org.opendatamesh.platform.core.dpds.exceptions.BuildException;
+import org.opendatamesh.platform.core.dpds.exceptions.FetchException;
+import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
+import org.opendatamesh.platform.core.dpds.exceptions.UnresolvableReferenceException;
+import org.opendatamesh.platform.core.dpds.exceptions.ValidationException;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataProduct;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataProductVersion;
 import org.opendatamesh.platform.pp.registry.database.repositories.DataProductRepository;
-import org.opendatamesh.platform.pp.registry.exceptions.*;
-import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DataProductVersionResource;
+import org.opendatamesh.platform.pp.registry.exceptions.BadGatewayException;
+import org.opendatamesh.platform.pp.registry.exceptions.BadRequestException;
+import org.opendatamesh.platform.pp.registry.exceptions.InternalServerException;
+import org.opendatamesh.platform.pp.registry.exceptions.NotFoundException;
+import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
+import org.opendatamesh.platform.pp.registry.exceptions.UnprocessableEntityException;
 import org.opendatamesh.platform.pp.registry.resources.v1.mappers.DataProductMapper;
 import org.opendatamesh.platform.pp.registry.resources.v1.observers.EventNotifier;
 import org.slf4j.Logger;
@@ -507,7 +512,7 @@ public class DataProductService {
         DataProductVersionBuilder descriptorBuilder = 
             new DataProductVersionBuilder(descriptorSource, serverUrl);
        
-        DataProductVersionResource descriptor = null;
+        DataProductVersionDPDS descriptor = null;
         try {
             descriptor = descriptorBuilder.build(true);
         } catch (BuildException e) {

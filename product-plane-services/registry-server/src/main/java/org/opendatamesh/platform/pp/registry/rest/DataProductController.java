@@ -4,12 +4,11 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.opendatamesh.platform.core.DataProductVersionValidator;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataProduct;
 import org.opendatamesh.platform.pp.registry.exceptions.BadRequestException;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
+import org.opendatamesh.platform.pp.registry.resources.v1.DataProductResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
-import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DataProductResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.mappers.DataProductMapper;
 import org.opendatamesh.platform.pp.registry.services.DataProductService;
 import org.slf4j.Logger;

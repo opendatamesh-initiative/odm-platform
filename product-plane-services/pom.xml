@@ -61,7 +61,6 @@ License.
 
     <modules>
         <module>registry-client</module>
-        <module>core</module>
         <module>registry-server</module>
     </modules>
 

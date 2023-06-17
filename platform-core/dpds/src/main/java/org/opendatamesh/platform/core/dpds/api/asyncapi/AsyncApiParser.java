@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.core.dpds.asyncapi;
+package org.opendatamesh.platform.core.dpds.api.asyncapi;
 
 import java.net.URI;
 import java.net.URISyntaxException;

@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.core.dpds.dsapi;
+package org.opendatamesh.platform.core.dpds.api.dsapi;
 
 import java.net.URI;
 import java.net.URISyntaxException;

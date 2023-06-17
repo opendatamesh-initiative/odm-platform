@@ -3,8 +3,8 @@ package org.opendatamesh.platform.core.dpds;
 import java.net.URI;
 import java.util.List;
 
-import org.opendatamesh.platform.core.dpds.asyncapi.AsyncApiParser;
-import org.opendatamesh.platform.core.dpds.dsapi.DataStoreApiParser;
+import org.opendatamesh.platform.core.dpds.api.asyncapi.AsyncApiParser;
+import org.opendatamesh.platform.core.dpds.api.dsapi.DataStoreApiParser;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.PortDPDS;
 import org.opendatamesh.platform.core.dpds.model.definitions.ApiDefinitionDPDS;

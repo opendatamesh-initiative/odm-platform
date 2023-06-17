@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
-import org.opendatamesh.platform.pp.registry.core.CoreApp;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DataProductResource;

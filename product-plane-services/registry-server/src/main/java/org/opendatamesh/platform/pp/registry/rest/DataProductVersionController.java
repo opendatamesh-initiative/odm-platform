@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-import org.opendatamesh.platform.pp.registry.core.DataProductVersionSerializer;
+import org.opendatamesh.platform.core.serde.DataProductVersionSerializer;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataProductVersion;
 import org.opendatamesh.platform.pp.registry.exceptions.BadRequestException;
 import org.opendatamesh.platform.pp.registry.exceptions.InternalServerException;

@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.opendatamesh.platform.pp.registry.core.CoreApp;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Definition;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DataProductResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.shared.DataProductSourceResource;

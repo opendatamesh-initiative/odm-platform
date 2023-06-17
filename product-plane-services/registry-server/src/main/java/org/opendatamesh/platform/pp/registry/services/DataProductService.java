@@ -1,23 +1,16 @@
 package org.opendatamesh.platform.pp.registry.services;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.networknt.schema.ValidationMessage;
 import org.opendatamesh.notification.EventResource;
 import org.opendatamesh.notification.EventType;
-import org.opendatamesh.platform.pp.registry.core.CoreApp;
-import org.opendatamesh.platform.pp.registry.core.DataProductVersionBuilder;
-import org.opendatamesh.platform.pp.registry.core.DataProductVersionSource;
-import org.opendatamesh.platform.pp.registry.core.exceptions.BuildException;
-import org.opendatamesh.platform.pp.registry.core.exceptions.FetchException;
-import org.opendatamesh.platform.pp.registry.core.exceptions.ParseException;
-import org.opendatamesh.platform.pp.registry.core.exceptions.UnresolvableReferenceException;
-import org.opendatamesh.platform.pp.registry.core.exceptions.ValidationException;
-import org.opendatamesh.platform.pp.registry.core.resolvers.ExternalReferencesResolver;
-import org.opendatamesh.platform.pp.registry.core.resolvers.InternalReferencesResolver;
-import org.opendatamesh.platform.pp.registry.core.resolvers.ReadOnlyPropertiesResolver;
-import org.opendatamesh.platform.pp.registry.core.resolvers.StandardDefinitionsResolver;
+import org.opendatamesh.platform.core.DataProductVersionBuilder;
+import org.opendatamesh.platform.core.DataProductVersionSource;
+import org.opendatamesh.platform.core.exceptions.BuildException;
+import org.opendatamesh.platform.core.exceptions.FetchException;
+import org.opendatamesh.platform.core.exceptions.ParseException;
+import org.opendatamesh.platform.core.exceptions.UnresolvableReferenceException;
+import org.opendatamesh.platform.core.exceptions.ValidationException;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataProduct;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataProductVersion;
 import org.opendatamesh.platform.pp.registry.database.repositories.DataProductRepository;
@@ -33,9 +26,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.criteria.Predicate;
-import java.io.IOException;
+
 import java.net.URI;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class DataProductService {

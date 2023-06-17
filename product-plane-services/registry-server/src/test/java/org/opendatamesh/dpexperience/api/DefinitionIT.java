@@ -3,7 +3,6 @@ package org.opendatamesh.dpexperience.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
-import org.opendatamesh.platform.pp.registry.core.CoreApp;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Definition;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;

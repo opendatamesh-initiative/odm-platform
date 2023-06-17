@@ -1,11 +1,11 @@
 package org.opendatamesh.platform.pp.registry.config;
 
+import org.opendatamesh.platform.core.serde.BuildInfoResourceDeserializer;
+import org.opendatamesh.platform.core.serde.DeployInfoResourceDeserializer;
+import org.opendatamesh.platform.core.serde.ProvisionInfoResourceDeserializer;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.BuildInfoResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DeployInfoResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.ProvisionInfoResource;
-import org.opendatamesh.platform.pp.registry.resources.v1.mappers.BuildInfoResourceDeserializer;
-import org.opendatamesh.platform.pp.registry.resources.v1.mappers.DeployInfoResourceDeserializer;
-import org.opendatamesh.platform.pp.registry.resources.v1.mappers.ProvisionInfoResourceDeserializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

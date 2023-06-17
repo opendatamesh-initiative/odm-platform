@@ -5,8 +5,7 @@ import java.net.URISyntaxException;
 
 import javax.validation.Valid;
 
-import org.opendatamesh.platform.pp.registry.core.DataProductVersionSerializer;
-import org.opendatamesh.platform.pp.registry.core.DataProductVersionValidator;
+import org.opendatamesh.platform.core.serde.DataProductVersionSerializer;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataProductVersion;
 import org.opendatamesh.platform.pp.registry.exceptions.BadRequestException;
 import org.opendatamesh.platform.pp.registry.exceptions.InternalServerException;
@@ -23,7 +22,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -60,8 +58,6 @@ public class DataProductUploadsController
     @Autowired
     private DataProductMapper dataProductMapper;
 
-    @Autowired
-    DataProductVersionValidator dataProductDescriptorValidator;
 
     @Autowired
     ObjectMapper objectMapper;

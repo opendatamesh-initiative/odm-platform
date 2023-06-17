@@ -1,20 +1,14 @@
 package org.opendatamesh.platform.pp.registry.rest;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+
 
 import javax.validation.Valid;
 
-import org.opendatamesh.platform.pp.registry.core.CoreApp;
-import org.opendatamesh.platform.pp.registry.core.DataProductVersionValidator;
-import org.opendatamesh.platform.pp.registry.core.exceptions.ParseException;
-import org.opendatamesh.platform.pp.registry.core.exceptions.UnresolvableReferenceException;
+import org.opendatamesh.platform.core.DataProductVersionValidator;
+
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataProductVersion;
 import org.opendatamesh.platform.pp.registry.exceptions.BadRequestException;
-import org.opendatamesh.platform.pp.registry.exceptions.InternalServerException;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
-import org.opendatamesh.platform.pp.registry.exceptions.UnprocessableEntityException;
 import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DataProductVersionResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.EntityType;
@@ -36,7 +30,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.networknt.schema.ValidationMessage;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -64,8 +57,6 @@ public class DataProductComponentsController
     @Autowired
     private DataProductMapper dataProductMapper;
 
-    @Autowired
-    DataProductVersionValidator dataProductDescriptorValidator;
 
     @Autowired
     ObjectMapper objectMapper;

@@ -7,7 +7,6 @@ import java.util.UUID;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.opendatamesh.platform.pp.registry.core.CoreApp;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
 import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DataProductResource;

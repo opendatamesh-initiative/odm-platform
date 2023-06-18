@@ -11,11 +11,10 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
-import org.opendatamesh.platform.pp.registry.core.CoreApp;
+import org.opendatamesh.platform.core.dpds.model.InfrastructuralComponentDPDS;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
+import org.opendatamesh.platform.pp.registry.resources.v1.DataProductResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
-import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DataProductResource;
-import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.InfrastructuralComponentResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -40,7 +39,7 @@ public class DataProductVersionIT extends OpenDataMeshIT {
 
     // private MockRestServiceServer mockServer;
 
-    InfrastructuralComponentResource infrastructuralComponent;
+    InfrastructuralComponentDPDS infrastructuralComponent;
 
     @Autowired
     ObjectMapper objectMapper;

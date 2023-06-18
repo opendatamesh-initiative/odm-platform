@@ -1,11 +1,11 @@
 package org.opendatamesh.platform.pp.registry.config;
 
-import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.BuildInfoResource;
-import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DeployInfoResource;
-import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.ProvisionInfoResource;
-import org.opendatamesh.platform.pp.registry.resources.v1.mappers.BuildInfoResourceDeserializer;
-import org.opendatamesh.platform.pp.registry.resources.v1.mappers.DeployInfoResourceDeserializer;
-import org.opendatamesh.platform.pp.registry.resources.v1.mappers.ProvisionInfoResourceDeserializer;
+import org.opendatamesh.platform.core.dpds.model.BuildInfoDPDS;
+import org.opendatamesh.platform.core.dpds.model.DeployInfoDPDS;
+import org.opendatamesh.platform.core.dpds.model.ProvisionInfoDPDS;
+import org.opendatamesh.platform.core.dpds.serde.BuildInfoResourceDeserializer;
+import org.opendatamesh.platform.core.dpds.serde.DeployInfoResourceDeserializer;
+import org.opendatamesh.platform.core.dpds.serde.ProvisionInfoResourceDeserializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -21,9 +21,9 @@ public class MappersConfiguration {
         objectMapper.setSerializationInclusion(Include.NON_EMPTY);
 
         SimpleModule module = new SimpleModule();
-        module.addDeserializer(ProvisionInfoResource.class, new ProvisionInfoResourceDeserializer());
-        module.addDeserializer(BuildInfoResource.class, new BuildInfoResourceDeserializer());
-        module.addDeserializer(DeployInfoResource.class, new DeployInfoResourceDeserializer());
+        module.addDeserializer(ProvisionInfoDPDS.class, new ProvisionInfoResourceDeserializer());
+        module.addDeserializer(BuildInfoDPDS.class, new BuildInfoResourceDeserializer());
+        module.addDeserializer(DeployInfoDPDS.class, new DeployInfoResourceDeserializer());
 
         objectMapper.registerModule(module);
 

@@ -96,5 +96,4 @@ public class DataProductVersion implements Cloneable, Serializable {
     public DataProductVersion clone() throws CloneNotSupportedException {
         return (DataProductVersion) super.clone();
     }
-
 }

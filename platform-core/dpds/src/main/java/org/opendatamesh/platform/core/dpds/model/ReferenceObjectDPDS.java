@@ -13,6 +13,9 @@ public class ReferenceObjectDPDS {
     @JsonProperty("description")
     private String description;
 
+    @JsonProperty("mediaType")
+    private String mediaType;
+
     @JsonProperty("$ref")
     private String ref;
 

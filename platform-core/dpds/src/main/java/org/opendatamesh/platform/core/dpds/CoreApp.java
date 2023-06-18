@@ -1,10 +1,12 @@
 package org.opendatamesh.platform.core.dpds;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.opendatamesh.platform.core.dpds.api.asyncapi.AsyncApiParser;
 import org.opendatamesh.platform.core.dpds.api.dsapi.DataStoreApiParser;
+import org.opendatamesh.platform.core.dpds.api.openapi.OpenApiParser;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.PortDPDS;
 import org.opendatamesh.platform.core.dpds.model.definitions.ApiDefinitionDPDS;
@@ -47,20 +49,28 @@ public class CoreApp /*implements CommandLineRunner*/ {
         String rawContent = serializer.serialize(dataProductVerion, "canonical", "yaml", true);
         System.out.println(rawContent);
 
-        List<PortDPDS> outputPorts = dataProductVerion.getInterfaceComponents().getOutputPorts();
-        for(PortDPDS outputPort : outputPorts) {
-            if(outputPort.getPromises().getApi().getSpecification().equalsIgnoreCase("datastoreApi")) {
-                String apiRawContent = outputPort.getPromises().getApi().getDefinition().getRawContent();
+        List<PortDPDS> ports = new ArrayList<PortDPDS>();
+        ports.addAll(dataProductVerion.getInterfaceComponents().getOutputPorts());
+        ports.addAll(dataProductVerion.getInterfaceComponents().getObservabilityPorts());
+       
+        for(PortDPDS port : ports) {
+            String apiRawContent = port.getPromises().getApi().getDefinition().getRawContent();
+            String mediaType = port.getPromises().getApi().getDefinition().getMediaType();
+            String specification =  port.getPromises().getApi().getSpecification();
+            if("datastoreApi".equalsIgnoreCase(specification)) {
                 DataStoreApiParser dataStoreApiParser = new DataStoreApiParser(dataProductVersionSource.getRootDocBaseURI());
-                ApiDefinitionDPDS api = dataStoreApiParser.parse(apiRawContent);
-                System.out.println("\n\n====\n" + outputPort.getFullyQualifiedName() + "\n====\n\n" +  api.getEndpoints());
-            } else if(outputPort.getPromises().getApi().getSpecification().equalsIgnoreCase("asyncApi")){
-                String apiRawContent = outputPort.getPromises().getApi().getDefinition().getRawContent();
+                ApiDefinitionDPDS api = dataStoreApiParser.parse(apiRawContent, mediaType);
+                System.out.println("\n\n====\n" + port.getFullyQualifiedName() + "\n====\n\n" +  api.getEndpoints());
+            } else if("asyncApi".equalsIgnoreCase(specification)){
                 AsyncApiParser asyncApiParser = new AsyncApiParser(dataProductVersionSource.getRootDocBaseURI());
-                ApiDefinitionDPDS api = asyncApiParser.parse(apiRawContent);
-                System.out.println("\n\n====\n" + outputPort.getFullyQualifiedName() + "\n====\n\n" +  api.getEndpoints());
-            }else {
-                System.out.println("\n\n====\n" + outputPort.getFullyQualifiedName() + "\n====\n\n" + outputPort.getPromises().getApi().getSpecification() + " not supported");
+                ApiDefinitionDPDS api = asyncApiParser.parse(apiRawContent, mediaType);
+                System.out.println("\n\n====\n" + port.getFullyQualifiedName() + "\n====\n\n" +  api.getEndpoints());
+            } else if("openApi".equalsIgnoreCase(specification)){
+                OpenApiParser openApiParser = new OpenApiParser(dataProductVersionSource.getRootDocBaseURI());
+                ApiDefinitionDPDS api = openApiParser.parse(apiRawContent, mediaType);
+                System.out.println("\n\n====\n" + port.getFullyQualifiedName() + "\n====\n\n" +  api.getEndpoints());
+            } else {
+                System.out.println("\n\n====\n" + port.getFullyQualifiedName() + "\n====\n\n" + port.getPromises().getApi().getSpecification() + " not supported");
             }
             
         }

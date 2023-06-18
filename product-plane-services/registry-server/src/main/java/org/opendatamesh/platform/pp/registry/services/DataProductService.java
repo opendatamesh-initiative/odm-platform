@@ -4,7 +4,7 @@ package org.opendatamesh.platform.pp.registry.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.notification.EventResource;
 import org.opendatamesh.notification.EventType;
-import org.opendatamesh.platform.core.dpds.DataProductVersionBuilder;
+import org.opendatamesh.platform.core.dpds.DPDSParser;
 import org.opendatamesh.platform.core.dpds.DataProductVersionSource;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.exceptions.BuildException;
@@ -509,12 +509,12 @@ public class DataProductService {
     private DataProductVersion descriptorToDataProductVersion(DataProductVersionSource descriptorSource, String serverUrl) {
         DataProductVersion dataProductVersion = null;
 
-        DataProductVersionBuilder descriptorBuilder = 
-            new DataProductVersionBuilder(descriptorSource, serverUrl);
+        DPDSParser descriptorBuilder = 
+            new DPDSParser(descriptorSource, serverUrl);
        
         DataProductVersionDPDS descriptor = null;
         try {
-            descriptor = descriptorBuilder.build(true);
+            descriptor = descriptorBuilder.parse(true);
         } catch (BuildException e) {
             handleBuildException(e);
         }

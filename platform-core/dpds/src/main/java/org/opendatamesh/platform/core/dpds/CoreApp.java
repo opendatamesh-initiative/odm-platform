@@ -34,20 +34,20 @@ public class CoreApp /*implements CommandLineRunner*/ {
         String ROOT_DOC_LOACAL_FILEPATH = "/home/andrea.gioia/Sviluppi/quantyca/open-data-mesh/github/odm-platform-pp-services/product-plane-services/registry-server/src/test/resources/test/dataproduct-descriptor/dp1-v1.json";
         //DataProductVersionSource descriptorSource = new DataProductVersionSource(Files.readString(Paths.get(ROOT_DOC_LOACAL_FILEPATH)));
 
-        URI ROOT_DOC_REMOTE_URI = new URI("https://raw.githubusercontent.com/opendatamesh-initiative/odm-specification-dpdescriptor/main/examples/tripexecution/data-product-descriptor.json#zozzo?pippo=/xxx");
+        URI ROOT_DOC_REMOTE_URI = new URI("https://raw.githubusercontent.com/opendatamesh-initiative/odm-specification-dpdescriptor/main/examples/tripexecution/data-product-descriptor.json#pippo?pippo=/xxx");
         DataProductVersionSource dataProductVersionSource = new DataProductVersionSource(ROOT_DOC_REMOTE_URI);
        
-        DataProductVersionBuilder builder = new DataProductVersionBuilder(dataProductVersionSource,
+        DPDSParser builder = new DPDSParser(dataProductVersionSource,
                 "http://localhost:80/");
 
-        DataProductVersionDPDS dataProductVerionRes = null;
-        dataProductVerionRes = builder.build(true);
+        DataProductVersionDPDS dataProductVerion = null;
+        dataProductVerion = builder.parse(true);
 
         DataProductVersionSerializer serializer = new DataProductVersionSerializer();
-        String rawContent = serializer.serialize(dataProductVerionRes, "canonical", "yaml", true);
+        String rawContent = serializer.serialize(dataProductVerion, "canonical", "yaml", true);
         System.out.println(rawContent);
 
-        List<PortDPDS> outputPorts = dataProductVerionRes.getInterfaceComponents().getOutputPorts();
+        List<PortDPDS> outputPorts = dataProductVerion.getInterfaceComponents().getOutputPorts();
         for(PortDPDS outputPort : outputPorts) {
             if(outputPort.getPromises().getApi().getSpecification().equalsIgnoreCase("datastoreApi")) {
                 String apiRawContent = outputPort.getPromises().getApi().getDefinition().getRawContent();

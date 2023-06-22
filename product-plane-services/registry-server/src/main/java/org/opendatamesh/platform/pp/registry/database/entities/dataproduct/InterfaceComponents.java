@@ -8,7 +8,7 @@ import javax.persistence.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Where;
-import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.EntityType;
+import org.opendatamesh.platform.core.dpds.model.EntityTypeDPDS;
 
 import lombok.Data;
 
@@ -67,7 +67,7 @@ public class InterfaceComponents {
     private List<Port> controlPorts = new ArrayList<>();
 
    
-    public List<Port> getPortListByEntityType(EntityType entityType){
+    public List<Port> getPortListByEntityType(EntityTypeDPDS entityType){
         switch (entityType){
             case outputport:
                 return outputPorts;

@@ -1,6 +1,6 @@
 # Open Data Mesh Platform
 
-[![Release](https://github.com/opendatamesh-initiative/odm-platform/workflows/odm-platform%20CI%2FCD/badge.svg)](https://github.com/opendatamesh-initiative/odm-platform/actions)
+[![Build](https://github.com/opendatamesh-initiative/odm-platform/workflows/odm-platform%20CI/badge.svg)](https://github.com/opendatamesh-initiative/odm-platform/actions) [![Release](https://github.com/opendatamesh-initiative/odm-platform/workflows/odm-platform%20CI%2FCD/badge.svg)](https://github.com/opendatamesh-initiative/odm-platform/actions)
 
 Open Data Mesh Platform is a platform that manages the full lifecycle of a data product from deployment to retirement. It use the [Data Product Descriptor Specification](https://dpds.opendatamesh.org/) to to create, deploy and operate data product containers in a mesh architecture. 
 

@@ -31,6 +31,7 @@ public class OpenDataMeshITRestTemplate extends TestRestTemplate {
 
     public OpenDataMeshITRestTemplate() {
         //objectMapper = DataProductDescriptor.buildObjectMapper();
+        objectMapper = new ObjectMapper();
     }
 
     public void setHost(String host) {

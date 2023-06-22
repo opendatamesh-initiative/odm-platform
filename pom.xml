@@ -118,6 +118,7 @@ License.
 
 
     <modules>
+        <module>platform-core</module>
         <module>product-plane-services</module>
         <module>utility-plane-services</module>
     </modules>

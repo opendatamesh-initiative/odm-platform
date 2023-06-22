@@ -8,8 +8,8 @@ import org.junit.runner.RunWith;
 import org.opendatamesh.platform.pp.registry.OpenDataMeshApp;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Definition;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
+import org.opendatamesh.platform.pp.registry.resources.v1.DataProductResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
-import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DataProductResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.shared.TemplateResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -224,7 +224,7 @@ public abstract class OpenDataMeshIT {
     }
 
     // ======================================================================================
-    // Verify reresponse
+    // Verify response
     // ======================================================================================
 
     // TODO ...add as needed

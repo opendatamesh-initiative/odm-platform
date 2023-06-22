@@ -1,5 +1,10 @@
 package org.opendatamesh.platform.pp.registry.services;
 
+import org.opendatamesh.platform.pp.registry.exceptions.BadGatewayException;
+import org.opendatamesh.platform.pp.registry.exceptions.InternalServerException;
+import org.opendatamesh.platform.pp.registry.exceptions.NotFoundException;
+import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
+import org.opendatamesh.platform.pp.registry.exceptions.UnprocessableEntityException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -11,7 +16,6 @@ import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.*;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Definition;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Template;
 import org.opendatamesh.platform.pp.registry.database.repositories.DataProductVersionRepository;
-import org.opendatamesh.platform.pp.registry.exceptions.*;
 import org.opendatamesh.platform.pp.registry.resources.v1.mappers.DataProductMapper;
 import org.opendatamesh.platform.pp.registry.resources.v1.observers.EventNotifier;
 import org.opendatamesh.platform.pp.registry.resources.v1.policyservice.PolicyName;

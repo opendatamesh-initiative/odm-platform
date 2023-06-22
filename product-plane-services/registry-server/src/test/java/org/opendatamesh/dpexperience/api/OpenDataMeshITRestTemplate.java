@@ -2,9 +2,9 @@ package org.opendatamesh.dpexperience.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Definition;
-import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.DataProductResource;
-import org.opendatamesh.platform.pp.registry.resources.v1.shared.DataProductSourceResource;
-import org.opendatamesh.platform.pp.registry.resources.v1.shared.DefinitionResource;
+import org.opendatamesh.platform.pp.registry.resources.v1.DataProductResource;
+import org.opendatamesh.platform.pp.registry.resources.v1.DataProductSourceResource;
+import org.opendatamesh.platform.pp.registry.resources.v1.DefinitionResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.shared.TemplateResource;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;

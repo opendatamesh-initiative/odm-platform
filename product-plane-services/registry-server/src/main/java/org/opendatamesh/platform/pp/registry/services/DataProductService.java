@@ -513,12 +513,12 @@ public class DataProductService {
     private DataProductVersion descriptorToDataProductVersion(DataProductVersionSource descriptorSource, String serverUrl) {
         DataProductVersion dataProductVersion = null;
 
-        DPDSParser descriptorBuilder = 
+        DPDSParser descriptorParser = 
             new DPDSParser(descriptorSource, serverUrl);
        
         DataProductVersionDPDS descriptor = null;
         try {
-            descriptor = descriptorBuilder.parse(true);
+            descriptor = descriptorParser.parse(true);
         } catch (BuildException e) {
             handleBuildException(e);
         }

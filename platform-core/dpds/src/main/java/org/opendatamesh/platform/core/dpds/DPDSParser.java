@@ -51,13 +51,17 @@ public class DPDSParser {
     public DPDSParser parseRootDoc(boolean validate) throws BuildException {
         try {
             String rawContent = source.fetchRootDoc();
-            dataProductVersion = ObjectMapperFactory.getRightMapper(rawContent).readValue(rawContent, DataProductVersionDPDS.class);
+            try {
+                dataProductVersion = ObjectMapperFactory.getRightMapper(rawContent).readValue(rawContent, DataProductVersionDPDS.class);
+            } catch (JsonProcessingException e) {
+                throw new ParseException("Root document format is not valid", e);
+            }
             dataProductVersion.setRawContent(rawContent);
             if(validate) {
                 validateSchema();
             }
-        } catch (FetchException | ParseException | ValidationException | JsonProcessingException e) {
-            throw new BuildException("Impossible to build root descriptor document",
+        } catch (FetchException | ParseException | ValidationException e) {
+            throw new BuildException("Impossible to parse root descriptor document",
                 BuildException.Stage.LOAD_ROOT_DOC, e);
         }
         

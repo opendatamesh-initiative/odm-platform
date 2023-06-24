@@ -249,7 +249,7 @@ public class DataProductVersionIT extends OpenDataMeshIT {
                 OpenDataMeshAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID);
 
         // Test error SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID
-        entity = new HttpEntity<String>("This us an invalid JSON document", entity.getHeaders());
+        entity = new HttpEntity<String>("This is an invalid JSON document", entity.getHeaders());
         errorResponse = rest.postForEntity(
                 apiUrl(RoutesV1.DATA_PRODUCTS, "/{id}/versions"),
                 entity,

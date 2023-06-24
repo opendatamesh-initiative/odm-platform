@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.IOException;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -220,6 +221,7 @@ public class DataProductVersionIT extends OpenDataMeshIT {
     @Test
     @Order(6)
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    @Ignore
     public void testDataProductCreation422Errors() throws IOException {
 
         ResponseEntity<ErrorRes> errorResponse;

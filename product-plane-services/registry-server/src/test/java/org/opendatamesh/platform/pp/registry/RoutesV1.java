@@ -1,4 +1,4 @@
-package org.opendatamesh.dpexperience.api;
+package org.opendatamesh.platform.pp.registry;
 
 public enum RoutesV1 {
 

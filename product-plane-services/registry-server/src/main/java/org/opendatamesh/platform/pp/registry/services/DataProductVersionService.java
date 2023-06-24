@@ -12,12 +12,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.opendatamesh.notification.EventResource;
 import org.opendatamesh.notification.EventType;
+import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.ApiDefinitionReference;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataProductVersion;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.Port;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.StandardDefinition;
+import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.ApiDefinitionEndpoint;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Definition;
 import org.opendatamesh.platform.pp.registry.database.repositories.DataProductVersionRepository;
 import org.opendatamesh.platform.pp.registry.resources.v1.mappers.DataProductMapper;
+import org.opendatamesh.platform.pp.registry.resources.v1.mappers.DataProductVersionMapper;
 import org.opendatamesh.platform.pp.registry.resources.v1.observers.EventNotifier;
 import org.opendatamesh.platform.pp.registry.resources.v1.policyservice.PolicyName;
 import org.slf4j.Logger;
@@ -42,7 +45,7 @@ public class DataProductVersionService {
     ObjectMapper objectMapper;
 
     @Autowired
-    private DataProductMapper dataProductMapper;
+    private DataProductVersionMapper dataProductVersionMapper;
 
     @Autowired
     EventNotifier eventNotifier;
@@ -105,7 +108,7 @@ public class DataProductVersionService {
                     EventType.DATA_PRODUCT_VERSION_CREATED,
                     dataProductVersion.getDataProductId(),
                     null,
-                    dataProductMapper.toResource(dataProductVersion).toEventString()
+                    dataProductVersionMapper.toResource(dataProductVersion).toEventString()
             );
             eventNotifier.notifyEvent(eventResource);
         } catch (Throwable t) {
@@ -135,7 +138,17 @@ public class DataProductVersionService {
         if(ports == null || ports.size() == 0) return;
 
         for(Port port: ports) {
-            saveApiDefinition(port);
+
+            Definition apiDefinition = saveApiDefinition(port);
+            if(apiDefinition == null) continue;
+            
+            if(port.getPromises().getApi().getDefinition() instanceof ApiDefinitionReference) {
+                ApiDefinitionReference apiDefinitionReference = (ApiDefinitionReference)port.getPromises().getApi().getDefinition();
+                List<ApiDefinitionEndpoint> endpoints = apiDefinitionReference.getEndpoints();
+                System.out.println(endpoints);
+            } else {
+                System.out.println("Ops: " + port.getPromises().getApi().getDefinition().getClass().getName());
+            }
         }
     }
 
@@ -163,14 +176,19 @@ public class DataProductVersionService {
             "An error occured in the backend database while saving api of port [" +  port.getFullyQualifiedName() + "]",
             t);
         }
-            
+           
+        
         // Once we have the api id we replace the definition content with a reference url
+        /* 
         String ref = api.getDefinition().getRef();
         ref = ref.replaceAll("\\{apiId\\}", "" + apiDefinition.getId());
         api.getDefinition().setRef(ref);
-             
+        */
+
         ObjectNode portObject = (ObjectNode)objectMapper.readTree(port.getRawContent());
         ObjectNode standardDefinitionContent = (ObjectNode)portObject.at("/promises/api/definition");
+        String ref = standardDefinitionContent.asText("$ref");
+        ref = ref.replaceAll("\\{apiId\\}", "" + apiDefinition.getId());
         standardDefinitionContent.put("$ref", ref);
         port.setRawContent( objectMapper.writeValueAsString(portObject));     
         
@@ -341,7 +359,7 @@ public class DataProductVersionService {
             EventResource eventResource = new EventResource(
                     EventType.DATA_PRODUCT_VERSION_DELETED,
                     dataProductVersion.getDataProductId(),
-                    dataProductMapper.toResource(dataProductVersion).toEventString(),
+                    dataProductVersionMapper.toResource(dataProductVersion).toEventString(),
                     null
             );
             eventNotifier.notifyEvent(eventResource);

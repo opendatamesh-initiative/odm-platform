@@ -13,8 +13,8 @@ import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
 import org.opendatamesh.platform.core.dpds.exceptions.UnresolvableReferenceException;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.PortDPDS;
-import org.opendatamesh.platform.core.dpds.model.definitions.ApiDefinitionDPDS;
-import org.opendatamesh.platform.core.dpds.model.definitions.DefinitionDPDS;
+import org.opendatamesh.platform.core.dpds.model.definitions.ApiDefinitionReferenceDPDS;
+import org.opendatamesh.platform.core.dpds.model.definitions.DefinitionReferenceDPDS;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -123,7 +123,7 @@ public class ApiDefinitionsProcessor {
         String mediaType = port.getPromises().getApi().getDefinition().getMediaType();
         String specification = port.getPromises().getApi().getSpecification();
 
-        ApiDefinitionDPDS api = null;
+        ApiDefinitionReferenceDPDS api = null;
         if ("datastoreApi".equalsIgnoreCase(specification)) {
             DataStoreApiParser dataStoreApiParser = new DataStoreApiParser(
                     source.getRootDocBaseURI());
@@ -140,7 +140,7 @@ public class ApiDefinitionsProcessor {
         }
 
         if(api != null) {
-            DefinitionDPDS definition = port.getPromises().getApi().getDefinition();
+            DefinitionReferenceDPDS definition = port.getPromises().getApi().getDefinition();
             api.setDescription(definition.getDescription());
             api.setMediaType(definition.getMediaType());
             api.setRef(definition.getRef());

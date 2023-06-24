@@ -6,8 +6,8 @@ import java.util.List;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.exceptions.FetchException;
 import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
-import org.opendatamesh.platform.core.dpds.model.definitions.DefinitionDPDS;
-import org.opendatamesh.platform.core.dpds.model.definitions.ApiDefinitionDPDS;
+import org.opendatamesh.platform.core.dpds.model.definitions.DefinitionReferenceDPDS;
+import org.opendatamesh.platform.core.dpds.model.definitions.ApiDefinitionReferenceDPDS;
 import org.opendatamesh.platform.core.dpds.model.definitions.ApiDefinitionEndpointDPDS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,8 +24,8 @@ public abstract class ApiParser {
         this.baseUri = baseUri;
     }
 
-    public ApiDefinitionDPDS parse(String rawContent, String mediaType) throws ParseException, FetchException {
-        ApiDefinitionDPDS api = new ApiDefinitionDPDS();
+    public ApiDefinitionReferenceDPDS parse(String rawContent, String mediaType) throws ParseException, FetchException {
+        ApiDefinitionReferenceDPDS api = new ApiDefinitionReferenceDPDS();
         api.setBaseUri(baseUri);
         api.setRawContent(rawContent);
         api.setEndpoints(extractEndpoints(rawContent, resolveMediaType(mediaType)));

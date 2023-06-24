@@ -14,6 +14,7 @@ import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardE
 import org.opendatamesh.platform.pp.registry.resources.v1.DataProductSourceResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
 import org.opendatamesh.platform.pp.registry.resources.v1.mappers.DataProductMapper;
+import org.opendatamesh.platform.pp.registry.resources.v1.mappers.DataProductVersionMapper;
 import org.opendatamesh.platform.pp.registry.services.DataProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +57,7 @@ public class DataProductUploadsController
     private DataProductService dataProductService;
 
     @Autowired
-    private DataProductMapper dataProductMapper;
+    private DataProductVersionMapper dataProductVersionMapper;
 
 
     @Autowired
@@ -140,7 +141,7 @@ public class DataProductUploadsController
         }
         String serverUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
         DataProductVersion dataProductVersion = dataProductService.addDataProductVersion(descriptorUri, true, serverUrl);
-        DataProductVersionDPDS dataProductVersionDPDS = dataProductMapper.toResource(dataProductVersion);
+        DataProductVersionDPDS dataProductVersionDPDS = dataProductVersionMapper.toResource(dataProductVersion);
         DataProductVersionSerializer serializer = new DataProductVersionSerializer();
         String serailizedContent = null;
         try {

@@ -10,6 +10,6 @@ import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DefinitionDPDS extends ReferenceObjectDPDS {
+public class DefinitionReferenceDPDS extends ReferenceObjectDPDS {
 
 }

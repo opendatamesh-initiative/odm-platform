@@ -9,8 +9,8 @@ import org.opendatamesh.platform.core.dpds.api.dsapi.DataStoreApiParser;
 import org.opendatamesh.platform.core.dpds.api.openapi.OpenApiParser;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.PortDPDS;
-import org.opendatamesh.platform.core.dpds.model.definitions.ApiDefinitionDPDS;
-import org.opendatamesh.platform.core.dpds.model.definitions.DefinitionDPDS;
+import org.opendatamesh.platform.core.dpds.model.definitions.ApiDefinitionReferenceDPDS;
+import org.opendatamesh.platform.core.dpds.model.definitions.DefinitionReferenceDPDS;
 import org.opendatamesh.platform.core.dpds.serde.DataProductVersionSerializer;
 
 /* 
@@ -57,7 +57,7 @@ public class CoreApp /* implements CommandLineRunner */ {
         ports.addAll(dataProductVerion.getInterfaceComponents().getObservabilityPorts());
 
         for (PortDPDS port : ports) {
-            ApiDefinitionDPDS api = (ApiDefinitionDPDS) port.getPromises().getApi().getDefinition();
+            ApiDefinitionReferenceDPDS api = (ApiDefinitionReferenceDPDS) port.getPromises().getApi().getDefinition();
             System.out.println("\n\n====\n" + port.getFullyQualifiedName() + "\n====\n\n" + api.getEndpoints());
         }
 

@@ -4,13 +4,9 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.opendatamesh.platform.core.dpds.api.asyncapi.AsyncApiParser;
-import org.opendatamesh.platform.core.dpds.api.dsapi.DataStoreApiParser;
-import org.opendatamesh.platform.core.dpds.api.openapi.OpenApiParser;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.PortDPDS;
 import org.opendatamesh.platform.core.dpds.model.definitions.ApiDefinitionReferenceDPDS;
-import org.opendatamesh.platform.core.dpds.model.definitions.DefinitionReferenceDPDS;
 import org.opendatamesh.platform.core.dpds.serde.DataProductVersionSerializer;
 
 /* 

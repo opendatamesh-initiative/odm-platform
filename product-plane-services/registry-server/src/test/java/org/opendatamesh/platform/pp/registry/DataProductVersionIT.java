@@ -221,7 +221,6 @@ public class DataProductVersionIT extends OpenDataMeshIT {
     @Test
     @Order(6)
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    @Ignore
     public void testDataProductCreation422Errors() throws IOException {
 
         ResponseEntity<ErrorRes> errorResponse;

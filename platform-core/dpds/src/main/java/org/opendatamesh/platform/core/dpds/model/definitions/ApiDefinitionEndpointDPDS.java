@@ -11,9 +11,12 @@ public class ApiDefinitionEndpointDPDS {
 
     @JsonProperty("name")
     private String name; 
+
+    @JsonProperty("outputMediaType")
+    private String outputMediaType;    
     
-    @JsonProperty("mediaType")
-    private String mediaType;    
+    @JsonProperty("schemaMediaType")
+    private String schemaMediaType;    
 
     @JsonProperty("schema")
     private String schema;    

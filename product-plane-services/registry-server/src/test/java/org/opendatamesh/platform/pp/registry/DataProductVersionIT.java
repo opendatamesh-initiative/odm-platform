@@ -1,4 +1,4 @@
-package org.opendatamesh.dpexperience.api;
+package org.opendatamesh.platform.pp.registry;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -221,7 +221,6 @@ public class DataProductVersionIT extends OpenDataMeshIT {
     @Test
     @Order(6)
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    @Ignore
     public void testDataProductCreation422Errors() throws IOException {
 
         ResponseEntity<ErrorRes> errorResponse;
@@ -251,7 +250,7 @@ public class DataProductVersionIT extends OpenDataMeshIT {
                 OpenDataMeshAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID);
 
         // Test error SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID
-        entity = new HttpEntity<String>("This us an invalid JSON document", entity.getHeaders());
+        entity = new HttpEntity<String>("This is an invalid JSON document", entity.getHeaders());
         errorResponse = rest.postForEntity(
                 apiUrl(RoutesV1.DATA_PRODUCTS, "/{id}/versions"),
                 entity,

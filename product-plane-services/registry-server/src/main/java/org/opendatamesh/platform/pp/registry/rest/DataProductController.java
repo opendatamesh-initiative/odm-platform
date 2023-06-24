@@ -10,6 +10,7 @@ import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardE
 import org.opendatamesh.platform.pp.registry.resources.v1.DataProductResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
 import org.opendatamesh.platform.pp.registry.resources.v1.mappers.DataProductMapper;
+import org.opendatamesh.platform.pp.registry.resources.v1.mappers.DataProductVersionMapper;
 import org.opendatamesh.platform.pp.registry.services.DataProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,6 +59,7 @@ public class DataProductController
     @Autowired
     private DataProductMapper dataProductMapper;
 
+    
 
     @Autowired
     ObjectMapper objectMapper;

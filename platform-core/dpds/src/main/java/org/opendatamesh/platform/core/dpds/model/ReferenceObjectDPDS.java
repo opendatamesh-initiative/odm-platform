@@ -13,6 +13,9 @@ public class ReferenceObjectDPDS {
     @JsonProperty("description")
     private String description;
 
+    @JsonProperty("mediaType")
+    private String mediaType;
+
     @JsonProperty("$ref")
     private String ref;
 
@@ -21,11 +24,4 @@ public class ReferenceObjectDPDS {
     
     @JsonIgnore
     protected String rawContent;
-
-    public ReferenceObjectDPDS() { }
-
-    public ReferenceObjectDPDS(String ref, String description) {
-        this.ref = ref;
-        this.description = description;
-    }
 }

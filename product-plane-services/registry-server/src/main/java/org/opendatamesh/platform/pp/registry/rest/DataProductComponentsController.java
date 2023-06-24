@@ -12,6 +12,7 @@ import org.opendatamesh.platform.pp.registry.exceptions.BadRequestException;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
 import org.opendatamesh.platform.pp.registry.resources.v1.mappers.DataProductMapper;
+import org.opendatamesh.platform.pp.registry.resources.v1.mappers.DataProductVersionMapper;
 import org.opendatamesh.platform.pp.registry.services.DataProductVersionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +54,7 @@ public class DataProductComponentsController
     private DataProductVersionService dataProductVersionService;
 
     @Autowired
-    private DataProductMapper dataProductMapper;
+    private DataProductVersionMapper dataProductVersionMapper;
 
 
     @Autowired
@@ -142,7 +143,7 @@ public class DataProductComponentsController
         }
 
         DataProductVersion dataProductVersion = dataProductVersionService.readDataProductVersion(id, version);
-        DataProductVersionDPDS dataProductVersionDPDS = dataProductMapper.toResource(dataProductVersion);
+        DataProductVersionDPDS dataProductVersionDPDS = dataProductVersionMapper.toResource(dataProductVersion);
        
 
         switch (format) {

@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import lombok.Data;
 
@@ -22,6 +23,9 @@ public class ReferenceObject {
     
     @Column(name = "DESCRIPTION")
     private String description;
+
+    @Transient
+    private String mediaType;
 
     // Eliminare ?
     @Column(name = "REF")

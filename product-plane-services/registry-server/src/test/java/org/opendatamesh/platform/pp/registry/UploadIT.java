@@ -1,4 +1,4 @@
-package org.opendatamesh.dpexperience.api;
+package org.opendatamesh.platform.pp.registry;
 
 import org.junit.jupiter.api.parallel.ExecutionMode;
 

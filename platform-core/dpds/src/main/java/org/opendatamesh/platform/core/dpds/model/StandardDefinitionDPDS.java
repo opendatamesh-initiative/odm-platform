@@ -1,5 +1,7 @@
 package org.opendatamesh.platform.core.dpds.model;
 
+import org.opendatamesh.platform.core.dpds.model.definitions.DefinitionReferenceDPDS;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -25,11 +27,8 @@ public class StandardDefinitionDPDS {
     @JsonProperty("specificationVersion")
     private String specificationVersion;
 
-    /*
-    @JsonProperty("definitionId")
-    private Long definitionId;
-    */
-    private ReferenceObjectDPDS definition;
+    @JsonProperty("definition")
+    private DefinitionReferenceDPDS definition;
 
     @JsonProperty("externalDocs")
     private ExternalResourceDPDS externalDocs;

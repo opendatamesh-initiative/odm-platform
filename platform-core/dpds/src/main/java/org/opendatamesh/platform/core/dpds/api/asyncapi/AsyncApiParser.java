@@ -10,7 +10,7 @@ import org.opendatamesh.platform.core.dpds.UriFetcher;
 import org.opendatamesh.platform.core.dpds.api.ApiParser;
 import org.opendatamesh.platform.core.dpds.exceptions.FetchException;
 import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
-import org.opendatamesh.platform.core.dpds.model.definitions.ApiDefinitionDPDS;
+import org.opendatamesh.platform.core.dpds.model.definitions.DefinitionDPDS;
 import org.opendatamesh.platform.core.dpds.model.definitions.ApiDefinitionEndpointDPDS;
 
 import com.fasterxml.jackson.core.JsonProcessingException;

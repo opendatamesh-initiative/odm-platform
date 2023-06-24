@@ -10,12 +10,9 @@ import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ApiDefinitionDPDS {
+public class ApiDefinitionDPDS extends DefinitionDPDS {
     @JsonProperty("baseUri")
     URI baseUri;
-    
-    @JsonProperty("rawContent")
-    String rawContent;
 
     @JsonProperty("endpoints")
     List<ApiDefinitionEndpointDPDS> endpoints;

@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.core.dpds.resolvers;
+package org.opendatamesh.platform.core.dpds.processors;
 
 import java.net.URI;
 import java.util.List;
@@ -13,20 +13,20 @@ import org.opendatamesh.platform.core.dpds.model.EntityTypeDPDS;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class ExternalReferencesResolver implements PropertiesResolver{
+public class ExternalReferencesProcessor implements PropertiesProcessor{
 
     DataProductVersionDPDS dataProductVersion;
     DataProductVersionSource source;
     ObjectMapper mapper;
 
-    public ExternalReferencesResolver(DataProductVersionDPDS dataProductVersionRes, DataProductVersionSource source) {
+    public ExternalReferencesProcessor(DataProductVersionDPDS dataProductVersionRes, DataProductVersionSource source) {
         this.dataProductVersion = dataProductVersionRes;
         this.source = source;
         this.mapper = ObjectMapperFactory.JSON_MAPPER;
     }
 
     @Override
-    public void resolve() throws UnresolvableReferenceException, ParseException {
+    public void process() throws UnresolvableReferenceException, ParseException {
         DataProductVersionDPDS parsedContent =  dataProductVersion;
 
         if (parsedContent.getInterfaceComponents() != null) {
@@ -83,8 +83,8 @@ public class ExternalReferencesResolver implements PropertiesResolver{
         return resolvedComponent;
     }
 
-    public static void resolve(DataProductVersionDPDS dataProductVersionRes, DataProductVersionSource source) throws UnresolvableReferenceException, ParseException {
-        ExternalReferencesResolver resolver = new ExternalReferencesResolver(dataProductVersionRes, source);
-        resolver.resolve();
+    public static void process(DataProductVersionDPDS dataProductVersionRes, DataProductVersionSource source) throws UnresolvableReferenceException, ParseException {
+        ExternalReferencesProcessor resolver = new ExternalReferencesProcessor(dataProductVersionRes, source);
+        resolver.process();
     }
 }

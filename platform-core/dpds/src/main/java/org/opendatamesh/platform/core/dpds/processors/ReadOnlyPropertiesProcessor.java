@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.core.dpds.resolvers;
+package org.opendatamesh.platform.core.dpds.processors;
 
 import java.util.List;
 import java.util.UUID;
@@ -14,19 +14,19 @@ import org.opendatamesh.platform.core.dpds.serde.DataProductVersionSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class ReadOnlyPropertiesResolver implements PropertiesResolver {
+public class ReadOnlyPropertiesProcessor implements PropertiesProcessor {
     DataProductVersionDPDS dataProductVersion;
     DataProductVersionSource source;
     ObjectMapper mapper;
 
-    public ReadOnlyPropertiesResolver(DataProductVersionDPDS dataProductVersionRes, DataProductVersionSource source) {
+    public ReadOnlyPropertiesProcessor(DataProductVersionDPDS dataProductVersionRes, DataProductVersionSource source) {
         this.dataProductVersion = dataProductVersionRes;
         this.mapper = ObjectMapperFactory.JSON_MAPPER;
 
     }
 
     @Override
-    public void resolve() throws ParseException {
+    public void process() throws ParseException {
        
         DataProductVersionDPDS parsedContent = dataProductVersion;
 
@@ -105,8 +105,8 @@ public class ReadOnlyPropertiesResolver implements PropertiesResolver {
     }
     
 
-    public static void resolve(DataProductVersionDPDS dataProductVersionRes, DataProductVersionSource source) throws ParseException {
-        ReadOnlyPropertiesResolver resolver = new ReadOnlyPropertiesResolver(dataProductVersionRes, source);
-        resolver.resolve();
+    public static void process(DataProductVersionDPDS dataProductVersionRes, DataProductVersionSource source) throws ParseException {
+        ReadOnlyPropertiesProcessor resolver = new ReadOnlyPropertiesProcessor(dataProductVersionRes, source);
+        resolver.process();
     }
 }

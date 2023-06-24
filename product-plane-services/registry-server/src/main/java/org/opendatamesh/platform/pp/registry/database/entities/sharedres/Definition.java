@@ -1,6 +1,5 @@
 package org.opendatamesh.platform.pp.registry.database.entities.sharedres;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

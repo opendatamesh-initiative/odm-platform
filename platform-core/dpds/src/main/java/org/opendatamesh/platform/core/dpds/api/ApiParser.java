@@ -6,6 +6,7 @@ import java.util.List;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.exceptions.FetchException;
 import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
+import org.opendatamesh.platform.core.dpds.model.definitions.DefinitionDPDS;
 import org.opendatamesh.platform.core.dpds.model.definitions.ApiDefinitionDPDS;
 import org.opendatamesh.platform.core.dpds.model.definitions.ApiDefinitionEndpointDPDS;
 import org.slf4j.Logger;

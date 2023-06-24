@@ -18,6 +18,7 @@ public class PromisesDPDS {
     @JsonProperty("api")
     protected StandardDefinitionDPDS api;
 
+
     @JsonProperty("deprecationPolicy")
     protected SpecificationExtensionPointDPDS deprecationPolicy;
 

@@ -24,11 +24,4 @@ public class ReferenceObjectDPDS {
     
     @JsonIgnore
     protected String rawContent;
-
-    public ReferenceObjectDPDS() { }
-
-    public ReferenceObjectDPDS(String ref, String description) {
-        this.ref = ref;
-        this.description = description;
-    }
 }

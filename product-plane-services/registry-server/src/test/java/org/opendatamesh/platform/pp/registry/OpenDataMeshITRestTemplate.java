@@ -8,9 +8,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Definition;
+import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Schema;
 import org.opendatamesh.platform.pp.registry.resources.v1.DataProductResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.DataProductSourceResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.DefinitionResource;
+import org.opendatamesh.platform.pp.registry.resources.v1.SchemaResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
@@ -111,6 +113,26 @@ public class OpenDataMeshITRestTemplate extends TestRestTemplate {
         }
 
         entity = new HttpEntity<>(definitionResource, headers);
+
+        return entity;
+    }
+
+     HttpEntity<SchemaResource> getSchemaAsHttpEntity(String file)
+            throws IOException {
+
+        HttpEntity<SchemaResource> entity = null;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        SchemaResource schemaResource = null;
+        if(file != null) {
+            String docContent = readFile(file);
+            schemaResource = objectMapper.readValue(docContent, SchemaResource.class);
+        }
+
+        entity = new HttpEntity<>(schemaResource, headers);
 
         return entity;
     }
@@ -353,6 +375,20 @@ public class OpenDataMeshITRestTemplate extends TestRestTemplate {
         return getForEntity(
                 apiUrl(RoutesV1.DEFINITIONS, urlExtensions),
                 DefinitionResource[].class);
+    }
+
+    // ----------------------------------------
+    // Schema
+    // ----------------------------------------
+    public ResponseEntity<SchemaResource> createSchema(String filePath) throws IOException {
+        HttpEntity<SchemaResource> entity = getSchemaAsHttpEntity(filePath);
+
+        ResponseEntity<SchemaResource> postSchemaResponse = postForEntity(
+                apiUrl(RoutesV1.SCHEMAS),
+                entity,
+                SchemaResource.class);
+
+        return postSchemaResponse;
     }
 
 }

@@ -6,9 +6,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.runner.RunWith;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Definition;
+import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Schema;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.resources.v1.DataProductResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
+import org.opendatamesh.platform.pp.registry.resources.v1.SchemaResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +47,7 @@ public abstract class OpenDataMeshIT {
     protected final String RESOURCE_DEF1_NOVERSION = "src/test/resources/test/definition/def1-missing-version.json";
     protected final String RESOURCE_DEF1_NONAME = "src/test/resources/test/definition/def1-missing-name.json";
     protected final String RESOURCE_DEF1_NONAME_NOVERSION = "src/test/resources/test/definition/def2-missing-name-version.json";
-
+    protected final String RESOURCE_SCHEMA1 = "src/test/resources/test/schema/schema1.json";
     protected final String RESOURCE_DPS_URI = "https://raw.githubusercontent.com/opendatamesh-initiative/odm-specification-dpdescriptor/main/examples/tripexecution/data-product-descriptor.json";
         
     @Autowired
@@ -164,6 +166,14 @@ public abstract class OpenDataMeshIT {
         verifyResponseEntity(postDefinition, HttpStatus.CREATED, true);
 
         return postDefinition.getBody();
+    }
+
+    protected SchemaResource createSchema1() throws IOException {
+        ResponseEntity<SchemaResource> postSchemaResponse = rest.createSchema(RESOURCE_SCHEMA1);
+        verifyResponseEntity(postSchemaResponse, HttpStatus.CREATED, true);
+
+        return postSchemaResponse.getBody();
+
     }
 
     // ======================================================================================

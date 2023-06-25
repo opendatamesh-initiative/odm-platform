@@ -71,11 +71,15 @@ public class AsyncApiParser extends ApiParser {
                     } else {
                         schemaMediaType = "application/json";
                     }
+                   
                     endpoint = new ApiDefinitionEndpointDPDS();
                     endpoint.setName(name);
-                    endpoint.setSchemaMediaType(schemaMediaType);
-                    endpoint.setSchema(operationSchema);
+                    ApiDefinitionEndpointDPDS.Schema s = new ApiDefinitionEndpointDPDS.Schema();
+                    s.setMediaType(schemaMediaType);
+                    s.setContent(operationSchema);
+                    endpoint.setSchema(s);
                     endpoints.add(endpoint);
+
                     i++;
                 }
             }

@@ -83,12 +83,15 @@ public class OpenApiParser extends ApiParser {
                     } else {
                         outputMediaType = "application/json";
                     }
+            
                     endpoint = new ApiDefinitionEndpointDPDS();
                     endpoint.setName(name);
-                    endpoint.setSchemaMediaType(schemaMediaType);
-                    endpoint.setOutputMediaType(outputMediaType);
-                    endpoint.setSchema(operationSchema);
+                    ApiDefinitionEndpointDPDS.Schema s = new ApiDefinitionEndpointDPDS.Schema();
+                    s.setMediaType(schemaMediaType);
+                    s.setContent(operationSchema);
+                    endpoint.setSchema(s);
                     endpoints.add(endpoint);
+
                     i++;
 
                 }

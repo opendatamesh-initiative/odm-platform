@@ -62,8 +62,10 @@ public class DataStoreApiParser extends ApiParser {
                     }
                     endpoint = new ApiDefinitionEndpointDPDS();
                     endpoint.setName(name);
-                    endpoint.setSchemaMediaType(schemaMediaType);
-                    endpoint.setSchema(tableSchema);
+                    ApiDefinitionEndpointDPDS.Schema schema = new ApiDefinitionEndpointDPDS.Schema();
+                    schema.setMediaType(schemaMediaType);
+                    schema.setContent(tableSchema);
+                    endpoint.setSchema(schema);
                     endpoints.add(endpoint);
                 }
             }

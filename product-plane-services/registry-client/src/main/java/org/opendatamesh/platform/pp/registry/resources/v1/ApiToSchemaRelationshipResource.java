@@ -1,34 +1,29 @@
-package org.opendatamesh.platform.pp.registry.database.entities.sharedres;
+package org.opendatamesh.platform.pp.registry.resources.v1;
 
-import java.beans.Transient;
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-
-import javax.persistence.Table;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
 
+
 @Data
-@Entity(name = "ApiToSchemaRelationship")
-@Table(name = "DPDS_API_TO_SCHEMA_RELATIONSHIPS", schema="PUBLIC")
-public class ApiToSchemaRelationship {
-    
-    @EmbeddedId
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class ApiToSchemaRelationshipResource {
+
+ 
+    @JsonIgnore
     private ApiToSchemaRelationshipId id;
 
-    @Column(name = "OPERATION_ID")
+    @JsonProperty("operationId")
     String operationId;
 
-    @Column(name = "OUTPUT_MEDIA_TYPE")
+    @JsonProperty("outputMediaType")
     String outputMediaType;
 
-    @Transient
+    @JsonProperty("apiId")
     public Long getApiId() {
         return (id == null ? null: id.getApiId());
     }
@@ -38,7 +33,7 @@ public class ApiToSchemaRelationship {
         id.setApiId(apiId);
     }
 
-    @Transient
+    @JsonProperty("schemaId")
     public Long getSchemaId() {
         return (id == null ? null: id.getSchemaId());
     }
@@ -48,13 +43,12 @@ public class ApiToSchemaRelationship {
         id.setSchemaId(schemaId);
     }
 
-    @Embeddable
     @Data
     public static class ApiToSchemaRelationshipId implements Serializable {
-        @Column(name = "API_ID")
+        @JsonProperty("operationId")
         Long apiId;
         
-        @Column(name = "SCHEMA_ID")
+        @JsonProperty("operationId")
         Long schemaId;
 
         public ApiToSchemaRelationshipId() {           
@@ -65,5 +59,4 @@ public class ApiToSchemaRelationship {
             this.schemaId = schemaId;
         }
     }
-   
 }

@@ -233,7 +233,7 @@ public class DefinitionController {
      @ResponseStatus(HttpStatus.OK)
      @Operation(
              summary = "Delete the specified definition",
-             description = "Delete the data product identified by the input `id` and all its associated versions"
+             description = "Delete the definition identified by the input `id`"
      )
      @ApiResponses(value = {
              @ApiResponse(

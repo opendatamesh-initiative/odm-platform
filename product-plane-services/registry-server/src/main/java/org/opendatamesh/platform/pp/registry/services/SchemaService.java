@@ -1,8 +1,11 @@
 package org.opendatamesh.platform.pp.registry.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import javax.validation.Valid;
 
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.ApiToSchemaRelationship;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Schema;
@@ -238,7 +241,7 @@ public class SchemaService {
             String version) {
 
         Schema schema = null;
-        List<Schema> schemas = searchSchemas(name, version);
+        List<Schema> schemas = searchSchemas(null, name, version);
         if (schemas == null || schemas.size() == 0) {
             schema = null;
         } else if (schemas.size() == 1) {
@@ -253,11 +256,12 @@ public class SchemaService {
     }
 
     public List<Schema> searchSchemas(
+            Long apiId,
             String name,
             String version) {
         List<Schema> schemaSearchResults = null;
         try {
-            schemaSearchResults = findSchemas(name, version);
+            schemaSearchResults = findSchemas(apiId, name, version);
         } catch (Throwable t) {
             throw new InternalServerException(
                     OpenDataMeshAPIStandardError.SC500_01_DATABASE_ERROR,
@@ -268,11 +272,41 @@ public class SchemaService {
     }
 
     private List<Schema> findSchemas(
+            Long apiId,
             String name,
             String version) {
 
-        return schemaRepository
+        List<Schema> schemas = new ArrayList<Schema>();
+
+        if(apiId != null) {
+            List<ApiToSchemaRelationship> relationships = relationshipRepository.findByIdApiId(apiId);
+            for(ApiToSchemaRelationship relationship: relationships) {
+                Schema schema = loadSchema(relationship.getId().getSchemaId());
+                if(schema != null) {
+                    boolean nameMatch = name == null || (name!=null && schema.getName().equals(name));
+                    boolean versionMatch = version == null || (version!=null && schema.getVersion().equals(version));
+                    if(versionMatch && nameMatch) {
+                        schemas.add(schema); 
+                    }
+                } else {
+                    logger.warn("The schema [" + relationship.getId().getSchemaId() + "] associated to api [" + apiId + "] does not exist anymore");
+                }
+            }
+        } else {
+             schemas = schemaRepository
                 .findAll(SchemaRepository.Specs.hasMatch(name, version));
+        }
+       
+        
+        return schemas;
+    }
+
+    public List<ApiToSchemaRelationship> readSchemaRealtionships(Long schemaId) {
+        if(!schemaExists(schemaId)) {
+            // eccezione
+        }
+        List<ApiToSchemaRelationship> relationships = relationshipRepository.findByIdSchemaId(schemaId);
+        return relationships;
     }
 
     // ======================================================================================
@@ -328,7 +362,4 @@ public class SchemaService {
         }
 
     }
-
-   
-
 }

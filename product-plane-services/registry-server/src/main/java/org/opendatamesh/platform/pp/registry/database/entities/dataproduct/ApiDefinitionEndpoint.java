@@ -7,15 +7,27 @@ import lombok.Data;
 @Data
 public class ApiDefinitionEndpoint {
     
-     @Transient
+    @Transient
     private String name; 
 
-     @Transient
+    @Transient
     private String outputMediaType;    
     
-     @Transient
-    private String schemaMediaType;    
+    @Transient
+    private Schema schema;    
 
-     @Transient
-    private String schema;       
+    @Data
+    public static class Schema {
+         @Transient
+        private String name; 
+
+         @Transient
+        private String version; 
+
+         @Transient
+        private String mediaType; 
+
+         @Transient
+        private String content;    
+    }
 }

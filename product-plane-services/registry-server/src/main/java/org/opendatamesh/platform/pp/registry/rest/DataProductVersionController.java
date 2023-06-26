@@ -15,6 +15,7 @@ import org.opendatamesh.platform.pp.registry.exceptions.NotFoundException;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
 import org.opendatamesh.platform.pp.registry.resources.v1.mappers.DataProductMapper;
+import org.opendatamesh.platform.pp.registry.resources.v1.mappers.DataProductVersionMapper;
 import org.opendatamesh.platform.pp.registry.services.DataProductService;
 import org.opendatamesh.platform.pp.registry.services.DataProductVersionService;
 import org.slf4j.Logger;
@@ -68,7 +69,7 @@ public class DataProductVersionController
     private DataProductVersionService dataProductVersionService;
 
     @Autowired
-    private DataProductMapper dataProductMapper;
+    private DataProductVersionMapper dataProductVersionMapper;
 
     @Autowired
     ObjectMapper objectMapper;
@@ -167,7 +168,7 @@ public class DataProductVersionController
         }
         String serverUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
         DataProductVersion dataProductVersion = dataProductService.addDataProductVersion(descriptorContent, false, serverUrl);
-        DataProductVersionDPDS dataProductVersionDPDS = dataProductMapper.toResource(dataProductVersion);
+        DataProductVersionDPDS dataProductVersionDPDS = dataProductVersionMapper.toResource(dataProductVersion);
         
         DataProductVersionSerializer serializer = new DataProductVersionSerializer();
         String serailizedContent = null;
@@ -322,7 +323,7 @@ public class DataProductVersionController
         }
         
         DataProductVersion dataProductVersion = dataProductVersionService.readDataProductVersion(id, version);;
-        DataProductVersionDPDS dataProductVersionDPDS = dataProductMapper.toResource(dataProductVersion);
+        DataProductVersionDPDS dataProductVersionDPDS = dataProductVersionMapper.toResource(dataProductVersion);
         if(format == null) format = "canonical";
         DataProductVersionSerializer serializer = new DataProductVersionSerializer();
         String serailizedContent = null;

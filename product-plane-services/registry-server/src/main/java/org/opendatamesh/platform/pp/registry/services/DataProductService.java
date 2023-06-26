@@ -22,6 +22,7 @@ import org.opendatamesh.platform.pp.registry.exceptions.NotFoundException;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.exceptions.UnprocessableEntityException;
 import org.opendatamesh.platform.pp.registry.resources.v1.mappers.DataProductMapper;
+import org.opendatamesh.platform.pp.registry.resources.v1.mappers.DataProductVersionMapper;
 import org.opendatamesh.platform.pp.registry.resources.v1.observers.EventNotifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +53,9 @@ public class DataProductService {
 
     @Autowired
     private DataProductMapper dataProductMapper;
+
+    @Autowired
+    private DataProductVersionMapper dataProductVersionMapper;
 
     @Autowired
     EventNotifier eventNotifier;
@@ -509,17 +513,17 @@ public class DataProductService {
     private DataProductVersion descriptorToDataProductVersion(DataProductVersionSource descriptorSource, String serverUrl) {
         DataProductVersion dataProductVersion = null;
 
-        DPDSParser descriptorBuilder = 
+        DPDSParser descriptorParser = 
             new DPDSParser(descriptorSource, serverUrl);
        
         DataProductVersionDPDS descriptor = null;
         try {
-            descriptor = descriptorBuilder.parse(true);
+            descriptor = descriptorParser.parse(true);
         } catch (BuildException e) {
             handleBuildException(e);
         }
      
-        dataProductVersion = dataProductMapper.toEntity(descriptor);
+        dataProductVersion = dataProductVersionMapper.toEntity(descriptor);
         dataProductVersion.setDataProductId(dataProductVersion.getInfo().getDataProductId());
         dataProductVersion.setVersionNumber(dataProductVersion.getInfo().getVersionNumber());
         return dataProductVersion;

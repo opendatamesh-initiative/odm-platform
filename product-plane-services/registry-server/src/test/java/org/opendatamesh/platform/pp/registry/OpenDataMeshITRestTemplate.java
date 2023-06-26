@@ -1,10 +1,11 @@
-package org.opendatamesh.dpexperience.api;
+package org.opendatamesh.platform.pp.registry;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Definition;
 import org.opendatamesh.platform.pp.registry.resources.v1.DataProductResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.DataProductSourceResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.DefinitionResource;
+import org.opendatamesh.platform.pp.registry.resources.v1.SchemaResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.shared.TemplateResource;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
@@ -107,6 +108,27 @@ public class OpenDataMeshITRestTemplate extends TestRestTemplate {
         entity = new HttpEntity<>(definitionResource, headers);
 
         return entity;
+    }
+
+    HttpEntity<SchemaResource> getSchemaAsHttpEntity(String file)
+            throws IOException {
+
+        HttpEntity<SchemaResource> entity = null;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        SchemaResource schemaResource = null;
+        if(file != null) {
+            String docContent = readFile(file);
+            schemaResource = objectMapper.readValue(docContent, SchemaResource.class);
+        }
+
+        entity = new HttpEntity<>(schemaResource, headers);
+
+        return entity;
+
     }
 
     HttpEntity<TemplateResource> getTemplateAsHttpEntity(String file) throws IOException {
@@ -368,7 +390,6 @@ public class OpenDataMeshITRestTemplate extends TestRestTemplate {
                 DefinitionResource[].class);
     }
 
-
     // ----------------------------------------
     // Template
     // ----------------------------------------
@@ -420,6 +441,21 @@ public class OpenDataMeshITRestTemplate extends TestRestTemplate {
                 apiUrl(RoutesV1.TEMPLATES, urlExtensions),
                 TemplateResource[].class
         );
+
+    }
+
+    // ----------------------------------------
+    // Schema
+    // ----------------------------------------
+    public ResponseEntity<SchemaResource> createSchema(String filePath) throws IOException {
+        HttpEntity<SchemaResource> entity = getSchemaAsHttpEntity(filePath);
+
+        ResponseEntity<SchemaResource> postSchemaResponse = postForEntity(
+                apiUrl(RoutesV1.SCHEMAS),
+                entity,
+                SchemaResource.class);
+
+        return postSchemaResponse;
     }
 
 }

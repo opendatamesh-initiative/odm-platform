@@ -9,6 +9,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Definition;
 
 import lombok.Data;
 
@@ -37,9 +40,8 @@ public class StandardDefinition {
     @Column(name = "SPECIFICATION_VERSION")
     private String specificationVersion;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "DEFINITION_ID", referencedColumnName = "ID")
-    private ReferenceObject definition;
+    @Transient
+    private DefinitionReference definition;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "EXTERNAL_DOC_ID", referencedColumnName = "ID")

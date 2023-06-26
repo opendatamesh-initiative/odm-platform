@@ -1,4 +1,4 @@
-package org.opendatamesh.dpexperience.api;
+package org.opendatamesh.platform.pp.registry;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -169,7 +169,7 @@ public class TemplateIT extends OpenDataMeshIT {
                 ErrorRes.class
         );
         verifyResponseError(errorResponse,
-                HttpStatus.BAD_REQUEST, OpenDataMeshAPIStandardError.SC400_12_TEMPLATE_IS_EMPTY);
+                HttpStatus.BAD_REQUEST, OpenDataMeshAPIStandardError.SC400_14_TEMPLATE_IS_EMPTY);
     }
 
     @Test
@@ -191,7 +191,7 @@ public class TemplateIT extends OpenDataMeshIT {
                 ErrorRes.class);
         verifyResponseError(errorResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                OpenDataMeshAPIStandardError.SC422_10_TEMPLATE_ALREADY_EXISTS);
+                OpenDataMeshAPIStandardError.SC422_13_TEMPLATE_ALREADY_EXISTS);
 
         // TEST 2: try to register a template without setting the href
         entity.getBody().setHref(null);
@@ -201,7 +201,7 @@ public class TemplateIT extends OpenDataMeshIT {
                 ErrorRes.class);
         verifyResponseError(errorResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                OpenDataMeshAPIStandardError.SC422_11_TEMPLATE_DOC_SYNTAX_IS_INVALID);
+                OpenDataMeshAPIStandardError.SC422_14_TEMPLATE_DOC_SYNTAX_IS_INVALID);
 
         // TEST 3: try to register a template without setting the mediaType
         entity.getBody().setMediaType(null);
@@ -211,7 +211,7 @@ public class TemplateIT extends OpenDataMeshIT {
                 ErrorRes.class);
         verifyResponseError(errorResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                OpenDataMeshAPIStandardError.SC422_11_TEMPLATE_DOC_SYNTAX_IS_INVALID);
+                OpenDataMeshAPIStandardError.SC422_14_TEMPLATE_DOC_SYNTAX_IS_INVALID);
 
     }
 
@@ -237,7 +237,7 @@ public class TemplateIT extends OpenDataMeshIT {
         verifyResponseError(
                 errorResponse,
                 HttpStatus.NOT_FOUND,
-                OpenDataMeshAPIStandardError.SC404_04_TEMPLATE_NOT_FOUND
+                OpenDataMeshAPIStandardError.SC404_05_TEMPLATE_NOT_FOUND
         );
 
     }
@@ -266,7 +266,7 @@ public class TemplateIT extends OpenDataMeshIT {
         verifyResponseError(
                 errorResponse,
                 HttpStatus.NOT_FOUND,
-                OpenDataMeshAPIStandardError.SC404_04_TEMPLATE_NOT_FOUND
+                OpenDataMeshAPIStandardError.SC404_05_TEMPLATE_NOT_FOUND
         );
 
     }

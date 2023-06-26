@@ -137,10 +137,10 @@ public class DefinitionController {
     @ApiResponses(value = {
         @ApiResponse(
             responseCode = "200", 
-            description = "The requested definition", 
+            description = "The list of all registered definitions", 
             content = @Content(
                 mediaType = "application/json", 
-                schema = @Schema(implementation = DefinitionResource.class)
+                schema = @Schema(implementation = List.class)
             )
         ),
         @ApiResponse(
@@ -206,7 +206,7 @@ public class DefinitionController {
         )
     })
     public DefinitionResource readOneDefinition(
-        @Parameter(description = "Idenntifier of the data product")
+        @Parameter(description = "Idenntifier of the definition")
         @Valid @PathVariable(value = "id") Long id) 
     {
         Definition definition = definitionService.readDefinition(id);
@@ -233,7 +233,7 @@ public class DefinitionController {
      @ResponseStatus(HttpStatus.OK)
      @Operation(
              summary = "Delete the specified definition",
-             description = "Delete the data product identified by the input `id` and all its associated versions"
+             description = "Delete the definition identified by the input `id`"
      )
      @ApiResponses(value = {
              @ApiResponse(

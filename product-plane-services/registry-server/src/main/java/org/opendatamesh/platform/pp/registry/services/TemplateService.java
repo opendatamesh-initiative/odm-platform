@@ -43,13 +43,13 @@ public class TemplateService {
 
         if (!StringUtils.hasText(template.getHref())) {
             throw new UnprocessableEntityException(
-                    OpenDataMeshAPIStandardError.SC422_11_TEMPLATE_DOC_SYNTAX_IS_INVALID,
+                    OpenDataMeshAPIStandardError.SC422_14_TEMPLATE_DOC_SYNTAX_IS_INVALID,
                     "Template href property cannot be empty");
         }
 
         if (templateExists(template.getMediaType(), template.getHref())) {
             throw new UnprocessableEntityException(
-                    OpenDataMeshAPIStandardError.SC422_10_TEMPLATE_ALREADY_EXISTS,
+                    OpenDataMeshAPIStandardError.SC422_13_TEMPLATE_ALREADY_EXISTS,
                     "Template [" + template.getMediaType() + "(v. " + template.getHref() + ")] already exists");
         }
 
@@ -95,7 +95,7 @@ public class TemplateService {
 
         if (template == null) {
             throw new NotFoundException(
-                    OpenDataMeshAPIStandardError.SC404_04_TEMPLATE_NOT_FOUND,
+                    OpenDataMeshAPIStandardError.SC404_05_TEMPLATE_NOT_FOUND,
                     "Template [" + templateId + "] does not exist");
         }
 
@@ -121,7 +121,7 @@ public class TemplateService {
         Template template = searchTemplate(templateId);
         if (template == null) {
             throw new NotFoundException(
-                    OpenDataMeshAPIStandardError.SC404_04_TEMPLATE_NOT_FOUND,
+                    OpenDataMeshAPIStandardError.SC404_05_TEMPLATE_NOT_FOUND,
                     "Template [" + templateId + "] does not exist");
         }
 
@@ -165,7 +165,7 @@ public class TemplateService {
         Template template = null;
         if (templateId == null) {
             throw new BadRequestException(
-                    OpenDataMeshAPIStandardError.SC400_13_TEMPLATE_ID_IS_EMPTY,
+                    OpenDataMeshAPIStandardError.SC400_15_TEMPLATE_ID_IS_EMPTY,
                     "Template id cannot be empty");
         }
 

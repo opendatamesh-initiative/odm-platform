@@ -1,4 +1,4 @@
-package org.opendatamesh.dpexperience.api;
+package org.opendatamesh.platform.pp.registry;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;

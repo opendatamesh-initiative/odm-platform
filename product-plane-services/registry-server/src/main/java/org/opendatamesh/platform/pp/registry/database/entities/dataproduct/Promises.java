@@ -20,8 +20,6 @@ public class Promises {
     @Column(name = "SERVICE_TYPE")
     protected String servicesType;
 
-    //@OneToOne(cascade = CascadeType.ALL)
-    //@JoinColumn(name = "API_ID", referencedColumnName = "ID")
     @Column(name = "API_ID")
     protected Long apiId;
 

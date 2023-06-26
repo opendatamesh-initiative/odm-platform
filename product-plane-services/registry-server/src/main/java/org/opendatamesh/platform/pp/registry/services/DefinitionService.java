@@ -1,17 +1,11 @@
 package org.opendatamesh.platform.pp.registry.services;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import javax.persistence.criteria.Predicate;
-
-import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.ReferenceObject;
-import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.StandardDefinition;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Definition;
 import org.opendatamesh.platform.pp.registry.database.repositories.DefinitionRepository;
-import org.opendatamesh.platform.pp.registry.database.repositories.StandardDefinitionRepository;
 import org.opendatamesh.platform.pp.registry.exceptions.BadRequestException;
 import org.opendatamesh.platform.pp.registry.exceptions.InternalServerException;
 import org.opendatamesh.platform.pp.registry.exceptions.NotFoundException;
@@ -20,7 +14,6 @@ import org.opendatamesh.platform.pp.registry.exceptions.UnprocessableEntityExcep
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 

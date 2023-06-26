@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.core.dpds.resolvers;
+package org.opendatamesh.platform.core.dpds.processors;
 
 import java.net.URI;
 import java.util.List;

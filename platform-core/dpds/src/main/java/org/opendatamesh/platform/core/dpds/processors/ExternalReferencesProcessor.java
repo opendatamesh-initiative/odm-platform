@@ -72,9 +72,10 @@ public class ExternalReferencesProcessor implements PropertiesProcessor{
 
         try {
             URI uri = new URI(ref).normalize();
-            String content = source.fetchResource(uri);
+            String content = source.fetchResource(source.getRootDocBaseURI(), uri);
             resolvedComponent = (E) mapper.readValue(content, component.getClass());
             resolvedComponent.setRawContent(content);
+            resolvedComponent.setOriginalRef(source.getRootDocBaseURI().resolve(uri).toString());
         } catch (Exception e) {
             throw new UnresolvableReferenceException(
                     "Impossible to resolve external reference [" + ref + "]",

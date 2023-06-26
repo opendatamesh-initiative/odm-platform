@@ -8,6 +8,7 @@ import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
 import org.opendatamesh.platform.core.dpds.exceptions.UnresolvableReferenceException;
 import org.opendatamesh.platform.core.dpds.model.ApplicationComponentDPDS;
+import org.opendatamesh.platform.core.dpds.model.ComponentDPDS;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.InfrastructuralComponentDPDS;
 import org.opendatamesh.platform.core.dpds.model.ReferenceObjectDPDS;
@@ -67,7 +68,7 @@ public class TemplatesResolver {
                 template = applicationComponent.getBuildInfo().getTemplate();
                 templateNode = (ObjectNode) serviceInfoNode.get("template");
                
-                templateNode = resolveReference(template, templateNode, "/templates/{apiId}");
+                templateNode = resolveReference(applicationComponent, template, templateNode, "/templates/{apiId}");
                 serviceInfoNode.set("template", templateNode);
             }
 
@@ -77,7 +78,7 @@ public class TemplatesResolver {
                 template = applicationComponent.getDeployInfo().getTemplate();
                 templateNode = (ObjectNode) serviceInfoNode.get("template");
                
-                templateNode = resolveReference(template, templateNode, "/templates/{apiId}");
+                templateNode = resolveReference(applicationComponent, template, templateNode, "/templates/{apiId}");
                 serviceInfoNode.set("template", templateNode);
             }
 
@@ -113,7 +114,7 @@ public class TemplatesResolver {
                 template = infrastructuralComponent.getProvisionInfo().getTemplate();
                 templateNode = (ObjectNode) serviceInfoNode.get("template");
                
-                templateNode = resolveReference(template, templateNode, "/templates/{apiId}");
+                templateNode = resolveReference(infrastructuralComponent, template, templateNode, "/templates/{apiId}");
                 serviceInfoNode.set("template", templateNode);
             }
 
@@ -127,6 +128,7 @@ public class TemplatesResolver {
     }
 
     private ObjectNode resolveReference(
+            ComponentDPDS component,
             ReferenceObjectDPDS reference,
             ObjectNode referenceNode,
             String endpoint)
@@ -141,7 +143,8 @@ public class TemplatesResolver {
             ref = referenceNode.get("$ref").asText();
             try {
                 URI uri = new URI(ref).normalize();
-                templateContent = source.fetchResource(uri);
+                URI baseUri = source.getBaseUri(new URI(component.getOriginalRef()));
+                templateContent = source.fetchResource(baseUri, uri);
             } catch (Exception e) {
                 try {
                     referenceNode.put("comment", "Unresolvable reference");

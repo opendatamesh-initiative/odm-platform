@@ -9,13 +9,12 @@ import lombok.Data;
 
 @Data
 public class DataProductVersionSource {
-    
+
     private URI rootDocURI;
     private URI rootDocBaseURI;
     private String rootDocFileName;
     private String rootDocContent;
-    private Fetcher fetcher;
-    
+
     public DataProductVersionSource(String descriptorContent) {
         rootDocContent = descriptorContent;
     }
@@ -23,35 +22,58 @@ public class DataProductVersionSource {
     public DataProductVersionSource(URI descriptorUri) {
         rootDocURI = descriptorUri.normalize();
         String path = rootDocURI.getPath();
-        String scheme = rootDocURI.getScheme();
         String basePath = path.substring(0, path.lastIndexOf('/') + 1);
         try {
-            rootDocBaseURI = new URI(scheme + ":" + basePath);
+            rootDocBaseURI = new URI(
+                    rootDocURI.getScheme(),
+                    rootDocURI.getUserInfo(),
+                    rootDocURI.getHost(),
+                    rootDocURI.getPort(),
+                    basePath,
+                    rootDocURI.getQuery(),
+                    rootDocURI.getFragment());
         } catch (URISyntaxException e) {
-            throw new RuntimeException("An unexpected exception occured while creating base uri [" + scheme + ":"
-                    + basePath + "] of uri [" + descriptorUri.toString() + "]", e);
+            throw new RuntimeException("An unexpected exception occured while creating base uri from uri [" + descriptorUri.toString() + "]", e);
         }
         rootDocFileName = path.substring(path.lastIndexOf('/') + 1);
+    }
 
-        fetcher = new UriFetcher(rootDocBaseURI);
+    public URI getBaseUri(URI resourceUri) {
+        URI baseUri = null;
+        URI normalizedUri = resourceUri.normalize();
+        String path = normalizedUri.getPath();
+        String basePath = path.substring(0, path.lastIndexOf('/') + 1);
+        try {
+            baseUri = new URI(
+                    rootDocURI.getScheme(),
+                    rootDocURI.getUserInfo(),
+                    rootDocURI.getHost(),
+                    rootDocURI.getPort(),
+                    basePath,
+                    rootDocURI.getQuery(),
+                    rootDocURI.getFragment());
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(
+                    "An unexpected exception occured while creating base uri from uri [" + resourceUri.toString() + "]",
+                    e);
+        }
+        return baseUri;
     }
 
     public String fetchRootDoc() throws FetchException {
-        if(rootDocContent == null) {
+        if (rootDocContent == null) {
+            UriFetcher fetcher = new UriFetcher(rootDocBaseURI);
             rootDocContent = fetcher.fetch(rootDocURI);
         }
-        return rootDocContent; 
+        return rootDocContent;
     }
 
-    public String fetchResource(URI resourceUri) throws FetchException {
-        return fetcher.fetch(resourceUri); 
+    public String fetchResource(URI baseURI, URI resourceUri) throws FetchException {
+        UriFetcher fetcher = new UriFetcher(baseURI);
+        return fetcher.fetch(resourceUri);
     }
-    
-    public Fetcher getResourceFetcher() {
-        return this.fetcher;
-    }    
 
-    static public interface Fetcher {
-        String fetch(URI resourceUri) throws FetchException;
+    public static interface Fetcher {
+        public String fetch(URI resourceUri) throws FetchException;
     }
 }

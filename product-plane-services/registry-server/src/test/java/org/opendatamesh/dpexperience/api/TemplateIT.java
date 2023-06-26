@@ -4,7 +4,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
-import org.opendatamesh.platform.pp.registry.resources.v1.dataproduct.InfrastructuralComponentResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.shared.TemplateResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -19,8 +18,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 public class TemplateIT extends OpenDataMeshIT {
-
-    InfrastructuralComponentResource infrastructuralComponent;
 
     @Before
     public void setup() {

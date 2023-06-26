@@ -57,7 +57,7 @@ public abstract class OpenDataMeshIT {
 
     @PostConstruct
     public final void init() {
-        rest = new OpenDataMeshITRestTemplate(mapper);
+        rest = new OpenDataMeshITRestTemplate();
         rest.setPort(port);
         HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
         // requestFactory.setConnectTimeout(30000);

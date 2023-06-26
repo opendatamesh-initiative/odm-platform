@@ -98,7 +98,7 @@ public class DataProductVersionService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
-                    "An internal processing error occured while saving API", t);
+                    "An internal processing error occured while saving templates", t);
         }
 
         try {

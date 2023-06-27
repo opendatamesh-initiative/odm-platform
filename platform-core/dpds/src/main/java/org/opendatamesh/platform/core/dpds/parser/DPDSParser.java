@@ -1,7 +1,9 @@
-package org.opendatamesh.platform.core.dpds;
+package org.opendatamesh.platform.core.dpds.parser;
 
 import java.util.Set;
 
+import org.opendatamesh.platform.core.dpds.DataProductVersionValidator;
+import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.exceptions.BuildException;
 import org.opendatamesh.platform.core.dpds.exceptions.FetchException;
 import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
@@ -25,41 +27,38 @@ import lombok.Data;
 @Data
 public class DPDSParser {
 
-    DataProductVersionSource source;
-    DataProductVersionDPDS dataProductVersion;
-    
-    private String targetURL;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(DPDSParser.class);
+   
+    private static final Logger logger = LoggerFactory.getLogger(DPDSParser.class);
     
 
-    public DPDSParser(DataProductVersionSource source, String serverUrl) {
-        this.source = source;
-        this.targetURL = serverUrl;
+    public DPDSParser() {        
     }
 
-    public DataProductVersionDPDS parse(boolean validate) throws BuildException  {
-        parseRootDoc(true)
-            .processExternalReferences(validate)
-            .processInternalReferences(validate)
-            .processReadOnlyProperties()
-            .processStandardDefinition()
-            .processTemplates();
-        return dataProductVersion;
+    public ParseResult parse(ParseLocation location, ParseOptions options) throws BuildException  {
+        ParseContext context = new ParseContext(location, options);
+        parseRootDoc(context)
+            .processExternalReferences(context)
+            .processInternalReferences(context)
+            .processReadOnlyProperties(context)
+            .processStandardDefinition(context)
+            .processTemplates(context);
+        return context.getResult();
     } 
 
-    public DPDSParser parseRootDoc(boolean validate) throws BuildException {
+    private DPDSParser parseRootDoc(ParseContext context) throws BuildException {
         try {
-            String rawContent = source.fetchRootDoc();
+            DataProductVersionDPDS descriptorDocument = null;
+            String rawContent = context.getLocation().fetchRootDoc();
             try {
-                dataProductVersion = ObjectMapperFactory.getRightMapper(rawContent).readValue(rawContent, DataProductVersionDPDS.class);
+                descriptorDocument = ObjectMapperFactory.getRightMapper(rawContent).readValue(rawContent, DataProductVersionDPDS.class);
             } catch (JsonProcessingException e) {
                 throw new ParseException("Root document format is not valid", e);
             }
-            dataProductVersion.setRawContent(rawContent);
-            if(validate) {
-                validateSchema();
+            descriptorDocument.setRawContent(rawContent);
+            if(context.getOptions().isValidateRootDocumet()) {
+                validateSchema(context.getResult().getDescriptorDocument());
             }
+            context.getResult().setDescriptorDocument(descriptorDocument);
         } catch (FetchException | ParseException | ValidationException e) {
             throw new BuildException("Impossible to parse root descriptor document",
                 BuildException.Stage.LOAD_ROOT_DOC, e);
@@ -68,11 +67,11 @@ public class DPDSParser {
         return this;
     }
 
-    public DPDSParser processExternalReferences(boolean validate) throws BuildException {
+    private DPDSParser processExternalReferences(ParseContext context) throws BuildException {
         try {
-            ExternalReferencesProcessor.process(dataProductVersion, source);
-            if(validate) {
-                validateSchema();
+            ExternalReferencesProcessor.process(context);
+            if(context.getOptions().isValidateExternalRefs()) {
+                validateSchema(context.getResult().getDescriptorDocument());
             }
         } catch (UnresolvableReferenceException | ParseException | ValidationException e) {
             throw new BuildException("Impossible to build external reference of root descriptor document",
@@ -81,10 +80,10 @@ public class DPDSParser {
         return this;
     }
 
-    public DPDSParser processReadOnlyProperties() throws BuildException {
+    private DPDSParser processReadOnlyProperties(ParseContext context) throws BuildException {
         
         try {
-            ReadOnlyPropertiesProcessor.process(dataProductVersion, source);
+            ReadOnlyPropertiesProcessor.process(context);
         } catch (ParseException e) {
             throw new BuildException("Impossible to build read only properties",
                 BuildException.Stage.RESOLVE_READ_ONLY_PROPERTIES, e);
@@ -93,10 +92,10 @@ public class DPDSParser {
         return this;
     }
 
-    public DPDSParser processTemplates() throws BuildException {
+    private DPDSParser processTemplates(ParseContext context) throws BuildException {
         
         try {
-            TemplatesResolver.resolve(dataProductVersion, source, targetURL);
+            TemplatesResolver.resolve(context);
         } catch (UnresolvableReferenceException | ParseException e) {
             throw new BuildException("Impossible to build template properties",
                 BuildException.Stage.RESOLVE_TEMPLATE_PROPERTIES, e);
@@ -107,10 +106,10 @@ public class DPDSParser {
 
     
 
-    public DPDSParser processStandardDefinition() throws BuildException {
+    private DPDSParser processStandardDefinition(ParseContext context) throws BuildException {
               
         try {
-            ApiDefinitionsProcessor.process(dataProductVersion, source, targetURL);
+            ApiDefinitionsProcessor.process(context);
         } catch (UnresolvableReferenceException | ParseException e) {
             throw new BuildException("Impossible to build standard definitions",
                 BuildException.Stage.RESOLVE_STANDARD_DEFINITIONS, e);
@@ -120,11 +119,11 @@ public class DPDSParser {
         return this;
     }
    
-    public DPDSParser processInternalReferences(boolean validate) throws BuildException {
+    private DPDSParser processInternalReferences(ParseContext context) throws BuildException {
         try {
-            InternalReferencesProcessor.process(dataProductVersion, source);
-            if(validate) {
-                validateSchema();
+            InternalReferencesProcessor.process(context);
+            if(context.getOptions().isValidateInternalRefs()) {
+                validateSchema(context.getResult().getDescriptorDocument());
             }
         } catch (UnresolvableReferenceException | ParseException | ValidationException e) {
             throw new BuildException("Impossible to build internal reference of root descriptor document",
@@ -133,7 +132,7 @@ public class DPDSParser {
         return this;
     }   
 
-    public DPDSParser validateSchema() throws ParseException, ValidationException {
+    public DPDSParser validateSchema(DataProductVersionDPDS descriptor) throws ParseException, ValidationException {
         Set<ValidationMessage> errors;
 
         // TODO validate against the right schema version
@@ -143,7 +142,7 @@ public class DPDSParser {
         String serailizedContent = null;
 
         try {
-            serailizedContent = serializer.serialize(dataProductVersion, "canonical", "json", false);
+            serailizedContent = serializer.serialize(descriptor, "canonical", "json", false);
         } catch (JsonProcessingException e) {
            throw new ParseException("Impossible to serialize data product version raw content", e);
         }

@@ -3,7 +3,6 @@ package org.opendatamesh.platform.core.dpds.processors;
 import java.net.URI;
 import java.util.List;
 
-import org.opendatamesh.platform.core.dpds.DataProductVersionSource;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
 import org.opendatamesh.platform.core.dpds.exceptions.UnresolvableReferenceException;
@@ -12,32 +11,28 @@ import org.opendatamesh.platform.core.dpds.model.ComponentDPDS;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.InfrastructuralComponentDPDS;
 import org.opendatamesh.platform.core.dpds.model.ReferenceObjectDPDS;
+import org.opendatamesh.platform.core.dpds.parser.ParseContext;
+import org.opendatamesh.platform.core.dpds.parser.ParseLocation;
+import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class TemplatesResolver {
 
-    DataProductVersionDPDS dataProductVersion;
-    DataProductVersionSource source;
-    private String targetURL;
+    ParseContext context;
     private ObjectMapper mapper;
 
-    public TemplatesResolver(DataProductVersionDPDS dataProductVersion, DataProductVersionSource source,
-            String targetURL) {
-        this.dataProductVersion = dataProductVersion;
-        this.source = source;
-        this.targetURL = targetURL;
+    public TemplatesResolver(ParseContext context) {
+        this.context = context;
         this.mapper = ObjectMapperFactory.JSON_MAPPER;
     }
 
     // Note: to be called after component resolution
     public void resolve() throws UnresolvableReferenceException, ParseException {
 
-        if (dataProductVersion.getInterfaceComponents() == null) {
+        if (context.getResult().getDescriptorDocument().getInterfaceComponents() == null) {
             return;
         }
 
@@ -47,7 +42,7 @@ public class TemplatesResolver {
 
     private void resolveTemplateObjectsInApp() throws UnresolvableReferenceException, ParseException {
 
-        List<ApplicationComponentDPDS> applicationComponents = dataProductVersion.getInternalComponents()
+        List<ApplicationComponentDPDS> applicationComponents = context.getResult().getDescriptorDocument().getInternalComponents()
                 .getApplicationComponents();
         for (ApplicationComponentDPDS applicationComponent : applicationComponents) {
 
@@ -93,7 +88,7 @@ public class TemplatesResolver {
 
     private void resolveTemplateObjectsInInfra() throws UnresolvableReferenceException, ParseException {
 
-        List<InfrastructuralComponentDPDS> infrastructuralComponents = dataProductVersion.getInternalComponents()
+        List<InfrastructuralComponentDPDS> infrastructuralComponents = context.getResult().getDescriptorDocument().getInternalComponents()
                 .getInfrastructuralComponents();
         for (InfrastructuralComponentDPDS infrastructuralComponent : infrastructuralComponents) {
 
@@ -143,8 +138,8 @@ public class TemplatesResolver {
             ref = referenceNode.get("$ref").asText();
             try {
                 URI uri = new URI(ref).normalize();
-                URI baseUri = source.getBaseUri(new URI(component.getOriginalRef()));
-                templateContent = source.fetchResource(baseUri, uri);
+                URI baseUri = context.getLocation().getBaseUri(new URI(component.getOriginalRef()));
+                templateContent = context.getLocation().fetchResource(baseUri, uri);
             } catch (Exception e) {
                 try {
                     referenceNode.put("comment", "Unresolvable reference");
@@ -159,7 +154,7 @@ public class TemplatesResolver {
                 */
             }
 
-            referenceRef = targetURL + endpoint;
+            referenceRef = context.getOptions().getServerUrl() + endpoint;
             referenceNode.put("$ref", referenceRef);
         } else { // inline
             try {
@@ -167,7 +162,7 @@ public class TemplatesResolver {
             } catch (JsonProcessingException e) {
                 throw new ParseException("Impossible serialize api definition", e);
             }
-            referenceRef = targetURL + endpoint;
+            referenceRef = context.getOptions().getServerUrl() + endpoint;
             referenceNode = mapper.createObjectNode();
             referenceNode.put("$ref", referenceRef);
         }
@@ -179,14 +174,9 @@ public class TemplatesResolver {
         return referenceNode;
 
     }
-
-    
-
    
-    public static void resolve(DataProductVersionDPDS dataProductVersionRes, DataProductVersionSource source,
-            String targetURL) throws UnresolvableReferenceException, ParseException {
-        TemplatesResolver resolver = new TemplatesResolver(dataProductVersionRes, source,
-                targetURL);
+    public static void resolve(ParseContext context) throws UnresolvableReferenceException, ParseException {
+        TemplatesResolver resolver = new TemplatesResolver(context);
         resolver.resolve();
     }
 }

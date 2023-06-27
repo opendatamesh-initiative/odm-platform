@@ -7,6 +7,9 @@ import java.util.List;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.PortDPDS;
 import org.opendatamesh.platform.core.dpds.model.definitions.ApiDefinitionReferenceDPDS;
+import org.opendatamesh.platform.core.dpds.parser.DPDSParser;
+import org.opendatamesh.platform.core.dpds.parser.ParseLocation;
+import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
 import org.opendatamesh.platform.core.dpds.serde.DataProductVersionSerializer;
 
 /* 
@@ -31,18 +34,19 @@ public class CoreApp /* implements CommandLineRunner */ {
     public static void run(String... arg0) throws Exception {
 
         String ROOT_DOC_LOACAL_FILEPATH = "/home/andrea.gioia/Sviluppi/quantyca/open-data-mesh/github/odm-platform-pp-services/product-plane-services/registry-server/src/test/resources/test/dataproduct-descriptor/dp1-v1.json";
-        // DataProductVersionSource descriptorSource = new
-        // DataProductVersionSource(Files.readString(Paths.get(ROOT_DOC_LOACAL_FILEPATH)));
+        // ParseLocation location = new ParseLocation(Files.readString(Paths.get(ROOT_DOC_LOACAL_FILEPATH)));
 
         URI ROOT_DOC_REMOTE_URI = new URI(
                 "https://raw.githubusercontent.com/opendatamesh-initiative/odm-specification-dpdescriptor/main/examples/tripexecution/data-product-descriptor.json#pippo?pippo=/xxx");
-        DataProductVersionSource dataProductVersionSource = new DataProductVersionSource(ROOT_DOC_REMOTE_URI);
+        ParseLocation location = new ParseLocation(ROOT_DOC_REMOTE_URI);
 
-        DPDSParser parser = new DPDSParser(dataProductVersionSource,
-                "http://localhost:80/");
+       
+        DPDSParser parser = new DPDSParser();
+        ParseOptions options = new ParseOptions();
+        options.setServerUrl( "http://localhost:80/");
 
-        DataProductVersionDPDS dataProductVerion = null;
-        dataProductVerion = parser.parse(true);
+        ParseResult result = parser.parse(location, options);
+        DataProductVersionDPDS dataProductVerion = 
 
         DataProductVersionSerializer serializer = new DataProductVersionSerializer();
         String rawContent = serializer.serialize(dataProductVerion, "canonical", "yaml", true);

@@ -3,24 +3,22 @@ package org.opendatamesh.platform.core.dpds.processors;
 import java.util.List;
 import java.util.UUID;
 
-import org.opendatamesh.platform.core.dpds.DataProductVersionSource;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
 import org.opendatamesh.platform.core.dpds.model.ComponentDPDS;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.EntityTypeDPDS;
-import org.opendatamesh.platform.core.dpds.serde.DataProductVersionSerializer;
+import org.opendatamesh.platform.core.dpds.parser.ParseContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class ReadOnlyPropertiesProcessor implements PropertiesProcessor {
-    DataProductVersionDPDS dataProductVersion;
-    DataProductVersionSource source;
+    ParseContext context;
     ObjectMapper mapper;
 
-    public ReadOnlyPropertiesProcessor(DataProductVersionDPDS dataProductVersionRes, DataProductVersionSource source) {
-        this.dataProductVersion = dataProductVersionRes;
+    public ReadOnlyPropertiesProcessor(ParseContext context) {
+        this.context = context;
         this.mapper = ObjectMapperFactory.JSON_MAPPER;
 
     }
@@ -28,7 +26,7 @@ public class ReadOnlyPropertiesProcessor implements PropertiesProcessor {
     @Override
     public void process() throws ParseException {
        
-        DataProductVersionDPDS parsedContent = dataProductVersion;
+        DataProductVersionDPDS parsedContent = context.getResult().getDescriptorDocument();
 
         addReadOnlyPropertiesToInfo();
         
@@ -47,7 +45,8 @@ public class ReadOnlyPropertiesProcessor implements PropertiesProcessor {
     private void addReadOnlyPropertiesToInfo() throws ParseException {
         String fqn, uuid;
 
-        String rawContent = dataProductVersion.getRawContent();
+        DataProductVersionDPDS descriptor = context.getResult().getDescriptorDocument();
+        String rawContent = descriptor.getRawContent();
         ObjectNode rootNode = null;
         try {
             rootNode = (ObjectNode)mapper.readTree(rawContent);
@@ -57,18 +56,18 @@ public class ReadOnlyPropertiesProcessor implements PropertiesProcessor {
         ObjectNode infoNode = (ObjectNode)rootNode.get("info");
 
         // Set field "entityType"
-        dataProductVersion.getInfo().setEntityType(EntityTypeDPDS.dataproduct.toString()); 
+        descriptor.getInfo().setEntityType(EntityTypeDPDS.dataproduct.toString()); 
         infoNode.put("entityType", EntityTypeDPDS.dataproduct.toString());
 
         // Set field "id"
-        fqn = dataProductVersion.getInfo().getFullyQualifiedName();
+        fqn = descriptor.getInfo().getFullyQualifiedName();
         uuid = UUID.nameUUIDFromBytes(fqn.getBytes()).toString();
-        dataProductVersion.getInfo().setDataProductId(uuid);
+        descriptor.getInfo().setDataProductId(uuid);
         infoNode.put("id", uuid);
 
         rootNode.set("info", infoNode);
         try {
-            dataProductVersion.setRawContent(mapper.writeValueAsString(rootNode));
+            descriptor.setRawContent(mapper.writeValueAsString(rootNode));
         } catch (Throwable t) {
             throw new ParseException("Impossible serialize descriptor", t);
         }
@@ -105,8 +104,8 @@ public class ReadOnlyPropertiesProcessor implements PropertiesProcessor {
     }
     
 
-    public static void process(DataProductVersionDPDS dataProductVersionRes, DataProductVersionSource source) throws ParseException {
-        ReadOnlyPropertiesProcessor resolver = new ReadOnlyPropertiesProcessor(dataProductVersionRes, source);
+    public static void process(ParseContext context) throws ParseException {
+        ReadOnlyPropertiesProcessor resolver = new ReadOnlyPropertiesProcessor(context);
         resolver.process();
     }
 }

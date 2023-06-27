@@ -2,7 +2,6 @@ package org.opendatamesh.platform.core.dpds.processors;
 
 import java.util.List;
 
-import org.opendatamesh.platform.core.dpds.DataProductVersionSource;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
 import org.opendatamesh.platform.core.dpds.exceptions.UnresolvableReferenceException;
@@ -10,25 +9,25 @@ import org.opendatamesh.platform.core.dpds.model.ComponentDPDS;
 import org.opendatamesh.platform.core.dpds.model.ComponentsDPDS;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.EntityTypeDPDS;
+import org.opendatamesh.platform.core.dpds.parser.ParseContext;
+import org.opendatamesh.platform.core.dpds.parser.ParseLocation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class InternalReferencesProcessor implements PropertiesProcessor{
 
-    DataProductVersionDPDS dataProductVersion;
-    DataProductVersionSource source;
+    ParseContext context;
     ObjectMapper mapper;
 
-    public InternalReferencesProcessor(DataProductVersionDPDS dataProductVersion, DataProductVersionSource source) {
-        this.dataProductVersion = dataProductVersion;
-        this.source = source;
+    public InternalReferencesProcessor(ParseContext context) {
+        this.context = context;
         this.mapper = ObjectMapperFactory.JSON_MAPPER;
     }
 
     @Override
     public void process() throws ParseException, UnresolvableReferenceException {
 
-        DataProductVersionDPDS parsedContent = dataProductVersion;
+        DataProductVersionDPDS parsedContent = context.getResult().getDescriptorDocument();
 
         if (parsedContent.getInterfaceComponents() != null) {
             resolveInternalReferences(parsedContent.getInterfaceComponents().getOutputPorts(),
@@ -76,8 +75,8 @@ public class InternalReferencesProcessor implements PropertiesProcessor{
         }
     }
 
-    public static void process(DataProductVersionDPDS dataProductVersionRes, DataProductVersionSource source)  throws ParseException, UnresolvableReferenceException {
-        InternalReferencesProcessor resolver = new InternalReferencesProcessor(dataProductVersionRes, source);
+    public static void process(ParseContext context)  throws ParseException, UnresolvableReferenceException {
+        InternalReferencesProcessor resolver = new InternalReferencesProcessor(context);
         resolver.process();
     }
 }

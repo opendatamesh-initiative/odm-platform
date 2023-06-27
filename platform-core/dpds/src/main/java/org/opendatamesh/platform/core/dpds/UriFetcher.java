@@ -34,11 +34,12 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.opendatamesh.platform.core.dpds.exceptions.FetchException;
-
+import org.opendatamesh.platform.core.dpds.parser.AuthorizationValue;
+import org.opendatamesh.platform.core.dpds.parser.ParseLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class UriFetcher implements DataProductVersionSource.Fetcher {
+public class UriFetcher implements ParseLocation.Fetcher {
 
     private URI baseUri;
 

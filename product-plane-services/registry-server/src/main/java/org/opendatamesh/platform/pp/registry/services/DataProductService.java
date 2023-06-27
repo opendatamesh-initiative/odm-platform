@@ -4,9 +4,11 @@ package org.opendatamesh.platform.pp.registry.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.notification.EventResource;
 import org.opendatamesh.notification.EventType;
-import org.opendatamesh.platform.core.dpds.DPDSParser;
-import org.opendatamesh.platform.core.dpds.DataProductVersionSource;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
+import org.opendatamesh.platform.core.dpds.parser.DPDSParser;
+import org.opendatamesh.platform.core.dpds.parser.ParseLocation;
+import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
+import org.opendatamesh.platform.core.dpds.parser.ParseResult;
 import org.opendatamesh.platform.core.dpds.exceptions.BuildException;
 import org.opendatamesh.platform.core.dpds.exceptions.FetchException;
 import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
@@ -501,24 +503,26 @@ public class DataProductService {
 
     private DataProductVersion descriptorToDataProductVersion(String descriptorContent, String serverUrl) {
        
-        DataProductVersionSource descriptorSource = new DataProductVersionSource(descriptorContent);
+        ParseLocation descriptorSource = new ParseLocation(descriptorContent);
         return descriptorToDataProductVersion(descriptorSource, serverUrl);
     }
 
     private DataProductVersion descriptorToDataProductVersion(URI descriptorUri, String serverUrl) {
-        DataProductVersionSource descriptorSource = new DataProductVersionSource(descriptorUri);
+        ParseLocation descriptorSource = new ParseLocation(descriptorUri);
         return descriptorToDataProductVersion(descriptorSource, serverUrl);        
     }
 
-    private DataProductVersion descriptorToDataProductVersion(DataProductVersionSource descriptorSource, String serverUrl) {
+    private DataProductVersion descriptorToDataProductVersion(ParseLocation descriptorLocation, String serverUrl) {
         DataProductVersion dataProductVersion = null;
 
-        DPDSParser descriptorParser = 
-            new DPDSParser(descriptorSource, serverUrl);
-       
+        DPDSParser descriptorParser = new DPDSParser();
+        ParseOptions options = new ParseOptions();
+        options.setServerUrl(serverUrl);
+               
         DataProductVersionDPDS descriptor = null;
         try {
-            descriptor = descriptorParser.parse(true);
+            ParseResult result = descriptorParser.parse(descriptorLocation, options);
+            descriptor = result.getDescriptorDocument();
         } catch (BuildException e) {
             handleBuildException(e);
         }

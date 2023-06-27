@@ -10,6 +10,7 @@ import org.opendatamesh.platform.core.dpds.model.definitions.ApiDefinitionRefere
 import org.opendatamesh.platform.core.dpds.parser.DPDSParser;
 import org.opendatamesh.platform.core.dpds.parser.ParseLocation;
 import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
+import org.opendatamesh.platform.core.dpds.parser.ParseResult;
 import org.opendatamesh.platform.core.dpds.serde.DataProductVersionSerializer;
 
 /* 
@@ -46,15 +47,15 @@ public class CoreApp /* implements CommandLineRunner */ {
         options.setServerUrl( "http://localhost:80/");
 
         ParseResult result = parser.parse(location, options);
-        DataProductVersionDPDS dataProductVerion = 
+        DataProductVersionDPDS descriptor = result.getDescriptorDocument();
 
         DataProductVersionSerializer serializer = new DataProductVersionSerializer();
-        String rawContent = serializer.serialize(dataProductVerion, "canonical", "yaml", true);
+        String rawContent = serializer.serialize(descriptor, "canonical", "yaml", true);
         System.out.println(rawContent);
 
         List<PortDPDS> ports = new ArrayList<PortDPDS>();
-        ports.addAll(dataProductVerion.getInterfaceComponents().getOutputPorts());
-        ports.addAll(dataProductVerion.getInterfaceComponents().getObservabilityPorts());
+        ports.addAll(descriptor.getInterfaceComponents().getOutputPorts());
+        ports.addAll(descriptor.getInterfaceComponents().getObservabilityPorts());
 
         for (PortDPDS port : ports) {
             ApiDefinitionReferenceDPDS api = (ApiDefinitionReferenceDPDS) port.getPromises().getApi().getDefinition();

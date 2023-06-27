@@ -8,9 +8,11 @@ import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.PortDPDS;
 import org.opendatamesh.platform.core.dpds.model.definitions.ApiDefinitionReferenceDPDS;
 import org.opendatamesh.platform.core.dpds.parser.DPDSParser;
+import org.opendatamesh.platform.core.dpds.parser.GitLocation;
 import org.opendatamesh.platform.core.dpds.parser.ParseLocation;
 import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
 import org.opendatamesh.platform.core.dpds.parser.ParseResult;
+import org.opendatamesh.platform.core.dpds.parser.UriLocation;
 import org.opendatamesh.platform.core.dpds.serde.DataProductVersionSerializer;
 
 /* 
@@ -39,8 +41,12 @@ public class CoreApp /* implements CommandLineRunner */ {
 
         URI ROOT_DOC_REMOTE_URI = new URI(
                 "https://raw.githubusercontent.com/opendatamesh-initiative/odm-specification-dpdescriptor/main/examples/tripexecution/data-product-descriptor.json#pippo?pippo=/xxx");
-        ParseLocation location = new ParseLocation(ROOT_DOC_REMOTE_URI);
+        ParseLocation location = new UriLocation(ROOT_DOC_REMOTE_URI);
 
+
+        String repoUri = "git@ssh.dev.azure.com:v3/andreagioia/opendatamesh/odm-dpds-examples";
+        URI descriptorUri = new URI("data-product-descriptor.json");
+        location = new GitLocation(repoUri, descriptorUri);
        
         DPDSParser parser = new DPDSParser();
         ParseOptions options = new ParseOptions();

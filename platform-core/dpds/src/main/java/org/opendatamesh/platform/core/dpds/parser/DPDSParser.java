@@ -56,7 +56,7 @@ public class DPDSParser {
             }
             descriptorDocument.setRawContent(rawContent);
             if(context.getOptions().isValidateRootDocumet()) {
-                validateSchema(context.getResult().getDescriptorDocument());
+                validateSchema(descriptorDocument);
             }
             context.getResult().setDescriptorDocument(descriptorDocument);
         } catch (FetchException | ParseException | ValidationException e) {

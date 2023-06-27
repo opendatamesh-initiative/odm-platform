@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.core.dpds;
+package org.opendatamesh.platform.core.dpds.parser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -34,8 +34,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.opendatamesh.platform.core.dpds.exceptions.FetchException;
-import org.opendatamesh.platform.core.dpds.parser.AuthorizationValue;
-import org.opendatamesh.platform.core.dpds.parser.ParseLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,14 +98,15 @@ public class UriFetcher implements ParseLocation.Fetcher {
 
         URI absoluteURI = baseUri.resolve(resourceUri);
 
-        if (absoluteURI.getScheme().toLowerCase().startsWith("http")) {
+        String schema = absoluteURI.getScheme().toLowerCase();
+        if (schema.startsWith("http")) {
             content = fetchFromRemote(absoluteURI);
-        } else if (absoluteURI.getScheme().toLowerCase().startsWith("jar:")) {
+        } else if (schema.toLowerCase().startsWith("jar")) {
             content = fetchFromJar(absoluteURI);
-        } else if (absoluteURI.getScheme().toLowerCase().startsWith("file:")) {
+        } else if (schema.toLowerCase().startsWith("file")) {
             content = fetchFromFile(absoluteURI);
         } else {
-            throw new FetchException("Impossible to fetch from [" + absoluteURI.getScheme() + "]", resourceUri);
+            throw new FetchException("Impossible to fetch from [" + schema + "]", resourceUri);
         }
 
         return content;

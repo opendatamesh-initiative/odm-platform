@@ -17,6 +17,7 @@ import org.opendatamesh.platform.core.dpds.model.definitions.DefinitionReference
 import org.opendatamesh.platform.core.dpds.parser.ParseContext;
 import org.opendatamesh.platform.core.dpds.parser.ParseLocation;
 import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
+import org.opendatamesh.platform.core.dpds.parser.UriUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -72,7 +73,7 @@ public class ApiDefinitionsProcessor {
                     String ref = apiDefinitionObject.get("$ref").asText();
                     try {
                         URI uri = new URI(ref).normalize();
-                        URI baseUri = context.getLocation().getBaseUri(new URI(port.getOriginalRef()));
+                        URI baseUri = UriUtils.getBaseUri(new URI(port.getOriginalRef()));
                         apiDefinitionContent = context.getLocation().fetchResource(baseUri, uri);
                     } catch (Exception e) {
                         throw new UnresolvableReferenceException(

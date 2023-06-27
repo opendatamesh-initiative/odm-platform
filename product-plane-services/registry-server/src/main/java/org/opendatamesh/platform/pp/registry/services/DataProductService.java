@@ -9,6 +9,7 @@ import org.opendatamesh.platform.core.dpds.parser.DPDSParser;
 import org.opendatamesh.platform.core.dpds.parser.ParseLocation;
 import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
 import org.opendatamesh.platform.core.dpds.parser.ParseResult;
+import org.opendatamesh.platform.core.dpds.parser.UriLocation;
 import org.opendatamesh.platform.core.dpds.exceptions.BuildException;
 import org.opendatamesh.platform.core.dpds.exceptions.FetchException;
 import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
@@ -503,12 +504,12 @@ public class DataProductService {
 
     private DataProductVersion descriptorToDataProductVersion(String descriptorContent, String serverUrl) {
        
-        ParseLocation descriptorSource = new ParseLocation(descriptorContent);
+        ParseLocation descriptorSource = new UriLocation(descriptorContent);
         return descriptorToDataProductVersion(descriptorSource, serverUrl);
     }
 
     private DataProductVersion descriptorToDataProductVersion(URI descriptorUri, String serverUrl) {
-        ParseLocation descriptorSource = new ParseLocation(descriptorUri);
+        ParseLocation descriptorSource = new UriLocation(descriptorUri);
         return descriptorToDataProductVersion(descriptorSource, serverUrl);        
     }
 

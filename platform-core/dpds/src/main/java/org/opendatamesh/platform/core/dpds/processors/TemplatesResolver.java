@@ -14,6 +14,7 @@ import org.opendatamesh.platform.core.dpds.model.ReferenceObjectDPDS;
 import org.opendatamesh.platform.core.dpds.parser.ParseContext;
 import org.opendatamesh.platform.core.dpds.parser.ParseLocation;
 import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
+import org.opendatamesh.platform.core.dpds.parser.UriUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -138,7 +139,7 @@ public class TemplatesResolver {
             ref = referenceNode.get("$ref").asText();
             try {
                 URI uri = new URI(ref).normalize();
-                URI baseUri = context.getLocation().getBaseUri(new URI(component.getOriginalRef()));
+                URI baseUri = UriUtils.getBaseUri(new URI(component.getOriginalRef()));
                 templateContent = context.getLocation().fetchResource(baseUri, uri);
             } catch (Exception e) {
                 try {

@@ -10,7 +10,6 @@ import org.opendatamesh.platform.core.dpds.api.ApiParser;
 import org.opendatamesh.platform.core.dpds.exceptions.FetchException;
 import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
 import org.opendatamesh.platform.core.dpds.model.definitions.ApiDefinitionEndpointDPDS;
-import org.opendatamesh.platform.core.dpds.parser.location.UriFetcher;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -63,9 +62,9 @@ public class OpenApiParser extends ApiParser {
                     }
 
                     if (schema.get("$ref") != null) {
-                        UriFetcher fetcher = new UriFetcher(baseUri);
+                    
                         String schemaRef = schema.get("$ref").asText();
-                        operationSchema = fetcher.fetch(new URI(schemaRef));
+                        operationSchema = fetcher.fetch(baseUri, new URI(schemaRef));
                         if (schemaRef.endsWith(".yaml") || schemaRef.endsWith(".yaml")) {
                             schemaMediaType = "application/yaml";
                         } else if (schemaRef.endsWith(".json")) {

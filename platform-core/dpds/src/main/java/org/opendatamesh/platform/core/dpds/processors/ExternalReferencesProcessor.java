@@ -10,7 +10,7 @@ import org.opendatamesh.platform.core.dpds.model.ComponentDPDS;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.EntityTypeDPDS;
 import org.opendatamesh.platform.core.dpds.parser.ParseContext;
-import org.opendatamesh.platform.core.dpds.parser.ParseLocation;
+import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -71,10 +71,10 @@ public class ExternalReferencesProcessor implements PropertiesProcessor{
 
         try {
             URI uri = new URI(ref).normalize();
-            String content = context.getLocation().fetchResource(context.getLocation().getRootDocBaseURI(), uri);
+            String content = context.getLocation().fetchResource(context.getLocation().getRootDocumentBaseUri(), uri);
             resolvedComponent = (E) mapper.readValue(content, component.getClass());
             resolvedComponent.setRawContent(content);
-            resolvedComponent.setOriginalRef(context.getLocation().getRootDocBaseURI().resolve(uri).toString());
+            resolvedComponent.setOriginalRef(context.getLocation().getRootDocumentBaseUri().resolve(uri).toString());
         } catch (Exception e) {
             throw new UnresolvableReferenceException(
                     "Impossible to resolve external reference [" + ref + "]",

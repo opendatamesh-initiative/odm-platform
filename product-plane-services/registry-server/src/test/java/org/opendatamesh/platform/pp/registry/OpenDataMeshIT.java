@@ -9,6 +9,7 @@ import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Definit
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Schema;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.resources.v1.DataProductResource;
+import org.opendatamesh.platform.pp.registry.resources.v1.DataProductDescriptorLocationResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
 import org.opendatamesh.platform.pp.registry.resources.v1.SchemaResource;
 import org.slf4j.Logger;
@@ -114,9 +115,9 @@ public abstract class OpenDataMeshIT {
         return postProductVersionResponse.getBody();
     }
 
-    protected String uploadDataProductVersion() throws IOException {
-        ResponseEntity<String> uploadProductVersionResponse = rest.uploadDataProductVersion(
-            RESOURCE_DPS_URI);
+    protected String uploadDataProductVersion(DataProductDescriptorLocationResource descriptorLocation) throws IOException {
+        ResponseEntity<String> uploadProductVersionResponse = 
+            rest.uploadDataProductVersion(descriptorLocation);
         verifyResponseEntity(uploadProductVersionResponse, HttpStatus.CREATED, true);
 
         return uploadProductVersionResponse.getBody();

@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
+import org.opendatamesh.platform.core.dpds.parser.location.UriLocation;
 import org.opendatamesh.platform.core.dpds.serde.DataProductVersionSerializer;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataProductVersion;
 import org.opendatamesh.platform.pp.registry.exceptions.BadRequestException;
@@ -166,8 +167,10 @@ public class DataProductVersionController
                 OpenDataMeshAPIStandardError.SC400_01_DESCRIPTOR_IS_EMPTY,
                 "Input descriptor document cannot be empty");
         }
+
+        UriLocation descriptorLocation = new UriLocation(descriptorContent);
         String serverUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
-        DataProductVersion dataProductVersion = dataProductService.addDataProductVersion(descriptorContent, false, serverUrl);
+        DataProductVersion dataProductVersion = dataProductService.addDataProductVersion(descriptorLocation, false, serverUrl);
         DataProductVersionDPDS dataProductVersionDPDS = dataProductVersionMapper.toResource(dataProductVersion);
         
         DataProductVersionSerializer serializer = new DataProductVersionSerializer();

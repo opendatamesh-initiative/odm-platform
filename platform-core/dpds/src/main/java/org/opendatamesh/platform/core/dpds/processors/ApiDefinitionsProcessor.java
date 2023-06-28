@@ -15,8 +15,8 @@ import org.opendatamesh.platform.core.dpds.model.PortDPDS;
 import org.opendatamesh.platform.core.dpds.model.definitions.ApiDefinitionReferenceDPDS;
 import org.opendatamesh.platform.core.dpds.model.definitions.DefinitionReferenceDPDS;
 import org.opendatamesh.platform.core.dpds.parser.ParseContext;
-import org.opendatamesh.platform.core.dpds.parser.ParseLocation;
 import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
+import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
 import org.opendatamesh.platform.core.dpds.parser.location.UriUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -125,13 +125,13 @@ public class ApiDefinitionsProcessor {
         ApiDefinitionReferenceDPDS api = null;
         if ("datastoreApi".equalsIgnoreCase(specification)) {
             DataStoreApiParser dataStoreApiParser = new DataStoreApiParser(
-                    context.getLocation().getRootDocBaseURI());
+                    context.getLocation().getRootDocumentBaseUri());
             api = dataStoreApiParser.parse(apiRawContent, mediaType);
         } else if ("asyncApi".equalsIgnoreCase(specification)) {
-            AsyncApiParser asyncApiParser = new AsyncApiParser(context.getLocation().getRootDocBaseURI());
+            AsyncApiParser asyncApiParser = new AsyncApiParser(context.getLocation().getRootDocumentBaseUri());
             api = asyncApiParser.parse(apiRawContent, mediaType);
         } else if ("openApi".equalsIgnoreCase(specification)) {
-            OpenApiParser openApiParser = new OpenApiParser(context.getLocation().getRootDocBaseURI());
+            OpenApiParser openApiParser = new OpenApiParser(context.getLocation().getRootDocumentBaseUri());
             api = openApiParser.parse(apiRawContent, mediaType);
         } else {
             System.out.println("\n\n====\n" + port.getFullyQualifiedName() + "\n====\n\n"

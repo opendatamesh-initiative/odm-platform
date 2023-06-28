@@ -11,4 +11,10 @@ public class ParseOptions {
     private boolean validateRootDocumet = true;
     private boolean validateExternalRefs = true;
     private boolean validateInternalRefs = true;
+
+    private boolean resoveExternalRef = true;
+    private boolean resoveInternalRef = true;
+    private boolean resoveReadOnlyProperties = true;
+    private boolean resoveStandardDefinitions = true;
+    private boolean resoveTemplates = true;
 }

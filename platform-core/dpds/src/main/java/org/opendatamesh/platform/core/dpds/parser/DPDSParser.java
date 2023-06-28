@@ -9,7 +9,9 @@ import org.opendatamesh.platform.core.dpds.exceptions.FetchException;
 import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
 import org.opendatamesh.platform.core.dpds.exceptions.UnresolvableReferenceException;
 import org.opendatamesh.platform.core.dpds.exceptions.ValidationException;
+import org.opendatamesh.platform.core.dpds.exceptions.BuildException.Stage;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
+import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
 import org.opendatamesh.platform.core.dpds.processors.ExternalReferencesProcessor;
 import org.opendatamesh.platform.core.dpds.processors.InternalReferencesProcessor;
 import org.opendatamesh.platform.core.dpds.processors.ReadOnlyPropertiesProcessor;
@@ -34,14 +36,27 @@ public class DPDSParser {
     public DPDSParser() {        
     }
 
-    public ParseResult parse(ParseLocation location, ParseOptions options) throws BuildException  {
+    public ParseResult parse(DescriptorLocation location, ParseOptions options) throws BuildException  {
+        try {
+            location.open();
+        } catch (FetchException e) {
+           throw new BuildException("Impossible to open location", Stage.LOAD_ROOT_DOC, e);
+        }
+
         ParseContext context = new ParseContext(location, options);
-        parseRootDoc(context)
-            .processExternalReferences(context)
-            .processInternalReferences(context)
-            .processReadOnlyProperties(context)
-            .processStandardDefinition(context)
-            .processTemplates(context);
+        parseRootDoc(context);
+        if(options.isResoveExternalRef()) processExternalReferences(context);
+        if(options.isResoveInternalRef()) processInternalReferences(context);
+        if(options.isResoveReadOnlyProperties()) processReadOnlyProperties(context);
+        if(options.isResoveStandardDefinitions()) processStandardDefinitions(context);
+        if(options.isResoveTemplates()) processTemplates(context);
+        
+        try {
+            location.close();
+        } catch (FetchException e) {
+           throw new BuildException("Impossible to close location", Stage.LOAD_ROOT_DOC, e);
+        }
+
         return context.getResult();
     } 
 
@@ -106,7 +121,7 @@ public class DPDSParser {
 
     
 
-    private DPDSParser processStandardDefinition(ParseContext context) throws BuildException {
+    private DPDSParser processStandardDefinitions(ParseContext context) throws BuildException {
               
         try {
             ApiDefinitionsProcessor.process(context);

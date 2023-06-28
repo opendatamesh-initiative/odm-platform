@@ -6,9 +6,9 @@ import org.opendatamesh.notification.EventResource;
 import org.opendatamesh.notification.EventType;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.parser.DPDSParser;
-import org.opendatamesh.platform.core.dpds.parser.ParseLocation;
 import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
 import org.opendatamesh.platform.core.dpds.parser.ParseResult;
+import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
 import org.opendatamesh.platform.core.dpds.parser.location.UriLocation;
 import org.opendatamesh.platform.core.dpds.exceptions.BuildException;
 import org.opendatamesh.platform.core.dpds.exceptions.FetchException;
@@ -392,7 +392,7 @@ public class DataProductService {
 
     /**
      * 
-     * @param descriptorContent
+     * @param descriptorLocation
      * @param createDataProductIfNotExists
      * @param serverUrl
      * @return
@@ -411,46 +411,16 @@ public class DataProductService {
      *      SC502_05_META_SERVICE_ERROR
      */
     public DataProductVersion addDataProductVersion(
-        String descriptorContent, 
+        DescriptorLocation descriptorLocation, 
         boolean createDataProductIfNotExists,
         String serverUrl // TODO remove form here !!!
     ) {
         DataProductVersion dataProductVersion = null;
-        dataProductVersion = descriptorToDataProductVersion(descriptorContent, serverUrl);
+        dataProductVersion = descriptorToDataProductVersion(descriptorLocation, serverUrl);
         return addDataProductVersion(dataProductVersion.getDataProductId(), dataProductVersion, createDataProductIfNotExists);
     }
 
-     /**
-     * 
-     * @param descriptorContent
-     * @param createDataProductIfNotExists
-     * @param serverUrl
-     * @return
-     * 
-     * @throws NotFoundException 
-     *      SC404_01_PRODUCT_NOT_FOUND
-     * @throws UnprocessableEntityException 
-     *      SC422_01_DESCRIPTOR_URI_IS_INVALID
-     *      SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID
-     *      SC422_03_DESCRIPTOR_DOC_SEMANTIC_IS_INVALID
-     *      SC422_05_VERSION_ALREADY_EXISTS
-     * @throws InternalServerException 
-     *      SC500_SERVICE_ERROR
-     *      SC500_DATABASE_ERROR
-     * @throws BadGatewayException 
-     *      SC502_01_POLICY_SERVICE_ERROR
-     *      SC502_05_META_SERVICE_ERROR
-     */
-    public DataProductVersion addDataProductVersion(
-        URI descriptorUri, 
-        boolean createDataProductIfNotExists,
-        String serverUrl // TODO remove form here !!!
-    ) {
-        
-        DataProductVersion dataProductVersion = null;
-        dataProductVersion = descriptorToDataProductVersion(descriptorUri, serverUrl);
-        return addDataProductVersion(dataProductVersion.getDataProductId(), dataProductVersion, createDataProductIfNotExists);
-    }
+   
 
 
     // TODO execute compatibility check (version check and API check for the moment)
@@ -502,8 +472,8 @@ public class DataProductService {
         return dataProductVersion;
     }
 
+    /* 
     private DataProductVersion descriptorToDataProductVersion(String descriptorContent, String serverUrl) {
-       
         ParseLocation descriptorSource = new UriLocation(descriptorContent);
         return descriptorToDataProductVersion(descriptorSource, serverUrl);
     }
@@ -512,8 +482,9 @@ public class DataProductService {
         ParseLocation descriptorSource = new UriLocation(descriptorUri);
         return descriptorToDataProductVersion(descriptorSource, serverUrl);        
     }
+    */
 
-    private DataProductVersion descriptorToDataProductVersion(ParseLocation descriptorLocation, String serverUrl) {
+    private DataProductVersion descriptorToDataProductVersion(DescriptorLocation descriptorLocation, String serverUrl) {
         DataProductVersion dataProductVersion = null;
 
         DPDSParser descriptorParser = new DPDSParser();

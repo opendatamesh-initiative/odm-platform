@@ -6,12 +6,15 @@ import java.net.URISyntaxException;
 import javax.validation.Valid;
 
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
+import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
+import org.opendatamesh.platform.core.dpds.parser.location.GitLocation;
+import org.opendatamesh.platform.core.dpds.parser.location.UriLocation;
 import org.opendatamesh.platform.core.dpds.serde.DataProductVersionSerializer;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataProductVersion;
 import org.opendatamesh.platform.pp.registry.exceptions.BadRequestException;
 import org.opendatamesh.platform.pp.registry.exceptions.InternalServerException;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
-import org.opendatamesh.platform.pp.registry.resources.v1.DataProductSourceResource;
+import org.opendatamesh.platform.pp.registry.resources.v1.DataProductDescriptorLocationResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
 import org.opendatamesh.platform.pp.registry.resources.v1.mappers.DataProductMapper;
 import org.opendatamesh.platform.pp.registry.resources.v1.mappers.DataProductVersionMapper;
@@ -129,18 +132,25 @@ public class DataProductUploadsController
         @Parameter( 
             description = "A data product descriptor source", 
             required = true)
-        @Valid @RequestBody(required=false)  DataProductSourceResource dataProductSourceRes
+        @Valid @RequestBody(required=false)  DataProductDescriptorLocationResource dataProductSourceRes
     ) {
-        URI descriptorUri = null;
+        DescriptorLocation descriptorLocation = null;
         try {
-            descriptorUri = new URI(dataProductSourceRes.getUri());
+            URI descriptorUri = new URI(dataProductSourceRes.getRootDocumentUri());
+            if(dataProductSourceRes.getGit() != null 
+                && StringUtils.hasText(dataProductSourceRes.getGit().getRepositorySshUri())) {
+                descriptorLocation = new GitLocation(dataProductSourceRes.getGit().getRepositorySshUri(), descriptorUri);
+            } else {
+                descriptorLocation = new UriLocation(descriptorUri);
+            }
+
         } catch (URISyntaxException e) {
             throw new BadRequestException(
                 OpenDataMeshAPIStandardError.SC400_05_INVALID_URILIST,
-                "Provided URI is invalid [" + dataProductSourceRes.getUri() + "]", e);
+                "Provided URI is invalid [" + dataProductSourceRes.getRootDocumentUri() + "]", e);
         }
         String serverUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
-        DataProductVersion dataProductVersion = dataProductService.addDataProductVersion(descriptorUri, true, serverUrl);
+        DataProductVersion dataProductVersion = dataProductService.addDataProductVersion(descriptorLocation, true, serverUrl);
         DataProductVersionDPDS dataProductVersionDPDS = dataProductVersionMapper.toResource(dataProductVersion);
         DataProductVersionSerializer serializer = new DataProductVersionSerializer();
         String serailizedContent = null;

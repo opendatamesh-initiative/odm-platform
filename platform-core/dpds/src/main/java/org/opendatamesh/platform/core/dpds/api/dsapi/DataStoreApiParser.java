@@ -9,7 +9,6 @@ import org.opendatamesh.platform.core.dpds.api.ApiParser;
 import org.opendatamesh.platform.core.dpds.exceptions.FetchException;
 import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
 import org.opendatamesh.platform.core.dpds.model.definitions.ApiDefinitionEndpointDPDS;
-import org.opendatamesh.platform.core.dpds.parser.location.UriFetcher;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -49,8 +48,7 @@ public class DataStoreApiParser extends ApiParser {
                         name = "endpoint-" + (i+1);
                     }
                     if(!table.at("/definition/$ref").isMissingNode()) {
-                        UriFetcher fetcher = new UriFetcher(baseUri);
-                        tableSchema = fetcher.fetch(new URI(table.at("/definition/$ref").asText()));
+                        tableSchema = fetcher.fetch(baseUri, new URI(table.at("/definition/$ref").asText()));
                     } else {
                         tableSchema = mapper.writeValueAsString(table.at("/definition"));
                     }

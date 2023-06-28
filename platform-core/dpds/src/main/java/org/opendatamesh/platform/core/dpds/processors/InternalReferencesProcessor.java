@@ -10,7 +10,7 @@ import org.opendatamesh.platform.core.dpds.model.ComponentsDPDS;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.EntityTypeDPDS;
 import org.opendatamesh.platform.core.dpds.parser.ParseContext;
-import org.opendatamesh.platform.core.dpds.parser.ParseLocation;
+import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 

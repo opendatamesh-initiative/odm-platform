@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class AsyncApiParser extends ApiParser {
     
     public AsyncApiParser(URI baseUri) {
-        super(baseUri);
+        super(baseUri, new UriFetcher());
     }
 
     @Override
@@ -60,8 +60,7 @@ public class AsyncApiParser extends ApiParser {
                     }
                     
                     if(payload.get("$ref") != null) {
-                        UriFetcher fetcher = new UriFetcher(baseUri);
-                        operationSchema = fetcher.fetch(new URI(payload.get("$ref").asText()));
+                        operationSchema = fetcher.fetch(baseUri, new URI(payload.get("$ref").asText()));
                     } else {
                         operationSchema = payload.toPrettyString();
                     }

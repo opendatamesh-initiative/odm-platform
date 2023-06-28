@@ -281,12 +281,12 @@ public class TemplateService {
         if (relationshipExists(relationship.getId().getComponentId(), relationship.getId().getTemplateId(), relationship.getId().getComponentType(), relationship.getId().getInfoType())) {
             throw new UnprocessableEntityException(
                     OpenDataMeshAPIStandardError.SC422_12_SCHEMA_TO_API_REL_ALREADY_EXISTS,
-                    "Component [" + relationship.getId().getComponentId()+ " relationship with template " + relationship.getId().getTemplateId() + "] already exists");
+                    "Component [" + relationship.getId().getComponentId()+ "] relationship with template [" + relationship.getId().getTemplateId() + "] already exists");
         }
 
         try {
             relationship = saveRelationship(relationship);
-            logger.info("Component [" + relationship.getId().getComponentId()+ " relationship with template [" + relationship.getId().getTemplateId() + "] successfully created");
+            logger.info("Component [" + relationship.getId().getComponentId()+ "] relationship with template [" + relationship.getId().getTemplateId() + "] successfully created");
         } catch (Throwable t) {
             throw new InternalServerException(
                     OpenDataMeshAPIStandardError.SC500_01_DATABASE_ERROR,

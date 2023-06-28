@@ -67,7 +67,7 @@ public class TemplatesResolver {
                 template = applicationComponent.getBuildInfo().getTemplate();
                 templateNode = (ObjectNode) serviceInfoNode.get("template");
                
-                templateNode = resolveReference(template, templateNode, "/templates/{apiId}");
+                templateNode = resolveReference(template, templateNode, "/templates/{templateId}");
                 serviceInfoNode.set("template", templateNode);
             }
 
@@ -77,7 +77,7 @@ public class TemplatesResolver {
                 template = applicationComponent.getDeployInfo().getTemplate();
                 templateNode = (ObjectNode) serviceInfoNode.get("template");
                
-                templateNode = resolveReference(template, templateNode, "/templates/{apiId}");
+                templateNode = resolveReference(template, templateNode, "/templates/{templateId}");
                 serviceInfoNode.set("template", templateNode);
             }
 
@@ -113,7 +113,7 @@ public class TemplatesResolver {
                 template = infrastructuralComponent.getProvisionInfo().getTemplate();
                 templateNode = (ObjectNode) serviceInfoNode.get("template");
                
-                templateNode = resolveReference(template, templateNode, "/templates/{apiId}");
+                templateNode = resolveReference(template, templateNode, "/templates/{templateId}");
                 serviceInfoNode.set("template", templateNode);
             }
 
@@ -147,7 +147,7 @@ public class TemplatesResolver {
                     referenceNode.put("comment", "Unresolvable reference");
                     templateContent = mapper.writeValueAsString(referenceNode);
                 } catch (JsonProcessingException e1) {
-                    throw new ParseException("Impossible serialize api definition", e1);
+                    throw new ParseException("Impossible serialize template definition", e1);
                 }
                 /* 
                 throw new UnresolvableReferenceException(
@@ -162,7 +162,7 @@ public class TemplatesResolver {
             try {
                 templateContent = mapper.writeValueAsString(referenceNode);
             } catch (JsonProcessingException e) {
-                throw new ParseException("Impossible serialize api definition", e);
+                throw new ParseException("Impossible serialize template definition", e);
             }
             referenceRef = targetURL + endpoint;
             referenceNode = mapper.createObjectNode();

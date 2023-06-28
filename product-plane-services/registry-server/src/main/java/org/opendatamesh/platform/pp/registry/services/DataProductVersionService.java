@@ -7,11 +7,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.opendatamesh.notification.EventResource;
 import org.opendatamesh.notification.EventType;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.*;
-import org.opendatamesh.platform.pp.registry.database.entities.sharedres.ApiToSchemaRelationship;
+import org.opendatamesh.platform.pp.registry.database.entities.sharedres.*;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.ApiToSchemaRelationship.ApiToSchemaRelationshipId;
-import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Definition;
-import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Schema;
-import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Template;
 import org.opendatamesh.platform.pp.registry.database.repositories.DataProductVersionRepository;
 import org.opendatamesh.platform.pp.registry.exceptions.*;
 import org.opendatamesh.platform.pp.registry.resources.v1.mappers.DataProductVersionMapper;
@@ -23,10 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class DataProductVersionService {
@@ -140,7 +134,7 @@ public class DataProductVersionService {
     }
 
     private void saveApiDefinitions(DataProductVersion dataProductVersion)
-            throws JsonMappingException, JsonProcessingException {
+            throws JsonProcessingException {
         if (dataProductVersion != null && dataProductVersion.getInterfaceComponents() != null) {
             saveApiDefinitions(dataProductVersion.getInterfaceComponents().getInputPorts());
             saveApiDefinitions(dataProductVersion.getInterfaceComponents().getOutputPorts());
@@ -150,7 +144,7 @@ public class DataProductVersionService {
         }
     }
 
-    private void saveApiDefinitions(List<Port> ports) throws JsonMappingException, JsonProcessingException {
+    private void saveApiDefinitions(List<Port> ports) throws JsonProcessingException {
         if (ports == null || ports.size() == 0)
             return;
 
@@ -216,7 +210,6 @@ public class DataProductVersionService {
         }
 
         // rewrite schema ref withing api def
-      
 
         return schema;
     }
@@ -273,45 +266,143 @@ public class DataProductVersionService {
     private void saveTemplates(DataProductVersion dataProductVersion) throws JsonProcessingException {
         if( dataProductVersion!= null && dataProductVersion.getInternalComponents() != null) {
             saveInfrastructuralComponentTemplates(dataProductVersion.getInternalComponents().getInfrastructuralComponents());
-            //saveApplicationComponentTemplates(dataProductVersion.getInternalComponents().getApplicationComponents());
+            saveApplicationComponentTemplates(dataProductVersion.getInternalComponents().getApplicationComponents());
         }
     }
 
-    private void saveInfrastructuralComponentTemplates(List<InfrastructuralComponent> components) {
+    private void saveInfrastructuralComponentTemplates(List<InfrastructuralComponent> components) throws JsonProcessingException {
         if(components == null || components.size() == 0) return;
-
-        ExternalResource template = null;
 
         for(InfrastructuralComponent component: components) {
-            template = component.getProvisionInfo().getTemplate();
-            saveTemplate(template, component.getId(), component.getFullyQualifiedName());
+            Template template = saveInfrastructuralComponentTemplate(component);
+            if (template != null)
+                saveComponentTemplateRelationship(template, component, "infrastructuralComponent", "provisionInfo");
         }
     }
 
-    private void saveApplicationComponentTemplates(List<ApplicationComponent> components) {
+    private void saveApplicationComponentTemplates(List<ApplicationComponent> components) throws JsonProcessingException {
         if(components == null || components.size() == 0) return;
 
-        ExternalResource buildTemplate;
-        ExternalResource deployTemplate = null;
-
         for(ApplicationComponent component : components) {
-            buildTemplate = component.getBuildInfo().getTemplate();
-            saveTemplate(buildTemplate, component.getId(), component.getFullyQualifiedName());
-            deployTemplate = component.getDeployInfo().getTemplate();
-            saveTemplate(deployTemplate, component.getId(), component.getFullyQualifiedName());
+            Template buildTemplate = saveApplicationComponentBuildInfoTemplates(component);
+            if (buildTemplate != null)
+                saveComponentTemplateRelationship(buildTemplate, component, "applicationComponent", "buildInfo");
+            Template deployTemplate = saveApplicationComponentDeployInfoTemplates(component);
+            if (deployTemplate != null)
+                saveComponentTemplateRelationship(deployTemplate, component, "applicationComponent", "deployInfo");
         }
     }
 
-    private Template saveTemplate(ExternalResource template, String componentId, String componentName) {
+    private Template saveInfrastructuralComponentTemplate(InfrastructuralComponent component) throws JsonProcessingException {
 
-        if(template == null) return null;
+        if (component.getProvisionInfo() == null)
+            return null;
+        if (
+                component.getProvisionInfo().getTemplate() == null || (
+                        component.getProvisionInfo().getTemplate().getDescription() == null
+                                && component.getProvisionInfo().getTemplate().getMediaType() == null
+                                && component.getProvisionInfo().getTemplate().getHref() == null
+                )
+        ) {
+            ObjectNode componentObject = (ObjectNode) objectMapper.readTree(component.getRawContent());
+            ObjectNode templateContent = (ObjectNode) componentObject.at("/provisionInfo/template");
+            templateContent.put("$ref", "");
+            component.setRawContent(objectMapper.writeValueAsString(componentObject));
+            return null;
+        }
+
+        ExternalResource template = component.getProvisionInfo().getTemplate();
+        Template templateEntity = saveTemplate(template, component.getFullyQualifiedName());
+
+        // Once we have the api id we replace the definition content with a reference url
+        ObjectNode componentObject = (ObjectNode) objectMapper.readTree(component.getRawContent());
+        ObjectNode templateContent = (ObjectNode) componentObject.at("/provisionInfo/template");
+        String ref = String.valueOf(templateContent.get("$ref"));
+        ref = ref.replaceAll("\\{templateId\\}", "" + templateEntity.getId());
+        ref = ref.replaceAll("\"", "");
+        templateContent.put("$ref", ref);
+        component.setRawContent(objectMapper.writeValueAsString(componentObject));
+
+        return templateEntity;
+
+    }
+
+    private Template saveApplicationComponentBuildInfoTemplates(ApplicationComponent component) throws JsonProcessingException {
+
+        if (component.getBuildInfo() == null)
+            return null;
+        if (
+                component.getBuildInfo().getTemplate() == null || (
+                        component.getBuildInfo().getTemplate().getDescription() == null
+                                && component.getBuildInfo().getTemplate().getMediaType() == null
+                                && component.getBuildInfo().getTemplate().getHref() == null
+                )
+        ) {
+            ObjectNode componentObject = (ObjectNode) objectMapper.readTree(component.getRawContent());
+            ObjectNode templateContent = (ObjectNode) componentObject.at("/buildInfo/template");
+            templateContent.put("$ref", "");
+            component.setRawContent(objectMapper.writeValueAsString(componentObject));
+            return null;
+        }
+
+        ExternalResource template = component.getBuildInfo().getTemplate();
+        Template templateEntity = saveTemplate(template, component.getFullyQualifiedName());
+
+        // Once we have the api id we replace the definition content with a reference url
+        ObjectNode componentObject = (ObjectNode) objectMapper.readTree(component.getRawContent());
+        ObjectNode templateContent = (ObjectNode) componentObject.at("/buildInfo/template");
+        String ref = String.valueOf(templateContent.get("$ref"));
+        ref = ref.replaceAll("\\{templateId\\}", "" + templateEntity.getId());
+        ref = ref.replaceAll("\"", "");
+        templateContent.put("$ref", ref);
+        component.setRawContent(objectMapper.writeValueAsString(componentObject));
+
+        return templateEntity;
+
+    }
+
+    private Template saveApplicationComponentDeployInfoTemplates(ApplicationComponent component) throws JsonProcessingException {
+
+        if (component.getDeployInfo() == null)
+            return null;
+        if (
+                component.getDeployInfo().getTemplate() == null || (
+                        component.getDeployInfo().getTemplate().getDescription() == null
+                        && component.getDeployInfo().getTemplate().getMediaType() == null
+                        && component.getDeployInfo().getTemplate().getHref() == null
+                )
+        ) {
+            ObjectNode componentObject = (ObjectNode) objectMapper.readTree(component.getRawContent());
+            ObjectNode templateContent = (ObjectNode) componentObject.at("/deployInfo/template");
+            templateContent.put("$ref", "");
+            component.setRawContent(objectMapper.writeValueAsString(componentObject));
+            return null;
+        }
+
+        ExternalResource template = component.getDeployInfo().getTemplate();
+        Template templateEntity = saveTemplate(template, component.getFullyQualifiedName());
+
+        // Once we have the api id we replace the definition content with a reference url
+        ObjectNode componentObject = (ObjectNode) objectMapper.readTree(component.getRawContent());
+        ObjectNode templateContent = (ObjectNode) componentObject.at("/deployInfo/template");
+        String ref = String.valueOf(templateContent.get("$ref"));
+        ref = ref.replaceAll("\\{templateId\\}", "" + templateEntity.getId());
+        ref = ref.replaceAll("\"", "");
+        templateContent.put("$ref", ref);
+        component.setRawContent(objectMapper.writeValueAsString(componentObject));
+
+        return templateEntity;
+
+    }
+
+    private Template saveTemplate(ExternalResource template, String componentName) {
 
         Template templateEntity = null;
 
         try {
-            if(StringUtils.hasText(templateEntity.getMediaType())
-                    && StringUtils.hasText(templateEntity.getHref())) {
-                templateEntity = templateService.searchTemplate(templateEntity.getMediaType(), templateEntity.getHref());
+            if(StringUtils.hasText(template.getMediaType())
+                    && StringUtils.hasText(template.getHref())) {
+                templateEntity = templateService.searchTemplate(template.getMediaType(), template.getHref());
             }
             if(templateEntity == null) {
                 templateEntity = templateService.createTemplate(
@@ -330,21 +421,18 @@ public class DataProductVersionService {
                     t);
         }
 
-        // Once we have the api id we replace the definition content with a reference url
-        /*String ref = api.getDefinition().getRef();
-        ref = ref.replaceAll("\\{apiId\\}", "" + apiDefinition.getId());
-        api.getDefinition().setRef(ref);
+        return templateEntity;
+    }
 
-        ObjectNode portObject = (ObjectNode)objectMapper.readTree(port.getRawContent());
-        ObjectNode standardDefinitionContent = (ObjectNode)portObject.at("/promises/api/definition");
-        standardDefinitionContent.put("$ref", ref);
-        port.setRawContent( objectMapper.writeValueAsString(portObject));
-
-        port.getPromises().setApiId(apiDefinition.getId());
-
-        return apiDefinition;*/
-
-        return null;
+    private void saveComponentTemplateRelationship(Template template, Component component, String componentType, String infoType) {
+        ComponentTemplate relationship = new ComponentTemplate();
+        relationship.setId(new ComponentTemplate.ComponentTemplateId(
+                UUID.nameUUIDFromBytes(component.getFullyQualifiedName().getBytes()).toString(),
+                template.getId(),
+                componentType,
+                infoType
+        ));
+        templateService.createComponentTemplateRelationship(relationship);
     }
 
     // ======================================================================================

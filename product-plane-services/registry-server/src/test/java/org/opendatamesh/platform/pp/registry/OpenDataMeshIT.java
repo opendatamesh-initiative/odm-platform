@@ -10,7 +10,7 @@ import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardE
 import org.opendatamesh.platform.pp.registry.resources.v1.DataProductResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
 import org.opendatamesh.platform.pp.registry.resources.v1.SchemaResource;
-import org.opendatamesh.platform.pp.registry.resources.v1.shared.TemplateResource;
+import org.opendatamesh.platform.pp.registry.resources.v1.TemplateResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

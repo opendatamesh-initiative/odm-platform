@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
-import org.opendatamesh.platform.pp.registry.resources.v1.shared.TemplateResource;
+import org.opendatamesh.platform.pp.registry.resources.v1.TemplateResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;

@@ -1,5 +1,7 @@
 package org.opendatamesh.platform.pp.registry.services;
 
+import org.opendatamesh.platform.pp.registry.database.entities.sharedres.ApiToSchemaRelationship;
+import org.opendatamesh.platform.pp.registry.database.entities.sharedres.ComponentTemplate;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Definition;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Template;
 import org.opendatamesh.platform.pp.registry.database.repositories.ComponentTemplateRepository;
@@ -68,7 +70,6 @@ public class TemplateService {
     }
 
     private Template saveTemplate(Template template) {
-        //componentTemplateRepository.saveAndFlush(??);
         return templateRepository.saveAndFlush(template);
     }
 
@@ -156,6 +157,15 @@ public class TemplateService {
                 && templateRepository.existsById(templateId);
     }
 
+    private boolean relationshipExists(String componentId, Long templateId, String componentType, String infoType) {
+        if (componentId == null ||  templateId == null) {
+            throw new InternalServerException(
+                    OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
+                    "componentId and templateId properties cannot be null");
+        }
+        return componentTemplateRepository.existsByIdComponentIdAndIdTemplateIdAndIdComponentTypeAndIdInfoType(componentId, templateId, componentType, infoType);
+    }
+
     
     // -------------------------
     // search methods
@@ -240,6 +250,55 @@ public class TemplateService {
         return templateRepository.findAll(
                 TemplateRepository.Specs.hasMatch(mediaType, href)
         );
+    }
+
+    public ComponentTemplate createComponentTemplateRelationship(ComponentTemplate relationship) {
+
+        if (relationship == null) {
+            throw new InternalServerException(
+                    OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
+                    "Relationship object cannot be null");
+        }
+
+        if (relationship.getId() == null) {
+            throw new UnprocessableEntityException(
+                    OpenDataMeshAPIStandardError.SC422_14_TEMPLATE_DOC_SYNTAX_IS_INVALID,
+                    "Relationship id property cannot be empty");
+        }
+
+        if (relationship.getId().getComponentId() == null) {
+            throw new UnprocessableEntityException(
+                    OpenDataMeshAPIStandardError.SC422_14_TEMPLATE_DOC_SYNTAX_IS_INVALID,
+                    "Relationship componentId property cannot be empty");
+        }
+
+        if (relationship.getId().getTemplateId() == null) {
+            throw new UnprocessableEntityException(
+                    OpenDataMeshAPIStandardError.SC422_14_TEMPLATE_DOC_SYNTAX_IS_INVALID,
+                    "Relationship templateId property cannot be empty");
+        }
+
+        if (relationshipExists(relationship.getId().getComponentId(), relationship.getId().getTemplateId(), relationship.getId().getComponentType(), relationship.getId().getInfoType())) {
+            throw new UnprocessableEntityException(
+                    OpenDataMeshAPIStandardError.SC422_12_SCHEMA_TO_API_REL_ALREADY_EXISTS,
+                    "Component [" + relationship.getId().getComponentId()+ " relationship with template " + relationship.getId().getTemplateId() + "] already exists");
+        }
+
+        try {
+            relationship = saveRelationship(relationship);
+            logger.info("Component [" + relationship.getId().getComponentId()+ " relationship with template [" + relationship.getId().getTemplateId() + "] successfully created");
+        } catch (Throwable t) {
+            throw new InternalServerException(
+                    OpenDataMeshAPIStandardError.SC500_01_DATABASE_ERROR,
+                    "An error occured in the backend database while saving relationship",
+                    t);
+        }
+
+        return relationship;
+    }
+
+    private ComponentTemplate saveRelationship(ComponentTemplate relationship) {
+        return componentTemplateRepository.saveAndFlush(relationship);
     }
 
 }

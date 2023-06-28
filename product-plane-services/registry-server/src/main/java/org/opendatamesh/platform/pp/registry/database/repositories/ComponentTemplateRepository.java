@@ -5,4 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 public interface ComponentTemplateRepository extends JpaRepository<ComponentTemplate, Long>, JpaSpecificationExecutor<ComponentTemplate> {
+    boolean existsByIdComponentIdAndIdTemplateIdAndIdComponentTypeAndIdInfoType(String componentId, Long templateId, String componentType, String infoType);
 }

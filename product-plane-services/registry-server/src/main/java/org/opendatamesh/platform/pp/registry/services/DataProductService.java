@@ -527,40 +527,6 @@ public class DataProductService {
         dataProductVersion.setDataProductId(dataProductVersion.getInfo().getDataProductId());
         dataProductVersion.setVersionNumber(dataProductVersion.getInfo().getVersionNumber());
 
-        // TO REFACTOR
-        for (int i = 0; i < dataProductVersion.getInternalComponents().getInfrastructuralComponents().size(); i++) {
-            if(
-                    dataProductVersion.getInternalComponents().getInfrastructuralComponents().get(i).getProvisionInfo().getTemplate() != null
-                    && descriptor.getInternalComponents().getInfrastructuralComponents().get(i).getProvisionInfo().getTemplate() != null
-                    && descriptor.getInternalComponents().getInfrastructuralComponents().get(i).getProvisionInfo().getTemplate().getRawContent().split("href\":").length > 1
-            ) {
-                dataProductVersion.getInternalComponents().getInfrastructuralComponents().get(i).getProvisionInfo().getTemplate().setHref(
-                        descriptor.getInternalComponents().getInfrastructuralComponents().get(i).getProvisionInfo().getTemplate().getRawContent().split("href\":")[1].split("}")[0]
-                );
-            }
-        }
-        for (int i = 0; i < dataProductVersion.getInternalComponents().getApplicationComponents().size(); i++) {
-            if(
-                    dataProductVersion.getInternalComponents().getApplicationComponents().get(i).getBuildInfo().getTemplate() != null
-                    && descriptor.getInternalComponents().getApplicationComponents().get(i).getBuildInfo().getTemplate() != null
-                    && descriptor.getInternalComponents().getApplicationComponents().get(i).getBuildInfo().getTemplate().getRawContent().split("href\":").length > 1
-            ) {
-                dataProductVersion.getInternalComponents().getApplicationComponents().get(i).getBuildInfo().getTemplate().setHref(
-                        descriptor.getInternalComponents().getApplicationComponents().get(i).getBuildInfo().getTemplate().getRawContent().split("href\":")[1].split("}")[0]
-                );
-            }
-            if(
-                    dataProductVersion.getInternalComponents().getApplicationComponents().get(i).getDeployInfo().getTemplate() != null
-                    && descriptor.getInternalComponents().getApplicationComponents().get(i).getDeployInfo().getTemplate() != null
-                    && descriptor.getInternalComponents().getApplicationComponents().get(i).getDeployInfo().getTemplate().getRawContent().split("href\":").length > 1
-            ) {
-                dataProductVersion.getInternalComponents().getApplicationComponents().get(i).getDeployInfo().getTemplate().setHref(
-                        descriptor.getInternalComponents().getApplicationComponents().get(i).getDeployInfo().getTemplate().getRawContent().split("href\":")[1].split("}")[0]
-                );
-            }
-        }
-        // END TO REFACTOR
-
         return dataProductVersion;
     }
 

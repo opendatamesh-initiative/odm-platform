@@ -75,7 +75,8 @@ public class ApiDefinitionsProcessor {
                     String ref = apiDefinitionObject.get("$ref").asText();
                     try {
                         URI uri = new URI(ref).normalize();
-                        apiDefinitionContent = source.fetchResource(uri);
+                        URI baseUri = source.getBaseUri(new URI(port.getOriginalRef()));
+                        apiDefinitionContent = source.fetchResource(baseUri, uri);
                     } catch (Exception e) {
                         throw new UnresolvableReferenceException(
                                 "Impossible to resolve external reference [" + ref + "]",

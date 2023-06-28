@@ -1,22 +1,16 @@
 package org.opendatamesh.platform.core.dpds.processors;
 
-import java.net.URI;
-import java.util.List;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.opendatamesh.platform.core.dpds.DataProductVersionSource;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
 import org.opendatamesh.platform.core.dpds.exceptions.UnresolvableReferenceException;
-import org.opendatamesh.platform.core.dpds.model.ApplicationComponentDPDS;
-import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
-import org.opendatamesh.platform.core.dpds.model.InfrastructuralComponentDPDS;
-import org.opendatamesh.platform.core.dpds.model.ReferenceObjectDPDS;
+import org.opendatamesh.platform.core.dpds.model.*;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.net.URI;
+import java.util.List;
 
 public class TemplatesResolver {
 
@@ -66,8 +60,8 @@ public class TemplatesResolver {
 
                 template = applicationComponent.getBuildInfo().getTemplate();
                 templateNode = (ObjectNode) serviceInfoNode.get("template");
-               
-                templateNode = resolveReference(template, templateNode, "/templates/{templateId}");
+
+                templateNode = resolveReference(applicationComponent, template, templateNode, "/templates/{templateId}");
                 serviceInfoNode.set("template", templateNode);
             }
 
@@ -76,8 +70,8 @@ public class TemplatesResolver {
 
                 template = applicationComponent.getDeployInfo().getTemplate();
                 templateNode = (ObjectNode) serviceInfoNode.get("template");
-               
-                templateNode = resolveReference(template, templateNode, "/templates/{templateId}");
+
+                templateNode = resolveReference(applicationComponent, template, templateNode, "/templates/{templateId}");
                 serviceInfoNode.set("template", templateNode);
             }
 
@@ -112,8 +106,8 @@ public class TemplatesResolver {
 
                 template = infrastructuralComponent.getProvisionInfo().getTemplate();
                 templateNode = (ObjectNode) serviceInfoNode.get("template");
-               
-                templateNode = resolveReference(template, templateNode, "/templates/{templateId}");
+
+                templateNode = resolveReference(infrastructuralComponent, template, templateNode, "/templates/{templateId}");
                 serviceInfoNode.set("template", templateNode);
             }
 
@@ -127,6 +121,7 @@ public class TemplatesResolver {
     }
 
     private ObjectNode resolveReference(
+            ComponentDPDS component,
             ReferenceObjectDPDS reference,
             ObjectNode referenceNode,
             String endpoint)
@@ -141,7 +136,8 @@ public class TemplatesResolver {
             ref = referenceNode.get("$ref").asText();
             try {
                 URI uri = new URI(ref).normalize();
-                templateContent = source.fetchResource(uri);
+                URI baseUri = source.getBaseUri(new URI(component.getOriginalRef()));
+                templateContent = source.fetchResource(baseUri, uri);
             } catch (Exception e) {
                 try {
                     referenceNode.put("comment", "Unresolvable reference");
@@ -177,9 +173,6 @@ public class TemplatesResolver {
 
     }
 
-    
-
-   
     public static void resolve(DataProductVersionDPDS dataProductVersionRes, DataProductVersionSource source,
             String targetURL) throws UnresolvableReferenceException, ParseException {
         TemplatesResolver resolver = new TemplatesResolver(dataProductVersionRes, source,

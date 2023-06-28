@@ -36,9 +36,13 @@ public class ComponentDPDS {
     @JsonProperty("componentGroup")
     protected String componentGroup;
 
-    //field to declare the component with a reference
     @JsonProperty("$ref")
     protected String ref;
+
+    // when the ref is resolved the original location of the actual content is saved here
+    // This field is impoirtant to properly manage relative ref in recursive resolvig procedures 
+    @JsonProperty("$originalRef")
+    protected String originalRef;
 
     @JsonIgnore
     protected String rawContent;

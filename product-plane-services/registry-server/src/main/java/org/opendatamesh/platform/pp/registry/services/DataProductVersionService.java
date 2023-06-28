@@ -253,8 +253,10 @@ public class DataProductVersionService {
 
         ObjectNode portObject = (ObjectNode) objectMapper.readTree(port.getRawContent());
         ObjectNode standardDefinitionContent = (ObjectNode) portObject.at("/promises/api/definition");
-        String ref = standardDefinitionContent.asText("$ref");
+        //String ref = standardDefinitionContent.asText("$ref");
+        String ref = String.valueOf(standardDefinitionContent.get("$ref"));
         ref = ref.replaceAll("\\{apiId\\}", "" + apiDefinition.getId());
+        ref = ref.replaceAll("\"", "");
         standardDefinitionContent.put("$ref", ref);
         port.setRawContent(objectMapper.writeValueAsString(portObject));
 

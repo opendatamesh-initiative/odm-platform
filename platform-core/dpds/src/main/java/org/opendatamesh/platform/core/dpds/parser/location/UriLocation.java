@@ -1,8 +1,9 @@
-package org.opendatamesh.platform.core.dpds.parser;
+package org.opendatamesh.platform.core.dpds.parser.location;
 
 import java.net.URI;
 
 import org.opendatamesh.platform.core.dpds.exceptions.FetchException;
+import org.opendatamesh.platform.core.dpds.parser.ParseLocation;
 
 import lombok.Data;
 

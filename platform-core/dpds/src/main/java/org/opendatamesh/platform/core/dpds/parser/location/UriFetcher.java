@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.core.dpds.parser;
+package org.opendatamesh.platform.core.dpds.parser.location;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -34,6 +34,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.opendatamesh.platform.core.dpds.exceptions.FetchException;
+import org.opendatamesh.platform.core.dpds.parser.ParseLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

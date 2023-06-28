@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.core.dpds.parser;
+package org.opendatamesh.platform.core.dpds.parser.location;
 
 import java.io.File;
 import java.io.IOException;

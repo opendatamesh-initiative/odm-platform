@@ -19,10 +19,10 @@ jobs:
           cache: maven
           server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
           settings-path: ${{ github.workspace }} # location for the settings.xml file
-      - name: Set env
-        run: echo "TAG_VERSION=$( echo ${GITHUB_REF#refs/*/} | sed 's/[^0-9.]//g' )" >> $GITHUB_ENV
+      #- name: Set env
+      #  run: echo "TAG_VERSION=$( echo ${GITHUB_REF#refs/*/} | sed 's/[^0-9.]//g' )" >> $GITHUB_ENV
       - name: Update versions
-        run: mvn versions:set -DgenerateBackupPoms=false -DnewVersion=${{ env.TAG_VERSION }}
+        run: mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$( echo ${GITHUB_REF#refs/*/} | sed 's/[^0-9.]//g' )
       - name: Push new version
         run: |
           git commit -am "Update version to ${{ env.TAG_VERSION }}"

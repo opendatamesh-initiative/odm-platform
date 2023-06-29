@@ -8,7 +8,6 @@ Open Data Mesh Platform is a platform that manages the full lifecycle of a data 
 
 ## Prerequisites
 The project requires the following dependencies:
-
 * Java 11
 * Maven 3.8.6
 

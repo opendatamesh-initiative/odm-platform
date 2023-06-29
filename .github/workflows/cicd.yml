@@ -17,18 +17,16 @@ jobs:
           cache: maven
           server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
           settings-path: ${{ github.workspace }} # location for the settings.xml file
-      - name: Set env
-        run: echo $( echo ${{github.ref_name}} | sed 's/[^0-9.]//g' ) 
-      #>> $GITHUB_ENV # echo ${GITHUB_REF#refs/*/}
-      #- name: Update versions
-      #  run: mvn versions:set -DgenerateBackupPoms=false -DnewVersion=${ echo ${{github.ref_name}} | sed 's/[^0-9.]//g' }
-      #- name: Push new version
-      #  run: |
-      #    git commit -am "Update version to ${{ env.TAG_VERSION }}"
-      #    git push
-      #- name: Build with Maven
-      #  run: mvn -B clean package --file pom.xml
-      #- name: Publish to GitHub Packages Apache Maven
-      #  run: mvn -DGitHubPackages=true deploy -s $GITHUB_WORKSPACE/settings.xml
-      #  env:
-      #    GITHUB_TOKEN: ${{ github.token }}
+      - name: Update versions
+        run: mvn versions:set -DgenerateBackupPoms=false -DnewVersion=${ echo ${{github.ref_name}} | sed 's/[^0-9.]//g' }
+      - name: Push new version
+        run: |
+          git remote set-url origin ${{ secrets.ssh }}
+          git commit -am "Update version to ${{ env.TAG_VERSION }}"
+          git push
+      - name: Build with Maven
+        run: mvn -B clean package --file pom.xml
+      - name: Publish to GitHub Packages Apache Maven
+        run: mvn -DGitHubPackages=true deploy -s $GITHUB_WORKSPACE/settings.xml
+        env:
+          GITHUB_TOKEN: ${{ github.token }}

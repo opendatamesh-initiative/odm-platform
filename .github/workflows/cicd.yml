@@ -22,7 +22,7 @@ jobs:
       #- name: Set env
       #  run: echo "TAG_VERSION=$( echo ${GITHUB_REF#refs/*/} | sed 's/[^0-9.]//g' )" >> $GITHUB_ENV
       - name: Update versions
-        run: mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$( echo ${GITHUB_REF#refs/*/} | sed 's/[^0-9.]//g' )
+        run: mvn versions:set -DgenerateBackupPoms=false -DnewVersion=${ echo ${GITHUB_REF#refs/*/} | sed 's/[^0-9.]//g' }
       - name: Push new version
         run: |
           git commit -am "Update version to ${{ env.TAG_VERSION }}"

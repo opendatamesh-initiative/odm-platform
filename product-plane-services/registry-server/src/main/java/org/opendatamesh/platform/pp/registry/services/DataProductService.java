@@ -526,6 +526,7 @@ public class DataProductService {
         dataProductVersion = dataProductVersionMapper.toEntity(descriptor);
         dataProductVersion.setDataProductId(dataProductVersion.getInfo().getDataProductId());
         dataProductVersion.setVersionNumber(dataProductVersion.getInfo().getVersionNumber());
+
         return dataProductVersion;
     }
 

@@ -1,23 +1,16 @@
 package org.opendatamesh.platform.core.dpds.processors;
 
-import java.net.URI;
-import java.util.List;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.opendatamesh.platform.core.dpds.DataProductVersionSource;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
 import org.opendatamesh.platform.core.dpds.exceptions.UnresolvableReferenceException;
-import org.opendatamesh.platform.core.dpds.model.ApplicationComponentDPDS;
-import org.opendatamesh.platform.core.dpds.model.ComponentDPDS;
-import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
-import org.opendatamesh.platform.core.dpds.model.InfrastructuralComponentDPDS;
-import org.opendatamesh.platform.core.dpds.model.ReferenceObjectDPDS;
+import org.opendatamesh.platform.core.dpds.model.*;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.net.URI;
+import java.util.List;
 
 public class TemplatesResolver {
 
@@ -67,8 +60,8 @@ public class TemplatesResolver {
 
                 template = applicationComponent.getBuildInfo().getTemplate();
                 templateNode = (ObjectNode) serviceInfoNode.get("template");
-               
-                templateNode = resolveReference(applicationComponent, template, templateNode, "/templates/{apiId}");
+
+                templateNode = resolveReference(applicationComponent, template, templateNode, "/templates/{templateId}");
                 serviceInfoNode.set("template", templateNode);
             }
 
@@ -77,8 +70,8 @@ public class TemplatesResolver {
 
                 template = applicationComponent.getDeployInfo().getTemplate();
                 templateNode = (ObjectNode) serviceInfoNode.get("template");
-               
-                templateNode = resolveReference(applicationComponent, template, templateNode, "/templates/{apiId}");
+
+                templateNode = resolveReference(applicationComponent, template, templateNode, "/templates/{templateId}");
                 serviceInfoNode.set("template", templateNode);
             }
 
@@ -113,8 +106,8 @@ public class TemplatesResolver {
 
                 template = infrastructuralComponent.getProvisionInfo().getTemplate();
                 templateNode = (ObjectNode) serviceInfoNode.get("template");
-               
-                templateNode = resolveReference(infrastructuralComponent, template, templateNode, "/templates/{apiId}");
+
+                templateNode = resolveReference(infrastructuralComponent, template, templateNode, "/templates/{templateId}");
                 serviceInfoNode.set("template", templateNode);
             }
 
@@ -150,7 +143,7 @@ public class TemplatesResolver {
                     referenceNode.put("comment", "Unresolvable reference");
                     templateContent = mapper.writeValueAsString(referenceNode);
                 } catch (JsonProcessingException e1) {
-                    throw new ParseException("Impossible serialize api definition", e1);
+                    throw new ParseException("Impossible serialize template definition", e1);
                 }
                 /* 
                 throw new UnresolvableReferenceException(
@@ -165,7 +158,7 @@ public class TemplatesResolver {
             try {
                 templateContent = mapper.writeValueAsString(referenceNode);
             } catch (JsonProcessingException e) {
-                throw new ParseException("Impossible serialize api definition", e);
+                throw new ParseException("Impossible serialize template definition", e);
             }
             referenceRef = targetURL + endpoint;
             referenceNode = mapper.createObjectNode();
@@ -180,9 +173,6 @@ public class TemplatesResolver {
 
     }
 
-    
-
-   
     public static void resolve(DataProductVersionDPDS dataProductVersionRes, DataProductVersionSource source,
             String targetURL) throws UnresolvableReferenceException, ParseException {
         TemplatesResolver resolver = new TemplatesResolver(dataProductVersionRes, source,

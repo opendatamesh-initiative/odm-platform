@@ -1,11 +1,9 @@
 package org.opendatamesh.platform.pp.registry;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.io.IOException;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -26,10 +24,10 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.annotation.DirtiesContext.MethodMode;
 import org.springframework.test.context.TestPropertySource;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.IOException;
+import java.util.regex.Pattern;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 //@@FixMethodOrder(MethodSorters.JVM)
 @TestPropertySource(properties = { "spring.test.context.parallel.enabled=false" })
@@ -336,6 +334,7 @@ public class DataProductVersionIT extends OpenDataMeshIT {
             ObjectNode apiDefinitionObject = (ObjectNode) apiObject.get("definition");
             assertThat(apiDefinitionObject.size()).isEqualTo(1);
             assertThat(apiDefinitionObject.get("$ref")).isNotNull();
+            assertThat(apiDefinitionObject.get("$ref").asText()).matches(Pattern.compile("http://localhost:\\d*/api/v1/pp/definitions/\\d*"));
 
             /*
              * ResponseEntity<String> getApiDefinitionResponse = rest.getForEntity(

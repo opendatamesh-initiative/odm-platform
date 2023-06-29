@@ -22,6 +22,7 @@ public class Promises {
 
     @Column(name = "API_ID")
     protected Long apiId;
+
     @Transient
     protected StandardDefinition api;
 

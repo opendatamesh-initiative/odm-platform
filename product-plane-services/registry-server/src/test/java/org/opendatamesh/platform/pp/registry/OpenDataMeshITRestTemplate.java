@@ -1,5 +1,15 @@
 package org.opendatamesh.platform.pp.registry;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Definition;
+import org.opendatamesh.platform.pp.registry.resources.v1.DataProductResource;
+import org.opendatamesh.platform.pp.registry.resources.v1.DataProductSourceResource;
+import org.opendatamesh.platform.pp.registry.resources.v1.DefinitionResource;
+import org.opendatamesh.platform.pp.registry.resources.v1.SchemaResource;
+import org.opendatamesh.platform.pp.registry.resources.v1.TemplateResource;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.*;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -7,28 +17,11 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Definition;
-import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Schema;
-import org.opendatamesh.platform.pp.registry.resources.v1.DataProductResource;
-import org.opendatamesh.platform.pp.registry.resources.v1.DataProductSourceResource;
-import org.opendatamesh.platform.pp.registry.resources.v1.DefinitionResource;
-import org.opendatamesh.platform.pp.registry.resources.v1.SchemaResource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 public class OpenDataMeshITRestTemplate extends TestRestTemplate {
 
     protected String host = "localhost";
     protected String port = "80";
 
-    @Autowired
     private ObjectMapper objectMapper;
 
     public OpenDataMeshITRestTemplate() {
@@ -64,21 +57,21 @@ public class OpenDataMeshITRestTemplate extends TestRestTemplate {
         return Files.readString(Paths.get(path));
     }
 
-    HttpEntity<DataProductResource> getProductDocumentAsHttpEntity(String file) 
+    HttpEntity<DataProductResource> getProductDocumentAsHttpEntity(String file)
     throws IOException {
-        
+
         HttpEntity<DataProductResource> entity = null;
 
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         headers.setContentType(MediaType.APPLICATION_JSON);
-        
+
         DataProductResource dataProductResource = null;
         if(file != null) {
             String docContent = readFile(file);
             dataProductResource = objectMapper.readValue(docContent, DataProductResource.class);
         }
-       
+
         entity = new HttpEntity<DataProductResource>(dataProductResource, headers);
 
         return entity;
@@ -117,7 +110,7 @@ public class OpenDataMeshITRestTemplate extends TestRestTemplate {
         return entity;
     }
 
-     HttpEntity<SchemaResource> getSchemaAsHttpEntity(String file)
+    HttpEntity<SchemaResource> getSchemaAsHttpEntity(String file)
             throws IOException {
 
         HttpEntity<SchemaResource> entity = null;
@@ -133,6 +126,26 @@ public class OpenDataMeshITRestTemplate extends TestRestTemplate {
         }
 
         entity = new HttpEntity<>(schemaResource, headers);
+
+        return entity;
+
+    }
+
+    HttpEntity<TemplateResource> getTemplateAsHttpEntity(String file) throws IOException {
+
+        HttpEntity<TemplateResource> entity = null;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        TemplateResource templateResource = null;
+        if(file != null) {
+            String docContent = readFile(file);
+            templateResource = objectMapper.readValue(docContent, TemplateResource.class);
+        }
+
+        entity = new HttpEntity<>(templateResource, headers);
 
         return entity;
     }
@@ -375,6 +388,60 @@ public class OpenDataMeshITRestTemplate extends TestRestTemplate {
         return getForEntity(
                 apiUrl(RoutesV1.DEFINITIONS, urlExtensions),
                 DefinitionResource[].class);
+    }
+
+    // ----------------------------------------
+    // Template
+    // ----------------------------------------
+
+    public ResponseEntity<TemplateResource> createTemplate(String filePath) throws IOException {
+        HttpEntity<TemplateResource> entity = getTemplateAsHttpEntity(filePath);
+        ResponseEntity<TemplateResource> postTemplateResponse = postForEntity(
+                apiUrl(RoutesV1.TEMPLATES),
+                entity,
+                TemplateResource.class
+        );
+        return postTemplateResponse;
+    }
+
+    public ResponseEntity<TemplateResource[]> readAllTemplates() {
+        return getForEntity(
+                apiUrl(RoutesV1.TEMPLATES),
+                TemplateResource[].class
+        );
+    }
+
+    public ResponseEntity<TemplateResource> readOneTemplate(Long templateId) {
+        return getForEntity(
+                apiUrlOfItem(RoutesV1.TEMPLATES),
+                TemplateResource.class,
+                templateId
+        );
+    }
+
+    public ResponseEntity<Void> deleteTemplate(Long templateId) {
+        return exchange(
+                apiUrlOfItem(RoutesV1.TEMPLATES),
+                HttpMethod.DELETE,
+                null,
+                Void.class,
+                templateId
+        );
+    }
+
+    public ResponseEntity<TemplateResource[]> searchTemplates(
+            Optional<String> mediaType
+    ) {
+
+        String urlExtensions = "";
+        if (mediaType.isPresent())
+            urlExtensions = urlExtensions + "?mediaType=" + mediaType.get();
+
+        return getForEntity(
+                apiUrl(RoutesV1.TEMPLATES, urlExtensions),
+                TemplateResource[].class
+        );
+
     }
 
     // ----------------------------------------

@@ -18,5 +18,11 @@ public class DataProductDescriptorLocationResource {
     public static class Git {
         @JsonProperty("repositorySshUri")
         private String repositorySshUri;
+
+        @JsonProperty("branch")
+        private String branch;
+
+        @JsonProperty("tag")
+        private String tag;
     }
 }

@@ -5,11 +5,9 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.ApiToSchemaRelationship;
-import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Definition;
 import org.opendatamesh.platform.pp.registry.exceptions.BadRequestException;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.resources.v1.ApiToSchemaRelationshipResource;
-import org.opendatamesh.platform.pp.registry.resources.v1.DefinitionResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
 import org.opendatamesh.platform.pp.registry.resources.v1.SchemaResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.mappers.SchemaMapper;

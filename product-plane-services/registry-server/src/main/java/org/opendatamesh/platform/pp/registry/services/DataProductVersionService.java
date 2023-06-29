@@ -167,8 +167,11 @@ public class DataProductVersionService {
             
             relationship.setOperationId(entry.getKey().getName());
             relationship.setOutputMediaType(entry.getKey().getOutputMediaType());
-
-            schemaService.createApiToSchemaRelationship(relationship); 
+            if(schemaService.searchRelationship(relationship.getId()) == null) {
+                schemaService.createApiToSchemaRelationship(relationship); 
+            } else {
+                schemaService.updateRelationship(relationship);
+            }
         }
     }
 
@@ -198,26 +201,20 @@ public class DataProductVersionService {
     private Schema saveApiSchema(ApiDefinitionEndpoint endpoint) {
         Schema schema = null;
 
-        if (StringUtils.hasText(endpoint.getSchema().getName())
-                && StringUtils.hasText(endpoint.getSchema().getVersion())) {
-           
-            schema = schemaService.searchSchema(endpoint.getSchema().getName(), endpoint.getSchema().getVersion());
-        }
+        Schema newSchema = new Schema();
+        newSchema.setName(endpoint.getSchema().getName());
+        newSchema.setVersion(endpoint.getSchema().getVersion());
+        newSchema.setMediaType(endpoint.getSchema().getMediaType());
+        newSchema.setContent(endpoint.getSchema().getContent());
+        
+        schema = schemaService.searchSchema(newSchema);
         if (schema == null) {
-            schema = new Schema();
-            
-            schema.setName(endpoint.getSchema().getName());
-            schema.setVersion(endpoint.getSchema().getVersion());
-            schema.setMediaType(endpoint.getSchema().getMediaType());
-            schema.setContent(endpoint.getSchema().getContent());
-            
-            schema = schemaService.createSchema(schema);
+            schema = schemaService.createSchema(newSchema);
         }
 
         // rewrite schema ref withing api def
-      
-
-        return schema;
+    
+        return schema;    
     }
 
     private Definition saveApiDefinition(Port port) throws JsonMappingException, JsonProcessingException {

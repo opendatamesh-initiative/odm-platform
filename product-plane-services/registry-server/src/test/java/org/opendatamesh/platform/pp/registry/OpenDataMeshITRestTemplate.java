@@ -264,9 +264,9 @@ public class OpenDataMeshITRestTemplate extends TestRestTemplate {
     }
 
     public ResponseEntity<String> uploadDataProductVersion(
-            DataProductDescriptorLocationResource dataProductSourceRes) throws IOException {
+            DataProductDescriptorLocationResource descriptorLocation) throws IOException {
               
-        HttpEntity<String> entity = getObjectAsHttpEntity(dataProductSourceRes);
+        HttpEntity<String> entity = getObjectAsHttpEntity(descriptorLocation);
 
         ResponseEntity<String> postUploadResponse = postForEntity(
                 apiUrl(RoutesV1.DATA_PRODUCTS_UPLOADS),

@@ -46,6 +46,8 @@ public class CoreApp /* implements CommandLineRunner */ {
 
         String repoUri = "git@ssh.dev.azure.com:v3/andreagioia/opendatamesh/odm-dpds-examples";
         URI descriptorUri = new URI("data-product-descriptor.json");
+        //String repoUri = "git@github.com:opendatamesh-initiative/odm-specification-dpdescriptor.git";
+        //URI descriptorUri = new URI("examples/tripexecution/data-product-descriptor.json");
         location = new GitLocation(repoUri, descriptorUri);
        
         DPDSParser parser = new DPDSParser();
@@ -54,6 +56,7 @@ public class CoreApp /* implements CommandLineRunner */ {
 
         ParseResult result = parser.parse(location, options);
         DataProductVersionDPDS descriptor = result.getDescriptorDocument();
+        System.out.println(descriptor.getInfo().getVersionNumber());
 
         DataProductVersionSerializer serializer = new DataProductVersionSerializer();
         String rawContent = serializer.serialize(descriptor, "canonical", "yaml", true);

@@ -132,14 +132,17 @@ public class DataProductUploadsController
         @Parameter( 
             description = "A data product descriptor source", 
             required = true)
-        @Valid @RequestBody(required=false)  DataProductDescriptorLocationResource dataProductSourceRes
+        @Valid @RequestBody(required=false)  DataProductDescriptorLocationResource descriptorLocationRes
     ) {
         DescriptorLocation descriptorLocation = null;
         try {
-            URI descriptorUri = new URI(dataProductSourceRes.getRootDocumentUri());
-            if(dataProductSourceRes.getGit() != null 
-                && StringUtils.hasText(dataProductSourceRes.getGit().getRepositorySshUri())) {
-                descriptorLocation = new GitLocation(dataProductSourceRes.getGit().getRepositorySshUri(), descriptorUri);
+            URI descriptorUri = new URI(descriptorLocationRes.getRootDocumentUri());
+            if(descriptorLocationRes.getGit() != null 
+                && StringUtils.hasText(descriptorLocationRes.getGit().getRepositorySshUri())) {
+                descriptorLocation = new GitLocation(
+                    descriptorLocationRes.getGit().getRepositorySshUri(), descriptorUri,
+                    descriptorLocationRes.getGit().getBranch(), descriptorLocationRes.getGit().getTag()
+                );
             } else {
                 descriptorLocation = new UriLocation(descriptorUri);
             }
@@ -147,7 +150,7 @@ public class DataProductUploadsController
         } catch (URISyntaxException e) {
             throw new BadRequestException(
                 OpenDataMeshAPIStandardError.SC400_05_INVALID_URILIST,
-                "Provided URI is invalid [" + dataProductSourceRes.getRootDocumentUri() + "]", e);
+                "Provided URI is invalid [" + descriptorLocationRes.getRootDocumentUri() + "]", e);
         }
         String serverUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
         DataProductVersion dataProductVersion = dataProductService.addDataProductVersion(descriptorLocation, true, serverUrl);

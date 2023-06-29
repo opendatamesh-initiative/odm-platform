@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import javax.validation.Valid;
-
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.ApiToSchemaRelationship;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Schema;
 import org.opendatamesh.platform.pp.registry.database.repositories.ApiToSchemaRelationshipRepository;
@@ -37,13 +35,8 @@ public class SchemaService {
 
     }
 
-    // ======================================================================================
-    // CREATE
-    // ======================================================================================
-
-    public Schema createSchema(Schema schema) {
-
-        if (schema == null) {
+    public Schema resolveNameAndVersion(Schema schema) {
+         if (schema == null) {
             throw new InternalServerException(
                     OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
                     "Schema object cannot be null");
@@ -66,10 +59,34 @@ public class SchemaService {
             logger.warn("Schema has no version. Version 1.0.0 will be used as default");
         }
 
+        return schema;
+    }
+
+
+    // ======================================================================================
+    // CREATE
+    // ======================================================================================
+
+    public Schema createSchema(Schema schema) {
+
+        if (schema == null) {
+            throw new InternalServerException(
+                    OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
+                    "Schema object cannot be null");
+        }
+
+        if (!StringUtils.hasText(schema.getContent())) {
+            throw new UnprocessableEntityException(
+                    OpenDataMeshAPIStandardError.SC422_08_DEFINITION_DOC_SYNTAX_IS_INVALID,
+                    "Schema content property cannot be empty");
+        }
+
+        schema = resolveNameAndVersion(schema);
+
         if (schemaExists(schema.getName(), schema.getVersion())) {
             throw new UnprocessableEntityException(
                     OpenDataMeshAPIStandardError.SC422_11_SCHEMA_ALREADY_EXISTS,
-                    "Schema [" + schema.getName() + "(v. " + schema.getVersion() + ")] already exists");
+                    "Schema [" + schema.getName() + "](v. " + schema.getVersion() + ")] already exists");
         }
 
         try {
@@ -93,32 +110,10 @@ public class SchemaService {
     // create relationship
     // -------------------------
 
-     public ApiToSchemaRelationship createApiToSchemaRelationship(ApiToSchemaRelationship relationship) {
+    public ApiToSchemaRelationship createApiToSchemaRelationship(ApiToSchemaRelationship relationship) {
 
-        if (relationship == null) {
-            throw new InternalServerException(
-                    OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
-                    "Relationship object cannot be null");
-        }
-
-        if (relationship.getId() == null) {
-            throw new UnprocessableEntityException(
-                    OpenDataMeshAPIStandardError.SC422_08_DEFINITION_DOC_SYNTAX_IS_INVALID,
-                    "Relationship id property cannot be empty");
-        }
-
-        if (relationship.getId().getApiId() == null) {
-            throw new UnprocessableEntityException(
-                    OpenDataMeshAPIStandardError.SC422_08_DEFINITION_DOC_SYNTAX_IS_INVALID,
-                    "Relationship apiId property cannot be empty");
-        }
-
-        if (relationship.getId().getSchemaId() == null) {
-            throw new UnprocessableEntityException(
-                    OpenDataMeshAPIStandardError.SC422_08_DEFINITION_DOC_SYNTAX_IS_INVALID,
-                    "Relationship schemaId property cannot be empty");
-        }
-
+      
+        validateRelationship(relationship);
       
 
         if (relationshipExists(relationship.getId().getApiId(), relationship.getId().getSchemaId())) {
@@ -233,6 +228,11 @@ public class SchemaService {
         return schema;
     }
 
+    public Schema searchSchema(Schema schema) {
+        schema = resolveNameAndVersion(schema);
+        return searchSchema(schema.getName(), schema.getVersion());
+    }
+
     /**
      * @return The schema identified by name and version. Null if not exists
      */
@@ -309,6 +309,16 @@ public class SchemaService {
         return relationships;
     }
 
+    public List<ApiToSchemaRelationship> searchRelationship(Long apiId, Long schemaId) {
+        ApiToSchemaRelationship.ApiToSchemaRelationshipId relId = new ApiToSchemaRelationship.ApiToSchemaRelationshipId();
+        return searchRelationship(relId);
+    }
+
+    public List<ApiToSchemaRelationship> searchRelationship(ApiToSchemaRelationship.ApiToSchemaRelationshipId relId) {
+        List<ApiToSchemaRelationship> relationships = relationshipRepository.findById(relId);
+        return relationships;
+    }
+
     // ======================================================================================
     // UPDATE
     // ======================================================================================
@@ -339,6 +349,11 @@ public class SchemaService {
         return schema;
     }
 
+    public ApiToSchemaRelationship updateRelationship(ApiToSchemaRelationship relationship) {
+        validateRelationship(relationship);
+        return saveRelationship(relationship);
+    }
+
     // ======================================================================================
     // DELETE
     // ======================================================================================
@@ -361,5 +376,35 @@ public class SchemaService {
                     t);
         }
 
+    }
+
+    // ======================================================================================
+    // Misc.
+    // ======================================================================================
+
+    private void validateRelationship(ApiToSchemaRelationship relationship) throws UnprocessableEntityException {
+          if (relationship == null) {
+            throw new UnprocessableEntityException(
+                    OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
+                    "Relationship object cannot be null");
+        }
+
+        if (relationship.getId() == null) {
+            throw new UnprocessableEntityException(
+                    OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
+                    "Relationship id property cannot be empty");
+        }
+
+        if (relationship.getId().getApiId() == null) {
+            throw new UnprocessableEntityException(
+                    OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
+                    "Relationship apiId property cannot be empty");
+        }
+
+        if (relationship.getId().getSchemaId() == null) {
+            throw new UnprocessableEntityException(
+                    OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
+                    "Relationship schemaId property cannot be empty");
+        }
     }
 }

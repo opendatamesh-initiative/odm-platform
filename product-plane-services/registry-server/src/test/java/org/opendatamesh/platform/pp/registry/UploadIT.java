@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -81,6 +82,89 @@ public class UploadIT extends OpenDataMeshIT {
         }
     }
 
+    @Test
+    @Ignore
+    @Order(3)
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testDataProductVersionDevOpsUploadMain() throws IOException {
+        DataProductDescriptorLocationResource descriptorLocation = new DataProductDescriptorLocationResource();
+        descriptorLocation.setRootDocumentUri("data-product-descriptor.json");
+        DataProductDescriptorLocationResource.Git git = new DataProductDescriptorLocationResource.Git();
+        git.setRepositorySshUri("git@ssh.dev.azure.com:v3/andreagioia/opendatamesh/odm-dpds-examples");
+        git.setBranch(null);
+        git.setTag(null);
+        descriptorLocation.setGit(git);
+        
+        String descriptorContent = uploadDataProductVersion(descriptorLocation);
+
+        DataProductVersionDPDS dpv = null;
+        try {
+            dpv = toDescriptor(descriptorContent);
+            Assert.assertEquals(dpv.getInfo().getVersionNumber(), "1.1.0");
+        } catch (BuildException e) {
+            Assert.fail(e.getMessage());
+        }
+    }
+
+    @Test
+    @Ignore
+    @Order(4)
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testDataProductVersionDevOpsUploadTag() throws IOException {
+        DataProductDescriptorLocationResource descriptorLocation = new DataProductDescriptorLocationResource();
+        descriptorLocation.setRootDocumentUri("data-product-descriptor.json");
+        DataProductDescriptorLocationResource.Git git = new DataProductDescriptorLocationResource.Git();
+        git.setRepositorySshUri("git@ssh.dev.azure.com:v3/andreagioia/opendatamesh/odm-dpds-examples");
+        git.setBranch(null);
+        git.setTag("v1.0.0");
+        descriptorLocation.setGit(git);
+        
+        String descriptorContent = uploadDataProductVersion(descriptorLocation);
+
+        DataProductVersionDPDS dpv = null;
+        try {
+            dpv = toDescriptor(descriptorContent);
+            Assert.assertEquals(dpv.getInfo().getVersionNumber(), "1.0.0");
+        } catch (BuildException e) {
+            Assert.fail(e.getMessage());
+        }
+    }
+
+    @Test
+    @Ignore
+    @Order(5)
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testDataProductVersionDevOpsUploadBranch() throws IOException {
+        DataProductDescriptorLocationResource descriptorLocation = new DataProductDescriptorLocationResource();
+        descriptorLocation.setRootDocumentUri("data-product-descriptor.json");
+        DataProductDescriptorLocationResource.Git git = new DataProductDescriptorLocationResource.Git();
+        git.setRepositorySshUri("git@ssh.dev.azure.com:v3/andreagioia/opendatamesh/odm-dpds-examples");
+        git.setBranch("dev");
+        git.setTag(null);
+        descriptorLocation.setGit(git);
+        
+        String descriptorContent = uploadDataProductVersion(descriptorLocation);
+        DataProductVersionDPDS dpv = null;
+        try {
+            dpv = toDescriptor(descriptorContent);
+            Assert.assertEquals(dpv.getInfo().getVersionNumber(), "2.0.0");
+        } catch (BuildException e) {
+            Assert.fail(e.getMessage());
+        }
+        /* 
+        descriptorLocation.getGit().setBranch(null);
+        descriptorLocation.getGit().setTag("v1.0.0");
+        descriptorContent = uploadDataProductVersion(descriptorLocation);
+        dpv = null;
+        try {
+            dpv = toDescriptor(descriptorContent);
+            Assert.assertEquals(dpv.getInfo().getVersionNumber(), "1.0.0");
+        } catch (BuildException e) {
+            Assert.fail(e.getMessage());
+        }
+        */
+    }
+
 
     // ======================================================================================
     // PRIVATE METHODS
@@ -96,7 +180,7 @@ public class UploadIT extends OpenDataMeshIT {
     // Verify test resources
     // ----------------------------------------
 
-    private void verifyBasicContent(String descriptorContent) throws BuildException {
+    private DataProductVersionDPDS toDescriptor(String descriptorContent) throws BuildException {
         DPDSParser parser = new DPDSParser();
         DescriptorLocation location = new UriLocation(descriptorContent);
 
@@ -107,6 +191,10 @@ public class UploadIT extends OpenDataMeshIT {
         options.setResoveStandardDefinitions(false);
         options.setResoveTemplates(false);
         DataProductVersionDPDS dpv = parser.parse(location, options).getDescriptorDocument();
+        return dpv;
+    }
+    private void verifyBasicContent(String descriptorContent) throws BuildException {
+        DataProductVersionDPDS dpv = toDescriptor(descriptorContent);
     
         Assert.assertEquals(dpv.getDataProductDescriptor(), "1.0.0");
 

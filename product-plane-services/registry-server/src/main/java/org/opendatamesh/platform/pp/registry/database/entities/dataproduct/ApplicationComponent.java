@@ -26,8 +26,6 @@ public class ApplicationComponent extends Component implements Cloneable {
     @JoinColumn(name = "BUILD_INFO_ID", referencedColumnName = "ID")
     private BuildInfo buildInfo;
 
-    //@OneToOne(mappedBy = "appComponent", cascade = CascadeType.ALL)
-    //@PrimaryKeyJoinColumn
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "DEPLOY_INFO_ID", referencedColumnName = "ID")
     private DeployInfo deployInfo;
@@ -69,21 +67,7 @@ public class ApplicationComponent extends Component implements Cloneable {
         this.deployInfo = deploymentInfo;
     }
 
-    @Override
-    public String toString() {
-        return "ApplicationComponent{" +
-                "platform='" + platform + '\'' +
-                ", applicationType='" + applicationType + '\'' +
-                ", buildInfo=" + buildInfo +
-                ", deployInfo=" + deployInfo +
-                ", consumesFrom=" + consumesFrom +
-                ", providesTo=" + providesTo +
-                ", dependsOn=" + dependsOn +
-                ", tags=" + tags +
-                ", externalDocs=" + externalDocs +
-                '}';
-    }
-
+   
     @PrePersist
     protected void onCreate() {
         logger.debug("Creating appComponent [" + getId() + "]");

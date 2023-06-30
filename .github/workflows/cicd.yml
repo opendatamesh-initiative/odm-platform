@@ -29,7 +29,7 @@ jobs:
           git config user.name "github-workflows-version-updater"
           git config user.email "bot@github.com"
           git commit -am "Update pom versions to ${{ env.TAG_VERSION }}"
-          git push
+          git push origin HEAD:main
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Build with Maven

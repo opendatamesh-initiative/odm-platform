@@ -6,14 +6,14 @@ public enum RoutesV1 {
 
     DEFINITIONS("/api/v1/pp/definitions"),
 
+    TEMPLATES("/api/v1/pp/templates"),
     SCHEMAS("/api/v1/pp/schemas"),
     
     DATA_PRODUCTS_UPLOADS("/api/v1/pp/products/uploads"),
     
     DATA_PRODUCTS_LISTURL("/api/v1/pp/products"),
     POLICYVALIDATE_BASEURL("/api/v1/planes/utility/policy-services/opa/validate"); 
-    
-   
+
 
     private final String path;
 

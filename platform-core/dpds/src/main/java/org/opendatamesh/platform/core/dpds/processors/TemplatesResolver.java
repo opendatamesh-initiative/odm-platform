@@ -8,17 +8,15 @@ import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
 import org.opendatamesh.platform.core.dpds.exceptions.UnresolvableReferenceException;
 import org.opendatamesh.platform.core.dpds.model.ApplicationComponentDPDS;
 import org.opendatamesh.platform.core.dpds.model.ComponentDPDS;
-import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.InfrastructuralComponentDPDS;
 import org.opendatamesh.platform.core.dpds.model.ReferenceObjectDPDS;
 import org.opendatamesh.platform.core.dpds.parser.ParseContext;
-import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
-import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
 import org.opendatamesh.platform.core.dpds.parser.location.UriUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
 
 public class TemplatesResolver {
 
@@ -63,8 +61,8 @@ public class TemplatesResolver {
 
                 template = applicationComponent.getBuildInfo().getTemplate();
                 templateNode = (ObjectNode) serviceInfoNode.get("template");
-               
-                templateNode = resolveReference(applicationComponent, template, templateNode, "/templates/{apiId}");
+
+                templateNode = resolveReference(applicationComponent, template, templateNode, "/templates/{templateId}");
                 serviceInfoNode.set("template", templateNode);
             }
 
@@ -73,8 +71,8 @@ public class TemplatesResolver {
 
                 template = applicationComponent.getDeployInfo().getTemplate();
                 templateNode = (ObjectNode) serviceInfoNode.get("template");
-               
-                templateNode = resolveReference(applicationComponent, template, templateNode, "/templates/{apiId}");
+
+                templateNode = resolveReference(applicationComponent, template, templateNode, "/templates/{templateId}");
                 serviceInfoNode.set("template", templateNode);
             }
 
@@ -109,8 +107,8 @@ public class TemplatesResolver {
 
                 template = infrastructuralComponent.getProvisionInfo().getTemplate();
                 templateNode = (ObjectNode) serviceInfoNode.get("template");
-               
-                templateNode = resolveReference(infrastructuralComponent, template, templateNode, "/templates/{apiId}");
+
+                templateNode = resolveReference(infrastructuralComponent, template, templateNode, "/templates/{templateId}");
                 serviceInfoNode.set("template", templateNode);
             }
 
@@ -146,7 +144,7 @@ public class TemplatesResolver {
                     referenceNode.put("comment", "Unresolvable reference");
                     templateContent = mapper.writeValueAsString(referenceNode);
                 } catch (JsonProcessingException e1) {
-                    throw new ParseException("Impossible serialize api definition", e1);
+                    throw new ParseException("Impossible serialize template definition", e1);
                 }
                 /* 
                 throw new UnresolvableReferenceException(
@@ -161,7 +159,7 @@ public class TemplatesResolver {
             try {
                 templateContent = mapper.writeValueAsString(referenceNode);
             } catch (JsonProcessingException e) {
-                throw new ParseException("Impossible serialize api definition", e);
+                throw new ParseException("Impossible serialize template definition", e);
             }
             referenceRef = context.getOptions().getServerUrl() + endpoint;
             referenceNode = mapper.createObjectNode();

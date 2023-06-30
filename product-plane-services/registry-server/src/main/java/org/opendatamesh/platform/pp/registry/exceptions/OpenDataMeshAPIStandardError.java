@@ -15,7 +15,9 @@ public enum OpenDataMeshAPIStandardError {
     SC400_11_PRODUCT_VERSION_NUMBER_IS_EMPTY ("40011", "Data product version number is empty"),
     SC400_12_SCHEMA_IS_EMPTY ("40012", "Schema is empty"),
     SC400_13_SCHEMA_ID_IS_EMPTY ("40013", "Schema id is empty"),
-    
+    SC400_14_TEMPLATE_IS_EMPTY ("40014", "Template is empty"),
+    SC400_15_TEMPLATE_ID_IS_EMPTY ("40015", "Template id is empty"),
+
     SC400_99_PROPERTY_REF_EXCEPTION ("40099", "Property Reference Exception"),
    
     // Not Found Exceptions
@@ -23,7 +25,8 @@ public enum OpenDataMeshAPIStandardError {
     SC404_02_VERSION_NOT_FOUND ("40402", "Data product version not found"),
     SC404_03_STDDEF_NOT_FOUND ("40403", "Standard definition not found"),
     SC404_04_SCHEMA_NOT_FOUND ("40404", "Schema not found"),
-    
+    SC404_05_TEMPLATE_NOT_FOUND ("40405", "Template not found"),
+
     // Unprocessable Entity Exceptions
     SC422_01_DESCRIPTOR_URI_IS_INVALID ("42201", "Descriptor URI is invalid"),
     SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID ("42202", "Descriptor document syntax is invalid"),
@@ -34,10 +37,13 @@ public enum OpenDataMeshAPIStandardError {
     SC422_07_PRODUCT_IS_INVALID ("42207", "Data product is invalid"),
     SC422_08_DEFINITION_DOC_SYNTAX_IS_INVALID ("42208", "Definition document is invalid"),
     SC422_09_DEFINITION_ALREADY_EXISTS ("42209", "Definition alredy exists"),
+
     SC422_10_SCHEMA_SYNTAX_IS_INVALID ("42210", "Schema is invalid"),
     SC422_11_SCHEMA_ALREADY_EXISTS ("42211", "Schema already exists"),
-    SC422_12_SCHEMA_TO_API_REL_ALREADY_EXISTS ("42211", "Schema to api relationship alredy exists"),
-    
+    SC422_12_SCHEMA_TO_API_REL_ALREADY_EXISTS ("42212", "Schema to api relationship alredy exists"),
+    SC422_13_TEMPLATE_ALREADY_EXISTS ("42213", "Template already exists"),
+    SC422_14_TEMPLATE_DOC_SYNTAX_IS_INVALID ("42214", "Template document is invalid"),
+
     // Conflict Exceptions
     SC409_01_CONCURRENT_DEPLOYMENT ("40901", "Concurrent deployment task"),
 

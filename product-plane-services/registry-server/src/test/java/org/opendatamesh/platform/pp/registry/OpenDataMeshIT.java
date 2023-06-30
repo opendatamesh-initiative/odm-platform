@@ -6,12 +6,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.runner.RunWith;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Definition;
-import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Schema;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.resources.v1.DataProductResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.DataProductDescriptorLocationResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
 import org.opendatamesh.platform.pp.registry.resources.v1.SchemaResource;
+import org.opendatamesh.platform.pp.registry.resources.v1.TemplateResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +26,8 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = { OpenDataMeshApp.class })
@@ -48,6 +48,8 @@ public abstract class OpenDataMeshIT {
     protected final String RESOURCE_DEF1_NOVERSION = "src/test/resources/test/definition/def1-missing-version.json";
     protected final String RESOURCE_DEF1_NONAME = "src/test/resources/test/definition/def1-missing-name.json";
     protected final String RESOURCE_DEF1_NONAME_NOVERSION = "src/test/resources/test/definition/def2-missing-name-version.json";
+    protected final String RESOURCE_TEMPLATE_1 = "src/test/resources/test/template/template1.json";
+    protected final String RESOURCE_TEMPLATE_2 = "src/test/resources/test/template/template2.json";
     protected final String RESOURCE_SCHEMA1 = "src/test/resources/test/schema/schema1.json";
     protected final String RESOURCE_DPS_URI = "https://raw.githubusercontent.com/opendatamesh-initiative/odm-specification-dpdescriptor/main/examples/tripexecution/data-product-descriptor.json";
         
@@ -131,8 +133,6 @@ public abstract class OpenDataMeshIT {
         return postProductVersionApiResponse.getBody();
     }
 
-    
-
     protected Definition createDefinition1() throws IOException {
         ResponseEntity<Definition> postDefinition = rest.createDefinition(
                 RESOURCE_DEF1_V1
@@ -167,6 +167,23 @@ public abstract class OpenDataMeshIT {
         verifyResponseEntity(postDefinition, HttpStatus.CREATED, true);
 
         return postDefinition.getBody();
+    }
+
+    protected TemplateResource createTemplate1() throws IOException {
+        ResponseEntity<TemplateResource> postTemplate = rest.createTemplate(
+                RESOURCE_TEMPLATE_1
+        );
+        verifyResponseEntity(postTemplate, HttpStatus.CREATED, true);
+        return postTemplate.getBody();
+    }
+
+    protected TemplateResource createTemplate2() throws IOException {
+        ResponseEntity<TemplateResource> postTemplate = rest.createTemplate(
+                RESOURCE_TEMPLATE_2
+        );
+        verifyResponseEntity(postTemplate, HttpStatus.CREATED, true);
+
+        return postTemplate.getBody();
     }
 
     protected SchemaResource createSchema1() throws IOException {
@@ -215,7 +232,7 @@ public abstract class OpenDataMeshIT {
     }
 
     // ======================================================================================
-    // Verify reresponse
+    // Verify response
     // ======================================================================================
 
     // TODO ...add as needed

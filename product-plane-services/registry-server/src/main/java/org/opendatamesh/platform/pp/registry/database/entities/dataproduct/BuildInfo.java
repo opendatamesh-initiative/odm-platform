@@ -26,28 +26,9 @@ public class BuildInfo {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "TEMPLATE_ID", referencedColumnName = "ID")
-    private ExternalResource template;
+    private ReferenceObject template;
 
     @Column(name = "CONFIGURATIONS", length=5000)
     @Convert(converter = HashMapConverter.class)
     private Map<String, Object> configurations;
-
-    public BuildInfo() {
-    }
-
-    public BuildInfo(ExternalResource service, ExternalResource template, Map<String, Object> configurations) {
-        this.service = service;
-        this.template = template;
-        this.configurations = configurations;
-    }
-
-    @Override
-    public String toString() {
-        return "BuildInfo{" +
-                "id=" + id +
-                ", service=" + service +
-                ", template=" + template +
-                ", configurations=" + configurations +
-                '}';
-    }
 }

@@ -1,0 +1,5 @@
+{
+  "description": "Github Template",
+  "mediaType": "text",
+  "$ref": "https://github.com/Giandom/tf-data-product-example.git"
+}

@@ -1,5 +1,8 @@
 package org.opendatamesh.platform.pp.registry.config;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.opendatamesh.platform.core.dpds.model.BuildInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.DeployInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.ProvisionInfoDPDS;
@@ -8,10 +11,6 @@ import org.opendatamesh.platform.core.dpds.serde.DeployInfoResourceDeserializer;
 import org.opendatamesh.platform.core.dpds.serde.ProvisionInfoResourceDeserializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 
 @Configuration
 public class MappersConfiguration {

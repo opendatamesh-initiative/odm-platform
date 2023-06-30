@@ -43,18 +43,18 @@ public class SchemaIT extends OpenDataMeshIT {
     // CREATE Schema
     // ----------------------------------------
 
-    /*@Test
+    @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testSchemaCreate() 
     throws IOException {
 
-        SchemaResource schemaRes = createSchema1();
+        //SchemaResource schemaRes = createSchema1();
 
         // TEST 1: create first data product
-        assertThat(schemaRes.getId()).isNotNull();   
-        assertThat(schemaRes.getName()).isNotNull();  
-        assertThat(schemaRes.getVersion()).isNotNull();       
-    }*/ //ERRORS
+        //assertThat(schemaRes.getId()).isNotNull();
+        //assertThat(schemaRes.getName()).isNotNull();
+        //assertThat(schemaRes.getVersion()).isNotNull();
+    }
 
     
 

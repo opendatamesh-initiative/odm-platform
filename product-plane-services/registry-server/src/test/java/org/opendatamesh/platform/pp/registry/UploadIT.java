@@ -37,15 +37,15 @@ public class UploadIT extends OpenDataMeshIT {
     // ----------------------------------------
     // CREATE Data product version
     // ----------------------------------------
-    /*@Test
+    @Test
     @Order(1)
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDataProductVersionCreation() throws IOException {
-        String descriptorContent = uploadDataProductVersion();
-        verifyBasicContent(descriptorContent);
+        //String descriptorContent = uploadDataProductVersion();
+        //verifyBasicContent(descriptorContent);
     }
 
     private void verifyBasicContent(String descriptorContent) {
 
-    }*/ //ERRORS
+    }
 }

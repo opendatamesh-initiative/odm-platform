@@ -21,7 +21,10 @@ jobs:
         run: echo "TAG_VERSION=$( echo ${{github.ref_name}} | sed 's/[^0-9.]//g' )" >> $GITHUB_ENV
       - name: Update versions
         run: mvn versions:set -DgenerateBackupPoms=false -DnewVersion=${{ env.TAG_VERSION }}
-      - name: Push new version # Not working due to protection on main branch
+      - name: Push new version
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref_name }}
         run: |
           git config user.name "github-workflows-version-updater"
           git config user.email "bot@github.com"

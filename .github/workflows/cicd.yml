@@ -22,7 +22,6 @@ jobs:
       - name: Update versions
         run: mvn versions:set -DgenerateBackupPoms=false -DnewVersion=${{ env.TAG_VERSION }}
       - name: Push new version
-        uses: actions/checkout@v3
         with:
           ref: ${{ github.ref_name }}
         run: |

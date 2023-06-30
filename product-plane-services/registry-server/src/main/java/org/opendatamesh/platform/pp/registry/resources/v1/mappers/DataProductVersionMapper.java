@@ -8,7 +8,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.SubclassMapping;
-import org.mapstruct.factory.Mappers;
 import org.opendatamesh.platform.core.dpds.model.ApplicationComponentDPDS;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.ExternalResourceDPDS;
@@ -21,7 +20,6 @@ import org.opendatamesh.platform.core.dpds.model.definitions.ApiDefinitionRefere
 import org.opendatamesh.platform.core.dpds.model.definitions.DefinitionReferenceDPDS;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.ApiDefinitionReference;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.ApplicationComponent;
-import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataProduct;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataProductVersion;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DefinitionReference;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.ExternalResource;
@@ -30,7 +28,6 @@ import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.Infra
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.Port;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.ReferenceObject;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.StandardDefinition;
-import org.opendatamesh.platform.pp.registry.resources.v1.DataProductResource;
 
 
 @Mapper(componentModel = "spring")
@@ -51,7 +48,6 @@ public interface DataProductVersionMapper {
     StandardDefinition toEntity(StandardDefinitionDPDS resource);
     StandardDefinitionDPDS toResource(StandardDefinition entity);
 
-
     ReferenceObject toEntity(ReferenceObjectDPDS resource);
     ReferenceObjectDPDS toResource(ReferenceObject entity);
 
@@ -65,6 +61,7 @@ public interface DataProductVersionMapper {
     ExternalResource toEntity(ExternalResourceDPDS resource);
     ExternalResourceDPDS toResource(ExternalResource entity);
 
+    /* 
     @Mapping(source = "rawContent", target = "href", qualifiedByName = "rawContentToHref")
     ExternalResource toEntityTemplate(ReferenceObjectDPDS resource);
 
@@ -76,4 +73,5 @@ public interface DataProductVersionMapper {
         ExternalResourceDPDS externalResourceDPDS = objectMapper.readValue(rawContent, ExternalResourceDPDS.class);
         return externalResourceDPDS.getHref();
     }
+    */
 }

@@ -7,6 +7,12 @@ import java.util.List;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.PortDPDS;
 import org.opendatamesh.platform.core.dpds.model.definitions.ApiDefinitionReferenceDPDS;
+import org.opendatamesh.platform.core.dpds.parser.DPDSParser;
+import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
+import org.opendatamesh.platform.core.dpds.parser.ParseResult;
+import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
+import org.opendatamesh.platform.core.dpds.parser.location.GitLocation;
+import org.opendatamesh.platform.core.dpds.parser.location.UriLocation;
 import org.opendatamesh.platform.core.dpds.serde.DataProductVersionSerializer;
 
 /* 
@@ -31,26 +37,34 @@ public class CoreApp /* implements CommandLineRunner */ {
     public static void run(String... arg0) throws Exception {
 
         String ROOT_DOC_LOACAL_FILEPATH = "/home/andrea.gioia/Sviluppi/quantyca/open-data-mesh/github/odm-platform-pp-services/product-plane-services/registry-server/src/test/resources/test/dataproduct-descriptor/dp1-v1.json";
-        // DataProductVersionSource descriptorSource = new
-        // DataProductVersionSource(Files.readString(Paths.get(ROOT_DOC_LOACAL_FILEPATH)));
+        // ParseLocation location = new ParseLocation(Files.readString(Paths.get(ROOT_DOC_LOACAL_FILEPATH)));
 
         URI ROOT_DOC_REMOTE_URI = new URI(
                 "https://raw.githubusercontent.com/opendatamesh-initiative/odm-specification-dpdescriptor/main/examples/tripexecution/data-product-descriptor.json#pippo?pippo=/xxx");
-        DataProductVersionSource dataProductVersionSource = new DataProductVersionSource(ROOT_DOC_REMOTE_URI);
+        DescriptorLocation location = new UriLocation(ROOT_DOC_REMOTE_URI);
 
-        DPDSParser parser = new DPDSParser(dataProductVersionSource,
-                "http://localhost:80/");
 
-        DataProductVersionDPDS dataProductVerion = null;
-        dataProductVerion = parser.parse(true);
+        String repoUri = "git@ssh.dev.azure.com:v3/andreagioia/opendatamesh/odm-dpds-examples";
+        URI descriptorUri = new URI("data-product-descriptor.json");
+        //String repoUri = "git@github.com:opendatamesh-initiative/odm-specification-dpdescriptor.git";
+        //URI descriptorUri = new URI("examples/tripexecution/data-product-descriptor.json");
+        location = new GitLocation(repoUri, descriptorUri);
+       
+        DPDSParser parser = new DPDSParser();
+        ParseOptions options = new ParseOptions();
+        options.setServerUrl( "http://localhost:80/");
+
+        ParseResult result = parser.parse(location, options);
+        DataProductVersionDPDS descriptor = result.getDescriptorDocument();
+        System.out.println(descriptor.getInfo().getVersionNumber());
 
         DataProductVersionSerializer serializer = new DataProductVersionSerializer();
-        String rawContent = serializer.serialize(dataProductVerion, "canonical", "yaml", true);
+        String rawContent = serializer.serialize(descriptor, "canonical", "yaml", true);
         System.out.println(rawContent);
 
         List<PortDPDS> ports = new ArrayList<PortDPDS>();
-        ports.addAll(dataProductVerion.getInterfaceComponents().getOutputPorts());
-        ports.addAll(dataProductVerion.getInterfaceComponents().getObservabilityPorts());
+        ports.addAll(descriptor.getInterfaceComponents().getOutputPorts());
+        ports.addAll(descriptor.getInterfaceComponents().getObservabilityPorts());
 
         for (PortDPDS port : ports) {
             ApiDefinitionReferenceDPDS api = (ApiDefinitionReferenceDPDS) port.getPromises().getApi().getDefinition();

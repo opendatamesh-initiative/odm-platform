@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.core.dpds;
+package org.opendatamesh.platform.core.dpds.parser.location;
 
 import java.net.URI;
 import java.util.Objects;

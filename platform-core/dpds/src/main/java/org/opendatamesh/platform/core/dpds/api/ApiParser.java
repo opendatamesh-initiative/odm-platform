@@ -7,6 +7,7 @@ import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.exceptions.FetchException;
 import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
 import org.opendatamesh.platform.core.dpds.model.definitions.ApiDefinitionReferenceDPDS;
+import org.opendatamesh.platform.core.dpds.parser.location.UriFetcher;
 import org.opendatamesh.platform.core.dpds.model.definitions.ApiDefinitionEndpointDPDS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,12 +16,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public abstract class ApiParser {
     protected URI baseUri;
+    protected UriFetcher fetcher;
 
     private static final Logger logger = LoggerFactory.getLogger(ApiParser.class);
 
     
     public ApiParser(URI baseUri) {
         this.baseUri = baseUri;
+        this.fetcher = new UriFetcher();
+    }
+
+    public ApiParser(URI baseUri, UriFetcher fetcher) {
+        this.baseUri = baseUri;
+        this.fetcher = fetcher;
     }
 
     public ApiDefinitionReferenceDPDS parse(String rawContent, String mediaType) throws ParseException, FetchException {

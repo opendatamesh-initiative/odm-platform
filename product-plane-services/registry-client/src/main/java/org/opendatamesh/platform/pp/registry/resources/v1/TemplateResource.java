@@ -19,8 +19,8 @@ public class TemplateResource {
     @JsonProperty("mediaType")
     private String mediaType;
 
-    @JsonProperty("$href")
-    private String href;
+    @JsonProperty("$ref")
+    private String ref;
 
     public String toRawContentString() throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();

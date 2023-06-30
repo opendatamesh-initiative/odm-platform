@@ -162,8 +162,11 @@ public class DataProductVersionService {
             
             relationship.setOperationId(entry.getKey().getName());
             relationship.setOutputMediaType(entry.getKey().getOutputMediaType());
-
-            schemaService.createApiToSchemaRelationship(relationship); 
+            if(schemaService.searchRelationship(relationship.getId()) == null) {
+                schemaService.createApiToSchemaRelationship(relationship); 
+            } else {
+                schemaService.updateRelationship(relationship);
+            }
         }
     }
 
@@ -193,25 +196,20 @@ public class DataProductVersionService {
     private Schema saveApiSchema(ApiDefinitionEndpoint endpoint) {
         Schema schema = null;
 
-        if (StringUtils.hasText(endpoint.getSchema().getName())
-                && StringUtils.hasText(endpoint.getSchema().getVersion())) {
-           
-            schema = schemaService.searchSchema(endpoint.getSchema().getName(), endpoint.getSchema().getVersion());
-        }
+        Schema newSchema = new Schema();
+        newSchema.setName(endpoint.getSchema().getName());
+        newSchema.setVersion(endpoint.getSchema().getVersion());
+        newSchema.setMediaType(endpoint.getSchema().getMediaType());
+        newSchema.setContent(endpoint.getSchema().getContent());
+        
+        schema = schemaService.searchSchema(newSchema);
         if (schema == null) {
-            schema = new Schema();
-            
-            schema.setName(endpoint.getSchema().getName());
-            schema.setVersion(endpoint.getSchema().getVersion());
-            schema.setMediaType(endpoint.getSchema().getMediaType());
-            schema.setContent(endpoint.getSchema().getContent());
-            
-            schema = schemaService.createSchema(schema);
+            schema = schemaService.createSchema(newSchema);
         }
 
         // rewrite schema ref withing api def
-
-        return schema;
+    
+        return schema;    
     }
 
     private Definition saveApiDefinition(Port port) throws JsonMappingException, JsonProcessingException {
@@ -303,7 +301,7 @@ public class DataProductVersionService {
                 component.getProvisionInfo().getTemplate() == null || (
                         component.getProvisionInfo().getTemplate().getDescription() == null
                                 && component.getProvisionInfo().getTemplate().getMediaType() == null
-                                && component.getProvisionInfo().getTemplate().getHref() == null
+                                && component.getProvisionInfo().getTemplate().getRef() == null
                 )
         ) {
             ObjectNode componentObject = (ObjectNode) objectMapper.readTree(component.getRawContent());
@@ -313,7 +311,7 @@ public class DataProductVersionService {
             return null;
         }
 
-        ExternalResource template = component.getProvisionInfo().getTemplate();
+        ReferenceObject template = component.getProvisionInfo().getTemplate();
         Template templateEntity = saveTemplate(template, component.getFullyQualifiedName());
 
         // Once we have the api id we replace the definition content with a reference url
@@ -337,7 +335,7 @@ public class DataProductVersionService {
                 component.getBuildInfo().getTemplate() == null || (
                         component.getBuildInfo().getTemplate().getDescription() == null
                                 && component.getBuildInfo().getTemplate().getMediaType() == null
-                                && component.getBuildInfo().getTemplate().getHref() == null
+                                && component.getBuildInfo().getTemplate().getRef() == null
                 )
         ) {
             ObjectNode componentObject = (ObjectNode) objectMapper.readTree(component.getRawContent());
@@ -347,7 +345,7 @@ public class DataProductVersionService {
             return null;
         }
 
-        ExternalResource template = component.getBuildInfo().getTemplate();
+        ReferenceObject template = component.getBuildInfo().getTemplate();
         Template templateEntity = saveTemplate(template, component.getFullyQualifiedName());
 
         // Once we have the api id we replace the definition content with a reference url
@@ -371,7 +369,7 @@ public class DataProductVersionService {
                 component.getDeployInfo().getTemplate() == null || (
                         component.getDeployInfo().getTemplate().getDescription() == null
                         && component.getDeployInfo().getTemplate().getMediaType() == null
-                        && component.getDeployInfo().getTemplate().getHref() == null
+                        && component.getDeployInfo().getTemplate().getRef() == null
                 )
         ) {
             ObjectNode componentObject = (ObjectNode) objectMapper.readTree(component.getRawContent());
@@ -381,7 +379,7 @@ public class DataProductVersionService {
             return null;
         }
 
-        ExternalResource template = component.getDeployInfo().getTemplate();
+        ReferenceObject template = component.getDeployInfo().getTemplate();
         Template templateEntity = saveTemplate(template, component.getFullyQualifiedName());
 
         // Once we have the api id we replace the definition content with a reference url
@@ -397,21 +395,21 @@ public class DataProductVersionService {
 
     }
 
-    private Template saveTemplate(ExternalResource template, String componentName) {
+    private Template saveTemplate(ReferenceObject template, String componentName) {
 
         Template templateEntity = null;
 
         try {
             if(StringUtils.hasText(template.getMediaType())
-                    && StringUtils.hasText(template.getHref())) {
-                templateEntity = templateService.searchTemplate(template.getMediaType(), template.getHref());
+                    && StringUtils.hasText(template.getRef())) {
+                templateEntity = templateService.searchTemplate(template.getMediaType(), template.getRef());
             }
             if(templateEntity == null) {
                 templateEntity = templateService.createTemplate(
                         new Template(
                                 template.getDescription(),
                                 template.getMediaType(),
-                                template.getHref()
+                                template.getRef()
                         )
                 );
             }

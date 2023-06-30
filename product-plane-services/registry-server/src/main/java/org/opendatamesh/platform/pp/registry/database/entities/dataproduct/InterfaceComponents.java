@@ -18,7 +18,6 @@ public class InterfaceComponents {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SUBSELECT)
-    //@JoinColumn(name = "DATA_PRODUCT_ID")
     @JoinColumns( {
             @JoinColumn(name = "DATA_PRODUCT_ID"),
             @JoinColumn(name = "VERSION")
@@ -28,7 +27,6 @@ public class InterfaceComponents {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SUBSELECT)
-    //@JoinColumn(name = "DATA_PRODUCT_ID")
     @JoinColumns( {
             @JoinColumn(name = "DATA_PRODUCT_ID"),
             @JoinColumn(name = "VERSION")

@@ -3,7 +3,7 @@ package org.opendatamesh.platform.pp.registry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Definition;
 import org.opendatamesh.platform.pp.registry.resources.v1.DataProductResource;
-import org.opendatamesh.platform.pp.registry.resources.v1.DataProductSourceResource;
+import org.opendatamesh.platform.pp.registry.resources.v1.DataProductDescriptorLocationResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.DefinitionResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.SchemaResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.TemplateResource;
@@ -278,11 +278,9 @@ public class OpenDataMeshITRestTemplate extends TestRestTemplate {
     }
 
     public ResponseEntity<String> uploadDataProductVersion(
-            String uri) throws IOException {
+            DataProductDescriptorLocationResource descriptorLocation) throws IOException {
               
-        DataProductSourceResource dataProductSourceRes = new DataProductSourceResource();
-        dataProductSourceRes.setUri(uri);
-        HttpEntity<String> entity = getObjectAsHttpEntity(dataProductSourceRes);
+        HttpEntity<String> entity = getObjectAsHttpEntity(descriptorLocation);
 
         ResponseEntity<String> postUploadResponse = postForEntity(
                 apiUrl(RoutesV1.DATA_PRODUCTS_UPLOADS),

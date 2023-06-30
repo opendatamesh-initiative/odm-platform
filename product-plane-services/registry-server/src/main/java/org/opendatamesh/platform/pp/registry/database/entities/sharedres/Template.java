@@ -20,16 +20,16 @@ public class Template {
     @Column(name = "MEDIA_TYPE")
     private String mediaType;
 
-    @Column(name = "HREF")
-    private String href;
+    @Column(name = "REF")
+    private String ref;
 
     public Template() {
     }
 
-    public Template(String description, String mediaType, String href) {
+    public Template(String description, String mediaType, String ref) {
         this.description = description;
         this.mediaType = mediaType;
-        this.href = href;
+        this.ref = ref;
     }
 
 }

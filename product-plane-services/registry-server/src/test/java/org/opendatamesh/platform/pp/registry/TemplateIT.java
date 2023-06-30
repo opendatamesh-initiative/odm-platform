@@ -43,7 +43,7 @@ public class TemplateIT extends OpenDataMeshIT {
         assertThat(templateRes.getId()).isEqualTo(1);
         assertThat(templateRes.getDescription()).isEqualTo("Github Template");
         assertThat(templateRes.getMediaType()).isEqualTo("text");
-        assertThat(templateRes.getHref()).isEqualTo("https://github.com/Giandom/tf-data-product-example.git");
+        assertThat(templateRes.getRef()).isEqualTo("https://github.com/Giandom/tf-data-product-example.git");
 
         // TEST 2: create a Template without version property and verify the response
         // ERROR SCENARIO
@@ -117,7 +117,7 @@ public class TemplateIT extends OpenDataMeshIT {
         assertThat(templateRes.getId()).isEqualTo(1);
         assertThat(templateRes.getDescription()).isEqualTo("Github Template");
         assertThat(templateRes.getMediaType()).isEqualTo("text");
-        assertThat(templateRes.getHref()).isEqualTo("https://github.com/Giandom/tf-data-product-example.git");
+        assertThat(templateRes.getRef()).isEqualTo("https://github.com/Giandom/tf-data-product-example.git");
 
     }
 
@@ -194,7 +194,7 @@ public class TemplateIT extends OpenDataMeshIT {
                 OpenDataMeshAPIStandardError.SC422_13_TEMPLATE_ALREADY_EXISTS);
 
         // TEST 2: try to register a template without setting the href
-        entity.getBody().setHref(null);
+        entity.getBody().setRef(null);
         errorResponse = rest.postForEntity(
                 apiUrl(RoutesV1.TEMPLATES),
                 entity,

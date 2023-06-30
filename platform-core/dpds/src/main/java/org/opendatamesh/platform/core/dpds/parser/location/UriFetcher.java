@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.core.dpds;
+package org.opendatamesh.platform.core.dpds.parser.location;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -34,20 +34,20 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.opendatamesh.platform.core.dpds.exceptions.FetchException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class UriFetcher implements DataProductVersionSource.Fetcher {
+import lombok.Data;
 
-    private URI baseUri;
+@Data
+public class UriFetcher implements DescriptorLocation.Fetcher {
 
     /**
-     * Encoding of the resource to fetch.
+     * Encoding of the resources to fetch.
      */
     private String encoding;
 
-    List<AuthorizationValue> authorizationValues;
+    private List<AuthorizationValue> authorizationValues;
 
     private static final String ACCEPT_HEADER_VALUE = "application/json, application/yaml, */*";
     private static final String USER_AGENT_HEADER_VALUE = "Apache-HttpClient/ODMP";
@@ -61,18 +61,17 @@ public class UriFetcher implements DataProductVersionSource.Fetcher {
      * 
      * @param baseUri can be null, in that case only absolute uri(s) can be fatched
      */
-    public UriFetcher(URI baseUri) {
-        this(baseUri, StandardCharsets.UTF_8.displayName());
+    public UriFetcher() {
+        this(null);
     }
 
-    public UriFetcher(URI baseUri, String encoding) {
-        this(baseUri, null, null);
+    public UriFetcher(String encoding) {
+        this(null, null);
     }
 
-    public UriFetcher(URI baseUri, String encoding, List<AuthorizationValue> authorizationValues) {
+    public UriFetcher(String encoding, List<AuthorizationValue> authorizationValues) {
 
-        this.baseUri = Objects.requireNonNull(baseUri, "baseUri cannot be null");
-
+     
         if (encoding == null || encoding.trim().isEmpty()) {
             encoding = StandardCharsets.UTF_8.displayName();
         } else if (Charset.isSupported(encoding)) {
@@ -89,24 +88,39 @@ public class UriFetcher implements DataProductVersionSource.Fetcher {
 
     }
 
+    public String fetch(URI baseUri, URI resourceUri) throws FetchException {
+        Objects.requireNonNull(baseUri);
+        Objects.requireNonNull(resourceUri);
+        if(resourceUri.isAbsolute()) {
+            logger.warn("The uri [" + resourceUri + "] to be fetched is alredy absolute. No need to resolve it against base uri [" + baseUri + "]");
+        } else {
+            if(!baseUri.isAbsolute()) {
+                throw new FetchException("Base uri in not absolute [" + baseUri + "]. To fetch a relative uri an absolute base uri must be provided", resourceUri); 
+            }
+        }
+        URI absoluteURI = baseUri.resolve(resourceUri);
+        return fetch(absoluteURI.normalize());
+    }
+
     @Override
     public String fetch(URI resourceUri) throws FetchException {
+
         String content = "";
 
-        if (!baseUri.isAbsolute() && baseUri == null) {
-            throw new RuntimeException("Impossible to fetch relative uri [" + resourceUri + "]");
+        Objects.requireNonNull(resourceUri);
+        if(!resourceUri.isAbsolute()) {
+            throw new FetchException("Impossible to fetch relative uri", resourceUri); 
         }
 
-        URI absoluteURI = baseUri.resolve(resourceUri);
-
-        if (absoluteURI.getScheme().toLowerCase().startsWith("http")) {
-            content = fetchFromRemote(absoluteURI);
-        } else if (absoluteURI.getScheme().toLowerCase().startsWith("jar:")) {
-            content = fetchFromJar(absoluteURI);
-        } else if (absoluteURI.getScheme().toLowerCase().startsWith("file:")) {
-            content = fetchFromFile(absoluteURI);
+        String schema = resourceUri.getScheme().toLowerCase();
+        if (schema.startsWith("http")) {
+            content = fetchFromRemote(resourceUri);
+        } else if (schema.toLowerCase().startsWith("jar")) {
+            content = fetchFromJar(resourceUri);
+        } else if (schema.toLowerCase().startsWith("file")) {
+            content = fetchFromFile(resourceUri);
         } else {
-            throw new FetchException("Impossible to fetch from [" + absoluteURI.getScheme() + "]", resourceUri);
+            throw new FetchException("Impossible to fetch from [" + schema + "]", resourceUri);
         }
 
         return content;

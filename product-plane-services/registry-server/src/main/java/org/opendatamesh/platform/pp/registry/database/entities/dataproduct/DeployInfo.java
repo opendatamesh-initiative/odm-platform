@@ -22,16 +22,6 @@ public class DeployInfo {
 
     @OneToOne(mappedBy = "deployInfo")
     ApplicationComponent appComponent;
-    /* 
-    @Id
-    @Column(name = "APP_COMPONENT_ID")
-    private String id;
-    
-    @OneToOne
-    @MapsId
-    @JoinColumn(name = "APP_COMPONENT_ID")
-    private ApplicationComponent appComponent;
-    */
    
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "SERVICE_ID", referencedColumnName = "ID")
@@ -39,7 +29,7 @@ public class DeployInfo {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "TEMPLATE_ID", referencedColumnName = "ID")
-    private ExternalResource template;
+    private ReferenceObject template;
 
 
     @Column(name = "CONFIGURATIONS", length=5000)
@@ -51,24 +41,8 @@ public class DeployInfo {
 
     public DeployInfo() {
         service= new ExternalResource();
-        template = new ExternalResource();
+        template = new ReferenceObject();
         configurations = new HashMap<>();
-    }
-
-    public DeployInfo(ExternalResource service, ExternalResource template, Map<String, Object> configurations) {
-        this.service = service;
-        this.template = template;
-        this.configurations = configurations;
-    }
-
-    @Override
-    public String toString() {
-        return "DeployInfo{" +
-                "id=" + id +
-                ", service=" + service +
-                ", template=" + template +
-                ", configurations=" + configurations +
-                '}';
     }
 
     @PrePersist

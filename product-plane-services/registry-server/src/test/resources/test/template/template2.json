@@ -1,5 +1,5 @@
 {
   "description": "Github Template - 2",
   "mediaType": "nottext",
-  "$href": "https://github.com/Giandom/tf-data-product-example-2.git"
+  "$ref": "https://github.com/Giandom/tf-data-product-example-2.git"
 }

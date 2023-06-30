@@ -1,8 +1,6 @@
 package org.opendatamesh.platform.pp.registry.services;
 
-import org.opendatamesh.platform.pp.registry.database.entities.sharedres.ApiToSchemaRelationship;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.ComponentTemplate;
-import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Definition;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Template;
 import org.opendatamesh.platform.pp.registry.database.repositories.ComponentTemplateRepository;
 import org.opendatamesh.platform.pp.registry.database.repositories.TemplateRepository;
@@ -43,16 +41,16 @@ public class TemplateService {
                     "Template object cannot be null");
         }
 
-        if (!StringUtils.hasText(template.getHref())) {
+        if (!StringUtils.hasText(template.getRef())) {
             throw new UnprocessableEntityException(
                     OpenDataMeshAPIStandardError.SC422_14_TEMPLATE_DOC_SYNTAX_IS_INVALID,
                     "Template href property cannot be empty");
         }
 
-        if (templateExists(template.getMediaType(), template.getHref())) {
+        if (templateExists(template.getMediaType(), template.getRef())) {
             throw new UnprocessableEntityException(
                     OpenDataMeshAPIStandardError.SC422_13_TEMPLATE_ALREADY_EXISTS,
-                    "Template [" + template.getMediaType() + "(v. " + template.getHref() + ")] already exists");
+                    "Template [" + template.getMediaType() + "] (v. " + template.getRef() + ")] already exists");
         }
 
         try {
@@ -149,7 +147,7 @@ public class TemplateService {
                     OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
                     "mediaType and href objects cannot be null");
         }
-        return templateRepository.existsByMediaTypeAndHref(mediaType, href);
+        return templateRepository.existsByMediaTypeAndRef(mediaType, href);
     }
 
     private boolean templateExists(Long templateId) {
@@ -229,11 +227,11 @@ public class TemplateService {
 
     public List<Template> searchTemplates(
             String mediaType,
-            String href
+            String ref
     ) {
         List<Template> templateSearchResults = null;
         try {
-            templateSearchResults = findTemplates(mediaType, href);
+            templateSearchResults = findTemplates(mediaType, ref);
         } catch (Throwable t) {
             throw new InternalServerException(
                     OpenDataMeshAPIStandardError.SC500_01_DATABASE_ERROR,
@@ -245,10 +243,10 @@ public class TemplateService {
 
     private List<Template> findTemplates(
             String mediaType,
-            String href
+            String ref
     ) {
         return templateRepository.findAll(
-                TemplateRepository.Specs.hasMatch(mediaType, href)
+                TemplateRepository.Specs.hasMatch(mediaType, ref)
         );
     }
 

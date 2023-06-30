@@ -3,7 +3,6 @@ package org.opendatamesh.platform.core.dpds.processors;
 import java.net.URI;
 import java.util.List;
 
-import org.opendatamesh.platform.core.dpds.DataProductVersionSource;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.api.asyncapi.AsyncApiParser;
 import org.opendatamesh.platform.core.dpds.api.dsapi.DataStoreApiParser;
@@ -15,6 +14,10 @@ import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.PortDPDS;
 import org.opendatamesh.platform.core.dpds.model.definitions.ApiDefinitionReferenceDPDS;
 import org.opendatamesh.platform.core.dpds.model.definitions.DefinitionReferenceDPDS;
+import org.opendatamesh.platform.core.dpds.parser.ParseContext;
+import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
+import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
+import org.opendatamesh.platform.core.dpds.parser.location.UriUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -23,16 +26,11 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class ApiDefinitionsProcessor {
 
-    DataProductVersionDPDS dataProductVersion;
-    DataProductVersionSource source;
-    private String targetURL;
+    ParseContext context;
     ObjectMapper mapper;
 
-    public ApiDefinitionsProcessor(DataProductVersionDPDS dataProductVersionRes, DataProductVersionSource source,
-            String targetURL) {
-        this.dataProductVersion = dataProductVersionRes;
-        this.source = source;
-        this.targetURL = targetURL;
+    public ApiDefinitionsProcessor(ParseContext context) {
+        this.context = context;
         this.mapper = ObjectMapperFactory.JSON_MAPPER;
 
     }
@@ -40,7 +38,7 @@ public class ApiDefinitionsProcessor {
     // Note: to be called after component resolution
     public void process() throws UnresolvableReferenceException, ParseException {
 
-        DataProductVersionDPDS parsedContent = dataProductVersion;
+        DataProductVersionDPDS parsedContent = context.getResult().getDescriptorDocument();
 
         if (parsedContent.getInterfaceComponents() == null) {
             return;
@@ -75,15 +73,15 @@ public class ApiDefinitionsProcessor {
                     String ref = apiDefinitionObject.get("$ref").asText();
                     try {
                         URI uri = new URI(ref).normalize();
-                        URI baseUri = source.getBaseUri(new URI(port.getOriginalRef()));
-                        apiDefinitionContent = source.fetchResource(baseUri, uri);
+                        URI baseUri = UriUtils.getBaseUri(new URI(port.getOriginalRef()));
+                        apiDefinitionContent = context.getLocation().fetchResource(baseUri, uri);
                     } catch (Exception e) {
                         throw new UnresolvableReferenceException(
                                 "Impossible to resolve external reference [" + ref + "]",
                                 e);
                     }
 
-                    apiDefinitionRef = targetURL + "/definitions/{apiId}";
+                    apiDefinitionRef = context.getOptions().getServerUrl() + "/definitions/{apiId}";
                     apiDefinitionObject.put("$ref", apiDefinitionRef);
                     port.getPromises().getApi().getDefinition().setOriginalRef("ref");
                 } else { // inline
@@ -93,7 +91,7 @@ public class ApiDefinitionsProcessor {
                     } catch (JsonProcessingException e) {
                         throw new ParseException("Impossible serialize api definition", e);
                     }
-                    apiDefinitionRef = targetURL + "/definitions/{apiId}";
+                    apiDefinitionRef = context.getOptions().getServerUrl() + "/definitions/{apiId}";
                     ObjectNode apiObject = (ObjectNode) portObject.at("/promises/api");
                     apiObject.remove("definition");
                     apiDefinitionObject = apiObject.putObject("definition");
@@ -127,13 +125,13 @@ public class ApiDefinitionsProcessor {
         ApiDefinitionReferenceDPDS api = null;
         if ("datastoreApi".equalsIgnoreCase(specification)) {
             DataStoreApiParser dataStoreApiParser = new DataStoreApiParser(
-                    source.getRootDocBaseURI());
+                    context.getLocation().getRootDocumentBaseUri());
             api = dataStoreApiParser.parse(apiRawContent, mediaType);
         } else if ("asyncApi".equalsIgnoreCase(specification)) {
-            AsyncApiParser asyncApiParser = new AsyncApiParser(source.getRootDocBaseURI());
+            AsyncApiParser asyncApiParser = new AsyncApiParser(context.getLocation().getRootDocumentBaseUri());
             api = asyncApiParser.parse(apiRawContent, mediaType);
         } else if ("openApi".equalsIgnoreCase(specification)) {
-            OpenApiParser openApiParser = new OpenApiParser(source.getRootDocBaseURI());
+            OpenApiParser openApiParser = new OpenApiParser(context.getLocation().getRootDocumentBaseUri());
             api = openApiParser.parse(apiRawContent, mediaType);
         } else {
             System.out.println("\n\n====\n" + port.getFullyQualifiedName() + "\n====\n\n"
@@ -151,9 +149,8 @@ public class ApiDefinitionsProcessor {
         }
     }
 
-    public static void process(DataProductVersionDPDS dataProductVersionRes, DataProductVersionSource source,
-            String targetURL) throws UnresolvableReferenceException, ParseException {
-        ApiDefinitionsProcessor processor = new ApiDefinitionsProcessor(dataProductVersionRes, source, targetURL);
+    public static void process(ParseContext context) throws UnresolvableReferenceException, ParseException {
+        ApiDefinitionsProcessor processor = new ApiDefinitionsProcessor(context);
         processor.process();
     }
 }

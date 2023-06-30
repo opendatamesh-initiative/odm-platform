@@ -6,11 +6,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.opendatamesh.platform.core.dpds.UriFetcher;
 import org.opendatamesh.platform.core.dpds.api.ApiParser;
 import org.opendatamesh.platform.core.dpds.exceptions.FetchException;
 import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
 import org.opendatamesh.platform.core.dpds.model.definitions.ApiDefinitionEndpointDPDS;
+import org.opendatamesh.platform.core.dpds.parser.location.UriFetcher;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class AsyncApiParser extends ApiParser {
     
     public AsyncApiParser(URI baseUri) {
-        super(baseUri);
+        super(baseUri, new UriFetcher());
     }
 
     @Override
@@ -60,8 +60,7 @@ public class AsyncApiParser extends ApiParser {
                     }
                     
                     if(payload.get("$ref") != null) {
-                        UriFetcher fetcher = new UriFetcher(baseUri);
-                        operationSchema = fetcher.fetch(new URI(payload.get("$ref").asText()));
+                        operationSchema = fetcher.fetch(baseUri, new URI(payload.get("$ref").asText()));
                     } else {
                         operationSchema = payload.toPrettyString();
                     }

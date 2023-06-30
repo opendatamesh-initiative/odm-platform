@@ -3,31 +3,30 @@ package org.opendatamesh.platform.core.dpds.processors;
 import java.net.URI;
 import java.util.List;
 
-import org.opendatamesh.platform.core.dpds.DataProductVersionSource;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
 import org.opendatamesh.platform.core.dpds.exceptions.UnresolvableReferenceException;
 import org.opendatamesh.platform.core.dpds.model.ComponentDPDS;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.EntityTypeDPDS;
+import org.opendatamesh.platform.core.dpds.parser.ParseContext;
+import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ExternalReferencesProcessor implements PropertiesProcessor{
 
-    DataProductVersionDPDS dataProductVersion;
-    DataProductVersionSource source;
+    ParseContext context;
     ObjectMapper mapper;
 
-    public ExternalReferencesProcessor(DataProductVersionDPDS dataProductVersionRes, DataProductVersionSource source) {
-        this.dataProductVersion = dataProductVersionRes;
-        this.source = source;
+    public ExternalReferencesProcessor(ParseContext context) {
+        this.context = context;
         this.mapper = ObjectMapperFactory.JSON_MAPPER;
     }
 
     @Override
     public void process() throws UnresolvableReferenceException, ParseException {
-        DataProductVersionDPDS parsedContent =  dataProductVersion;
+        DataProductVersionDPDS parsedContent =  context.getResult().getDescriptorDocument();
 
         if (parsedContent.getInterfaceComponents() != null) {
             resolveExternalReferences(parsedContent.getInterfaceComponents().getInputPorts(), 
@@ -72,10 +71,10 @@ public class ExternalReferencesProcessor implements PropertiesProcessor{
 
         try {
             URI uri = new URI(ref).normalize();
-            String content = source.fetchResource(source.getRootDocBaseURI(), uri);
+            String content = context.getLocation().fetchResource(context.getLocation().getRootDocumentBaseUri(), uri);
             resolvedComponent = (E) mapper.readValue(content, component.getClass());
             resolvedComponent.setRawContent(content);
-            resolvedComponent.setOriginalRef(source.getRootDocBaseURI().resolve(uri).toString());
+            resolvedComponent.setOriginalRef(context.getLocation().getRootDocumentBaseUri().resolve(uri).toString());
         } catch (Exception e) {
             throw new UnresolvableReferenceException(
                     "Impossible to resolve external reference [" + ref + "]",
@@ -84,8 +83,8 @@ public class ExternalReferencesProcessor implements PropertiesProcessor{
         return resolvedComponent;
     }
 
-    public static void process(DataProductVersionDPDS dataProductVersionRes, DataProductVersionSource source) throws UnresolvableReferenceException, ParseException {
-        ExternalReferencesProcessor resolver = new ExternalReferencesProcessor(dataProductVersionRes, source);
+    public static void process(ParseContext context) throws UnresolvableReferenceException, ParseException {
+        ExternalReferencesProcessor resolver = new ExternalReferencesProcessor(context);
         resolver.process();
     }
 }

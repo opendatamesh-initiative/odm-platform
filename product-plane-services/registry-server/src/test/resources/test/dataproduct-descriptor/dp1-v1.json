@@ -333,7 +333,6 @@
             "mediaType": "application/json",
             "$href": "http://192.168.1.9:8082/api/v1/planes/utility/integration-services/builds"
           },
-          "template": {},
           "configurations": {
             "description": "application/json",
             "$ref": "https://raw.githubusercontent.com/Giandom/tf-data-product-example/main/azure-pipelines-CI.config"
@@ -345,7 +344,6 @@
             "mediaType": "application/json",
             "$href": "http://192.168.1.9:8083/api/v1/planes/utility/integration-services/deployments"
           },
-          "template": {},
           "configurations": {
             "description": "application/json",
             "$ref": "https://raw.githubusercontent.com/Giandom/tf-data-product-example/main/azure-pipelines-CD.config"
@@ -389,12 +387,12 @@
           "template": {
             "description": "Github Template",
             "mediaType": "text",
-            "$href": "https://github.com/Giandom/tf-data-product-example.git"
+            "$ref": "https://github.com/Giandom/tf-data-product-example.git"
           },
           "configurations": {
             "description": "Github Conf",
             "mediaType": "text",
-            "$href": "https://raw.githubusercontent.com/Giandom/tf-data-product-example/main/example.conf"
+            "$ref": "https://raw.githubusercontent.com/Giandom/tf-data-product-example/main/example.conf"
           }
         },        
         "dependsOn": [],

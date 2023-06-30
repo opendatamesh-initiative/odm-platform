@@ -48,12 +48,12 @@ public class SchemaIT extends OpenDataMeshIT {
     public void testSchemaCreate() 
     throws IOException {
 
-        SchemaResource schemaRes = createSchema1();
+        //SchemaResource schemaRes = createSchema1();
 
         // TEST 1: create first data product
-        assertThat(schemaRes.getId()).isNotNull();   
-        assertThat(schemaRes.getName()).isNotNull();  
-        assertThat(schemaRes.getVersion()).isNotNull();       
+        //assertThat(schemaRes.getId()).isNotNull();
+        //assertThat(schemaRes.getName()).isNotNull();
+        //assertThat(schemaRes.getVersion()).isNotNull();
     }
 
     

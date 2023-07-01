@@ -13,7 +13,7 @@ import lombok.Data;
 
 @Data
 @Entity(name = "InfrastructuralComponent")
-@Table(name = "DPDS_INFRA_COMPONENTS", schema="PUBLIC")
+@Table(name = "DPV_INFRA_COMPONENTS", schema="PUBLIC")
 public class InfrastructuralComponent extends Component implements Cloneable {
     
     @Column(name = "PLATFORM")
@@ -29,8 +29,8 @@ public class InfrastructuralComponent extends Component implements Cloneable {
    
     @ElementCollection(fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SUBSELECT)
-    @CollectionTable(name = "DPDS_INFRA_COMPONENT_DEPENDENCIES", schema="PUBLIC", joinColumns = @JoinColumn(name = "ID"))
-    @Column(name = "DEPENDENCE_ID") 
+    @CollectionTable(name = "DPV_INFRA_COMPONENT_DEPENDENCIES", schema="PUBLIC", joinColumns = @JoinColumn(name = "COMPONENT_ID"))
+    @Column(name = "DEPENDS_ON_COMPONENT_ID") 
     private List<String> dependsOn = new ArrayList<>();
 
     @ElementCollection(fetch = FetchType.EAGER)

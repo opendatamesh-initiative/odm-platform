@@ -13,7 +13,7 @@ import java.util.*;
 
 @Data
 @Entity(name = "ApplicationComponent")
-@Table(name = "DPDS_APP_COMPONENTS", schema="PUBLIC")
+@Table(name = "DPV_APP_COMPONENTS", schema="PUBLIC")
 public class ApplicationComponent extends Component implements Cloneable {
 
     @Column(name = "PLATFORM")
@@ -43,8 +43,8 @@ public class ApplicationComponent extends Component implements Cloneable {
     private List<String> providesTo = new ArrayList<String>();
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "DPDS_APP_COMPONENT_DEPENDENCIES", schema="PUBLIC", joinColumns = @JoinColumn(name = "ID"))
-    @Column(name = "DEPENDENCE_ID") 
+    @CollectionTable(name = "DPV_APP_COMPONENT_DEPENDENCIES", schema="PUBLIC", joinColumns = @JoinColumn(name = "COMPONENT_ID"))
+    @Column(name = "DEPENDS_ON_COMPONENT_ID") 
     @Fetch(value = FetchMode.SUBSELECT)
     private List<String> dependsOn = new ArrayList<String>();
 
@@ -58,14 +58,8 @@ public class ApplicationComponent extends Component implements Cloneable {
     @JoinColumn(name = "EXTERNAL_DOC_ID", referencedColumnName = "ID")
     private ExternalResource externalDocs;
 
+    
     private static final Logger logger = LoggerFactory.getLogger(ApplicationComponent.class);
-
-
-    public ApplicationComponent() {}
-    public ApplicationComponent(BuildInfo buildInfo, DeployInfo deploymentInfo) {
-        this.buildInfo = buildInfo;
-        this.deployInfo = deploymentInfo;
-    }
 
    
     @PrePersist

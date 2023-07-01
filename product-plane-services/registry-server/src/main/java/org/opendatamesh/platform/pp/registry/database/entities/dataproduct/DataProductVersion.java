@@ -14,12 +14,9 @@ import java.util.List;
 
 @Data
 @Entity(name = "DataProductVersion")
-@Table(name = "DATA_PRODUCT_VERSIONS", schema="PUBLIC")
+@Table(name = "DP_VERSIONS", schema="PUBLIC")
 @IdClass(DataProductVersionId.class)
 public class DataProductVersion implements Cloneable, Serializable {
-
-    @Column(name = "DPDS_VERSION")
-    private String dataProductDescriptor;
 
     @Id
     @Column(name = "DATA_PRODUCT_ID")
@@ -49,14 +46,18 @@ public class DataProductVersion implements Cloneable, Serializable {
     @Fetch(value = FetchMode.SUBSELECT)
     protected List<String> tags = new ArrayList<String>();
 
+
+    @Column(name = "DPDS_VERSION")
+    private String dataProductDescriptor;
+
+    @Column(name="CONTENT", columnDefinition = "LONGTEXT")
+    private String rawContent;
+
     @Column(name = "CREATED_AT")
     private Date createdAt;
 
     @Column(name = "UPDATED_AT")
     private Date updatedAt;
-
-    @Column(name="CONTENT", columnDefinition = "LONGTEXT")
-    private String rawContent;
 
     /**
      * 

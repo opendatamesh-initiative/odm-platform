@@ -18,19 +18,17 @@ public class InternalComponents {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SUBSELECT)
-    //@JoinColumn(name = "DATA_PRODUCT_ID")
     @JoinColumns( {
             @JoinColumn(name = "DATA_PRODUCT_ID"),
-            @JoinColumn(name = "VERSION")
+            @JoinColumn(name = "DATA_PRODUCT_VERSION")
     })
     private List<ApplicationComponent> applicationComponents = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SUBSELECT)
-    //@JoinColumn(name = "DATA_PRODUCT_ID")
     @JoinColumns( {
             @JoinColumn(name = "DATA_PRODUCT_ID"),
-            @JoinColumn(name = "VERSION")
+            @JoinColumn(name = "DATA_PRODUCT_VERSION")
     })
     private List<InfrastructuralComponent> infrastructuralComponents = new ArrayList<>();
 

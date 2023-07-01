@@ -21,32 +21,31 @@ public class Info implements Serializable, Cloneable{
     @Transient
     private String versionNumber;
    
-    @Column(name = "FQN")
+    @Column(name = "DP_FQN")
     private String fullyQualifiedName;
     
-    @Column(name = "ENTITY_TYPE")
+    @Column(name = "DP_ENTITY_TYPE")
     private String entityType;
    
-    @Column(name = "NAME")
+    @Column(name = "DP_NAME")
     private String name;
    
-    @Column(name = "DISPLAY_NAME")
+    @Column(name = "DP_DISPLAY_NAME")
     private String displayName;
     
+    @Column(name = "DP_DOMAIN")
+    private String domain;
+
     @Column(name = "DESCRIPTION")
     private String description;
     
-    @Column(name = "DOMAIN")
-    private String domain;
-
     @ManyToOne(cascade = CascadeType.ALL, optional = false)
     @JoinColumn(name = "OWNER_ID", referencedColumnName = "ID")
     private Owner owner;
     
-    
     @Embedded
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "INFO_CONTACT_POINTS", joinColumns = {@JoinColumn(name = "DATA_PRODUCT_ID"), @JoinColumn(name = "VERSION_NUMBER")})
+    @CollectionTable(name = "DPV_INFO_CONTACT_POINTS", joinColumns = {@JoinColumn(name = "DATA_PRODUCT_ID"), @JoinColumn(name = "VERSION_NUMBER")})
     //@Column(name = "CONTACT_POINT_ID") 
     @Fetch(value = FetchMode.SUBSELECT)
     private List<ContactPoint> contactPoints = new ArrayList<ContactPoint>();   

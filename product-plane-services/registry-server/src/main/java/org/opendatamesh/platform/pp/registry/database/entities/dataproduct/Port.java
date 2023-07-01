@@ -12,7 +12,7 @@ import java.util.List;
 
 @Data
 @Entity(name = "Port")
-@Table(name = "DPDS_PORTS", schema="PUBLIC")
+@Table(name = "DPV_PORTS", schema="PUBLIC")
 public class Port extends Component implements Cloneable{
 
     @OneToOne(cascade = CascadeType.ALL)

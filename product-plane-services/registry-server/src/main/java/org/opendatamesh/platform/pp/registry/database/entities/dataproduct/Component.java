@@ -38,15 +38,16 @@ public class Component {
     @Column(name="COMPONENT_GROUP")
     protected String componentGroup;
 
+    @Column(name="CONTENT", columnDefinition = "LONGTEXT")
+    private String rawContent;
+
     @Column(name="CREATED_AT")
     protected Date createdAt;
    
     @Column(name="UPDATED_AT")
     protected Date updatedAt;
 
-    @Column(name="CONTENT", columnDefinition = "LONGTEXT")
-    private String rawContent;
-
+    
     public void setFullyQualifiedName(String fqn) {
         fullyQualifiedName = fqn;
         setId(UUID.nameUUIDFromBytes(fqn.getBytes()).toString());

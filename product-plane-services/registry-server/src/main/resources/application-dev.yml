@@ -56,8 +56,17 @@ spring:
 ##############################
 # Policy Module configuration
 ##############################
+odm:
+  utilityPlane:
+    policyService:
+      active: false
+      address: http://localhost:4242
+    metaService:
+      active: false
+      address: http://localhost:8595
+
+
 policyserviceaddress: http://localhost:4242
 metaserviceaddress: http://localhost:8595 #8084
-
 skippolicyservice: true
 skipmetaservice: true

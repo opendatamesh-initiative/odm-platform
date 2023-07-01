@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 @Entity(name = "Owner")
-@Table(name = "DPDS_INFO_OWNERS", schema="PUBLIC")
+@Table(name = "INFO_OWNERS", schema="PUBLIC")
 public class Owner {
 
     @Id

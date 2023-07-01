@@ -46,16 +46,8 @@ public class Info implements Serializable, Cloneable{
     
     @Embedded
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "DPDS_INFO_CONTACT_POINTS", joinColumns = {@JoinColumn(name = "ID"), @JoinColumn(name = "VERSION")})
-    @Column(name = "CONTACT_POINT_ID") 
+    @CollectionTable(name = "INFO_CONTACT_POINTS", joinColumns = {@JoinColumn(name = "DATA_PRODUCT_ID"), @JoinColumn(name = "VERSION_NUMBER")})
+    //@Column(name = "CONTACT_POINT_ID") 
     @Fetch(value = FetchMode.SUBSELECT)
-    private List<ContactPoint> contactPoints = new ArrayList<ContactPoint>();
-
-
-    public Info() { }
-   
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        return super.clone();
-    }
+    private List<ContactPoint> contactPoints = new ArrayList<ContactPoint>();   
 }

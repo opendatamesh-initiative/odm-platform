@@ -3,6 +3,7 @@ package org.opendatamesh.platform.pp.registry.database.entities.dataproduct;
 import lombok.Data;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.opendatamesh.platform.pp.registry.database.entities.IdentifierStrategy;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -13,9 +14,12 @@ import java.util.List;
 
 @Data
 @Entity(name = "DataProductVersion")
-@Table(name = "DPDS_DATA_PRODUCT_VERSIONS", schema="PUBLIC")
+@Table(name = "DATA_PRODUCT_VERSIONS", schema="PUBLIC")
 @IdClass(DataProductVersionId.class)
 public class DataProductVersion implements Cloneable, Serializable {
+
+    @Column(name = "DPDS_VERSION")
+    private String dataProductDescriptor;
 
     @Id
     @Column(name = "DATA_PRODUCT_ID")
@@ -25,9 +29,7 @@ public class DataProductVersion implements Cloneable, Serializable {
     @Column(name = "VERSION_NUMBER")
     private String versionNumber;
 
-    @Column(name = "DPDS_VERSION")
-    private String dataProductDescriptor;
-
+    
     @Embedded
     private Info info;
 
@@ -61,7 +63,16 @@ public class DataProductVersion implements Cloneable, Serializable {
      * @return the reffered data product
      */
     public DataProduct getDataProduct() {
-        return new DataProduct(this); 
+        DataProduct dataProduct = new DataProduct();
+        if(getInfo().getFullyQualifiedName() == null) {
+            throw new RuntimeException("The fully qualified name of product is not specified in the product version");
+        } else {
+            dataProduct.setFullyQualifiedName(getInfo().getFullyQualifiedName());
+        }
+
+        dataProduct.setId( IdentifierStrategy.DEFUALT.getId(getInfo().getFullyQualifiedName()) );
+        dataProduct.setDomain(this.getInfo().getDomain());
+        return dataProduct;
     }
 
     /**
@@ -91,9 +102,5 @@ public class DataProductVersion implements Cloneable, Serializable {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = new Date();
-    }
-
-    public DataProductVersion clone() throws CloneNotSupportedException {
-        return (DataProductVersion) super.clone();
     }
 }

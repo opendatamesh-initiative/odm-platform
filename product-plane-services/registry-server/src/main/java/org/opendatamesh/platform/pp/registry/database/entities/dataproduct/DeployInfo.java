@@ -13,7 +13,7 @@ import java.util.Map;
 
 @Data
 @Entity(name = "DeployInfo")
-@Table(name = "DPDS_APP_COMPONENT_DEPLOY_INFOS", schema="PUBLIC")
+@Table(name = "DPV_APP_COMPONENT_DEPLOY_INFOS", schema="PUBLIC")
 public class DeployInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

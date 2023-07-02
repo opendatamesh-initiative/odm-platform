@@ -28,7 +28,7 @@ public class Port extends Component implements Cloneable{
     private Contracts contracts;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "DPDS_PORT_TAGS", schema="PUBLIC", joinColumns = @JoinColumn(name = "ID"))
+    @CollectionTable(name = "DPV_PORT_TAGS", schema="PUBLIC", joinColumns = @JoinColumn(name = "ID"))
     @Column(name = "TAG_ID") 
     @Fetch(value = FetchMode.SUBSELECT)
     private List<String> tags = new ArrayList<>();

@@ -10,7 +10,7 @@ import java.util.Map;
 
 @Data
 @Entity(name = "ProvisionInfo")
-@Table(name = "DPDS_INFRA_PROVISION_INFOS", schema="PUBLIC")
+@Table(name = "DPV_INFRA_PROVISION_INFOS", schema="PUBLIC")
 public class ProvisionInfo {
 
     @Id

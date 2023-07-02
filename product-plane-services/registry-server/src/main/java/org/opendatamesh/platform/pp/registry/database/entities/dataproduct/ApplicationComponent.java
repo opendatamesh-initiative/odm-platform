@@ -32,13 +32,13 @@ public class ApplicationComponent extends Component implements Cloneable {
                                        
     @ElementCollection(fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SUBSELECT)
-    @CollectionTable(name = "DPDS_APP_COMPONENT_SOURCES", schema="PUBLIC", joinColumns = @JoinColumn(name = "ID"))
+    @CollectionTable(name = "DPV_APP_COMPONENT_SOURCES", schema="PUBLIC", joinColumns = @JoinColumn(name = "ID"))
     @Column(name = "SOURCE_ID") 
     private List<String> consumesFrom = new ArrayList<String>();
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SUBSELECT)
-    @CollectionTable(name = "DPDS_APP_COMPONENT_SINKS", schema="PUBLIC", joinColumns = @JoinColumn(name = "ID"))
+    @CollectionTable(name = "DPV_APP_COMPONENT_SINKS", schema="PUBLIC", joinColumns = @JoinColumn(name = "ID"))
     @Column(name = "SINK_ID") 
     private List<String> providesTo = new ArrayList<String>();
 
@@ -49,7 +49,7 @@ public class ApplicationComponent extends Component implements Cloneable {
     private List<String> dependsOn = new ArrayList<String>();
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "DPDS_APP_COMPONENT_TAGS", schema="PUBLIC", joinColumns = @JoinColumn(name = "ID"))
+    @CollectionTable(name = "DPV_APP_COMPONENT_TAGS", schema="PUBLIC", joinColumns = @JoinColumn(name = "ID"))
     @Column(name = "TAG_ID") 
     @Fetch(value = FetchMode.SUBSELECT)
     private List<String> tags = new ArrayList<>();

@@ -10,7 +10,7 @@ import java.util.Map;
 
 @Data
 @Entity( name = "BuildInfo" )
-@Table( name = "DPDS_APP_COMPONENT_BUILD_INFOS", schema="PUBLIC")
+@Table( name = "DPV_APP_COMPONENT_BUILD_INFOS", schema="PUBLIC")
 public class BuildInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

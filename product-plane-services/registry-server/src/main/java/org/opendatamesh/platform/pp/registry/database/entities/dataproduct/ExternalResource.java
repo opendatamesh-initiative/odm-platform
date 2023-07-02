@@ -11,7 +11,7 @@ import lombok.Data;
 
 @Data
 @Entity(name = "ExternalResource")
-@Table(name = "DPDS_EXTERNAL_RESOURCES", schema="PUBLIC")
+@Table(name = "DPV_EXTERNAL_RESOURCES", schema="PUBLIC")
 public class ExternalResource {
 
     @Id

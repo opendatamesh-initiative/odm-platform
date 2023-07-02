@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @Entity(name = "SpecificationExtensionPoint")
-@Table(name = "DPDS_SPEC_EXTENSION_POINTS", schema="PUBLIC")
+@Table(name = "DPV_SPEC_EXTENSION_POINTS", schema="PUBLIC")
 public class SpecificationExtensionPoint {
     
     @Id

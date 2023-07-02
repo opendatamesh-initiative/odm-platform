@@ -13,7 +13,7 @@ import lombok.Data;
 
 @Data
 @Entity(name = "ReferenceObject")  // cambiare nome
-@Table(name = "DPDS_REFERENCE_OBJECTS", schema="PUBLIC")
+@Table(name = "DPV_REFERENCE_OBJECTS", schema="PUBLIC")
 public class ReferenceObject {
 
     @Id
@@ -24,24 +24,16 @@ public class ReferenceObject {
     @Column(name = "DESCRIPTION")
     private String description;
 
-    @Transient
+    @Column(name = "MEDIA_TYPE")
     private String mediaType;
 
-    // Eliminare ?
     @Column(name = "REF")
     private String ref;
 
-    // ELiminare
     @Column(name = "ORIGINAL_REF")
     private String originalRef;
 
     @Column(name="CONTENT", columnDefinition = "LONGTEXT")
     private String rawContent;
    
-    public ReferenceObject() { }
-
-    public ReferenceObject(String ref, String description) {
-        this.ref = ref;
-        this.description = description;
-    }
 }

@@ -6,12 +6,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.util.UUID;
 
 
 @Data
 @Entity(name = "DataProduct")
-@Table(name = "DPDS_DATA_PRODUCTS", schema="PUBLIC")
+@Table(name = "DATA_PRODUCTS", schema="PUBLIC")
 public class DataProduct {
 
     @Id
@@ -26,36 +25,4 @@ public class DataProduct {
 
     @Column(name = "DESCRIPTION")
     private String description;
-
-    /* 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "dataProduct")
-    private List<DataProductVersion> dataProductVersions = new ArrayList<>();
-    */
-
-    public DataProduct() {
-    }
-    
-    public DataProduct(String id) {
-        this.id = id;
-    }
-
-    public DataProduct(DataProductVersion dataProductVersion) {
-        if(dataProductVersion == null) {
-            throw new RuntimeException("Input data product version cannot be null");
-        }
-
-        if(dataProductVersion.getInfo().getFullyQualifiedName() == null) {
-            throw new RuntimeException("The fully qualified name of product is not specified in the product version");
-        } else {
-            this.fullyQualifiedName = dataProductVersion.getInfo().getFullyQualifiedName();
-        }
-        this.id =  UUID.nameUUIDFromBytes(fullyQualifiedName.getBytes()).toString();
-        this.domain = dataProductVersion.getInfo().getDomain();
-    }
-
-    public DataProduct(String id, String fullyQualifiedName, String domain) {
-        this.id = id;
-        this.fullyQualifiedName = fullyQualifiedName;
-        this.domain = domain;
-    }
 }

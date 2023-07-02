@@ -1,5 +1,5 @@
 {
-    "fullyQualifiedName": "urn:dpds:it.quantyca:dataproducts:sampleDomain:tripExecution",
+    "fullyQualifiedName": "urn:org.opendatamesh:dataproduct:tripExecution",
     "description": "This is prod-1 - updated",
     "domain": "Disney - updated"
 }

@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @Entity(name = "Contracts")
-@Table(name = "DPDS_PORT_CONTRACTS", schema="PUBLIC")
+@Table(name = "DPV_PORT_CONTRACTS", schema="PUBLIC")
 public class Contracts {
 
         @Id

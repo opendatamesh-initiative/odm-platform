@@ -410,42 +410,54 @@ public class DataProductService {
      *      SC502_01_POLICY_SERVICE_ERROR
      *      SC502_05_META_SERVICE_ERROR
      */
-    public DataProductVersion addDataProductVersion(
+     public DataProductVersion addDataProductVersion(
+        String dataProductId,
         DescriptorLocation descriptorLocation, 
-        boolean createDataProductIfNotExists,
         String serverUrl // TODO remove form here !!!
     ) {
-        DataProductVersion dataProductVersion = null;
-        dataProductVersion = descriptorToDataProductVersion(descriptorLocation, serverUrl);
-        return addDataProductVersion(dataProductVersion.getDataProductId(), dataProductVersion, createDataProductIfNotExists);
-    }
-
-   
-
-
-    // TODO execute compatibility check (version check and API check for the moment)
-    //TODO check schemas evolution rules
-    private DataProductVersion addDataProductVersion (
-        String dataProductId, DataProductVersion dataProductVersion, 
-        boolean createDataProductIfNotExists) 
-    {
         if(!StringUtils.hasText(dataProductId)) {
             throw new InternalServerException(
                 OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
                 "Data product id cannot be null");
         }
 
+        DataProduct dataProduct = readDataProduct(dataProductId);
+        DataProductVersion dataProductVersion = null;
+        dataProductVersion = descriptorToDataProductVersion(descriptorLocation, serverUrl);
+        if(!dataProduct.getId().equals(dataProductVersion.getInfo().getDataProductId())) {
+            throw new UnprocessableEntityException(
+                OpenDataMeshAPIStandardError.SC422_03_DESCRIPTOR_DOC_SEMANTIC_IS_INVALID,
+                "Data product id [" + dataProduct.getFullyQualifiedName() + "]does not match with the id [" + dataProductVersion.getInfo().getFullyQualifiedName() + "] contained in data product descriptor");
+        }
+        
+        
+        return addDataProductVersion(dataProductVersion, false);
+    }
+
+
+    public DataProductVersion addDataProductVersion(
+        DescriptorLocation descriptorLocation, 
+        boolean createDataProductIfNotExists,
+        String serverUrl // TODO remove form here !!!
+    ) {
+
+        DataProductVersion dataProductVersion = null;
+        dataProductVersion = descriptorToDataProductVersion(descriptorLocation, serverUrl);
+        return addDataProductVersion(dataProductVersion, createDataProductIfNotExists);
+    }
+
+   
+    // TODO execute compatibility check (version check and API check for the moment)
+    //TODO check schemas evolution rules
+    private DataProductVersion addDataProductVersion (
+        DataProductVersion dataProductVersion, 
+        boolean createDataProductIfNotExists) 
+    {
+        
         if(dataProductVersion == null) {
             throw new InternalServerException(
                 OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
                 "Data product version object cannot be null");
-        }
-
-        DataProduct dataProduct = dataProductVersion.getDataProduct();
-        if(!dataProductId.equals(dataProduct.getId())) {
-            throw new UnprocessableEntityException(
-                OpenDataMeshAPIStandardError.SC422_03_DESCRIPTOR_DOC_SEMANTIC_IS_INVALID,
-                "Data product id does not match with the id contained in data product descriptor");
         }
 
         if(dataProductVersionService.isCompliantWithGlobalPolicies(dataProductVersion)) {
@@ -454,11 +466,13 @@ public class DataProductService {
                 "Data product descriptor is not compliant with global policies");
         }
         
-
+        DataProduct dataProduct = null;
+        String dataProductId = dataProductVersion.getInfo().getDataProductId();
         if(dataProductExists(dataProductId)) {
-            dataProduct = loadDataProduct(dataProduct.getId());
+            dataProduct = loadDataProduct(dataProductId);
         } else {
             if(createDataProductIfNotExists) {
+                dataProduct = dataProductVersion.getDataProduct();
                 dataProduct = createDataProduct(dataProduct);
             } else {
                 throw new NotFoundException(
@@ -471,18 +485,6 @@ public class DataProductService {
 
         return dataProductVersion;
     }
-
-    /* 
-    private DataProductVersion descriptorToDataProductVersion(String descriptorContent, String serverUrl) {
-        ParseLocation descriptorSource = new UriLocation(descriptorContent);
-        return descriptorToDataProductVersion(descriptorSource, serverUrl);
-    }
-
-    private DataProductVersion descriptorToDataProductVersion(URI descriptorUri, String serverUrl) {
-        ParseLocation descriptorSource = new UriLocation(descriptorUri);
-        return descriptorToDataProductVersion(descriptorSource, serverUrl);        
-    }
-    */
 
     private DataProductVersion descriptorToDataProductVersion(DescriptorLocation descriptorLocation, String serverUrl) {
         DataProductVersion dataProductVersion = null;

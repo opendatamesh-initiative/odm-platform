@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 @Entity(name = "Owner")
-@Table(name = "DPDS_INFO_OWNERS", schema="PUBLIC")
+@Table(name = "DPV_INFO_OWNERS", schema="PUBLIC")
 public class Owner {
 
     @Id
@@ -20,12 +20,4 @@ public class Owner {
 
     @OneToMany(mappedBy="info.owner", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     public List<DataProductVersion> dataproduct;
-
-    @Override
-    public String toString() {
-        return "Owner{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                '}';
-    }
 }

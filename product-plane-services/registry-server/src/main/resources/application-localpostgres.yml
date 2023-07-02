@@ -38,8 +38,10 @@ spring:
   # DB
   datasource:
     url: jdbc:postgresql://localhost:5432/odmpdb
-    username: usr
-    password: pwd
+    username: postgres
+    password: postgres
+    #username: usr
+    #password: pwd
   h2:
     console:
       enabled: false
@@ -48,8 +50,10 @@ spring:
   flyway:
     #enabled: false # To disable
     url: jdbc:postgresql://localhost:5432/odmpdb
-    user: usr
-    password: pwd
+    user: postgres
+    password: postgres
+    #username: usr
+    #password: pwd
     #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
     schemas: flyway
     locations: classpath:db/migration/postgres

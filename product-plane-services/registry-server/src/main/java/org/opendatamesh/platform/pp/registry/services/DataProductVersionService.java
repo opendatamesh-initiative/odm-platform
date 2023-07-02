@@ -196,15 +196,23 @@ public class DataProductVersionService {
     private Schema saveApiSchema(ApiDefinitionEndpoint endpoint) {
         Schema schema = null;
 
-        Schema newSchema = new Schema();
+        Schema newSchema = new Schema(); // why not a mapper?
         newSchema.setName(endpoint.getSchema().getName());
         newSchema.setVersion(endpoint.getSchema().getVersion());
         newSchema.setMediaType(endpoint.getSchema().getMediaType());
         newSchema.setContent(endpoint.getSchema().getContent());
         
-        schema = schemaService.searchSchema(newSchema);
-        if (schema == null) {
-            schema = schemaService.createSchema(newSchema);
+        try {
+            schema = schemaService.searchSchema(newSchema);
+            if (schema == null) {
+                schema = schemaService.createSchema(newSchema);
+            }
+        } catch (Throwable t) {
+            throw new InternalServerException(
+                    OpenDataMeshAPIStandardError.SC500_01_DATABASE_ERROR,
+                    "An error occured in the backend database while schema of endpoint [" + endpoint
+                            + "]",
+                    t);
         }
 
         // rewrite schema ref withing api def
@@ -214,25 +222,29 @@ public class DataProductVersionService {
 
     private Definition saveApiDefinition(Port port) throws JsonMappingException, JsonProcessingException {
 
+        Definition definition = null;
+
         if (port.getPromises() == null)
             return null;
         if (port.getPromises().getApi() == null)
             return null;
 
         StandardDefinition api = port.getPromises().getApi();
-        Definition apiDefinition = null;
-
+        Definition newDefinition = new Definition(); // why not a mapper?
+        newDefinition.setName(api.getName());
+        newDefinition.setVersion(api.getVersion());
+        newDefinition.setDescription(api.getDescription());
+        newDefinition.setSpecification(api.getSpecification());
+        newDefinition.setSpecificationVersion(api.getSpecificationVersion());
+        newDefinition.setContent(api.getDefinition().getRawContent());
+        
         // Api is created first to obtain the id used after for replacing api definition
         // content with a reference url
         try {
-            if (StringUtils.hasText(api.getName())
-                    && StringUtils.hasText(api.getVersion())) {
-                apiDefinition = definitionService.searchDefinition(api.getName(), api.getVersion());
+            definition = definitionService.searchDefinition(newDefinition);
+            if(definition == null) {
+                definition = definitionService.createDefinition(newDefinition);
             }
-            if (apiDefinition == null) {
-                apiDefinition = definitionService.createDefinition(new Definition("API", api));
-            }
-
         } catch (Throwable t) {
             throw new InternalServerException(
                     OpenDataMeshAPIStandardError.SC500_01_DATABASE_ERROR,
@@ -241,26 +253,20 @@ public class DataProductVersionService {
                     t);
         }
 
-        // Once we have the api id we replace the definition content with a reference
-        // url
-        /*
-         * String ref = api.getDefinition().getRef();
-         * ref = ref.replaceAll("\\{apiId\\}", "" + apiDefinition.getId());
-         * api.getDefinition().setRef(ref);
-         */
-
+        // Once we have the api id we replace the definition content with a reference url
         ObjectNode portObject = (ObjectNode) objectMapper.readTree(port.getRawContent());
+        
         ObjectNode standardDefinitionContent = (ObjectNode) portObject.at("/promises/api/definition");
-        //String ref = standardDefinitionContent.asText("$ref");
         String ref = String.valueOf(standardDefinitionContent.get("$ref"));
-        ref = ref.replaceAll("\\{apiId\\}", "" + apiDefinition.getId());
+        ref = ref.replaceAll("\\{apiId\\}", "" + definition.getId());
         ref = ref.replaceAll("\"", "");
         standardDefinitionContent.put("$ref", ref);
+        
         port.setRawContent(objectMapper.writeValueAsString(portObject));
 
-        port.getPromises().setApiId(apiDefinition.getId());
+        port.getPromises().setApiId(definition.getId());
 
-        return apiDefinition;
+        return definition;
     }
 
     private void saveTemplates(DataProductVersion dataProductVersion) throws JsonProcessingException {
@@ -275,8 +281,10 @@ public class DataProductVersionService {
 
         for(InfrastructuralComponent component: components) {
             Template template = saveInfrastructuralComponentTemplate(component);
-            if (template != null)
-                saveComponentTemplateRelationship(template, component, "infrastructuralComponent", "provisionInfo");
+            if (template != null){
+                //saveComponentTemplateRelationship(template, component, "infrastructuralComponent", "provisionInfo");
+            }
+                
         }
     }
 
@@ -285,11 +293,15 @@ public class DataProductVersionService {
 
         for(ApplicationComponent component : components) {
             Template buildTemplate = saveApplicationComponentBuildInfoTemplates(component);
-            if (buildTemplate != null)
-                saveComponentTemplateRelationship(buildTemplate, component, "applicationComponent", "buildInfo");
+            if (buildTemplate != null) {
+                //saveComponentTemplateRelationship(buildTemplate, component, "applicationComponent", "buildInfo");
+            }
+                
             Template deployTemplate = saveApplicationComponentDeployInfoTemplates(component);
-            if (deployTemplate != null)
-                saveComponentTemplateRelationship(deployTemplate, component, "applicationComponent", "deployInfo");
+            if (deployTemplate != null) {
+                //saveComponentTemplateRelationship(deployTemplate, component, "applicationComponent", "deployInfo");
+            }
+                
         }
     }
 

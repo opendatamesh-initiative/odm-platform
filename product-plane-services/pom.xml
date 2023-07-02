@@ -60,7 +60,7 @@ License.
     </developers>
 
     <modules>
-        <module>registry-client</module>
+        <module>registry-api</module>
         <module>registry-server</module>
     </modules>
 

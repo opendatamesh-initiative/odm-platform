@@ -14,9 +14,8 @@ import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataP
 import org.opendatamesh.platform.pp.registry.exceptions.BadRequestException;
 import org.opendatamesh.platform.pp.registry.exceptions.InternalServerException;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
-import org.opendatamesh.platform.pp.registry.resources.v1.DataProductDescriptorLocationResource;
+import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductDescriptorLocationResource;
 import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
-import org.opendatamesh.platform.pp.registry.resources.v1.mappers.DataProductMapper;
 import org.opendatamesh.platform.pp.registry.resources.v1.mappers.DataProductVersionMapper;
 import org.opendatamesh.platform.pp.registry.services.DataProductService;
 import org.slf4j.Logger;

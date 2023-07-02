@@ -2,11 +2,11 @@ package org.opendatamesh.platform.pp.registry;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Definition;
-import org.opendatamesh.platform.pp.registry.resources.v1.DataProductResource;
-import org.opendatamesh.platform.pp.registry.resources.v1.DataProductDescriptorLocationResource;
-import org.opendatamesh.platform.pp.registry.resources.v1.DefinitionResource;
-import org.opendatamesh.platform.pp.registry.resources.v1.SchemaResource;
-import org.opendatamesh.platform.pp.registry.resources.v1.TemplateResource;
+import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductResource;
+import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductDescriptorLocationResource;
+import org.opendatamesh.platform.pp.registry.api.v1.resources.DefinitionResource;
+import org.opendatamesh.platform.pp.registry.api.v1.resources.SchemaResource;
+import org.opendatamesh.platform.pp.registry.api.v1.resources.TemplateResource;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 

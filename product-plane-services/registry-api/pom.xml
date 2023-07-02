@@ -30,9 +30,9 @@ License.
     </parent>
 
     <groupId>org.opendatamesh</groupId>
-    <artifactId>odm-platform-pp-registry-client</artifactId>
-    <name>ODM Platform Registry Client</name>
-    <description>Open Data Mesh Platform's registry service client</description>
+    <artifactId>odm-platform-pp-registry-api</artifactId>
+    <name>ODM Platform Registry API</name>
+    <description>Open Data Mesh Platform's registry service API</description>
     <version>1.0.0</version>
    
 

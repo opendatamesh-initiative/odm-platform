@@ -7,12 +7,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
+import org.opendatamesh.platform.pp.registry.api.v1.resources.TemplateResource;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Template;
 import org.opendatamesh.platform.pp.registry.exceptions.BadRequestException;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
 import org.opendatamesh.platform.pp.registry.resources.v1.mappers.TemplateMapper;
-import org.opendatamesh.platform.pp.registry.resources.v1.TemplateResource;
 import org.opendatamesh.platform.pp.registry.services.TemplateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

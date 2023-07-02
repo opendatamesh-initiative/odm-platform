@@ -9,7 +9,7 @@ import org.opendatamesh.platform.core.dpds.parser.DPDSParser;
 import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
 import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
 import org.opendatamesh.platform.core.dpds.parser.location.UriLocation;
-import org.opendatamesh.platform.pp.registry.resources.v1.DataProductDescriptorLocationResource;
+import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductDescriptorLocationResource;
 
 import java.io.IOException;
 import java.util.List;

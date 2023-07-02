@@ -211,7 +211,7 @@ License.
 
         <dependency>
             <groupId>org.opendatamesh</groupId>
-            <artifactId>odm-platform-pp-registry-client</artifactId>
+            <artifactId>odm-platform-pp-registry-api</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>
@@ -270,7 +270,8 @@ License.
                     </execution>
                 </executions>
             </plugin>
-            <!--Integration tests-->
+            <!--Integration
+            tests-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>

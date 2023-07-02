@@ -3,10 +3,11 @@ package org.opendatamesh.platform.pp.registry.resources.v1.mappers;
 import java.util.List;
 
 import org.mapstruct.Mapper;
+import org.opendatamesh.platform.pp.registry.api.v1.resources.ApiToSchemaRelationshipResource;
+import org.opendatamesh.platform.pp.registry.api.v1.resources.SchemaResource;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.ApiToSchemaRelationship;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Schema;
-import org.opendatamesh.platform.pp.registry.resources.v1.ApiToSchemaRelationshipResource;
-import org.opendatamesh.platform.pp.registry.resources.v1.SchemaResource;
+
 
 @Mapper(componentModel = "spring")
 public interface SchemaMapper { 

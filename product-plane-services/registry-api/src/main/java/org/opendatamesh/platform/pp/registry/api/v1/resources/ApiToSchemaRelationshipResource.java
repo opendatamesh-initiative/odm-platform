@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.pp.registry.resources.v1;
+package org.opendatamesh.platform.pp.registry.api.v1.resources;
 
 import java.io.Serializable;
 

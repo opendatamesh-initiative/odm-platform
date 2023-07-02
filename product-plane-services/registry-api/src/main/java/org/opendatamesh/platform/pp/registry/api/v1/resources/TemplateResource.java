@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.pp.registry.resources.v1;
+package org.opendatamesh.platform.pp.registry.api.v1.resources;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

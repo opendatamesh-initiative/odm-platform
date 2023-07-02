@@ -3,7 +3,7 @@ package org.opendatamesh.platform.pp.registry.database.entities.dataproduct;
 import lombok.Data;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.opendatamesh.platform.pp.registry.database.entities.IdentifierStrategy;
+import org.opendatamesh.platform.core.dpds.parser.IdentifierStrategy;
 
 import javax.persistence.*;
 import java.io.Serializable;

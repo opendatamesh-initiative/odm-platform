@@ -203,7 +203,7 @@ public class UploadIT extends OpenDataMeshIT {
         Assert.assertEquals(info.getName(), "tripExecution");
         Assert.assertEquals(info.getVersionNumber(), "1.2.3"); //FIXME!
         Assert.assertEquals(info.getDomain(), "Transport Management");
-        Assert.assertEquals(info.getFullyQualifiedName(), "urn:dpds:com.company-xyz:dataproducts:tripExecution:1");
+        Assert.assertEquals(info.getFullyQualifiedName(), "urn:org.opendatamesh:dataproduct:tripExecution");
         //Assert.assertEquals(info.getEntityType(), "dataproduct");
         //Assert.assertEquals(info.getDataProductId(), "3187c1fa-dd44-344a-a5b5-a4e86677b5dd"); //FIXME!
    
@@ -216,13 +216,13 @@ public class UploadIT extends OpenDataMeshIT {
         Assert.assertEquals(ports.size(), 2);
     
         PortDPDS port = ports.get(0);
-        Assert.assertEquals(port.getFullyQualifiedName(), "urn:dpds:com.company-xyz:dataproducts:tripExecution:1:outputports:tripStatus");
+        Assert.assertEquals(port.getFullyQualifiedName(), "urn:org.opendatamesh:dataproduct:tripExecution:1.2.3:outputport:tripStatus:1.2.0");
         Assert.assertNotNull( port.getPromises().getApi().getDefinition().getRef() ); // FIXME!
         //Assert.assertEquals(port.getEntityType(), "outputport");
         //Assert.assertEquals(port.getId(), "3497405b-7034-3989-98d5-c67318f05806"); 
    
         port = ports.get(1);
-        Assert.assertEquals(port.getFullyQualifiedName(), "urn:dpds:com.company-xyz:dataproducts:tripExecution:1:outputports:tripEvents");
+        Assert.assertEquals(port.getFullyQualifiedName(), "urn:org.opendatamesh:dataproduct:tripExecution:1.2.3:outputport:tripEvents:1.2.0");
         Assert.assertNotNull( port.getPromises().getApi().getDefinition().getRef() ) ; // FIXME!
         //Assert.assertEquals(port.getEntityType(), "outputport");
         //Assert.assertEquals(port.getId(), "62b02846-2cf0-35fa-95b5-7cf24402748b"); 
@@ -232,7 +232,7 @@ public class UploadIT extends OpenDataMeshIT {
         Assert.assertEquals(ports.size(), 1);
         
         port = ports.get(0);
-        Assert.assertEquals(port.getFullyQualifiedName(), "urn:dpds:com.company-xyz:dataproducts:tripExecution:1:observabilityports:helthMetrics");
+        Assert.assertEquals(port.getFullyQualifiedName(), "urn:org.opendatamesh:dataproduct:tripExecution:1.2.3:observabilityport:helthMetrics:1.2.0");
         Assert.assertNotNull( port.getPromises().getApi().getDefinition().getRef() ); // FIXME!
         //Assert.assertEquals(port.getEntityType(), "observabilityport");
         //Assert.assertEquals(port.getId(), "c96180ea-90bb-31b7-b6e6-0ebc0cebadcc"); 

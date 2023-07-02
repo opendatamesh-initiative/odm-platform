@@ -110,7 +110,7 @@ public abstract class OpenDataMeshIT {
     }
 
     protected String createDataProduct1Version1(String dataProduct1Id) throws IOException {
-        ResponseEntity<String> postProductVersionResponse = rest.createDataProductVersion(
+        ResponseEntity<String> postProductVersionResponse = rest.createDataProductVersionFromFile(
                 dataProduct1Id, RESOURCE_DP1_V1);
         verifyResponseEntity(postProductVersionResponse, HttpStatus.CREATED, true);
 

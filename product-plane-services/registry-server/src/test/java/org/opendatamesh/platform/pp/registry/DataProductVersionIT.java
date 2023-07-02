@@ -1,5 +1,7 @@
 package org.opendatamesh.platform.pp.registry;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -28,6 +30,7 @@ import java.io.IOException;
 import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
 
 //@@FixMethodOrder(MethodSorters.JVM)
 @TestPropertySource(properties = { "spring.test.context.parallel.enabled=false" })
@@ -48,11 +51,9 @@ public class DataProductVersionIT extends OpenDataMeshIT {
     @Value("${metaserviceaddress}")
     private String metaserviceaddress;
 
-    // JsonNode descriptorContent;
-
     @Before
     public void setup() {
-        //objectMapper = DataProductDescriptor.buildObjectMapper();
+        // objectMapper = DataProductDescriptor.buildObjectMapper();
         /*
          * mockServer =
          * MockRestServiceServer.bindTo(restTemplate).ignoreExpectOrder(true).build();
@@ -95,8 +96,39 @@ public class DataProductVersionIT extends OpenDataMeshIT {
         // alredy done in DataProductIT
 
         String descriptorContent = createDataProduct1Version1(dataProduct1Res.getId());
-        System.out.println(descriptorContent);
         verifyBasicContent(descriptorContent);
+    }
+
+    @Test
+    @Order(1)
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testDataProductVersionsCreation() throws IOException {
+
+        DataProductResource dataProduct1Res = createDataProduct1();
+
+        String descriptor = " ";
+        descriptor = rest.readFile(RESOURCE_DP1_V1);
+        ResponseEntity<String> postProductVersion1Response = rest.createDataProductVersionFromString(
+                dataProduct1Res.getId(), descriptor);
+        verifyResponseEntity(postProductVersion1Response, HttpStatus.CREATED, true);
+        // verifyBasicContent(postProductVersion1Response.getBody());
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(Include.NON_EMPTY);
+        JsonNode rootEntity = null;
+        try {
+            rootEntity = (ObjectNode) mapper.readTree(descriptor);
+            ObjectNode infoNode = (ObjectNode) rootEntity.get("info");
+            infoNode.put("version", "1.5.5");
+            descriptor = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootEntity);
+        } catch (JsonProcessingException e) {
+            fail("Impossible to parse response");
+        }
+
+        ResponseEntity<String> postProductVersion2Response = rest.createDataProductVersionFromString(
+                dataProduct1Res.getId(), descriptor);
+        verifyResponseEntity(postProductVersion2Response, HttpStatus.CREATED, true);
+        // verifyBasicContent(postProductVersion1Response.getBody());
     }
 
     // ----------------------------------------
@@ -191,7 +223,7 @@ public class DataProductVersionIT extends OpenDataMeshIT {
 
     // ----------------------------------------
     // CREATE Data product version
-    // ----------------------------------------    }
+    // ---------------------------------------- }
 
     @Test
     @Order(5)
@@ -334,7 +366,8 @@ public class DataProductVersionIT extends OpenDataMeshIT {
             ObjectNode apiDefinitionObject = (ObjectNode) apiObject.get("definition");
             assertThat(apiDefinitionObject.size()).isEqualTo(1);
             assertThat(apiDefinitionObject.get("$ref")).isNotNull();
-            assertThat(apiDefinitionObject.get("$ref").asText()).matches(Pattern.compile("http://localhost:\\d*/api/v1/pp/definitions/\\d*"));
+            assertThat(apiDefinitionObject.get("$ref").asText())
+                    .matches(Pattern.compile("http://localhost:\\d*/api/v1/pp/definitions/\\d*"));
 
             /*
              * ResponseEntity<String> getApiDefinitionResponse = rest.getForEntity(

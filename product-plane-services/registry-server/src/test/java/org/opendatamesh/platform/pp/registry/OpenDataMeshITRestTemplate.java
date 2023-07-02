@@ -82,6 +82,10 @@ public class OpenDataMeshITRestTemplate extends TestRestTemplate {
         if (file != null) {
             descriptor = readFile(file);
         }
+        return getVersionStringAsHttpEntity(descriptor);
+    }
+
+    HttpEntity<String> getVersionStringAsHttpEntity(String descriptor) throws IOException {
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -89,6 +93,7 @@ public class OpenDataMeshITRestTemplate extends TestRestTemplate {
 
         return entity;
     }
+
 
     HttpEntity<DefinitionResource> getDefinitionAsHttpEntity(String file)
             throws IOException {
@@ -240,7 +245,7 @@ public class OpenDataMeshITRestTemplate extends TestRestTemplate {
     // Data product version
     // ----------------------------------------
 
-    public ResponseEntity<String> createDataProductVersion(
+    public ResponseEntity<String> createDataProductVersionFromFile(
             String dataProductId, String filePath) throws IOException {
 
         HttpEntity<String> entity = getVersionFileAsHttpEntity(filePath);
@@ -253,6 +258,22 @@ public class OpenDataMeshITRestTemplate extends TestRestTemplate {
 
         return postProductVersionResponse;
     }
+
+     public ResponseEntity<String> createDataProductVersionFromString(
+            String dataProductId, String descriptor) throws IOException {
+
+        HttpEntity<String> entity = getVersionStringAsHttpEntity(descriptor);
+
+        ResponseEntity<String> postProductVersionResponse = postForEntity(
+                apiUrl(RoutesV1.DATA_PRODUCTS, "/{id}/versions"),
+                entity,
+                String.class,
+                dataProductId);
+
+        return postProductVersionResponse;
+    }
+
+    
 
     public ResponseEntity<String[]> readAllDataProductVersions(String dataProductId) {
         return getForEntity(

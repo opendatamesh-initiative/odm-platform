@@ -170,7 +170,7 @@ public class DataProductVersionController
 
         UriLocation descriptorLocation = new UriLocation(descriptorContent);
         String serverUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
-        DataProductVersion dataProductVersion = dataProductService.addDataProductVersion(descriptorLocation, false, serverUrl);
+        DataProductVersion dataProductVersion = dataProductService.addDataProductVersion(id, descriptorLocation, serverUrl);
         DataProductVersionDPDS dataProductVersionDPDS = dataProductVersionMapper.toResource(dataProductVersion);
         
         DataProductVersionSerializer serializer = new DataProductVersionSerializer();

@@ -52,8 +52,8 @@ public class DataProductIT extends OpenDataMeshIT {
 
         // TEST 1: create first data product
         assertThat(dataProductRes.getId())
-                .isEqualTo(UUID.nameUUIDFromBytes("urn:dpds:it.quantyca:dataproducts:sampleDomain:tripExecution".getBytes()).toString());
-        assertThat(dataProductRes.getFullyQualifiedName()).isEqualTo("urn:dpds:it.quantyca:dataproducts:sampleDomain:tripExecution");
+                .isEqualTo(UUID.nameUUIDFromBytes("urn:org.opendatamesh:dataproduct:tripExecution".getBytes()).toString());
+        assertThat(dataProductRes.getFullyQualifiedName()).isEqualTo("urn:org.opendatamesh:dataproduct:tripExecution");
         assertThat(dataProductRes.getDescription()).isEqualTo("This is prod-1");
         assertThat(dataProductRes.getDomain()).isEqualTo("Disney");
 
@@ -138,8 +138,8 @@ public class DataProductIT extends OpenDataMeshIT {
 
         // TEST 1: create first data product
         assertThat(dataProductRes.getId())
-                .isEqualTo(UUID.nameUUIDFromBytes("urn:dpds:it.quantyca:dataproducts:sampleDomain:tripExecution".getBytes()).toString());
-        assertThat(dataProductRes.getFullyQualifiedName()).isEqualTo("urn:dpds:it.quantyca:dataproducts:sampleDomain:tripExecution");
+                .isEqualTo(UUID.nameUUIDFromBytes("urn:org.opendatamesh:dataproduct:tripExecution".getBytes()).toString());
+        assertThat(dataProductRes.getFullyQualifiedName()).isEqualTo("urn:org.opendatamesh:dataproduct:tripExecution");
         assertThat(dataProductRes.getDescription()).isEqualTo("This is prod-1 - updated");
         assertThat(dataProductRes.getDomain()).isEqualTo("Disney - updated");
 

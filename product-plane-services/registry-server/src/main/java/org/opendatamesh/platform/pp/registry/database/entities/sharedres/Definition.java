@@ -51,19 +51,5 @@ public class Definition {
     @Column(name = "CONTENT")
     private String content;
 
-    public Definition() {}
-
-    public Definition(String type, StandardDefinition standardDefinition) {
-       if(standardDefinition != null) {
-            this.name = standardDefinition.getName();
-            this.version = standardDefinition.getVersion();
-            this.description = standardDefinition.getDescription();
-            this.specification = standardDefinition.getSpecification();
-            this.specificationVersion = standardDefinition.getSpecificationVersion();
-            this.content = standardDefinition.getDefinition().getRawContent();
-        }
-        
-    }
-    
    
 }

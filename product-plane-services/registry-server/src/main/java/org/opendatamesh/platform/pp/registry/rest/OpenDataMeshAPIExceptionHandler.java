@@ -1,6 +1,7 @@
 package org.opendatamesh.platform.pp.registry.rest;
 
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.opendatamesh.platform.pp.registry.exceptions.BadRequestException;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIException;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
@@ -29,7 +30,8 @@ public class OpenDataMeshAPIExceptionHandler extends ResponseEntityExceptionHand
 	@ExceptionHandler({OpenDataMeshAPIException.class})
 	protected ResponseEntity<Object> handleOpenDataMeshException(OpenDataMeshAPIException e, WebRequest request) {
 		String errorLogMessage = e.getErrorName() + ":" + e.getMessage();
-		errorLogMessage += e.getCause()!=null?" : " + e.getCause().getMessage():"";
+		Throwable rootCause = ExceptionUtils.getRootCause(e);
+		errorLogMessage += rootCause!=null?" : " + rootCause.getMessage():"";
 		logger.error(errorLogMessage, e);
 		String url = getUrl(request);
 		ErrorRes error = new ErrorRes(e.getStatus().value(), e.getStandardError(), e.getMessage(), url);
@@ -48,7 +50,8 @@ public class OpenDataMeshAPIExceptionHandler extends ResponseEntityExceptionHand
 	protected ResponseEntity<Object> handleExceptionInternal(Exception e, Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
 		if(!OpenDataMeshAPIException.class.isAssignableFrom(e.getClass())) {
 			String errorLogMessage = e.getClass().getName() + ":" + e.getMessage();
-			errorLogMessage += e.getCause()!=null?" : " + e.getCause().getMessage():"";
+			Throwable rootCause = ExceptionUtils.getRootCause(e);
+			errorLogMessage += rootCause!=null?" : " + rootCause.getMessage():"";
 			logger.error(errorLogMessage);
 		}
 		

@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Definition;
+import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Schema;
 import org.opendatamesh.platform.pp.registry.database.repositories.DefinitionRepository;
 import org.opendatamesh.platform.pp.registry.exceptions.BadRequestException;
 import org.opendatamesh.platform.pp.registry.exceptions.InternalServerException;
@@ -29,16 +30,11 @@ public class DefinitionService {
 
     }
 
-    // ======================================================================================
-    // CREATE
-    // ======================================================================================
-
-    public Definition createDefinition(Definition definition) {
-
-        if (definition == null) {
+    public Definition resolveNameAndVersion(Definition definition) {
+         if (definition == null) {
             throw new InternalServerException(
                     OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
-                    "Standard definition object cannot be null");
+                    "Definition object cannot be null");
         }
 
         if (!StringUtils.hasText(definition.getContent())) {
@@ -57,6 +53,29 @@ public class DefinitionService {
             definition.setVersion("1.0.0");
             logger.warn("Definition has no version. Version 1.0.0 will be used as default");
         }
+
+        return definition;
+    }
+
+    // ======================================================================================
+    // CREATE
+    // ======================================================================================
+
+    public Definition createDefinition(Definition definition) {
+
+        if (definition == null) {
+            throw new InternalServerException(
+                    OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
+                    "Standard definition object cannot be null");
+        }
+
+        if (!StringUtils.hasText(definition.getContent())) {
+            throw new UnprocessableEntityException(
+                    OpenDataMeshAPIStandardError.SC422_08_DEFINITION_DOC_SYNTAX_IS_INVALID,
+                    "Definition content property cannot be empty");
+        }
+
+       definition = resolveNameAndVersion(definition);
 
         if (definitionExists(definition.getName(), definition.getVersion())) {
             throw new UnprocessableEntityException(
@@ -161,12 +180,17 @@ public class DefinitionService {
         return definition;
     }
 
+     public Definition searchDefinition(Definition definition) {
+        definition = resolveNameAndVersion(definition);
+        return searchDefinition(definition.getName(), definition.getVersion());
+    }
     /**
      * @return The definition identified by name and version. Null if not exists
      */
     public Definition searchDefinition(
             String name,
             String version) {
+
         Definition definition = null;
         List<Definition> definitions = searchDefinitions(name, version, null, null, null);
         if (definitions == null || definitions.size() == 0) {

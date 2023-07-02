@@ -241,21 +241,15 @@ public class DataProductVersionService {
                     t);
         }
 
-        // Once we have the api id we replace the definition content with a reference
-        // url
-        /*
-         * String ref = api.getDefinition().getRef();
-         * ref = ref.replaceAll("\\{apiId\\}", "" + apiDefinition.getId());
-         * api.getDefinition().setRef(ref);
-         */
-
+        // Once we have the api id we replace the definition content with a reference url
         ObjectNode portObject = (ObjectNode) objectMapper.readTree(port.getRawContent());
+        
         ObjectNode standardDefinitionContent = (ObjectNode) portObject.at("/promises/api/definition");
-        //String ref = standardDefinitionContent.asText("$ref");
         String ref = String.valueOf(standardDefinitionContent.get("$ref"));
         ref = ref.replaceAll("\\{apiId\\}", "" + apiDefinition.getId());
         ref = ref.replaceAll("\"", "");
         standardDefinitionContent.put("$ref", ref);
+        
         port.setRawContent(objectMapper.writeValueAsString(portObject));
 
         port.getPromises().setApiId(apiDefinition.getId());

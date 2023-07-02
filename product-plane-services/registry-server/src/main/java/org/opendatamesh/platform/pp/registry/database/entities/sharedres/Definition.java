@@ -14,7 +14,7 @@ import lombok.Data;
 
 @Data
 @Entity(name = "Definition")
-@Table(name = "DPDS_DEFINITIONS", schema="PUBLIC")
+@Table(name = "DEFINITIONS", schema="PUBLIC")
 public class Definition {
     @Id
     @Column(name = "ID")

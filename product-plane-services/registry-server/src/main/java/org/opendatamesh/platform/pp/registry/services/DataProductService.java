@@ -2,8 +2,7 @@ package org.opendatamesh.platform.pp.registry.services;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.opendatamesh.notification.EventResource;
-import org.opendatamesh.notification.EventType;
+
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.parser.DPDSParser;
 import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
@@ -27,6 +26,8 @@ import org.opendatamesh.platform.pp.registry.exceptions.UnprocessableEntityExcep
 import org.opendatamesh.platform.pp.registry.resources.v1.mappers.DataProductMapper;
 import org.opendatamesh.platform.pp.registry.resources.v1.mappers.DataProductVersionMapper;
 import org.opendatamesh.platform.pp.registry.resources.v1.observers.EventNotifier;
+import org.opendatamesh.platform.up.notification.api.v1.resources.EventResource;
+import org.opendatamesh.platform.up.notification.api.v1.resources.EventType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

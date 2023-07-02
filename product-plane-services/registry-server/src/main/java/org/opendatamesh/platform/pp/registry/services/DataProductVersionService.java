@@ -4,8 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.opendatamesh.notification.EventResource;
-import org.opendatamesh.notification.EventType;
+
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.*;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.*;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.ApiToSchemaRelationship.ApiToSchemaRelationshipId;
@@ -14,6 +13,8 @@ import org.opendatamesh.platform.pp.registry.exceptions.*;
 import org.opendatamesh.platform.pp.registry.resources.v1.mappers.DataProductVersionMapper;
 import org.opendatamesh.platform.pp.registry.resources.v1.observers.EventNotifier;
 import org.opendatamesh.platform.pp.registry.resources.v1.policyservice.PolicyName;
+import org.opendatamesh.platform.up.notification.api.v1.resources.EventResource;
+import org.opendatamesh.platform.up.notification.api.v1.resources.EventType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

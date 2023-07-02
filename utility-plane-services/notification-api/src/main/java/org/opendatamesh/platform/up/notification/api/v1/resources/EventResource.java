@@ -28,4 +28,14 @@ public class EventResource {
 
     @JsonProperty("time")
     private Date time;
+
+    public EventResource () {}
+
+    public EventResource (EventType type, String entityId, String beforeState, String afterState) {
+        this.type = type.toString();
+        this.entityId = entityId;
+        this.beforeState = beforeState;
+        this.afterState = afterState;
+        this.time = new Date();
+    }
 }

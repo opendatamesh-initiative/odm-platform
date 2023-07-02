@@ -1,4 +1,4 @@
-package org.opendatamesh.notification;
+package org.opendatamesh.platform.up.notification.api.v1.resources;
 
 public enum EventType {
     DATA_PRODUCT_CREATED,

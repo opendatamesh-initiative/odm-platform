@@ -1,12 +1,11 @@
 package org.opendatamesh.platform.up.policy.api.v1.resources;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import org.opendatamesh.platform.up.policy.api.v1.errors.PolicyserviceOpaAPIStandardError;
 
 import java.util.Date;
 
 @Data
-@NoArgsConstructor
 public class ErrorResource {
 
     // HTTP Status code
@@ -27,6 +26,27 @@ public class ErrorResource {
     String path;
 
     // Error timestamp
-    long timestamp = new Date().getTime();
+    Long timestamp;
 
+    public ErrorResource() {
+        this.timestamp = new Date().getTime();
+    }
+
+    public ErrorResource(int status, PolicyserviceOpaAPIStandardError error, String message, String path) {
+        super();
+        this.status = status;
+        this.code = error.code();
+        this.description = error.description();
+        this.message = message;
+        this.path = path;
+    }
+
+    public ErrorResource(int status, String errorCode, String errorDescription, String message, String path) {
+        super();
+        this.status = status;
+        this.code = errorCode;
+        this.description = errorDescription;
+        this.message = message;
+        this.path = path;
+    }
 }

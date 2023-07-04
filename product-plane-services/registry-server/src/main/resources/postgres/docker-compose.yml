@@ -3,8 +3,8 @@ services:
   postgres:
     environment:
       POSTGRES_DB: odmpdb
-      POSTGRES_PASSWORD: pwd
-      POSTGRES_USER: usr
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
     image: postgres:11-alpine
     ports:
       - "5432:5432"

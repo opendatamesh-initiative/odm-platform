@@ -77,6 +77,7 @@ docker run --name odmp-mysql-db -d -p 3306:3306  \
 ```bash
 docker run --name odmp-postgres-db -d -p 5432:5432  \
    -e POSTGRES_DB=odmpdb \
+   -e POSTGRES_USER=postgres \
    -e POSTGRES_PASSWORD=postgres \
    postgres:11-alpine
 ```

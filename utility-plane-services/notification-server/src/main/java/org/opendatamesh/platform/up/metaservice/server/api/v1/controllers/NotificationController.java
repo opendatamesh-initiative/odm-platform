@@ -1,7 +1,5 @@
 package org.opendatamesh.platform.up.metaservice.server.api.v1.controllers;
 
-import java.util.List;
-
 import org.opendatamesh.platform.up.metaservice.server.services.MetaServiceException;
 import org.opendatamesh.platform.up.metaservice.server.services.NotificationService;
 import org.opendatamesh.platform.up.notification.api.v1.controllers.AbstractNotificationController;
@@ -11,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 public class NotificationController extends AbstractNotificationController {

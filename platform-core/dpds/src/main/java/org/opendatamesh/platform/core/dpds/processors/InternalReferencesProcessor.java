@@ -1,7 +1,6 @@
 package org.opendatamesh.platform.core.dpds.processors;
 
-import java.util.List;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
 import org.opendatamesh.platform.core.dpds.exceptions.UnresolvableReferenceException;
@@ -10,9 +9,8 @@ import org.opendatamesh.platform.core.dpds.model.ComponentsDPDS;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.EntityTypeDPDS;
 import org.opendatamesh.platform.core.dpds.parser.ParseContext;
-import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
 
 public class InternalReferencesProcessor implements PropertiesProcessor{
 

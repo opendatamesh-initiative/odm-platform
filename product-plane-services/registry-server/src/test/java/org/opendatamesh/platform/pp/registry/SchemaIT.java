@@ -1,7 +1,6 @@
 package org.opendatamesh.platform.pp.registry;
 
-import java.io.IOException;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +8,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.annotation.DirtiesContext.MethodMode;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
 
 //TODO every update to data product must check and mock the call to the policyservice
 

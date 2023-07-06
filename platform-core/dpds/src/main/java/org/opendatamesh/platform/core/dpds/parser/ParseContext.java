@@ -1,8 +1,7 @@
 package org.opendatamesh.platform.core.dpds.parser;
 
-import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
-
 import lombok.Data;
+import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
 
 @Data
 public class ParseContext {

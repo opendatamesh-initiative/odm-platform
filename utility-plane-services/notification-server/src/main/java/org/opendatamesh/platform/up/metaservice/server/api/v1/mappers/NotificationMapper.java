@@ -1,10 +1,10 @@
 package org.opendatamesh.platform.up.metaservice.server.api.v1.mappers;
 
-import java.util.List;
-
 import org.mapstruct.Mapper;
 import org.opendatamesh.platform.up.metaservice.server.database.entities.Notification;
 import org.opendatamesh.platform.up.notification.api.v1.resources.NotificationResource;
+
+import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface NotificationMapper {

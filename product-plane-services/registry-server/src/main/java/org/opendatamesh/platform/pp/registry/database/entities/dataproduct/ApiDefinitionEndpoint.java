@@ -1,8 +1,8 @@
 package org.opendatamesh.platform.pp.registry.database.entities.dataproduct;
 
-import javax.persistence.Transient;
-
 import lombok.Data;
+
+import javax.persistence.Transient;
 
 @Data
 public class ApiDefinitionEndpoint {

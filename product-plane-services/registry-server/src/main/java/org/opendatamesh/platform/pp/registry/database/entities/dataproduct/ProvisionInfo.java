@@ -1,11 +1,9 @@
 package org.opendatamesh.platform.pp.registry.database.entities.dataproduct;
 
 import lombok.Data;
-
-import javax.persistence.*;
-
 import org.opendatamesh.platform.pp.registry.utils.HashMapConverter;
 
+import javax.persistence.*;
 import java.util.Map;
 
 @Data

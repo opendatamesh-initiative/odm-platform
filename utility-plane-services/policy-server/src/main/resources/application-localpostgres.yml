@@ -1,0 +1,53 @@
+##########################
+# Spring, JPA and Postgresql configuration
+##########################
+spring:
+   profile: localpostgres
+   datasource:
+      url: jdbc:postgresql://localhost:5433/mydb
+      username: usr
+      password: pwd
+   h2:
+      console:
+         enabled: false
+   flyway:
+      #enabled: false # To disable
+      url: jdbc:postgresql://localhost:5433/mydb
+      user: usr
+      password: pwd
+      #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
+      schemas: flyway
+      locations: classpath:db/migration/postgres
+      clean-on-validation-error: true
+   jpa:
+      properties:
+         hibernate:
+            dialect: org.hibernate.dialect.PostgreSQLDialect
+            globally_quoted_identifiers: true
+            default_schema: PUBLIC
+      hibernate:
+         ddl-auto: validate #or none
+         show-sql: true
+# Uncomment the following properties if the first time you want to create and populate tables with schema.sql and data.sql
+#spring.jpa.hibernate.ddl-auto: none
+#spring.sql.init.mode: always
+
+##########################
+# Server configuration
+##########################
+server:
+   port: 4242
+   servlet:
+      contextPath: /api/v1/planes/utility/policy-services/opa
+   error:
+      include-stacktrace: always
+      include-message: always
+timeout.seconds :  30
+
+##########################
+# OPA configuration
+##########################
+opa:
+   url:
+      policies: http://localhost:8181/v1/policies
+      data: http://localhost:8181/v1/data

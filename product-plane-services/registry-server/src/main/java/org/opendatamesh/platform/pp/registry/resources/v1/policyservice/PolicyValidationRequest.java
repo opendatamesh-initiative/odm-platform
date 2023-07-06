@@ -2,11 +2,9 @@ package org.opendatamesh.platform.pp.registry.resources.v1.policyservice;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import javax.persistence.Convert;
-
 import org.opendatamesh.platform.pp.registry.utils.HashMapConverter;
 
+import javax.persistence.Convert;
 import java.util.HashMap;
 import java.util.Map;
 

@@ -2,10 +2,10 @@ package org.opendatamesh.platform.core.dpds.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import lombok.Data;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 
 @Data

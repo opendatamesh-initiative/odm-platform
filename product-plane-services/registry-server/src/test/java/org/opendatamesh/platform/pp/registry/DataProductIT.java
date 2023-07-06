@@ -1,10 +1,6 @@
 package org.opendatamesh.platform.pp.registry;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.io.IOException;
-import java.util.UUID;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductResource;
@@ -18,7 +14,10 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.annotation.DirtiesContext.MethodMode;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.util.UUID;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 //TODO every update to data product must check and mock the call to the policyservice
 

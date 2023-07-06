@@ -1,11 +1,9 @@
 package org.opendatamesh.platform.up.metaservice.server.database.entities;
 
 import lombok.Data;
-
-import javax.persistence.*;
-
 import org.opendatamesh.platform.up.notification.api.v1.resources.NotificationStatus;
 
+import javax.persistence.*;
 import java.util.Date;
 
 @Data

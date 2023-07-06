@@ -1,16 +1,15 @@
 package org.opendatamesh.platform.core.dpds.serde;
 
-import java.io.IOException;
-import java.util.Map;
-
-import org.opendatamesh.platform.core.dpds.model.DeployInfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.ReferenceObjectDPDS;
-
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import org.opendatamesh.platform.core.dpds.model.DeployInfoDPDS;
+import org.opendatamesh.platform.core.dpds.model.ReferenceObjectDPDS;
+
+import java.io.IOException;
+import java.util.Map;
 
 public class DeployInfoResourceDeserializer extends StdDeserializer<DeployInfoDPDS> {
 

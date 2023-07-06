@@ -1,30 +1,20 @@
 package org.opendatamesh.platform.core.dpds.parser;
 
-import java.util.Set;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.networknt.schema.ValidationMessage;
+import lombok.Data;
 import org.opendatamesh.platform.core.dpds.DataProductVersionValidator;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
-import org.opendatamesh.platform.core.dpds.exceptions.BuildException;
-import org.opendatamesh.platform.core.dpds.exceptions.FetchException;
-import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
-import org.opendatamesh.platform.core.dpds.exceptions.UnresolvableReferenceException;
-import org.opendatamesh.platform.core.dpds.exceptions.ValidationException;
+import org.opendatamesh.platform.core.dpds.exceptions.*;
 import org.opendatamesh.platform.core.dpds.exceptions.BuildException.Stage;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
-import org.opendatamesh.platform.core.dpds.processors.ExternalReferencesProcessor;
-import org.opendatamesh.platform.core.dpds.processors.InternalReferencesProcessor;
-import org.opendatamesh.platform.core.dpds.processors.ReadOnlyPropertiesProcessor;
-import org.opendatamesh.platform.core.dpds.processors.ApiDefinitionsProcessor;
-import org.opendatamesh.platform.core.dpds.processors.TemplatesResolver;
+import org.opendatamesh.platform.core.dpds.processors.*;
 import org.opendatamesh.platform.core.dpds.serde.DataProductVersionSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.networknt.schema.ValidationMessage;
-
-import lombok.Data;
+import java.util.Set;
 
 @Data
 public class DPDSParser {

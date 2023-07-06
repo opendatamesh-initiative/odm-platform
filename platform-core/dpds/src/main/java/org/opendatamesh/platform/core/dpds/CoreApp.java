@@ -1,9 +1,5 @@
 package org.opendatamesh.platform.core.dpds;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.PortDPDS;
 import org.opendatamesh.platform.core.dpds.model.definitions.ApiDefinitionReferenceDPDS;
@@ -14,6 +10,10 @@ import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
 import org.opendatamesh.platform.core.dpds.parser.location.GitLocation;
 import org.opendatamesh.platform.core.dpds.parser.location.UriLocation;
 import org.opendatamesh.platform.core.dpds.serde.DataProductVersionSerializer;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 /* 
 import org.springframework.boot.CommandLineRunner;

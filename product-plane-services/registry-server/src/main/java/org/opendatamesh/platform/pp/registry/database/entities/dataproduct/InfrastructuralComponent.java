@@ -1,15 +1,13 @@
 package org.opendatamesh.platform.pp.registry.database.entities.dataproduct;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.*;
-
+import lombok.Data;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
-import lombok.Data;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity(name = "InfrastructuralComponent")

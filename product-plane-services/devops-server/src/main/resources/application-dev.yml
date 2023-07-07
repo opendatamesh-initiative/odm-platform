@@ -16,6 +16,8 @@ server:
 ############################################
 spring:
   # JPA configuration
+  # Profile
+  profile: dev
   jpa:
     hibernate:
       ddl-auto: validate
@@ -67,14 +69,16 @@ odm:
       address: http://localhost:8482
   utilityPlane:
     policyServices:
-      opa:
+      openPolicyAgent:
         active: false
         address: http://localhost:8480
     executorServices:
-      azuredevops:
+      azureDevOps:
         active: flase
         address: http://localhost:8481
     notificationServices:
       blindata:
         active: false
         address: http://localhost:8482
+
+prova: merda

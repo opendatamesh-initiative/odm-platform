@@ -13,10 +13,10 @@
 
     <groupId>org.opendatamesh</groupId>
     <artifactId>odm-platform-up-policy-api</artifactId>
-    <name>ODM Platform Policy Service OPA API</name>
-    <description>Open Data Mesh Platform Policy Service Open Policy Agent API</description>
-    <version>1.0.0</version>
-
+    <name>ODM Platform Policy Service API</name>
+    <description>Open Data Mesh Platform Policy Service API</description>
+    <url>https://github.com/opendatamesh-initiative/odm-platform</url>
+    
     <licenses>
         <license>
             <name>The Apache License, Version 2.0</name>
@@ -24,6 +24,11 @@
         </license>
     </licenses>
 
+     <scm>
+        <connection>scm:git:git@github.com:opendatamesh-initiative/odm-platform</connection>
+        <developerConnection>scm:git:git@github.com:opendatamesh-initiative/odm-platform</developerConnection>
+        <url>scm:git:git@github.com:opendatamesh-initiative/odm-platform</url>
+    </scm>
 
     <developers>
         <developer>

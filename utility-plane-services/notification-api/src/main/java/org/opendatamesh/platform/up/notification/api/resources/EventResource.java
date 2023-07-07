@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.up.notification.api.v1.resources;
+package org.opendatamesh.platform.up.notification.api.resources;
 
 
 import java.util.Date;

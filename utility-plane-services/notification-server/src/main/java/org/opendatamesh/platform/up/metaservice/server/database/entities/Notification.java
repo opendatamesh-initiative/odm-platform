@@ -4,7 +4,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 
-import org.opendatamesh.platform.up.notification.api.v1.resources.NotificationStatus;
+import org.opendatamesh.platform.up.notification.api.resources.NotificationStatus;
 
 import java.util.Date;
 

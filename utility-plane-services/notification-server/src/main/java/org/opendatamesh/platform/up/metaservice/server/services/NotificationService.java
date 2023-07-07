@@ -3,8 +3,8 @@ package org.opendatamesh.platform.up.metaservice.server.services;
 import org.opendatamesh.platform.up.metaservice.server.api.v1.mappers.NotificationMapper;
 import org.opendatamesh.platform.up.metaservice.server.database.entities.Notification;
 import org.opendatamesh.platform.up.metaservice.server.database.repositories.NotificationRepository;
-import org.opendatamesh.platform.up.notification.api.v1.resources.NotificationResource;
-import org.opendatamesh.platform.up.notification.api.v1.resources.NotificationStatus;
+import org.opendatamesh.platform.up.notification.api.resources.NotificationResource;
+import org.opendatamesh.platform.up.notification.api.resources.NotificationStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

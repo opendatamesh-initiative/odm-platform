@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.mapstruct.Mapper;
 import org.opendatamesh.platform.up.metaservice.server.database.entities.Notification;
-import org.opendatamesh.platform.up.notification.api.v1.resources.NotificationResource;
+import org.opendatamesh.platform.up.notification.api.resources.NotificationResource;
 
 @Mapper(componentModel = "spring")
 public interface NotificationMapper {

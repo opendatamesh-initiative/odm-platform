@@ -1,0 +1,40 @@
+##########################
+# Active profile
+##########################
+spring:
+  profiles:
+    active: dev
+
+##########################
+# Logging configuration
+##########################
+logging:
+  level:
+    org:
+      apache:
+        http: INFO
+      opendatamesh:
+        dpexperience:
+          api.*: DEBUG
+    httpclient:
+      wire: INFO
+    it:
+      quantyca:
+        odm:
+          api:
+            planes:
+              dpexperience.*: DEBUG
+
+
+##########################
+# Doc configuration
+##########################
+springdoc:
+  swagger-ui:
+    operationsSorter: alpha
+
+
+
+
+
+

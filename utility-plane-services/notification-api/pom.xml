@@ -13,9 +13,11 @@
 
     <groupId>org.opendatamesh</groupId>
     <artifactId>odm-platform-up-notification-api</artifactId>
-    <name>ODM Platform Meta Service API</name>
-    <description>Open Data Mesh Platform Meta Service API</description>
+    <name>ODM Platform Notification Service API</name>
+    <description>Open Data Mesh Platform Notification Service API</description>
     <version>1.0.0</version>
+    <url>https://github.com/opendatamesh-initiative/odm-platform</url>
+
 
     <licenses>
         <license>
@@ -24,6 +26,11 @@
         </license>
     </licenses>
 
+     <scm>
+        <connection>scm:git:git@github.com:opendatamesh-initiative/odm-platform</connection>
+        <developerConnection>scm:git:git@github.com:opendatamesh-initiative/odm-platform</developerConnection>
+        <url>scm:git:git@github.com:opendatamesh-initiative/odm-platform</url>
+    </scm>
 
     <developers>
         <developer>

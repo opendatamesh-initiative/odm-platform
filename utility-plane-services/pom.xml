@@ -30,8 +30,7 @@ License.
 
     <groupId>org.opendatamesh</groupId>
     <artifactId>odm-platform-up-services</artifactId>
-    <name>ODM Platform Utility Plane Services</name>
-   
+    <name>ODM Platform UTILITY PLANE SERVICES</name>
     <description>Open Data Mesh Platform Utility Plane Services</description>
     <version>1.0.0</version>
     <url>https://github.com/opendatamesh-initiative/odm-platform-pp-services</url>
@@ -63,6 +62,7 @@ License.
         <module>notification-api</module>
         <module>notification-server</module>
         <module>policy-api</module>
+        <module>executor-api</module>
     </modules>
 
 </project>

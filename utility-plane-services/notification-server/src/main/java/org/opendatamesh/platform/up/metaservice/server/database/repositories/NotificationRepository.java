@@ -1,7 +1,7 @@
 package org.opendatamesh.platform.up.metaservice.server.database.repositories;
 
 import org.opendatamesh.platform.up.metaservice.server.database.entities.Notification;
-import org.opendatamesh.platform.up.notification.api.v1.resources.NotificationStatus;
+import org.opendatamesh.platform.up.notification.api.resources.NotificationStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 

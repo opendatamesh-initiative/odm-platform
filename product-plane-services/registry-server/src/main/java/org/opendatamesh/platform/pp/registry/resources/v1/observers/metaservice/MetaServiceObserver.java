@@ -3,7 +3,7 @@ package org.opendatamesh.platform.pp.registry.resources.v1.observers.metaservice
 
 import org.opendatamesh.platform.pp.registry.resources.v1.observers.Observer;
 import org.opendatamesh.platform.pp.registry.services.MetaServiceProxy;
-import org.opendatamesh.platform.up.notification.api.v1.resources.EventResource;
+import org.opendatamesh.platform.up.notification.api.resources.EventResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

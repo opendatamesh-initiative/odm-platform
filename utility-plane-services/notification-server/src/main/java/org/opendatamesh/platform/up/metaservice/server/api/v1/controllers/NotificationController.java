@@ -2,8 +2,8 @@ package org.opendatamesh.platform.up.metaservice.server.api.v1.controllers;
 
 import org.opendatamesh.platform.up.metaservice.server.services.MetaServiceException;
 import org.opendatamesh.platform.up.metaservice.server.services.NotificationService;
-import org.opendatamesh.platform.up.notification.api.v1.controllers.AbstractNotificationController;
-import org.opendatamesh.platform.up.notification.api.v1.resources.NotificationResource;
+import org.opendatamesh.platform.up.notification.api.controllers.AbstractNotificationController;
+import org.opendatamesh.platform.up.notification.api.resources.NotificationResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

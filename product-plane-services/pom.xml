@@ -30,11 +30,11 @@ License.
 
     <groupId>org.opendatamesh</groupId>
     <artifactId>odm-platform-pp-services</artifactId>
-    <name>ODM Platform Product Plane Services</name>
+    <name>ODM Platform PRODUCT PLANE SERVICES</name>
    
     <description>Open Data Mesh Platform Utility Plane Services</description>
     <version>1.0.0</version>
-    <url>https://github.com/opendatamesh-initiative/odm-platform-pp-services</url>
+    <url>https://github.com/opendatamesh-initiative/odm-platform</url>
     <packaging>pom</packaging>
 
     <licenses>
@@ -45,9 +45,9 @@ License.
     </licenses>
 
     <scm>
-        <connection>scm:git:git@github.com:opendatamesh-initiative/odm-platform-pp-services</connection>
-        <developerConnection>scm:git:git@github.com:opendatamesh-initiative/odm-platform-pp-services</developerConnection>
-        <url>scm:git:git@github.com:opendatamesh-initiative/odm-platform-pp-services</url>
+        <connection>scm:git:git@github.com:opendatamesh-initiative/odm-platform</connection>
+        <developerConnection>scm:git:git@github.com:opendatamesh-initiative/odm-platform</developerConnection>
+        <url>scm:git:git@github.com:opendatamesh-initiative/odm-platform</url>
     </scm>
 
     <developers>
@@ -62,6 +62,8 @@ License.
     <modules>
         <module>registry-api</module>
         <module>registry-server</module>
+        <module>devops-api</module>
+        <module>devops-server</module>
     </modules>
 
 </project>

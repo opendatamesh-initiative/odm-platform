@@ -15,6 +15,7 @@
     <artifactId>odm-platform-up-policy-api</artifactId>
     <name>ODM Platform Policy Service OPA API</name>
     <description>Open Data Mesh Platform Policy Service Open Policy Agent API</description>
+    <url>https://github.com/opendatamesh-initiative/odm-platform</url>
     <version>1.0.0</version>
 
     <properties>
@@ -28,6 +29,11 @@
         </license>
     </licenses>
 
+     <scm>
+        <connection>scm:git:git@github.com:opendatamesh-initiative/odm-platform</connection>
+        <developerConnection>scm:git:git@github.com:opendatamesh-initiative/odm-platform</developerConnection>
+        <url>scm:git:git@github.com:opendatamesh-initiative/odm-platform</url>
+    </scm>
 
     <developers>
         <developer>

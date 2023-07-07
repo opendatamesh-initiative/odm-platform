@@ -2,7 +2,7 @@ package org.opendatamesh.platform.up.metaservice.server.api.v1.mappers;
 
 import org.mapstruct.Mapper;
 import org.opendatamesh.platform.up.metaservice.server.database.entities.Notification;
-import org.opendatamesh.platform.up.notification.api.v1.resources.NotificationResource;
+import org.opendatamesh.platform.up.notification.api.resources.NotificationResource;
 
 import java.util.List;
 

@@ -1,10 +1,9 @@
 package org.opendatamesh.platform.pp.registry.resources.v1.observers;
 
-
-import org.opendatamesh.platform.up.notification.api.v1.resources.EventResource;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.opendatamesh.platform.up.notification.api.resources.EventResource;
 
 public class EventNotifier {
     private List<Observer> observers = new ArrayList<>();

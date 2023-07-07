@@ -1,6 +1,6 @@
 package org.opendatamesh.platform.up.metaservice.server.services;
 
-import org.opendatamesh.platform.up.notification.api.v1.resources.NotificationResource;
+import org.opendatamesh.platform.up.notification.api.resources.NotificationResource;
 import org.springframework.stereotype.Service;
 
 @Service

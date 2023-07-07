@@ -13,9 +13,11 @@
 
 	<groupId>org.opendatamesh</groupId>
 	<artifactId>odm-platform-up-notification-server</artifactId>
-    <name>ODM Platform Meta Service Server</name>
-	<description>Open Data Mesh Platform Meta Service server</description>
+    <name>ODM Platform Notification Service Server</name>
+	<description>Open Data Mesh Platform Notification Service server</description>
 	<version>1.0.0</version>
+    <url>https://github.com/opendatamesh-initiative/odm-platform</url>
+
 
     <licenses>
         <license>
@@ -23,6 +25,12 @@
             <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
         </license>
     </licenses>
+
+     <scm>
+        <connection>scm:git:git@github.com:opendatamesh-initiative/odm-platform</connection>
+        <developerConnection>scm:git:git@github.com:opendatamesh-initiative/odm-platform</developerConnection>
+        <url>scm:git:git@github.com:opendatamesh-initiative/odm-platform</url>
+    </scm>
 
 
     <developers>

@@ -1,0 +1,66 @@
+##########################
+# Server configuration
+##########################
+app:
+  workdir:
+
+server:
+  port: ${SPRING_PORT}
+  error:
+    include-message: always
+  servlet:
+    context-path: /api/v1/pp/
+
+############################################
+# Spring, JPA, DB and Flyway configurations
+############################################
+spring:
+  # Profile
+  profile: docker
+  # JPA
+  jpa:
+    hibernate:
+      ddl-auto: validate
+      show-sql: true
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
+        globally_quoted_identifiers: true
+        default_schema: PUBLIC
+  # DB
+  datasource:
+    url: ${DATABASE_URL}?allowPublicKeyRetrieval=true&useSSL=false
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+  h2:
+    console:
+      enabled: ${H2_CONSOLE_ENABLED}
+      path: /${H2_CONSOLE_PATH}
+      settings:
+        web-allow-others: true
+  # FlyWay
+  # More: https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html#appendix.application-properties.data-migration
+  flyway:
+    #enabled: false # To disable it
+    url: ${DATABASE_URL}?allowPublicKeyRetrieval=true&useSSL=false
+    user: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+    schemas: ${FLYWAY_SCHEMA} 
+    #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
+    locations: classpath:db/migration/${FLYWAY_SCRIPTS_DIR}
+    clean-on-validation-error: true
+
+
+##############################
+# Policy Module configuration
+##############################
+policyserviceaddress: http://${POLICYSERVICE_HOSTNAME}:${POLICYSERVICE_PORT}  #172.17.0.1:4242
+metaserviceaddress: http://${METASERVICE_HOSTNAME}:${METASERVICE_PORT}
+
+skippolicyservice: ${SKIP_POLICYSERVICE}
+skipmetaservice: ${SKIP_METASERVICE}

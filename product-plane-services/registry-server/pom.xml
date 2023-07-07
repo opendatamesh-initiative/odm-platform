@@ -34,7 +34,7 @@ License.
     <name>ODM Platform Registry Server</name>
     <description>Open Data Mesh Platform's registry service server</description>
     <version>1.0.0</version>
-    <url>https://bitbucket.org/quantyca/odm-plane-dpexperience-services/</url>
+     <url>https://github.com/opendatamesh-initiative/odm-platform</url>
 
 
     <licenses>
@@ -44,10 +44,10 @@ License.
         </license>
     </licenses>
 
-    <scm>
-        <connection>scm:git:git@github.com:opendatamesh-initiative/odm-plane-dpexperience-services</connection>
-        <developerConnection>scm:git:git@github.com:opendatamesh-initiative/odm-plane-dpexperience-services</developerConnection>
-        <url>scm:git:git@github.com:opendatamesh-initiative/odm-plane-dpexperience-services</url>
+     <scm>
+        <connection>scm:git:git@github.com:opendatamesh-initiative/odm-platform</connection>
+        <developerConnection>scm:git:git@github.com:opendatamesh-initiative/odm-platform</developerConnection>
+        <url>scm:git:git@github.com:opendatamesh-initiative/odm-platform</url>
     </scm>
 
     <developers>

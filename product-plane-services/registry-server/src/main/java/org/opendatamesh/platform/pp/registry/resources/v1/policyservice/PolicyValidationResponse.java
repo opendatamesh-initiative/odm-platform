@@ -1,9 +1,9 @@
 package org.opendatamesh.platform.pp.registry.resources.v1.policyservice;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PolicyValidationResponse {

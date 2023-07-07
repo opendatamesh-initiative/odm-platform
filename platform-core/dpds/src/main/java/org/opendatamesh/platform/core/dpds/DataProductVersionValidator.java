@@ -1,17 +1,16 @@
 package org.opendatamesh.platform.core.dpds;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Set;
-
-import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.networknt.schema.JsonSchema;
 import com.networknt.schema.JsonSchemaFactory;
 import com.networknt.schema.SpecVersion.VersionFlag;
 import com.networknt.schema.ValidationMessage;
+import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Set;
 
 
 public class DataProductVersionValidator {

@@ -1,11 +1,11 @@
 package org.opendatamesh.platform.core.dpds.parser;
 
-import java.util.UUID;
-
 import org.apache.commons.lang3.StringUtils;
 import org.opendatamesh.platform.core.dpds.model.ComponentDPDS;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.InfoDPDS;
+
+import java.util.UUID;
 
 
 public class IdentifierStrategy {

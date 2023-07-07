@@ -1,8 +1,8 @@
 package org.opendatamesh.platform.core.dpds.parser.location;
 
-import java.net.URI;
-
 import org.opendatamesh.platform.core.dpds.exceptions.FetchException;
+
+import java.net.URI;
 
 
 public interface DescriptorLocation {

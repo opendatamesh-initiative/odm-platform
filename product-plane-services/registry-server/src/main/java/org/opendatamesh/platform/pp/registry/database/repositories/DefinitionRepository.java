@@ -1,14 +1,13 @@
 package org.opendatamesh.platform.pp.registry.database.repositories;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.criteria.Predicate;
-
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Definition;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+
+import javax.persistence.criteria.Predicate;
+import java.util.ArrayList;
+import java.util.List;
 
 public interface DefinitionRepository extends JpaRepository<Definition, Long>, JpaSpecificationExecutor<Definition> {
 

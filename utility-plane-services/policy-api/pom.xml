@@ -13,10 +13,15 @@
 
     <groupId>org.opendatamesh</groupId>
     <artifactId>odm-platform-up-policy-api</artifactId>
-    <name>ODM Platform Policy Service API</name>
-    <description>Open Data Mesh Platform Policy Service API</description>
+    <name>ODM Platform Policy Service OPA API</name>
+    <description>Open Data Mesh Platform Policy Service Open Policy Agent API</description>
     <url>https://github.com/opendatamesh-initiative/odm-platform</url>
-    
+    <version>1.0.0</version>
+
+    <properties>
+        <java.version>11</java.version>
+    </properties>
+
     <licenses>
         <license>
             <name>The Apache License, Version 2.0</name>
@@ -58,11 +63,6 @@
 
 
     <dependencies>
-        <!-- Spring Boot Starter -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
 
         <!-- Auto Documentation -->
         <dependency>
@@ -77,22 +77,6 @@
             <artifactId>lombok</artifactId>
             <version>1.18.24</version>
             <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.docx4j</groupId>
-            <artifactId>docx4j-ImportXHTML</artifactId>
-            <version>3.0.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-log4j12</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>log4j</groupId>
-                    <artifactId>log4j</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>

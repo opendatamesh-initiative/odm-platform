@@ -1,12 +1,11 @@
 package org.opendatamesh.platform.pp.registry.database.entities.dataproduct;
 
-import javax.persistence.*;
-
+import lombok.Data;
 import org.opendatamesh.platform.core.dpds.model.EntityTypeDPDS;
 
-import lombok.Data;
-
-import java.util.*;
+import javax.persistence.*;
+import java.util.Date;
+import java.util.UUID;
 
 @Data
 @MappedSuperclass

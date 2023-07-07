@@ -3,7 +3,8 @@ package org.opendatamesh.platform.up.metaservice.server.database.entities;
 
 import lombok.Data;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import java.util.Date;
 
 @Embeddable

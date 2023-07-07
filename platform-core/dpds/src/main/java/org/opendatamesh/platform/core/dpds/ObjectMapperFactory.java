@@ -1,12 +1,5 @@
 package org.opendatamesh.platform.core.dpds;
 
-import org.opendatamesh.platform.core.dpds.model.BuildInfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.DeployInfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.ProvisionInfoDPDS;
-import org.opendatamesh.platform.core.dpds.serde.BuildInfoResourceDeserializer;
-import org.opendatamesh.platform.core.dpds.serde.DeployInfoResourceDeserializer;
-import org.opendatamesh.platform.core.dpds.serde.ProvisionInfoResourceDeserializer;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonFactoryBuilder;
@@ -16,6 +9,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import org.opendatamesh.platform.core.dpds.model.BuildInfoDPDS;
+import org.opendatamesh.platform.core.dpds.model.DeployInfoDPDS;
+import org.opendatamesh.platform.core.dpds.model.ProvisionInfoDPDS;
+import org.opendatamesh.platform.core.dpds.serde.BuildInfoResourceDeserializer;
+import org.opendatamesh.platform.core.dpds.serde.DeployInfoResourceDeserializer;
+import org.opendatamesh.platform.core.dpds.serde.ProvisionInfoResourceDeserializer;
 
 public class ObjectMapperFactory {
 

@@ -1,8 +1,8 @@
 package org.opendatamesh.platform.core.dpds.exceptions;
 
-import java.net.URI;
-
 import lombok.Data;
+
+import java.net.URI;
 
 @Data
 public class FetchException extends Exception{

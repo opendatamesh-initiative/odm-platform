@@ -1,8 +1,7 @@
 package org.opendatamesh.platform.core.dpds.parser;
 
-import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
-
 import lombok.Data;
+import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 
 @Data
 public class ParseResult {

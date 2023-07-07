@@ -1,6 +1,5 @@
 package org.opendatamesh.platform.pp.registry.resources.v1.observers;
 
-
 import java.util.ArrayList;
 import java.util.List;
 

@@ -1,0 +1,54 @@
+##########################
+# Spring, JPA, H2 and flyway configuration
+##########################
+spring:
+  profile: docker
+  jpa:
+    hibernate:
+      ddl-auto: validate # [validate, none]
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        globally_quoted_identifiers: true
+        default_schema: PUBLIC
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: true
+  flyway:
+    #enabled: false # To disable
+    url: ${DATABASE_URL}
+    user: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+    #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
+    schemas: flyway
+    locations: classpath:db/migration/${FLYWAY_SCRIPTS_DIR}
+    clean-on-validation-error: true
+
+##########################
+# Server configuration
+##########################
+server:
+  port: ${SPRING_LOCAL_PORT}
+  servlet:
+    contextPath: /api/v1/planes/utility/policy-services/opa
+  error:
+    include-stacktrace: always
+    include-message: always
+timeout:
+  seconds : 30
+
+##########################
+# OPA configuration
+##########################
+opa:
+  url:
+    policies: http://${OPA_HOSTNAME}:${OPA_LOCAL_PORT}/v1/policies #http://host.docker.internal:8181/v1/policies
+    data: http://${OPA_HOSTNAME}:${OPA_LOCAL_PORT}/v1/data #http://host.docker.internal:8181/v1/data

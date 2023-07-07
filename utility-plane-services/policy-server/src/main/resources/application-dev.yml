@@ -1,0 +1,51 @@
+##########################
+# Spring, JPA and H2 configuration
+##########################
+spring:
+  profile: dev
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driverClassName: org.h2.Driver
+    username: sa
+    password: password
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: none # [validate, none]
+      show-sql: true
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  flyway:
+    #enabled: false # To disable
+    url: jdbc:h2:mem:testdb
+    user: sa
+    password: password
+    #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
+    schemas: flyway
+    locations: classpath:db/migration/h2
+    clean-on-validation-error: true
+
+##########################
+# Server configuration
+##########################
+server:
+  port: 4242
+  servlet:
+    contextPath: /api/v1/planes/utility/policy-services/opa
+  error:
+    include-stacktrace: always
+    include-message: always
+timeout:
+  seconds : 30
+
+##########################
+# OPA configuration
+##########################
+opa:
+  url:
+    policies: http://localhost:8181/v1/policies
+    data: http://localhost:8181/v1/data

@@ -1,15 +1,14 @@
 package org.opendatamesh.platform.pp.registry.database.entities.dataproduct;
 
 
-
+import lombok.Data;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
-import lombok.Data;
-
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Embeddable

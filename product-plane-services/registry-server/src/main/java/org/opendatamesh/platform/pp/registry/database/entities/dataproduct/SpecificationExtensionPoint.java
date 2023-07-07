@@ -1,8 +1,8 @@
 package org.opendatamesh.platform.pp.registry.database.entities.dataproduct;
 
-import javax.persistence.*;
-
 import lombok.Data;
+
+import javax.persistence.*;
 
 @Data
 @Entity(name = "SpecificationExtensionPoint")

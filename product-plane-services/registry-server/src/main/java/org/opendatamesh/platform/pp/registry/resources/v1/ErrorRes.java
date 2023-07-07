@@ -1,10 +1,9 @@
 package org.opendatamesh.platform.pp.registry.resources.v1;
 
-import java.util.Date;
-
+import lombok.Data;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
 
-import lombok.Data;
+import java.util.Date;
 
 @Data
 public class ErrorRes {

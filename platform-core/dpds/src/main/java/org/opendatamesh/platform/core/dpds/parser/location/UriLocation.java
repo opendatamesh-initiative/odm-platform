@@ -1,11 +1,10 @@
 package org.opendatamesh.platform.core.dpds.parser.location;
 
-import java.net.URI;
-import java.util.List;
-
+import lombok.Data;
 import org.opendatamesh.platform.core.dpds.exceptions.FetchException;
 
-import lombok.Data;
+import java.net.URI;
+import java.util.List;
 
 @Data
 public class UriLocation implements DescriptorLocation {

@@ -1,10 +1,9 @@
 package org.opendatamesh.platform.core.dpds.exceptions;
 
-import java.util.Set;
-
 import com.networknt.schema.ValidationMessage;
-
 import lombok.Data;
+
+import java.util.Set;
 
 @Data
 public class ValidationException extends Exception {

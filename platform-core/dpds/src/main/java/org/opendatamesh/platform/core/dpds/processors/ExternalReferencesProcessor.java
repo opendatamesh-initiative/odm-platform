@@ -1,8 +1,6 @@
 package org.opendatamesh.platform.core.dpds.processors;
 
-import java.net.URI;
-import java.util.List;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
 import org.opendatamesh.platform.core.dpds.exceptions.UnresolvableReferenceException;
@@ -11,8 +9,8 @@ import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.EntityTypeDPDS;
 import org.opendatamesh.platform.core.dpds.parser.ParseContext;
 
-
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.net.URI;
+import java.util.List;
 
 public class ExternalReferencesProcessor implements PropertiesProcessor{
 

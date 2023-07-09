@@ -22,11 +22,20 @@ public class BuildInfo {
     @JoinColumn(name = "SERVICE_ID", referencedColumnName = "ID")
     private ExternalResource service;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "TEMPLATE_ID", referencedColumnName = "ID")
-    private ReferenceObject template;
+     @Column(name = "TEMPLATE_ID")
+    protected Long templateId;
 
-    @Column(name = "CONFIGURATIONS", length=5000)
-    @Convert(converter = HashMapConverter.class)
-    private Map<String, Object> configurations;
+    @Transient
+    protected StandardDefinition template;
+
+    @Column(name = "CONFIGURATIONS")
+    private String configurations;
+
+    public boolean hasTemplate() {
+        return template != null;
+    }
+
+    public boolean hasTemplateDefinition() {
+        return hasTemplate() && template.hasDefinition();
+    }
 }

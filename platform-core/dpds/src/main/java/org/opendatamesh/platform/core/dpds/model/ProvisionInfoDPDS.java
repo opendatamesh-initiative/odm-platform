@@ -11,20 +11,11 @@ import java.util.Map;
 public class ProvisionInfoDPDS {
 
     @JsonProperty("service")
-    private ReferenceObjectDPDS service;
+    private ExternalResourceDPDS service;
 
     @JsonProperty("template")
-    private ReferenceObjectDPDS template;
+    private StandardDefinitionDPDS template;
    
     @JsonProperty("configurations")
-    private Map<String, Object> configurations;
-
-    public ProvisionInfoDPDS() {
-    }
-
-    public ProvisionInfoDPDS(ReferenceObjectDPDS service, ReferenceObjectDPDS template, Map<String, Object> configurations) {
-        this.service = service;
-        this.template = template;
-        this.configurations = configurations;
-    }
+    private String configurations;
 }

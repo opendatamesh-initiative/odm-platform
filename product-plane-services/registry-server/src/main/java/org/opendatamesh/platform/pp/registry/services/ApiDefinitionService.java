@@ -1,7 +1,7 @@
 package org.opendatamesh.platform.pp.registry.services;
 
-import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Definition;
-import org.opendatamesh.platform.pp.registry.database.repositories.DefinitionRepository;
+import org.opendatamesh.platform.pp.registry.database.entities.sharedres.ApiDefinition;
+import org.opendatamesh.platform.pp.registry.database.repositories.ApiDefinitionRepository;
 import org.opendatamesh.platform.pp.registry.exceptions.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,18 +14,18 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class DefinitionService {
+public class ApiDefinitionService {
 
     @Autowired
-    private DefinitionRepository definitionRepository;
+    private ApiDefinitionRepository apiDefinitionRepository;
 
-    private static final Logger logger = LoggerFactory.getLogger(DefinitionService.class);
+    private static final Logger logger = LoggerFactory.getLogger(ApiDefinitionService.class);
 
-    public DefinitionService() {
+    public ApiDefinitionService() {
 
     }
 
-    public Definition resolveNameAndVersion(Definition definition) {
+    public ApiDefinition resolveNameAndVersion(ApiDefinition definition) {
          if (definition == null) {
             throw new InternalServerException(
                     OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
@@ -56,7 +56,7 @@ public class DefinitionService {
     // CREATE
     // ======================================================================================
 
-    public Definition createDefinition(Definition definition) {
+    public ApiDefinition createDefinition(ApiDefinition definition) {
 
         if (definition == null) {
             throw new InternalServerException(
@@ -91,15 +91,15 @@ public class DefinitionService {
         return definition;
     }
 
-    private Definition saveDefinition(Definition definition) {
-        return definitionRepository.saveAndFlush(definition);
+    private ApiDefinition saveDefinition(ApiDefinition definition) {
+        return apiDefinitionRepository.saveAndFlush(definition);
     }
 
     // ======================================================================================
     // READ
     // ======================================================================================
 
-    public Definition readOneDefinition(Definition definition) {
+    public ApiDefinition readOneDefinition(ApiDefinition definition) {
         if (definition == null) {
             throw new InternalServerException(
                     OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
@@ -109,8 +109,8 @@ public class DefinitionService {
         return readDefinition(definition.getId());
     }
 
-    public Definition readDefinition(Long definitionId) {
-        Definition definition = null;
+    public ApiDefinition readDefinition(Long definitionId) {
+        ApiDefinition definition = null;
 
         definition = searchDefinition(definitionId);
 
@@ -123,9 +123,9 @@ public class DefinitionService {
         return definition;
     }
 
-    public Definition loadDefinition(Long definitionId) {
-        Definition definition = null;
-        Optional<Definition> referenceObjectLookUpResults = definitionRepository.findById(definitionId);
+    public ApiDefinition loadDefinition(Long definitionId) {
+        ApiDefinition definition = null;
+        Optional<ApiDefinition> referenceObjectLookUpResults = apiDefinitionRepository.findById(definitionId);
 
         if (referenceObjectLookUpResults.isPresent()) {
             definition = referenceObjectLookUpResults.get();
@@ -143,20 +143,20 @@ public class DefinitionService {
                     OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
                     "name and version objects cannot be null");
         }
-        return definitionRepository.existsByNameAndVersion(name, version);
+        return apiDefinitionRepository.existsByNameAndVersion(name, version);
     }
 
     private boolean definitionExists(Long standardDefinitionId) {
         return standardDefinitionId != null
-                && definitionRepository.existsById(standardDefinitionId);
+                && apiDefinitionRepository.existsById(standardDefinitionId);
     }
 
     // -------------------------
     // search methods
     // -------------------------
 
-    public Definition searchDefinition(Long definitionId) {
-        Definition definition = null;
+    public ApiDefinition searchDefinition(Long definitionId) {
+        ApiDefinition definition = null;
         if (definitionId == null) {
             throw new BadRequestException(
                     OpenDataMeshAPIStandardError.SC400_09_STDDEF_ID_IS_EMPTY,
@@ -175,19 +175,19 @@ public class DefinitionService {
         return definition;
     }
 
-     public Definition searchDefinition(Definition definition) {
+     public ApiDefinition searchDefinition(ApiDefinition definition) {
         definition = resolveNameAndVersion(definition);
         return searchDefinition(definition.getName(), definition.getVersion());
     }
     /**
      * @return The definition identified by name and version. Null if not exists
      */
-    public Definition searchDefinition(
+    public ApiDefinition searchDefinition(
             String name,
             String version) {
 
-        Definition definition = null;
-        List<Definition> definitions = searchDefinitions(name, version, null, null, null);
+        ApiDefinition definition = null;
+        List<ApiDefinition> definitions = searchDefinitions(name, version, null, null, null);
         if (definitions == null || definitions.size() == 0) {
             definition = null;
         } else if (definitions.size() == 1) {
@@ -201,13 +201,13 @@ public class DefinitionService {
         return definition;
     }
 
-    public List<Definition> searchDefinitions(
+    public List<ApiDefinition> searchDefinitions(
             String name,
             String version,
             String type,
             String specification,
             String specificationVersion) {
-        List<Definition> definitionSearchResults = null;
+        List<ApiDefinition> definitionSearchResults = null;
         try {
             definitionSearchResults = findDefinitions(name, version, type, specification, specificationVersion);
         } catch (Throwable t) {
@@ -219,22 +219,22 @@ public class DefinitionService {
         return definitionSearchResults;
     }
 
-    private List<Definition> findDefinitions(
+    private List<ApiDefinition> findDefinitions(
             String name,
             String version,
             String type,
             String specification,
             String specificationVersion) {
 
-        return definitionRepository
-                .findAll(DefinitionRepository.Specs.hasMatch(name, version, type, specification, specificationVersion));
+        return apiDefinitionRepository
+                .findAll(ApiDefinitionRepository.Specs.hasMatch(name, version, type, specification, specificationVersion));
     }
 
     // ======================================================================================
     // UPDATE
     // ======================================================================================
 
-    public Definition updateDefinition(Definition definition) {
+    public ApiDefinition updateDefinition(ApiDefinition definition) {
         if (definition == null) {
             throw new InternalServerException(
                     OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
@@ -265,7 +265,7 @@ public class DefinitionService {
     // ======================================================================================
 
     public void deleteDefinition(Long definitionId) {
-        Definition definition = searchDefinition(definitionId);
+        ApiDefinition definition = searchDefinition(definitionId);
         if (definition == null) {
             throw new NotFoundException(
                     OpenDataMeshAPIStandardError.SC404_03_STDDEF_NOT_FOUND,
@@ -273,7 +273,7 @@ public class DefinitionService {
         }
 
         try {
-            definitionRepository.delete(definition);
+            apiDefinitionRepository.delete(definition);
             logger.info("Definition [" + definitionId + "] successfully deleted");
         } catch (Throwable t) {
             throw new InternalServerException(

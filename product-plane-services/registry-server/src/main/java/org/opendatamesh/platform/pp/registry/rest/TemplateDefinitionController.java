@@ -8,12 +8,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DefinitionResource;
-import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Definition;
+import org.opendatamesh.platform.pp.registry.database.entities.sharedres.TemplateDefinition;
 import org.opendatamesh.platform.pp.registry.exceptions.BadRequestException;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
-import org.opendatamesh.platform.pp.registry.resources.v1.mappers.DefinitionMapper;
-import org.opendatamesh.platform.pp.registry.services.DefinitionService;
+import org.opendatamesh.platform.pp.registry.resources.v1.mappers.TemplateDefinitionMapper;
+import org.opendatamesh.platform.pp.registry.services.TemplateDefinitionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(
-    value =  "/definitions", 
+    value =  "/templates", 
     produces = { 
         "application/vnd.odmp.v1+json", 
         "application/vnd.odmp+json", 
@@ -35,20 +35,20 @@ import java.util.List;
 )
 @Validated
 @Tag(
-    name = "Definitions", 
-    description = "Definitions")
-public class DefinitionController {
+    name = "Templates", 
+    description = "Tempates's definitions")
+public class TemplateDefinitionController {
 
     @Autowired
-    private DefinitionService definitionService;
+    private TemplateDefinitionService templateDefinitionService;
 
     @Autowired
-    private DefinitionMapper definitionMapper;
+    private TemplateDefinitionMapper templateDefinitionMapper;
 
-    private static final Logger logger = LoggerFactory.getLogger(DefinitionController.class);
+    private static final Logger logger = LoggerFactory.getLogger(TemplateDefinitionController.class);
 
-    public DefinitionController() { 
-        logger.debug("Standard definitions controller successfully started");
+    public TemplateDefinitionController() { 
+        logger.debug("Standard Template definitions controller successfully started");
     }
 
     // ======================================================================================
@@ -65,13 +65,13 @@ public class DefinitionController {
     )
     @ResponseStatus(HttpStatus.CREATED) 
     @Operation(
-        summary = "Register the  definition",
-        description = "Register the provided definition in the Data Product Registry" 
+        summary = "Register the  Template definition",
+        description = "Register the provided Template definition in the Data Product Registry" 
     )
     @ApiResponses(value = {
         @ApiResponse(
             responseCode = "201", 
-            description = "Definition registered", 
+            description = "Template definition registered", 
             content = @Content(
                 mediaType = "application/json", 
                 schema = @Schema(implementation = DefinitionResource.class)
@@ -100,18 +100,21 @@ public class DefinitionController {
     })
     public DefinitionResource createDefinition(
         @Parameter( 
-            description = "A definition object", 
+            description = "An Template definition object", 
             required = true)
-        @Valid @RequestBody(required=false)  Definition definition
+        @Valid @RequestBody(required=false)  DefinitionResource definitionRes
     ) {
-        if(definition == null) {
+        if(definitionRes == null) {
             throw new BadRequestException(
                 OpenDataMeshAPIStandardError.SC400_08_STDDEF_IS_EMPTY,
-                "Definition cannot be empty");
+                "Template definition cannot be empty");
         }
         
-        definition = definitionService.createDefinition(definition);
-        return definitionMapper.toResource(definition);
+        TemplateDefinition templateDefinition = templateDefinitionMapper.toEntity(definitionRes);
+        templateDefinition.setStatus("ACTIVE"); // TODO find a better way to manage read-only properties
+        templateDefinition.setType("TEMPLATE"); // TODO find a better way to manage read-only properties
+        templateDefinition = templateDefinitionService.createDefinition(templateDefinition);
+        return templateDefinitionMapper.toResource(templateDefinition);
     }
 
     // ----------------------------------------
@@ -121,13 +124,13 @@ public class DefinitionController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK) 
     @Operation(
-        summary = "Get all registered definitions",
-        description = "Get all definitions registered in the Data Product Registry."
+        summary = "Get all registered Template definitions",
+        description = "Get all Template definitions registered in the Data Product Registry."
     )
     @ApiResponses(value = {
         @ApiResponse(
             responseCode = "200", 
-            description = "The list of all registered definitions", 
+            description = "The list of all registered Template definitions", 
             content = @Content(
                 mediaType = "application/json", 
                 schema = @Schema(implementation = List.class)
@@ -162,8 +165,8 @@ public class DefinitionController {
         String specificationVersion
     )
     {
-        List<Definition> definitions = definitionService.searchDefinitions(name, version, type, specification, specificationVersion);
-        List<DefinitionResource> definitionResources = definitionMapper.definitionsToResources(definitions);
+        List<TemplateDefinition> definitions = templateDefinitionService.searchDefinitions(name, version, type, specification, specificationVersion);
+        List<DefinitionResource> definitionResources = templateDefinitionMapper.definitionsToResources(definitions);
         return definitionResources;
     }
 
@@ -176,8 +179,8 @@ public class DefinitionController {
     )
     @ResponseStatus(HttpStatus.OK)
     @Operation(
-        summary = "Get the specified definition",
-        description = "Get the definition identified by the input `id`"
+        summary = "Get the specified Template definition",
+        description = "Get the Template definition identified by the input `id`"
     )
     @ApiResponses(value = {
         @ApiResponse(
@@ -196,11 +199,11 @@ public class DefinitionController {
         )
     })
     public DefinitionResource readOneDefinition(
-        @Parameter(description = "Idenntifier of the definition")
+        @Parameter(description = "Idenntifier of the Template definition")
         @Valid @PathVariable(value = "id") Long id) 
     {
-        Definition definition = definitionService.readDefinition(id);
-        DefinitionResource definitionResource = definitionMapper.toResource(definition);
+        TemplateDefinition definition = templateDefinitionService.readDefinition(id);
+        DefinitionResource definitionResource = templateDefinitionMapper.toResource(definition);
         return definitionResource;
     }
 
@@ -222,8 +225,8 @@ public class DefinitionController {
      )
      @ResponseStatus(HttpStatus.OK)
      @Operation(
-             summary = "Delete the specified definition",
-             description = "Delete the definition identified by the input `id`"
+             summary = "Delete the specified Template definition",
+             description = "Delete the Template definition identified by the input `id`"
      )
      @ApiResponses(value = {
              @ApiResponse(
@@ -244,7 +247,7 @@ public class DefinitionController {
         @PathVariable Long id
     )
     {
-        definitionService.deleteDefinition(id);
+        templateDefinitionService.deleteDefinition(id);
     }
 
     

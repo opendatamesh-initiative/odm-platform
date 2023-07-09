@@ -5,9 +5,9 @@ import lombok.Data;
 import javax.persistence.*;
 
 @Data
-@Entity(name = "Definition")
-@Table(name = "DEFINITIONS", schema="PUBLIC")
-public class Definition {
+@Entity(name = "TemplateDefinition")
+@Table(name = "DEF_TEMPLATES", schema="PUBLIC")
+public class TemplateDefinition {
     @Id
     @Column(name = "ID")
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -42,6 +42,4 @@ public class Definition {
 
     @Column(name = "CONTENT")
     private String content;
-
-   
 }

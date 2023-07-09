@@ -61,6 +61,21 @@ public class ApplicationComponent extends Component implements Cloneable {
     
     private static final Logger logger = LoggerFactory.getLogger(ApplicationComponent.class);
 
+    public boolean hasBuildInfo() {
+        return buildInfo != null;
+    }
+
+    public boolean hasBuildInfoTemplateDefinition() {
+        return hasBuildInfo() && buildInfo.hasTemplateDefinition();
+    }
+
+    public boolean hasDeploydInfo() {
+        return deployInfo != null;
+    }
+
+    public boolean hasDeployInfoTemplateDefinition() {
+        return hasDeploydInfo() && deployInfo.hasTemplateDefinition();
+    }
    
     @PrePersist
     protected void onCreate() {

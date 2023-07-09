@@ -46,7 +46,7 @@ public class SchemaController {
     @Autowired
     private SchemaMapper schemaMapper;
 
-    private static final Logger logger = LoggerFactory.getLogger(DefinitionController.class);
+    private static final Logger logger = LoggerFactory.getLogger(ApiDefinitionController.class);
 
     public SchemaController() { 
         logger.debug("Schemas controller succesfully started");

@@ -34,10 +34,6 @@ import java.util.List;
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 public class UploadIT extends OpenDataMeshIT {
     
-    @Autowired
-    ObjectMapper objectMapper;
-    
-
     @Before
     public void setup() {
         

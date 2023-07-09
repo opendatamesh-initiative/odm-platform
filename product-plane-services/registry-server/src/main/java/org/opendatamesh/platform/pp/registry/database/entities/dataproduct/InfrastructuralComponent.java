@@ -40,4 +40,12 @@ public class InfrastructuralComponent extends Component implements Cloneable {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "EXTERNAL_DOC_ID", referencedColumnName = "ID")
     private ExternalResource externalDocs;
+
+    public boolean hasProvisionInfo() {
+        return provisionInfo != null;
+    }
+
+    public boolean hasProvisionInfoTemplateDefinition() {
+        return hasProvisionInfo() && provisionInfo.hasTemplateDefinition();
+    }
 }

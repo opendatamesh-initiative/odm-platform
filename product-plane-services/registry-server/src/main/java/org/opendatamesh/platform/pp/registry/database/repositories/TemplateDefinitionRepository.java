@@ -1,6 +1,6 @@
 package org.opendatamesh.platform.pp.registry.database.repositories;
 
-import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Definition;
+import org.opendatamesh.platform.pp.registry.database.entities.sharedres.TemplateDefinition;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -9,12 +9,12 @@ import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.List;
 
-public interface DefinitionRepository extends JpaRepository<Definition, Long>, JpaSpecificationExecutor<Definition> {
+public interface TemplateDefinitionRepository extends JpaRepository<TemplateDefinition, Long>, JpaSpecificationExecutor<TemplateDefinition> {
 
     public boolean existsByNameAndVersion(String name, String version);
 
     class Specs {
-        static public Specification<Definition> hasMatch(
+        static public Specification<TemplateDefinition> hasMatch(
             String name, String version, String type,
             String specification,
             String specificationVersion) {

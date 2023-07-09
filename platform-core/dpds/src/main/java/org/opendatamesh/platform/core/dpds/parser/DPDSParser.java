@@ -100,7 +100,7 @@ public class DPDSParser {
     private DPDSParser processTemplates(ParseContext context) throws BuildException {
         
         try {
-            TemplatesResolver.resolve(context);
+            TemplateDefinitionsProcessor.resolve(context);
         } catch (UnresolvableReferenceException | ParseException e) {
             throw new BuildException("Impossible to build template properties",
                 BuildException.Stage.RESOLVE_TEMPLATE_PROPERTIES, e);

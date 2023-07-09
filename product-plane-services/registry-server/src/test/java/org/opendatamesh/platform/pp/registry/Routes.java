@@ -1,10 +1,10 @@
 package org.opendatamesh.platform.pp.registry;
 
-public enum RoutesV1 {
+public enum Routes {
 
     DATA_PRODUCTS("/api/v1/pp/products"),
 
-    DEFINITIONS("/api/v1/pp/definitions"),
+    APIS("/api/v1/pp/definitions"),
 
     TEMPLATES("/api/v1/pp/templates"),
     SCHEMAS("/api/v1/pp/schemas"),
@@ -17,7 +17,7 @@ public enum RoutesV1 {
 
     private final String path;
 
-    private RoutesV1(String path) {
+    private Routes(String path) {
         this.path = path;
     }
 

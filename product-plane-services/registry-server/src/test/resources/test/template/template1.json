@@ -1,5 +1,12 @@
 {
-  "description": "Github Template",
-  "mediaType": "text",
-  "$ref": "https://github.com/Giandom/tf-data-product-example.git"
+  "name": "template-1",
+  "version": "1.0.1",
+  "status": "STATUS",
+  "displayName": "Github Template 1",
+  "description": "test template-1",
+  "type": "TYPE",
+  "specification": "spec",
+  "specificationVersion": "2.0",
+  "contentMediaType": "plain/text",
+  "content": "https://github.com/Giandom/tf-data-product-example.git"
 }

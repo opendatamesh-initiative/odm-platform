@@ -18,4 +18,8 @@ public class StandardDefinition {
     private DefinitionReference definition;
     
     private ExternalResource externalDocs;
+
+    public boolean hasDefinition() {
+       return definition != null; 
+    }
 }

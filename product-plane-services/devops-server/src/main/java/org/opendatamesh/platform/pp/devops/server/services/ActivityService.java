@@ -38,11 +38,11 @@ public class ActivityService {
         List<InfrastructuralComponentDPDS> infraCompnents = dataProductVersion.getInternalComponents().getInfrastructuralComponents();
         InfrastructuralComponentDPDS infraComponent = infraCompnents.get(0);
         ProvisionInfoDPDS provisionInfo =  infraComponent.getProvisionInfo();
-        String serviceRef = provisionInfo.getService().getRef();
+        String serviceRef = provisionInfo.getService().getHref();
         if(serviceRef.equalsIgnoreCase("azuredevops")) {
             executor = new ExecutorClient("http://localhost:8482");
             TaskResource task = new TaskResource();
-            task.setTemplate(provisionInfo.getTemplate().getRawContent());
+            task.setTemplate(provisionInfo.getTemplate().getDefinition().getRawContent());
             //Stask.setTemplate(provisionInfo.getConfigurations());
         } else {
             throw new RuntimeException("Not supported");

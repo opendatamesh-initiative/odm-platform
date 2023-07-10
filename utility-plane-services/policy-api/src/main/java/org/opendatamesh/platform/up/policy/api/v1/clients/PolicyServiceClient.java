@@ -1,24 +1,14 @@
 package org.opendatamesh.platform.up.policy.api.v1.clients;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import org.opendatamesh.platform.pp.registry.api.v1.clients.ODMClient;
+import org.opendatamesh.platform.pp.registry.api.v1.clients.Routes;
 import org.opendatamesh.platform.up.policy.api.v1.resources.PolicyResource;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
 
-import java.util.Objects;
+public class PolicyServiceClient extends ODMClient {
 
-@Data
-@NoArgsConstructor
-public class PolicyServiceClient {
-
-    String address;
-
-    RestTemplate restTemplate;
-
-    public PolicyServiceClient(String address) {
-        this.address = Objects.requireNonNull(address);
-        restTemplate = new RestTemplate();
+    public PolicyServiceClient(String serverAddress) {
+        super(serverAddress);
     }
 
     // ----------------------------------------
@@ -27,8 +17,8 @@ public class PolicyServiceClient {
 
     public PolicyResource[] readPolicies() {
 
-        ResponseEntity<PolicyResource[]> getResponse = restTemplate.getForEntity(
-                apiUrl(Routes.POLICIES),
+        ResponseEntity<PolicyResource[]> getResponse = rest.getForEntity(
+                apiUrl(Routes.POLICYSERVICE_POLICY),
                 PolicyResource[].class
         );
 
@@ -38,8 +28,8 @@ public class PolicyServiceClient {
 
     public PolicyResource readOnePolicy(String id) {
 
-        ResponseEntity<PolicyResource> getResponse = restTemplate.getForEntity(
-                apiUrlOfItem(Routes.POLICIES),
+        ResponseEntity<PolicyResource> getResponse = rest.getForEntity(
+                apiUrlOfItem(Routes.POLICYSERVICE_POLICY),
                 PolicyResource.class,
                 id
         );
@@ -62,50 +52,5 @@ public class PolicyServiceClient {
 
     // TODO ...
 
-
-    // ----------------------------------------
-    // Utils
-    // ----------------------------------------
-
-    protected String apiUrl(Routes route) {
-        return apiUrl(route, "");
-    }
-
-    protected String apiUrl(Routes route, String extension) {
-        return apiUrlFromString(route.getPath() + extension);
-    }
-
-    protected String apiUrlOfItem(Routes route) {
-        return apiUrl(route, "/{id}");
-    }
-
-    protected String apiUrlFromString(String routeUrlString) {
-        return address + routeUrlString;
-    }
-
-
-    // ----------------------------------------
-    // Routes
-    // ----------------------------------------
-
-    private enum Routes {
-
-        POLICIES("/api/v1/planes/utility/policy-services/opa/policies");
-
-        private final String path;
-
-        Routes(String path) {
-            this.path = path;
-        }
-
-        @Override
-        public String toString() {
-            return this.path;
-        }
-
-        public String getPath() {
-            return path;
-        }
-    }
 
 }

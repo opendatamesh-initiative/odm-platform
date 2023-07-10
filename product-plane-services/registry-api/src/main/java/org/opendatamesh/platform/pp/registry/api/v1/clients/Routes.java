@@ -12,7 +12,9 @@ public enum Routes {
     DATA_PRODUCTS_UPLOADS("/api/v1/pp/products/uploads"),
     
     DATA_PRODUCTS_LISTURL("/api/v1/pp/products"),
-    POLICYVALIDATE_BASEURL("/api/v1/planes/utility/policy-services/opa/validate"); 
+    POLICYSERVICE_POLICY("/api/v1/planes/utility/policy-services/opa/policies"),
+    POLICYSERVICE_SUITE("/api/v1/planes/utility/policy-services/opa/suites"),
+    POLICYSERVICE_VALIDATE_BASEURL("/api/v1/planes/utility/policy-services/opa/validate");
 
 
     private final String path;

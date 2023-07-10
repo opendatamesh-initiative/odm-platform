@@ -1,16 +1,14 @@
 package org.opendatamesh.platform.pp.registry.api.v1.clients;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
-
-import org.opendatamesh.platform.pp.registry.api.v1.resources.*;
-import org.springframework.http.*;
+import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductDescriptorLocationResource;
+import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductResource;
+import org.opendatamesh.platform.pp.registry.api.v1.resources.DefinitionResource;
+import org.opendatamesh.platform.pp.registry.api.v1.resources.SchemaResource;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 

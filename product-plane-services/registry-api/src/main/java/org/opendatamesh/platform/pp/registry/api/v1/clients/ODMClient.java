@@ -1,22 +1,16 @@
 package org.opendatamesh.platform.pp.registry.api.v1.clients;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Collections;
-
-import org.apache.poi.ss.formula.functions.T;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Data;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import lombok.Data;
+import java.io.IOException;
+import java.util.Collections;
 
 @Data
 public class ODMClient {

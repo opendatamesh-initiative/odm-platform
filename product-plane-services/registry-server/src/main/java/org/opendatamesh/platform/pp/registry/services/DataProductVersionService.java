@@ -343,7 +343,7 @@ public class DataProductVersionService {
         // url
         ObjectNode componentObject = (ObjectNode) objectMapper.readTree(component.getRawContent());
 
-        ObjectNode templateDefinitionNode = (ObjectNode) componentObject.at("/" + templateDefinitionProperty + "/template/definition");
+        ObjectNode templateDefinitionNode = (ObjectNode) componentObject.at("/" + templateDefinitionProperty + "/template");
         String ref = String.valueOf(templateDefinitionNode.get("$ref"));
         ref = ref.replaceAll("\\{templateId\\}", "" + templateDefinition.getId());
         ref = ref.replaceAll("\"", "");

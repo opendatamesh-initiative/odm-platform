@@ -33,7 +33,7 @@ public class ActivityService {
     public ActivityResource createActivity(Activity activity,
             boolean startAfterCreation) {
 
-        DataProductVersionDPDS dataProductVersion = registry.readDataProductVersion(Long.parseLong(activity.getDataProductId()), activity.getDataProductVersion());
+        DataProductVersionDPDS dataProductVersion = registry.readOneDataProductVersion(activity.getDataProductId(), activity.getDataProductVersion());
         
         List<InfrastructuralComponentDPDS> infraCompnents = dataProductVersion.getInternalComponents().getInfrastructuralComponents();
         InfrastructuralComponentDPDS infraComponent = infraCompnents.get(0);

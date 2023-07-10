@@ -28,8 +28,9 @@ public class BuildInfo {
     @Transient
     protected StandardDefinition template;
 
-    @Column(name = "CONFIGURATIONS")
-    private String configurations;
+    @Column(name = "CONFIGURATIONS", length=5000)
+    @Convert(converter = HashMapConverter.class)
+    private Map<String, Object> configurations;
 
     public boolean hasTemplate() {
         return template != null;

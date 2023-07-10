@@ -38,8 +38,8 @@ public class DPDSParser {
         if(options.isResoveExternalRef()) processExternalReferences(context);
         if(options.isResoveInternalRef()) processInternalReferences(context);
         if(options.isResoveReadOnlyProperties()) processReadOnlyProperties(context);
-        if(options.isResoveStandardDefinitions()) processStandardDefinitions(context);
-        if(options.isResoveTemplates()) processTemplates(context);
+        if(options.isResoveApiDefinitions()) processApiDefinitions(context);
+        if(options.isResoveTemplateDefinitions()) processTemplates(context);
         
         try {
             location.close();
@@ -111,12 +111,12 @@ public class DPDSParser {
 
     
 
-    private DPDSParser processStandardDefinitions(ParseContext context) throws BuildException {
+    private DPDSParser processApiDefinitions(ParseContext context) throws BuildException {
               
         try {
             ApiDefinitionsProcessor.process(context);
         } catch (UnresolvableReferenceException | ParseException e) {
-            throw new BuildException("Impossible to build standard definitions",
+            throw new BuildException("Impossible to build Api definitions",
                 BuildException.Stage.RESOLVE_STANDARD_DEFINITIONS, e);
         }
        

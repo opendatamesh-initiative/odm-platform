@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
+import org.opendatamesh.platform.core.dpds.model.DeployInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.ExternalResourceDPDS;
 import org.opendatamesh.platform.core.dpds.model.ProvisionInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.ReferenceObjectDPDS;
@@ -28,32 +29,36 @@ public class ProvisionInfoResourceDeserializer extends StdDeserializer<Provision
     public ProvisionInfoDPDS deserialize(JsonParser jp, DeserializationContext ctxt)
             throws IOException, JsonProcessingException {
         
-        ProvisionInfoDPDS infoResource = null;        
+        ProvisionInfoDPDS infoResource = new ProvisionInfoDPDS();        
+       
         JsonNode node = jp.getCodec().readTree(jp);
-        //String service = node.get("service").asText();
 
-        try {
-            JsonParser jp2 = null;
+        JsonParser jp2 = null;
 
+        ExternalResourceDPDS serviceRef = null;
+        if (node.get("service") != null) {
             jp2 = node.get("service").traverse();
             jp2.nextToken();
-            ExternalResourceDPDS serviceRef = ctxt.readValue(jp2, ExternalResourceDPDS.class);
+            serviceRef = ctxt.readValue(jp2, ExternalResourceDPDS.class);
+        }
 
+        StandardDefinitionDPDS templateRef = null;
+        if (node.get("template") != null) {
             jp2 = node.get("template").traverse();
             jp2.nextToken();
-            StandardDefinitionDPDS templateRef = ctxt.readValue(jp2, StandardDefinitionDPDS.class);
-
+            templateRef = ctxt.readValue(jp2, StandardDefinitionDPDS.class);
+        }
+        Map<String, Object> configurationsRef = null;
+        if (node.get("configurations") != null) {
             jp2 = node.get("configurations").traverse();
             jp2.nextToken();
-            String configurationsRef = ctxt.readValue(jp2, String.class);
-            
-            infoResource = new ProvisionInfoDPDS();
-            infoResource.setService(serviceRef);
-            infoResource.setTemplate(templateRef);
-            infoResource.setConfigurations(configurationsRef);
-        } catch (Exception e) {
-            System.out.println(e.getMessage() + "\n ops");
+            configurationsRef = ctxt.readValue(jp2, Map.class);
         }
+
+        infoResource.setService(serviceRef);
+        infoResource.setTemplate(templateRef);
+        infoResource.setConfigurations(configurationsRef);
+        
         return infoResource;
     }
 }

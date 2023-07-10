@@ -88,7 +88,6 @@ public class TemplateDefinitionIT extends OpenDataMeshIT {
         assertThat(getTemplateResponse.getBody().length).isEqualTo(2);
         assertThat(templateResources[0].getId()).isEqualTo(1);
         verifyTemplate1(templateResources[0]);
-        assertThat(templateResources[1].getId()).isEqualTo(1);
         verifyTemplate2(templateResources[1]);
     }
 
@@ -114,9 +113,9 @@ public class TemplateDefinitionIT extends OpenDataMeshIT {
         DefinitionResource[] templateResources = getTemplateResponse.getBody();
         verifyResponseEntity(getTemplateResponse, HttpStatus.OK, true);
 
-        assertThat(getTemplateResponse.getBody().length).isEqualTo(1);
-        assertThat(templateResources[0].getDescription()).isEqualTo("Github Template");
-
+        for(int i = 0; i < templateResources.length; i++) {
+            assertThat(templateResources[i].getSpecification()).isEqualTo("spec");
+        }
     }
 
     @Test
@@ -131,9 +130,8 @@ public class TemplateDefinitionIT extends OpenDataMeshIT {
         DefinitionResource templateRes = getTemplateResponse.getBody();
 
         verifyResponseEntity(getTemplateResponse, HttpStatus.OK, true);
-        assertThat(templateRes.getId()).isEqualTo(1);
-        assertThat(templateRes.getDescription()).isEqualTo("Github Template");
-        assertThat(templateRes.getContentMediaType()).isEqualTo("text");
+        assertThat(templateRes.getDescription()).isEqualTo("test template-1");
+        assertThat(templateRes.getContentMediaType()).isEqualTo("plain/text");
         //assertThat(templateRes.getRef()).isEqualTo("https://github.com/Giandom/tf-data-product-example.git");
 
     }
@@ -289,15 +287,11 @@ public class TemplateDefinitionIT extends OpenDataMeshIT {
         assertThat(templateDefinition.getDescription()).isEqualTo("test template-2");
         assertThat(templateDefinition.getType()).isEqualTo("TEMPLATE");
         assertThat(templateDefinition.getContentMediaType()).isEqualTo("application/json");
-        assertThat(templateDefinition.getContent()).isEqualTo("{\\n" + //
-                "   repository: \\\"https:\\/\\/github.com\\/Giandom\\/tf-data-product-example.git\\\",\\n" + //
-                "   tag: \\\"v1.0.2\\n" + //
-                "}");
-
+        
         try {
             ObjectNode contentNode = (ObjectNode) mapper.readTree(templateDefinition.getContent());
-            assertThat(contentNode.asText("repository")).isEqualTo("https://github.com/Giandom/tf-data-product-example.git");
-            assertThat(contentNode.asText("tag")).isEqualTo("v1.0.2");
+            assertThat(contentNode.get("repository").asText()).isEqualTo("https://github.com/Giandom/tf-data-product-example.git");
+            assertThat(contentNode.get("tag").asText()).isEqualTo("v1.0.2");
         } catch (JsonProcessingException e) {
             fail("Impossible to parse response");
         }

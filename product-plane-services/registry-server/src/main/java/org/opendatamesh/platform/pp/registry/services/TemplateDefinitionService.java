@@ -76,7 +76,7 @@ public class TemplateDefinitionService {
 
         if (definitionExists(definition.getName(), definition.getVersion())) {
             throw new UnprocessableEntityException(
-                    OpenDataMeshAPIStandardError.SC422_06_STDDEF_ALREADY_EXISTS,
+                    OpenDataMeshAPIStandardError.SC422_13_TEMPLATE_ALREADY_EXISTS,
                     "Definition [" + definition.getName() + "(v. " + definition.getVersion() + ")] already exists");
         }
 
@@ -118,7 +118,7 @@ public class TemplateDefinitionService {
 
         if (definition == null) {
             throw new NotFoundException(
-                    OpenDataMeshAPIStandardError.SC404_03_STDDEF_NOT_FOUND,
+                    OpenDataMeshAPIStandardError.SC404_05_TEMPLATE_NOT_FOUND,
                     "Definition [" + definitionId + "] does not exist");
         }
 
@@ -161,7 +161,7 @@ public class TemplateDefinitionService {
         TemplateDefinition definition = null;
         if (definitionId == null) {
             throw new BadRequestException(
-                    OpenDataMeshAPIStandardError.SC400_09_STDDEF_ID_IS_EMPTY,
+                    OpenDataMeshAPIStandardError.SC400_14_TEMPLATE_IS_EMPTY,
                     "Definition id cannot be empty");
         }
 
@@ -245,7 +245,7 @@ public class TemplateDefinitionService {
 
         if (!definitionExists(definition.getId())) {
             throw new NotFoundException(
-                    OpenDataMeshAPIStandardError.SC404_03_STDDEF_NOT_FOUND,
+                    OpenDataMeshAPIStandardError.SC404_05_TEMPLATE_NOT_FOUND,
                     "Definition [" + definition.getId() + "] does not exist");
         }
 
@@ -270,7 +270,7 @@ public class TemplateDefinitionService {
         TemplateDefinition definition = searchDefinition(definitionId);
         if (definition == null) {
             throw new NotFoundException(
-                    OpenDataMeshAPIStandardError.SC404_03_STDDEF_NOT_FOUND,
+                    OpenDataMeshAPIStandardError.SC404_05_TEMPLATE_NOT_FOUND,
                     "Definition [" + definitionId + "] does not exist");
         }
 

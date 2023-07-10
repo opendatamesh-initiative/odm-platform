@@ -1,10 +1,11 @@
 package org.opendatamesh.platform.pp.registry;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
+
+import java.io.IOException;
+import java.util.regex.Pattern;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.MethodOrderer;
@@ -12,11 +13,9 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
-import org.opendatamesh.platform.core.dpds.model.InfrastructuralComponentDPDS;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductResource;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -26,11 +25,11 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.annotation.DirtiesContext.MethodMode;
 import org.springframework.test.context.TestPropertySource;
 
-import java.io.IOException;
-import java.util.regex.Pattern;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.fail;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 //@@FixMethodOrder(MethodSorters.JVM)
 @TestPropertySource(properties = { "spring.test.context.parallel.enabled=false" })
@@ -107,6 +106,9 @@ public class DataProductVersionIT extends OpenDataMeshIT {
         descriptor = createDataProductVersion(dataProduct1Res.getId(), RESOURCE_DP1_V1);
         // TODO verifyBasicContent(descriptor);
 
+        // TODO test also resubmitting the response of previous creation (need a fix on server)
+        descriptor = resourceBuilder.readResourceFromFile(RESOURCE_DP1_V1);
+        
         // modify version & re-post
         ObjectMapper mapper = new ObjectMapper();
         mapper.setSerializationInclusion(Include.NON_EMPTY);
@@ -236,7 +238,8 @@ public class DataProductVersionIT extends OpenDataMeshIT {
         HttpEntity<String> entity = null;
 
         // Test error SC400_01_DESCRIPTOR_IS_EMPTY
-        String payload = null;
+        // TODO test also with a null payload (requires a fix on server)
+        String payload = " ";
         ResponseEntity<ErrorRes> errorResponse = registryClient.postDataProductVersion(dataProduct1Res.getId(), payload, ErrorRes.class);
         verifyResponseError(errorResponse, HttpStatus.BAD_REQUEST, OpenDataMeshAPIStandardError.SC400_01_DESCRIPTOR_IS_EMPTY);
     }
@@ -253,12 +256,14 @@ public class DataProductVersionIT extends OpenDataMeshIT {
 
         // Test error SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID
 
+        // TODO this should work (fix on server). fqn is optional if name and version are set
         // remove from descriptor fullyQualifiedName property
         String descriptorContent = resourceBuilder.readResourceFromFile(RESOURCE_DP1_V1);
         JsonNode descriptorRootEntity = mapper.readTree(descriptorContent);
         ObjectNode infoObject = (ObjectNode) descriptorRootEntity.get("info");
         infoObject.remove("fullyQualifiedName");
-        
+        descriptorContent = mapper.writeValueAsString(descriptorRootEntity);
+
         errorResponse = registryClient.postDataProductVersion(dataProduct1Res.getId(), descriptorContent, ErrorRes.class);
         verifyResponseError(errorResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,

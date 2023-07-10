@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.pp.registry.client;
+package org.opendatamesh.platform.pp.registry;
 
 import java.io.IOException;
 import java.nio.file.Files;

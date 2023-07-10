@@ -106,7 +106,7 @@ public class TemplateDefinitionController {
     ) {
         if(definitionRes == null) {
             throw new BadRequestException(
-                OpenDataMeshAPIStandardError.SC400_08_STDDEF_IS_EMPTY,
+                OpenDataMeshAPIStandardError.SC400_14_TEMPLATE_IS_EMPTY,
                 "Template definition cannot be empty");
         }
         

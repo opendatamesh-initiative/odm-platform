@@ -8,5 +8,5 @@
   "specification": "spec",
   "specificationVersion": "2.0",
   "contentMediaType": "application/json",
-  "content": "{\n   repository: \"https:\/\/github.com\/Giandom\/tf-data-product-example.git\",\n   tag: \"v1.0.2\n}"
+  "content": "{\n   \"repository\": \"https:\/\/github.com\/Giandom\/tf-data-product-example.git\",\n   \"tag\": \"v1.0.2\"\n}"
 }

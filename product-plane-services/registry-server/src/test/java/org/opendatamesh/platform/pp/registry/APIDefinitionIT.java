@@ -27,7 +27,7 @@ public class APIDefinitionIT extends OpenDataMeshIT {
 
     @Before
     public void setup() {
-        //objectMapper = DataProductDescriptor.buildObjectMapper();
+        // objectMapper = DataProductDescriptor.buildObjectMapper();
     }
 
     // ======================================================================================
@@ -88,7 +88,8 @@ public class APIDefinitionIT extends OpenDataMeshIT {
         assertThat(definitionRes3.getContentMediaType()).isEqualTo("plain/text");
         assertThat(definitionRes3.getContent()).isEqualTo("Content of test definition");
 
-        // TEST 4: create a Definition without name and version properties and verify the response
+        // TEST 4: create a Definition without name and version properties and verify
+        // the response
         DefinitionResource definitionRes4 = createApiDefinition(RESOURCE_DEF1_NONAME_NOVERSION);
         assertThat(definitionRes4.getId()).isEqualTo(4);
         assertThat(definitionRes4.getName()).isEqualTo("cf9e4b59-af4f-3254-aa44-c7259a7249c9");
@@ -171,7 +172,8 @@ public class APIDefinitionIT extends OpenDataMeshIT {
 
         DefinitionResource definitionResource = createApiDefinition(RESOURCE_DEF1_V1);
 
-        ResponseEntity<DefinitionResource> getDefinitionResponse = registryClient.readOneApiDefinition(definitionResource.getId());
+        ResponseEntity<DefinitionResource> getDefinitionResponse = registryClient
+                .readOneApiDefinition(definitionResource.getId());
         DefinitionResource definitionRes = getDefinitionResponse.getBody();
 
         verifyResponseEntity(getDefinitionResponse, HttpStatus.OK, true);
@@ -207,7 +209,8 @@ public class APIDefinitionIT extends OpenDataMeshIT {
 
         DefinitionResource definitionResource = createApiDefinition(RESOURCE_DEF1_V1);
 
-        ResponseEntity<Void> getDefinitionResponse = registryClient.deleteApiDefinition(definitionResource.getId(), Void.class);
+        ResponseEntity<Void> getDefinitionResponse = registryClient.deleteApiDefinition(definitionResource.getId(),
+                Void.class);
         verifyResponseEntity(getDefinitionResponse, HttpStatus.OK, false);
 
     }
@@ -251,7 +254,6 @@ public class APIDefinitionIT extends OpenDataMeshIT {
         ResponseEntity<ErrorRes> errorResponse = null;
 
         createApiDefinition(RESOURCE_DEF1_V1);
-
 
         // TEST 1: try to register the same definition again
         String payload = resourceBuilder.readResourceFromFile(RESOURCE_DEF1_V1);
@@ -330,11 +332,25 @@ public class APIDefinitionIT extends OpenDataMeshIT {
     // Clean state for each test: empty DB
     // ----------------------------------------
     private void cleanState() {
-
-        ResponseEntity<DefinitionResource[]> getDefinitionResponse = registryClient.readAllApiDefinitions();
-        DefinitionResource[] definitionResources = getDefinitionResponse.getBody();
-        for (DefinitionResource definitionResource : definitionResources) {
-            registryClient.deleteApiDefinition(definitionResource.getId(), Void.class);
+        try {
+            /*
+            ResponseEntity<String> getDefinitionResponse = registryClient.getApiDefinitions(String.class);
+            String definitionResources = getDefinitionResponse.getBody();
+            System.out.println(definitionResources);
+             
+            for (String definitionResource : definitionResources) {
+                System.out.println(definitionResource);
+            }
+            */
+             
+            ResponseEntity<DefinitionResource[]> getDefinitionResponse = registryClient.readAllApiDefinitions();
+            DefinitionResource[] definitionResources = getDefinitionResponse.getBody();
+            for (DefinitionResource definitionResource : definitionResources) {
+                registryClient.deleteApiDefinition(definitionResource.getId(), Void.class);
+            }
+            
+        } catch (Throwable t) {
+            t.printStackTrace();
         }
 
     }

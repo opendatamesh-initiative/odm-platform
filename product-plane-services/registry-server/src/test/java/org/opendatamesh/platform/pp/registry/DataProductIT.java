@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductResource;
-import org.opendatamesh.platform.pp.registry.client.ResourceBuilder;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
 import org.springframework.beans.factory.annotation.Autowired;

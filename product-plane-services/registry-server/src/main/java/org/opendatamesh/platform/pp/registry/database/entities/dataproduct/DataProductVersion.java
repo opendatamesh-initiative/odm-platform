@@ -66,7 +66,7 @@ public class DataProductVersion implements Cloneable, Serializable {
     public DataProduct getDataProduct() {
         DataProduct dataProduct = new DataProduct();
         if(getInfo().getFullyQualifiedName() == null) {
-            throw new RuntimeException("The fully qualified name of product is not specified in the product version");
+            throw new RuntimeException("The fully qualified name of product is not specified in the data product version");
         } else {
             dataProduct.setFullyQualifiedName(getInfo().getFullyQualifiedName());
         }
@@ -82,10 +82,23 @@ public class DataProductVersion implements Cloneable, Serializable {
      * @param dataProductVersion the data product version
      * @return true if the referred product match with the one passed as input, false otherwise
      */
-    private boolean isVersionOf(DataProduct dataProduct) {
+    public boolean isVersionOf(DataProduct dataProduct) {
         DataProduct referredDataProduct = this.getDataProduct();
         return dataProduct.equals(referredDataProduct);
     }
+
+    public boolean hasInternalComponents() {
+        return getInternalComponents() != null;
+    }
+
+    public boolean hasApplicationComponents() {
+        return hasInternalComponents() && getInternalComponents().hasApplicationComponents();
+    } 
+
+    public boolean hasInfrastructuralComponents() {
+        return hasInternalComponents() && getInternalComponents().hasInfrastructuralComponents();
+    } 
+
 
     @PrePersist
     protected void onCreate() {

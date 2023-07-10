@@ -159,21 +159,6 @@ public class DataProductUploadsController
         return serailizedContent;
     }
 
-    /*
-    public String createVersionFromURI(
-        @Parameter(
-            description="An URI pointing to a fatchable data product descriptor document", 
-            required = true,  
-            content = @Content(mediaType = "text/uri-list"))
-        @Valid @RequestBody String uriListString) 
-    {
-        URI descriptorUri = getUriFromUriListString(uriListString);
-        String serverUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
-        DataProductVersion dataProductVersion = dataProductService.addDataProductVersion(descriptorUri, true, serverUrl);
-        DataProductVersionResource dataProductVersionResource = dataProductMapper.toResource(dataProductVersion);
-        return dataProductVersionResource.getRawContent(false);
-    } 
-    */
 
     // ----------------
     // Private methods

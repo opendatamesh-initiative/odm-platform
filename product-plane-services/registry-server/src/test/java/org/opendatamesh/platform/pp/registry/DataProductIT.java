@@ -7,7 +7,6 @@ import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductResourc
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
@@ -18,14 +17,12 @@ import java.io.IOException;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.fail;
 
 //TODO every update to data product must check and mock the call to the policyservice
 
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 public class DataProductIT extends OpenDataMeshIT {
-
-    @Autowired
-    ObjectMapper objectMapper;
 
     @Before
     public void setup() {
@@ -47,34 +44,43 @@ public class DataProductIT extends OpenDataMeshIT {
 
         ResponseEntity<DataProductResource> postProductResponse = null;
 
-        DataProductResource dataProductRes = createDataProduct1();
+        DataProductResource dataProductRequest, dataProductResponse;
 
         // TEST 1: create first data product
-        assertThat(dataProductRes.getId())
+        dataProductRequest = createDataProduct(RESOURCE_DP1);
+        assertThat(dataProductRequest.getId())
                 .isEqualTo(UUID.nameUUIDFromBytes("urn:org.opendatamesh:dataproduct:tripExecution".getBytes()).toString());
-        assertThat(dataProductRes.getFullyQualifiedName()).isEqualTo("urn:org.opendatamesh:dataproduct:tripExecution");
-        assertThat(dataProductRes.getDescription()).isEqualTo("This is prod-1");
-        assertThat(dataProductRes.getDomain()).isEqualTo("Disney");
+        assertThat(dataProductRequest.getFullyQualifiedName()).isEqualTo("urn:org.opendatamesh:dataproduct:tripExecution");
+        assertThat(dataProductRequest.getDescription()).isEqualTo("This is prod-1");
+        assertThat(dataProductRequest.getDomain()).isEqualTo("Disney");
 
         // TEST 2: create another data product setting only the fqn property
-        postProductResponse = rest.createDataProduct("prod-2", null, null);
+        dataProductRequest = resourceBuilder.buildDataProduct("prod-2", null, null);
+        postProductResponse = registryClient.postDataProduct(dataProductRequest);
         verifyResponseEntity(postProductResponse, HttpStatus.CREATED, true);
-       
-        assertThat(postProductResponse.getBody().getId())
-                .isEqualTo(UUID.nameUUIDFromBytes("prod-2".getBytes()).toString());
-        assertThat(postProductResponse.getBody().getFullyQualifiedName()).isEqualTo("prod-2");
-        assertThat(postProductResponse.getBody().getDescription()).isNull();
-        assertThat(postProductResponse.getBody().getDomain()).isNull();
-
-        // TEST 3: create another data product setting all properties including the id
-        postProductResponse = rest.createDataProduct(UUID.nameUUIDFromBytes("prod-3".getBytes()).toString(), "prod-3", "Disney", "This is prod-3");
-        verifyResponseEntity(postProductResponse, HttpStatus.CREATED, true);
+        dataProductResponse = postProductResponse.getBody();
+        if(dataProductResponse != null) {
+            assertThat(dataProductResponse.getId()).isEqualTo(UUID.nameUUIDFromBytes("prod-2".getBytes()).toString());
+            assertThat(dataProductResponse.getFullyQualifiedName()).isEqualTo("prod-2");
+            assertThat(dataProductResponse.getDescription()).isNull();
+            assertThat(dataProductResponse.getDomain()).isNull();
+        } else {
+            fail("Response body is null");
+        }
         
-        assertThat(postProductResponse.getBody().getId())
-                .isEqualTo(UUID.nameUUIDFromBytes("prod-3".getBytes()).toString());
-        assertThat(postProductResponse.getBody().getFullyQualifiedName()).isEqualTo("prod-3");
-        assertThat(postProductResponse.getBody().getDescription()).isEqualTo("This is prod-3");
-        assertThat(postProductResponse.getBody().getDomain()).isEqualTo("Disney");
+        // TEST 3: create another data product setting all properties including the id
+        dataProductRequest = resourceBuilder.buildDataProduct(UUID.nameUUIDFromBytes("prod-3".getBytes()).toString(), "prod-3", "Disney", "This is prod-3");
+        postProductResponse = registryClient.postDataProduct(dataProductRequest);
+        verifyResponseEntity(postProductResponse, HttpStatus.CREATED, true);
+        dataProductResponse = postProductResponse.getBody();
+        if(dataProductResponse != null) {
+            assertThat(dataProductResponse.getId()).isEqualTo(UUID.nameUUIDFromBytes("prod-3".getBytes()).toString());
+            assertThat(dataProductResponse.getFullyQualifiedName()).isEqualTo("prod-3");
+            assertThat(dataProductResponse.getDescription()).isEqualTo("This is prod-3");
+            assertThat(dataProductResponse.getDomain()).isEqualTo("Disney");
+        } else {
+            fail("Response body is null");
+        }
     }
 
     // ----------------------------------------
@@ -84,13 +90,27 @@ public class DataProductIT extends OpenDataMeshIT {
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDataProductReadAll() throws IOException {
 
-        rest.createDataProduct("prod-1", "marketing", "marketing product");
-        rest.createDataProduct("prod-2", "sales", "sales product");
-        rest.createDataProduct("prod-3", "hr", "hr product");
-
-        ResponseEntity<DataProductResource[]> getProducteResponse = rest.readAllDataProducts();
-        verifyResponseEntity(getProducteResponse, HttpStatus.OK, true);
+        ResponseEntity<DataProductResource> postProductResponse = null;
+        DataProductResource dataProduct1Request, dataProduct2Request, dataProduct3Request;
+        DataProductResource dataProduct1Response, dataProduct2Response, dataProduct3Response;
         
+        dataProduct1Request = resourceBuilder.buildDataProduct("prod-1", "marketing", "marketing product");
+        postProductResponse = registryClient.postDataProduct(dataProduct1Request);
+        verifyResponseEntity(postProductResponse, HttpStatus.CREATED, true);
+        dataProduct1Response = postProductResponse.getBody();
+
+        dataProduct2Request = resourceBuilder.buildDataProduct("prod-2", "sales", "sales product");
+        postProductResponse = registryClient.postDataProduct(dataProduct2Request);
+        verifyResponseEntity(postProductResponse, HttpStatus.CREATED, true);
+        dataProduct2Response = postProductResponse.getBody();
+        
+        dataProduct3Request = resourceBuilder.buildDataProduct("prod-3", "hr", "hr product");
+        postProductResponse = registryClient.postDataProduct(dataProduct3Request);
+        verifyResponseEntity(postProductResponse, HttpStatus.CREATED, true);
+        dataProduct3Response = postProductResponse.getBody();
+
+        ResponseEntity<DataProductResource[]> getProducteResponse = registryClient.getDataProducts();
+        verifyResponseEntity(getProducteResponse, HttpStatus.OK, true);
         assertThat(getProducteResponse.getBody().length).isEqualTo(3);
 
         // TODO test also content of each data product in the response body
@@ -106,17 +126,22 @@ public class DataProductIT extends OpenDataMeshIT {
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDataProductReadOne() throws IOException {
 
-        DataProductResource dataProdRes = null;
+        ResponseEntity<DataProductResource> postProductResponse = null;
+        DataProductResource dataProductRequest, dataProductRespnse;
 
-        ResponseEntity<DataProductResource> response1 
-            =  rest.createDataProduct("prod-1", "marketing", "marketing product");
-        ResponseEntity<DataProductResource> response2 
-            =  rest.createDataProduct("prod-2", "sales", "sales product");
-        ResponseEntity<DataProductResource> response3 
-            =  rest.createDataProduct("prod-3", "hr", "hr product");
+        dataProductRequest = resourceBuilder.buildDataProduct("prod-1", "marketing", "marketing product");
+        postProductResponse = registryClient.postDataProduct(dataProductRequest);
+        verifyResponseEntity(postProductResponse, HttpStatus.CREATED, true);
 
-    
-        ResponseEntity<DataProductResource> getDataProductResponse = rest.readOneDataProduct("prod-1");
+        dataProductRequest = resourceBuilder.buildDataProduct("prod-2", "sales", "sales product");
+        postProductResponse = registryClient.postDataProduct(dataProductRequest);
+        verifyResponseEntity(postProductResponse, HttpStatus.CREATED, true);
+
+        dataProductRequest = resourceBuilder.buildDataProduct("prod-3", "hr", "hr product");
+        postProductResponse = registryClient.postDataProduct(dataProductRequest);
+        verifyResponseEntity(postProductResponse, HttpStatus.CREATED, true);
+
+        ResponseEntity<DataProductResource> getDataProductResponse = registryClient.getDataProductByFqn("prod-1");
         verifyResponseEntity(getDataProductResponse, HttpStatus.OK, true);
         assertThat(getDataProductResponse.getBody().getDomain()).isEqualTo("marketing");
 
@@ -132,8 +157,8 @@ public class DataProductIT extends OpenDataMeshIT {
 
         ResponseEntity<DataProductResource> postProductResponse = null;
 
-        createDataProduct1();
-        DataProductResource dataProductRes = updateDataProduct1();
+        createDataProduct(RESOURCE_DP1);
+        DataProductResource dataProductRes = updateDataProduct(RESOURCE_DP1_UPD);
 
         // TEST 1: create first data product
         assertThat(dataProductRes.getId())
@@ -153,8 +178,6 @@ public class DataProductIT extends OpenDataMeshIT {
         // TODO
     }
 
-   
-
     // ======================================================================================
     // ERROR PATH
     // ======================================================================================
@@ -167,15 +190,11 @@ public class DataProductIT extends OpenDataMeshIT {
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDataProductCreateError400Errors() throws IOException {
 
-        HttpEntity<DataProductResource> entity = null;
         ResponseEntity<ErrorRes> errorResponse = null;
 
         // Test error SC400_01_DESCRIPTOR_IS_EMPTY
-        entity = rest.getProductDocumentAsHttpEntity(null);
-        errorResponse = rest.postForEntity(
-                apiUrl(RoutesV1.DATA_PRODUCTS),
-                entity,
-                ErrorRes.class);
+        String payload = null;
+        errorResponse = registryClient.postDataProduct(payload, ErrorRes.class);
         verifyResponseError(errorResponse,
                 HttpStatus.BAD_REQUEST, OpenDataMeshAPIStandardError.SC400_10_PRODUCT_IS_EMPTY);
     }
@@ -184,39 +203,35 @@ public class DataProductIT extends OpenDataMeshIT {
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDataProductCreateError422Errors() throws IOException {
 
-        HttpEntity<DataProductResource> entity = null;
         ResponseEntity<ErrorRes> errorResponse = null;
 
-        DataProductResource dataProductRes = createDataProduct1();
+        DataProductResource dataProductRes = createDataProduct(RESOURCE_DP1);
 
         // TEST 1: try to register the same product again
-        entity = rest.getProductDocumentAsHttpEntity(RESOURCE_DP1);
-        errorResponse = rest.postForEntity(
-                apiUrl(RoutesV1.DATA_PRODUCTS),
-                entity,
-                ErrorRes.class);
+        errorResponse = registryClient.postDataProduct(dataProductRes, ErrorRes.class);
         verifyResponseError(errorResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
                 OpenDataMeshAPIStandardError.SC422_04_PRODUCT_ALREADY_EXISTS);
 
 
         // TEST 2: try to register a product without setting the fqn
-        entity.getBody().setFullyQualifiedName(null);
-        errorResponse = rest.postForEntity(
-                apiUrl(RoutesV1.DATA_PRODUCTS),
-                entity,
-                ErrorRes.class);
+        dataProductRes = resourceBuilder.buildDataProduct(null, "marketing", "marketing product");
+        errorResponse = registryClient.postDataProduct(dataProductRes, ErrorRes.class);
         verifyResponseError(errorResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
                 OpenDataMeshAPIStandardError.SC422_07_PRODUCT_IS_INVALID);
-
-        // TEST 3: try to register a product setting an id that not match with the fqn
-        entity.getBody().setId("wrong-id");
-        entity.getBody().setFullyQualifiedName("prod-5");
-        errorResponse = rest.postForEntity(
-                apiUrl(RoutesV1.DATA_PRODUCTS),
-                entity,
-                ErrorRes.class);
+        
+        // TEST 3: try to register a product with an empty fqn
+        dataProductRes = resourceBuilder.buildDataProduct("    ", "marketing", "marketing product");
+        errorResponse = registryClient.postDataProduct(dataProductRes, ErrorRes.class);
+        verifyResponseError(errorResponse,
+                HttpStatus.UNPROCESSABLE_ENTITY,
+                OpenDataMeshAPIStandardError.SC422_07_PRODUCT_IS_INVALID);
+        
+    
+        // TEST 4: try to register a product setting an id that not match with the fqn
+        dataProductRes = resourceBuilder.buildDataProduct("wrong-id", "prod-5", "marketing", "marketing product");
+        errorResponse = registryClient.postDataProduct(dataProductRes, ErrorRes.class);
         verifyResponseError(errorResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
                 OpenDataMeshAPIStandardError.SC422_07_PRODUCT_IS_INVALID);
@@ -246,22 +261,4 @@ public class DataProductIT extends OpenDataMeshIT {
 
         // TODO test one wrong media type for create and update endpoints
     }
-
-   
-
-    // ======================================================================================
-    // PRIVATE METHODS
-    // ======================================================================================
-
-    // ----------------------------------------
-    // Create test resources
-    // ----------------------------------------
-
-    // TODO: ...as needed
-
-    // ----------------------------------------
-    // Verify test resources
-    // ----------------------------------------
-
-    // TODO: ...as needed
 }

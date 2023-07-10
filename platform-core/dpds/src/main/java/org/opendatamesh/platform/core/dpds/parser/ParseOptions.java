@@ -23,6 +23,6 @@ public class ParseOptions {
     private boolean rewriteFqn = true;
     private boolean rewriteId = true;
 
-    private boolean resoveStandardDefinitions = true;
-    private boolean resoveTemplates = true;
+    private boolean resoveApiDefinitions = true;
+    private boolean resoveTemplateDefinitions = true;
 }

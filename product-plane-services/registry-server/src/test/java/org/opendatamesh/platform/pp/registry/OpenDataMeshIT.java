@@ -5,11 +5,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.runner.RunWith;
+import org.opendatamesh.platform.pp.registry.api.v1.clients.RegistryClient;
+import org.opendatamesh.platform.pp.registry.api.v1.clients.Routes;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductDescriptorLocationResource;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductResource;
+import org.opendatamesh.platform.pp.registry.api.v1.resources.DefinitionResource;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.SchemaResource;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.TemplateResource;
-import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Definition;
+import org.opendatamesh.platform.pp.registry.database.entities.sharedres.ApiDefinition;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
 import org.slf4j.Logger;
@@ -41,48 +43,44 @@ public abstract class OpenDataMeshIT {
     @LocalServerPort
     protected String port;
 
-    protected OpenDataMeshITRestTemplate rest;
+    protected RegistryClient registryClient;
+    protected ResourceBuilder resourceBuilder;
+    
+     @Autowired
+    protected ObjectMapper mapper;
 
-    protected Logger logger = LoggerFactory.getLogger("OpenDataMeshIT.class");
+    protected Logger logger = LoggerFactory.getLogger(OpenDataMeshIT.class);
 
     protected final String RESOURCE_DP1 = "src/test/resources/test/dataproduct-descriptor/dp1.json";
     protected final String RESOURCE_DP1_UPD = "src/test/resources/test/dataproduct-descriptor/dp1-updated.json";
     protected final String RESOURCE_DP1_V1 = "src/test/resources/test/dataproduct-descriptor/dp1-v1.json";
-    protected final String RESOURCE_DP1_V1_API1 = "src/test/resources/test/dataproduct-descriptor/dp1-v1-api1.json";
+    
+    //protected final String RESOURCE_DP1_V1_API1 = "src/test/resources/test/dataproduct-descriptor/dp1-v1-api1.json";
     protected final String RESOURCE_DEF1_V1 = "src/test/resources/test/definition/def1.json";
     protected final String RESOURCE_DEF1_NOVERSION = "src/test/resources/test/definition/def1-missing-version.json";
     protected final String RESOURCE_DEF1_NONAME = "src/test/resources/test/definition/def1-missing-name.json";
     protected final String RESOURCE_DEF1_NONAME_NOVERSION = "src/test/resources/test/definition/def2-missing-name-version.json";
+    
     protected final String RESOURCE_TEMPLATE_1 = "src/test/resources/test/template/template1.json";
     protected final String RESOURCE_TEMPLATE_2 = "src/test/resources/test/template/template2.json";
     protected final String RESOURCE_SCHEMA1 = "src/test/resources/test/schema/schema1.json";
     protected final String RESOURCE_DPS_URI = "https://raw.githubusercontent.com/opendatamesh-initiative/odm-specification-dpdescriptor/main/examples/tripexecution/data-product-descriptor.json";
         
-    @Autowired
-    protected ObjectMapper mapper;
-
     @PostConstruct
     public final void init() {
-        rest = new OpenDataMeshITRestTemplate();
-        rest.setPort(port);
-        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
-        // requestFactory.setConnectTimeout(30000);
-        // requestFactory.setReadTimeout(30000);
-        rest.getRestTemplate().setRequestFactory(requestFactory);
-        // add uri template handler because '+' of iso date would not be encoded
-        DefaultUriBuilderFactory defaultUriBuilderFactory = new DefaultUriBuilderFactory();
-        defaultUriBuilderFactory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.TEMPLATE_AND_VALUES);
-        rest.setUriTemplateHandler(defaultUriBuilderFactory);
+        resourceBuilder = new ResourceBuilder();
+        registryClient = new RegistryClient("http://localhost:" + port);
     }
 
     // ======================================================================================
     // Url builder utils
     // ======================================================================================
-    protected String apiUrl(RoutesV1 route) {
+    // TODO delete all these methods
+    protected String apiUrl(Routes route) {
         return apiUrl(route, "");
     }
 
-    protected String apiUrl(RoutesV1 route, String extension) {
+    protected String apiUrl(Routes route, String extension) {
         return apiUrlFromString(route.getPath() + extension);
     }
 
@@ -90,7 +88,7 @@ public abstract class OpenDataMeshIT {
         return "http://localhost:" + port + routeUrlString;
     }
 
-    protected String apiUrlOfItem(RoutesV1 route) {
+    protected String apiUrlOfItem(Routes route) {
         return apiUrl(route, "/{id}");
     }
 
@@ -98,101 +96,62 @@ public abstract class OpenDataMeshIT {
     // Create test basic resources
     // ======================================================================================
 
-    protected DataProductResource createDataProduct1() throws IOException {
-        ResponseEntity<DataProductResource> postProductResponse = rest.createDataProduct(RESOURCE_DP1);
+    protected DataProductResource createDataProduct(String filePath) throws IOException {
+        String payload = resourceBuilder.readResourceFromFile(filePath);
+        ResponseEntity<DataProductResource> postProductResponse = registryClient.postDataProduct(payload);
         verifyResponseEntity(postProductResponse, HttpStatus.CREATED, true);
-
         return postProductResponse.getBody();
-
     }
 
-    protected DataProductResource updateDataProduct1() throws IOException {
-        ResponseEntity<DataProductResource> putProductResponse = rest.updateDataProduct(RESOURCE_DP1_UPD);
+    protected DataProductResource updateDataProduct(String filePath) throws IOException {
+        String payload = resourceBuilder.readResourceFromFile(filePath);
+        ResponseEntity<DataProductResource> putProductResponse = registryClient.putDataProduct(payload);
         verifyResponseEntity(putProductResponse, HttpStatus.OK, true);
-
         return putProductResponse.getBody();
-
     }
 
-    protected String createDataProduct1Version1(String dataProduct1Id) throws IOException {
-        ResponseEntity<String> postProductVersionResponse = rest.createDataProductVersionFromFile(
-                dataProduct1Id, RESOURCE_DP1_V1);
+    protected String createDataProductVersion(String dataProductId, String filePath) throws IOException {
+        String payload = resourceBuilder.readResourceFromFile(filePath);
+        ResponseEntity<String> postProductVersionResponse = registryClient.postDataProductVersion(
+                dataProductId, payload, String.class);
         verifyResponseEntity(postProductVersionResponse, HttpStatus.CREATED, true);
-
         return postProductVersionResponse.getBody();
     }
 
     protected String uploadDataProductVersion(DataProductDescriptorLocationResource descriptorLocation) throws IOException {
         ResponseEntity<String> uploadProductVersionResponse = 
-            rest.uploadDataProductVersion(descriptorLocation);
+            registryClient.uploadDataProductVersion(descriptorLocation, String.class);
         verifyResponseEntity(uploadProductVersionResponse, HttpStatus.CREATED, true);
 
         return uploadProductVersionResponse.getBody();
     }
 
-    protected Definition createDataProduct1Version1Api1() throws IOException {
-        ResponseEntity<Definition> postProductVersionApiResponse = rest.createDefinition(
-                RESOURCE_DP1_V1);
-        verifyResponseEntity(postProductVersionApiResponse, HttpStatus.CREATED, true);
 
-        return postProductVersionApiResponse.getBody();
-    }
-
-    protected Definition createDefinition1() throws IOException {
-        ResponseEntity<Definition> postDefinition = rest.createDefinition(
-                RESOURCE_DEF1_V1
-        );
+    protected DefinitionResource createApiDefinition(String filePath) throws IOException {
+        String payload = resourceBuilder.readResourceFromFile(filePath);
+        ResponseEntity<DefinitionResource> postDefinition = registryClient.postApiDefinition(payload);
         verifyResponseEntity(postDefinition, HttpStatus.CREATED, true);
-
         return postDefinition.getBody();
     }
 
-    protected Definition createDefinitionMissingVersion() throws IOException {
-        ResponseEntity<Definition> postDefinition = rest.createDefinition(
-                RESOURCE_DEF1_NOVERSION
-        );
-        verifyResponseEntity(postDefinition, HttpStatus.CREATED, true);
-
-        return postDefinition.getBody();
-    }
-
-    protected Definition createDefinitionMissingName() throws IOException {
-        ResponseEntity<Definition> postDefinition = rest.createDefinition(
-                RESOURCE_DEF1_NONAME
-        );
-        verifyResponseEntity(postDefinition, HttpStatus.CREATED, true);
-
-        return postDefinition.getBody();
-    }
-
-    protected Definition createDefinitionMissingNameAndVersion() throws IOException {
-        ResponseEntity<Definition> postDefinition = rest.createDefinition(
-                RESOURCE_DEF1_NONAME_NOVERSION
-        );
-        verifyResponseEntity(postDefinition, HttpStatus.CREATED, true);
-
-        return postDefinition.getBody();
-    }
-
-    protected TemplateResource createTemplate1() throws IOException {
-        ResponseEntity<TemplateResource> postTemplate = rest.createTemplate(
-                RESOURCE_TEMPLATE_1
-        );
+    protected DefinitionResource createTemplate(String filePath) throws IOException {
+        String payload = resourceBuilder.readResourceFromFile(filePath);
+        ResponseEntity<DefinitionResource> postTemplate = registryClient.postTemplateDefinition(payload);
         verifyResponseEntity(postTemplate, HttpStatus.CREATED, true);
         return postTemplate.getBody();
     }
 
-    protected TemplateResource createTemplate2() throws IOException {
-        ResponseEntity<TemplateResource> postTemplate = rest.createTemplate(
-                RESOURCE_TEMPLATE_2
+   
+    protected DefinitionResource createTemplate(DefinitionResource templateDefinitionRes) throws IOException {
+        ResponseEntity<DefinitionResource> postTemplate = registryClient.postTemplateDefinition(
+                templateDefinitionRes
         );
         verifyResponseEntity(postTemplate, HttpStatus.CREATED, true);
-
         return postTemplate.getBody();
     }
 
     protected SchemaResource createSchema1() throws IOException {
-        ResponseEntity<SchemaResource> postSchemaResponse = rest.createSchema(RESOURCE_SCHEMA1);
+        ResponseEntity<SchemaResource> postSchemaResponse = registryClient.postSchema(RESOURCE_SCHEMA1);
         verifyResponseEntity(postSchemaResponse, HttpStatus.CREATED, true);
 
         return postSchemaResponse.getBody();

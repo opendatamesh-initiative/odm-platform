@@ -1,11 +1,15 @@
 package org.opendatamesh.platform.up.policy.api.v1.clients;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.opendatamesh.platform.up.policy.api.v1.resources.PolicyResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Objects;
 
+@Data
+@NoArgsConstructor
 public class PolicyServiceClient {
 
     String address;
@@ -21,11 +25,11 @@ public class PolicyServiceClient {
     // POLICY endpoints
     // ----------------------------------------
 
-    public PolicyResource readPolicies() {
+    public PolicyResource[] readPolicies() {
 
-        ResponseEntity<PolicyResource> getResponse = restTemplate.getForEntity(
+        ResponseEntity<PolicyResource[]> getResponse = restTemplate.getForEntity(
                 apiUrl(Routes.POLICIES),
-                PolicyResource.class
+                PolicyResource[].class
         );
 
         return getResponse.getBody();

@@ -25,26 +25,21 @@ public class DeployInfo {
     @JoinColumn(name = "SERVICE_ID", referencedColumnName = "ID")
     private ExternalResource service;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "TEMPLATE_ID", referencedColumnName = "ID")
-    private ReferenceObject template;
+     @Column(name = "TEMPLATE_ID")
+    protected Long templateId;
 
+    @Transient
+    protected StandardDefinition template;
 
     @Column(name = "CONFIGURATIONS", length=5000)
     @Convert(converter = HashMapConverter.class)
     private Map<String, Object> configurations;
 
-    private static final Logger logger = LoggerFactory.getLogger(DeployInfo.class);
-
-
-    public DeployInfo() {
-        service= new ExternalResource();
-        template = new ReferenceObject();
-        configurations = new HashMap<>();
+    public boolean hasTemplate() {
+        return template != null;
     }
 
-    @PrePersist
-    protected void onCreate() {
-        logger.debug("Creating appComponent [" + getId() + "]");
+    public boolean hasTemplateDefinition() {
+        return hasTemplate() && template.hasDefinition();
     }
 }

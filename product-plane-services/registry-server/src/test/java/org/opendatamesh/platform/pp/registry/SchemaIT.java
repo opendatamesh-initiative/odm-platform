@@ -15,9 +15,6 @@ import java.io.IOException;
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 public class SchemaIT extends OpenDataMeshIT {
 
-    @Autowired
-    ObjectMapper objectMapper;
-
     @Before
     public void setup() {
         //objectMapper = DataProductDescriptor.buildObjectMapper();

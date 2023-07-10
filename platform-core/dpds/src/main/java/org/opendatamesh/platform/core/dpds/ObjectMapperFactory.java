@@ -54,7 +54,7 @@ public class ObjectMapperFactory {
         module.addDeserializer(BuildInfoDPDS.class, new BuildInfoResourceDeserializer());
         module.addDeserializer(DeployInfoDPDS.class, new DeployInfoResourceDeserializer());
         mapper.registerModule(module);
-
+        
         return mapper;
     }
 

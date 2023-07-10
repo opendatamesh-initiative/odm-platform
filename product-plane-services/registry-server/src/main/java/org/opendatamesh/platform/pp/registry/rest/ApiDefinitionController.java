@@ -8,12 +8,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DefinitionResource;
-import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Definition;
+import org.opendatamesh.platform.pp.registry.database.entities.sharedres.ApiDefinition;
 import org.opendatamesh.platform.pp.registry.exceptions.BadRequestException;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
-import org.opendatamesh.platform.pp.registry.resources.v1.mappers.DefinitionMapper;
-import org.opendatamesh.platform.pp.registry.services.DefinitionService;
+import org.opendatamesh.platform.pp.registry.resources.v1.mappers.ApiDefinitionMapper;
+import org.opendatamesh.platform.pp.registry.services.ApiDefinitionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(
-    value =  "/definitions", 
+    value =  "/apis", 
     produces = { 
         "application/vnd.odmp.v1+json", 
         "application/vnd.odmp+json", 
@@ -35,20 +35,20 @@ import java.util.List;
 )
 @Validated
 @Tag(
-    name = "Definitions", 
-    description = "Definitions")
-public class DefinitionController {
+    name = "APIs", 
+    description = "API's definitions")
+public class ApiDefinitionController {
 
     @Autowired
-    private DefinitionService definitionService;
+    private ApiDefinitionService apiDefinitionService;
 
     @Autowired
-    private DefinitionMapper definitionMapper;
+    private ApiDefinitionMapper definitionMapper;
 
-    private static final Logger logger = LoggerFactory.getLogger(DefinitionController.class);
+    private static final Logger logger = LoggerFactory.getLogger(ApiDefinitionController.class);
 
-    public DefinitionController() { 
-        logger.debug("Standard definitions controller successfully started");
+    public ApiDefinitionController() { 
+        logger.debug("Standard api definitions controller successfully started");
     }
 
     // ======================================================================================
@@ -65,13 +65,13 @@ public class DefinitionController {
     )
     @ResponseStatus(HttpStatus.CREATED) 
     @Operation(
-        summary = "Register the  definition",
-        description = "Register the provided definition in the Data Product Registry" 
+        summary = "Register the  API definition",
+        description = "Register the provided API definition in the Data Product Registry" 
     )
     @ApiResponses(value = {
         @ApiResponse(
             responseCode = "201", 
-            description = "Definition registered", 
+            description = "API definition registered", 
             content = @Content(
                 mediaType = "application/json", 
                 schema = @Schema(implementation = DefinitionResource.class)
@@ -100,18 +100,19 @@ public class DefinitionController {
     })
     public DefinitionResource createDefinition(
         @Parameter( 
-            description = "A definition object", 
+            description = "An API definition object", 
             required = true)
-        @Valid @RequestBody(required=false)  Definition definition
+        @Valid @RequestBody(required=false)  DefinitionResource definition
     ) {
         if(definition == null) {
             throw new BadRequestException(
                 OpenDataMeshAPIStandardError.SC400_08_STDDEF_IS_EMPTY,
-                "Definition cannot be empty");
+                "API definition cannot be empty");
         }
         
-        definition = definitionService.createDefinition(definition);
-        return definitionMapper.toResource(definition);
+        ApiDefinition apiDefinition = definitionMapper.toEntity(definition);
+        apiDefinition = apiDefinitionService.createDefinition(apiDefinition);
+        return definitionMapper.toResource(apiDefinition);
     }
 
     // ----------------------------------------
@@ -121,13 +122,13 @@ public class DefinitionController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK) 
     @Operation(
-        summary = "Get all registered definitions",
-        description = "Get all definitions registered in the Data Product Registry."
+        summary = "Get all registered API definitions",
+        description = "Get all API definitions registered in the Data Product Registry."
     )
     @ApiResponses(value = {
         @ApiResponse(
             responseCode = "200", 
-            description = "The list of all registered definitions", 
+            description = "The list of all registered API definitions", 
             content = @Content(
                 mediaType = "application/json", 
                 schema = @Schema(implementation = List.class)
@@ -162,7 +163,7 @@ public class DefinitionController {
         String specificationVersion
     )
     {
-        List<Definition> definitions = definitionService.searchDefinitions(name, version, type, specification, specificationVersion);
+        List<ApiDefinition> definitions = apiDefinitionService.searchDefinitions(name, version, type, specification, specificationVersion);
         List<DefinitionResource> definitionResources = definitionMapper.definitionsToResources(definitions);
         return definitionResources;
     }
@@ -176,8 +177,8 @@ public class DefinitionController {
     )
     @ResponseStatus(HttpStatus.OK)
     @Operation(
-        summary = "Get the specified definition",
-        description = "Get the definition identified by the input `id`"
+        summary = "Get the specified API definition",
+        description = "Get the API definition identified by the input `id`"
     )
     @ApiResponses(value = {
         @ApiResponse(
@@ -196,12 +197,11 @@ public class DefinitionController {
         )
     })
     public DefinitionResource readOneDefinition(
-        @Parameter(description = "Idenntifier of the definition")
+        @Parameter(description = "Idenntifier of the API definition")
         @Valid @PathVariable(value = "id") Long id) 
     {
-        Definition definition = definitionService.readDefinition(id);
-        DefinitionResource definitionResource = definitionMapper.toResource(definition);
-        return definitionResource;
+        ApiDefinition apiDefinition = apiDefinitionService.readDefinition(id);
+        return definitionMapper.toResource(apiDefinition);
     }
 
     // ----------------------------------------
@@ -222,8 +222,8 @@ public class DefinitionController {
      )
      @ResponseStatus(HttpStatus.OK)
      @Operation(
-             summary = "Delete the specified definition",
-             description = "Delete the definition identified by the input `id`"
+             summary = "Delete the specified API definition",
+             description = "Delete the API definition identified by the input `id`"
      )
      @ApiResponses(value = {
              @ApiResponse(
@@ -244,7 +244,7 @@ public class DefinitionController {
         @PathVariable Long id
     )
     {
-        definitionService.deleteDefinition(id);
+        apiDefinitionService.deleteDefinition(id);
     }
 
     

@@ -35,4 +35,12 @@ public class Port extends Component implements Cloneable{
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "EXTERNAL_DOC_ID", referencedColumnName = "ID")
     private ExternalResource externalDocs;
+
+    public boolean hasApi() {
+        return getPromises() != null && getPromises().getApi() != null;
+    }
+
+    public boolean hasApiDefinition() {
+        return hasApi() && getPromises().getApi().hasDefinition();
+    }
 }

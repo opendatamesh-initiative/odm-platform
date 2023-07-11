@@ -30,9 +30,9 @@ License.
     </parent>
 
     <groupId>org.opendatamesh</groupId>
-    <artifactId>odm-platform-core-service-clients</artifactId>
-    <name>ODM Platform Service Clients</name>
-    <description>Open Data Mesh Platform's Service Clients</description>
+    <artifactId>odm-platform-core-commons</artifactId>
+    <name>ODM Platform Commons</name>
+    <description>Open Data Mesh Platform's Commons</description>
     <version>1.0.0</version>
     <url>https://github.com/opendatamesh-initiative/odm-platform</url>
 

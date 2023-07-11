@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.core.service.clients;
+package org.opendatamesh.platform.core.commons.clients;
 
 public interface RoutesInterface {
     @Override

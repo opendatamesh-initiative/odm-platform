@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.core.service.clients;
+package org.opendatamesh.platform.core.commons.clients;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;

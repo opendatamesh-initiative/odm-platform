@@ -1,6 +1,6 @@
 package org.opendatamesh.platform.pp.registry.api.v1.clients;
 
-import org.opendatamesh.platform.core.service.clients.RoutesInterface;
+import org.opendatamesh.platform.core.commons.clients.RoutesInterface;
 
 public enum Routes implements RoutesInterface {
 

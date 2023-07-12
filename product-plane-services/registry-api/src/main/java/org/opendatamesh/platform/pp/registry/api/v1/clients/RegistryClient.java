@@ -1,6 +1,7 @@
 package org.opendatamesh.platform.pp.registry.api.v1.clients;
 
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
+import org.opendatamesh.platform.core.commons.clients.ODMClient;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductDescriptorLocationResource;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductResource;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DefinitionResource;

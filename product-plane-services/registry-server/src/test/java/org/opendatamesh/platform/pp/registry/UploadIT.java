@@ -43,7 +43,6 @@ public class UploadIT extends OpenDataMeshIT {
     // CREATE Data product version
     // ----------------------------------------
     @Test
-     @Ignore
     @Order(1)
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDataProductVersionUriUpload() throws IOException {
@@ -58,7 +57,6 @@ public class UploadIT extends OpenDataMeshIT {
     }
 
     @Test
-     @Ignore
     @Order(2)
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDataProductVersionGitUpload() throws IOException {

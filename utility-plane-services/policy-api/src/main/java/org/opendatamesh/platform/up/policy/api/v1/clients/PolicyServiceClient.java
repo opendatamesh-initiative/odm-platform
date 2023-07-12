@@ -1,6 +1,6 @@
 package org.opendatamesh.platform.up.policy.api.v1.clients;
 
-import org.opendatamesh.platform.pp.registry.api.v1.clients.ODMClient;
+import org.opendatamesh.platform.core.commons.clients.ODMClient;
 import org.opendatamesh.platform.pp.registry.api.v1.clients.Routes;
 import org.opendatamesh.platform.up.policy.api.v1.enums.PatchModes;
 import org.opendatamesh.platform.up.policy.api.v1.resources.PolicyResource;

@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.pp.registry.api.v1.clients;
+package org.opendatamesh.platform.core.commons.clients;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
@@ -54,15 +54,15 @@ public class ODMClient {
         return restTemplate;
     }
     
-    protected String apiUrl(Routes route) {
+    protected String apiUrl(RoutesInterface route) {
         return apiUrl(route, "");
     }
 
-    protected String apiUrlOfItem(Routes route) {
+    protected String apiUrlOfItem(RoutesInterface route) {
         return apiUrl(route, "/{id}");
     }
 
-    protected String apiUrl(Routes route, String extension) {
+    protected String apiUrl(RoutesInterface route, String extension) {
         return apiUrlFromString(route.getPath() + extension);
     }
 

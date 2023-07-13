@@ -66,6 +66,6 @@ public abstract class AbstrPolicyController extends AbstractPolicyController {
     public abstract ResponseEntity updatePolicy(String id, PolicyResource policies);
 
     @Override
-    public abstract void deletePolicy(String id);
+    public abstract ResponseEntity deletePolicy(String id);
 
 }

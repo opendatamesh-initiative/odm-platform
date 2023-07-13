@@ -31,7 +31,8 @@ public class OpenDataMeshAPIExceptionHandler extends ResponseEntityExceptionHand
 	protected ResponseEntity<Object> handleOpenDataMeshException(OpenDataMeshAPIException e, WebRequest request) {
 		String errorLogMessage = e.getErrorName() + ":" + e.getMessage();
 		Throwable rootCause = ExceptionUtils.getRootCause(e);
-		errorLogMessage += rootCause!=null?" : " + rootCause.getMessage():"";
+		String rootCauseMessage = rootCause!=null? " : " + rootCause.getMessage(): "";
+		errorLogMessage += rootCauseMessage;
 		logger.error(errorLogMessage, e);
 		String url = getUrl(request);
 		ErrorRes error = new ErrorRes(e.getStatus().value(), e.getStandardError(), e.getMessage(), url);

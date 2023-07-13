@@ -82,6 +82,7 @@ public class ApiDefinitionsProcessor {
     private void resolveApiDefinition(PortDPDS port, JsonNode portObject)
             throws UnresolvableReferenceException, FetchException, ParseException {
 
+        if(port.hasApiDefinition() == false) return;
         ObjectNode apiDefinitionNode = (ObjectNode) portObject.at("/promises/api/definition");
         if (apiDefinitionNode.isMissingNode())
             return;

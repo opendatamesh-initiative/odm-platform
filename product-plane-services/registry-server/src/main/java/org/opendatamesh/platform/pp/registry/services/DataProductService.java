@@ -510,15 +510,15 @@ public class DataProductService {
             case RESOLVE_READ_ONLY_PROPERTIES:
                 throw new InternalServerException(
                     OpenDataMeshAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
-            "An error occured in the backend descriptor processor while adding read only properties");
+            "An error occured in the backend descriptor processor while adding read only properties", e);
             case RESOLVE_STANDARD_DEFINITIONS:
                 throw new InternalServerException(
                     OpenDataMeshAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
-            "An error occured in the backend descriptor processor while resolving standard definitions");
+            "An error occured in the backend descriptor processor while resolving standard definitions", e);
             default:
               throw new InternalServerException(
                     OpenDataMeshAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
-                    "An error occured in the backend descriptor processor while adding read only properties");
+                    "An error occured in the backend descriptor processor while adding read only properties", e);
           }
     }
 
@@ -535,11 +535,11 @@ public class DataProductService {
         } else if(e.getCause() instanceof ValidationException) {
             throw new UnprocessableEntityException(
                 OpenDataMeshAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
-                "Descriptor document does not comply with DPDS. The following validation errors has been found during validation [" + ((ValidationException)e.getCause()).getErrors().toString() + "]");    
+                "Descriptor document does not comply with DPDS. The following validation errors has been found during validation [" + ((ValidationException)e.getCause()).getErrors().toString() + "]", e);    
         } else {
             throw new InternalServerException(
                 OpenDataMeshAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
-                "An unexpected exception occured while loading root document");
+                "An unexpected exception occured while loading root document", e);
         }  
     }
 
@@ -548,7 +548,7 @@ public class DataProductService {
         if(e.getCause() instanceof UnresolvableReferenceException) {
             throw new UnprocessableEntityException(
                 OpenDataMeshAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
-                "Descriptor document contains unresolvable external references: " + e.getMessage());
+                "Descriptor document contains unresolvable external references: " + e.getMessage(), e);
         } else if(e.getCause() instanceof ParseException) {
             throw new UnprocessableEntityException(
                 OpenDataMeshAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
@@ -556,11 +556,11 @@ public class DataProductService {
         } else if(e.getCause() instanceof ValidationException) {
             throw new UnprocessableEntityException(
                 OpenDataMeshAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
-                "Descriptor document does not comply with DPDS. The following validation errors has been found during validation of external references [" + ((ValidationException)e.getCause()).getErrors().toString() + "]");
+                "Descriptor document does not comply with DPDS. The following validation errors has been found during validation of external references [" + ((ValidationException)e.getCause()).getErrors().toString() + "]", e);
         } else {
             throw new InternalServerException(
                 OpenDataMeshAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
-                "An unexpected exception occured while resolving external references");
+                "An unexpected exception occured while resolving external references", e);
         }  
     }
 
@@ -569,7 +569,7 @@ public class DataProductService {
         if(e.getCause() instanceof UnresolvableReferenceException) {
             throw new UnprocessableEntityException(
                 OpenDataMeshAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
-                "Descriptor document contains unresolvable internal references");
+                "Descriptor document contains unresolvable internal references", e);
         } else if(e.getCause() instanceof ParseException) {
             throw new UnprocessableEntityException(
                 OpenDataMeshAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
@@ -577,11 +577,11 @@ public class DataProductService {
         } else if(e.getCause() instanceof ValidationException) {
             throw new UnprocessableEntityException(
                 OpenDataMeshAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
-                "Descriptor document does not comply with DPDS. The following validation errors has been found during internal reference validation [" + ((ValidationException)e.getCause()).getErrors().toString() + "]");
+                "Descriptor document does not comply with DPDS. The following validation errors has been found during internal reference validation [" + ((ValidationException)e.getCause()).getErrors().toString() + "]", e);
         } else {
             throw new InternalServerException(
                 OpenDataMeshAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
-                "An unexpected exception occured while resolving internal references");
+                "An unexpected exception occured while resolving internal references", e);
         }  
     }
 

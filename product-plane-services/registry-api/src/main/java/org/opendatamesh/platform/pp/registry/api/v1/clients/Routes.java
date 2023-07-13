@@ -1,8 +1,6 @@
 package org.opendatamesh.platform.pp.registry.api.v1.clients;
 
-import org.opendatamesh.platform.core.commons.clients.RoutesInterface;
-
-public enum Routes implements RoutesInterface {
+public enum Routes {
 
     DATA_PRODUCTS("/api/v1/pp/products"),
 
@@ -21,7 +19,7 @@ public enum Routes implements RoutesInterface {
 
     private final String path;
 
-    Routes(String path) {
+    private Routes(String path) {
         this.path = path;
     }
 
@@ -33,5 +31,4 @@ public enum Routes implements RoutesInterface {
     public String getPath() {
         return path;
     }
-
 }

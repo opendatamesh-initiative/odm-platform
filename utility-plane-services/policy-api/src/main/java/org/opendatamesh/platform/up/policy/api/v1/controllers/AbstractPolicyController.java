@@ -207,14 +207,6 @@ public abstract class AbstractPolicyController {
     )
     @ApiResponses(value = {
             @ApiResponse(
-                    responseCode = "200",
-                    description = "Policy deleted",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = Void.class)
-                    )
-            ),
-            @ApiResponse(
                     responseCode = "400",
                     description = "[Bad Request](https://www.rfc-editor.org/rfc/rfc9110.html#name-400-bad-request)"
                             + "\r\n - Error code 40006 - OPA Server bad request",
@@ -235,14 +227,14 @@ public abstract class AbstractPolicyController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResource.class))
             )
     })
-    public ResponseEntity deletePolicyByID(
+    public void deletePolicyByID(
             @Parameter(description = "Identifier of the policy")
             @Valid @PathVariable String id
     ){
-        return deletePolicy(id);
+        deletePolicy(id);
     }
 
-    public abstract ResponseEntity deletePolicy(String id);
+    public abstract void deletePolicy(String id);
 
 }
 

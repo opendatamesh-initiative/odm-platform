@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Data
 @Entity(name = "Schema")
-@Table(name = "DEF_SCHEMAS", schema="PUBLIC")
+@Table(name = "DPDS_SCHEMAS", schema="PUBLIC")
 public class Schema {
     
     @Id

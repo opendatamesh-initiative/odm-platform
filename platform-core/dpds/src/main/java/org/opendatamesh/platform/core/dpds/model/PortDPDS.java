@@ -2,13 +2,11 @@ package org.opendatamesh.platform.core.dpds.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@ToString(callSuper = true)
 public class PortDPDS extends ComponentDPDS implements Cloneable {
 
     @JsonProperty("promises")
@@ -29,17 +27,4 @@ public class PortDPDS extends ComponentDPDS implements Cloneable {
     public Object clone() throws CloneNotSupportedException {
         return super.clone();
     }
-
-    public boolean hasPromises() {
-        return promises != null;
-    }
-
-    public boolean hasApi() {
-        return hasPromises() && promises.getApi() != null;
-    }
-
-    public boolean hasApiDefinition() {
-        return hasApi() && promises.getApi().getDefinition() != null;
-    }
 }
-

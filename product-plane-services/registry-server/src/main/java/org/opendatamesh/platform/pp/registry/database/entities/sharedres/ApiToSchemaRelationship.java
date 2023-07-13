@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 @Data
 @Entity(name = "ApiToSchemaRelationship")
-@Table(name = "REL_APIS_TO_SCHEMAS", schema="PUBLIC")
+@Table(name = "DPDS_API_TO_SCHEMA_RELATIONSHIPS", schema="PUBLIC")
 public class ApiToSchemaRelationship {
     
     @EmbeddedId

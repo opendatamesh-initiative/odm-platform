@@ -61,7 +61,6 @@ License.
 
     <modules>
         <module>dpds</module>
-        <module>commons</module>
     </modules>
 
 </project>

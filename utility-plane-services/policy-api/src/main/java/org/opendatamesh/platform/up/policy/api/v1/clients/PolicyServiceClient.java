@@ -1,7 +1,6 @@
 package org.opendatamesh.platform.up.policy.api.v1.clients;
 
 import org.opendatamesh.platform.core.commons.clients.ODMClient;
-import org.opendatamesh.platform.pp.registry.api.v1.clients.Routes;
 import org.opendatamesh.platform.up.policy.api.v1.enums.PatchModes;
 import org.opendatamesh.platform.up.policy.api.v1.resources.PolicyResource;
 import org.opendatamesh.platform.up.policy.api.v1.resources.SuiteResource;
@@ -21,7 +20,7 @@ public class PolicyServiceClient extends ODMClient {
     // POLICY endpoints
     // ----------------------------------------
 
-    public ResponseEntity<PolicyResource[]> readPolicies() {
+    public ResponseEntity readPolicies() {
 
         ResponseEntity<PolicyResource[]> getResponse = rest.getForEntity(
                 apiUrl(Routes.POLICYSERVICE_POLICY),
@@ -29,10 +28,9 @@ public class PolicyServiceClient extends ODMClient {
         );
 
         return getResponse;
-
     }
 
-    public ResponseEntity<PolicyResource> readOnePolicy(String id) {
+    public ResponseEntity readOnePolicy(String id) {
 
         ResponseEntity<PolicyResource> getResponse = rest.getForEntity(
                 apiUrlOfItem(Routes.POLICYSERVICE_POLICY),
@@ -43,7 +41,7 @@ public class PolicyServiceClient extends ODMClient {
         return getResponse;
     }
 
-    public ResponseEntity<PolicyResource> createPolicy(PolicyResource policies){
+    public ResponseEntity createPolicy(PolicyResource policies){
         ResponseEntity<PolicyResource> postPolicyResponse = rest.postForEntity(
                 apiUrl(Routes.POLICYSERVICE_POLICY),
                 policies,
@@ -52,7 +50,7 @@ public class PolicyServiceClient extends ODMClient {
         return postPolicyResponse;
     }
 
-    public ResponseEntity<PolicyResource> updatePolicy(String id,PolicyResource policies){
+    public ResponseEntity updatePolicy(String id,PolicyResource policies){
         ResponseEntity<PolicyResource> putPolicyResponse = rest.exchange(
                 apiUrlOfItem(Routes.POLICYSERVICE_POLICY),
                 HttpMethod.PUT,
@@ -63,7 +61,7 @@ public class PolicyServiceClient extends ODMClient {
         return putPolicyResponse;
     }
 
-    public ResponseEntity<Void> deletePolicy(String id){
+    public ResponseEntity deletePolicy(String id){
         ResponseEntity<Void> deleteResponse = rest.exchange(apiUrlOfItem(Routes.POLICYSERVICE_POLICY),
                 HttpMethod.DELETE,
                 null,
@@ -77,7 +75,7 @@ public class PolicyServiceClient extends ODMClient {
     // ----------------------------------------
 
     // TODO ...
-    public ResponseEntity<SuiteResource[]> readSuites(){
+    public ResponseEntity readSuites(){
 
         ResponseEntity<SuiteResource[]> getResponse = rest.getForEntity(
                 apiUrl(Routes.POLICYSERVICE_SUITE),
@@ -86,7 +84,7 @@ public class PolicyServiceClient extends ODMClient {
         return getResponse;
     }
 
-    public ResponseEntity<SuiteResource> readOneSuite(String id){
+    public ResponseEntity readOneSuite(String id){
         ResponseEntity<SuiteResource> getResponse = rest.getForEntity(
                 apiUrlOfItem(Routes.POLICYSERVICE_SUITE),
                 SuiteResource.class,
@@ -94,7 +92,7 @@ public class PolicyServiceClient extends ODMClient {
         return getResponse;
     }
 
-    public ResponseEntity<SuiteResource> createSuite(SuiteResource suite){
+    public ResponseEntity createSuite(SuiteResource suite){
         ResponseEntity<SuiteResource> postResponse = rest.postForEntity(
                 apiUrl(Routes.POLICYSERVICE_SUITE),
                 new HttpEntity<> (suite),
@@ -103,7 +101,7 @@ public class PolicyServiceClient extends ODMClient {
         return postResponse;
     }
 
-    public ResponseEntity<Void> deleteSuite(String id){
+    public ResponseEntity deleteSuite(String id){
         ResponseEntity<Void> deleteResponse = rest.exchange(apiUrlOfItem(Routes.POLICYSERVICE_SUITE),
                 HttpMethod.DELETE,
                 null,
@@ -112,8 +110,8 @@ public class PolicyServiceClient extends ODMClient {
         return deleteResponse;
     }
 
-    public ResponseEntity<SuiteResource> updateSuite(String suiteId, PatchModes mode, String policyId){
-        String extension = suiteId+"?mode="+mode.toString()+"&policyId="+policyId;
+    public ResponseEntity updateSuite(String suiteId, PatchModes mode, String policyId){
+        String extension = "/"+suiteId+"?mode="+mode.toString()+"&policyId="+policyId;
         ResponseEntity<SuiteResource> putSuiteResponse = rest.exchange(
                 apiUrl(Routes.POLICYSERVICE_SUITE,extension),
                 HttpMethod.PATCH,

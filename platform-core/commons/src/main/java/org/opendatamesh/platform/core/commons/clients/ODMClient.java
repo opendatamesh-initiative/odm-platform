@@ -81,7 +81,9 @@ public class ODMClient {
         return new HttpEntity<T>(payload, getHeaders());
     }
 
-    //todo add object mapper resource creation
+    //this method maps the responses of the client based on the response's status code.
+    //the mapper returns the passed acceptedClass if the response contains the acceptedStatusCode(s)
+    //otherwise it returns the errorClass
     protected ResponseEntity mapResponseEntity(ResponseEntity response,
                                                     HttpStatus acceptedStatusCode,
                                                     Class acceptedClass,

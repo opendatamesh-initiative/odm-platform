@@ -1,6 +1,7 @@
 package org.opendatamesh.platform.up.policy.api.v1.clients;
 
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.opendatamesh.platform.core.commons.clients.ODMClient;
 import org.opendatamesh.platform.up.policy.api.v1.enums.PatchModes;
 import org.opendatamesh.platform.up.policy.api.v1.resources.ErrorResource;
@@ -25,25 +26,35 @@ public class PolicyServiceClient extends ODMClient {
     // POLICY endpoints
     // ----------------------------------------
 
-    public ResponseEntity readPolicies() {
+    public ResponseEntity readPolicies() throws JsonProcessingException {
 
-        ResponseEntity<PolicyResource[]> getResponse = rest.getForEntity(
+        ResponseEntity getResponse = rest.getForEntity(
                 apiUrl(Routes.POLICYSERVICE_POLICY),
-                PolicyResource[].class
+                Object.class
         );
 
-        return getResponse;
+        ResponseEntity response = mapResponseEntity(getResponse,
+                HttpStatus.OK,
+                PolicyResource[].class,
+                ErrorResource.class);
+
+        return response;
     }
 
-    public ResponseEntity readOnePolicy(String id) {
+    public ResponseEntity readOnePolicy(String id) throws JsonProcessingException {
 
-        ResponseEntity<PolicyResource> getResponse = rest.getForEntity(
+        ResponseEntity getResponse = rest.getForEntity(
                 apiUrlOfItem(Routes.POLICYSERVICE_POLICY),
-                PolicyResource.class,
+                Object.class,
                 id
         );
 
-        return getResponse;
+        ResponseEntity response = mapResponseEntity(getResponse,
+                HttpStatus.OK,
+                PolicyResource.class,
+                ErrorResource.class);
+
+        return response;
     }
 
     public ResponseEntity createPolicy(PolicyResource policies) throws IOException {
@@ -59,24 +70,34 @@ public class PolicyServiceClient extends ODMClient {
         return response;
     }
 
-    public ResponseEntity updatePolicy(String id,PolicyResource policies){
-        ResponseEntity<PolicyResource> putPolicyResponse = rest.exchange(
+    public ResponseEntity updatePolicy(String id,PolicyResource policies) throws JsonProcessingException {
+        ResponseEntity putPolicyResponse = rest.exchange(
                 apiUrlOfItem(Routes.POLICYSERVICE_POLICY),
                 HttpMethod.PUT,
                 new HttpEntity<>(policies),
-                PolicyResource.class,
+                Object.class,
                 id
         );
-        return putPolicyResponse;
+
+        ResponseEntity response = mapResponseEntity(putPolicyResponse,
+                HttpStatus.OK,
+                PolicyResource.class,
+                ErrorResource.class);
+        return response;
     }
 
-    public ResponseEntity deletePolicy(String id){
-        ResponseEntity<Void> deleteResponse = rest.exchange(apiUrlOfItem(Routes.POLICYSERVICE_POLICY),
+    public ResponseEntity deletePolicy(String id) throws JsonProcessingException {
+        ResponseEntity deleteResponse = rest.exchange(apiUrlOfItem(Routes.POLICYSERVICE_POLICY),
                 HttpMethod.DELETE,
                 null,
-                Void.class,
+                Object.class,
                 id);
-        return deleteResponse;
+
+        ResponseEntity response = mapResponseEntity(deleteResponse,
+                HttpStatus.OK,
+                Void.class,
+                ErrorResource.class);
+        return response;
     }
 
     // ----------------------------------------

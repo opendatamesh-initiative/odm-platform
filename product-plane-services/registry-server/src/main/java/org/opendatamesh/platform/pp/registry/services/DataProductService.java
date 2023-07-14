@@ -51,9 +51,6 @@ public class DataProductService {
     @Autowired
     EventNotifier eventNotifier;
     
-    // TODO call policy service when a data product is modified
-    @Autowired
-    private PolicyServiceProxy policyServiceProxy;
 
     private static final Logger logger = LoggerFactory.getLogger(DataProductService.class);
 

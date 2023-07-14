@@ -37,7 +37,8 @@ spring:
     # https://java.testcontainers.org/modules/databases/jdbc/
     # Create a Docker container from mysql:8.0.24 image
     url: jdbc:tc:mysql:8.0.24://localhost/PUBLIC?user=root&password=root&currentSchema=PUBLIC
-    # OBS: without localhost/ it fails to create PUBLIC DB/Schema and without user and password it use "test" "test"
+    # OBS: without localhost/ it fails to create PUBLIC DB/Schema (it use default db-schema "test"
+    # and without user and password it use "test" "test"
     # TestContainers driverClassName for JDBC url generated DBs
     driverClassName: org.testcontainers.jdbc.ContainerDatabaseDriver
     #driverClassName: com.mysql.cj.jdbc.Driver

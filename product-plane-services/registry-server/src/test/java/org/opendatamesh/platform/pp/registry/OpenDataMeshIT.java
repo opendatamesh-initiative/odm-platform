@@ -20,6 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.PostConstruct;
@@ -30,6 +31,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @RunWith(SpringRunner.class)
+//@ActiveProfiles("dev")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = { OpenDataMeshApp.class })
 public abstract class OpenDataMeshIT {
 
@@ -39,7 +41,7 @@ public abstract class OpenDataMeshIT {
     protected RegistryClient registryClient;
     protected ResourceBuilder resourceBuilder;
     
-     @Autowired
+    @Autowired
     protected ObjectMapper mapper;
 
     protected Logger logger = LoggerFactory.getLogger(OpenDataMeshIT.class);

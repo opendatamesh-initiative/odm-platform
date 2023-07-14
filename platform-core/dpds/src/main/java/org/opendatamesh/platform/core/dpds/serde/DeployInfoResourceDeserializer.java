@@ -5,11 +5,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-
-import org.opendatamesh.platform.core.dpds.model.BuildInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.DeployInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.ExternalResourceDPDS;
-import org.opendatamesh.platform.core.dpds.model.ReferenceObjectDPDS;
 import org.opendatamesh.platform.core.dpds.model.StandardDefinitionDPDS;
 
 import java.io.IOException;

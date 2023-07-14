@@ -5,8 +5,11 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.*;
-import org.opendatamesh.platform.pp.registry.database.entities.sharedres.*;
+import org.opendatamesh.platform.pp.registry.database.entities.sharedres.ApiDefinition;
+import org.opendatamesh.platform.pp.registry.database.entities.sharedres.ApiToSchemaRelationship;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.ApiToSchemaRelationship.ApiToSchemaRelationshipId;
+import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Schema;
+import org.opendatamesh.platform.pp.registry.database.entities.sharedres.TemplateDefinition;
 import org.opendatamesh.platform.pp.registry.database.repositories.DataProductVersionRepository;
 import org.opendatamesh.platform.pp.registry.exceptions.*;
 import org.opendatamesh.platform.pp.registry.resources.v1.mappers.DataProductVersionMapper;
@@ -20,7 +23,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class DataProductVersionService {

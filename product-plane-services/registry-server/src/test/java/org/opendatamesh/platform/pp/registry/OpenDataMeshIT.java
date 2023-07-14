@@ -11,7 +11,6 @@ import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductDescrip
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductResource;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DefinitionResource;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.SchemaResource;
-import org.opendatamesh.platform.pp.registry.database.entities.sharedres.ApiDefinition;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
 import org.slf4j.Logger;
@@ -21,10 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.util.DefaultUriBuilderFactory;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;

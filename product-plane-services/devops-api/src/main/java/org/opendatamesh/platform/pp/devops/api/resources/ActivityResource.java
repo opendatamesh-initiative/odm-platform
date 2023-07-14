@@ -20,7 +20,7 @@ public class ActivityResource {
     @JsonProperty("dataProductVersion")
     private String dataProductVersion;
 
-    @JsonProperty("status")
+    @JsonProperty("type")
     ActivityType type;
 
     @JsonProperty("status")

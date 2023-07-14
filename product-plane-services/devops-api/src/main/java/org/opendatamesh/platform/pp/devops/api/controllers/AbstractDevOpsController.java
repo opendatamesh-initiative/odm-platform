@@ -42,13 +42,32 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 )
 public abstract class AbstractDevOpsController {
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = { "application/vnd.odmp.v1+json", 
+        "application/vnd.odmp+json", "application/json"})
+    @ResponseStatus(HttpStatus.CREATED) 
     @Operation(
             summary = "Create a new activity",
             description = "Create new activity"
     )
+     @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "201", 
+            description = "Activity createdd", 
+            content = @Content(
+                mediaType = "application/json", 
+                schema = @Schema(implementation = ActivityResource.class)
+            )
+        )})
     public ActivityResource createActivityEndpoint(
-        ActivityResource activity, boolean startAfterCreation) {
+        @Parameter( 
+            description = "An activity object", 
+            required = true)
+        @Valid @RequestBody ActivityResource activity, 
+
+        @Parameter(
+            description="Pass true to start the activity after creation")
+        @RequestParam(required = false, name = "startAfterCreation") boolean startAfterCreation) 
+    {
         return createActivity(activity, startAfterCreation);
     }
 

@@ -57,28 +57,26 @@ spring:
 # Policy Module configuration
 ##############################
 odm:
-  productPlane:
-    blueprintService:
+  product-plane:
+    blueprint-service:
       active: false
       address: http://localhost:8480
-    registryService:
+    registry-service:
       active: true
       address: http://localhost:8481
-    devopsService:
+    devops-service:
       active: true
       address: http://localhost:8482
-  utilityPlane:
-    policyServices:
-      openPolicyAgent:
+  utility-plane:
+    policy-services:
+      open-policy-agent:
         active: false
         address: http://localhost:8480
-    executorServices:
-      azureDevOps:
+    executor-services:
+      azure-devops:
         active: flase
         address: http://localhost:8481
-    notificationServices:
+    notification-services:
       blindata:
         active: false
         address: http://localhost:8482
-
-prova: merda

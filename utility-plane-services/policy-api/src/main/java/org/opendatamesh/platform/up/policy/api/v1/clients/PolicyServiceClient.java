@@ -1,13 +1,18 @@
 package org.opendatamesh.platform.up.policy.api.v1.clients;
 
+import com.fasterxml.jackson.core.JsonParser;
 import org.opendatamesh.platform.core.commons.clients.ODMClient;
 import org.opendatamesh.platform.up.policy.api.v1.enums.PatchModes;
+import org.opendatamesh.platform.up.policy.api.v1.resources.ErrorResource;
 import org.opendatamesh.platform.up.policy.api.v1.resources.PolicyResource;
 import org.opendatamesh.platform.up.policy.api.v1.resources.SuiteResource;
 import org.opendatamesh.platform.up.policy.api.v1.resources.ValidateResponse;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import java.io.IOException;
 import java.util.Map;
 
 public class PolicyServiceClient extends ODMClient {
@@ -41,13 +46,17 @@ public class PolicyServiceClient extends ODMClient {
         return getResponse;
     }
 
-    public ResponseEntity createPolicy(PolicyResource policies){
-        ResponseEntity<PolicyResource> postPolicyResponse = rest.postForEntity(
+    public ResponseEntity createPolicy(PolicyResource policies) throws IOException {
+        ResponseEntity postPolicyResponse = rest.postForEntity(
                 apiUrl(Routes.POLICYSERVICE_POLICY),
                 policies,
-                PolicyResource.class
+                Object.class
         );
-        return postPolicyResponse;
+        ResponseEntity response = mapResponseEntity(postPolicyResponse,
+                HttpStatus.CREATED,
+                PolicyResource.class,
+                ErrorResource.class);
+        return response;
     }
 
     public ResponseEntity updatePolicy(String id,PolicyResource policies){
@@ -74,7 +83,6 @@ public class PolicyServiceClient extends ODMClient {
     // SUITE endpoint
     // ----------------------------------------
 
-    // TODO ...
     public ResponseEntity readSuites(){
 
         ResponseEntity<SuiteResource[]> getResponse = rest.getForEntity(
@@ -127,7 +135,8 @@ public class PolicyServiceClient extends ODMClient {
     // ----------------------------------------
 
     // TODO ...
-    public ResponseEntity validateDocument(String[] ids, String[] suites, Object document){
+    //public ResponseEntity validateDocument(String[] ids, String[] suites, Object document){
+    public ResponseEntity validateDocument(Object document){
         ResponseEntity<Map> validationResponse = rest.exchange(
                 apiUrl(Routes.POLICYSERVICE_VALIDATE_BASEURL),
                 HttpMethod.POST,
@@ -137,7 +146,7 @@ public class PolicyServiceClient extends ODMClient {
         return validationResponse;
     }
 
-    public ResponseEntity validateDocumentByPolicyId(String id, Object document){
+    public ResponseEntity validateDocumentByPoliciesIds(Object document, String id){
         return rest.exchange(
                 apiUrl(Routes.POLICYSERVICE_VALIDATE_BASEURL, "?id={id}"),
                 HttpMethod.POST,
@@ -147,7 +156,7 @@ public class PolicyServiceClient extends ODMClient {
         );
     }
 
-    public ResponseEntity validateDocumentBySuiteId(String id, Object document){
+    public ResponseEntity validateDocumentBySuiteId(Object document, String id){
         return rest.exchange(
                 apiUrl(Routes.POLICYSERVICE_VALIDATE_BASEURL, "?suite={suite}"),
                 HttpMethod.POST,

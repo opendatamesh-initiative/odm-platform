@@ -1,15 +1,11 @@
 package org.opendatamesh.platform.pp.devops.server.database.entities;
 
 
-import java.util.Date;
-
+import lombok.Data;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatus;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityType;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import lombok.Data;
+import java.util.Date;
 
 @Data
 public class Activity {

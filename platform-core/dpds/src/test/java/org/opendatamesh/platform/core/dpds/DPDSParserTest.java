@@ -1,13 +1,5 @@
 package org.opendatamesh.platform.core.dpds;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.core.dpds.exceptions.BuildException;
 import org.opendatamesh.platform.core.dpds.model.ApplicationComponentDPDS;
@@ -18,6 +10,13 @@ import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
 import org.opendatamesh.platform.core.dpds.parser.ParseResult;
 import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
 import org.opendatamesh.platform.core.dpds.parser.location.UriLocation;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DPDSParserTest {
     

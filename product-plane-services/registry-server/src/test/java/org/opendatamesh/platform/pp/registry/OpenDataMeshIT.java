@@ -11,7 +11,6 @@ import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductDescrip
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductResource;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DefinitionResource;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.SchemaResource;
-import org.opendatamesh.platform.pp.registry.database.entities.sharedres.ApiDefinition;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
 import org.slf4j.Logger;
@@ -21,10 +20,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.util.DefaultUriBuilderFactory;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -34,9 +31,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @RunWith(SpringRunner.class)
-//@ActiveProfiles(value = "localpostgres")
-//@ActiveProfiles(value = "localmysql")
-@ActiveProfiles(value = "dev")
+//@ActiveProfiles("dev")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = { OpenDataMeshApp.class })
 public abstract class OpenDataMeshIT {
 
@@ -46,7 +41,7 @@ public abstract class OpenDataMeshIT {
     protected RegistryClient registryClient;
     protected ResourceBuilder resourceBuilder;
     
-     @Autowired
+    @Autowired
     protected ObjectMapper mapper;
 
     protected Logger logger = LoggerFactory.getLogger(OpenDataMeshIT.class);

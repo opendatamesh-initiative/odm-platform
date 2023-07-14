@@ -53,6 +53,7 @@ spring:
   flyway:
     enabled: true
     # Redundant (Flyway get them from datasource) + conflicts with TestContainers DBs from JDBC url auto-generation integration with FLyway
+    # https://stackoverflow.com/questions/73605371/table-not-found-in-integration-tests-when-using-testcontainers-with-flyway
     #url: jdbc:postgresql://localhost:5432/odmpdb
     #user: postgres
     #password: postgres

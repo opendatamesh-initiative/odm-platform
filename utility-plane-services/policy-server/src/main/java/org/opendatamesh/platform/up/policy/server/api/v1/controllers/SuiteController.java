@@ -98,9 +98,10 @@ public class SuiteController extends AbstractSuiteController {
             // Delete policy on internal DB
             sr.deleteById(id);
 
+            String response = "Suite "+ id +" correctly deleted";
             return ResponseEntity
                     .status(HttpStatus.OK)
-                    .body("Suite " + id + " correctly deleted");
+                    .body(Void.class);
 
         }
 

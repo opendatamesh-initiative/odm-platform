@@ -62,6 +62,7 @@ public abstract class AbstractPolicyController {
     public abstract ResponseEntity readPolicies();
 
     @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
     @Operation(
             summary = "Get a policy",
             description = "Fetch a specific registered policy given its ID",
@@ -105,6 +106,7 @@ public abstract class AbstractPolicyController {
     public abstract ResponseEntity readOnePolicy(String id);
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
     @Operation(
             summary = "Create a new policy",
             description = "Create and register a new OPA policy",
@@ -148,6 +150,7 @@ public abstract class AbstractPolicyController {
             path = "/{id}",
             consumes = MediaType.APPLICATION_JSON_VALUE
     )
+    @ResponseStatus(HttpStatus.OK)
     @Operation(
             summary = "Update a policy",
             description = "Update a registered OPA policy",

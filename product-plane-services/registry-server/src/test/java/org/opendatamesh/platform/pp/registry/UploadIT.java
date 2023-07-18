@@ -1,7 +1,6 @@
 package org.opendatamesh.platform.pp.registry;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;

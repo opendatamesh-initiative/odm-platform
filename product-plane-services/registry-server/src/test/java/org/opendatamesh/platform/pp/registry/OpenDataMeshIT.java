@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.opendatamesh.platform.pp.registry.api.v1.clients.RegistryClient;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductDescriptorLocationResource;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductResource;
@@ -23,6 +24,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.jdbc.JdbcTestUtils;
 
 import javax.annotation.PostConstruct;
@@ -33,6 +35,7 @@ import static org.assertj.core.api.Assertions.fail;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
+@ExtendWith(SpringExtension.class)
 //@ActiveProfiles("dev")
 //@ActiveProfiles("testpostgresql")
 @ActiveProfiles("testmysql")

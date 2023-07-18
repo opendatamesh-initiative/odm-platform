@@ -1,7 +1,6 @@
 package org.opendatamesh.platform.pp.registry;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.annotation.DirtiesContext.MethodMode;
@@ -13,10 +12,6 @@ import java.io.IOException;
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 public class SchemaIT extends OpenDataMeshIT {
 
-    @Before
-    public void setup() {
-        //objectMapper = DataProductDescriptor.buildObjectMapper();
-    }
 
     // ======================================================================================
     // HAPPY PATH

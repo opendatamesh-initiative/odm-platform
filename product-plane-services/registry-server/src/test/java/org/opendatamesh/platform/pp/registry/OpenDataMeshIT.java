@@ -4,9 +4,10 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.opendatamesh.platform.pp.registry.api.v1.clients.RegistryClient;
-import org.opendatamesh.platform.pp.registry.api.v1.clients.Routes;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductDescriptorLocationResource;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductResource;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DefinitionResource;
@@ -18,20 +19,24 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.jdbc.JdbcTestUtils;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.fail;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
-@RunWith(SpringRunner.class)
-//@ActiveProfiles("dev")
+//@RunWith(SpringRunner.class)
+//@ActiveProfiles("testmysql")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = { OpenDataMeshApp.class })
 public abstract class OpenDataMeshIT {
 
@@ -67,24 +72,78 @@ public abstract class OpenDataMeshIT {
         registryClient = new RegistryClient("http://localhost:" + port);
     }
 
-    // ======================================================================================
-    // Url builder utils
-    // ======================================================================================
-    // TODO delete all these methods
-    protected String apiUrl(Routes route) {
-        return apiUrl(route, "");
+    @Before
+    public void setup() {
+        // objectMapper = DataProductDescriptor.buildObjectMapper();
     }
 
-    protected String apiUrl(Routes route, String extension) {
-        return apiUrlFromString(route.getPath() + extension);
-    }
-
-    protected String apiUrlFromString(String routeUrlString) {
-        return "http://localhost:" + port + routeUrlString;
-    }
-
-    protected String apiUrlOfItem(Routes route) {
-        return apiUrl(route, "/{id}");
+    @BeforeEach
+    public void cleanDbState(@Autowired JdbcTemplate jdbcTemplate,  @Autowired Environment environment) {
+        if(Arrays.stream(environment.getActiveProfiles()).findFirst().get().equals("testpostgresql")) {
+            JdbcTestUtils.deleteFromTables(
+                    jdbcTemplate,
+                    "\"PUBLIC\".\"DPV_PORT_TAGS\"",
+                    "\"PUBLIC\".\"DPV_PORTS\"",
+                    "\"PUBLIC\".\"DPV_PORT_PROMISES\"",
+                    "\"PUBLIC\".\"DPV_PORT_EXPECTATIONS\"",
+                    "\"PUBLIC\".\"DPV_PORT_CONTRACTS\"",
+                    "\"PUBLIC\".\"REL_APIS_TO_SCHEMAS\"",
+                    "\"PUBLIC\".\"DEF_APIS\"",
+                    "\"PUBLIC\".\"DEF_SCHEMAS\"",
+                    "\"PUBLIC\".\"DPV_INFRA_COMPONENT_TAGS\"",
+                    "\"PUBLIC\".\"DPV_INFRA_COMPONENTS\"",
+                    "\"PUBLIC\".\"DPV_INFRA_COMPONENT_DEPENDENCIES\"",
+                    "\"PUBLIC\".\"DPV_INFRA_PROVISION_INFOS\"",
+                    "\"PUBLIC\".\"DPV_INFO_CONTACT_POINTS\"",
+                    "\"PUBLIC\".\"DPV_APP_COMPONENT_TAGS\"",
+                    "\"PUBLIC\".\"DPV_APP_COMPONENT_DEPENDENCIES\"",
+                    "\"PUBLIC\".\"DPV_APP_COMPONENT_SINKS\"",
+                    "\"PUBLIC\".\"DPV_APP_COMPONENT_SOURCES\"",
+                    "\"PUBLIC\".\"DPV_APP_COMPONENTS\"",
+                    "\"PUBLIC\".\"DPV_APP_COMPONENT_BUILD_INFOS\"",
+                    "\"PUBLIC\".\"DPV_APP_COMPONENT_DEPLOY_INFOS\"",
+                    "\"PUBLIC\".\"DP_VERSIONS\"",
+                    "\"PUBLIC\".\"DPV_INFO_OWNERS\"",
+                    "\"PUBLIC\".\"DPV_SPEC_EXTENSION_POINTS\"",
+                    "\"PUBLIC\".\"DPV_EXTERNAL_RESOURCES\"",
+                    "\"PUBLIC\".\"DPV_REFERENCE_OBJECTS\"",
+                    "\"PUBLIC\".\"DPV_DATA_PRODUCT_TAGS\"",
+                    "\"PUBLIC\".\"DATA_PRODUCTS\"",
+                    "\"PUBLIC\".\"DEF_TEMPLATES\""
+            );
+        } else if (Arrays.stream(environment.getActiveProfiles()).findFirst().get().equals("testmysql")) {
+            JdbcTestUtils.deleteFromTables(
+                    jdbcTemplate,
+                    "PUBLIC.DPV_PORT_TAGS",
+                    "PUBLIC.DPV_PORTS",
+                    "PUBLIC.DPV_PORT_PROMISES",
+                    "PUBLIC.DPV_PORT_EXPECTATIONS",
+                    "PUBLIC.DPV_PORT_CONTRACTS",
+                    "PUBLIC.REL_APIS_TO_SCHEMAS",
+                    "PUBLIC.DEF_APIS",
+                    "PUBLIC.DEF_SCHEMAS",
+                    "PUBLIC.DPV_INFRA_COMPONENT_TAGS",
+                    "PUBLIC.DPV_INFRA_COMPONENTS",
+                    "PUBLIC.DPV_INFRA_COMPONENT_DEPENDENCIES",
+                    "PUBLIC.DPV_INFRA_PROVISION_INFOS",
+                    "PUBLIC.DPV_INFO_CONTACT_POINTS",
+                    "PUBLIC.DPV_APP_COMPONENT_TAGS",
+                    "PUBLIC.DPV_APP_COMPONENT_DEPENDENCIES",
+                    "PUBLIC.DPV_APP_COMPONENT_SINKS",
+                    "PUBLIC.DPV_APP_COMPONENT_SOURCES",
+                    "PUBLIC.DPV_APP_COMPONENTS",
+                    "PUBLIC.DPV_APP_COMPONENT_BUILD_INFOS",
+                    "PUBLIC.DPV_APP_COMPONENT_DEPLOY_INFOS",
+                    "PUBLIC.DP_VERSIONS",
+                    "PUBLIC.DPV_INFO_OWNERS",
+                    "PUBLIC.DPV_SPEC_EXTENSION_POINTS",
+                    "PUBLIC.DPV_EXTERNAL_RESOURCES",
+                    "PUBLIC.DPV_REFERENCE_OBJECTS",
+                    "PUBLIC.DPV_DATA_PRODUCT_TAGS",
+                    "PUBLIC.DATA_PRODUCTS",
+                    "PUBLIC.DEF_TEMPLATES"
+            );
+        }
     }
 
     // ======================================================================================

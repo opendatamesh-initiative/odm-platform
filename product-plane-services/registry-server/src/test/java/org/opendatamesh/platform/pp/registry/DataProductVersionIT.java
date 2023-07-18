@@ -203,7 +203,7 @@ public class DataProductVersionIT extends OpenDataMeshIT {
     @Test
     @Order(4)
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    @EnabledIf(expression = "#{environment.acceptsProfiles('testpostgresql', 'dev')}", loadContext = true)t ad
+    @EnabledIf(expression = "#{environment.acceptsProfiles('testpostgresql', 'dev')}", loadContext = true)
     public void testDataProductVersionDelete()
             throws IOException {
 

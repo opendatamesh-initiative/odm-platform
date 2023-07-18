@@ -270,9 +270,6 @@ License.
                             <version>1.5.3.Final</version>
                         </path>
                     </annotationProcessorPaths>
-                    <includes>
-                        <include>**/*IT.java</include>
-                    </includes>
                 </configuration>
             </plugin>
             <plugin>
@@ -311,6 +308,18 @@ License.
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/*IT.java</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/OpenDataMeshIT.java</exclude>
+                    </excludes>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.springdoc</groupId>

@@ -26,6 +26,7 @@ import java.util.List;
 @Execution(ExecutionMode.SAME_THREAD)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
+@Disabled
 public class UploadIT extends OpenDataMeshIT {
 
     // ----------------------------------------

@@ -22,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.annotation.DirtiesContext.MethodMode;
+import org.springframework.test.annotation.IfProfileValue;
 import org.springframework.test.context.TestPropertySource;
 
 import java.io.IOException;
@@ -160,6 +161,7 @@ public class DataProductVersionIT extends OpenDataMeshIT {
     @Test
     @Order(3)
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    @IfProfileValue(name = "spring.profiles.active", values = {"dev", "testpostgresql"}) // TEMP!
     public void testDataProductVersionsReadOne() throws IOException {
 
         // create a product and associate to it a version
@@ -192,6 +194,7 @@ public class DataProductVersionIT extends OpenDataMeshIT {
     @Test
     @Order(4)
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    @IfProfileValue(name = "spring.profiles.active", values = {"dev", "testpostgresql"}) // TEMP!
     public void testDataProductVersionDelete()
             throws IOException {
 

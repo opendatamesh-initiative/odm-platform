@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductResource;
@@ -161,7 +162,7 @@ public class DataProductVersionIT extends OpenDataMeshIT {
     @Test
     @Order(3)
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    @IfProfileValue(name = "spring.profiles.active", values = {"dev", "testpostgresql"}) // TEMP!
+    @DisabledIfSystemProperty(named = "spring.profiles.active", matches = "testmysql") // TEMP!
     public void testDataProductVersionsReadOne() throws IOException {
 
         // create a product and associate to it a version
@@ -194,7 +195,7 @@ public class DataProductVersionIT extends OpenDataMeshIT {
     @Test
     @Order(4)
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    @IfProfileValue(name = "spring.profiles.active", values = {"dev", "testpostgresql"}) // TEMP!
+    @DisabledIfSystemProperty(named = "spring.profiles.active", matches = "testmysql")
     public void testDataProductVersionDelete()
             throws IOException {
 

@@ -48,7 +48,9 @@ public class ActivitiesController extends AbstractDevOpsController {
     @Override
     public List<ActivityResource> readActivitiy(Long id) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'readActivitiy'");
+        //throw new UnsupportedOperationException("Unimplemented method 'readActivitiy'");
+        activityService.createActivity(null, true);
+        return null;
     }
     
 }

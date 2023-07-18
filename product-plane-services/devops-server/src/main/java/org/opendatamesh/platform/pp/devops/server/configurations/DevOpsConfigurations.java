@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class DevOpsConfigurations {
 
-    @Value("${odm.utilityPlane.executorServices.azureDevOps.address}")
+    @Value("${odm.utility-plane.executor-services.azure-devops.address}")
     String registryAddress;
 
     @Bean

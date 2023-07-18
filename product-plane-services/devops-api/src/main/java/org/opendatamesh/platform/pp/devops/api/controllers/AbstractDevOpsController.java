@@ -1,6 +1,7 @@
 package org.opendatamesh.platform.pp.devops.api.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping(
         value = "/activities",
@@ -26,13 +29,32 @@ import java.util.List;
 )
 public abstract class AbstractDevOpsController {
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = { "application/vnd.odmp.v1+json", 
+        "application/vnd.odmp+json", "application/json"})
+    @ResponseStatus(HttpStatus.CREATED) 
     @Operation(
             summary = "Create a new activity",
             description = "Create new activity"
     )
+     @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "201", 
+            description = "Activity createdd", 
+            content = @Content(
+                mediaType = "application/json", 
+                schema = @Schema(implementation = ActivityResource.class)
+            )
+        )})
     public ActivityResource createActivityEndpoint(
-        ActivityResource activity, boolean startAfterCreation) {
+        @Parameter( 
+            description = "An activity object", 
+            required = true)
+        @Valid @RequestBody ActivityResource activity, 
+
+        @Parameter(
+            description="Pass true to start the activity after creation")
+        @RequestParam(required = false, name = "startAfterCreation") boolean startAfterCreation) 
+    {
         return createActivity(activity, startAfterCreation);
     }
 

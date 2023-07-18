@@ -1,7 +1,6 @@
 package org.opendatamesh.platform.pp.registry;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductResource;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
@@ -21,11 +20,6 @@ import static org.junit.Assert.fail;
 
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 public class DataProductIT extends OpenDataMeshIT {
-
-    @Before
-    public void setup() {
-        //objectMapper = DataProductDescriptor.buildObjectMapper();
-    }
 
     // ======================================================================================
     // HAPPY PATH

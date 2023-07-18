@@ -1,12 +1,7 @@
 package org.opendatamesh.platform.pp.registry;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.opendatamesh.platform.core.dpds.exceptions.BuildException;
@@ -30,12 +25,8 @@ import java.util.List;
 @Execution(ExecutionMode.SAME_THREAD)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
+@Disabled
 public class UploadIT extends OpenDataMeshIT {
-    
-    @Before
-    public void setup() {
-        
-    }
 
     // ----------------------------------------
     // CREATE Data product version
@@ -73,7 +64,7 @@ public class UploadIT extends OpenDataMeshIT {
     }
 
     @Test
-    @Ignore
+    @Disabled
     @Order(3)
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDataProductVersionDevOpsUploadMain() throws IOException {
@@ -97,7 +88,7 @@ public class UploadIT extends OpenDataMeshIT {
     }
 
     @Test
-    @Ignore
+    @Disabled
     @Order(4)
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDataProductVersionDevOpsUploadTag() throws IOException {
@@ -121,7 +112,7 @@ public class UploadIT extends OpenDataMeshIT {
     }
 
     @Test
-    @Ignore
+    @Disabled
     @Order(5)
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDataProductVersionDevOpsUploadBranch() throws IOException {

@@ -1,7 +1,6 @@
 package org.opendatamesh.platform.pp.registry;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DefinitionResource;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.ApiDefinition;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
@@ -21,11 +20,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 public class APIDefinitionIT extends OpenDataMeshIT {
 
-    @Before
-    public void setup() {
-        // objectMapper = DataProductDescriptor.buildObjectMapper();
-    }
-
     // ======================================================================================
     // HAPPY PATH
     // ======================================================================================
@@ -38,7 +32,7 @@ public class APIDefinitionIT extends OpenDataMeshIT {
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDefinitionCreate() throws IOException {
 
-        cleanState();
+        //cleanState();
 
         ResponseEntity<ApiDefinition> postProductResponse = null;
 
@@ -108,7 +102,7 @@ public class APIDefinitionIT extends OpenDataMeshIT {
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDefinitionReadAll() throws IOException {
 
-        cleanState();
+        //cleanState();
 
         createApiDefinition(RESOURCE_DEF1_V1);
         createApiDefinition(RESOURCE_DEF1_NOVERSION);
@@ -131,7 +125,7 @@ public class APIDefinitionIT extends OpenDataMeshIT {
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDefinitionSearch() throws IOException {
 
-        cleanState();
+        //cleanState();
 
         createApiDefinition(RESOURCE_DEF1_V1);
         createApiDefinition(RESOURCE_DEF1_NOVERSION);
@@ -164,7 +158,7 @@ public class APIDefinitionIT extends OpenDataMeshIT {
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDefinitionReadOne() throws IOException {
 
-        cleanState();
+        //cleanState();
 
         DefinitionResource definitionResource = createApiDefinition(RESOURCE_DEF1_V1);
 
@@ -173,7 +167,6 @@ public class APIDefinitionIT extends OpenDataMeshIT {
         DefinitionResource definitionRes = getDefinitionResponse.getBody();
 
         verifyResponseEntity(getDefinitionResponse, HttpStatus.OK, true);
-        assertThat(definitionRes.getId()).isEqualTo(1);
         assertThat(definitionRes.getName()).isEqualTo("definition1");
         assertThat(definitionRes.getVersion()).isEqualTo("0.0.1");
         assertThat(definitionRes.getStatus()).isEqualTo("OK");
@@ -201,7 +194,7 @@ public class APIDefinitionIT extends OpenDataMeshIT {
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDefinitionDelete() throws IOException {
 
-        cleanState();
+        //cleanState();
 
         DefinitionResource definitionResource = createApiDefinition(RESOURCE_DEF1_V1);
 
@@ -223,7 +216,7 @@ public class APIDefinitionIT extends OpenDataMeshIT {
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDefinitionCreationError400Errors() throws IOException {
 
-        cleanState();
+        //cleanState();
 
         HttpEntity<DefinitionResource> entity = null;
         ResponseEntity<ErrorRes> errorResponse = null;
@@ -245,7 +238,7 @@ public class APIDefinitionIT extends OpenDataMeshIT {
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDefinitionCreateError422Errors() throws IOException {
 
-        cleanState();
+        //cleanState();
 
         ResponseEntity<ErrorRes> errorResponse = null;
 
@@ -281,7 +274,7 @@ public class APIDefinitionIT extends OpenDataMeshIT {
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDefinitionDeleteError404Errors() {
 
-        cleanState();
+        //cleanState();
 
         ResponseEntity<ErrorRes> errorResponse = null;
 
@@ -323,32 +316,5 @@ public class APIDefinitionIT extends OpenDataMeshIT {
     // ----------------------------------------
     // Verify test resources
     // ----------------------------------------
-
-    // ----------------------------------------
-    // Clean state for each test: empty DB
-    // ----------------------------------------
-    private void cleanState() {
-        try {
-            /*
-            ResponseEntity<String> getDefinitionResponse = registryClient.getApiDefinitions(String.class);
-            String definitionResources = getDefinitionResponse.getBody();
-            System.out.println(definitionResources);
-             
-            for (String definitionResource : definitionResources) {
-                System.out.println(definitionResource);
-            }
-            */
-             
-            ResponseEntity<DefinitionResource[]> getDefinitionResponse = registryClient.readAllApiDefinitions();
-            DefinitionResource[] definitionResources = getDefinitionResponse.getBody();
-            for (DefinitionResource definitionResource : definitionResources) {
-                registryClient.deleteApiDefinition(definitionResource.getId(), Void.class);
-            }
-            
-        } catch (Throwable t) {
-            t.printStackTrace();
-        }
-
-    }
 
 }

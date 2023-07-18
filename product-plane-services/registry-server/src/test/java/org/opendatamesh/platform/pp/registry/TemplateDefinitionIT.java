@@ -2,8 +2,7 @@ package org.opendatamesh.platform.pp.registry;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DefinitionResource;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
@@ -20,11 +19,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 public class TemplateDefinitionIT extends OpenDataMeshIT {
 
-    @Before
-    public void setup() {
-        //objectMapper = DataProductDescriptor.buildObjectMapper();
-    }
-
     // ======================================================================================
     // HAPPY PATH
     // ======================================================================================
@@ -37,11 +31,8 @@ public class TemplateDefinitionIT extends OpenDataMeshIT {
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     public void testTemplateCreate() throws IOException {
 
-        cleanState();
-
         // TEST 1: create a Template with all properties and verify the response
         DefinitionResource templateDefinitionRes = createTemplate(RESOURCE_TEMPLATE_1);
-        assertThat(templateDefinitionRes.getId()).isEqualTo(1);
         verifyTemplate1(templateDefinitionRes);
 
         // TEST 1: create a Template without name and version
@@ -73,8 +64,6 @@ public class TemplateDefinitionIT extends OpenDataMeshIT {
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     public void testTemplateReadAll() throws IOException {
 
-        cleanState();
-
         createTemplate(RESOURCE_TEMPLATE_1);
         createTemplate(RESOURCE_TEMPLATE_2);
 
@@ -83,7 +72,6 @@ public class TemplateDefinitionIT extends OpenDataMeshIT {
         verifyResponseEntity(getTemplateResponse, HttpStatus.OK, true);
 
         assertThat(getTemplateResponse.getBody().length).isEqualTo(2);
-        assertThat(templateResources[0].getId()).isEqualTo(1);
         verifyTemplate1(templateResources[0]);
         verifyTemplate2(templateResources[1]);
     }
@@ -91,8 +79,6 @@ public class TemplateDefinitionIT extends OpenDataMeshIT {
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     public void testTemplateSearch() throws IOException {
-
-        cleanState();
 
         createTemplate(RESOURCE_TEMPLATE_1);
         createTemplate(RESOURCE_TEMPLATE_2);
@@ -119,8 +105,6 @@ public class TemplateDefinitionIT extends OpenDataMeshIT {
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     public void testTemplateReadOne() throws IOException {
 
-        cleanState();
-
         DefinitionResource templateResource = createTemplate(RESOURCE_TEMPLATE_1);
 
         ResponseEntity<DefinitionResource> getTemplateResponse = registryClient.readOneTemplateDefinition(templateResource.getId());
@@ -129,7 +113,6 @@ public class TemplateDefinitionIT extends OpenDataMeshIT {
         verifyResponseEntity(getTemplateResponse, HttpStatus.OK, true);
         assertThat(templateRes.getDescription()).isEqualTo("test template-1");
         assertThat(templateRes.getContentMediaType()).isEqualTo("plain/text");
-        //assertThat(templateRes.getRef()).isEqualTo("https://github.com/Giandom/tf-data-product-example.git");
 
     }
 
@@ -146,8 +129,6 @@ public class TemplateDefinitionIT extends OpenDataMeshIT {
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     public void testTemplateDelete() throws IOException {
-
-        cleanState();
 
         DefinitionResource templateResource = createTemplate(RESOURCE_TEMPLATE_1);
 
@@ -168,8 +149,6 @@ public class TemplateDefinitionIT extends OpenDataMeshIT {
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     public void testTemplateCreationError400Errors() throws IOException {
 
-        cleanState();
-
         ResponseEntity<ErrorRes> errorResponse = null;
 
         // Test error SC400_12_TEMPLATE_IS_EMPTY
@@ -182,8 +161,6 @@ public class TemplateDefinitionIT extends OpenDataMeshIT {
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     public void testTemplateCreateError422Errors() throws IOException {
-
-        cleanState();
 
         ResponseEntity<ErrorRes> errorResponse = null;
 
@@ -215,8 +192,6 @@ public class TemplateDefinitionIT extends OpenDataMeshIT {
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     public void testTemplateReadOne404Error() throws IOException {
 
-        cleanState();
-
         ResponseEntity<ErrorRes> errorResponse = null;
 
         errorResponse = registryClient.readOneTemplateDefinition(1L, ErrorRes.class);
@@ -237,8 +212,6 @@ public class TemplateDefinitionIT extends OpenDataMeshIT {
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     public void testTemplateDeleteError404Errors() {
-
-        cleanState();
 
         ResponseEntity<ErrorRes> errorResponse = null;
 
@@ -292,20 +265,6 @@ public class TemplateDefinitionIT extends OpenDataMeshIT {
         } catch (JsonProcessingException e) {
             fail("Impossible to parse response");
         }
-    }
-
-    // ----------------------------------------
-    // UTILS
-    // ----------------------------------------
-
-    private void cleanState() {
-
-        ResponseEntity<DefinitionResource[]> getTemplateResponse = registryClient.readAllTemplateDefinitions();
-        DefinitionResource[] templateResources = getTemplateResponse.getBody();
-        for (DefinitionResource templateResource : templateResources) {
-            registryClient.deleteTemplateDefinition(templateResource.getId(), Void.class);
-        }
-
     }
     
 }

@@ -6,7 +6,7 @@ server:
     context-path: /api/v1/up/metaservice/
 
 spring:
-  profile: localpostgres
+  profile: localpostgresql
   jpa:
     hibernate:
       ddl-auto: validate
@@ -32,7 +32,7 @@ spring:
     password: my-secret-password
     #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
     schemas: ODMNOTIFICATION
-    locations: classpath:db/migration/postgres
+    locations: classpath:db/migration/postgresql
     clean-on-validation-error: true
 
 ##########################

@@ -44,7 +44,7 @@ public class Info implements Serializable, Cloneable{
     
     @Embedded
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "DPV_INFO_CONTACT_POINTS", joinColumns = {@JoinColumn(name = "DATA_PRODUCT_ID"), @JoinColumn(name = "VERSION_NUMBER")})
+    @CollectionTable(name = "DPV_INFO_CONTACT_POINTS", schema="ODMREGISTRY", joinColumns = {@JoinColumn(name = "DATA_PRODUCT_ID"), @JoinColumn(name = "VERSION_NUMBER")})
     //@Column(name = "CONTACT_POINT_ID") 
     @Fetch(value = FetchMode.SUBSELECT)
     private List<ContactPoint> contactPoints = new ArrayList<ContactPoint>();   

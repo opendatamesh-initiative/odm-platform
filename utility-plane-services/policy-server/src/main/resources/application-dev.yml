@@ -25,7 +25,7 @@ spring:
     user: sa
     password: password
     #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
-    schemas: flyway
+    schemas: ODMPOLICY
     locations: classpath:db/migration/h2
     clean-on-validation-error: true
 

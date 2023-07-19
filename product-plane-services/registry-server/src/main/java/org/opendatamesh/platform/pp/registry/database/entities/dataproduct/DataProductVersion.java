@@ -41,7 +41,7 @@ public class DataProductVersion implements Cloneable, Serializable {
     private ExternalResource externalDocs;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "DPV_DATA_PRODUCT_TAGS", schema="PUBLIC", joinColumns = {@JoinColumn(name = "DATAPRODUCT_ID"), @JoinColumn(name = "VERSION")})
+    @CollectionTable(name = "DPV_DATA_PRODUCT_TAGS", schema="ODMREGISTRY", joinColumns = {@JoinColumn(name = "DATAPRODUCT_ID"), @JoinColumn(name = "VERSION")})
     @Column(name = "TAG_ID") 
     @Fetch(value = FetchMode.SUBSELECT)
     protected List<String> tags = new ArrayList<String>();

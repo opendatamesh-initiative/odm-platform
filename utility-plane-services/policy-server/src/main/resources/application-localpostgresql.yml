@@ -2,7 +2,7 @@
 # Spring, JPA and Postgresql configuration
 ##########################
 spring:
-   profile: localpostgres
+   profile: localpostgresql
    datasource:
       url: jdbc:postgresql://localhost:5433/mydb
       username: usr
@@ -16,7 +16,7 @@ spring:
       user: usr
       password: pwd
       #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
-      schemas: flyway
+      schemas: ODMPOLICY
       locations: classpath:db/migration/postgres
       clean-on-validation-error: true
    jpa:
@@ -24,7 +24,7 @@ spring:
          hibernate:
             dialect: org.hibernate.dialect.PostgreSQLDialect
             globally_quoted_identifiers: true
-            default_schema: PUBLIC
+            default_schema: ODMPOLICY
       hibernate:
          ddl-auto: validate #or none
          show-sql: true

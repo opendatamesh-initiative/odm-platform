@@ -17,7 +17,7 @@ server:
 ############################################
 spring:
   # Profile
-  profile: localpostgres
+  profile: localpostgresql
   # JPA
   jpa:
     show-sql: true
@@ -34,7 +34,7 @@ spring:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQL95Dialect # Or PostgreSQLDialect
         globally_quoted_identifiers: true
-        default_schema: PUBLIC
+        default_schema: ODMREGISTRY
   # DB
   datasource:
     url: jdbc:postgresql://localhost:5432/odmpdb
@@ -55,8 +55,8 @@ spring:
     #username: usr
     #password: pwd
     #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
-    schemas: flyway
-    locations: classpath:db/migration/postgres
+    schemas: ODMREGISTRY
+    locations: classpath:db/migration/postgresql
     clean-on-validation-error: true
 
 

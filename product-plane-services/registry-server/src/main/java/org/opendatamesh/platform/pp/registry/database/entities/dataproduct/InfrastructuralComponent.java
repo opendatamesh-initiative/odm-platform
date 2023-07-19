@@ -27,12 +27,12 @@ public class InfrastructuralComponent extends Component implements Cloneable {
    
     @ElementCollection(fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SUBSELECT)
-    @CollectionTable(name = "DPV_INFRA_COMPONENT_DEPENDENCIES", schema="PUBLIC", joinColumns = @JoinColumn(name = "COMPONENT_ID"))
+    @CollectionTable(name = "DPV_INFRA_COMPONENT_DEPENDENCIES", schema="ODMREGISTRY", joinColumns = @JoinColumn(name = "COMPONENT_ID"))
     @Column(name = "DEPENDS_ON_COMPONENT_ID") 
     private List<String> dependsOn = new ArrayList<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "DPV_INFRA_COMPONENT_TAGS", schema="PUBLIC", joinColumns = @JoinColumn(name = "ID"))
+    @CollectionTable(name = "DPV_INFRA_COMPONENT_TAGS", schema="ODMREGISTRY", joinColumns = @JoinColumn(name = "ID"))
     @Column(name = "TAG_ID") 
     @Fetch(value = FetchMode.SUBSELECT)
     private List<String> tags = new ArrayList<>();

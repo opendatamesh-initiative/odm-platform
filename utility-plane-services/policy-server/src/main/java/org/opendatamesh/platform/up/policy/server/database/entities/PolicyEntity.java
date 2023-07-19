@@ -11,7 +11,7 @@ import javax.persistence.Table;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name="POLICY")
+@Table(name="POLICY", schema = "ODMPOLICY")
 @Data
 public class PolicyEntity {
     @Id

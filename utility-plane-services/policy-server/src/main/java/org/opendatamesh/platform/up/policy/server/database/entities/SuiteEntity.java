@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 @Entity
-@Table(name="SUITE")
+@Table(name="SUITE", schema = "ODMPOLICY")
 @Data
 public class SuiteEntity {
     @Id

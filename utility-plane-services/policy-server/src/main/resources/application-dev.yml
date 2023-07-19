@@ -15,6 +15,9 @@ spring:
       show-sql: true
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        default_schema: ODMPOLICY
   h2:
     console:
       enabled: true

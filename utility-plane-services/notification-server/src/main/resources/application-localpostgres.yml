@@ -20,7 +20,7 @@ spring:
           lob:
             non_contextual_creation: true
         globally_quoted_identifiers: true
-        default_schema: PUBLIC
+        default_schema: ODMNOTIFICATION
   datasource:
     url: jdbc:postgresql://localhost:49156/postgres
     username: postgres
@@ -31,7 +31,7 @@ spring:
     user: postgres
     password: my-secret-password
     #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
-    schemas: public
+    schemas: ODMNOTIFICATION
     locations: classpath:db/migration/postgres
     clean-on-validation-error: true
 

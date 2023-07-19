@@ -13,7 +13,7 @@ import java.util.List;
 
 @Data
 @Entity(name = "ApplicationComponent")
-@Table(name = "DPV_APP_COMPONENTS", schema="PUBLIC")
+@Table(name = "DPV_APP_COMPONENTS", schema="ODMREGISTRY")
 public class ApplicationComponent extends Component implements Cloneable {
 
     @Column(name = "PLATFORM")

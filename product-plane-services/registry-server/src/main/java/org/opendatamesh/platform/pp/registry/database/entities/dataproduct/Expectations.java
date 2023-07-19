@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Data
 @Entity(name = "Expectations")
-@Table(name = "DPV_PORT_EXPECTATIONS", schema="PUBLIC")
+@Table(name = "DPV_PORT_EXPECTATIONS", schema="ODMREGISTRY")
 public class Expectations {
 
     @Id

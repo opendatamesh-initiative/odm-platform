@@ -7,7 +7,7 @@ import javax.persistence.*;
 
 @Data
 @Entity(name = "ReferenceObject")  // cambiare nome
-@Table(name = "DPV_REFERENCE_OBJECTS", schema="PUBLIC")
+@Table(name = "DPV_REFERENCE_OBJECTS", schema="ODMREGISTRY")
 public class ReferenceObject {
 
     @Id

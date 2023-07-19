@@ -19,15 +19,15 @@ public class ApiDefinitionEndpoint {
     @Data
     public static class Schema {
          @Transient
-        private String name; 
+         private String name;
 
          @Transient
-        private String version; 
+         private String version;
 
          @Transient
-        private String mediaType; 
+         private String mediaType;
 
          @Transient
-        private String content;    
+         private String content;
     }
 }

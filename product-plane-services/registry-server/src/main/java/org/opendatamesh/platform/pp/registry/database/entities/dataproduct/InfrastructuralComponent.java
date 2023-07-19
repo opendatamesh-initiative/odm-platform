@@ -11,7 +11,7 @@ import java.util.List;
 
 @Data
 @Entity(name = "InfrastructuralComponent")
-@Table(name = "DPV_INFRA_COMPONENTS", schema="PUBLIC")
+@Table(name = "DPV_INFRA_COMPONENTS", schema="ODMREGISTRY")
 public class InfrastructuralComponent extends Component implements Cloneable {
     
     @Column(name = "PLATFORM")

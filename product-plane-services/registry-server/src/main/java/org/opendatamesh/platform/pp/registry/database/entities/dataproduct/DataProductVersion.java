@@ -14,7 +14,7 @@ import java.util.List;
 
 @Data
 @Entity(name = "DataProductVersion")
-@Table(name = "DP_VERSIONS", schema="PUBLIC")
+@Table(name = "DP_VERSIONS", schema="ODMREGISTRY")
 @IdClass(DataProductVersionId.class)
 public class DataProductVersion implements Cloneable, Serializable {
 

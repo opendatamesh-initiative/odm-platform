@@ -61,10 +61,6 @@ spring:
     #schemas: ODMREGISTRY # not working
     clean-on-validation-error: true
 
-testcontainers:
-  reuse:
-    enable: true
-
 
 ##############################
 # Policy Module configuration

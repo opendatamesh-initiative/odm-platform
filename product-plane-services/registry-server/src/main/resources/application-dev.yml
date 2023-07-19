@@ -29,6 +29,7 @@ spring:
         jdbc:
           lob:
             non_contextual_creation: true
+        default_schema: ODMREGISTRY
     database-platform: org.hibernate.dialect.H2Dialect
   # DB
   datasource:

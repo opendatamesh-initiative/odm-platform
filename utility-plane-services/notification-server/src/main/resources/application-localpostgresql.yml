@@ -1,3 +1,6 @@
+##########################
+# Server configuration
+##########################
 server:
   port: 8595
   error:
@@ -5,6 +8,9 @@ server:
   servlet:
     context-path: /api/v1/up/metaservice/
 
+############################################
+# Spring, JPA, DB and Flyway configurations
+############################################
 spring:
   profile: localpostgresql
   jpa:

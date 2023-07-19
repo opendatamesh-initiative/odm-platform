@@ -30,6 +30,7 @@ spring:
         jdbc:
           lob:
             non_contextual_creation: true
+        schemas: ODMNOTIFICATION
     database-platform: org.hibernate.dialect.H2Dialect
   # DB
   datasource:

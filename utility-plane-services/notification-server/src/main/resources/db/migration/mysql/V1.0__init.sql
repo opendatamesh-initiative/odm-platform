@@ -1,4 +1,10 @@
--- MySql 8
+-- MySql 8;
+
+CREATE TABLE hibernate_sequence (
+    NEXT_VAL BIGINT AUTO_INCREMENT,
+    PRIMARY KEY (NEXT_VAL)
+);
+INSERT INTO hibernate_sequence VALUES (0);
 
 CREATE TABLE POLICY (
     ID VARCHAR(255) NOT NULL,

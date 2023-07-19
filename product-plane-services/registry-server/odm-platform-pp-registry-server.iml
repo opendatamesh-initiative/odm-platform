@@ -13,8 +13,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="odm-platform-core-dpds" />
-    <orderEntry type="module" module-name="odm-platform-core-commons" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter:2.7.7" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot:2.7.7" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-context:5.3.24" level="project" />

@@ -43,7 +43,7 @@ spring:
     #url: jdbc:mysql://localhost:3306/odmpdb
     #user: "root"
     #password: "root"
-    locations: classpath:db/migration/mysql
+    locations: classpath:db/migration/postgresql
     #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
     schemas: ODMPOLICY
     clean-on-validation-error: true

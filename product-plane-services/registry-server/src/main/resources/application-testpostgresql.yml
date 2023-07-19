@@ -17,7 +17,7 @@ server:
 ############################################
 spring:
   # Profile
-  profile: localpostgres
+  profile: testpostgresql
   # JPA
   jpa:
     show-sql: true

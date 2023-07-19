@@ -17,7 +17,7 @@ server:
 ############################################
 spring:
   # Profile
-  profile: localmysql
+  profile: testmysql
   # JPA
   jpa:
     hibernate:

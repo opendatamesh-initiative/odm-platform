@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Data
 @Entity(name = "TemplateDefinition")
-@Table(name = "DEF_TEMPLATES", schema="PUBLIC")
+@Table(name = "DEF_TEMPLATES", schema="ODMREGISTRY")
 public class TemplateDefinition {
     @Id
     @Column(name = "ID")

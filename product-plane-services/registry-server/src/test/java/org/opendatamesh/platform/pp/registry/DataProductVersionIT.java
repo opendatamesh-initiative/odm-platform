@@ -234,8 +234,6 @@ public class DataProductVersionIT extends OpenDataMeshIT {
 
         DataProductResource dataProduct1Res = createDataProduct(RESOURCE_DP1);
 
-        HttpEntity<String> entity = null;
-
         // Test error SC400_01_DESCRIPTOR_IS_EMPTY
         // TODO test also with a null payload (requires a fix on server)
         String payload = " ";

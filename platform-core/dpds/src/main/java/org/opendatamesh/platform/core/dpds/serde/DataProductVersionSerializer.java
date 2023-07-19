@@ -103,11 +103,6 @@ public class DataProductVersionSerializer {
         return getRawContent(resources, new HashSet<EntityTypeDPDS>(Arrays.asList(EntityTypeDPDS.values())));
     }
 
-    private JsonNode getRawContent(InterfaceComponentsDPDS resources, EntityTypeDPDS inludedPortType)
-            throws JsonProcessingException {
-        return getRawContent(resources, new HashSet<EntityTypeDPDS>(Arrays.asList(new EntityTypeDPDS[] { inludedPortType })));
-    }
-
     private JsonNode getRawContent(InterfaceComponentsDPDS resources, Set<EntityTypeDPDS> inludedPortTypes)
             throws JsonProcessingException {
 

@@ -8,11 +8,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@EqualsAndHashCode(callSuper=true)
+@ToString(callSuper = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class InternalComponentsDPDS extends ComponentContainerDPDS{
 

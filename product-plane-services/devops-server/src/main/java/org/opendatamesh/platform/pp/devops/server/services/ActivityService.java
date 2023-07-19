@@ -10,8 +10,6 @@ import org.opendatamesh.platform.pp.devops.server.database.entities.Activity;
 import org.opendatamesh.platform.pp.registry.api.v1.clients.RegistryClient;
 import org.opendatamesh.platform.up.executor.api.clients.ExecutorClient;
 import org.opendatamesh.platform.up.executor.api.resources.TaskResource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +29,7 @@ public class ActivityService {
     @Autowired
     RegistryClient registry;
 
-    private static final Logger logger = LoggerFactory.getLogger(ActivityService.class);
+    //private static final Logger logger = LoggerFactory.getLogger(ActivityService.class);
 
     public ActivityService() { }
 

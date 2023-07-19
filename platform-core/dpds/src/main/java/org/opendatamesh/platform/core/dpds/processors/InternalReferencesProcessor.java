@@ -50,6 +50,7 @@ public class InternalReferencesProcessor implements PropertiesProcessor{
         //descriptor.setRawContent(mapper.getParsedContentAsString(descriptor.getParsedContent(), false));
     }
 
+    @SuppressWarnings("unchecked")
     private <E extends ComponentDPDS> void resolveInternalReferences(List<E> components,
             ComponentsDPDS componentsObject,
             EntityTypeDPDS type) throws UnresolvableReferenceException {

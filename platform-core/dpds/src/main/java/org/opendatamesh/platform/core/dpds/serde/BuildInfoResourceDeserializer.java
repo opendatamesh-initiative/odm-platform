@@ -23,6 +23,7 @@ public class BuildInfoResourceDeserializer extends StdDeserializer<BuildInfoDPDS
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public BuildInfoDPDS deserialize(JsonParser jp, DeserializationContext ctxt)
             throws IOException, JsonProcessingException {
 

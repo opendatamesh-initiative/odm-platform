@@ -53,6 +53,8 @@ public enum EntityTypeDPDS {
             case infrastructure:
                 componentContainerPropertyName = "infrastructuralComponents";
                 break;
+            default:
+                throw new RuntimeException("[" + this + "] is not a valid component type");
         }
 
         return componentContainerPropertyName;

@@ -23,6 +23,7 @@ public class ProvisionInfoResourceDeserializer extends StdDeserializer<Provision
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public ProvisionInfoDPDS deserialize(JsonParser jp, DeserializationContext ctxt)
             throws IOException, JsonProcessingException {
         

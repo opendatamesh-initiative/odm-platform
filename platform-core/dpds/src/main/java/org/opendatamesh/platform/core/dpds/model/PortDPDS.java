@@ -2,12 +2,14 @@ package org.opendatamesh.platform.core.dpds.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@EqualsAndHashCode(callSuper=true)
 @ToString(callSuper = true)
 public class PortDPDS extends ComponentDPDS implements Cloneable {
 

@@ -23,6 +23,7 @@ public class DeployInfoResourceDeserializer extends StdDeserializer<DeployInfoDP
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public DeployInfoDPDS deserialize(JsonParser jp, DeserializationContext ctxt)
             throws IOException, JsonProcessingException {
         

@@ -57,6 +57,7 @@ public class ExternalReferencesProcessor implements PropertiesProcessor{
         }
     }
 
+    @SuppressWarnings("unchecked")
     private <E extends ComponentDPDS> E resolveExternalReference(E component)
             throws UnresolvableReferenceException {
         E resolvedComponent = null;

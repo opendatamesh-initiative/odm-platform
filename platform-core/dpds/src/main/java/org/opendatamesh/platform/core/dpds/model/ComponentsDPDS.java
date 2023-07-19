@@ -55,6 +55,7 @@ public class ComponentsDPDS {
         this.controlPorts.put(key, value);
     }
 
+    @SuppressWarnings("unchecked")
     public <E extends ComponentDPDS> Map<String, E> getComponentsByEntityType(EntityTypeDPDS type){
         switch (type){
             case inputport:
@@ -71,7 +72,8 @@ public class ComponentsDPDS {
                 return (Map<String, E>) applicationComponents;
             case infrastructure:
                 return (Map<String, E>) infrastructuralComponents;
-        }
-        return null;
+            default:
+                throw new RuntimeException("[" + type + "] is not a valid component type");
+        } 
     }
 }

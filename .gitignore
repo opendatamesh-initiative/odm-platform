@@ -7,6 +7,8 @@
 node_modules/
 dist/
 
+platform-kernel/
+
 
 
 # Compiled Java class files

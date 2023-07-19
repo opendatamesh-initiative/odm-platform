@@ -11,8 +11,6 @@ import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
 import org.opendatamesh.platform.core.dpds.processors.*;
 import org.opendatamesh.platform.core.dpds.serde.DataProductVersionSerializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Set;
 
@@ -20,7 +18,7 @@ import java.util.Set;
 public class DPDSParser {
 
    
-    private static final Logger logger = LoggerFactory.getLogger(DPDSParser.class);
+    //private static final Logger logger = LoggerFactory.getLogger(DPDSParser.class);
     
 
     public DPDSParser() {        

@@ -2,6 +2,9 @@ package org.opendatamesh.platform.pp.registry.database.entities.dataproduct;
 
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -10,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@EqualsAndHashCode(callSuper=true)
+@ToString(callSuper = true)
 @Entity(name = "InfrastructuralComponent")
 @Table(name = "DPV_INFRA_COMPONENTS", schema="PUBLIC")
 public class InfrastructuralComponent extends Component implements Cloneable {

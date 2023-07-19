@@ -90,22 +90,21 @@ public class DataProductIT extends OpenDataMeshIT {
 
         ResponseEntity<DataProductResource> postProductResponse = null;
         DataProductResource dataProduct1Request, dataProduct2Request, dataProduct3Request;
-        DataProductResource dataProduct1Response, dataProduct2Response, dataProduct3Response;
-        
+    
         dataProduct1Request = resourceBuilder.buildDataProduct("prod-1", "marketing", "marketing product");
         postProductResponse = registryClient.postDataProduct(dataProduct1Request);
         verifyResponseEntity(postProductResponse, HttpStatus.CREATED, true);
-        dataProduct1Response = postProductResponse.getBody();
+        postProductResponse.getBody();
 
         dataProduct2Request = resourceBuilder.buildDataProduct("prod-2", "sales", "sales product");
         postProductResponse = registryClient.postDataProduct(dataProduct2Request);
         verifyResponseEntity(postProductResponse, HttpStatus.CREATED, true);
-        dataProduct2Response = postProductResponse.getBody();
+        postProductResponse.getBody();
         
         dataProduct3Request = resourceBuilder.buildDataProduct("prod-3", "hr", "hr product");
         postProductResponse = registryClient.postDataProduct(dataProduct3Request);
         verifyResponseEntity(postProductResponse, HttpStatus.CREATED, true);
-        dataProduct3Response = postProductResponse.getBody();
+        postProductResponse.getBody();
 
         ResponseEntity<DataProductResource[]> getProducteResponse = registryClient.getDataProducts();
         verifyResponseEntity(getProducteResponse, HttpStatus.OK, true);
@@ -125,7 +124,7 @@ public class DataProductIT extends OpenDataMeshIT {
     public void testDataProductReadOne() throws IOException {
 
         ResponseEntity<DataProductResource> postProductResponse = null;
-        DataProductResource dataProductRequest, dataProductRespnse;
+        DataProductResource dataProductRequest;
 
         dataProductRequest = resourceBuilder.buildDataProduct("prod-1", "marketing", "marketing product");
         postProductResponse = registryClient.postDataProduct(dataProductRequest);
@@ -152,8 +151,6 @@ public class DataProductIT extends OpenDataMeshIT {
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDataProductUpdate() throws IOException {
-
-        ResponseEntity<DataProductResource> postProductResponse = null;
 
         createDataProduct(RESOURCE_DP1);
         DataProductResource dataProductRes = updateDataProduct(RESOURCE_DP1_UPD);

@@ -3,6 +3,22 @@
 ##########################
 spring:
    profile: localpostgresql
+   jpa:
+      hibernate:
+         ddl-auto: validate #none
+         show-sql: true
+         naming:
+            #implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+            physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      properties:
+         hibernate:
+            jdbc:
+               lob:
+                  non_contextual_creation: true
+            format_sql: true
+            dialect: org.hibernate.dialect.PostgreSQLDialect
+            globally_quoted_identifiers: true
+            default_schema: ODMPOLICY
    datasource:
       url: jdbc:postgresql://localhost:5433/mydb
       username: usr
@@ -19,15 +35,6 @@ spring:
       schemas: ODMPOLICY
       locations: classpath:db/migration/postgresql
       clean-on-validation-error: true
-   jpa:
-      properties:
-         hibernate:
-            dialect: org.hibernate.dialect.PostgreSQLDialect
-            globally_quoted_identifiers: true
-            default_schema: ODMPOLICY
-      hibernate:
-         ddl-auto: validate #or none
-         show-sql: true
 # Uncomment the following properties if the first time you want to create and populate tables with schema.sql and data.sql
 #spring.jpa.hibernate.ddl-auto: none
 #spring.sql.init.mode: always

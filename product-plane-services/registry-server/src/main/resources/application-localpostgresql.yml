@@ -40,8 +40,6 @@ spring:
     url: jdbc:postgresql://localhost:5432/odmpdb
     username: postgres
     password: postgres
-    #username: usr
-    #password: pwd
   h2:
     console:
       enabled: false
@@ -52,8 +50,6 @@ spring:
     url: jdbc:postgresql://localhost:5432/odmpdb
     user: postgres
     password: postgres
-    #username: usr
-    #password: pwd
     #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
     schemas: ODMREGISTRY
     locations: classpath:db/migration/postgresql

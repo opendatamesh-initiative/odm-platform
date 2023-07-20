@@ -157,7 +157,7 @@ License.
         <dependency>
             <groupId>org.junit.vintage</groupId>
             <artifactId>junit-vintage-engine</artifactId>
-            <scope>test</scope>
+            <scope>test</scope> <!-- test rimozione -->
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>

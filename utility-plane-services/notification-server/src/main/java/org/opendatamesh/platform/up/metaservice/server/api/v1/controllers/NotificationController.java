@@ -18,7 +18,6 @@ public class NotificationController extends AbstractNotificationController {
     @Autowired
     private NotificationService notificationService;
 
-
     private static final Logger logger = LoggerFactory.getLogger(NotificationController.class);
 
     public NotificationController() { 

@@ -1,3 +1,14 @@
+##########################
+# Server configuration
+##########################
+server:
+  port: 8595
+  error:
+    include-message: always
+  servlet:
+    context-path: /api/v1/up/metaservice/
+
+
 ############################################
 # Spring, JPA, DB and Flyway configurations
 ############################################
@@ -22,8 +33,8 @@ spring:
     # TestContainer URL for auto-creation of Docker PostgreSQL DB on app start-up
     # https://java.testcontainers.org/modules/databases/jdbc/
     # Create a Docker container from mysql:8.0.24 image
-    url: jdbc:tc:mysql:8.0.24://localhost/ODMPOLICY?user=root&password=root&currentSchema=ODMPOLICY&TC_REUSABLE=true
-    # OBS: without localhost/ it fails to create ODMPOLICY DB/Schema (it use default db-schema "test"
+    url: jdbc:tc:mysql:8.0.24://localhost/ODMNOTIFICATION?user=root&password=root&currentSchema=ODMNOTIFICATION&TC_REUSABLE=true
+    # OBS: without localhost/ it fails to create ODMNOTIFICATION DB/Schema (it use default db-schema "test"
     # and without user and password it use "test" "test"
     # TestContainers driverClassName for JDBC url generated DBs
     driverClassName: org.testcontainers.jdbc.ContainerDatabaseDriver
@@ -43,28 +54,16 @@ spring:
     #password: "root"
     locations: classpath:db/migration/mysql
     #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
-    #schemas: ODMPOLICY # not working
+    #schemas: ODMNOTIFICATION # not working
     clean-on-validation-error: true
 
 
 ##########################
-# Server configuration
+# Other configuration
 ##########################
-server:
-  port: 4242
-  servlet:
-    contextPath: /api/v1/planes/utility/policy-services/opa
-  error:
-    include-stacktrace: always
-    include-message: always
-timeout:
-  seconds : 30
-
-
-##########################
-# OPA configuration
-##########################
-opa:
-  url:
-    policies: http://localhost:8181/v1/policies
-    data: http://localhost:8181/v1/data
+blindata:
+  url: http://localhost:3000
+  user: "owner"
+  password: "owner123"
+  tenantUUID: "fc8dbadb-83b9-4c4a-baec-fc5a5f91f98b"
+  roleUuid: "777f0307-bf30-4f70-92a4-f0cf3bc3f436"

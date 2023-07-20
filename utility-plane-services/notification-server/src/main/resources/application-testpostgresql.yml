@@ -28,7 +28,7 @@ spring:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect # Or PostgreSQLDialect
         globally_quoted_identifiers: true
-        default_schema: ODMPOLICY
+        default_schema: ODMNOTIFICATION
   datasource:
     # TestContainer URL for auto-creation of Docker PostgreSQL DB on app start-up
     # https://java.testcontainers.org/modules/databases/jdbc/

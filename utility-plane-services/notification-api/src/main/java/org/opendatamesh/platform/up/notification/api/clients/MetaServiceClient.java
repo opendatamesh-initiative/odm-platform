@@ -2,6 +2,7 @@ package org.opendatamesh.platform.up.notification.api.clients;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.opendatamesh.platform.core.commons.clients.ODMClient;
+import org.opendatamesh.platform.up.notification.api.resources.ErrorResource;
 import org.opendatamesh.platform.up.notification.api.resources.NotificationResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +37,7 @@ public class MetaServiceClient extends ODMClient {
             HttpStatus acceptedStatusCode,
             Class acceptedClass
     ) throws JsonProcessingException {
-        return mapResponseEntity(response, List.of(acceptedStatusCode), acceptedClass, Error.class);
+        return mapResponseEntity(response, List.of(acceptedStatusCode), acceptedClass, ErrorResource.class);
     }
 
 }

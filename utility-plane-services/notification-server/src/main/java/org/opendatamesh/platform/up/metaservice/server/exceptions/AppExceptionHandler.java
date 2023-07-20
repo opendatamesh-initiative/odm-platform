@@ -1,6 +1,6 @@
 package org.opendatamesh.platform.up.metaservice.server.exceptions;
 
-import org.opendatamesh.platform.up.notification.api.resources.Error;
+import org.opendatamesh.platform.up.notification.api.resources.ErrorResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -26,11 +26,11 @@ public class AppExceptionHandler {
             ConstraintViolationException ex,
             WebRequest request) {
         logger.error(ex.getMessage());
-        List<Error> errors = ex.getConstraintViolations()
+        List<ErrorResource> errorResources = ex.getConstraintViolations()
                 .stream()
-                .map(constraintViolation -> new Error(ex.getClass().getSimpleName(), constraintViolation.getMessage()))
+                .map(constraintViolation -> new ErrorResource(ex.getClass().getSimpleName(), constraintViolation.getMessage()))
                 .collect(Collectors.toList());
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errorResources, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler({ MethodArgumentNotValidException.class })
@@ -38,11 +38,11 @@ public class AppExceptionHandler {
             MethodArgumentNotValidException ex,
             WebRequest request) {
         logger.error(ex.getMessage());
-        List<Error> errors = ex.getBindingResult().getAllErrors()
+        List<ErrorResource> errorResources = ex.getBindingResult().getAllErrors()
                 .stream()
-                .map(error -> new Error(error.getClass().getSimpleName(), error.getDefaultMessage()))
+                .map(error -> new ErrorResource(error.getClass().getSimpleName(), error.getDefaultMessage()))
                 .collect(Collectors.toList());
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errorResources, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler({ Exception.class })
@@ -53,10 +53,10 @@ public class AppExceptionHandler {
         logger.error(ex.getMessage());
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        Error error = new Error(
+        ErrorResource errorResource = new ErrorResource(
                 ex.getClass().getSimpleName(),
                 ex.getMessage()
         );
-        return new ResponseEntity<>(Arrays.asList(error), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(Arrays.asList(errorResource), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

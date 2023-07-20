@@ -8,7 +8,7 @@ import java.util.Date;
 
 @Data
 @Entity(name = "Notification")
-@Table(name = "NOTIFICATION", schema = "PUBLIC")
+@Table(name = "NOTIFICATION", schema = "ODMNOTIFICATION")
 public class Notification {
 
     @Id

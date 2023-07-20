@@ -4,7 +4,7 @@ import org.opendatamesh.platform.core.commons.clients.RoutesInterface;
 
 public enum Routes implements RoutesInterface {
 
-    METASERVICE_NOTIFICATION("/api/v1/up/metaservice/");
+    METASERVICE_NOTIFICATION("/api/v1/up/metaservice/notifications");
 
     private final String path;
 

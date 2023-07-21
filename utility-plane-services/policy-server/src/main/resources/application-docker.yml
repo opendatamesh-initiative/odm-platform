@@ -36,7 +36,7 @@ spring:
 # Server configuration
 ##########################
 server:
-  port: ${SPRING_LOCAL_PORT}
+  port: ${SPRING_PORT}
   servlet:
     contextPath: /api/v1/planes/utility/policy-services/opa
   error:
@@ -50,5 +50,5 @@ timeout:
 ##########################
 opa:
   url:
-    policies: http://${OPA_HOSTNAME}:${OPA_LOCAL_PORT}/v1/policies #http://host.docker.internal:8181/v1/policies
-    data: http://${OPA_HOSTNAME}:${OPA_LOCAL_PORT}/v1/data #http://host.docker.internal:8181/v1/data
+    policies: http://${OPA_HOSTNAME}:${OPA_PORT}/v1/policies #http://host.docker.internal:8181/v1/policies
+    data: http://${OPA_HOSTNAME}:${OPA_PORT}/v1/data #http://host.docker.internal:8181/v1/data

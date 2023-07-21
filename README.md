@@ -54,7 +54,7 @@ git clone git@github.com:opendatamesh-initiative/odm-platform-pp-services.git
 cd odm-platform-pp-services
 ```
 
-Here you can find the a Dockerfile which creates an image containing the application by directly copying it from the build executed locally (i.e. from `target` folder).
+Here you can find the Dockerfile which creates an image containing the application by directly copying it from the build executed locally (i.e. from `target` folder).
 
 ### Compile project
 You need to first execute the build locally by running the following command: 

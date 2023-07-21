@@ -52,3 +52,6 @@ Thumbs.db
 *.mov
 *.wmv
 
+# IML files
+*.iml
+

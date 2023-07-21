@@ -12,7 +12,7 @@ services:
     image: postgres:11-alpine
     env_file: .env
     ports:
-      - "${DATABASE_PORT}:${DATABASE_PORT}"
+     - "${DATABASE_PORT}:${DATABASE_PORT}"
     volumes:
       - postgres:/var/lib/postgresql/${DATABASE_NAME}/data:rw
     healthcheck:
@@ -36,9 +36,7 @@ services:
         DATABASE_USERNAME: "${DATABASE_USERNAME}"
         DATABASE_PASSWORD: "${DATABASE_PASSWORD}"
         FLYWAY_SCHEMA: "flyway"
-        FLYWAY_SCRIPTS_DIR: "postgres"
-        H2_CONSOLE_ENABLED: "false"
-        H2_CONSOLE_PATH: "h2-console"
+        FLYWAY_SCRIPTS_DIR: "postgresql"
     env_file: .env
     ports:
       - "${SPRING_PORT}:${SPRING_PORT}"

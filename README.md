@@ -24,7 +24,7 @@ cd odm-platform-pp-services
 Compile the project:
 
 ```bash
-mvn clean install
+mvn clean install -DskipTests
 ```
 
 ### Run application
@@ -33,6 +33,9 @@ Run the application:
 ```bash
 java -jar registry-server/target/odm-platform-pp-registry-server-1.0.0.jar
 ```
+
+*_version could be greater than 1.0.0, check on parent POM_
+
 ### Stop application
 To stop the application type CTRL+C or just close the shell. To start it again re-execute the following command:
 
@@ -51,19 +54,17 @@ git clone git@github.com:opendatamesh-initiative/odm-platform-pp-services.git
 cd odm-platform-pp-services
 ```
 
-Here you can find the following two Dockerfiles:
-* `Dockerfile`: This file creates a docker image containing the application built from the code present on the Git repository;
-* `Dockerfile.local`: This file creates an image containing the application by directly copying it from the build executed locally (i.e. from `target` folder).
+Here you can find the a Dockerfile which creates an image containing the application by directly copying it from the build executed locally (i.e. from `target` folder).
 
 ### Compile project
-If you decide to create the Docker image using the second Dockerfile (i.e. `Dokerfile.local`), you need to first execute the build locally by running the following command: 
+You need to first execute the build locally by running the following command: 
 
 ```bash
-mvn clean install
+mvn clean install -DskipTests
 ```
 
 ### Run database
-The image generated from both Dockerfiles contains only the application. It requires a database to run properly. The supported databases are MySql and Postgres. If you do not already have a database available, you can create one by running the following commands:
+The image generated from Dockerfile contains only the application. It requires a database to run properly. The supported databases are MySql and Postgres. If you do not already have a database available, you can create one by running the following commands:
 
 **MySql**
 ```bash
@@ -91,18 +92,17 @@ docker logs odmp-mysql-db
 
 *Postgres*
 ```bash
-docker logs odmp-mysql-db
+docker logs odmp-postgres-db
 ```
+
 ### Build image
 Build the Docker image of the application and run it. 
 
-*Before executing the following commands: 
-* change properly the value of arguments `DATABASE_USERNAME`, `DATABASE_PASSWORD` and `DATABASE_URL`. Reported commands already contains right argument values if you have created the database using the commands above.
-* remove the option `-f Dockerfile.local` if you want to build the application from code taken from repository*
+*Before executing the following commands change properly the value of arguments `DATABASE_USERNAME`, `DATABASE_PASSWORD` and `DATABASE_URL`. Reported commands already contains right argument values if you have created the database using the commands above.
 
 **MySql**
 ```bash
-docker build -t odmp-mysql-app . -f Dockerfile.local \
+docker build -t odmp-mysql-app . -f Dockerfile \
    --build-arg DATABASE_URL=jdbc:mysql://localhost:3306/odmpdb \
    --build-arg DATABASE_USERNAME=root \
    --build-arg DATABASE_PASSWORD=root \
@@ -111,11 +111,11 @@ docker build -t odmp-mysql-app . -f Dockerfile.local \
 
 **Postgres**
 ```bash
-docker build -t odmp-postgres-app . -f Dockerfile.local \
+docker build -t odmp-postgres-app . -f Dockerfile \
    --build-arg DATABASE_URL=jdbc:postgresql://localhost:5432/odmpdb \
    --build-arg DATABASE_USERNAME=postgres \
    --build-arg DATABASE_PASSWORD=postgres \
-   --build-arg FLYWAY_SCRIPTS_DIR=postgres
+   --build-arg FLYWAY_SCRIPTS_DIR=postgresql
 ```
 
 ### Run application
@@ -136,7 +136,8 @@ docker run --name odmp-postgres-app -p 8585:8585 --net host odmp-postgres-app
 ### Stop application
 
 *Before executing the following commands: 
-* change the instance name to `odmp-postgres-app` if you are using postgres and not mysql *
+* change the DB name to `odmp-postgres-db` if you are using postgres and not mysql
+* change the instance name to `odmp-postgres-app` if you are using postgres and not mysql
 
 ```bash
 docker stop odmp-mysql-app

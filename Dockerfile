@@ -1,5 +1,7 @@
 FROM openjdk:17-alpine
+
 VOLUME /tmp
+
 ADD platform-core/dpds/target/odm-platform-core-dpds-*.jar ./
 ADD product-plane-services/registry-api/target/odm-platform-pp-registry-api-*.jar ./
 ADD utility-plane-services/notification-api/target/odm-platform-up-notification-api-*.jar ./
@@ -42,4 +44,5 @@ ENV POLICYSERVICE_HOSTNAME ${POLICYSERVICE_HOSTNAME}
 ENV POLICYSERVICE_PORT ${POLICYSERVICE_PORT}
 
 EXPOSE $SPRING_PORT
+
 ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS  -Dspring.profiles.active=$SPRING_PROFILES_ACTIVE $SPRING_PROPS -jar ./application.jar" ]

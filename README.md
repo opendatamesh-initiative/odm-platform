@@ -17,8 +17,8 @@ The project requires the following dependencies:
 Clone the repository and move to the project root folder
 
 ```bash
-git clone git@github.com:opendatamesh-initiative/odm-platform-pp-services.git
-cd odm-platform-pp-services
+git clone git@github.com:opendatamesh-initiative/odm-platform.git
+cd odm-platform
 ```
 ### Compile project
 Compile the project:
@@ -50,8 +50,8 @@ java -jar registry-server/target/odm-platform-pp-registry-server-1.0.0.jar
 Clone the repository and move it to the project root folder
 
 ```bash
-git clone git@github.com:opendatamesh-initiative/odm-platform-pp-services.git
-cd odm-platform-pp-services
+git clone git@github.com:opendatamesh-initiative/odm-platform.git
+cd odm-platform
 ```
 
 Here you can find the Dockerfile which creates an image containing the application by directly copying it from the build executed locally (i.e. from `target` folder).
@@ -163,8 +163,8 @@ docker rm odmp-mysql-db
 Clone the repository and move it to the project root folder
 
 ```bash
-git clone git@github.com:opendatamesh-initiative/odm-platform-pp-services.git
-cd odm-platform-pp-services
+git clone git@github.com:opendatamesh-initiative/odm-platform.git
+cd odm-platform
 ```
 
 ### Build image

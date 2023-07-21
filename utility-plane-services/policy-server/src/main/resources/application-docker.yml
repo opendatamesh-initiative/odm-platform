@@ -11,7 +11,7 @@ spring:
     properties:
       hibernate:
         globally_quoted_identifiers: true
-        default_schema: PUBLIC
+        default_schema: ODMPOLICY
   datasource:
     url: ${DATABASE_URL}
     username: ${DATABASE_USERNAME}
@@ -28,7 +28,7 @@ spring:
     user: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
     #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
-    schemas: flyway
+    schemas: ODMPOLICY
     locations: classpath:db/migration/${FLYWAY_SCRIPTS_DIR}
     clean-on-validation-error: true
 

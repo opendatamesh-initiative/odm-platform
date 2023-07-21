@@ -178,7 +178,6 @@ DATABASE_USERNAME=usr
 DATABASE_PORT=5432
 SPRING_PORT=8585
 ```
-*_if the DB will be MySQL use the Schema name (i.e., ODMREGISTRY) as DATABASE_NAME_
 
 Then, build the docker-compose file:
 ```bash

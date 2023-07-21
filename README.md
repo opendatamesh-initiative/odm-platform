@@ -69,7 +69,7 @@ The image generated from Dockerfile contains only the application. It requires a
 **MySql**
 ```bash
 docker run --name odmp-mysql-db -d -p 3306:3306  \
-   -e MYSQL_DATABASE=odmpdb \
+   -e MYSQL_DATABASE=ODMREGISTRY \
    -e MYSQL_ROOT_PASSWORD=root \
    mysql:8
 ```
@@ -103,7 +103,7 @@ Build the Docker image of the application and run it.
 **MySql**
 ```bash
 docker build -t odmp-mysql-app . -f Dockerfile \
-   --build-arg DATABASE_URL=jdbc:mysql://localhost:3306/odmpdb \
+   --build-arg DATABASE_URL=jdbc:mysql://localhost:3306/ODMREGISTRY \
    --build-arg DATABASE_USERNAME=root \
    --build-arg DATABASE_PASSWORD=root \
    --build-arg FLYWAY_SCRIPTS_DIR=mysql
@@ -178,6 +178,7 @@ DATABASE_USERNAME=usr
 DATABASE_PORT=5432
 SPRING_PORT=8585
 ```
+*_if the DB will be MySQL use the Schema name (i.e., ODMREGISTRY) as DATABASE_NAME_
 
 Then, build the docker-compose file:
 ```bash

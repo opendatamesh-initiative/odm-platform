@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.opendatamesh</groupId>
         <artifactId>odm-platform-pp-services</artifactId>
-        <version>1.0.1</version>
+        <version>1.0.0</version>
         <relativePath>../</relativePath>
     </parent>
 
@@ -15,7 +15,7 @@
     <artifactId>odm-platform-pp-devops-api</artifactId>
     <name>ODM Platform DevOps API</name>
     <description>Open Data Mesh Platform's DevOps service API</description>
-    <version>1.0.1</version>
+    <version>1.0.0</version>
 
     <licenses>
         <license>

@@ -10,7 +10,7 @@ import javax.persistence.Table;
 
 @Data
 @Entity(name = "DataProduct")
-@Table(name = "DATA_PRODUCTS", schema="PUBLIC")
+@Table(name = "DATA_PRODUCTS", schema="ODMREGISTRY")
 public class DataProduct {
 
     @Id

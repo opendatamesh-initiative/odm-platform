@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Data
 @Entity(name = "ExternalResource")
-@Table(name = "DPV_EXTERNAL_RESOURCES", schema="PUBLIC")
+@Table(name = "DPV_EXTERNAL_RESOURCES", schema="ODMREGISTRY")
 public class ExternalResource {
 
     @Id

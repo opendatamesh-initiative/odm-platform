@@ -17,7 +17,7 @@ server:
 ############################################
 spring:
   # Profile
-  profile: localmysql
+  profile: testmysql
   # JPA
   jpa:
     hibernate:
@@ -36,7 +36,7 @@ spring:
     # TestContainer URL for auto-creation of Docker PostgreSQL DB on app start-up
     # https://java.testcontainers.org/modules/databases/jdbc/
     # Create a Docker container from mysql:8.0.24 image
-    url: jdbc:tc:mysql:8.0.24://localhost/PUBLIC?user=root&password=root&currentSchema=PUBLIC
+    url: jdbc:tc:mysql:8.0.24://localhost/ODMREGISTRY?user=root&password=root&currentSchema=ODMREGISTRY&TC_REUSABLE=true
     # OBS: without localhost/ it fails to create PUBLIC DB/Schema (it use default db-schema "test"
     # and without user and password it use "test" "test"
     # TestContainers driverClassName for JDBC url generated DBs
@@ -58,7 +58,7 @@ spring:
     #password: "root"
     locations: classpath:db/migration/mysql
     #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
-    #schemas: flyway # not working
+    #schemas: ODMREGISTRY # not working
     clean-on-validation-error: true
 
 

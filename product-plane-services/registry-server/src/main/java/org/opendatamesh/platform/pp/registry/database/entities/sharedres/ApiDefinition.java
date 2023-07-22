@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Data
 @Entity(name = "ApiDefinition")
-@Table(name = "DEF_APIS", schema="PUBLIC")
+@Table(name = "DEF_APIS", schema="ODMREGISTRY")
 public class ApiDefinition {
     @Id
     @Column(name = "ID")

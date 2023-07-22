@@ -1,14 +1,14 @@
-package org.opendatamesh.platform.up.metaservice.server.exceptions;
+package org.opendatamesh.platform.up.notification.api.resources;
 
-public class Error {
+public class ErrorResource {
 
     private String errorType;
     private String message;
 
-    public Error() {
+    public ErrorResource() {
     }
 
-    public Error(String errorType, String message) {
+    public ErrorResource(String errorType, String message) {
         this.errorType = errorType;
         this.message = message;
     }

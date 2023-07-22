@@ -1,16 +1,16 @@
 package org.opendatamesh.platform.core.commons.clients;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 
 @Data
 public class ODMClient {
@@ -80,5 +80,34 @@ public class ODMClient {
     protected <T> HttpEntity<T> getHttpEntity(T payload) throws IOException {
         return new HttpEntity<T>(payload, getHeaders());
     }
-    
+
+    //this method maps the responses of the client based on the response's status code.
+    //the mapper returns the passed acceptedClass if the response contains the acceptedStatusCode(s)
+    //otherwise it returns the errorClass
+    protected ResponseEntity mapResponseEntity(ResponseEntity response,
+                                                    HttpStatus acceptedStatusCode,
+                                                    Class acceptedClass,
+                                                    Class errorClass) throws JsonProcessingException {
+        return mapResponseEntity(response,List.of(acceptedStatusCode),acceptedClass,errorClass);
+    }
+
+    protected ResponseEntity mapResponseEntity(ResponseEntity response,
+                                               List<HttpStatus> acceptedStatusCodes,
+                                               Class acceptedClass,
+                                               Class errorClass) throws JsonProcessingException {
+        ResponseEntity result;
+        if (acceptedStatusCodes.contains(response.getStatusCode())){
+            result = ResponseEntity.status(response.getStatusCode())
+                    .headers(response.getHeaders())
+                    .body(mapper.readValue(mapper.writeValueAsString(response.getBody())
+                            , acceptedClass));
+        }
+        else {
+            result = ResponseEntity.status(response.getStatusCode())
+                    .headers(response.getHeaders())
+                    .body(mapper.readValue(mapper.writeValueAsString(response.getBody())
+                            , errorClass));
+        }
+        return result;
+    }
 }

@@ -117,7 +117,6 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
         </dependency>
-
         <!-- MySQL - TEST -->
         <dependency>
             <groupId>mysql</groupId>
@@ -181,16 +180,22 @@
             <artifactId>flyway-mysql</artifactId>
         </dependency>
 
-		 <dependency>
+        <!-- ODM -->
+        <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-pp-registry-api</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>
-
         <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-up-notification-api</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.opendatamesh</groupId>
+            <artifactId>odm-platform-core-commons</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>

@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 @Entity(name = "Owner")
-@Table(name = "DPV_INFO_OWNERS", schema="PUBLIC")
+@Table(name = "DPV_INFO_OWNERS", schema="ODMREGISTRY")
 public class Owner {
 
     @Id

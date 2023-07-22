@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.opendatamesh.platform.up.policy.api.v1.enums.PatchModes;
 import org.opendatamesh.platform.up.policy.api.v1.resources.ErrorResource;
 import org.opendatamesh.platform.up.policy.api.v1.resources.SuiteResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -30,6 +31,7 @@ import javax.validation.Valid;
 public abstract class AbstractSuiteController {
 
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     @Operation(
             summary = "Get all suites",
             description = "Fetch all registered suites",
@@ -61,6 +63,7 @@ public abstract class AbstractSuiteController {
     public abstract ResponseEntity readSuites();
 
     @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
     @Operation(
             summary = "Get a suite",
             description = "Fetch a specific registered suite given its ID",
@@ -104,6 +107,7 @@ public abstract class AbstractSuiteController {
     public abstract ResponseEntity readOneSuite(String id);
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
     @Operation(
             summary = "Create a new suite",
             description = "Create and register a new suite (i.e., collection of OPA policies)",
@@ -148,6 +152,7 @@ public abstract class AbstractSuiteController {
     public abstract ResponseEntity createSuite(SuiteResource suite);
 
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
     @Operation(
             summary = "Delete a suite",
             description = "Delete a registered suite given its ID",
@@ -158,8 +163,8 @@ public abstract class AbstractSuiteController {
                     responseCode = "200",
                     description = "Suite deleted",
                     content = @Content(
-                            mediaType = "plain/text",
-                            schema = @Schema(implementation = String.class)
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = Void.class)
                     )
             ),
             @ApiResponse(
@@ -191,6 +196,7 @@ public abstract class AbstractSuiteController {
     public abstract ResponseEntity deleteSuite(String id);
 
     @PatchMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
     @Operation(
             summary = "Update a suite",
             description = "Add or remove a policy, through its ID, from a registered suite",

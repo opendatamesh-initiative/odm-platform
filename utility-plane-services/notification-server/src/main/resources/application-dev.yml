@@ -30,6 +30,7 @@ spring:
         jdbc:
           lob:
             non_contextual_creation: true
+        schemas: ODMNOTIFICATION
     database-platform: org.hibernate.dialect.H2Dialect
   # DB
   datasource:
@@ -49,7 +50,7 @@ spring:
     user: sa
     password:
     #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
-    schemas: PUBLIC
+    schemas: ODMNOTIFICATION
     locations: classpath:db/migration/h2
     clean-on-validation-error: true
 

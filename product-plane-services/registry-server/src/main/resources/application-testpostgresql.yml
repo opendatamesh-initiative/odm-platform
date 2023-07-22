@@ -17,7 +17,7 @@ server:
 ############################################
 spring:
   # Profile
-  profile: localpostgres
+  profile: testpostgresql
   # JPA
   jpa:
     show-sql: true
@@ -34,13 +34,13 @@ spring:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQL95Dialect # Or PostgreSQLDialect
         globally_quoted_identifiers: true
-        default_schema: PUBLIC
+        default_schema: ODMREGISTRY
   # DB
   datasource:
     # TestContainer URL for auto-creation of Docker PostgreSQL DB on app start-up
     # https://java.testcontainers.org/modules/databases/jdbc/
     # Create a Docker container from postgresql:11-alpine image
-    url: jdbc:tc:postgresql:11-alpine:///odmpdb?stringtype=unspecified
+    url: jdbc:tc:postgresql:11-alpine:///odmpdb?stringtype=unspecified&TC_REUSABLE=true
     username: postgres
     password: postgres
     # TestContainers driverClassName for JDBC url generated DBs
@@ -58,8 +58,8 @@ spring:
     #user: postgres
     #password: postgres
     #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
-    schemas: flyway
-    locations: classpath:db/migration/postgres
+    schemas: ODMREGISTRY
+    locations: classpath:db/migration/postgresql
     clean-on-validation-error: true
 
 

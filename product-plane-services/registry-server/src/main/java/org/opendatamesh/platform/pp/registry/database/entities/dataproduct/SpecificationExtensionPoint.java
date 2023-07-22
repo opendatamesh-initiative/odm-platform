@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Data
 @Entity(name = "SpecificationExtensionPoint")
-@Table(name = "DPV_SPEC_EXTENSION_POINTS", schema="PUBLIC")
+@Table(name = "DPV_SPEC_EXTENSION_POINTS", schema="ODMREGISTRY")
 public class SpecificationExtensionPoint {
     
     @Id

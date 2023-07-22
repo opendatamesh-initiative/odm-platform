@@ -62,6 +62,7 @@ public abstract class AbstractPolicyController {
     public abstract ResponseEntity readPolicies();
 
     @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
     @Operation(
             summary = "Get a policy",
             description = "Fetch a specific registered policy given its ID",
@@ -105,6 +106,7 @@ public abstract class AbstractPolicyController {
     public abstract ResponseEntity readOnePolicy(String id);
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
     @Operation(
             summary = "Create a new policy",
             description = "Create and register a new OPA policy",
@@ -148,6 +150,7 @@ public abstract class AbstractPolicyController {
             path = "/{id}",
             consumes = MediaType.APPLICATION_JSON_VALUE
     )
+    @ResponseStatus(HttpStatus.OK)
     @Operation(
             summary = "Update a policy",
             description = "Update a registered OPA policy",
@@ -207,6 +210,14 @@ public abstract class AbstractPolicyController {
     )
     @ApiResponses(value = {
             @ApiResponse(
+                    responseCode = "200",
+                    description = "Policy deleted",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = Void.class)
+                    )
+            ),
+            @ApiResponse(
                     responseCode = "400",
                     description = "[Bad Request](https://www.rfc-editor.org/rfc/rfc9110.html#name-400-bad-request)"
                             + "\r\n - Error code 40006 - OPA Server bad request",
@@ -227,14 +238,14 @@ public abstract class AbstractPolicyController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResource.class))
             )
     })
-    public void deletePolicyByID(
+    public ResponseEntity deletePolicyByID(
             @Parameter(description = "Identifier of the policy")
             @Valid @PathVariable String id
     ){
-        deletePolicy(id);
+        return deletePolicy(id);
     }
 
-    public abstract void deletePolicy(String id);
+    public abstract ResponseEntity deletePolicy(String id);
 
 }
 

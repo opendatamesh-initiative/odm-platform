@@ -8,7 +8,7 @@ import java.util.Map;
 
 @Data
 @Entity(name = "ProvisionInfo")
-@Table(name = "DPV_INFRA_PROVISION_INFOS", schema="PUBLIC")
+@Table(name = "DPV_INFRA_PROVISION_INFOS", schema="ODMREGISTRY")
 public class ProvisionInfo {
 
     @Id

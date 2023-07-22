@@ -15,6 +15,9 @@ spring:
       show-sql: true
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        default_schema: ODMPOLICY
   h2:
     console:
       enabled: true
@@ -25,7 +28,7 @@ spring:
     user: sa
     password: password
     #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
-    schemas: flyway
+    schemas: ODMPOLICY
     locations: classpath:db/migration/h2
     clean-on-validation-error: true
 

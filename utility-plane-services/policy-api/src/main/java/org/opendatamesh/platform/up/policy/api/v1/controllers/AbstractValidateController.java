@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.opendatamesh.platform.up.policy.api.v1.resources.ErrorResource;
 import org.opendatamesh.platform.up.policy.api.v1.resources.ValidateResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -29,6 +30,7 @@ import javax.validation.Valid;
 public abstract class AbstractValidateController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
     @Operation(
             summary = "Validate a document",
             description = "Validate a document with a single policy, multiple policies, all the policies or the policies in a suite"

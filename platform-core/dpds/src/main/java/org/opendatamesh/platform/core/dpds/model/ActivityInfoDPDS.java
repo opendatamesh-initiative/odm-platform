@@ -1,16 +1,15 @@
 package org.opendatamesh.platform.core.dpds.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
-
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class BuildInfoDPDS {
-
+public class ActivityInfoDPDS {
     @JsonProperty("service")
     private ExternalResourceDPDS service;
 
@@ -18,5 +17,5 @@ public class BuildInfoDPDS {
     private StandardDefinitionDPDS template;
 
     @JsonProperty("configurations")
-    private Map<String, Object> configurations;
+    private Map<String, Object> configurations; 
 }

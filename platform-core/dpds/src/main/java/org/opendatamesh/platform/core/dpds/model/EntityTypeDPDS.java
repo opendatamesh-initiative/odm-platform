@@ -8,7 +8,8 @@ public enum EntityTypeDPDS {
     controlport, 
     observabilityport, 
     application, 
-    infrastructure;
+    infrastructure,
+    template;
 
 
     public static EntityTypeDPDS get(String entityTypeName) {
@@ -51,6 +52,9 @@ public enum EntityTypeDPDS {
                 componentContainerPropertyName = "applicationComponents";
                 break;
             case infrastructure:
+                componentContainerPropertyName = "infrastructuralComponents";
+                break;
+            case template:
                 componentContainerPropertyName = "infrastructuralComponents";
                 break;
             default:

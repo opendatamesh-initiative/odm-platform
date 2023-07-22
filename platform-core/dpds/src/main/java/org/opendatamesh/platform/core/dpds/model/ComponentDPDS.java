@@ -48,6 +48,6 @@ public class ComponentDPDS {
 
     @JsonAnySetter
     public void ignored(String name, Object value) {
-        System.out.println(name + " : " + value + " : " + value.getClass().getName());
+        //System.out.println(name + " : " + value + " : " + value.getClass().getName());
     }
 }

@@ -86,8 +86,13 @@ public class DataProductVersionSerializer {
             resultRootNode.set("dataProductDescriptor", rootNode.get("dataProductDescriptor"));
             resultRootNode.set("info", rootNode.get("info"));
 
-            resultRootNode.set("interfaceComponents", getRawContent(dataProductVersion.getInterfaceComponents()));
-            resultRootNode.set("internalComponents", getRawContent(dataProductVersion.getInternalComponents()));
+            if(dataProductVersion.getInterfaceComponents() != null) {
+                resultRootNode.set("interfaceComponents", getRawContent(dataProductVersion.getInterfaceComponents()));
+            }
+            if(dataProductVersion.getInternalComponents() != null) {
+                resultRootNode.set("internalComponents", getRawContent(dataProductVersion.getInternalComponents()));
+            }
+            
         }
 
         if (prettyPrint) {

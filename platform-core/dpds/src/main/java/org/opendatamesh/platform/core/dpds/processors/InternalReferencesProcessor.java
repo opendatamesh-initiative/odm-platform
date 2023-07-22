@@ -1,16 +1,26 @@
 package org.opendatamesh.platform.core.dpds.processors;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
 import org.opendatamesh.platform.core.dpds.exceptions.UnresolvableReferenceException;
+import org.opendatamesh.platform.core.dpds.model.ActivityInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.ComponentDPDS;
 import org.opendatamesh.platform.core.dpds.model.ComponentsDPDS;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.EntityTypeDPDS;
+import org.opendatamesh.platform.core.dpds.model.LifecycleInfoDPDS;
+import org.opendatamesh.platform.core.dpds.model.definitions.DefinitionReferenceDPDS;
 import org.opendatamesh.platform.core.dpds.parser.ParseContext;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 public class InternalReferencesProcessor implements PropertiesProcessor{
 
@@ -44,10 +54,14 @@ public class InternalReferencesProcessor implements PropertiesProcessor{
                     parsedContent.getComponents(), EntityTypeDPDS.application);
             resolveInternalReferences(parsedContent.getInternalComponents().getInfrastructuralComponents(),
                     parsedContent.getComponents(), EntityTypeDPDS.infrastructure);
+            
+            if(parsedContent.getInternalComponents().getLifecycleInfo() != null) {
+                resolveInternalReferences(parsedContent.getInternalComponents().getLifecycleInfo(), parsedContent.getComponents());
+            }
+            
         }
 
-        //descriptor.setParsedContent(parsedContent);
-        //descriptor.setRawContent(mapper.getParsedContentAsString(descriptor.getParsedContent(), false));
+        
     }
 
     @SuppressWarnings("unchecked")
@@ -62,7 +76,7 @@ public class InternalReferencesProcessor implements PropertiesProcessor{
 
                 // internal ref example : #/components/infrastructuralComponents/eventStore
                 ComponentDPDS resovedComponent = componentsObject.getComponentsByEntityType(type)
-                        .get(ref.substring(ref.lastIndexOf("/")));
+                        .get(ref.substring(ref.lastIndexOf("/")+1));
 
                 if (resovedComponent == null) {
                     throw new UnresolvableReferenceException(
@@ -70,6 +84,50 @@ public class InternalReferencesProcessor implements PropertiesProcessor{
                 }
 
                 components.set(i, (E) resovedComponent);
+            }
+        }
+    }
+
+    private void resolveInternalReferences(LifecycleInfoDPDS lifecycleInfo, ComponentsDPDS componentsObject) throws UnresolvableReferenceException {
+        Objects.requireNonNull(lifecycleInfo, "Parameter [lifecycleInfo] cannot be null");
+        
+        Set<String> stageNames = lifecycleInfo.getStages().keySet();
+        for(String stageName : stageNames) {
+            ActivityInfoDPDS activityInfo = lifecycleInfo.getStages().get(stageName);
+
+            if(activityInfo.getTemplate() == null) continue; // Nothings to do
+            DefinitionReferenceDPDS templateDefinition = activityInfo.getTemplate().getDefinition();
+            String ref = templateDefinition!=null? templateDefinition.getRef(): null; 
+            if (ref != null && ref.trim().startsWith("#")) {
+
+                // internal ref example : "#components/templates/dpdLifecyclePipe"
+                String templateName = ref.substring(ref.lastIndexOf("/")+1);
+                ObjectNode resolvedTemplateDefinitionNode = componentsObject.getTemplates().get(templateName);
+
+                if (resolvedTemplateDefinitionNode == null) {
+                    throw new UnresolvableReferenceException(
+                            "Impossible to resolve internal reference [" + ref + "]");
+                }
+
+                
+                try {
+                    DefinitionReferenceDPDS resolvedTemplateDefinition = new DefinitionReferenceDPDS();
+                    resolvedTemplateDefinition.setMediaType("application/json");
+                    resolvedTemplateDefinition.setOriginalRef(ref);
+                    resolvedTemplateDefinition.setRawContent(ObjectMapperFactory.JSON_MAPPER.writeValueAsString(resolvedTemplateDefinitionNode));
+                    activityInfo.getTemplate().setDefinition(resolvedTemplateDefinition);
+
+                    ObjectNode lifecycelNode = (ObjectNode)ObjectMapperFactory.JSON_MAPPER.readTree(lifecycleInfo.getRawContent());
+                    ObjectNode templateNode =  (ObjectNode)lifecycelNode.at("/" + stageName + "/template");
+                    if(!templateNode.isMissingNode()) {
+                        resolvedTemplateDefinitionNode.put("mediaType", resolvedTemplateDefinition.getMediaType());
+                        resolvedTemplateDefinitionNode.put("$originalRef", resolvedTemplateDefinition.getOriginalRef());
+                        templateNode.set("definition", resolvedTemplateDefinitionNode);
+                        lifecycleInfo.setRawContent(ObjectMapperFactory.JSON_MAPPER.writeValueAsString(lifecycelNode));
+                    }
+                } catch (Exception e) {
+                    throw new UnresolvableReferenceException("Impossible to parse lifecycle raw content while resolving internal reference [" + ref + "]", e);
+                } 
             }
         }
     }

@@ -26,9 +26,18 @@ public class InternalComponentsDPDS extends ComponentContainerDPDS{
     @JsonProperty("infrastructuralComponents")
     private List<InfrastructuralComponentDPDS> infrastructuralComponents = new ArrayList<InfrastructuralComponentDPDS>();
 
+    @JsonProperty("lifecycleInfo") 
+    private LifecycleInfoDPDS lifecycleInfo;
 
     public void setRawContent(ObjectNode internalComponentNodes) throws JsonProcessingException {
        
+        ObjectMapper mapper = new ObjectMapper();
+
+        ObjectNode lifecycleNode = (ObjectNode)internalComponentNodes.get("lifecycleInfo");
+        if (lifecycleNode != null) {
+            String rawContent = mapper.writeValueAsString(lifecycleNode);
+            lifecycleInfo.setRawContent(rawContent);
+        }
 
         ArrayNode applicationComponentNodes = (ArrayNode)internalComponentNodes.get("applicationComponents");
         if (applicationComponentNodes != null) {
@@ -45,6 +54,9 @@ public class InternalComponentsDPDS extends ComponentContainerDPDS{
     public ObjectNode getRawContent() throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode internalComponentsNode = mapper.createObjectNode();
+
+        ObjectNode lifecycleNode = (ObjectNode)mapper.readTree(lifecycleInfo.getRawContent());
+        internalComponentsNode.set("lifecycleInfo",lifecycleNode );
         internalComponentsNode.set("applicationComponents", getRawContent(applicationComponents));
         internalComponentsNode.set("infrastructuralComponents", getRawContent(infrastructuralComponents));
         return internalComponentsNode;

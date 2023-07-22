@@ -5,29 +5,29 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import org.opendatamesh.platform.core.dpds.model.BuildInfoDPDS;
+import org.opendatamesh.platform.core.dpds.model.DeployInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.ExternalResourceDPDS;
 import org.opendatamesh.platform.core.dpds.model.StandardDefinitionDPDS;
 
 import java.io.IOException;
 import java.util.Map;
 
-public class BuildInfoResourceDeserializer extends StdDeserializer<BuildInfoDPDS> {
+public class DeployInfoDeserializer extends StdDeserializer<DeployInfoDPDS> {
 
-    public BuildInfoResourceDeserializer() {
+    public DeployInfoDeserializer() {
         this(null);
     }
 
-    public BuildInfoResourceDeserializer(Class<?> vc) {
+    public DeployInfoDeserializer(Class<?> vc) {
         super(vc);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public BuildInfoDPDS deserialize(JsonParser jp, DeserializationContext ctxt)
+    public DeployInfoDPDS deserialize(JsonParser jp, DeserializationContext ctxt)
             throws IOException, JsonProcessingException {
-
-        BuildInfoDPDS infoResource = new BuildInfoDPDS();
+        
+        DeployInfoDPDS infoResource = new DeployInfoDPDS();   
 
         JsonNode node = jp.getCodec().readTree(jp);
 
@@ -53,7 +53,6 @@ public class BuildInfoResourceDeserializer extends StdDeserializer<BuildInfoDPDS
             configurationsRef = ctxt.readValue(jp2, Map.class);
         }
 
-       
         infoResource.setService(serviceRef);
         infoResource.setTemplate(templateRef);
         infoResource.setConfigurations(configurationsRef);

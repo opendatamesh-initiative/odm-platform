@@ -28,10 +28,7 @@ public class PortDPDS extends ComponentDPDS implements Cloneable {
     @JsonProperty("externalDocs")
     protected ExternalResourceDPDS externalDocs;
 
-    public Object clone() throws CloneNotSupportedException {
-        return super.clone();
-    }
-
+   
     public boolean hasPromises() {
         return promises != null;
     }

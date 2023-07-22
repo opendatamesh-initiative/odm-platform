@@ -2,10 +2,14 @@ package org.opendatamesh.platform.core.dpds.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import lombok.Data;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import org.opendatamesh.platform.core.dpds.model.definitions.DefinitionReferenceDPDS;
 
 
 @Data
@@ -33,27 +37,9 @@ public class ComponentsDPDS {
     @JsonProperty("infrastructuralComponents")
     private Map<String, InfrastructuralComponentDPDS> infrastructuralComponents = new HashMap<>();
 
-    public void addInputPort(String key, PortDPDS value){
-        this.inputPorts.put(key, value);
-    }
+    @JsonProperty("templates")
+    private Map<String, ObjectNode> templates = new HashMap<>();
 
-    public void addOutputPort(String key, PortDPDS value){
-        this.outputPorts.put(key, value);
-    }
-
-    public void addDiscoveryPort(String key, PortDPDS value){
-        this.discoveryPorts.put(key, value);
-    }
-
-    
-    public void addObservabilityPort(String key, PortDPDS value){
-        this.observabilityPorts.put(key, value);
-    }
-
-
-    public void addControlPort(String key, PortDPDS value){
-        this.controlPorts.put(key, value);
-    }
 
     @SuppressWarnings("unchecked")
     public <E extends ComponentDPDS> Map<String, E> getComponentsByEntityType(EntityTypeDPDS type){

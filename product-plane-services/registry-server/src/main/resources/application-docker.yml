@@ -31,7 +31,7 @@ spring:
           lob:
             non_contextual_creation: true
         globally_quoted_identifiers: true
-        default_schema: PUBLIC
+        default_schema: ODMREGISTRY
   # DB
   datasource:
     url: ${DATABASE_URL}?allowPublicKeyRetrieval=true&useSSL=false

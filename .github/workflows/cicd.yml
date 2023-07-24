@@ -3,6 +3,8 @@ on:
   push:
     tags:
       - '*'
+env:
+  IMAGE_NAME: odm-platform
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -41,7 +43,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Build Docker image
-        run: docker build . --file Dockerfile --tag odm-platform --label "runnumber=${GITHUB_RUN_ID}"
+        run: docker build . --file Dockerfile --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}"
       - name: Login to Container Registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
       - name: Push image to Container Registry

@@ -2,7 +2,7 @@
 # Server configuration
 ##########################
 server:
-  port: 8595
+  port: 9002
   error:
     include-message: always
   servlet:

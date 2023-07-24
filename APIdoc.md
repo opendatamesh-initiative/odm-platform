@@ -53,7 +53,7 @@ This is done modifying spring-boot-maven-plugin and adding springdoc-openapi-mav
 					</execution>
 				</executions>
 				 <configuration> 
-					<apiDocsUrl>http://localhost:8585/api/v1/pp/v3/api-docs</apiDocsUrl> 
+					<apiDocsUrl>http://localhost:8001/api/v1/pp/v3/api-docs</apiDocsUrl> 
 					<outputFileName>openapi.json</outputFileName> 
 					<outputDir>${project.build.directory}</outputDir> 
 				</configuration>

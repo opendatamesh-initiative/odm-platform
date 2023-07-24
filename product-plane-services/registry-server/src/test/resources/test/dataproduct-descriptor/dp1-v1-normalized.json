@@ -107,7 +107,7 @@
               "specification": "custom-api-spec",
               "specificationVersion": "1.3.2",
               "definition": {
-                "$ref": "http://localhost:8585/api/v1/pp/definitions/3"
+                "$ref": "http://localhost:8001/api/v1/pp/definitions/3"
               }
             },
             "deprecationPolicy": {
@@ -204,7 +204,7 @@
               "specification": "custom-api-spec",
               "version": "1.3.2",
               "definition": {
-                "$ref": "http://localhost:8585/api/v1/pp/definitions/1"
+                "$ref": "http://localhost:8001/api/v1/pp/definitions/1"
               }
             },
             "deprecationPolicy": {
@@ -298,7 +298,7 @@
               "specification": "custom-api-spec",
               "specificationVersion": "1.2.0",
               "definition": {
-                "$ref": "http://localhost:8585/api/v1/pp/definitions/2"
+                "$ref": "http://localhost:8001/api/v1/pp/definitions/2"
               }
             },
             "deprecationPolicy": {

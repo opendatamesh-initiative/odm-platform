@@ -36,7 +36,6 @@ public class PolicyServiceProxy {
     private ObjectMapper objectMapper;
 
 
-
     private static final Logger logger = LoggerFactory.getLogger(PolicyServiceProxy.class);
 
 

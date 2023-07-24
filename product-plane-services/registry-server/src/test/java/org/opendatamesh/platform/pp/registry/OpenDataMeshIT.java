@@ -28,8 +28,15 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.jdbc.JdbcTestUtils;
 
 import javax.annotation.PostConstruct;
+import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.fail;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -53,6 +60,8 @@ public abstract class OpenDataMeshIT {
 
     protected Logger logger = LoggerFactory.getLogger(OpenDataMeshIT.class);
 
+    protected final String DB_TABLES_POSTGRESQL = "src/test/resources/db/tables_postgresql.txt";
+    protected final String DB_TABLES_MYSQL = "src/test/resources/db/tables_mysql.txt";
     protected final String RESOURCE_DP1 = "src/test/resources/test/dataproduct-descriptor/dp1.json";
     protected final String RESOURCE_DP1_UPD = "src/test/resources/test/dataproduct-descriptor/dp1-updated.json";
     protected final String RESOURCE_DP1_V1 = "src/test/resources/test/dataproduct-descriptor/dp1-v1.json";
@@ -80,70 +89,21 @@ public abstract class OpenDataMeshIT {
     }
 
     @BeforeEach
-    public void cleanDbState(@Autowired JdbcTemplate jdbcTemplate,  @Autowired Environment environment) {
-        if(Arrays.stream(environment.getActiveProfiles()).findFirst().get().equals("testpostgresql")) {
+    public void cleanDbState(@Autowired JdbcTemplate jdbcTemplate, @Autowired Environment environment) throws IOException {
+        String activeProfile = Arrays.stream(environment.getActiveProfiles()).findFirst().get();
+        String[] tableSet;
+        if(activeProfile.equals("testpostgresql")) {
+            tableSet = Files.readAllLines(new File(DB_TABLES_POSTGRESQL).toPath(), Charset.defaultCharset()).toArray(new String[0]);
+            System.out.println(tableSet);
             JdbcTestUtils.deleteFromTables(
                     jdbcTemplate,
-                    "\"ODMREGISTRY\".\"DPV_PORT_TAGS\"",
-                    "\"ODMREGISTRY\".\"DPV_PORTS\"",
-                    "\"ODMREGISTRY\".\"DPV_PORT_PROMISES\"",
-                    "\"ODMREGISTRY\".\"DPV_PORT_EXPECTATIONS\"",
-                    "\"ODMREGISTRY\".\"DPV_PORT_CONTRACTS\"",
-                    "\"ODMREGISTRY\".\"REL_APIS_TO_SCHEMAS\"",
-                    "\"ODMREGISTRY\".\"DEF_APIS\"",
-                    "\"ODMREGISTRY\".\"DEF_SCHEMAS\"",
-                    "\"ODMREGISTRY\".\"DPV_INFRA_COMPONENT_TAGS\"",
-                    "\"ODMREGISTRY\".\"DPV_INFRA_COMPONENTS\"",
-                    "\"ODMREGISTRY\".\"DPV_INFRA_COMPONENT_DEPENDENCIES\"",
-                    "\"ODMREGISTRY\".\"DPV_INFRA_PROVISION_INFOS\"",
-                    "\"ODMREGISTRY\".\"DPV_INFO_CONTACT_POINTS\"",
-                    "\"ODMREGISTRY\".\"DPV_APP_COMPONENT_TAGS\"",
-                    "\"ODMREGISTRY\".\"DPV_APP_COMPONENT_DEPENDENCIES\"",
-                    "\"ODMREGISTRY\".\"DPV_APP_COMPONENT_SINKS\"",
-                    "\"ODMREGISTRY\".\"DPV_APP_COMPONENT_SOURCES\"",
-                    "\"ODMREGISTRY\".\"DPV_APP_COMPONENTS\"",
-                    "\"ODMREGISTRY\".\"DPV_APP_COMPONENT_BUILD_INFOS\"",
-                    "\"ODMREGISTRY\".\"DPV_APP_COMPONENT_DEPLOY_INFOS\"",
-                    "\"ODMREGISTRY\".\"DP_VERSIONS\"",
-                    "\"ODMREGISTRY\".\"DPV_INFO_OWNERS\"",
-                    "\"ODMREGISTRY\".\"DPV_SPEC_EXTENSION_POINTS\"",
-                    "\"ODMREGISTRY\".\"DPV_EXTERNAL_RESOURCES\"",
-                    "\"ODMREGISTRY\".\"DPV_REFERENCE_OBJECTS\"",
-                    "\"ODMREGISTRY\".\"DPV_DATA_PRODUCT_TAGS\"",
-                    "\"ODMREGISTRY\".\"DATA_PRODUCTS\"",
-                    "\"ODMREGISTRY\".\"DEF_TEMPLATES\""
+                    tableSet
             );
-        } else if (Arrays.stream(environment.getActiveProfiles()).findFirst().get().equals("testmysql")) {
+        } else if (activeProfile.equals("testmysql")) {
+            tableSet = Files.readAllLines(new File(DB_TABLES_MYSQL).toPath(), Charset.defaultCharset()).toArray(new String[0]);
             JdbcTestUtils.deleteFromTables(
                     jdbcTemplate,
-                    "ODMREGISTRY.DPV_PORT_TAGS",
-                    "ODMREGISTRY.DPV_PORTS",
-                    "ODMREGISTRY.DPV_PORT_PROMISES",
-                    "ODMREGISTRY.DPV_PORT_EXPECTATIONS",
-                    "ODMREGISTRY.DPV_PORT_CONTRACTS",
-                    "ODMREGISTRY.REL_APIS_TO_SCHEMAS",
-                    "ODMREGISTRY.DEF_APIS",
-                    "ODMREGISTRY.DEF_SCHEMAS",
-                    "ODMREGISTRY.DPV_INFRA_COMPONENT_TAGS",
-                    "ODMREGISTRY.DPV_INFRA_COMPONENTS",
-                    "ODMREGISTRY.DPV_INFRA_COMPONENT_DEPENDENCIES",
-                    "ODMREGISTRY.DPV_INFRA_PROVISION_INFOS",
-                    "ODMREGISTRY.DPV_INFO_CONTACT_POINTS",
-                    "ODMREGISTRY.DPV_APP_COMPONENT_TAGS",
-                    "ODMREGISTRY.DPV_APP_COMPONENT_DEPENDENCIES",
-                    "ODMREGISTRY.DPV_APP_COMPONENT_SINKS",
-                    "ODMREGISTRY.DPV_APP_COMPONENT_SOURCES",
-                    "ODMREGISTRY.DPV_APP_COMPONENTS",
-                    "ODMREGISTRY.DPV_APP_COMPONENT_BUILD_INFOS",
-                    "ODMREGISTRY.DPV_APP_COMPONENT_DEPLOY_INFOS",
-                    "ODMREGISTRY.DP_VERSIONS",
-                    "ODMREGISTRY.DPV_INFO_OWNERS",
-                    "ODMREGISTRY.DPV_SPEC_EXTENSION_POINTS",
-                    "ODMREGISTRY.DPV_EXTERNAL_RESOURCES",
-                    "ODMREGISTRY.DPV_REFERENCE_OBJECTS",
-                    "ODMREGISTRY.DPV_DATA_PRODUCT_TAGS",
-                    "ODMREGISTRY.DATA_PRODUCTS",
-                    "ODMREGISTRY.DEF_TEMPLATES"
+                    tableSet
             );
         }
     }
@@ -256,4 +216,5 @@ public abstract class OpenDataMeshIT {
     // ======================================================================================
 
     // TODO ...add as needed
+
 }

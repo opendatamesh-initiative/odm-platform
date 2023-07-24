@@ -62,5 +62,5 @@ spring:
 policyserviceaddress: http://localhost:9001
 metaserviceaddress: http://localhost:9002
 
-skippolicyservice: true
+skippolicyservice: false #true
 skipmetaservice: true

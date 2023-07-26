@@ -10,8 +10,6 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductResource;
@@ -26,7 +24,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.annotation.DirtiesContext.MethodMode;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.DisabledIf;
 import org.springframework.test.context.junit.jupiter.EnabledIf;
 
 import java.io.IOException;
@@ -168,11 +165,6 @@ public class DataProductVersionIT extends OpenDataMeshIT {
     @EnabledIf(expression = "#{environment.acceptsProfiles('testpostgresql', 'dev')}", loadContext = true)
     public void testDataProductVersionsReadOne() throws IOException {
 
-        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa");
-        System.out.println(SystemProperties.get("spring.profile"));
-        System.out.println(SystemProperties.get("spring.profiles.active"));
-        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa");
-
         // create a product and associate to it a version
         DataProductResource dataProduct1Res = createDataProduct(RESOURCE_DP1);
         String descriptorContent = createDataProductVersion(dataProduct1Res.getId(), RESOURCE_DP1_V1);
@@ -203,7 +195,6 @@ public class DataProductVersionIT extends OpenDataMeshIT {
     @Test
     @Order(4)
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    @EnabledIf(expression = "#{environment.acceptsProfiles('testpostgresql', 'dev')}", loadContext = true)
     public void testDataProductVersionDelete()
             throws IOException {
 

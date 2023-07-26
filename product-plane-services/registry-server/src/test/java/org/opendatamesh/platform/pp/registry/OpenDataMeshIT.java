@@ -46,6 +46,7 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 //@ActiveProfiles("dev")
 //@ActiveProfiles("testpostgresql")
 //@ActiveProfiles("testmysql")
+@ActiveProfiles("localmysql")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = { OpenDataMeshApp.class })
 public abstract class OpenDataMeshIT {
 
@@ -53,6 +54,7 @@ public abstract class OpenDataMeshIT {
     protected String port;
 
     protected RegistryClient registryClient;
+
     protected ResourceBuilder resourceBuilder;
     
     @Autowired
@@ -99,7 +101,7 @@ public abstract class OpenDataMeshIT {
                     jdbcTemplate,
                     tableSet
             );
-        } else if (activeProfile.equals("testmysql")) {
+        } else if (activeProfile.equals("testmysql") || activeProfile.equals("localmysql")) {
             tableSet = Files.readAllLines(new File(DB_TABLES_MYSQL).toPath(), Charset.defaultCharset()).toArray(new String[0]);
             JdbcTestUtils.deleteFromTables(
                     jdbcTemplate,

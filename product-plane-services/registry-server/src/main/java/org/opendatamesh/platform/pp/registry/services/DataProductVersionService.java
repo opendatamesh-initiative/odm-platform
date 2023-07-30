@@ -275,6 +275,12 @@ public class DataProductVersionService {
     }
 
     private void saveTemplates(DataProductVersion dataProductVersion) throws JsonProcessingException {
+        
+        if (dataProductVersion.hasLifecycleInfo()) {
+            saveLifecycleInfoTemplates(
+                    dataProductVersion.getInternalComponents().getLifecycleInfo());
+        }
+        
         if (dataProductVersion.hasInfrastructuralComponents()) {
             saveInfrastructuralComponentTemplates(
                     dataProductVersion.getInternalComponents().getInfrastructuralComponents());
@@ -285,6 +291,19 @@ public class DataProductVersionService {
                 dataProductVersion.getInternalComponents().getApplicationComponents());
         }
     }
+
+      private void saveLifecycleInfoTemplates(LifecycleInfo lifecycleInfo)
+            throws JsonProcessingException {
+    
+        for (LifecycleActivityInfo activity : lifecycleInfo.getActivityInfos()) {
+            if(activity.getTemplate() != null && activity.getTemplate().getDefinition() != null) {
+                TemplateDefinition templateDefinition = saveActivityTemplate(activity);
+                activity.setTemplateId(templateDefinition.getId());
+            }
+        }
+    }
+
+  
 
     private void saveInfrastructuralComponentTemplates(List<InfrastructuralComponent> components)
             throws JsonProcessingException {
@@ -311,6 +330,49 @@ public class DataProductVersionService {
                 component.getDeployInfo().setTemplateId(templateDefinition.getId());
             }
         }
+    }
+
+    private TemplateDefinition saveActivityTemplate(
+        LifecycleActivityInfo activity)
+    throws JsonProcessingException {
+
+        StandardDefinition template = activity.getTemplate();
+        TemplateDefinition templateDefinition = null;
+
+        TemplateDefinition newTemplateDefinition = new TemplateDefinition(); // why not a mapper?
+        newTemplateDefinition.setName(template.getName());
+        newTemplateDefinition.setVersion(template.getVersion());
+        newTemplateDefinition.setDescription(template.getDescription());
+        newTemplateDefinition.setSpecification(template.getSpecification());
+        newTemplateDefinition.setSpecificationVersion(template.getSpecificationVersion());
+        newTemplateDefinition.setContent(template.getDefinition().getRawContent());
+
+        // Api is created first to obtain the id used after for replacing api definition
+        // content with a reference url
+        try {
+            templateDefinition = templateService.searchDefinition(newTemplateDefinition);
+            if (templateDefinition == null) {
+                templateDefinition = templateService.createDefinition(newTemplateDefinition);
+            }
+        } catch (Throwable t) {
+            throw new InternalServerException(
+                    OpenDataMeshAPIStandardError.SC500_01_DATABASE_ERROR,
+                    "An error occured in the backend database while saving stage [" +  activity.getStageName() + "] of lifecycleInfo object", t);
+        }
+        
+        // Once we have the template id we replace the definition content with a reference
+        // url
+        ObjectNode activityNode = (ObjectNode) objectMapper.readTree(activity.getRawContent());
+
+        ObjectNode templateDefinitionNode = (ObjectNode) activityNode.at("/template/definition");
+        String ref = String.valueOf(templateDefinitionNode.get("$ref"));
+        ref = ref.replaceAll("\\{templateId\\}", "" + templateDefinition.getId());
+        ref = ref.replaceAll("\"", "");
+        templateDefinitionNode.put("$ref", ref);
+
+        activity.setRawContent(objectMapper.writeValueAsString(activityNode));
+
+        return templateDefinition;
     }
 
     private TemplateDefinition saveComponentTemplate(

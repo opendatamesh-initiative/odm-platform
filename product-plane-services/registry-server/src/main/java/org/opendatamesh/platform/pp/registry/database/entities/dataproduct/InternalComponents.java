@@ -43,4 +43,10 @@ public class InternalComponents {
         return infrastructuralComponents != null && !infrastructuralComponents.isEmpty();
     }
 
+    public boolean hasLifecycleInfo() {
+        return lifecycleInfo != null 
+            && lifecycleInfo.getActivityInfos() != null 
+            && !lifecycleInfo.getActivityInfos().isEmpty();
+    }
+
 }

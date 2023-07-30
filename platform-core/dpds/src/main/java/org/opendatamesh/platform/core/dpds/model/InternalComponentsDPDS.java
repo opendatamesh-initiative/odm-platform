@@ -76,6 +76,8 @@ public class InternalComponentsDPDS extends ComponentContainerDPDS{
 
     @JsonIgnore
     public ObjectNode getActivityRawContent() throws JsonProcessingException {
+
+        if(lifecycleInfo == null) return null; // nothing to do
         ObjectMapper mapper = ObjectMapperFactory.JSON_MAPPER;
         ObjectNode lifecycleNode = mapper.createObjectNode();
         for(LifecycleActivityInfoDPDS activity: lifecycleInfo.getActivityInfos()) {

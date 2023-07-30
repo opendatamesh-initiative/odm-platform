@@ -208,7 +208,6 @@ public class TemplateDefinitionsProcessor {
             URI uri = null;
             try {
                 uri = new URI(ref).normalize();
-                // baseUri = UriUtils.getBaseUri(new URI(component.getOriginalRef()));
                 templateDefinitionContent = context.getLocation().fetchResource(baseUri, uri);
             } catch (Exception e) {
                 try {

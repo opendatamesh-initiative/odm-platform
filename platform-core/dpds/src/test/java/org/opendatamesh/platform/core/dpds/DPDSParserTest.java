@@ -2,7 +2,7 @@ package org.opendatamesh.platform.core.dpds;
 
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.core.dpds.exceptions.BuildException;
-import org.opendatamesh.platform.core.dpds.model.ActivityInfoDPDS;
+import org.opendatamesh.platform.core.dpds.model.LifecycleActivityInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.ApplicationComponentDPDS;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.InfrastructuralComponentDPDS;

@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
-import org.opendatamesh.platform.core.dpds.model.ActivityInfoDPDS;
+import org.opendatamesh.platform.core.dpds.model.LifecycleActivityInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.BuildInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.DeployInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.LifecycleInfoDPDS;
@@ -55,7 +55,7 @@ public class ObjectMapperFactory {
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         SimpleModule module = new SimpleModule();
-        module.addDeserializer(ActivityInfoDPDS.class, new ActivityInfoDeserializer());
+        module.addDeserializer(LifecycleActivityInfoDPDS.class, new ActivityInfoDeserializer());
         module.addDeserializer(LifecycleInfoDPDS.class, new LifecycleInfoDeserializer());
         module.addDeserializer(ProvisionInfoDPDS.class, new ProvisionInfoDeserializer());
         module.addDeserializer(BuildInfoDPDS.class, new BuildInfoDeserializer());

@@ -12,7 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.junit.jupiter.api.Test;
-import org.opendatamesh.platform.core.dpds.model.ActivityInfoDPDS;
+import org.opendatamesh.platform.core.dpds.model.LifecycleActivityInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.parser.DPDSParser;
 import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
@@ -69,16 +69,16 @@ public class DPDSParserLifecycleTest {
         }
 
         DataProductVersionDPDS descriptor = result.getDescriptorDocument();
-        ActivityInfoDPDS activityInfo = null;
+        LifecycleActivityInfoDPDS activityInfo = null;
         ObjectNode templateDefinitionNode = null;
 
         assertTrue(descriptor != null);
         assertNotNull(descriptor.getInternalComponents());
         assertNotNull(descriptor.getInternalComponents().getLifecycleInfo());
-        assertNotNull(descriptor.getInternalComponents().getLifecycleInfo().getStages());
-        assertEquals(2, descriptor.getInternalComponents().getLifecycleInfo().getStages().size());
+        assertNotNull(descriptor.getInternalComponents().getLifecycleInfo().getActivityInfos());
+        assertEquals(2, descriptor.getInternalComponents().getLifecycleInfo().getActivityInfos().size());
 
-        activityInfo = descriptor.getInternalComponents().getLifecycleInfo().getStages().get("dev");
+        activityInfo = descriptor.getInternalComponents().getLifecycleInfo().getActivityInfo("dev");
         assertNotNull(activityInfo);
         assertNotNull(activityInfo.getService());
         assertEquals("azure-devops", activityInfo.getService().getHref());
@@ -103,7 +103,7 @@ public class DPDSParserLifecycleTest {
         assertEquals(1, activityInfo.getConfigurations().size());
         assertEquals("DEV", activityInfo.getConfigurations().get("stage"));
 
-        activityInfo = descriptor.getInternalComponents().getLifecycleInfo().getStages().get("prod");
+        activityInfo = descriptor.getInternalComponents().getLifecycleInfo().getActivityInfo("prod");
         assertNotNull(activityInfo);
         assertNotNull(activityInfo.getService());
         assertEquals("azure-devops", activityInfo.getService().getHref());
@@ -153,34 +153,34 @@ public class DPDSParserLifecycleTest {
 
         DataProductVersionDPDS descriptor = result.getDescriptorDocument();
 
-        ActivityInfoDPDS activityInfo = null;
+        LifecycleActivityInfoDPDS activityInfo = null;
         ObjectNode templateDefinitionNode = null;
 
         assertTrue(descriptor != null);
         assertNotNull(descriptor.getInternalComponents());
         assertNotNull(descriptor.getInternalComponents().getLifecycleInfo());
-        assertNotNull(descriptor.getInternalComponents().getLifecycleInfo().getStages());
-        assertEquals(4, descriptor.getInternalComponents().getLifecycleInfo().getStages().size());
+        assertNotNull(descriptor.getInternalComponents().getLifecycleInfo().getActivityInfos());
+        assertEquals(4, descriptor.getInternalComponents().getLifecycleInfo().getActivityInfos().size());
 
-        activityInfo = descriptor.getInternalComponents().getLifecycleInfo().getStages().get("dev");
+        activityInfo = descriptor.getInternalComponents().getLifecycleInfo().getActivityInfo("dev");
         assertNotNull(activityInfo);
         assertNotNull(activityInfo.getService());
         assertEquals(null, activityInfo.getTemplate());
         assertEquals(null, activityInfo.getConfigurations());
 
-        activityInfo = descriptor.getInternalComponents().getLifecycleInfo().getStages().get("qa");
+        activityInfo = descriptor.getInternalComponents().getLifecycleInfo().getActivityInfo("qa");
         assertNotNull(activityInfo);
         assertNotNull(activityInfo.getService());
         assertNotNull(activityInfo.getTemplate());
         assertEquals(null, activityInfo.getConfigurations());
 
-        activityInfo = descriptor.getInternalComponents().getLifecycleInfo().getStages().get("prod");
+        activityInfo = descriptor.getInternalComponents().getLifecycleInfo().getActivityInfo("prod");
         assertNotNull(activityInfo);
         assertNotNull(activityInfo.getService());
         assertNotNull(activityInfo.getTemplate());
         assertNotNull(activityInfo.getConfigurations());
 
-        activityInfo = descriptor.getInternalComponents().getLifecycleInfo().getStages().get("deprecated");
+        activityInfo = descriptor.getInternalComponents().getLifecycleInfo().getActivityInfo("deprecated");
         assertNotNull(activityInfo);
         assertEquals(null, activityInfo.getService());
         assertEquals(null, activityInfo.getTemplate());
@@ -212,17 +212,17 @@ public class DPDSParserLifecycleTest {
 
         DataProductVersionDPDS descriptor = result.getDescriptorDocument();
 
-        ActivityInfoDPDS activityInfo = null;
+        LifecycleActivityInfoDPDS activityInfo = null;
         ObjectNode templateDefinitionNode = null;
 
         assertTrue(descriptor != null);
         assertNotNull(descriptor.getInternalComponents());
         assertNotNull(descriptor.getInternalComponents().getLifecycleInfo());
-        assertNotNull(descriptor.getInternalComponents().getLifecycleInfo().getStages());
-        assertEquals(4, descriptor.getInternalComponents().getLifecycleInfo().getStages().size());
+        assertNotNull(descriptor.getInternalComponents().getLifecycleInfo().getActivityInfos());
+        assertEquals(4, descriptor.getInternalComponents().getLifecycleInfo().getActivityInfos().size());
 
         //DEV
-        activityInfo = descriptor.getInternalComponents().getLifecycleInfo().getStages().get("dev");
+        activityInfo = descriptor.getInternalComponents().getLifecycleInfo().getActivityInfo("dev");
         assertNotNull(activityInfo);
         assertNotNull(activityInfo.getTemplate());
         assertEquals("spec", activityInfo.getTemplate().getSpecification());
@@ -243,7 +243,7 @@ public class DPDSParserLifecycleTest {
         assertEquals("1.0.0", templateDefinitionNode.get("version").asText());
 
         // QA
-        activityInfo = descriptor.getInternalComponents().getLifecycleInfo().getStages().get("qa");
+        activityInfo = descriptor.getInternalComponents().getLifecycleInfo().getActivityInfo("qa");
         assertNotNull(activityInfo);
         assertNotNull(activityInfo.getTemplate());
         assertNotNull(activityInfo.getTemplate());
@@ -265,7 +265,7 @@ public class DPDSParserLifecycleTest {
         assertEquals("1.0.0", templateDefinitionNode.get("version").asText());
 
         // PROD
-        activityInfo = descriptor.getInternalComponents().getLifecycleInfo().getStages().get("prod");
+        activityInfo = descriptor.getInternalComponents().getLifecycleInfo().getActivityInfo("prod");
         assertNotNull(activityInfo);
         assertNotNull(activityInfo.getTemplate());
         assertNotNull(activityInfo.getTemplate());
@@ -287,7 +287,7 @@ public class DPDSParserLifecycleTest {
         assertEquals("1.0.0", templateDefinitionNode.get("version").asText());
 
         // DEPRECATED
-        activityInfo = descriptor.getInternalComponents().getLifecycleInfo().getStages().get("deprecated");
+        activityInfo = descriptor.getInternalComponents().getLifecycleInfo().getActivityInfo("deprecated");
         assertNotNull(activityInfo);
         assertEquals(null, activityInfo.getService());
         assertEquals(null, activityInfo.getTemplate());
@@ -318,17 +318,17 @@ public class DPDSParserLifecycleTest {
 
         DataProductVersionDPDS descriptor = result.getDescriptorDocument();
 
-        ActivityInfoDPDS activityInfo = null;
+        LifecycleActivityInfoDPDS activityInfo = null;
         ObjectNode templateDefinitionNode = null;
 
         assertTrue(descriptor != null);
         assertNotNull(descriptor.getInternalComponents());
         assertNotNull(descriptor.getInternalComponents().getLifecycleInfo());
-        assertNotNull(descriptor.getInternalComponents().getLifecycleInfo().getStages());
-        assertEquals(4, descriptor.getInternalComponents().getLifecycleInfo().getStages().size());
+        assertNotNull(descriptor.getInternalComponents().getLifecycleInfo().getActivityInfos());
+        assertEquals(4, descriptor.getInternalComponents().getLifecycleInfo().getActivityInfos().size());
 
         //DEV
-        activityInfo = descriptor.getInternalComponents().getLifecycleInfo().getStages().get("dev");
+        activityInfo = descriptor.getInternalComponents().getLifecycleInfo().getActivityInfo("dev");
         assertNotNull(activityInfo);
         assertNotNull(activityInfo.getTemplate());
         assertEquals("spec", activityInfo.getTemplate().getSpecification());
@@ -349,7 +349,7 @@ public class DPDSParserLifecycleTest {
         assertEquals("1.0.0", templateDefinitionNode.get("version").asText());
 
         // QA
-        activityInfo = descriptor.getInternalComponents().getLifecycleInfo().getStages().get("qa");
+        activityInfo = descriptor.getInternalComponents().getLifecycleInfo().getActivityInfo("qa");
         assertNotNull(activityInfo);
         assertNotNull(activityInfo.getTemplate());
         assertNotNull(activityInfo.getTemplate());
@@ -371,7 +371,7 @@ public class DPDSParserLifecycleTest {
         assertEquals("1.0.0", templateDefinitionNode.get("version").asText());
 
         // PROD
-        activityInfo = descriptor.getInternalComponents().getLifecycleInfo().getStages().get("prod");
+        activityInfo = descriptor.getInternalComponents().getLifecycleInfo().getActivityInfo("prod");
         assertNotNull(activityInfo);
         assertNotNull(activityInfo.getTemplate());
         assertNotNull(activityInfo.getTemplate());
@@ -394,7 +394,7 @@ public class DPDSParserLifecycleTest {
 
 
 
-        activityInfo = descriptor.getInternalComponents().getLifecycleInfo().getStages().get("deprecated");
+        activityInfo = descriptor.getInternalComponents().getLifecycleInfo().getActivityInfo("deprecated");
         assertNotNull(activityInfo);
         assertEquals(null, activityInfo.getService());
         assertEquals(null, activityInfo.getTemplate());

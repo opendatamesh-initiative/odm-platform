@@ -1,25 +1,32 @@
 package org.opendatamesh.platform.core.dpds.model;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class LifecycleInfoDPDS {
-    Map<String, ActivityInfoDPDS> stages;
-
-    @JsonIgnore
-    protected String rawContent;
+    private List<LifecycleActivityInfoDPDS> activityInfos;
 
     public LifecycleInfoDPDS() {
-        stages = new HashMap<String, ActivityInfoDPDS>();
+        activityInfos = new ArrayList<LifecycleActivityInfoDPDS>();
+    }   
+
+    @JsonIgnore
+    public LifecycleActivityInfoDPDS getActivityInfo(String stageName) {
+        Objects.requireNonNull(stageName, "Parameter stageName cannot be null");
+        for(LifecycleActivityInfoDPDS activity: activityInfos) {
+            if(stageName.equals(activity.getStageName())) {
+                return activity;
+            }
+        }
+        return null;
     }
+
 }

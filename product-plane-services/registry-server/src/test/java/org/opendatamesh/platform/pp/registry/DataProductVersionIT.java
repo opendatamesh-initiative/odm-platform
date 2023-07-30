@@ -19,14 +19,12 @@ import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardE
 import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.system.SystemProperties;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.annotation.DirtiesContext.MethodMode;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.DisabledIf;
 import org.springframework.test.context.junit.jupiter.EnabledIf;
 
 import java.io.IOException;
@@ -358,17 +356,6 @@ public class DataProductVersionIT extends OpenDataMeshIT {
             assertThat(apiDefinitionObject.get("$ref")).isNotNull();
             assertThat(apiDefinitionObject.get("$ref").asText())
                     .matches(Pattern.compile("http://localhost:\\d*/api/v1/pp/definitions/\\d*"));
-
-            /*
-             * ResponseEntity<String> getApiDefinitionResponse = rest.getForEntity(
-             * apiDefinitionObject.get("$ref").asText(), String.class
-             * );
-             * assertThat(getApiDefinitionResponse.getStatusCode())
-             * .isEqualByComparingTo(HttpStatus.OK);
-             * assertThat(getApiDefinitionResponse.getBody())
-             * .isNotNull();
-             */
-
         }
 
         JsonNode outputPorts = interfaceComponentsObject.path("outputPorts");
@@ -394,6 +381,21 @@ public class DataProductVersionIT extends OpenDataMeshIT {
         // test internal components
         JsonNode internalComponentsObject = rootEntity.path("internalComponents");
         assertThat(internalComponentsObject).isNotNull();
+       
+
+        // test lifecycleInfo
+        JsonNode lifecycleInfoObject = internalComponentsObject.path("lifecycleInfo");
+        assertThat(lifecycleInfoObject).isNotNull();
+        ObjectNode stage = null, template = null;
+        stage = (ObjectNode)lifecycleInfoObject.get("dev");
+        assertThat(stage).isNotNull();
+        template = (ObjectNode)stage.get("template");
+        assertThat(template).isNotNull();
+
+        stage = (ObjectNode)lifecycleInfoObject.get("prod");
+        assertThat(stage).isNotNull();
+        template = (ObjectNode)stage.get("template");
+        assertThat(template).isNotNull();
 
         // test application components
         JsonNode appComponents = internalComponentsObject.path("applicationComponents");
@@ -409,7 +411,7 @@ public class DataProductVersionIT extends OpenDataMeshIT {
                     .isEqualTo("custom-prop-value");
         }
 
-        // test application components
+        // test infra components
         JsonNode infraComponents = internalComponentsObject.path("infrastructuralComponents");
         assertThat(infraComponents).isNotNull();
         assertThat(infraComponents.isArray()).isTrue();

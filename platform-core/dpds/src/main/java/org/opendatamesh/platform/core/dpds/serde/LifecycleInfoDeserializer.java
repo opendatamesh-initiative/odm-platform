@@ -6,10 +6,10 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
-import org.opendatamesh.platform.core.dpds.model.ActivityInfoDPDS;
+import org.opendatamesh.platform.core.dpds.model.LifecycleActivityInfoDPDS;
+import org.opendatamesh.platform.core.dpds.model.LifecycleInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.BuildInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.ExternalResourceDPDS;
-import org.opendatamesh.platform.core.dpds.model.LifecycleInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.StandardDefinitionDPDS;
 
 import java.io.IOException;
@@ -31,7 +31,7 @@ public class LifecycleInfoDeserializer extends StdDeserializer<LifecycleInfoDPDS
     public LifecycleInfoDPDS deserialize(JsonParser jp, DeserializationContext ctxt)
             throws IOException, JsonProcessingException {
 
-        LifecycleInfoDPDS infoResource = new LifecycleInfoDPDS();
+        LifecycleInfoDPDS lifecycleInfo = new LifecycleInfoDPDS();
 
         JsonNode node = jp.getCodec().readTree(jp);
 
@@ -45,11 +45,12 @@ public class LifecycleInfoDeserializer extends StdDeserializer<LifecycleInfoDPDS
             jp2 = node.get(stageName).traverse();
             jp2.setCodec(jp.getCodec());
             jp2.nextToken();
-            ActivityInfoDPDS activityInfo = null;
-            activityInfo = ctxt.readValue(jp2, ActivityInfoDPDS.class);
-            infoResource.getStages().put(stageName, activityInfo);
+            LifecycleActivityInfoDPDS activityInfo = null;
+            activityInfo = ctxt.readValue(jp2, LifecycleActivityInfoDPDS.class);
+            activityInfo.setStageName(stageName);
+            lifecycleInfo.getActivityInfos().add(activityInfo);
         }
 
-        return infoResource;
+        return lifecycleInfo;
     }
 }

@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
 import org.opendatamesh.platform.core.dpds.exceptions.UnresolvableReferenceException;
-import org.opendatamesh.platform.core.dpds.model.ActivityInfoDPDS;
+import org.opendatamesh.platform.core.dpds.model.LifecycleActivityInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.ComponentDPDS;
 import org.opendatamesh.platform.core.dpds.model.ComponentsDPDS;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
@@ -91,12 +91,10 @@ public class InternalReferencesProcessor implements PropertiesProcessor{
     private void resolveInternalReferences(LifecycleInfoDPDS lifecycleInfo, ComponentsDPDS componentsObject) throws UnresolvableReferenceException {
         Objects.requireNonNull(lifecycleInfo, "Parameter [lifecycleInfo] cannot be null");
         
-        Set<String> stageNames = lifecycleInfo.getStages().keySet();
-        for(String stageName : stageNames) {
-            ActivityInfoDPDS activityInfo = lifecycleInfo.getStages().get(stageName);
-
-            if(activityInfo.getTemplate() == null) continue; // Nothings to do
-            DefinitionReferenceDPDS templateDefinition = activityInfo.getTemplate().getDefinition();
+        for(LifecycleActivityInfoDPDS activity : lifecycleInfo.getActivityInfos()) {
+            
+            if(activity.getTemplate() == null) continue; // Nothings to do
+            DefinitionReferenceDPDS templateDefinition = activity.getTemplate().getDefinition();
             String ref = templateDefinition!=null? templateDefinition.getRef(): null; 
             if (ref != null && ref.trim().startsWith("#")) {
 
@@ -115,15 +113,15 @@ public class InternalReferencesProcessor implements PropertiesProcessor{
                     resolvedTemplateDefinition.setMediaType("application/json");
                     resolvedTemplateDefinition.setOriginalRef(ref);
                     resolvedTemplateDefinition.setRawContent(ObjectMapperFactory.JSON_MAPPER.writeValueAsString(resolvedTemplateDefinitionNode));
-                    activityInfo.getTemplate().setDefinition(resolvedTemplateDefinition);
+                    activity.getTemplate().setDefinition(resolvedTemplateDefinition);
 
-                    ObjectNode lifecycelNode = (ObjectNode)ObjectMapperFactory.JSON_MAPPER.readTree(lifecycleInfo.getRawContent());
-                    ObjectNode templateNode =  (ObjectNode)lifecycelNode.at("/" + stageName + "/template");
+                    ObjectNode activityNode = (ObjectNode)ObjectMapperFactory.JSON_MAPPER.readTree(activity.getRawContent());
+                    ObjectNode templateNode =  (ObjectNode)activityNode.at("/template");
                     if(!templateNode.isMissingNode()) {
                         resolvedTemplateDefinitionNode.put("mediaType", resolvedTemplateDefinition.getMediaType());
                         resolvedTemplateDefinitionNode.put("$originalRef", resolvedTemplateDefinition.getOriginalRef());
                         templateNode.set("definition", resolvedTemplateDefinitionNode);
-                        lifecycleInfo.setRawContent(ObjectMapperFactory.JSON_MAPPER.writeValueAsString(lifecycelNode));
+                        activity.setRawContent(ObjectMapperFactory.JSON_MAPPER.writeValueAsString(activityNode));
                     }
                 } catch (Exception e) {
                     throw new UnresolvableReferenceException("Impossible to parse lifecycle raw content while resolving internal reference [" + ref + "]", e);

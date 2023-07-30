@@ -17,10 +17,9 @@ import java.util.Set;
 @Data
 public class DataProductVersionSerializer {
 
-   public DataProductVersionSerializer() {
+    public DataProductVersionSerializer() {
 
-   }
-   
+    }
 
     public String serialize(
             DataProductVersionDPDS dataProductVersionRes,
@@ -86,13 +85,13 @@ public class DataProductVersionSerializer {
             resultRootNode.set("dataProductDescriptor", rootNode.get("dataProductDescriptor"));
             resultRootNode.set("info", rootNode.get("info"));
 
-            if(dataProductVersion.getInterfaceComponents() != null) {
+            if (dataProductVersion.getInterfaceComponents() != null) {
                 resultRootNode.set("interfaceComponents", getRawContent(dataProductVersion.getInterfaceComponents()));
             }
-            if(dataProductVersion.getInternalComponents() != null) {
+            if (dataProductVersion.getInternalComponents() != null) {
                 resultRootNode.set("internalComponents", getRawContent(dataProductVersion.getInternalComponents()));
             }
-            
+
         }
 
         if (prettyPrint) {
@@ -137,6 +136,7 @@ public class DataProductVersionSerializer {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode internalComponentsNode = mapper.createObjectNode();
 
+        internalComponentsNode.set("lifecycleInfo", resources.getActivityRawContent());
         internalComponentsNode.set("applicationComponents", getRawContent(resources.getApplicationComponents()));
         internalComponentsNode.set("infrastructuralComponents",
                 getRawContent(resources.getInfrastructuralComponents()));
@@ -152,7 +152,8 @@ public class DataProductVersionSerializer {
 
         for (ComponentDPDS component : components) {
             String componentRawContent = component.getRawContent();
-            JsonNode componentNode = ObjectMapperFactory.getRightMapper(componentRawContent).readTree(componentRawContent);
+            JsonNode componentNode = ObjectMapperFactory.getRightMapper(componentRawContent)
+                    .readTree(componentRawContent);
             interfaceComponentsNode.add(componentNode);
         }
 

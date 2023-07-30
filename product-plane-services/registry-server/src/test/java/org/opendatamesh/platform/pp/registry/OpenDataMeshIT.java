@@ -38,7 +38,7 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 @ExtendWith(SpringExtension.class)
 //@ActiveProfiles("dev")
 //@ActiveProfiles("testpostgresql")
-//@ActiveProfiles("testmysql")
+@ActiveProfiles("testmysql")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = { OpenDataMeshApp.class })
 public abstract class OpenDataMeshIT {
 
@@ -92,18 +92,16 @@ public abstract class OpenDataMeshIT {
                     "\"ODMREGISTRY\".\"REL_APIS_TO_SCHEMAS\"",
                     "\"ODMREGISTRY\".\"DEF_APIS\"",
                     "\"ODMREGISTRY\".\"DEF_SCHEMAS\"",
+                    "\"ODMREGISTRY\".\"DPV_ACTIVITY_INFOS\"",
                     "\"ODMREGISTRY\".\"DPV_INFRA_COMPONENT_TAGS\"",
                     "\"ODMREGISTRY\".\"DPV_INFRA_COMPONENTS\"",
                     "\"ODMREGISTRY\".\"DPV_INFRA_COMPONENT_DEPENDENCIES\"",
-                    "\"ODMREGISTRY\".\"DPV_INFRA_PROVISION_INFOS\"",
                     "\"ODMREGISTRY\".\"DPV_INFO_CONTACT_POINTS\"",
                     "\"ODMREGISTRY\".\"DPV_APP_COMPONENT_TAGS\"",
                     "\"ODMREGISTRY\".\"DPV_APP_COMPONENT_DEPENDENCIES\"",
                     "\"ODMREGISTRY\".\"DPV_APP_COMPONENT_SINKS\"",
                     "\"ODMREGISTRY\".\"DPV_APP_COMPONENT_SOURCES\"",
                     "\"ODMREGISTRY\".\"DPV_APP_COMPONENTS\"",
-                    "\"ODMREGISTRY\".\"DPV_APP_COMPONENT_BUILD_INFOS\"",
-                    "\"ODMREGISTRY\".\"DPV_APP_COMPONENT_DEPLOY_INFOS\"",
                     "\"ODMREGISTRY\".\"DP_VERSIONS\"",
                     "\"ODMREGISTRY\".\"DPV_INFO_OWNERS\"",
                     "\"ODMREGISTRY\".\"DPV_SPEC_EXTENSION_POINTS\"",
@@ -124,18 +122,16 @@ public abstract class OpenDataMeshIT {
                     "ODMREGISTRY.REL_APIS_TO_SCHEMAS",
                     "ODMREGISTRY.DEF_APIS",
                     "ODMREGISTRY.DEF_SCHEMAS",
+                    "ODMREGISTRY.DPV_ACTIVITY_INFOS",
                     "ODMREGISTRY.DPV_INFRA_COMPONENT_TAGS",
                     "ODMREGISTRY.DPV_INFRA_COMPONENTS",
                     "ODMREGISTRY.DPV_INFRA_COMPONENT_DEPENDENCIES",
-                    "ODMREGISTRY.DPV_INFRA_PROVISION_INFOS",
                     "ODMREGISTRY.DPV_INFO_CONTACT_POINTS",
                     "ODMREGISTRY.DPV_APP_COMPONENT_TAGS",
                     "ODMREGISTRY.DPV_APP_COMPONENT_DEPENDENCIES",
                     "ODMREGISTRY.DPV_APP_COMPONENT_SINKS",
                     "ODMREGISTRY.DPV_APP_COMPONENT_SOURCES",
                     "ODMREGISTRY.DPV_APP_COMPONENTS",
-                    "ODMREGISTRY.DPV_APP_COMPONENT_BUILD_INFOS",
-                    "ODMREGISTRY.DPV_APP_COMPONENT_DEPLOY_INFOS",
                     "ODMREGISTRY.DP_VERSIONS",
                     "ODMREGISTRY.DPV_INFO_OWNERS",
                     "ODMREGISTRY.DPV_SPEC_EXTENSION_POINTS",

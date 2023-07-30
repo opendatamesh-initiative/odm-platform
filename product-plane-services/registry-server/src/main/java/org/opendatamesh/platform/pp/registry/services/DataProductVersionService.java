@@ -280,16 +280,6 @@ public class DataProductVersionService {
             saveLifecycleInfoTemplates(
                     dataProductVersion.getInternalComponents().getLifecycleInfo());
         }
-        
-        if (dataProductVersion.hasInfrastructuralComponents()) {
-            saveInfrastructuralComponentTemplates(
-                    dataProductVersion.getInternalComponents().getInfrastructuralComponents());
-        }
-
-        if (dataProductVersion.hasApplicationComponents()) {
-            saveApplicationComponentTemplates(
-                dataProductVersion.getInternalComponents().getApplicationComponents());
-        }
     }
 
       private void saveLifecycleInfoTemplates(LifecycleInfo lifecycleInfo)
@@ -299,35 +289,6 @@ public class DataProductVersionService {
             if(activity.getTemplate() != null && activity.getTemplate().getDefinition() != null) {
                 TemplateDefinition templateDefinition = saveActivityTemplate(activity);
                 activity.setTemplateId(templateDefinition.getId());
-            }
-        }
-    }
-
-  
-
-    private void saveInfrastructuralComponentTemplates(List<InfrastructuralComponent> components)
-            throws JsonProcessingException {
-    
-        for (InfrastructuralComponent component : components) {
-            if(component.hasProvisionInfoTemplateDefinition()) {
-                TemplateDefinition templateDefinition = saveComponentTemplate(component, "provisionInfo", component.getProvisionInfo().getTemplate());
-                component.getProvisionInfo().setTemplateId(templateDefinition.getId());
-            }
-        }
-    }
-
-    private void saveApplicationComponentTemplates(List<ApplicationComponent> components)
-            throws JsonProcessingException {
-        
-        for (ApplicationComponent component : components) {
-            if(component.hasBuildInfoTemplateDefinition()) {
-                TemplateDefinition templateDefinition = saveComponentTemplate(component, "buildInfo", component.getBuildInfo().getTemplate());
-                component.getBuildInfo().setTemplateId(templateDefinition.getId());
-            }
-
-            if(component.hasDeployInfoTemplateDefinition()) {
-                TemplateDefinition templateDefinition = saveComponentTemplate(component, "deployInfo", component.getDeployInfo().getTemplate());
-                component.getDeployInfo().setTemplateId(templateDefinition.getId());
             }
         }
     }

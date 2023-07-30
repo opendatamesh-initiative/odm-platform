@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
 import org.opendatamesh.platform.core.dpds.model.LifecycleActivityInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.LifecycleInfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.BuildInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.ExternalResourceDPDS;
 import org.opendatamesh.platform.core.dpds.model.StandardDefinitionDPDS;
 

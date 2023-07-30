@@ -19,12 +19,6 @@ public class ApplicationComponentDPDS extends ComponentDPDS implements Cloneable
     @JsonProperty("applicationType")
     private String applicationType;
 
-    @JsonProperty("buildInfo")
-    private BuildInfoDPDS buildInfo;
-
-    @JsonProperty("deployInfo")
-    private DeployInfoDPDS deployInfo;
-
     @JsonProperty("consumesFrom")
     private List<String> consumesFrom = new ArrayList<String>();
     @JsonProperty("providesTo")
@@ -38,12 +32,4 @@ public class ApplicationComponentDPDS extends ComponentDPDS implements Cloneable
     
     @JsonProperty("externalDocs")
     private ExternalResourceDPDS externalDocs;
-
-    public ApplicationComponentDPDS() {
-        
-    }
-    public ApplicationComponentDPDS(BuildInfoDPDS buildInfo, DeployInfoDPDS deploymentInfo) {
-        this.buildInfo = buildInfo;
-        this.deployInfo = deploymentInfo;
-    }
 }

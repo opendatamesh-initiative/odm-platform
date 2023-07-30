@@ -5,15 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import org.opendatamesh.platform.core.dpds.model.LifecycleActivityInfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.BuildInfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.DeployInfoDPDS;
+
 import org.opendatamesh.platform.core.dpds.model.LifecycleInfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.ProvisionInfoDPDS;
 import org.opendatamesh.platform.core.dpds.serde.ActivityInfoDeserializer;
-import org.opendatamesh.platform.core.dpds.serde.BuildInfoDeserializer;
-import org.opendatamesh.platform.core.dpds.serde.DeployInfoDeserializer;
+
 import org.opendatamesh.platform.core.dpds.serde.LifecycleInfoDeserializer;
-import org.opendatamesh.platform.core.dpds.serde.ProvisionInfoDeserializer;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -27,9 +24,7 @@ public class MappersConfiguration {
         SimpleModule module = new SimpleModule();
         module.addDeserializer(LifecycleActivityInfoDPDS.class, new ActivityInfoDeserializer());
         module.addDeserializer(LifecycleInfoDPDS.class, new LifecycleInfoDeserializer());
-        module.addDeserializer(ProvisionInfoDPDS.class, new ProvisionInfoDeserializer());
-        module.addDeserializer(BuildInfoDPDS.class, new BuildInfoDeserializer());
-        module.addDeserializer(DeployInfoDPDS.class, new DeployInfoDeserializer());
+       
 
         objectMapper.registerModule(module);
 

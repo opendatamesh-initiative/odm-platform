@@ -8,13 +8,8 @@ import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
 import org.opendatamesh.platform.core.dpds.exceptions.UnresolvableReferenceException;
 import org.opendatamesh.platform.core.dpds.model.*;
 import org.opendatamesh.platform.core.dpds.parser.ParseContext;
-import org.opendatamesh.platform.core.dpds.parser.location.UriUtils;
 
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Set;
-import java.util.Map.Entry;
 
 public class TemplateDefinitionsProcessor {
 
@@ -34,8 +29,7 @@ public class TemplateDefinitionsProcessor {
         }
 
         resolveTemplateObjectsInLifecycle();
-        resolveTemplateObjectsInApp();
-        processTemplateDefinitionsInInfra();
+
     }
 
     private void resolveTemplateObjectsInLifecycle() throws UnresolvableReferenceException, ParseException {
@@ -73,122 +67,6 @@ public class TemplateDefinitionsProcessor {
 
         }
 
-    }
-
-    private void resolveTemplateObjectsInApp() throws UnresolvableReferenceException, ParseException {
-
-        if (context.getResult().getDescriptorDocument().getInternalComponents() == null)
-            return;
-
-        List<ApplicationComponentDPDS> applicationComponents = context.getResult().getDescriptorDocument()
-                .getInternalComponents()
-                .getApplicationComponents();
-        for (ApplicationComponentDPDS applicationComponent : applicationComponents) {
-
-            ObjectNode applicationNode = null;
-            try {
-                applicationNode = (ObjectNode) mapper.readTree(applicationComponent.getRawContent());
-            } catch (JsonProcessingException e) {
-                throw new ParseException("Impossible to parse descriptor raw cantent", e);
-            }
-
-            ObjectNode serviceInfoNode = null;
-            ObjectNode templateNode = null;
-            StandardDefinitionDPDS template = null;
-
-            URI baseUri = null;
-            if (applicationComponent.getOriginalRef() != null) {
-                try {
-                    baseUri = UriUtils.getBaseUri(new URI(applicationComponent.getOriginalRef()));
-                } catch (URISyntaxException e) {
-                    new UnresolvableReferenceException(
-                            "Impossible to resolve baseUri [" + applicationComponent.getOriginalRef() + "]", e);
-                }
-            }
-
-            serviceInfoNode = (ObjectNode) applicationNode.get("buildInfo");
-            if (serviceInfoNode != null && serviceInfoNode.get("template") != null) {
-
-                template = applicationComponent.getBuildInfo().getTemplate();
-                templateNode = (ObjectNode) serviceInfoNode.get("template");
-
-                templateNode = resolveTemplateDefinition(baseUri, template.getDefinition(), templateNode);
-                serviceInfoNode.set("template", templateNode);
-            }
-
-            serviceInfoNode = (ObjectNode) applicationNode.get("deployInfo");
-            if (serviceInfoNode != null && serviceInfoNode.get("template") != null) {
-
-                template = applicationComponent.getDeployInfo().getTemplate();
-                templateNode = (ObjectNode) serviceInfoNode.get("template");
-
-                templateNode = resolveTemplateDefinition(baseUri, template.getDefinition(), templateNode);
-                serviceInfoNode.set("template", templateNode);
-            }
-
-            try {
-                String rawContent = mapper.writeValueAsString(applicationNode);
-                applicationComponent.setRawContent(rawContent);
-            } catch (JsonProcessingException e) {
-                throw new ParseException("Impossible serialize descriptor", e);
-            }
-        }
-    }
-
-    private void processTemplateDefinitionsInInfra() throws UnresolvableReferenceException, ParseException {
-
-        if (context.getResult().getDescriptorDocument().getInternalComponents() == null)
-            return;
-
-        List<InfrastructuralComponentDPDS> infraComponents = context.getResult().getDescriptorDocument()
-                .getInternalComponents()
-                .getInfrastructuralComponents();
-
-        if (infraComponents == null || infraComponents.isEmpty()) {
-            return;
-        }
-
-        for (InfrastructuralComponentDPDS infraComponent : infraComponents) {
-
-            ObjectNode infraNode = null;
-            try {
-                infraNode = (ObjectNode) mapper.readTree(infraComponent.getRawContent());
-            } catch (JsonProcessingException e) {
-                throw new ParseException("Impossible to parse raw content of infrastructural component ["
-                        + infraComponent.getFullyQualifiedName() + "]", e);
-            }
-
-            ObjectNode serviceInfoNode = null;
-            ObjectNode templateNode = null;
-            StandardDefinitionDPDS template = null;
-
-            URI baseUri = null;
-            if (infraComponent.getOriginalRef() != null) {
-                try {
-                    baseUri = UriUtils.getBaseUri(new URI(infraComponent.getOriginalRef()));
-                } catch (URISyntaxException e) {
-                    new UnresolvableReferenceException(
-                            "Impossible to resolve baseUri [" + infraComponent.getOriginalRef() + "]", e);
-                }
-            }
-
-            serviceInfoNode = (ObjectNode) infraNode.get("provisionInfo");
-            if (serviceInfoNode != null && serviceInfoNode.get("template") != null) {
-
-                template = infraComponent.getProvisionInfo().getTemplate();
-                templateNode = (ObjectNode) serviceInfoNode.get("template");
-
-                templateNode = resolveTemplateDefinition(baseUri, template.getDefinition(), templateNode);
-                serviceInfoNode.set("template", templateNode);
-            }
-
-            try {
-                String rawContent = mapper.writeValueAsString(infraNode);
-                infraComponent.setRawContent(rawContent);
-            } catch (JsonProcessingException e) {
-                throw new ParseException("Impossible serialize descriptor", e);
-            }
-        }
     }
 
     private ObjectNode resolveTemplateDefinition(

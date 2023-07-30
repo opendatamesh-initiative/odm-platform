@@ -98,18 +98,15 @@ public class DPDSParserTest {
         assertTrue(descriptor.getInternalComponents() != null);
         assertTrue(descriptor.getInternalComponents().getInfrastructuralComponents() != null);
 
-
-
         List<ApplicationComponentDPDS> appComponents = descriptor.getInternalComponents().getApplicationComponents();
         assertTrue(appComponents.size() == 1);
         ApplicationComponentDPDS appComponent = appComponents.get(0);
-        assertTrue(appComponent.getBuildInfo() != null);
-        assertTrue(appComponent.getDeployInfo() != null);
+        // TODO
 
         List<InfrastructuralComponentDPDS> infraComponents = descriptor.getInternalComponents().getInfrastructuralComponents();
         assertTrue(infraComponents.size() == 1);
         InfrastructuralComponentDPDS infraComponent = infraComponents.get(0);
-        assertTrue(infraComponent.getProvisionInfo() != null);
+        // TODO
 
     }
 }

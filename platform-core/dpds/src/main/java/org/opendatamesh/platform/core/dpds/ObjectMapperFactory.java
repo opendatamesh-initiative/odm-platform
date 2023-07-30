@@ -11,15 +11,10 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import org.opendatamesh.platform.core.dpds.model.LifecycleActivityInfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.BuildInfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.DeployInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.LifecycleInfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.ProvisionInfoDPDS;
 import org.opendatamesh.platform.core.dpds.serde.ActivityInfoDeserializer;
-import org.opendatamesh.platform.core.dpds.serde.BuildInfoDeserializer;
-import org.opendatamesh.platform.core.dpds.serde.DeployInfoDeserializer;
+
 import org.opendatamesh.platform.core.dpds.serde.LifecycleInfoDeserializer;
-import org.opendatamesh.platform.core.dpds.serde.ProvisionInfoDeserializer;
 
 public class ObjectMapperFactory {
 
@@ -57,9 +52,6 @@ public class ObjectMapperFactory {
         SimpleModule module = new SimpleModule();
         module.addDeserializer(LifecycleActivityInfoDPDS.class, new ActivityInfoDeserializer());
         module.addDeserializer(LifecycleInfoDPDS.class, new LifecycleInfoDeserializer());
-        module.addDeserializer(ProvisionInfoDPDS.class, new ProvisionInfoDeserializer());
-        module.addDeserializer(BuildInfoDPDS.class, new BuildInfoDeserializer());
-        module.addDeserializer(DeployInfoDPDS.class, new DeployInfoDeserializer());
 
         mapper.registerModule(module);
 

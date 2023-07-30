@@ -3,7 +3,6 @@ package org.opendatamesh.platform.pp.devops.server.database.entities;
 
 import lombok.Data;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatus;
-import org.opendatamesh.platform.pp.devops.api.resources.ActivityType;
 
 import java.util.Date;
 
@@ -15,7 +14,7 @@ public class Activity {
 
     private String dataProductVersion;
 
-    ActivityType type;
+    String type;
 
     ActivityStatus status;
 

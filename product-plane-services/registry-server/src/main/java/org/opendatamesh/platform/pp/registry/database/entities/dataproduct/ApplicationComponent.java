@@ -26,14 +26,6 @@ public class ApplicationComponent extends Component implements Cloneable {
 
     @Column(name = "APPLICATION_TYPE")
     private String applicationType;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "BUILD_INFO_ID", referencedColumnName = "ID")
-    private BuildInfo buildInfo;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "DEPLOY_INFO_ID", referencedColumnName = "ID")
-    private DeployInfo deployInfo;
                                        
     @ElementCollection(fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SUBSELECT)
@@ -66,21 +58,6 @@ public class ApplicationComponent extends Component implements Cloneable {
     
     private static final Logger logger = LoggerFactory.getLogger(ApplicationComponent.class);
 
-    public boolean hasBuildInfo() {
-        return buildInfo != null;
-    }
-
-    public boolean hasBuildInfoTemplateDefinition() {
-        return hasBuildInfo() && buildInfo.hasTemplateDefinition();
-    }
-
-    public boolean hasDeploydInfo() {
-        return deployInfo != null;
-    }
-
-    public boolean hasDeployInfoTemplateDefinition() {
-        return hasDeploydInfo() && deployInfo.hasTemplateDefinition();
-    }
    
     @PrePersist
     protected void onCreate() {

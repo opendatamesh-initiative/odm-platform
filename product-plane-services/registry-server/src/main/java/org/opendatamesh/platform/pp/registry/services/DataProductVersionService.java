@@ -129,7 +129,9 @@ public class DataProductVersionService {
         } catch (Throwable t) {
             throw new BadGatewayException(
                     OpenDataMeshAPIStandardError.SC502_05_META_SERVICE_ERROR,
-                    "Impossible to upload data product version to metaService", t);
+                    "Impossible to upload data product version to metaService: " + t.getMessage()
+                    , t
+            );
         }
 
         return dataProductVersion;
@@ -514,7 +516,8 @@ public class DataProductVersionService {
             throw new InternalServerException(
                     OpenDataMeshAPIStandardError.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while deleting data product version",
-                    t);
+                    t
+            );
         }
 
         try {
@@ -528,7 +531,9 @@ public class DataProductVersionService {
         } catch (Throwable t) {
             throw new BadGatewayException(
                     OpenDataMeshAPIStandardError.SC502_05_META_SERVICE_ERROR,
-                    "Impossible to upload data product version to metaService", t);
+                    "Impossible to upload data product version to metaService: " + t.getMessage(),
+                    t
+            );
         }
 
     }
@@ -546,8 +551,9 @@ public class DataProductVersionService {
         } catch (Throwable t) {
             throw new BadGatewayException(
                     OpenDataMeshAPIStandardError.SC502_01_POLICY_SERVICE_ERROR,
-                    "An error occured while invoking policy service to validate data product version ",
-                    t);
+                    "An error occured while invoking policy service to validate data product version: " + t.getMessage(),
+                    t
+            );
         }
 
         return isValid;

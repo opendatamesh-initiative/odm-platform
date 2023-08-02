@@ -14,7 +14,6 @@ public class MetaServiceObserver implements Observer {
     private MetaServiceProxy metaServiceProxy;
 
     public MetaServiceObserver() {
-        //this.metaServiceProxy = new MetaServiceProxy();
     }
 
     @Override

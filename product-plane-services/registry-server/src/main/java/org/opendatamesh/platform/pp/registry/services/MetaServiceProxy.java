@@ -3,6 +3,7 @@ package org.opendatamesh.platform.pp.registry.services;
 import org.opendatamesh.platform.pp.registry.exceptions.BadGatewayException;
 import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.up.notification.api.clients.MetaServiceClient;
+import org.opendatamesh.platform.up.notification.api.resources.ErrorResource;
 import org.opendatamesh.platform.up.notification.api.resources.EventResource;
 import org.opendatamesh.platform.up.notification.api.resources.NotificationResource;
 import org.slf4j.Logger;
@@ -13,9 +14,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class MetaServiceProxy extends MetaServiceClient {
-
-    @Value("${skipmetaservice}")
-    private String skipmetaservice;
 
     private static final Logger logger = LoggerFactory.getLogger(MetaServiceProxy.class);
 
@@ -30,21 +28,23 @@ public class MetaServiceProxy extends MetaServiceClient {
 
         try {
 
-            ResponseEntity<NotificationResource> responseEntity = createNotification(notification);
+            ResponseEntity responseEntity = createNotification(notification);
 
             if(responseEntity.getStatusCode().is2xxSuccessful()){
-                notification = responseEntity.getBody();
+                notification = (NotificationResource) responseEntity.getBody();
                 logger.debug("Successfuly loaded information to Meta service system: " + notification.toString());
             } else {
+                ErrorResource error = (ErrorResource) responseEntity.getBody();
                 throw new BadGatewayException(
                         OpenDataMeshAPIStandardError.SC502_05_META_SERVICE_ERROR,
-                        "An error occurred while comunicating with the metaService");
+                        error.getMessage()
+                );
             }
 
         } catch (Exception e) {
             throw new BadGatewayException(
                     OpenDataMeshAPIStandardError.SC502_05_META_SERVICE_ERROR,
-                    "metaService not reachable"
+                    e.getMessage()
             );
         }
     }

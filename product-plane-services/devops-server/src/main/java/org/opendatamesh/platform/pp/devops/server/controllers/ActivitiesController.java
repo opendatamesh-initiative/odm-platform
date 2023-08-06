@@ -2,6 +2,8 @@ package org.opendatamesh.platform.pp.devops.server.controllers;
 
 import org.opendatamesh.platform.pp.devops.api.controllers.AbstractDevOpsController;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityResource;
+import org.opendatamesh.platform.pp.devops.server.database.entities.Activity;
+import org.opendatamesh.platform.pp.devops.server.database.mappers.ActivityMapper;
 import org.opendatamesh.platform.pp.devops.server.services.ActivityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,43 +16,39 @@ public class ActivitiesController extends AbstractDevOpsController {
     @Autowired
     ActivityService activityService;
 
+    @Autowired
+    ActivityMapper activityMapper;
+
     @Override
-    public ActivityResource createActivity(ActivityResource activity,
-            boolean startAfterCreation) {
-        activityService.createActivity(null, startAfterCreation);
-        throw new UnsupportedOperationException("Unimplemented method 'createActivity'");
+    public ActivityResource createActivity(
+        ActivityResource activityRes,
+        boolean startAfterCreation) 
+    {
+        Activity activity = activityService.createActivity(activityMapper.toEntity(activityRes), startAfterCreation);
+        return activityMapper.toResource(activity);
     }
 
     @Override
     public ActivityResource startActivity(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'startActivity'");
+        Activity activity = activityService.startActivity(id);
+        return activityMapper.toResource(activity);
     }
 
     @Override
-    public ActivityResource stopActivity(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'stopActivity'");
-    }
-
-    @Override
-    public ActivityResource readActivityStatus(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'readActivityStatus'");
+    public String readActivityStatus(Long id) {
+       Activity activity = activityService.readActivity(id);
+       return activity.getStatus().toString();
     }
 
     @Override
     public List<ActivityResource> readActivities() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'readActivities'");
+        List<Activity> activities = activityService.readAllActivities();
+        return activityMapper.toResources(activities);
     }
 
     @Override
-    public List<ActivityResource> readActivitiy(Long id) {
-        // TODO Auto-generated method stub
-        //throw new UnsupportedOperationException("Unimplemented method 'readActivitiy'");
-        activityService.createActivity(null, true);
-        return null;
+    public ActivityResource readActivitiy(Long id) {
+        Activity activity = activityService.readActivity(id);
+        return activityMapper.toResource(activity);
     }
-    
 }

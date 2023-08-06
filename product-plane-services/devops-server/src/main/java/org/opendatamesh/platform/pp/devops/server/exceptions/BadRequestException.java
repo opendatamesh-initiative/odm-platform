@@ -1,5 +1,6 @@
 package org.opendatamesh.platform.pp.devops.server.exceptions;
 
+import org.opendatamesh.platform.pp.devops.api.resources.ODMDevOpsAPIStandardError;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -15,7 +16,7 @@ import org.springframework.http.HttpStatus;
  * EXAMPLE: a request missing some mandatory parameters
  * 
  * @see https://www.rfc-editor.org/rfc/rfc9110.html#name-400-bad-request
- * @see OpenDataMeshAPIStandardError
+ * @see ODMDevOpsAPIStandardError
  * @see OpenDataMeshAPIExceptionHandler
  */
 public class BadRequestException extends OpenDataMeshAPIException {
@@ -24,16 +25,16 @@ public class BadRequestException extends OpenDataMeshAPIException {
 		super();
 	}
 
-	public BadRequestException(OpenDataMeshAPIStandardError error, String message, Throwable cause,
+	public BadRequestException(ODMDevOpsAPIStandardError error, String message, Throwable cause,
 			boolean enableSuppression, boolean writableStackTrace) {
 		super(error, message, cause, enableSuppression, writableStackTrace);
 	}
 
-	public BadRequestException(OpenDataMeshAPIStandardError error, String message, Throwable cause) {
+	public BadRequestException(ODMDevOpsAPIStandardError error, String message, Throwable cause) {
 		super(error, message, cause);
 	}
 
-	public BadRequestException(OpenDataMeshAPIStandardError error, String message) {
+	public BadRequestException(ODMDevOpsAPIStandardError error, String message) {
 		super(error, message);
 	}
 

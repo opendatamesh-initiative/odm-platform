@@ -34,7 +34,7 @@ spring:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQL95Dialect # Or PostgreSQLDialect
         globally_quoted_identifiers: true
-        default_schema: PUBLIC
+        default_schema: ODMDEVOPS
   # DB
   datasource:
     url: jdbc:postgresql://localhost:5432/odmpdb

@@ -10,9 +10,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.ApiToSchemaRelationshipResource;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.SchemaResource;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.ApiToSchemaRelationship;
-import org.opendatamesh.platform.pp.registry.exceptions.BadRequestException;
-import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
-import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
+import org.opendatamesh.platform.pp.registry.api.v1.exceptions.BadRequestException;
+import org.opendatamesh.platform.pp.registry.api.v1.exceptions.OpenDataMeshAPIStandardError;
+import org.opendatamesh.platform.pp.registry.api.v1.resources.ErrorRes;
 import org.opendatamesh.platform.pp.registry.resources.v1.mappers.SchemaMapper;
 import org.opendatamesh.platform.pp.registry.services.SchemaService;
 import org.slf4j.Logger;
@@ -104,14 +104,15 @@ public class SchemaController {
         @Parameter( 
             description = "A schema object", 
             required = true)
-        @Valid @RequestBody(required=false)  org.opendatamesh.platform.pp.registry.database.entities.sharedres.Schema schema
+        @Valid @RequestBody(required=false)  SchemaResource schemaResource
     ) {
-        if(schema == null) {
+        if(schemaResource == null) {
             throw new BadRequestException(
                 OpenDataMeshAPIStandardError.SC400_12_SCHEMA_IS_EMPTY,
                 "Schema cannot be empty");
         }
-        
+
+        org.opendatamesh.platform.pp.registry.database.entities.sharedres.Schema schema = schemaMapper.toEntity(schemaResource);
         schema = schemaService.createSchema(schema);
         return schemaMapper.toResource(schema);
     }

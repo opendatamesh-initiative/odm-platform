@@ -1,8 +1,8 @@
 package org.opendatamesh.platform.pp.registry.services;
 
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataProductVersion;
-import org.opendatamesh.platform.pp.registry.exceptions.BadGatewayException;
-import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
+import org.opendatamesh.platform.pp.registry.api.v1.exceptions.BadGatewayException;
+import org.opendatamesh.platform.pp.registry.api.v1.exceptions.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.resources.v1.policyservice.PolicyName;
 import org.opendatamesh.platform.pp.registry.resources.v1.policyservice.PolicyValidationResponse;
 import org.opendatamesh.platform.pp.registry.resources.v1.policyservice.ValidatedPolicy;

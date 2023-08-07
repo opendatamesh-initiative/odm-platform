@@ -11,7 +11,7 @@ import org.opendatamesh.platform.pp.registry.database.entities.sharedres.ApiToSc
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Schema;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.TemplateDefinition;
 import org.opendatamesh.platform.pp.registry.database.repositories.DataProductVersionRepository;
-import org.opendatamesh.platform.pp.registry.exceptions.*;
+import org.opendatamesh.platform.pp.registry.api.v1.exceptions.*;
 import org.opendatamesh.platform.pp.registry.resources.v1.mappers.DataProductVersionMapper;
 import org.opendatamesh.platform.pp.registry.resources.v1.observers.EventNotifier;
 import org.opendatamesh.platform.pp.registry.resources.v1.policyservice.PolicyName;

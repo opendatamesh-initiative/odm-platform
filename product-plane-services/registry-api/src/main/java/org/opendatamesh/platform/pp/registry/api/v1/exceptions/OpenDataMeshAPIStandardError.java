@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.pp.registry.exceptions;
+package org.opendatamesh.platform.pp.registry.api.v1.exceptions;
 
 public enum OpenDataMeshAPIStandardError {
 

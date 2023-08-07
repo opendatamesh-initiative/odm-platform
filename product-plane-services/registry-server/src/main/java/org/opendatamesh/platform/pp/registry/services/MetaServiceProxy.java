@@ -1,7 +1,7 @@
 package org.opendatamesh.platform.pp.registry.services;
 
-import org.opendatamesh.platform.pp.registry.exceptions.BadGatewayException;
-import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
+import org.opendatamesh.platform.pp.registry.api.v1.exceptions.BadGatewayException;
+import org.opendatamesh.platform.pp.registry.api.v1.exceptions.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.up.notification.api.clients.MetaServiceClient;
 import org.opendatamesh.platform.up.notification.api.resources.ErrorResource;
 import org.opendatamesh.platform.up.notification.api.resources.EventResource;

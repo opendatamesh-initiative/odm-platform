@@ -2,7 +2,7 @@ package org.opendatamesh.platform.pp.registry.services;
 
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.TemplateDefinition;
 import org.opendatamesh.platform.pp.registry.database.repositories.TemplateDefinitionRepository;
-import org.opendatamesh.platform.pp.registry.exceptions.*;
+import org.opendatamesh.platform.pp.registry.api.v1.exceptions.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

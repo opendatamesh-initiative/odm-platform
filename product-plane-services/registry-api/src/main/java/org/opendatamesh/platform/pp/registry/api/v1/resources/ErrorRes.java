@@ -1,7 +1,7 @@
-package org.opendatamesh.platform.pp.registry.resources.v1;
+package org.opendatamesh.platform.pp.registry.api.v1.resources;
 
 import lombok.Data;
-import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
+import org.opendatamesh.platform.pp.registry.api.v1.exceptions.OpenDataMeshAPIStandardError;
 
 import java.util.Date;
 

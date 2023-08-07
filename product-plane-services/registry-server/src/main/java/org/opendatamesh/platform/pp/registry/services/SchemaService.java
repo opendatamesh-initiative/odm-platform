@@ -4,7 +4,7 @@ import org.opendatamesh.platform.pp.registry.database.entities.sharedres.ApiToSc
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.Schema;
 import org.opendatamesh.platform.pp.registry.database.repositories.ApiToSchemaRelationshipRepository;
 import org.opendatamesh.platform.pp.registry.database.repositories.SchemaRepository;
-import org.opendatamesh.platform.pp.registry.exceptions.*;
+import org.opendatamesh.platform.pp.registry.api.v1.exceptions.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

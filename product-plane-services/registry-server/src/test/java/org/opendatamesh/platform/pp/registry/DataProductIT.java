@@ -1,9 +1,10 @@
 package org.opendatamesh.platform.pp.registry;
 
+import org.apache.poi.ss.formula.functions.T;
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductResource;
-import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
-import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
+import org.opendatamesh.platform.pp.registry.api.v1.exceptions.OpenDataMeshAPIStandardError;
+import org.opendatamesh.platform.pp.registry.api.v1.resources.ErrorRes;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
@@ -166,8 +167,13 @@ public class DataProductIT extends OpenDataMeshIT {
     // ----------------------------------------
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    public void testDataProductDelete() {
-        // TODO
+    public void testDataProductDelete() throws IOException {
+
+        DataProductResource dataProductResource = createDataProduct(RESOURCE_DP1);
+
+        ResponseEntity deleteResponse = registryClient.deleteDataProduct(dataProductResource.getId());
+        verifyResponseEntity(deleteResponse, HttpStatus.OK, false);
+
     }
 
     // ======================================================================================
@@ -228,18 +234,6 @@ public class DataProductIT extends OpenDataMeshIT {
                 HttpStatus.UNPROCESSABLE_ENTITY,
                 OpenDataMeshAPIStandardError.SC422_07_PRODUCT_IS_INVALID);
     }
-
-    // ----------------------------------------
-    // UPDATE Data product
-    // ----------------------------------------
-
-    // TODO
-
-    // ----------------------------------------
-    // DELETE Data product
-    // ----------------------------------------
-
-    // TODO
 
 
     // ----------------------------------------

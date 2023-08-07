@@ -13,11 +13,11 @@ import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.parser.location.UriLocation;
 import org.opendatamesh.platform.core.dpds.serde.DataProductVersionSerializer;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataProductVersion;
-import org.opendatamesh.platform.pp.registry.exceptions.BadRequestException;
-import org.opendatamesh.platform.pp.registry.exceptions.InternalServerException;
-import org.opendatamesh.platform.pp.registry.exceptions.NotFoundException;
-import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
-import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
+import org.opendatamesh.platform.pp.registry.api.v1.exceptions.BadRequestException;
+import org.opendatamesh.platform.pp.registry.api.v1.exceptions.InternalServerException;
+import org.opendatamesh.platform.pp.registry.api.v1.exceptions.NotFoundException;
+import org.opendatamesh.platform.pp.registry.api.v1.exceptions.OpenDataMeshAPIStandardError;
+import org.opendatamesh.platform.pp.registry.api.v1.resources.ErrorRes;
 import org.opendatamesh.platform.pp.registry.resources.v1.mappers.DataProductVersionMapper;
 import org.opendatamesh.platform.pp.registry.services.DataProductService;
 import org.opendatamesh.platform.pp.registry.services.DataProductVersionService;
@@ -234,7 +234,7 @@ public class DataProductVersionController
     }
 
     // ----------------------------------------
-    // READ Date product version
+    // READ Data product version
     // ----------------------------------------
 
     @GetMapping(
@@ -327,7 +327,7 @@ public class DataProductVersionController
     }
 
     // ----------------------------------------
-    // DELETE Date product version
+    // DELETE Data product version
     // ----------------------------------------
 
     @DeleteMapping(

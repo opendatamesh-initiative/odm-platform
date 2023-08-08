@@ -143,6 +143,8 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+        <!-- ODM -->
         <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-core-commons</artifactId>

@@ -20,17 +20,17 @@ spring:
             globally_quoted_identifiers: true
             default_schema: ODMPOLICY
    datasource:
-      url: jdbc:postgresql://localhost:5433/mydb
-      username: usr
-      password: pwd
+      url: jdbc:postgresql://localhost:5432/odmpdb #5433:mydb
+      username: postgres #usr
+      password: postgres #pwd
    h2:
       console:
          enabled: false
    flyway:
       #enabled: false # To disable
-      url: jdbc:postgresql://localhost:5433/mydb
-      user: usr
-      password: pwd
+      url: jdbc:postgresql://localhost:5432/odmpdb #5433:mydb
+      user: postgres #usr
+      password: postgres #pwd
       #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
       schemas: ODMPOLICY
       locations: classpath:db/migration/postgresql
@@ -43,7 +43,7 @@ spring:
 # Server configuration
 ##########################
 server:
-   port: 4242
+   port: 9001
    servlet:
       contextPath: /api/v1/planes/utility/policy-services/opa
    error:

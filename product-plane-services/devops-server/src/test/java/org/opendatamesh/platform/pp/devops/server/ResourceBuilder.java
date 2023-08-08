@@ -29,10 +29,10 @@ public class ResourceBuilder {
 
     public ActivityResource buildActivity(
             String dataProductId, String dataProductVersion, String type) throws IOException {
-        return buildDataProduct(null, dataProductId, dataProductVersion, type);
+        return buildActivity(null, dataProductId, dataProductVersion, type);
     }
 
-    public ActivityResource buildDataProduct(Long id,
+    public ActivityResource buildActivity(Long id,
             String dataProductId, String dataProductVersion, String type) throws IOException {
        
         ActivityResource activityRes = null;
@@ -45,18 +45,5 @@ public class ResourceBuilder {
 
         return activityRes;
     }
-
-    public DefinitionResource buildDefinition(String name, String version, String contentMediaType, String content) {
-        DefinitionResource definitionRes;
-
-        definitionRes = new DefinitionResource();
-        definitionRes.setName(name);
-        definitionRes.setVersion(version);
-        definitionRes.setContentMediaType(contentMediaType);
-        definitionRes.setContent(content);
-
-        return definitionRes;
-    }
-
     
 }

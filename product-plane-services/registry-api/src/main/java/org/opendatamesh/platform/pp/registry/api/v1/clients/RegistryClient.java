@@ -1,18 +1,16 @@
 package org.opendatamesh.platform.pp.registry.api.v1.clients;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.opendatamesh.platform.core.commons.clients.ODMClient;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductDescriptorLocationResource;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductResource;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.DefinitionResource;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.SchemaResource;
+import org.opendatamesh.platform.pp.registry.api.v1.resources.*;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -49,20 +47,18 @@ public class RegistryClient extends ODMClient {
                 responseType);
     }
 
-
-   
     public DataProductResource updateDataProduct(Object payload) throws IOException {
         return putDataProduct(payload).getBody();
     }
 
     public ResponseEntity<DataProductResource> putDataProduct(
-        Object payload) throws IOException {
-            return putDataProduct(payload, DataProductResource.class);
+            Object payload) throws IOException {
+        return putDataProduct(payload, DataProductResource.class);
     }
 
     public <T> ResponseEntity<T> putDataProduct(
             Object payload, Class<T> responseType) throws IOException {
-  
+
         return rest.exchange(
                 apiUrl(Routes.DATA_PRODUCTS, "/"),
                 HttpMethod.PUT,
@@ -70,7 +66,6 @@ public class RegistryClient extends ODMClient {
                 responseType);
     }
 
-   
     public DataProductResource[] readAllDataProducts() {
         return getDataProducts().getBody();
     }
@@ -84,8 +79,7 @@ public class RegistryClient extends ODMClient {
                 apiUrl(Routes.DATA_PRODUCTS),
                 responseType);
     }
-    
-    
+
     public DataProductResource findDataProductByFqn(String fqn) {
         return getDataProductByFqn(fqn).getBody();
     }
@@ -101,6 +95,39 @@ public class RegistryClient extends ODMClient {
                 UUID.nameUUIDFromBytes(fqn.getBytes()).toString());
     }
 
+    public ResponseEntity getDataProductById(String id) throws JsonProcessingException {
+
+        ResponseEntity getResponse =  rest.getForEntity(
+                apiUrlOfItem(Routes.DATA_PRODUCTS),
+                Object.class,
+                id
+        );
+
+        return mapResponseEntity(
+                getResponse,
+                HttpStatus.OK,
+                DataProductResource.class
+        );
+
+    }
+
+    public ResponseEntity deleteDataProduct(String id) throws JsonProcessingException {
+
+        ResponseEntity deleteResponse = rest.exchange(
+                apiUrlOfItem(Routes.DATA_PRODUCTS),
+                HttpMethod.DELETE,
+                null,
+                Object.class,
+                id
+        );
+
+        return mapResponseEntity(
+                deleteResponse,
+                HttpStatus.OK,
+                Void.class
+        );
+
+    }
 
 
     // ----------------------------------------
@@ -128,7 +155,7 @@ public class RegistryClient extends ODMClient {
     }
 
 
-    // this endpoint return just an arry of version's numbers
+    // this endpoint return just an array of version's numbers
     public String[] readAllDataProductVersions(String dataProductId) {
         return getDataProductVersions(dataProductId).getBody();
     }
@@ -163,8 +190,8 @@ public class RegistryClient extends ODMClient {
     }
 
     public <T> ResponseEntity<T> getDataProductVersion(
-        String dataProductId, String dataProductVersionNumber, 
-        Class<T> responseType) 
+            String dataProductId, String dataProductVersionNumber,
+            Class<T> responseType)
     {
         return rest.getForEntity(
                 apiUrl(Routes.DATA_PRODUCTS, "/{id}/versions/{number}"),
@@ -174,10 +201,10 @@ public class RegistryClient extends ODMClient {
     }
 
     public <T> ResponseEntity<T> deleteDataProductVersion(
-        String dataProductId, String dataProductVersionNumber,
-        Class<T> responseType) 
+            String dataProductId, String dataProductVersionNumber,
+            Class<T> responseType)
     {
-    
+
         return rest.exchange(
                 apiUrl(Routes.DATA_PRODUCTS, "/{id}/versions/{number}"),
                 HttpMethod.DELETE, null,
@@ -197,10 +224,10 @@ public class RegistryClient extends ODMClient {
         return postUploadResponse;
     }
 
+
     // ----------------------------------------
     // API Definition
     // ----------------------------------------
-
 
     public DefinitionResource createApiDefinition(Object payload) throws IOException {
         return postApiDefinition(payload).getBody();
@@ -214,7 +241,7 @@ public class RegistryClient extends ODMClient {
 
     public <T> ResponseEntity<T> postApiDefinition(
             Object payload, Class<T> responseType) throws IOException {
-       
+
         return rest.postForEntity(
                 apiUrl(Routes.APIS),
                 getHttpEntity(payload),
@@ -304,6 +331,7 @@ public class RegistryClient extends ODMClient {
                 DefinitionResource[].class);
     }
 
+
     // ----------------------------------------
     // Template Definition
     // ----------------------------------------
@@ -320,7 +348,7 @@ public class RegistryClient extends ODMClient {
 
     public <T> ResponseEntity<T> postTemplateDefinition(
             Object payload, Class<T> responseType) throws IOException {
-       
+
         return rest.postForEntity(
                 apiUrl(Routes.TEMPLATES),
                 getHttpEntity(payload),
@@ -348,7 +376,7 @@ public class RegistryClient extends ODMClient {
                 definitionId);
     }
 
-  
+
 
     public <T> ResponseEntity<T> deleteTemplateDefinition(Long definitionId, Class<T> responseType) {
         return rest.exchange(
@@ -416,12 +444,12 @@ public class RegistryClient extends ODMClient {
                 DefinitionResource[].class);
     }
 
+
     // ----------------------------------------
     // Schema
     // ----------------------------------------
 
-
-     public SchemaResource createSchema(Object payload) throws IOException {
+    public SchemaResource createSchema(Object payload) throws IOException {
         return postSchema(payload).getBody();
     }
 
@@ -440,5 +468,119 @@ public class RegistryClient extends ODMClient {
                 responseType);
     }
 
+    public ResponseEntity readSchemas() throws JsonProcessingException {
+
+        ResponseEntity getResponse = rest.getForEntity(
+                apiUrl(Routes.SCHEMAS),
+                Object.class
+        );
+
+        return mapResponseEntity(
+                getResponse,
+                HttpStatus.OK,
+                SchemaResource[].class
+        );
+    }
+
+    public ResponseEntity getSchemaById(Long id) throws JsonProcessingException {
+
+        ResponseEntity getResponse =  rest.getForEntity(
+                apiUrlOfItem(Routes.SCHEMAS),
+                Object.class,
+                id
+        );
+
+        return mapResponseEntity(
+                getResponse,
+                HttpStatus.OK,
+                SchemaResource.class
+        );
+
+    }
+
+    public ResponseEntity getSchemaContentById(Long id) throws JsonProcessingException {
+
+        ResponseEntity getResponse =  rest.getForEntity(
+                apiUrl(Routes.SCHEMAS, "/{id}/raw"),
+                Object.class,
+                id
+        );
+
+        return mapResponseEntity(
+                getResponse,
+                HttpStatus.OK,
+                String.class
+        );
+
+    }
+
+    public ResponseEntity getSchemaApiRelationshipById(Long id) throws JsonProcessingException {
+
+        ResponseEntity getResponse =  rest.getForEntity(
+                apiUrl(Routes.SCHEMAS, "/{id}/apis"),
+                Object.class,
+                id
+        );
+
+        return mapResponseEntity(
+                getResponse,
+                HttpStatus.OK,
+                ApiToSchemaRelationshipResource[].class
+        );
+
+    }
+
+    public ResponseEntity deleteSchema(Long id) throws JsonProcessingException {
+
+        ResponseEntity deleteResponse = rest.exchange(
+                apiUrlOfItem(Routes.SCHEMAS),
+                HttpMethod.DELETE,
+                null,
+                Object.class,
+                id
+        );
+
+        return mapResponseEntity(
+                deleteResponse,
+                HttpStatus.OK,
+                Void.class
+        );
+
+    }
+
+
+    // ----------------------------------------
+    // Data Product Components
+    // ----------------------------------------
+
+    public ResponseEntity getDataProductPorts(String dataProductId, String versionId) throws JsonProcessingException {
+
+        ResponseEntity getResponse = rest.getForEntity(
+                apiUrl(Routes.DATA_PRODUCTS, "/{id}/versions/{version}/ports"),
+                Object.class,
+                dataProductId,
+                versionId
+        );
+
+        return mapResponseEntity(
+                getResponse,
+                HttpStatus.OK,
+                String.class
+        );
+
+    }
+
+
+    // ----------------------------------------
+    // Utils
+    // ----------------------------------------
+
+    protected ResponseEntity mapResponseEntity(
+            ResponseEntity response,
+            HttpStatus acceptedStatusCode,
+            Class acceptedClass
+    ) throws JsonProcessingException {
+        return mapResponseEntity(response, List.of(acceptedStatusCode), acceptedClass, ErrorRes.class);
+    }
 
 }

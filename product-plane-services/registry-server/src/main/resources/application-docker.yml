@@ -31,7 +31,7 @@ spring:
           lob:
             non_contextual_creation: true
         globally_quoted_identifiers: true
-        default_schema: PUBLIC
+        default_schema: ODMREGISTRY
   # DB
   datasource:
     url: ${DATABASE_URL}?allowPublicKeyRetrieval=true&useSSL=false
@@ -62,5 +62,5 @@ spring:
 skippolicyservice: ${SKIP_POLICYSERVICE}
 skipmetaservice: ${SKIP_METASERVICE}
 
-policyserviceaddress: http://${POLICYSERVICE_HOSTNAME}:${POLICYSERVICE_PORT}  #172.17.0.1:4242
+policyserviceaddress: http://${POLICYSERVICE_HOSTNAME}:${POLICYSERVICE_PORT}  #172.17.0.1:9001
 metaserviceaddress: http://${METASERVICE_HOSTNAME}:${METASERVICE_PORT}

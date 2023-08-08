@@ -5,7 +5,7 @@ app:
   workdir:
 
 server:
-  port: 8585
+  port: 8001
   error:
     include-message: always
   servlet:
@@ -66,8 +66,8 @@ spring:
 ##############################
 # Policy Module configuration
 ##############################
-policyserviceaddress: http://localhost:4242
-metaserviceaddress: http://localhost:8084
+policyserviceaddress: http://localhost:9001
+metaserviceaddress: http://localhost:9002
 
 skippolicyservice: true
 skipmetaservice: true

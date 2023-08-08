@@ -1,6 +1,5 @@
-package org.opendatamesh.platform.pp.registry.exceptions;
+package org.opendatamesh.platform.pp.registry.api.v1.exceptions;
 
-import org.opendatamesh.platform.pp.registry.api.v1.resources.OpenDataMeshAPIStandardError;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -23,12 +22,12 @@ import org.springframework.http.HttpStatus;
  * on the same product.
  * 
  * @see https://www.rfc-editor.org/rfc/rfc9110.html#name-409-conflict
- * @see OpenDataMeshAPIStandardError
+ * @see ODMRegistryAPIStandardError
  * @see OpenDataMeshAPIExceptionHandler
  */
 public class ConflictException extends OpenDataMeshAPIException {
 
-    public ConflictException(OpenDataMeshAPIStandardError error, String message) {
+    public ConflictException(ODMRegistryAPIStandardError error, String message) {
 		super(error, message);
 	}
 
@@ -38,12 +37,12 @@ public class ConflictException extends OpenDataMeshAPIException {
 	}
 
 
-	public ConflictException(OpenDataMeshAPIStandardError error, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+	public ConflictException(ODMRegistryAPIStandardError error, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
 		super(error, message, cause, enableSuppression, writableStackTrace);
 	}
 
 
-	public ConflictException(OpenDataMeshAPIStandardError error, String message, Throwable cause) {
+	public ConflictException(ODMRegistryAPIStandardError error, String message, Throwable cause) {
 		super(error, message,  cause);
 	}
 

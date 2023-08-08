@@ -1,9 +1,8 @@
 package org.opendatamesh.platform.pp.registry.services;
 
-import org.opendatamesh.platform.pp.registry.api.v1.resources.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.TemplateDefinition;
 import org.opendatamesh.platform.pp.registry.database.repositories.TemplateDefinitionRepository;
-import org.opendatamesh.platform.pp.registry.exceptions.*;
+import org.opendatamesh.platform.pp.registry.api.v1.exceptions.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,13 +28,13 @@ public class TemplateDefinitionService {
     public TemplateDefinition resolveNameAndVersion(TemplateDefinition definition) {
          if (definition == null) {
             throw new InternalServerException(
-                    OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
+                    ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
                     "Definition object cannot be null");
         }
 
         if (!StringUtils.hasText(definition.getContent())) {
             throw new UnprocessableEntityException(
-                    OpenDataMeshAPIStandardError.SC422_08_DEFINITION_DOC_SYNTAX_IS_INVALID,
+                    ODMRegistryAPIStandardError.SC422_08_DEFINITION_DOC_SYNTAX_IS_INVALID,
                     "Definition content property cannot be empty");
         }
 
@@ -61,13 +60,13 @@ public class TemplateDefinitionService {
 
         if (definition == null) {
             throw new InternalServerException(
-                    OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
+                    ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
                     "Standard definition object cannot be null");
         }
 
         if (!StringUtils.hasText(definition.getContent())) {
             throw new UnprocessableEntityException(
-                    OpenDataMeshAPIStandardError.SC422_08_DEFINITION_DOC_SYNTAX_IS_INVALID,
+                    ODMRegistryAPIStandardError.SC422_08_DEFINITION_DOC_SYNTAX_IS_INVALID,
                     "Definition content property cannot be empty");
         }
 
@@ -75,7 +74,7 @@ public class TemplateDefinitionService {
 
         if (definitionExists(definition.getName(), definition.getVersion())) {
             throw new UnprocessableEntityException(
-                    OpenDataMeshAPIStandardError.SC422_13_TEMPLATE_ALREADY_EXISTS,
+                    ODMRegistryAPIStandardError.SC422_13_TEMPLATE_ALREADY_EXISTS,
                     "Definition [" + definition.getName() + "(v. " + definition.getVersion() + ")] already exists");
         }
 
@@ -84,7 +83,7 @@ public class TemplateDefinitionService {
             logger.info("Standard definition [" + definition.getId() + "] successfully created");
         } catch (Throwable t) {
             throw new InternalServerException(
-                    OpenDataMeshAPIStandardError.SC500_01_DATABASE_ERROR,
+                    ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while saving standard definition",
                     t);
         }
@@ -103,7 +102,7 @@ public class TemplateDefinitionService {
     public TemplateDefinition readOneDefinition(TemplateDefinition definition) {
         if (definition == null) {
             throw new InternalServerException(
-                    OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
+                    ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
                     "Definition object cannot be null");
         }
 
@@ -117,7 +116,7 @@ public class TemplateDefinitionService {
 
         if (definition == null) {
             throw new NotFoundException(
-                    OpenDataMeshAPIStandardError.SC404_05_TEMPLATE_NOT_FOUND,
+                    ODMRegistryAPIStandardError.SC404_05_TEMPLATE_NOT_FOUND,
                     "Definition [" + definitionId + "] does not exist");
         }
 
@@ -141,7 +140,7 @@ public class TemplateDefinitionService {
     private boolean definitionExists(String name, String version) {
         if (!StringUtils.hasText(name) || !StringUtils.hasText(version)) {
             throw new InternalServerException(
-                    OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
+                    ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
                     "name and version objects cannot be null");
         }
         return templateDefinitionRepository.existsByNameAndVersion(name, version);
@@ -160,7 +159,7 @@ public class TemplateDefinitionService {
         TemplateDefinition definition = null;
         if (definitionId == null) {
             throw new BadRequestException(
-                    OpenDataMeshAPIStandardError.SC400_14_TEMPLATE_IS_EMPTY,
+                    ODMRegistryAPIStandardError.SC400_14_TEMPLATE_IS_EMPTY,
                     "Definition id cannot be empty");
         }
 
@@ -168,7 +167,7 @@ public class TemplateDefinitionService {
             definition = loadDefinition(definitionId);
         } catch (Throwable t) {
             throw new InternalServerException(
-                    OpenDataMeshAPIStandardError.SC500_01_DATABASE_ERROR,
+                    ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while loading definition [" + definitionId + "]",
                     t);
         }
@@ -195,7 +194,7 @@ public class TemplateDefinitionService {
             definition = definitions.get(0);
         } else {
             throw new InternalServerException(
-                    OpenDataMeshAPIStandardError.SC500_01_DATABASE_ERROR,
+                    ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while searching definitions");
         }
 
@@ -213,7 +212,7 @@ public class TemplateDefinitionService {
             definitionSearchResults = findDefinitions(name, version, type, specification, specificationVersion);
         } catch (Throwable t) {
             throw new InternalServerException(
-                    OpenDataMeshAPIStandardError.SC500_01_DATABASE_ERROR,
+                    ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while searching definitions",
                     t);
         }
@@ -238,13 +237,13 @@ public class TemplateDefinitionService {
     public TemplateDefinition updateDefinition(TemplateDefinition definition) {
         if (definition == null) {
             throw new InternalServerException(
-                    OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
+                    ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
                     "Definition object cannot be null");
         }
 
         if (!definitionExists(definition.getId())) {
             throw new NotFoundException(
-                    OpenDataMeshAPIStandardError.SC404_05_TEMPLATE_NOT_FOUND,
+                    ODMRegistryAPIStandardError.SC404_05_TEMPLATE_NOT_FOUND,
                     "Definition [" + definition.getId() + "] does not exist");
         }
 
@@ -253,7 +252,7 @@ public class TemplateDefinitionService {
             logger.info("Definition [" + definition.getId() + "] successfully updated");
         } catch (Throwable t) {
             throw new InternalServerException(
-                    OpenDataMeshAPIStandardError.SC500_01_DATABASE_ERROR,
+                    ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while updating definition [" + definition.getId() + "]",
                     t);
         }
@@ -269,7 +268,7 @@ public class TemplateDefinitionService {
         TemplateDefinition definition = searchDefinition(definitionId);
         if (definition == null) {
             throw new NotFoundException(
-                    OpenDataMeshAPIStandardError.SC404_05_TEMPLATE_NOT_FOUND,
+                    ODMRegistryAPIStandardError.SC404_05_TEMPLATE_NOT_FOUND,
                     "Definition [" + definitionId + "] does not exist");
         }
 
@@ -278,7 +277,7 @@ public class TemplateDefinitionService {
             logger.info("Definition [" + definitionId + "] successfully deleted");
         } catch (Throwable t) {
             throw new InternalServerException(
-                    OpenDataMeshAPIStandardError.SC500_01_DATABASE_ERROR,
+                    ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while deleting definition [" + definitionId + "]",
                     t);
         }

@@ -1,11 +1,10 @@
 package org.opendatamesh.platform.pp.registry.rest;
 
-
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.opendatamesh.platform.pp.registry.api.v1.exceptions.BadRequestException;
+import org.opendatamesh.platform.pp.registry.api.v1.exceptions.OpenDataMeshAPIException;
+import org.opendatamesh.platform.pp.registry.api.v1.exceptions.ODMRegistryAPIStandardError;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.ErrorRes;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.OpenDataMeshAPIStandardError;
-import org.opendatamesh.platform.pp.registry.exceptions.BadRequestException;
-import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIException;
 import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -43,7 +42,7 @@ public class OpenDataMeshAPIExceptionHandler extends ResponseEntityExceptionHand
 
 	@ExceptionHandler({PropertyReferenceException.class})
 	protected ResponseEntity<Object> handlePropertyReferenceException(PropertyReferenceException e, WebRequest request) {
-		BadRequestException badRequestException = new BadRequestException(OpenDataMeshAPIStandardError.SC400_99_PROPERTY_REF_EXCEPTION, e.getMessage(), e);
+		BadRequestException badRequestException = new BadRequestException(ODMRegistryAPIStandardError.SC400_99_PROPERTY_REF_EXCEPTION, e.getMessage(), e);
 		return handleOpenDataMeshException(badRequestException, request);
 	}
 

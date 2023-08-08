@@ -9,9 +9,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DefinitionResource;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.ErrorRes;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.ApiDefinition;
-import org.opendatamesh.platform.pp.registry.exceptions.BadRequestException;
+import org.opendatamesh.platform.pp.registry.api.v1.exceptions.BadRequestException;
+import org.opendatamesh.platform.pp.registry.api.v1.exceptions.ODMRegistryAPIStandardError;
 import org.opendatamesh.platform.pp.registry.resources.v1.mappers.ApiDefinitionMapper;
 import org.opendatamesh.platform.pp.registry.services.ApiDefinitionService;
 import org.slf4j.Logger;
@@ -106,7 +106,7 @@ public class ApiDefinitionController {
     ) {
         if(definition == null) {
             throw new BadRequestException(
-                OpenDataMeshAPIStandardError.SC400_08_STDDEF_IS_EMPTY,
+                ODMRegistryAPIStandardError.SC400_08_STDDEF_IS_EMPTY,
                 "API definition cannot be empty");
         }
         

@@ -15,8 +15,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.devops.api.clients.DevOpsClient;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityResource;
+import org.opendatamesh.platform.pp.devops.api.resources.ODMDevOpsAPIStandardError;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.ErrorRes;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.OpenDataMeshAPIStandardError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,7 +122,7 @@ public abstract class ODMDevOpsIT {
     protected void verifyResponseError(
             ResponseEntity<ErrorRes> errorResponse,
             HttpStatus status,
-            OpenDataMeshAPIStandardError error) {
+            ODMDevOpsAPIStandardError error) {
         assertThat(errorResponse.getStatusCode())
                 .isEqualByComparingTo(status);
         assertThat(errorResponse.getBody().getCode())

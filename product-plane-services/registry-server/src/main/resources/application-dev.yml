@@ -5,7 +5,7 @@ app:
   workdir:
 
 server:
-  port: 8585
+  port: 8001
   error:
     include-message: always
   servlet:
@@ -61,13 +61,13 @@ odm:
   utilityPlane:
     policyService:
       active: false
-      address: http://localhost:4242
+      address: http://localhost:9001
     metaService:
       active: false
-      address: http://localhost:8595
+      address: http://localhost:9002
 
 
-policyserviceaddress: http://localhost:4242
-metaserviceaddress: http://localhost:8595 #8084
+policyserviceaddress: http://localhost:9001
+metaserviceaddress: http://localhost:9002
 skippolicyservice: true
 skipmetaservice: true

@@ -4,6 +4,8 @@ import lombok.Data;
 
 import java.util.Date;
 
+import org.opendatamesh.platform.pp.registry.api.v1.exceptions.ODMRegistryAPIStandardError;
+
 @Data
 public class ErrorRes {
 	
@@ -31,7 +33,8 @@ public class ErrorRes {
 
 	}
 
-	public ErrorRes(int status, OpenDataMeshAPIStandardError error, String message, String path) {
+
+	public ErrorRes(int status, ODMRegistryAPIStandardError error, String message, String path) {
 		super();
 		this.status = status;
 		this.code = error.code();

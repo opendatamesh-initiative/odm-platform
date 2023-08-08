@@ -1,33 +1,27 @@
 package org.opendatamesh.platform.pp.registry.services;
 
 
-import org.opendatamesh.platform.pp.registry.api.v1.resources.OpenDataMeshAPIStandardError;
-import org.opendatamesh.platform.pp.registry.exceptions.BadGatewayException;
+import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
+import org.opendatamesh.platform.pp.registry.api.v1.exceptions.BadGatewayException;
+import org.opendatamesh.platform.pp.registry.api.v1.exceptions.ODMRegistryAPIStandardError;
+import org.opendatamesh.platform.up.notification.api.clients.MetaServiceClient;
+import org.opendatamesh.platform.up.notification.api.resources.ErrorResource;
 import org.opendatamesh.platform.up.notification.api.resources.EventResource;
 import org.opendatamesh.platform.up.notification.api.resources.NotificationResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 @Service
-public class MetaServiceProxy {
-
-    @Value("${skipmetaservice}")
-    private String skipmetaservice;
-
-    @Value("${metaserviceaddress}")
-    private String metaserviceaddress;
-
-    @Autowired
-    private RestTemplate restTemplate;
+public class MetaServiceProxy extends MetaServiceClient {
 
     private static final Logger logger = LoggerFactory.getLogger(MetaServiceProxy.class);
 
-    public MetaServiceProxy() {}
+    public MetaServiceProxy(@Value("${metaserviceaddress}") final String serverAddress) {
+        super(serverAddress, ObjectMapperFactory.JSON_MAPPER);
+    }
 
     public void postEventToMetaService(EventResource event) {
 
@@ -36,26 +30,23 @@ public class MetaServiceProxy {
 
         try {
 
-            ResponseEntity<NotificationResource> responseEntity = restTemplate
-                    .postForEntity(
-                            metaserviceaddress + "/api/v1/up/metaservice/notifications",
-                            notification,
-                            NotificationResource.class
-                    );
+            ResponseEntity responseEntity = createNotification(notification);
 
             if(responseEntity.getStatusCode().is2xxSuccessful()){
-                notification = responseEntity.getBody();
+                notification = (NotificationResource) responseEntity.getBody();
                 logger.debug("Successfuly loaded information to Meta service system: " + notification.toString());
             } else {
+                ErrorResource error = (ErrorResource) responseEntity.getBody();
                 throw new BadGatewayException(
-                        OpenDataMeshAPIStandardError.SC502_05_META_SERVICE_ERROR,
-                        "An error occurred while comunicating with the metaService");
+                        ODMRegistryAPIStandardError.SC502_05_META_SERVICE_ERROR,
+                        error.getMessage()
+                );
             }
 
         } catch (Exception e) {
             throw new BadGatewayException(
-                    OpenDataMeshAPIStandardError.SC502_05_META_SERVICE_ERROR,
-                    "metaService not reachable"
+                    ODMRegistryAPIStandardError.SC502_05_META_SERVICE_ERROR,
+                    e.getMessage()
             );
         }
     }

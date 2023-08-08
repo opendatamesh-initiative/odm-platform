@@ -9,11 +9,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.registry.api.v1.clients.RegistryClient;
+import org.opendatamesh.platform.pp.registry.api.v1.exceptions.ODMRegistryAPIStandardError;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductDescriptorLocationResource;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductResource;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DefinitionResource;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.ErrorRes;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.SchemaResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +29,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.jdbc.JdbcTestUtils;
 
 import javax.annotation.PostConstruct;
+import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.fail;
@@ -47,6 +50,7 @@ public abstract class OpenDataMeshIT {
     protected String port;
 
     protected RegistryClient registryClient;
+
     protected ResourceBuilder resourceBuilder;
     
     @Autowired
@@ -54,6 +58,8 @@ public abstract class OpenDataMeshIT {
 
     protected Logger logger = LoggerFactory.getLogger(OpenDataMeshIT.class);
 
+    protected final String DB_TABLES_POSTGRESQL = "src/test/resources/db/tables_postgresql.txt";
+    protected final String DB_TABLES_MYSQL = "src/test/resources/db/tables_mysql.txt";
     protected final String RESOURCE_DP1 = "src/test/resources/test/dataproduct-descriptor/dp1.json";
     protected final String RESOURCE_DP1_UPD = "src/test/resources/test/dataproduct-descriptor/dp1-updated.json";
     protected final String RESOURCE_DP1_V1 = "src/test/resources/test/dataproduct-descriptor/dp1-v1.json";
@@ -81,66 +87,21 @@ public abstract class OpenDataMeshIT {
     }
 
     @BeforeEach
-    public void cleanDbState(@Autowired JdbcTemplate jdbcTemplate,  @Autowired Environment environment) {
-        if(Arrays.stream(environment.getActiveProfiles()).findFirst().get().equals("testpostgresql")) {
+    public void cleanDbState(@Autowired JdbcTemplate jdbcTemplate, @Autowired Environment environment) throws IOException {
+        String activeProfile = Arrays.stream(environment.getActiveProfiles()).findFirst().get();
+        String[] tableSet;
+        if(activeProfile.equals("testpostgresql")) {
+            tableSet = Files.readAllLines(new File(DB_TABLES_POSTGRESQL).toPath(), Charset.defaultCharset()).toArray(new String[0]);
+            System.out.println(tableSet);
             JdbcTestUtils.deleteFromTables(
                     jdbcTemplate,
-                    "\"ODMREGISTRY\".\"DPV_PORT_TAGS\"",
-                    "\"ODMREGISTRY\".\"DPV_PORTS\"",
-                    "\"ODMREGISTRY\".\"DPV_PORT_PROMISES\"",
-                    "\"ODMREGISTRY\".\"DPV_PORT_EXPECTATIONS\"",
-                    "\"ODMREGISTRY\".\"DPV_PORT_CONTRACTS\"",
-                    "\"ODMREGISTRY\".\"REL_APIS_TO_SCHEMAS\"",
-                    "\"ODMREGISTRY\".\"DEF_APIS\"",
-                    "\"ODMREGISTRY\".\"DEF_SCHEMAS\"",
-                    "\"ODMREGISTRY\".\"DPV_ACTIVITY_INFOS\"",
-                    "\"ODMREGISTRY\".\"DPV_INFRA_COMPONENT_TAGS\"",
-                    "\"ODMREGISTRY\".\"DPV_INFRA_COMPONENTS\"",
-                    "\"ODMREGISTRY\".\"DPV_INFRA_COMPONENT_DEPENDENCIES\"",
-                    "\"ODMREGISTRY\".\"DPV_INFO_CONTACT_POINTS\"",
-                    "\"ODMREGISTRY\".\"DPV_APP_COMPONENT_TAGS\"",
-                    "\"ODMREGISTRY\".\"DPV_APP_COMPONENT_DEPENDENCIES\"",
-                    "\"ODMREGISTRY\".\"DPV_APP_COMPONENT_SINKS\"",
-                    "\"ODMREGISTRY\".\"DPV_APP_COMPONENT_SOURCES\"",
-                    "\"ODMREGISTRY\".\"DPV_APP_COMPONENTS\"",
-                    "\"ODMREGISTRY\".\"DP_VERSIONS\"",
-                    "\"ODMREGISTRY\".\"DPV_INFO_OWNERS\"",
-                    "\"ODMREGISTRY\".\"DPV_SPEC_EXTENSION_POINTS\"",
-                    "\"ODMREGISTRY\".\"DPV_EXTERNAL_RESOURCES\"",
-                    "\"ODMREGISTRY\".\"DPV_REFERENCE_OBJECTS\"",
-                    "\"ODMREGISTRY\".\"DPV_DATA_PRODUCT_TAGS\"",
-                    "\"ODMREGISTRY\".\"DATA_PRODUCTS\"",
-                    "\"ODMREGISTRY\".\"DEF_TEMPLATES\""
+                    tableSet
             );
-        } else if (Arrays.stream(environment.getActiveProfiles()).findFirst().get().equals("testmysql")) {
+        } else if (activeProfile.equals("testmysql") || activeProfile.equals("localmysql")) {
+            tableSet = Files.readAllLines(new File(DB_TABLES_MYSQL).toPath(), Charset.defaultCharset()).toArray(new String[0]);
             JdbcTestUtils.deleteFromTables(
                     jdbcTemplate,
-                    "ODMREGISTRY.DPV_PORT_TAGS",
-                    "ODMREGISTRY.DPV_PORTS",
-                    "ODMREGISTRY.DPV_PORT_PROMISES",
-                    "ODMREGISTRY.DPV_PORT_EXPECTATIONS",
-                    "ODMREGISTRY.DPV_PORT_CONTRACTS",
-                    "ODMREGISTRY.REL_APIS_TO_SCHEMAS",
-                    "ODMREGISTRY.DEF_APIS",
-                    "ODMREGISTRY.DEF_SCHEMAS",
-                    "ODMREGISTRY.DPV_ACTIVITY_INFOS",
-                    "ODMREGISTRY.DPV_INFRA_COMPONENT_TAGS",
-                    "ODMREGISTRY.DPV_INFRA_COMPONENTS",
-                    "ODMREGISTRY.DPV_INFRA_COMPONENT_DEPENDENCIES",
-                    "ODMREGISTRY.DPV_INFO_CONTACT_POINTS",
-                    "ODMREGISTRY.DPV_APP_COMPONENT_TAGS",
-                    "ODMREGISTRY.DPV_APP_COMPONENT_DEPENDENCIES",
-                    "ODMREGISTRY.DPV_APP_COMPONENT_SINKS",
-                    "ODMREGISTRY.DPV_APP_COMPONENT_SOURCES",
-                    "ODMREGISTRY.DPV_APP_COMPONENTS",
-                    "ODMREGISTRY.DP_VERSIONS",
-                    "ODMREGISTRY.DPV_INFO_OWNERS",
-                    "ODMREGISTRY.DPV_SPEC_EXTENSION_POINTS",
-                    "ODMREGISTRY.DPV_EXTERNAL_RESOURCES",
-                    "ODMREGISTRY.DPV_REFERENCE_OBJECTS",
-                    "ODMREGISTRY.DPV_DATA_PRODUCT_TAGS",
-                    "ODMREGISTRY.DATA_PRODUCTS",
-                    "ODMREGISTRY.DEF_TEMPLATES"
+                    tableSet
             );
         }
     }
@@ -204,7 +165,8 @@ public abstract class OpenDataMeshIT {
     }
 
     protected SchemaResource createSchema1() throws IOException {
-        ResponseEntity<SchemaResource> postSchemaResponse = registryClient.postSchema(RESOURCE_SCHEMA1);
+        SchemaResource schemaResource = resourceBuilder.readResourceFromFile(RESOURCE_SCHEMA1, SchemaResource.class);
+        ResponseEntity<SchemaResource> postSchemaResponse = registryClient.postSchema(schemaResource);
         verifyResponseEntity(postSchemaResponse, HttpStatus.CREATED, true);
 
         return postSchemaResponse.getBody();
@@ -239,7 +201,7 @@ public abstract class OpenDataMeshIT {
     protected void verifyResponseError(
             ResponseEntity<ErrorRes> errorResponse,
             HttpStatus status,
-            OpenDataMeshAPIStandardError error) {
+            ODMRegistryAPIStandardError error) {
         assertThat(errorResponse.getStatusCode())
                 .isEqualByComparingTo(status);
         assertThat(errorResponse.getBody().getCode())
@@ -253,4 +215,5 @@ public abstract class OpenDataMeshIT {
     // ======================================================================================
 
     // TODO ...add as needed
+
 }

@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.validation.ConstraintViolationException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,6 +56,6 @@ public class AppExceptionHandler {
                 ex.getClass().getSimpleName(),
                 ex.getMessage()
         );
-        return new ResponseEntity<>(Arrays.asList(errorResource), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(errorResource, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

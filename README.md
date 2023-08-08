@@ -125,12 +125,12 @@ Run the Docker image.
 
 **MySql**
 ```bash
-docker run --name odmp-mysql-app -p 8585:8585 --net host odmp-mysql-app
+docker run --name odmp-mysql-app -p 8001:8001 --net host odmp-mysql-app
 ```
 
 **Postgres**
 ```bash
-docker run --name odmp-postgres-app -p 8585:8585 --net host odmp-postgres-app
+docker run --name odmp-postgres-app -p 8001:8001 --net host odmp-postgres-app
 ```
 
 ### Stop application
@@ -176,7 +176,7 @@ DATABASE_NAME=odmpdb
 DATABASE_PASSWORD=pwd
 DATABASE_USERNAME=usr
 DATABASE_PORT=5432
-SPRING_PORT=8585
+SPRING_PORT=8001
 ```
 
 Then, build the docker-compose file:
@@ -212,12 +212,12 @@ docker-compose build --no-cache
 
 You can invoke REST endpoints through *OpenAPI UI* available at the following url:
 
-* [http://localhost:8585/api/v1/pp/swagger-ui/index.html](http://localhost:8585/api/v1/pp/swagger-ui/index.html)
+* [http://localhost:8001/api/v1/pp/swagger-ui/index.html](http://localhost:8001/api/v1/pp/swagger-ui/index.html)
 
 ## Database 
 
 If the application is running using an in memory instance of H2 database you can check the database content through H2 Web Console available at the following url:
 
-* [http://localhost:8585/api/v1/pp/h2-console](http://localhost:8585/api/v1/pp/h2-console)
+* [http://localhost:8001/api/v1/pp/h2-console](http://localhost:8001/api/v1/pp/h2-console)
 
 In all cases you can also use your favourite sql client providing the proper connection parameters

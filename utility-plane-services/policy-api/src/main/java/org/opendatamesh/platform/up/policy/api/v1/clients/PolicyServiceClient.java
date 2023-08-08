@@ -193,9 +193,11 @@ public class PolicyServiceClient extends ODMClient {
                 Object.class,
                 id
         );
-        ResponseEntity response = mapResponseEntity(validationResponse,
+        ResponseEntity response = mapResponseEntity(
+                validationResponse,
                 HttpStatus.OK,
-                ValidateResponse.class);
+                ValidateResponse.class
+        );
         return response;
     }
 

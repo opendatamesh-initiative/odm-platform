@@ -14,11 +14,11 @@ import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
+import org.opendatamesh.platform.pp.registry.api.v1.exceptions.ODMRegistryAPIStandardError;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductResource;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.ErrorRes;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.OpenDataMeshAPIStandardError;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.system.SystemProperties;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
@@ -37,14 +37,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 @Execution(ExecutionMode.SAME_THREAD)
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 public class DataProductVersionIT extends OpenDataMeshIT {
-
-    // private MockRestServiceServer mockServer;
-
-
-    @Value("${policyserviceaddress}")
-    private String policyserviceaddress;
-    @Value("${metaserviceaddress}")
-    private String metaserviceaddress;
 
     @Before
     public void setup() {
@@ -209,7 +201,6 @@ public class DataProductVersionIT extends OpenDataMeshIT {
 
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    @EnabledIf(expression = "#{environment.acceptsProfiles('testpostgresql', 'dev')}", loadContext = true)
     public void testDataProductVersionDelete()
             throws IOException {
 
@@ -255,7 +246,7 @@ public class DataProductVersionIT extends OpenDataMeshIT {
         // TODO test also with a null payload (requires a fix on server)
         String payload = " ";
         ResponseEntity<ErrorRes> errorResponse = registryClient.postDataProductVersion(dataProduct1Res.getId(), payload, ErrorRes.class);
-        verifyResponseError(errorResponse, HttpStatus.BAD_REQUEST, OpenDataMeshAPIStandardError.SC400_01_DESCRIPTOR_IS_EMPTY);
+        verifyResponseError(errorResponse, HttpStatus.BAD_REQUEST, ODMRegistryAPIStandardError.SC400_01_DESCRIPTOR_IS_EMPTY);
     }
 
     @Test
@@ -280,14 +271,14 @@ public class DataProductVersionIT extends OpenDataMeshIT {
         errorResponse = registryClient.postDataProductVersion(dataProduct1Res.getId(), descriptorContent, ErrorRes.class);
         verifyResponseError(errorResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                OpenDataMeshAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID);
+                ODMRegistryAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID);
 
         // Test error SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID
         errorResponse = registryClient.postDataProductVersion(dataProduct1Res.getId(), 
             "This is an invalid JSON document", ErrorRes.class);
         verifyResponseError(errorResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                OpenDataMeshAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID);
+                ODMRegistryAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID);
 
         // Test error SC422_05_VERSION_ALREADY_EXISTS
 
@@ -299,7 +290,7 @@ public class DataProductVersionIT extends OpenDataMeshIT {
             descriptorContent, ErrorRes.class);
         verifyResponseError(errorResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                OpenDataMeshAPIStandardError.SC422_05_VERSION_ALREADY_EXISTS);
+                ODMRegistryAPIStandardError.SC422_05_VERSION_ALREADY_EXISTS);
     }
 
     // ======================================================================================

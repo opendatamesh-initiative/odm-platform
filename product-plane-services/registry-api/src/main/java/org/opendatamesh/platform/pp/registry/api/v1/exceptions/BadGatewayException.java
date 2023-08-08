@@ -1,6 +1,5 @@
-package org.opendatamesh.platform.pp.registry.exceptions;
+package org.opendatamesh.platform.pp.registry.api.v1.exceptions;
 
-import org.opendatamesh.platform.pp.registry.api.v1.resources.OpenDataMeshAPIStandardError;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -13,12 +12,12 @@ import org.springframework.http.HttpStatus;
  * EXAMPLE: An internal call to a service exposed by the utility plane fails
  * 
  * @see https://www.rfc-editor.org/rfc/rfc9110.html#name-502-bad-gateway
- * @see OpenDataMeshAPIStandardError
+ * @see ODMRegistryAPIStandardError
  * @see OpenDataMeshAPIExceptionHandler
  */
 public class BadGatewayException extends OpenDataMeshAPIException {
 
-	public BadGatewayException(OpenDataMeshAPIStandardError error, String message) {
+	public BadGatewayException(ODMRegistryAPIStandardError error, String message) {
 		super(error, message);
 	}
 
@@ -28,12 +27,12 @@ public class BadGatewayException extends OpenDataMeshAPIException {
 	}
 
 
-	public BadGatewayException(OpenDataMeshAPIStandardError error, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+	public BadGatewayException(ODMRegistryAPIStandardError error, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
 		super(error, message, cause, enableSuppression, writableStackTrace);
 	}
 
 
-	public BadGatewayException(OpenDataMeshAPIStandardError error, String message, Throwable cause) {
+	public BadGatewayException(ODMRegistryAPIStandardError error, String message, Throwable cause) {
 		super(error, message, cause);
 	}
 

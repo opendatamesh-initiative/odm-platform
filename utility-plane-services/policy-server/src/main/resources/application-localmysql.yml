@@ -43,7 +43,7 @@ spring:
 # Server configuration
 ##########################
 server:
-  port: 4242
+  port: 9001
   servlet:
     contextPath: /api/v1/planes/utility/policy-services/opa
   error:

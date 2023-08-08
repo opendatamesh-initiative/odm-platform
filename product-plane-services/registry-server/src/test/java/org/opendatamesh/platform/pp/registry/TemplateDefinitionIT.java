@@ -3,8 +3,8 @@ package org.opendatamesh.platform.pp.registry;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
+import org.opendatamesh.platform.pp.registry.api.v1.exceptions.ODMRegistryAPIStandardError;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DefinitionResource;
-import org.opendatamesh.platform.pp.registry.api.v1.exceptions.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.ErrorRes;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -107,7 +107,7 @@ public class TemplateDefinitionIT extends OpenDataMeshIT {
 
         DefinitionResource templateResource = createTemplate(RESOURCE_TEMPLATE_1);
 
-        ResponseEntity<DefinitionResource> getTemplateResponse = registryClient.readOneTemplateDefinition(templateResource.getId());
+        ResponseEntity<DefinitionResource> getTemplateResponse = registryClient.getOneTemplateDefinition(templateResource.getId());
         DefinitionResource templateRes = getTemplateResponse.getBody();
 
         verifyResponseEntity(getTemplateResponse, HttpStatus.OK, true);
@@ -155,7 +155,7 @@ public class TemplateDefinitionIT extends OpenDataMeshIT {
         String payload = null;
         errorResponse = registryClient.postTemplateDefinition(payload, ErrorRes.class);
         verifyResponseError(errorResponse,
-                HttpStatus.BAD_REQUEST, OpenDataMeshAPIStandardError.SC400_14_TEMPLATE_IS_EMPTY);
+                HttpStatus.BAD_REQUEST, ODMRegistryAPIStandardError.SC400_14_TEMPLATE_IS_EMPTY);
     }
 
     @Test
@@ -172,14 +172,14 @@ public class TemplateDefinitionIT extends OpenDataMeshIT {
         errorResponse = registryClient.postTemplateDefinition(payload, ErrorRes.class);
         verifyResponseError(errorResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                OpenDataMeshAPIStandardError.SC422_13_TEMPLATE_ALREADY_EXISTS);
+                ODMRegistryAPIStandardError.SC422_13_TEMPLATE_ALREADY_EXISTS);
 
        // TEST 2: try to register a definition without setting the content
         DefinitionResource definitionRes = resourceBuilder.buildDefinition("template-1", "1.0.0", "application/json", null);
         errorResponse = registryClient.postApiDefinition(definitionRes, ErrorRes.class);
         verifyResponseError(errorResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                OpenDataMeshAPIStandardError.SC422_08_DEFINITION_DOC_SYNTAX_IS_INVALID);
+                ODMRegistryAPIStandardError.SC422_08_DEFINITION_DOC_SYNTAX_IS_INVALID);
 
     }
 
@@ -194,12 +194,12 @@ public class TemplateDefinitionIT extends OpenDataMeshIT {
 
         ResponseEntity<ErrorRes> errorResponse = null;
 
-        errorResponse = registryClient.readOneTemplateDefinition(1L, ErrorRes.class);
+        errorResponse = registryClient.getOneTemplateDefinition(1L, ErrorRes.class);
        
         verifyResponseError(
                 errorResponse,
                 HttpStatus.NOT_FOUND,
-                OpenDataMeshAPIStandardError.SC404_05_TEMPLATE_NOT_FOUND
+                ODMRegistryAPIStandardError.SC404_05_TEMPLATE_NOT_FOUND
         );
 
     }
@@ -219,7 +219,7 @@ public class TemplateDefinitionIT extends OpenDataMeshIT {
         verifyResponseError(
                 errorResponse,
                 HttpStatus.NOT_FOUND,
-                OpenDataMeshAPIStandardError.SC404_05_TEMPLATE_NOT_FOUND
+                ODMRegistryAPIStandardError.SC404_05_TEMPLATE_NOT_FOUND
         );
 
     }

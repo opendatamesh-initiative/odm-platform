@@ -43,11 +43,14 @@ public class ReadOnlyPropertiesProcessor implements PropertiesProcessor {
         addReadOnlyPropertiesToComponents(descriptor, descriptor.getInterfaceComponents().getControlPorts(),
                 EntityTypeDPDS.controlport);
 
-        addReadOnlyPropertiesToComponents(descriptor, descriptor.getInternalComponents().getApplicationComponents(),
+        if(descriptor.getInternalComponents() != null) {
+             addReadOnlyPropertiesToComponents(descriptor, descriptor.getInternalComponents().getApplicationComponents(),
                 EntityTypeDPDS.application);
-        addReadOnlyPropertiesToComponents(descriptor, descriptor.getInternalComponents().getInfrastructuralComponents(),
+            addReadOnlyPropertiesToComponents(descriptor, descriptor.getInternalComponents().getInfrastructuralComponents(),
                 EntityTypeDPDS.infrastructure);
 
+        }
+       
     }
 
     private void addReadOnlyPropertiesToInfo() throws ParseException {

@@ -1,6 +1,8 @@
 package org.opendatamesh.platform.pp.registry;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductResource;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DefinitionResource;
 
@@ -13,7 +15,7 @@ public class ResourceBuilder {
     ObjectMapper mapper;
 
     public ResourceBuilder() {
-        mapper = new ObjectMapper();
+        mapper = ObjectMapperFactory.JSON_MAPPER;
     }
     
     public String readResourceFromFile(String filePath) throws IOException {

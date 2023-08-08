@@ -1,5 +1,6 @@
 package org.opendatamesh.platform.pp.devops.server.exceptions;
 
+import org.opendatamesh.platform.pp.devops.api.resources.ODMDevOpsAPIStandardError;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -17,7 +18,7 @@ import org.springframework.http.HttpStatus;
  */
 public class UnprocessableEntityException extends OpenDataMeshAPIException {
 
-	public UnprocessableEntityException(OpenDataMeshAPIStandardError error, String message) {
+	public UnprocessableEntityException(ODMDevOpsAPIStandardError error, String message) {
 		super(error, message);
 	}
 
@@ -27,12 +28,12 @@ public class UnprocessableEntityException extends OpenDataMeshAPIException {
 	}
 
 
-	public UnprocessableEntityException(OpenDataMeshAPIStandardError error, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+	public UnprocessableEntityException(ODMDevOpsAPIStandardError error, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
 		super(error, message, cause, enableSuppression, writableStackTrace);
 	}
 
 
-	public UnprocessableEntityException(OpenDataMeshAPIStandardError error, String message, Throwable cause) {
+	public UnprocessableEntityException(ODMDevOpsAPIStandardError error, String message, Throwable cause) {
 		super(error, message, cause);
 	}
 

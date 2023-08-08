@@ -2,18 +2,20 @@ package org.opendatamesh.platform.pp.registry;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Before;
 import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
+import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
+import org.opendatamesh.platform.pp.registry.api.v1.exceptions.ODMRegistryAPIStandardError;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductResource;
-import org.opendatamesh.platform.pp.registry.api.v1.exceptions.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.ErrorRes;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -31,10 +33,8 @@ import java.util.regex.Pattern;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
-//@@FixMethodOrder(MethodSorters.JVM)
 @TestPropertySource(properties = { "spring.test.context.parallel.enabled=false" })
 @Execution(ExecutionMode.SAME_THREAD)
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 public class DataProductVersionIT extends OpenDataMeshIT {
 
@@ -74,7 +74,6 @@ public class DataProductVersionIT extends OpenDataMeshIT {
     // CREATE Data product version
     // ----------------------------------------
     @Test
-    @Order(1)
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDataProductVersionCreation() throws IOException {
 
@@ -84,10 +83,18 @@ public class DataProductVersionIT extends OpenDataMeshIT {
 
         String descriptorContent = createDataProductVersion(dataProduct1Res.getId(), RESOURCE_DP1_V1);
         verifyBasicContent(descriptorContent);
+        DataProductVersionDPDS dataProductVersion = null;
+		try {
+			dataProductVersion = ObjectMapperFactory.JSON_MAPPER.readValue(descriptorContent, DataProductVersionDPDS.class);
+        } catch (Throwable e) {
+			fail("Impossible to parse descriptor content");
+		} 
+        verifyParsedContent(dataProductVersion);
+
+        
     }
 
     @Test
-    @Order(1)
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDataProductVersionsCreation() throws IOException {
 
@@ -102,7 +109,7 @@ public class DataProductVersionIT extends OpenDataMeshIT {
         descriptor = resourceBuilder.readResourceFromFile(RESOURCE_DP1_V1);
         
         // modify version & re-post
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = ObjectMapperFactory.JSON_MAPPER;
         mapper.setSerializationInclusion(Include.NON_EMPTY);
         JsonNode rootEntity = null;
         try {
@@ -124,7 +131,6 @@ public class DataProductVersionIT extends OpenDataMeshIT {
     // READ Data product version
     // ----------------------------------------
     @Test
-    @Order(2)
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDataProductVersionsReadAll() throws IOException {
 
@@ -146,14 +152,12 @@ public class DataProductVersionIT extends OpenDataMeshIT {
             assertThat(dataProductVersionNumbers[0]).isEqualTo(versionNumber);
         } else {
             fail("Response is empty");
-        }
-        
+        } 
     }
 
     @Test
-    @Order(3)
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    @EnabledIf(expression = "#{environment.acceptsProfiles('testpostgresql', 'dev')}", loadContext = true)
+    //@EnabledIf(expression = "#{environment.acceptsProfiles('testpostgresql', 'dev')}", loadContext = true)
     public void testDataProductVersionsReadOne() throws IOException {
 
         // create a product and associate to it a version
@@ -171,6 +175,18 @@ public class DataProductVersionIT extends OpenDataMeshIT {
         // test response
         verifyResponseEntity(getDataProductVersionResponse, HttpStatus.OK, true);
         verifyBasicContent(getDataProductVersionResponse.getBody());
+        DataProductVersionDPDS dataProductVersion = null;
+		try {
+			dataProductVersion = ObjectMapperFactory.JSON_MAPPER.readValue(getDataProductVersionResponse.getBody(), DataProductVersionDPDS.class);
+        } catch (Throwable e) {
+			fail("Impossible to parse descriptor content");
+		} 
+        verifyParsedContent(dataProductVersion);
+
+       
+        dataProductVersion = registryClient.readOneDataProductVersion(dataProduct1Res.getId(), versionNumber);
+        verifyParsedContent(dataProductVersion);
+        
     }
 
     // ----------------------------------------
@@ -184,7 +200,6 @@ public class DataProductVersionIT extends OpenDataMeshIT {
     // ----------------------------------------
 
     @Test
-    @Order(4)
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDataProductVersionDelete()
             throws IOException {
@@ -222,23 +237,19 @@ public class DataProductVersionIT extends OpenDataMeshIT {
     // ---------------------------------------- }
 
     @Test
-    @Order(5)
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDataProductCreation400Errors() throws IOException {
 
         DataProductResource dataProduct1Res = createDataProduct(RESOURCE_DP1);
 
-        HttpEntity<String> entity = null;
-
         // Test error SC400_01_DESCRIPTOR_IS_EMPTY
         // TODO test also with a null payload (requires a fix on server)
         String payload = " ";
         ResponseEntity<ErrorRes> errorResponse = registryClient.postDataProductVersion(dataProduct1Res.getId(), payload, ErrorRes.class);
-        verifyResponseError(errorResponse, HttpStatus.BAD_REQUEST, OpenDataMeshAPIStandardError.SC400_01_DESCRIPTOR_IS_EMPTY);
+        verifyResponseError(errorResponse, HttpStatus.BAD_REQUEST, ODMRegistryAPIStandardError.SC400_01_DESCRIPTOR_IS_EMPTY);
     }
 
     @Test
-    @Order(6)
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDataProductCreation422Errors() throws IOException {
 
@@ -260,14 +271,14 @@ public class DataProductVersionIT extends OpenDataMeshIT {
         errorResponse = registryClient.postDataProductVersion(dataProduct1Res.getId(), descriptorContent, ErrorRes.class);
         verifyResponseError(errorResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                OpenDataMeshAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID);
+                ODMRegistryAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID);
 
         // Test error SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID
         errorResponse = registryClient.postDataProductVersion(dataProduct1Res.getId(), 
             "This is an invalid JSON document", ErrorRes.class);
         verifyResponseError(errorResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                OpenDataMeshAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID);
+                ODMRegistryAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID);
 
         // Test error SC422_05_VERSION_ALREADY_EXISTS
 
@@ -279,7 +290,7 @@ public class DataProductVersionIT extends OpenDataMeshIT {
             descriptorContent, ErrorRes.class);
         verifyResponseError(errorResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                OpenDataMeshAPIStandardError.SC422_05_VERSION_ALREADY_EXISTS);
+                ODMRegistryAPIStandardError.SC422_05_VERSION_ALREADY_EXISTS);
     }
 
     // ======================================================================================
@@ -295,6 +306,15 @@ public class DataProductVersionIT extends OpenDataMeshIT {
     // ----------------------------------------
     // Verify test resources
     // ----------------------------------------
+
+    private DataProductVersionDPDS verifyParsedContent(DataProductVersionDPDS dpVersion) {
+        assertThat(dpVersion.getInternalComponents()).isNotNull();
+        assertThat(dpVersion.getInternalComponents().getLifecycleInfo()).isNotNull();
+        assertThat(dpVersion.getInternalComponents().getLifecycleInfo().getActivityInfos()).isNotNull();
+        assertThat(dpVersion.getInternalComponents().getLifecycleInfo().getActivityInfos().size()).isEqualTo(2);
+    
+        return dpVersion;
+    }
 
     private JsonNode verifyBasicContent(String responseBody) {
 
@@ -341,18 +361,7 @@ public class DataProductVersionIT extends OpenDataMeshIT {
             assertThat(apiDefinitionObject.size()).isEqualTo(1);
             assertThat(apiDefinitionObject.get("$ref")).isNotNull();
             assertThat(apiDefinitionObject.get("$ref").asText())
-                    .matches(Pattern.compile("http://localhost:\\d*/api/v1/pp/definitions/\\d*"));
-
-            /*
-             * ResponseEntity<String> getApiDefinitionResponse = rest.getForEntity(
-             * apiDefinitionObject.get("$ref").asText(), String.class
-             * );
-             * assertThat(getApiDefinitionResponse.getStatusCode())
-             * .isEqualByComparingTo(HttpStatus.OK);
-             * assertThat(getApiDefinitionResponse.getBody())
-             * .isNotNull();
-             */
-
+                    .matches(Pattern.compile("http://localhost:\\d*/api/v1/pp/apis/\\d*"));
         }
 
         JsonNode outputPorts = interfaceComponentsObject.path("outputPorts");
@@ -378,6 +387,26 @@ public class DataProductVersionIT extends OpenDataMeshIT {
         // test internal components
         JsonNode internalComponentsObject = rootEntity.path("internalComponents");
         assertThat(internalComponentsObject).isNotNull();
+       
+
+        // test lifecycleInfo
+        JsonNode lifecycleInfoObject = internalComponentsObject.path("lifecycleInfo");
+        assertThat(lifecycleInfoObject).isNotNull();
+        ObjectNode stage = null, template = null;
+        stage = (ObjectNode)lifecycleInfoObject.get("dev");
+        assertThat(stage).isNotNull();
+        template = (ObjectNode)stage.get("template");
+        assertThat(template).isNotNull();
+        assertThat(template.get("definition")).isNotNull();
+        assertThat(template.get("definition").get("$ref")).isNotNull();
+        assertThat(template.get("definition").get("$ref").asText())
+                    .matches(Pattern.compile("http://localhost:\\d*/api/v1/pp/templates/\\d*"));
+        
+        
+        stage = (ObjectNode)lifecycleInfoObject.get("prod");
+        assertThat(stage).isNotNull();
+        template = (ObjectNode)stage.get("template");
+        assertThat(template).isNotNull();
 
         // test application components
         JsonNode appComponents = internalComponentsObject.path("applicationComponents");
@@ -393,7 +422,7 @@ public class DataProductVersionIT extends OpenDataMeshIT {
                     .isEqualTo("custom-prop-value");
         }
 
-        // test application components
+        // test infra components
         JsonNode infraComponents = internalComponentsObject.path("infrastructuralComponents");
         assertThat(infraComponents).isNotNull();
         assertThat(infraComponents.isArray()).isTrue();

@@ -1,7 +1,9 @@
 package org.opendatamesh.platform.pp.registry.services;
 
+
+import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.registry.api.v1.exceptions.BadGatewayException;
-import org.opendatamesh.platform.pp.registry.api.v1.exceptions.OpenDataMeshAPIStandardError;
+import org.opendatamesh.platform.pp.registry.api.v1.exceptions.ODMRegistryAPIStandardError;
 import org.opendatamesh.platform.up.notification.api.clients.MetaServiceClient;
 import org.opendatamesh.platform.up.notification.api.resources.ErrorResource;
 import org.opendatamesh.platform.up.notification.api.resources.EventResource;
@@ -18,7 +20,7 @@ public class MetaServiceProxy extends MetaServiceClient {
     private static final Logger logger = LoggerFactory.getLogger(MetaServiceProxy.class);
 
     public MetaServiceProxy(@Value("${metaserviceaddress}") final String serverAddress) {
-        super(serverAddress);
+        super(serverAddress, ObjectMapperFactory.JSON_MAPPER);
     }
 
     public void postEventToMetaService(EventResource event) {
@@ -36,14 +38,14 @@ public class MetaServiceProxy extends MetaServiceClient {
             } else {
                 ErrorResource error = (ErrorResource) responseEntity.getBody();
                 throw new BadGatewayException(
-                        OpenDataMeshAPIStandardError.SC502_05_META_SERVICE_ERROR,
+                        ODMRegistryAPIStandardError.SC502_05_META_SERVICE_ERROR,
                         error.getMessage()
                 );
             }
 
         } catch (Exception e) {
             throw new BadGatewayException(
-                    OpenDataMeshAPIStandardError.SC502_05_META_SERVICE_ERROR,
+                    ODMRegistryAPIStandardError.SC502_05_META_SERVICE_ERROR,
                     e.getMessage()
             );
         }

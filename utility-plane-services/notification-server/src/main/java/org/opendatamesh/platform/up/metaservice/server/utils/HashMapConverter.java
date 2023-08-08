@@ -3,6 +3,8 @@ package org.opendatamesh.platform.up.metaservice.server.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +16,7 @@ import java.util.Map;
 public class HashMapConverter implements AttributeConverter<Map<String, Object>, String> {
 
     private static final Logger logger = LoggerFactory.getLogger(HashMapConverter.class);
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = ObjectMapperFactory.JSON_MAPPER;
 
     @Override
     public String convertToDatabaseColumn(Map<String, Object> map) {

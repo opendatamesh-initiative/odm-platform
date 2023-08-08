@@ -1,10 +1,10 @@
 package org.opendatamesh.platform.pp.registry;
 
 import org.junit.jupiter.api.Test;
+import org.opendatamesh.platform.pp.registry.api.v1.exceptions.ODMRegistryAPIStandardError;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DefinitionResource;
-import org.opendatamesh.platform.pp.registry.database.entities.sharedres.ApiDefinition;
-import org.opendatamesh.platform.pp.registry.api.v1.exceptions.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.ErrorRes;
+import org.opendatamesh.platform.pp.registry.database.entities.sharedres.ApiDefinition;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -225,7 +225,7 @@ public class APIDefinitionIT extends OpenDataMeshIT {
         String payload = null;
         errorResponse = registryClient.postApiDefinition(payload, ErrorRes.class);
         verifyResponseError(errorResponse,
-                HttpStatus.BAD_REQUEST, OpenDataMeshAPIStandardError.SC400_08_STDDEF_IS_EMPTY);
+                HttpStatus.BAD_REQUEST, ODMRegistryAPIStandardError.SC400_08_STDDEF_IS_EMPTY);
     }
 
     @Test
@@ -249,14 +249,14 @@ public class APIDefinitionIT extends OpenDataMeshIT {
         errorResponse = registryClient.postApiDefinition(payload, ErrorRes.class);
         verifyResponseError(errorResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                OpenDataMeshAPIStandardError.SC422_06_STDDEF_ALREADY_EXISTS);
+                ODMRegistryAPIStandardError.SC422_06_STDDEF_ALREADY_EXISTS);
 
         // TEST 2: try to register a definition without setting the content
         DefinitionResource definitionRes = resourceBuilder.buildDefinition("api-1", "1.0.0", "application/json", null);
         errorResponse = registryClient.postApiDefinition(definitionRes, ErrorRes.class);
         verifyResponseError(errorResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                OpenDataMeshAPIStandardError.SC422_08_DEFINITION_DOC_SYNTAX_IS_INVALID);
+                ODMRegistryAPIStandardError.SC422_08_DEFINITION_DOC_SYNTAX_IS_INVALID);
 
     }
 
@@ -283,7 +283,7 @@ public class APIDefinitionIT extends OpenDataMeshIT {
         verifyResponseError(
                 errorResponse,
                 HttpStatus.NOT_FOUND,
-                OpenDataMeshAPIStandardError.SC404_03_STDDEF_NOT_FOUND);
+                ODMRegistryAPIStandardError.SC404_03_STDDEF_NOT_FOUND);
 
     }
 

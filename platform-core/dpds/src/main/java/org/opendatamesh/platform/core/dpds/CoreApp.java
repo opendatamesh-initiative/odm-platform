@@ -36,7 +36,7 @@ public class CoreApp /* implements CommandLineRunner */ {
     // @Override
     public static void run(String... arg0) throws Exception {
 
-        String ROOT_DOC_LOACAL_FILEPATH = "/home/andrea.gioia/Sviluppi/quantyca/open-data-mesh/github/odm-platform-pp-services/product-plane-services/registry-server/src/test/resources/test/dataproduct-descriptor/dp1-v1.json";
+        //String ROOT_DOC_LOACAL_FILEPATH = "/home/andrea.gioia/Sviluppi/quantyca/open-data-mesh/github/odm-platform-pp-services/product-plane-services/registry-server/src/test/resources/test/dataproduct-descriptor/dp1-v1.json";
         //DescriptorLocation location = new UriLocation(Files.readString(Paths.get(ROOT_DOC_LOACAL_FILEPATH)));
 
         URI ROOT_DOC_REMOTE_URI = new URI(

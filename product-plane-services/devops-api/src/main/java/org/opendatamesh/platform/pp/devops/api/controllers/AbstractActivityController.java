@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityResource;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,10 +23,10 @@ import javax.validation.Valid;
 )
 @Validated
 @Tag(
-        name = "DevOps API",
-        description = "API of ODM Platform's DevOps Mudule"
+    name = "Activities",
+    description = "Endpoints associated to activities collection"
 )
-public abstract class AbstractDevOpsController {
+public abstract class AbstractActivityController {
 
     @PostMapping(consumes = { "application/vnd.odmp.v1+json", 
         "application/vnd.odmp+json", "application/json"})
@@ -75,18 +74,6 @@ public abstract class AbstractDevOpsController {
         return startActivity(id);
     }
     public abstract ActivityResource startActivity(Long id);
-
-    @PostMapping(
-        value = "/{id}/stop"
-    )
-    @Operation(
-        summary = "Stop the specified activity",
-        description = "Stop the activity identified by the input `id` if it has been already started but it is not finished yet"
-    )
-    public ActivityResource stopActivityEndpoint(Long id) {
-         return stopActivity(id);
-    }
-    public abstract ActivityResource stopActivity(Long id);
     
     @GetMapping(
         value = "/{id}/status"
@@ -96,10 +83,10 @@ public abstract class AbstractDevOpsController {
         summary = "Get the specified activity's status",
         description = "Get the status of activity identified by the input `id`"
     )
-    public ActivityResource readActivityStatusEndpoint(Long id) {
+    public String readActivityStatusEndpoint(Long id) {
         return readActivityStatus(id);
     }
-    public abstract ActivityResource readActivityStatus(Long id);
+    public abstract String readActivityStatus(Long id);
 
 
     @GetMapping
@@ -133,10 +120,10 @@ public abstract class AbstractDevOpsController {
             )
         )
     })
-    public List<ActivityResource> readActivitiyEndpoint(Long id) {
+    public ActivityResource readActivitiyEndpoint(Long id) {
         return readActivitiy(id);
     }
 
-    public abstract List<ActivityResource>  readActivitiy(Long id);
+    public abstract ActivityResource readActivitiy(Long id);
 
 }

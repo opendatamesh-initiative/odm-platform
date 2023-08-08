@@ -1,5 +1,6 @@
 package org.opendatamesh.platform.up.executor.api.resources;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -12,6 +13,15 @@ public class TaskResource  {
     
     @JsonProperty("id")
     Long id;   
+
+    @JsonProperty("activityId")
+    String activityId; 
+
+    @JsonIgnore
+    String executorRef; 
+
+    @JsonProperty("callbackRef")
+    String callbackRef; 
     
     @JsonProperty("template")
     String template;  
@@ -27,6 +37,9 @@ public class TaskResource  {
 
     @JsonProperty("errors")
     String errors;
+
+    @JsonProperty("createdAt")
+    private Date createdAt;
 
     @JsonProperty("startedAt")
     private Date startedAt;

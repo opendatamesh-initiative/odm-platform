@@ -4,23 +4,23 @@ import org.springframework.http.HttpStatus;
 
 public abstract class OpenDataMeshAPIException extends RuntimeException{
 
-	OpenDataMeshAPIStandardError error;
+	ODMRegistryAPIStandardError error;
 
 	public OpenDataMeshAPIException() {
 		super();
 	}
 
-	public OpenDataMeshAPIException(OpenDataMeshAPIStandardError error, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+	public OpenDataMeshAPIException(ODMRegistryAPIStandardError error, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
 		super(message, cause, enableSuppression, writableStackTrace);
 		setError(error);
 	}
 
-	public OpenDataMeshAPIException(OpenDataMeshAPIStandardError error, String message,Throwable cause) {
+	public OpenDataMeshAPIException(ODMRegistryAPIStandardError error, String message,Throwable cause) {
 		super(message, cause);
 		setError(error);
 	}
 
-	public OpenDataMeshAPIException(OpenDataMeshAPIStandardError error, String message) {
+	public OpenDataMeshAPIException(ODMRegistryAPIStandardError error, String message) {
 		super(message);
 		setError(error);
 	}
@@ -29,14 +29,14 @@ public abstract class OpenDataMeshAPIException extends RuntimeException{
 		super(cause);
 	}
 
-	public void setError(OpenDataMeshAPIStandardError error) {
+	public void setError(ODMRegistryAPIStandardError error) {
 		this.error = error;
 	}
 
 	/**
 	 * @return the error
 	 */
-	public OpenDataMeshAPIStandardError getStandardError() {
+	public ODMRegistryAPIStandardError getStandardError() {
 		return error;
 	}
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.*;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.ApiDefinition;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.ApiToSchemaRelationship;
@@ -73,7 +74,7 @@ public class DataProductVersionService {
             boolean checkGlobalPolicies) {
         if (dataProductVersion == null) {
             throw new InternalServerException(
-                    OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
+                    ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
                     "Data product version object cannot be null");
         }
 
@@ -81,7 +82,7 @@ public class DataProductVersionService {
             dataProductVersion.getInfo().getVersionNumber();
             dataProductVersion.getInfo().getFullyQualifiedName();
             throw new UnprocessableEntityException(
-                    OpenDataMeshAPIStandardError.SC422_05_VERSION_ALREADY_EXISTS,
+                    ODMRegistryAPIStandardError.SC422_05_VERSION_ALREADY_EXISTS,
                     "Version [" + dataProductVersion.getInfo().getVersionNumber() + "] of data product ["
                             + dataProductVersion.getInfo().getFullyQualifiedName() + "] already exists");
         }
@@ -89,7 +90,7 @@ public class DataProductVersionService {
         // TODO check schemas evolution rules
         if (checkGlobalPolicies && !isCompliantWithGlobalPolicies(dataProductVersion)) {
             throw new UnprocessableEntityException(
-                    OpenDataMeshAPIStandardError.SC422_03_DESCRIPTOR_DOC_SEMANTIC_IS_INVALID,
+                    ODMRegistryAPIStandardError.SC422_03_DESCRIPTOR_DOC_SEMANTIC_IS_INVALID,
                     "The data product descriptor is not compliant to one or more global policies");
         }
 
@@ -97,7 +98,7 @@ public class DataProductVersionService {
             saveApiDefinitions(dataProductVersion);
         } catch (Throwable t) {
             throw new InternalServerException(
-                    OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
+                    ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
                     "An internal processing error occured while saving API", t);
         }
 
@@ -105,7 +106,7 @@ public class DataProductVersionService {
             saveTemplates(dataProductVersion);
         } catch (Throwable t) {
             throw new InternalServerException(
-                    OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
+                    ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
                     "An internal processing error occured while saving templates", t);
         }
 
@@ -113,7 +114,7 @@ public class DataProductVersionService {
             dataProductVersion = saveDataProductVersion(dataProductVersion);
         } catch (Throwable t) {
             throw new InternalServerException(
-                    OpenDataMeshAPIStandardError.SC500_01_DATABASE_ERROR,
+                    ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while saving version ["
                             + dataProductVersion.getInfo().getVersionNumber() + "] of data product ["
                             + dataProductVersion.getDataProduct().getId() + "]",
@@ -129,7 +130,7 @@ public class DataProductVersionService {
             eventNotifier.notifyEvent(eventResource);
         } catch (Throwable t) {
             throw new BadGatewayException(
-                    OpenDataMeshAPIStandardError.SC502_05_META_SERVICE_ERROR,
+                    ODMRegistryAPIStandardError.SC502_05_META_SERVICE_ERROR,
                     "Impossible to upload data product version to metaService: " + t.getMessage()
                     , t
             );
@@ -218,7 +219,7 @@ public class DataProductVersionService {
             }
         } catch (Throwable t) {
             throw new InternalServerException(
-                    OpenDataMeshAPIStandardError.SC500_01_DATABASE_ERROR,
+                    ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while schema of endpoint [" + endpoint
                             + "]",
                     t);
@@ -254,7 +255,7 @@ public class DataProductVersionService {
             }
         } catch (Throwable t) {
             throw new InternalServerException(
-                    OpenDataMeshAPIStandardError.SC500_01_DATABASE_ERROR,
+                    ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while saving api of port [" + port.getFullyQualifiedName()
                             + "]",
                     t);
@@ -278,42 +279,65 @@ public class DataProductVersionService {
     }
 
     private void saveTemplates(DataProductVersion dataProductVersion) throws JsonProcessingException {
-        if (dataProductVersion.hasInfrastructuralComponents()) {
-            saveInfrastructuralComponentTemplates(
-                    dataProductVersion.getInternalComponents().getInfrastructuralComponents());
-        }
-
-        if (dataProductVersion.hasApplicationComponents()) {
-            saveApplicationComponentTemplates(
-                dataProductVersion.getInternalComponents().getApplicationComponents());
+        
+        if (dataProductVersion.hasLifecycleInfo()) {
+            saveLifecycleInfoTemplates(
+                    dataProductVersion.getInternalComponents().getLifecycleInfo());
         }
     }
 
-    private void saveInfrastructuralComponentTemplates(List<InfrastructuralComponent> components)
+      private void saveLifecycleInfoTemplates(LifecycleInfo lifecycleInfo)
             throws JsonProcessingException {
     
-        for (InfrastructuralComponent component : components) {
-            if(component.hasProvisionInfoTemplateDefinition()) {
-                TemplateDefinition templateDefinition = saveComponentTemplate(component, "provisionInfo", component.getProvisionInfo().getTemplate());
-                component.getProvisionInfo().setTemplateId(templateDefinition.getId());
+        for (LifecycleActivityInfo activity : lifecycleInfo.getActivityInfos()) {
+            if(activity.getTemplate() != null && activity.getTemplate().getDefinition() != null) {
+                TemplateDefinition templateDefinition = saveActivityTemplate(activity);
+                activity.setTemplateId(templateDefinition.getId());
             }
         }
     }
 
-    private void saveApplicationComponentTemplates(List<ApplicationComponent> components)
-            throws JsonProcessingException {
-        
-        for (ApplicationComponent component : components) {
-            if(component.hasBuildInfoTemplateDefinition()) {
-                TemplateDefinition templateDefinition = saveComponentTemplate(component, "buildInfo", component.getBuildInfo().getTemplate());
-                component.getBuildInfo().setTemplateId(templateDefinition.getId());
-            }
+    private TemplateDefinition saveActivityTemplate(
+        LifecycleActivityInfo activity)
+    throws JsonProcessingException {
 
-            if(component.hasDeployInfoTemplateDefinition()) {
-                TemplateDefinition templateDefinition = saveComponentTemplate(component, "deployInfo", component.getDeployInfo().getTemplate());
-                component.getDeployInfo().setTemplateId(templateDefinition.getId());
+        StandardDefinition template = activity.getTemplate();
+        TemplateDefinition templateDefinition = null;
+
+        TemplateDefinition newTemplateDefinition = new TemplateDefinition(); // why not a mapper?
+        newTemplateDefinition.setName(template.getName());
+        newTemplateDefinition.setVersion(template.getVersion());
+        newTemplateDefinition.setDescription(template.getDescription());
+        newTemplateDefinition.setSpecification(template.getSpecification());
+        newTemplateDefinition.setSpecificationVersion(template.getSpecificationVersion());
+        newTemplateDefinition.setContent(template.getDefinition().getRawContent());
+
+        // Api is created first to obtain the id used after for replacing api definition
+        // content with a reference url
+        try {
+            templateDefinition = templateService.searchDefinition(newTemplateDefinition);
+            if (templateDefinition == null) {
+                templateDefinition = templateService.createDefinition(newTemplateDefinition);
             }
+        } catch (Throwable t) {
+            throw new InternalServerException(
+                    ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
+                    "An error occured in the backend database while saving stage [" +  activity.getStageName() + "] of lifecycleInfo object", t);
         }
+        
+        // Once we have the template id we replace the definition content with a reference
+        // url
+        ObjectNode activityNode = (ObjectNode) objectMapper.readTree(activity.getRawContent());
+
+        ObjectNode templateDefinitionNode = (ObjectNode) activityNode.at("/template/definition");
+        String ref = String.valueOf(templateDefinitionNode.get("$ref"));
+        ref = ref.replaceAll("\\{templateId\\}", "" + templateDefinition.getId());
+        ref = ref.replaceAll("\"", "");
+        templateDefinitionNode.put("$ref", ref);
+
+        activity.setRawContent(objectMapper.writeValueAsString(activityNode));
+
+        return templateDefinition;
     }
 
     private TemplateDefinition saveComponentTemplate(
@@ -342,7 +366,7 @@ public class DataProductVersionService {
             }
         } catch (Throwable t) {
             throw new InternalServerException(
-                    OpenDataMeshAPIStandardError.SC500_01_DATABASE_ERROR,
+                    ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while saving [" + templateDefinitionProperty + "].template of app component [" + component.getFullyQualifiedName()
                             + "]",
                     t);
@@ -377,13 +401,13 @@ public class DataProductVersionService {
     private DataProductVersion readDataProductVersion(DataProductVersion dataProductVersion) {
         if (dataProductVersion == null) {
             throw new InternalServerException(
-                    OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
+                    ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
                     "Data product version object cannot be null");
         }
 
         if (dataProductVersion.getDataProduct() == null) {
             throw new InternalServerException(
-                    OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
+                    ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
                     "Data product object cannot be null");
         }
         return readDataProductVersion(dataProductVersion.getDataProduct().getId(),
@@ -396,7 +420,7 @@ public class DataProductVersionService {
 
         if (!StringUtils.hasText(dataProductId)) {
             throw new InternalServerException(
-                    OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
+                    ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
                     "Data product id cannot be empty");
         }
 
@@ -404,7 +428,7 @@ public class DataProductVersionService {
             dataProductVersion = getDataProductVersion(dataProductId, version);
         } catch (Throwable t) {
             throw new InternalServerException(
-                    OpenDataMeshAPIStandardError.SC500_01_DATABASE_ERROR,
+                    ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while loading version [" + version + "] of data product ["
                             + dataProductId + "]",
                     t);
@@ -412,7 +436,7 @@ public class DataProductVersionService {
 
         if (dataProductVersion == null) {
             throw new NotFoundException(
-                    OpenDataMeshAPIStandardError.SC404_01_PRODUCT_NOT_FOUND,
+                    ODMRegistryAPIStandardError.SC404_01_PRODUCT_NOT_FOUND,
                     "Data product [" + dataProductId + "] does not exist");
         }
 
@@ -436,13 +460,13 @@ public class DataProductVersionService {
     private boolean dataProductVersionExists(DataProductVersion dataProductVersion) {
         if (dataProductVersion == null) {
             throw new InternalServerException(
-                    OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
+                    ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
                     "Data product version object cannot be null");
         }
 
         if (dataProductVersion.getDataProduct() == null) {
             throw new InternalServerException(
-                    OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
+                    ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
                     "Data product object cannot be null");
         }
 
@@ -466,7 +490,7 @@ public class DataProductVersionService {
             dataProductVersionSearchResult = findDataProductVersions(dataProductId);
         } catch (Throwable t) {
             throw new InternalServerException(
-                    OpenDataMeshAPIStandardError.SC500_01_DATABASE_ERROR,
+                    ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while searching data product versions",
                     t);
         }
@@ -491,7 +515,7 @@ public class DataProductVersionService {
     public void deleteDataProductVersion(DataProductVersion dataProductVersion) {
         if (dataProductVersion == null) {
             throw new InternalServerException(
-                    OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
+                    ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
                     "Data product version object cannot be null");
         }
         deleteDataProductVersion(
@@ -515,7 +539,7 @@ public class DataProductVersionService {
                     + "] succesfully deleted");
         } catch (Throwable t) {
             throw new InternalServerException(
-                    OpenDataMeshAPIStandardError.SC500_01_DATABASE_ERROR,
+                    ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while deleting data product version",
                     t
             );
@@ -531,7 +555,7 @@ public class DataProductVersionService {
             eventNotifier.notifyEvent(eventResource);
         } catch (Throwable t) {
             throw new BadGatewayException(
-                    OpenDataMeshAPIStandardError.SC502_05_META_SERVICE_ERROR,
+                    ODMRegistryAPIStandardError.SC502_05_META_SERVICE_ERROR,
                     "Impossible to upload data product version to metaService: " + t.getMessage(),
                     t
             );
@@ -551,7 +575,7 @@ public class DataProductVersionService {
                     dataProductVersion, PolicyName.dataproduct);
         } catch (Throwable t) {
             throw new BadGatewayException(
-                    OpenDataMeshAPIStandardError.SC502_01_POLICY_SERVICE_ERROR,
+                    ODMRegistryAPIStandardError.SC502_01_POLICY_SERVICE_ERROR,
                     "An error occured while invoking policy service to validate data product version: " + t.getMessage(),
                     t
             );

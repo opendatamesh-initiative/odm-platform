@@ -1,8 +1,10 @@
 package org.opendatamesh.platform.core.dpds.exceptions;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
+@EqualsAndHashCode(callSuper=true)
 public class BuildException extends Exception {
     
     Stage stage;

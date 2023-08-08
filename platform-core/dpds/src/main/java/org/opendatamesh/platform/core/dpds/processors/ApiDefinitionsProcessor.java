@@ -103,9 +103,9 @@ public class ApiDefinitionsProcessor {
             }
             apiDefinitionContent = context.getLocation().fetchResource(baseUri, uri);
 
-            apiDefinitionRef = context.getOptions().getServerUrl() + "/definitions/{apiId}";
+            apiDefinitionRef = context.getOptions().getServerUrl() + "/apis/{apiId}";
             apiDefinitionNode.put("$ref", apiDefinitionRef);
-            port.getPromises().getApi().getDefinition().setOriginalRef("ref");
+            port.getPromises().getApi().getDefinition().setOriginalRef(ref);
         } else { // inline
             // set apiDefinitionObject as raw content of reference object
             try {
@@ -113,7 +113,7 @@ public class ApiDefinitionsProcessor {
             } catch (JsonProcessingException e) {
                 throw new ParseException("Impossible serialize api definition", e);
             }
-            apiDefinitionRef = context.getOptions().getServerUrl() + "/definitions/{apiId}";
+            apiDefinitionRef = context.getOptions().getServerUrl() + "/apis/{apiId}";
             ObjectNode apiObject = (ObjectNode) portObject.at("/promises/api");
             apiObject.remove("definition");
             apiDefinitionNode = apiObject.putObject("definition");

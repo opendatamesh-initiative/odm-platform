@@ -1,0 +1,16 @@
+{
+  "dataProductDescriptor": "1.0.0",
+  "info": {
+    "fullyQualifiedName": "urn:dpds:orm.opendatamesh:dataproducts:dpdMinimal",
+    "name": "dpdMinimal",
+    "version": "1.0.0",
+    "domain": "testDomain",
+    "owner": {
+      "id": "john.doe@company-xyz.com"
+    }
+  },
+    
+  "interfaceComponents": {
+    "outputPorts": []
+  }
+}

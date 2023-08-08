@@ -1,6 +1,9 @@
 package org.opendatamesh.platform.pp.registry.database.entities.dataproduct;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.slf4j.Logger;
@@ -12,6 +15,8 @@ import java.util.List;
 
 
 @Data
+@EqualsAndHashCode(callSuper=true)
+@ToString(callSuper = true)
 @Entity(name = "ApplicationComponent")
 @Table(name = "DPV_APP_COMPONENTS", schema="ODMREGISTRY")
 public class ApplicationComponent extends Component implements Cloneable {
@@ -21,14 +26,6 @@ public class ApplicationComponent extends Component implements Cloneable {
 
     @Column(name = "APPLICATION_TYPE")
     private String applicationType;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "BUILD_INFO_ID", referencedColumnName = "ID")
-    private BuildInfo buildInfo;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "DEPLOY_INFO_ID", referencedColumnName = "ID")
-    private DeployInfo deployInfo;
                                        
     @ElementCollection(fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SUBSELECT)
@@ -61,21 +58,6 @@ public class ApplicationComponent extends Component implements Cloneable {
     
     private static final Logger logger = LoggerFactory.getLogger(ApplicationComponent.class);
 
-    public boolean hasBuildInfo() {
-        return buildInfo != null;
-    }
-
-    public boolean hasBuildInfoTemplateDefinition() {
-        return hasBuildInfo() && buildInfo.hasTemplateDefinition();
-    }
-
-    public boolean hasDeploydInfo() {
-        return deployInfo != null;
-    }
-
-    public boolean hasDeployInfoTemplateDefinition() {
-        return hasDeploydInfo() && deployInfo.hasTemplateDefinition();
-    }
    
     @PrePersist
     protected void onCreate() {

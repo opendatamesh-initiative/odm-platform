@@ -14,10 +14,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.EntityTypeDPDS;
 import org.opendatamesh.platform.core.dpds.model.InterfaceComponentsDPDS;
-import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataProductVersion;
 import org.opendatamesh.platform.pp.registry.api.v1.exceptions.BadRequestException;
-import org.opendatamesh.platform.pp.registry.api.v1.exceptions.OpenDataMeshAPIStandardError;
+import org.opendatamesh.platform.pp.registry.api.v1.exceptions.ODMRegistryAPIStandardError;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.ErrorRes;
+import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataProductVersion;
 import org.opendatamesh.platform.pp.registry.resources.v1.mappers.DataProductVersionMapper;
 import org.opendatamesh.platform.pp.registry.services.DataProductVersionService;
 import org.slf4j.Logger;
@@ -116,7 +116,7 @@ public class DataProductComponentsController
             entityType = EntityTypeDPDS.get(portType);
             if(entityType == null || !entityType.isPort()){
                 throw new BadRequestException(
-                    OpenDataMeshAPIStandardError.SC400_06_INVALID_PORTTYPE,
+                    ODMRegistryAPIStandardError.SC400_06_INVALID_PORTTYPE,
                     "Value [" + portType + "] is not a valid port type"
                 );
             }
@@ -127,7 +127,7 @@ public class DataProductComponentsController
         } else {
             if(!format.equals("normalized") || !format.equals("canonical")) {
                 throw new BadRequestException(
-                    OpenDataMeshAPIStandardError.SC400_04_INVALID_FORMAT,
+                    ODMRegistryAPIStandardError.SC400_04_INVALID_FORMAT,
                     "Value [" + format + "] is not a valid format"
                 );
             }
@@ -150,7 +150,7 @@ public class DataProductComponentsController
                 return objectMapper.writeValueAsString(dataProductVersionDPDS.getInterfaceComponents());
         }
         throw new BadRequestException(
-            OpenDataMeshAPIStandardError.SC400_04_INVALID_FORMAT,
+            ODMRegistryAPIStandardError.SC400_04_INVALID_FORMAT,
             "Format [" + format + "] is not supported");
     }
 }

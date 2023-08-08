@@ -2,11 +2,15 @@ package org.opendatamesh.platform.core.dpds.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@EqualsAndHashCode(callSuper=true)
+@ToString(callSuper = true)
 public class ApplicationComponentDPDS extends ComponentDPDS implements Cloneable {
 
     @JsonProperty("platform")
@@ -14,12 +18,6 @@ public class ApplicationComponentDPDS extends ComponentDPDS implements Cloneable
 
     @JsonProperty("applicationType")
     private String applicationType;
-
-    @JsonProperty("buildInfo")
-    private BuildInfoDPDS buildInfo;
-
-    @JsonProperty("deployInfo")
-    private DeployInfoDPDS deployInfo;
 
     @JsonProperty("consumesFrom")
     private List<String> consumesFrom = new ArrayList<String>();
@@ -34,12 +32,4 @@ public class ApplicationComponentDPDS extends ComponentDPDS implements Cloneable
     
     @JsonProperty("externalDocs")
     private ExternalResourceDPDS externalDocs;
-
-    public ApplicationComponentDPDS() {
-        
-    }
-    public ApplicationComponentDPDS(BuildInfoDPDS buildInfo, DeployInfoDPDS deploymentInfo) {
-        this.buildInfo = buildInfo;
-        this.deployInfo = deploymentInfo;
-    }
 }

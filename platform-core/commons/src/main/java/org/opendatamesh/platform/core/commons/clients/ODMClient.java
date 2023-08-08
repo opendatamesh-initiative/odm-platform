@@ -6,11 +6,16 @@ import lombok.Data;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.util.DefaultUriBuilderFactory;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Data
 public class ODMClient {
@@ -26,9 +31,9 @@ public class ODMClient {
     protected ObjectMapper mapper;
 
 
-    public ODMClient(String serverAddress) {
+    public ODMClient(String serverAddress, ObjectMapper mapper) {
         this.serverAddress = serverAddress;
-        mapper = new ObjectMapper();
+        this.mapper = mapper;
         rest = initRestTemplate();
         acceptMediaType = MediaType.APPLICATION_JSON;
         contentMediaType = MediaType.APPLICATION_JSON;
@@ -38,6 +43,20 @@ public class ODMClient {
 
         TestRestTemplate restTemplate = new TestRestTemplate();
 
+        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+        converter.setObjectMapper(mapper);
+        List<HttpMessageConverter<?>>  converters = restTemplate.getRestTemplate().getMessageConverters();
+        for(HttpMessageConverter c : converters) {
+
+            if(c instanceof MappingJackson2HttpMessageConverter) {
+               MappingJackson2HttpMessageConverter m = (MappingJackson2HttpMessageConverter)c;
+              
+               Set<Object> modules = m.getObjectMapper().getRegisteredModuleIds();
+               System.out.println(modules);
+            }
+            System.out.println(c.getClass().getCanonicalName() + "\n" + c.getSupportedMediaTypes());
+        }
+        //.add(converter);
         //rest.setPort(port);
         
         // TODO this is ok for debugging IT not for executing them while building. Link the behaviour to application context (i.e. debug=>timeout didabled timeout while test=>timeout active)
@@ -54,16 +73,38 @@ public class ODMClient {
         return restTemplate;
     }
     
-    protected String apiUrl(RoutesInterface route) {
-        return apiUrl(route, "");
+    protected String apiUrlOfItem(RoutesInterface route) {
+        return apiUrl(route, "/{id}", null);
     }
 
-    protected String apiUrlOfItem(RoutesInterface route) {
-        return apiUrl(route, "/{id}");
+    protected String apiUrlOfItem(RoutesInterface route, Map<String, Object> queryParams) {
+        return apiUrl(route, "/{id}", queryParams);
+    }
+
+    protected String apiUrl(RoutesInterface route) {
+        return apiUrl(route, "", null);
     }
 
     protected String apiUrl(RoutesInterface route, String extension) {
-        return apiUrlFromString(route.getPath() + extension);
+        return apiUrl(route, extension, null);
+    }
+
+    protected String apiUrl(RoutesInterface route, String extension, Map<String, Object> queryParams) {
+        String urlTemplate = null;
+
+        urlTemplate = (extension != null)?
+            apiUrlFromString(route.getPath() + extension):
+            apiUrlFromString(route.getPath());
+
+        if(queryParams != null) {
+            UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(urlTemplate);
+            for(String paramName : queryParams.keySet()){
+                uriBuilder.queryParam(paramName, "{" + paramName + "}");
+            }
+            urlTemplate = uriBuilder.encode().toUriString();
+        }
+        
+        return urlTemplate;
     }
 
     protected String apiUrlFromString(String servicePath) {

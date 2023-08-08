@@ -9,10 +9,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.util.*;
 
+import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
+
 @Data
+@EqualsAndHashCode(callSuper=true)
+@ToString(callSuper = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonPropertyOrder({ "inputPorts", "outputPorts",  "discoveryPorts", "observabilityPorts", "controlPorts"})
 public class InterfaceComponentsDPDS extends ComponentContainerDPDS{
@@ -93,7 +99,7 @@ public class InterfaceComponentsDPDS extends ComponentContainerDPDS{
     @JsonIgnore
     public  ObjectNode getRawContent(Set<EntityTypeDPDS> inludedPortTypes) throws JsonProcessingException {
        
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = ObjectMapperFactory.JSON_MAPPER;
         ObjectNode interfaceComponentNodes = mapper.createObjectNode();
        
         if(inludedPortTypes.contains(EntityTypeDPDS.inputport))

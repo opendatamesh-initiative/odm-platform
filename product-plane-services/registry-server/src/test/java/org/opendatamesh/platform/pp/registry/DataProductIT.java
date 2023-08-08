@@ -2,8 +2,8 @@ package org.opendatamesh.platform.pp.registry;
 
 import org.apache.poi.ss.formula.functions.T;
 import org.junit.jupiter.api.Test;
+import org.opendatamesh.platform.pp.registry.api.v1.exceptions.ODMRegistryAPIStandardError;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductResource;
-import org.opendatamesh.platform.pp.registry.api.v1.exceptions.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.ErrorRes;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -85,22 +85,21 @@ public class DataProductIT extends OpenDataMeshIT {
 
         ResponseEntity<DataProductResource> postProductResponse = null;
         DataProductResource dataProduct1Request, dataProduct2Request, dataProduct3Request;
-        DataProductResource dataProduct1Response, dataProduct2Response, dataProduct3Response;
-        
+    
         dataProduct1Request = resourceBuilder.buildDataProduct("prod-1", "marketing", "marketing product");
         postProductResponse = registryClient.postDataProduct(dataProduct1Request);
         verifyResponseEntity(postProductResponse, HttpStatus.CREATED, true);
-        dataProduct1Response = postProductResponse.getBody();
+        postProductResponse.getBody();
 
         dataProduct2Request = resourceBuilder.buildDataProduct("prod-2", "sales", "sales product");
         postProductResponse = registryClient.postDataProduct(dataProduct2Request);
         verifyResponseEntity(postProductResponse, HttpStatus.CREATED, true);
-        dataProduct2Response = postProductResponse.getBody();
+        postProductResponse.getBody();
         
         dataProduct3Request = resourceBuilder.buildDataProduct("prod-3", "hr", "hr product");
         postProductResponse = registryClient.postDataProduct(dataProduct3Request);
         verifyResponseEntity(postProductResponse, HttpStatus.CREATED, true);
-        dataProduct3Response = postProductResponse.getBody();
+        postProductResponse.getBody();
 
         ResponseEntity<DataProductResource[]> getProducteResponse = registryClient.getDataProducts();
         verifyResponseEntity(getProducteResponse, HttpStatus.OK, true);
@@ -120,7 +119,7 @@ public class DataProductIT extends OpenDataMeshIT {
     public void testDataProductReadOne() throws IOException {
 
         ResponseEntity<DataProductResource> postProductResponse = null;
-        DataProductResource dataProductRequest, dataProductRespnse;
+        DataProductResource dataProductRequest;
 
         dataProductRequest = resourceBuilder.buildDataProduct("prod-1", "marketing", "marketing product");
         postProductResponse = registryClient.postDataProduct(dataProductRequest);
@@ -147,8 +146,6 @@ public class DataProductIT extends OpenDataMeshIT {
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDataProductUpdate() throws IOException {
-
-        ResponseEntity<DataProductResource> postProductResponse = null;
 
         createDataProduct(RESOURCE_DP1);
         DataProductResource dataProductRes = updateDataProduct(RESOURCE_DP1_UPD);
@@ -194,7 +191,7 @@ public class DataProductIT extends OpenDataMeshIT {
         String payload = null;
         errorResponse = registryClient.postDataProduct(payload, ErrorRes.class);
         verifyResponseError(errorResponse,
-                HttpStatus.BAD_REQUEST, OpenDataMeshAPIStandardError.SC400_10_PRODUCT_IS_EMPTY);
+                HttpStatus.BAD_REQUEST, ODMRegistryAPIStandardError.SC400_10_PRODUCT_IS_EMPTY);
     }
 
     @Test
@@ -209,7 +206,7 @@ public class DataProductIT extends OpenDataMeshIT {
         errorResponse = registryClient.postDataProduct(dataProductRes, ErrorRes.class);
         verifyResponseError(errorResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                OpenDataMeshAPIStandardError.SC422_04_PRODUCT_ALREADY_EXISTS);
+                ODMRegistryAPIStandardError.SC422_04_PRODUCT_ALREADY_EXISTS);
 
 
         // TEST 2: try to register a product without setting the fqn
@@ -217,14 +214,14 @@ public class DataProductIT extends OpenDataMeshIT {
         errorResponse = registryClient.postDataProduct(dataProductRes, ErrorRes.class);
         verifyResponseError(errorResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                OpenDataMeshAPIStandardError.SC422_07_PRODUCT_IS_INVALID);
+                ODMRegistryAPIStandardError.SC422_07_PRODUCT_IS_INVALID);
         
         // TEST 3: try to register a product with an empty fqn
         dataProductRes = resourceBuilder.buildDataProduct("    ", "marketing", "marketing product");
         errorResponse = registryClient.postDataProduct(dataProductRes, ErrorRes.class);
         verifyResponseError(errorResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                OpenDataMeshAPIStandardError.SC422_07_PRODUCT_IS_INVALID);
+                ODMRegistryAPIStandardError.SC422_07_PRODUCT_IS_INVALID);
         
     
         // TEST 4: try to register a product setting an id that not match with the fqn
@@ -232,7 +229,7 @@ public class DataProductIT extends OpenDataMeshIT {
         errorResponse = registryClient.postDataProduct(dataProductRes, ErrorRes.class);
         verifyResponseError(errorResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                OpenDataMeshAPIStandardError.SC422_07_PRODUCT_IS_INVALID);
+                ODMRegistryAPIStandardError.SC422_07_PRODUCT_IS_INVALID);
     }
 
 

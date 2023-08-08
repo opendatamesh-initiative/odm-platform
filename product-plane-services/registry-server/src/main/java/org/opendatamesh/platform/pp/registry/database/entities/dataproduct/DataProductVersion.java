@@ -99,6 +99,10 @@ public class DataProductVersion implements Cloneable, Serializable {
         return hasInternalComponents() && getInternalComponents().hasInfrastructuralComponents();
     } 
 
+    public boolean hasLifecycleInfo() {
+        return hasInternalComponents() && getInternalComponents().hasLifecycleInfo();
+    } 
+
 
     @PrePersist
     protected void onCreate() {

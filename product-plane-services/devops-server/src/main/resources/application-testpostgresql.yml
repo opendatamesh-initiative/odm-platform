@@ -1,0 +1,93 @@
+##########################
+# Server configuration
+##########################
+app:
+  workdir:
+
+server:
+  port: 8581
+  error:
+    include-message: always
+  servlet:
+    context-path: /api/v1/pp/devops/
+
+
+############################################
+# Spring, JPA, DB and Flyway configurations
+############################################
+spring:
+  # Profile
+  profile: testpostgresql
+
+# JPA
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: validate #none
+      naming:
+        #implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQL95Dialect # Or PostgreSQLDialect
+        globally_quoted_identifiers: true
+        default_schema: ODMDEVOPS
+  # DB
+  datasource:
+    # TestContainer URL for auto-creation of Docker PostgreSQL DB on app start-up
+    # https://java.testcontainers.org/modules/databases/jdbc/
+    # Create a Docker container from postgresql:11-alpine image
+    url: jdbc:tc:postgresql:11-alpine:///odmpdb?stringtype=unspecified&TC_REUSABLE=true
+    username: postgres
+    password: postgres
+    # TestContainers driverClassName for JDBC url generated DBs
+    driverClassName: org.testcontainers.jdbc.ContainerDatabaseDriver
+  h2:
+    console:
+      enabled: false
+  # FlyWay configuration
+  # More: https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html#appendix.application-properties.data-migration
+  flyway:
+    enabled: true
+    # Redundant (Flyway get them from datasource) + conflicts with TestContainers DBs from JDBC url auto-generation integration with FLyway
+    # https://stackoverflow.com/questions/73605371/table-not-found-in-integration-tests-when-using-testcontainers-with-flyway
+    #url: jdbc:postgresql://localhost:5432/odmpdb
+    #user: postgres
+    #password: postgres
+    #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
+    schemas: ODMDEVOPS
+    locations: classpath:db/migration/postgresql
+    clean-on-validation-error: true
+
+
+##############################
+# Policy Module configuration
+##############################
+odm:
+  productPlane:
+    registryService:
+      active: true
+      address: http://localhost:8585
+    devopsService:
+      active: true
+      address: http://localhost:8481
+    blueprintService:
+      active: false
+      address: http://localhost:8480
+  utilityPlane:
+    policyServices:
+      open-policy-agent:
+        active: false
+        address: http://localhost:8580
+    executorServices:
+      azure-devops:
+        active: true
+        address: http://localhost:8581
+    notificationServices:
+      blindata:
+        active: false
+        address: http://localhost:8582

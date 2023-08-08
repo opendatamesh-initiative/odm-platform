@@ -8,11 +8,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.ApiToSchemaRelationshipResource;
+import org.opendatamesh.platform.pp.registry.api.v1.resources.ErrorRes;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.SchemaResource;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.ApiToSchemaRelationship;
 import org.opendatamesh.platform.pp.registry.api.v1.exceptions.BadRequestException;
-import org.opendatamesh.platform.pp.registry.api.v1.exceptions.OpenDataMeshAPIStandardError;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.ErrorRes;
+import org.opendatamesh.platform.pp.registry.api.v1.exceptions.ODMRegistryAPIStandardError;
 import org.opendatamesh.platform.pp.registry.resources.v1.mappers.SchemaMapper;
 import org.opendatamesh.platform.pp.registry.services.SchemaService;
 import org.slf4j.Logger;
@@ -108,7 +108,7 @@ public class SchemaController {
     ) {
         if(schemaResource == null) {
             throw new BadRequestException(
-                OpenDataMeshAPIStandardError.SC400_12_SCHEMA_IS_EMPTY,
+                ODMRegistryAPIStandardError.SC400_12_SCHEMA_IS_EMPTY,
                 "Schema cannot be empty");
         }
 

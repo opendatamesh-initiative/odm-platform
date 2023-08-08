@@ -15,7 +15,7 @@ import org.springframework.http.HttpStatus;
  * EXAMPLE: a request missing some mandatory parameters
  * 
  * @see https://www.rfc-editor.org/rfc/rfc9110.html#name-400-bad-request
- * @see OpenDataMeshAPIStandardError
+ * @see ODMRegistryAPIStandardError
  * @see OpenDataMeshAPIExceptionHandler
  */
 public class BadRequestException extends OpenDataMeshAPIException {
@@ -24,16 +24,16 @@ public class BadRequestException extends OpenDataMeshAPIException {
 		super();
 	}
 
-	public BadRequestException(OpenDataMeshAPIStandardError error, String message, Throwable cause,
+	public BadRequestException(ODMRegistryAPIStandardError error, String message, Throwable cause,
 			boolean enableSuppression, boolean writableStackTrace) {
 		super(error, message, cause, enableSuppression, writableStackTrace);
 	}
 
-	public BadRequestException(OpenDataMeshAPIStandardError error, String message, Throwable cause) {
+	public BadRequestException(ODMRegistryAPIStandardError error, String message, Throwable cause) {
 		super(error, message, cause);
 	}
 
-	public BadRequestException(OpenDataMeshAPIStandardError error, String message) {
+	public BadRequestException(ODMRegistryAPIStandardError error, String message) {
 		super(error, message);
 	}
 

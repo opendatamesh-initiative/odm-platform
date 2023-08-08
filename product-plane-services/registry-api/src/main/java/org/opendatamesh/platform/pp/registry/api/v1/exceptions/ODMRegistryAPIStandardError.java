@@ -1,6 +1,6 @@
-package org.opendatamesh.platform.pp.devops.server.exceptions;
+package org.opendatamesh.platform.pp.registry.api.v1.exceptions;
 
-public enum OpenDataMeshAPIStandardError {
+public enum ODMRegistryAPIStandardError {
 
     // Bad Request Exceptions
     SC400_01_DESCRIPTOR_IS_EMPTY ("40001", "Descriptor is empty"),
@@ -64,7 +64,7 @@ public enum OpenDataMeshAPIStandardError {
     private final String code;   
     private final String description; 
     
-    OpenDataMeshAPIStandardError(String code, String description) {
+    ODMRegistryAPIStandardError(String code, String description) {
         this.code = code;
         this.description = description;
     }

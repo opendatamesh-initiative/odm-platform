@@ -73,29 +73,29 @@ public class DataProductService {
      *      SC500_DATABASE_ERROR
      */
     public DataProduct createDataProduct(DataProduct dataProduct) {
-
-        if(dataProduct == null) {
+     if(dataProduct == null) {
             throw new InternalServerException(
-                OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
+                ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
                 "Data product object cannot be null");
         }
 
         if(!StringUtils.hasText(dataProduct.getFullyQualifiedName())) {
             throw new UnprocessableEntityException(
-                OpenDataMeshAPIStandardError.SC422_07_PRODUCT_IS_INVALID,
+                ODMRegistryAPIStandardError.SC422_07_PRODUCT_IS_INVALID,
                 "Data product fullyQualifiedName property cannot be empty");
         }
         
         if(searchDataProductsByFQN(dataProduct.getFullyQualifiedName()) != null) {
             throw new UnprocessableEntityException(
-                OpenDataMeshAPIStandardError.SC422_04_PRODUCT_ALREADY_EXISTS,
+                ODMRegistryAPIStandardError.SC422_04_PRODUCT_ALREADY_EXISTS,
                 "Data product [" + dataProduct.getFullyQualifiedName() + "] already exists");
         }
+   
 
         String uuid = UUID.nameUUIDFromBytes(dataProduct.getFullyQualifiedName().getBytes()).toString();
         if(dataProduct.getId() != null && !dataProduct.getId().equals(uuid)) {
             throw new UnprocessableEntityException(
-                OpenDataMeshAPIStandardError.SC422_07_PRODUCT_IS_INVALID,
+                ODMRegistryAPIStandardError.SC422_07_PRODUCT_IS_INVALID,
                 "Data product [" + dataProduct.getFullyQualifiedName() + "] id [" + dataProduct.getId()+ "] is invalid. Expected [" + uuid + "]");
         }
         dataProduct.setId(uuid);
@@ -105,7 +105,7 @@ public class DataProductService {
             logger.info("Data product [" + dataProduct.getFullyQualifiedName() + "] succesfully created");
         } catch(Throwable t) {
             throw new InternalServerException(
-                OpenDataMeshAPIStandardError.SC500_01_DATABASE_ERROR,
+                ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
                 "An error occured in the backend database while saving data product [" + dataProduct.getFullyQualifiedName() + "]",
                 t);
         }
@@ -120,7 +120,7 @@ public class DataProductService {
             eventNotifier.notifyEvent(eventResource);
         } catch (Throwable t) {
             throw new BadGatewayException(
-                    OpenDataMeshAPIStandardError.SC502_05_META_SERVICE_ERROR,
+                    ODMRegistryAPIStandardError.SC502_05_META_SERVICE_ERROR,
                     "Impossible to upload data product to metaService: " + t.getMessage(),
                     t
             );
@@ -143,7 +143,7 @@ public class DataProductService {
             dataProducts = loadAllDataProducts();
         } catch(Throwable t) {
             throw new InternalServerException(
-                OpenDataMeshAPIStandardError.SC500_01_DATABASE_ERROR,
+                ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
                 "An error occured in the backend database while loading data products",
                 t);
         }
@@ -157,7 +157,7 @@ public class DataProductService {
     public DataProduct readDataProduct(DataProduct dataProduct)  {
         if(dataProduct == null) {
             throw new InternalServerException(
-                OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
+                ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
                 "Data product object cannot be null");
         }
         return readDataProduct(dataProduct.getId());
@@ -168,7 +168,7 @@ public class DataProductService {
         
         if(!StringUtils.hasText(dataProductId)) {
             throw new BadRequestException(
-                OpenDataMeshAPIStandardError.SC400_07_PRODUCT_ID_IS_EMPTY,
+                ODMRegistryAPIStandardError.SC400_07_PRODUCT_ID_IS_EMPTY,
                 "Data product id is empty");
         }
 
@@ -176,15 +176,15 @@ public class DataProductService {
             dataProduct = loadDataProduct(dataProductId);
         } catch(Throwable t) {
             throw new InternalServerException(
-                OpenDataMeshAPIStandardError.SC500_01_DATABASE_ERROR,
+                ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
                 "An error occured in the backend database while loading data product with id [" + dataProductId + "]",
                 t);
         }
        
         if(dataProduct == null){
             throw new NotFoundException(
-                OpenDataMeshAPIStandardError.SC404_01_PRODUCT_NOT_FOUND,
-                "Data Product with [" + dataProductId + "] does not exist");
+                ODMRegistryAPIStandardError.SC404_01_PRODUCT_NOT_FOUND,
+                "Data Product with id [" + dataProductId + "] does not exist");
         }
 
         return dataProduct;
@@ -209,7 +209,7 @@ public class DataProductService {
     private boolean dataProductExists(DataProduct dataProduct)  {
         if(dataProduct == null) {
             throw new InternalServerException(
-                OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
+                ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
                 "Data product object cannot be null");
         }
         return dataProductRepository.existsById(dataProduct.getId());
@@ -229,7 +229,7 @@ public class DataProductService {
             dataProductSearchResults = findDataProductsByDomainAndOwner(domain, ownerId);
         } catch(Throwable t) {
             throw new InternalServerException(
-                OpenDataMeshAPIStandardError.SC500_01_DATABASE_ERROR,
+                ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
                 "An error occured in the backend database while searching data products",
                 t);
         }
@@ -262,7 +262,7 @@ public class DataProductService {
             }
         } catch(Throwable t) {
             throw new InternalServerException(
-                OpenDataMeshAPIStandardError.SC500_01_DATABASE_ERROR,
+                ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
                 "An error occured in the backend database while searching data products",
                 t);
         }
@@ -293,20 +293,20 @@ public class DataProductService {
 
         if(dataProduct == null) {
             throw new InternalServerException(
-                    OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
+                    ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
                     "Data product object cannot be null");
         }
 
         if(!StringUtils.hasText(dataProduct.getFullyQualifiedName())) {
             throw new UnprocessableEntityException(
-                    OpenDataMeshAPIStandardError.SC422_07_PRODUCT_IS_INVALID,
+                    ODMRegistryAPIStandardError.SC422_07_PRODUCT_IS_INVALID,
                     "Data product fullyQualifiedName property cannot be empty");
         }
 
         DataProduct oldDataProduct = searchDataProductsByFQN(dataProduct.getFullyQualifiedName());
         if(oldDataProduct == null) {
             throw new NotFoundException(
-                    OpenDataMeshAPIStandardError.SC404_01_PRODUCT_NOT_FOUND,
+                    ODMRegistryAPIStandardError.SC404_01_PRODUCT_NOT_FOUND,
                     "Data product [" + dataProduct.getFullyQualifiedName() + "] doesn't exists");
         }
         dataProduct.setId(oldDataProduct.getId());
@@ -316,7 +316,7 @@ public class DataProductService {
             logger.info("Data product [" + dataProduct.getFullyQualifiedName() + "] succesfully updated");
         } catch(Throwable t) {
             throw new InternalServerException(
-                OpenDataMeshAPIStandardError.SC500_01_DATABASE_ERROR,
+                ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
                 "An error occured in the backend database while updating data product [" + dataProduct.getFullyQualifiedName() + "]",
                 t);
         }
@@ -331,7 +331,7 @@ public class DataProductService {
             eventNotifier.notifyEvent(eventResource);
         } catch (Throwable t) {
             throw new BadGatewayException(
-                    OpenDataMeshAPIStandardError.SC502_05_META_SERVICE_ERROR,
+                    ODMRegistryAPIStandardError.SC502_05_META_SERVICE_ERROR,
                     "Impossible to upload data product version to metaService", t);
         }
 
@@ -350,7 +350,7 @@ public class DataProductService {
             logger.info("Data product with id [" + dataProductId + "] successfully deleted");
         } catch(Throwable t) {
             throw new InternalServerException(
-                OpenDataMeshAPIStandardError.SC500_01_DATABASE_ERROR,
+                ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
                 "An error occured in the backend database while deleting data product",
                 t);
         }
@@ -365,7 +365,7 @@ public class DataProductService {
             eventNotifier.notifyEvent(eventResource);
         } catch (Throwable t) {
             throw new BadGatewayException(
-                    OpenDataMeshAPIStandardError.SC502_05_META_SERVICE_ERROR,
+                    ODMRegistryAPIStandardError.SC502_05_META_SERVICE_ERROR,
                     "Impossible to upload data product to metaService", t);
         }
 
@@ -404,7 +404,7 @@ public class DataProductService {
     ) {
         if(!StringUtils.hasText(dataProductId)) {
             throw new InternalServerException(
-                OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
+                ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
                 "Data product id cannot be null");
         }
 
@@ -413,7 +413,7 @@ public class DataProductService {
         dataProductVersion = descriptorToDataProductVersion(descriptorLocation, serverUrl);
         if(!dataProduct.getId().equals(dataProductVersion.getInfo().getDataProductId())) {
             throw new UnprocessableEntityException(
-                OpenDataMeshAPIStandardError.SC422_03_DESCRIPTOR_DOC_SEMANTIC_IS_INVALID,
+                ODMRegistryAPIStandardError.SC422_03_DESCRIPTOR_DOC_SEMANTIC_IS_INVALID,
                 "Data product id [" + dataProduct.getFullyQualifiedName() + "]does not match with the id [" + dataProductVersion.getInfo().getFullyQualifiedName() + "] contained in data product descriptor");
         }
         
@@ -443,13 +443,13 @@ public class DataProductService {
         
         if(dataProductVersion == null) {
             throw new InternalServerException(
-                OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
+                ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
                 "Data product version object cannot be null");
         }
 
         if(dataProductVersionService.isCompliantWithGlobalPolicies(dataProductVersion)) {
             throw new UnprocessableEntityException(
-                OpenDataMeshAPIStandardError.SC422_03_DESCRIPTOR_DOC_SEMANTIC_IS_INVALID,
+                ODMRegistryAPIStandardError.SC422_03_DESCRIPTOR_DOC_SEMANTIC_IS_INVALID,
                 "Data product descriptor is not compliant with global policies");
         }
         
@@ -463,7 +463,7 @@ public class DataProductService {
                 dataProduct = createDataProduct(dataProduct);
             } else {
                 throw new NotFoundException(
-                    OpenDataMeshAPIStandardError.SC404_01_PRODUCT_NOT_FOUND,
+                    ODMRegistryAPIStandardError.SC404_01_PRODUCT_NOT_FOUND,
                 "Data product [" + dataProductId + "] not found");
             } 
         }
@@ -508,15 +508,15 @@ public class DataProductService {
                 break;
             case RESOLVE_READ_ONLY_PROPERTIES:
                 throw new InternalServerException(
-                    OpenDataMeshAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
+                    ODMRegistryAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
             "An error occured in the backend descriptor processor while adding read only properties", e);
             case RESOLVE_STANDARD_DEFINITIONS:
                 throw new InternalServerException(
-                    OpenDataMeshAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
+                    ODMRegistryAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
             "An error occured in the backend descriptor processor while resolving standard definitions", e);
             default:
               throw new InternalServerException(
-                    OpenDataMeshAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
+                    ODMRegistryAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
                     "An error occured in the backend descriptor processor while adding read only properties", e);
           }
     }
@@ -525,19 +525,19 @@ public class DataProductService {
 
         if(e.getCause() instanceof FetchException) {
             throw new UnprocessableEntityException(
-                OpenDataMeshAPIStandardError.SC422_01_DESCRIPTOR_URI_IS_INVALID,
+                ODMRegistryAPIStandardError.SC422_01_DESCRIPTOR_URI_IS_INVALID,
                 "Provided URI cannot be fatched [" + ((FetchException)e.getCause()).getUri() + "]", e);
         } else if(e.getCause() instanceof ParseException) {
             throw new UnprocessableEntityException(
-                OpenDataMeshAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
+                ODMRegistryAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
                 "Descriptor document it's not a valid JSON document", e);    
         } else if(e.getCause() instanceof ValidationException) {
             throw new UnprocessableEntityException(
-                OpenDataMeshAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
+                ODMRegistryAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
                 "Descriptor document does not comply with DPDS. The following validation errors has been found during validation [" + ((ValidationException)e.getCause()).getErrors().toString() + "]", e);    
         } else {
             throw new InternalServerException(
-                OpenDataMeshAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
+                ODMRegistryAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
                 "An unexpected exception occured while loading root document", e);
         }  
     }
@@ -546,19 +546,19 @@ public class DataProductService {
 
         if(e.getCause() instanceof UnresolvableReferenceException) {
             throw new UnprocessableEntityException(
-                OpenDataMeshAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
+                ODMRegistryAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
                 "Descriptor document contains unresolvable external references: " + e.getMessage(), e);
         } else if(e.getCause() instanceof ParseException) {
             throw new UnprocessableEntityException(
-                OpenDataMeshAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
+                ODMRegistryAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
                 "Descriptor document referentiates external resources that are not valid JSON documents", e);
         } else if(e.getCause() instanceof ValidationException) {
             throw new UnprocessableEntityException(
-                OpenDataMeshAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
+                ODMRegistryAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
                 "Descriptor document does not comply with DPDS. The following validation errors has been found during validation of external references [" + ((ValidationException)e.getCause()).getErrors().toString() + "]", e);
         } else {
             throw new InternalServerException(
-                OpenDataMeshAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
+                ODMRegistryAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
                 "An unexpected exception occured while resolving external references", e);
         }  
     }
@@ -567,19 +567,19 @@ public class DataProductService {
 
         if(e.getCause() instanceof UnresolvableReferenceException) {
             throw new UnprocessableEntityException(
-                OpenDataMeshAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
+                ODMRegistryAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
                 "Descriptor document contains unresolvable internal references", e);
         } else if(e.getCause() instanceof ParseException) {
             throw new UnprocessableEntityException(
-                OpenDataMeshAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
+                ODMRegistryAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
                 "Descriptor document that referentiates internal resources that are not valid JSON documents", e);
         } else if(e.getCause() instanceof ValidationException) {
             throw new UnprocessableEntityException(
-                OpenDataMeshAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
+                ODMRegistryAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
                 "Descriptor document does not comply with DPDS. The following validation errors has been found during internal reference validation [" + ((ValidationException)e.getCause()).getErrors().toString() + "]", e);
         } else {
             throw new InternalServerException(
-                OpenDataMeshAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
+                ODMRegistryAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
                 "An unexpected exception occured while resolving internal references", e);
         }  
     }

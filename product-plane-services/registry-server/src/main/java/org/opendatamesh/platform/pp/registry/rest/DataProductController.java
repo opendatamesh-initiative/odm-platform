@@ -8,11 +8,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductResource;
+import org.opendatamesh.platform.pp.registry.api.v1.resources.ErrorRes;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataProduct;
 import org.opendatamesh.platform.pp.registry.api.v1.exceptions.BadRequestException;
-import org.opendatamesh.platform.pp.registry.api.v1.exceptions.OpenDataMeshAPIStandardError;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.ErrorRes;
+import org.opendatamesh.platform.pp.registry.api.v1.exceptions.ODMRegistryAPIStandardError;
 import org.opendatamesh.platform.pp.registry.resources.v1.mappers.DataProductMapper;
 import org.opendatamesh.platform.pp.registry.services.DataProductService;
 import org.slf4j.Logger;
@@ -113,7 +114,7 @@ public class DataProductController
     ) throws Exception {
         if(dataProductRes == null) {
             throw new BadRequestException(
-                OpenDataMeshAPIStandardError.SC400_10_PRODUCT_IS_EMPTY,
+                ODMRegistryAPIStandardError.SC400_10_PRODUCT_IS_EMPTY,
                 "Data product cannot be empty");
         }
         DataProduct dataProduct = dataProductMapper.toEntity(dataProductRes);
@@ -270,7 +271,7 @@ public class DataProductController
 
         if(dataProductRes == null)
             throw new BadRequestException(
-                OpenDataMeshAPIStandardError.SC400_10_PRODUCT_IS_EMPTY,
+                ODMRegistryAPIStandardError.SC400_10_PRODUCT_IS_EMPTY,
                 "Domain is empty"
             );
 

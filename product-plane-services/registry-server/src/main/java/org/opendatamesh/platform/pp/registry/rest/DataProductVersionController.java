@@ -12,12 +12,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.parser.location.UriLocation;
 import org.opendatamesh.platform.core.dpds.serde.DataProductVersionSerializer;
+import org.opendatamesh.platform.pp.registry.api.v1.resources.ErrorRes;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataProductVersion;
 import org.opendatamesh.platform.pp.registry.api.v1.exceptions.BadRequestException;
 import org.opendatamesh.platform.pp.registry.api.v1.exceptions.InternalServerException;
 import org.opendatamesh.platform.pp.registry.api.v1.exceptions.NotFoundException;
-import org.opendatamesh.platform.pp.registry.api.v1.exceptions.OpenDataMeshAPIStandardError;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.ErrorRes;
+import org.opendatamesh.platform.pp.registry.api.v1.exceptions.ODMRegistryAPIStandardError;
 import org.opendatamesh.platform.pp.registry.resources.v1.mappers.DataProductVersionMapper;
 import org.opendatamesh.platform.pp.registry.services.DataProductService;
 import org.opendatamesh.platform.pp.registry.services.DataProductVersionService;
@@ -144,13 +144,13 @@ public class DataProductVersionController
 
         if(!StringUtils.hasText(id)) {
             throw new BadRequestException(
-                OpenDataMeshAPIStandardError.SC400_07_PRODUCT_ID_IS_EMPTY,
+                ODMRegistryAPIStandardError.SC400_07_PRODUCT_ID_IS_EMPTY,
                 "Id cannot be cannot be empty");
         }
 
         if(!StringUtils.hasText(descriptorContent)) {
             throw new BadRequestException(
-                OpenDataMeshAPIStandardError.SC400_01_DESCRIPTOR_IS_EMPTY,
+                ODMRegistryAPIStandardError.SC400_01_DESCRIPTOR_IS_EMPTY,
                 "Input descriptor document cannot be empty");
         }
 
@@ -165,7 +165,7 @@ public class DataProductVersionController
             serailizedContent = serializer.serialize(dataProductVersionDPDS, "canonical", "json", true);
         } catch (JsonProcessingException e) {
            throw new InternalServerException(
-            OpenDataMeshAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
+            ODMRegistryAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
             "Impossible to serialize data product version raw content", e);
         }
         return serailizedContent;
@@ -217,13 +217,13 @@ public class DataProductVersionController
     {
         if(!StringUtils.hasText(id)) {
             throw new BadRequestException(
-                OpenDataMeshAPIStandardError.SC400_07_PRODUCT_ID_IS_EMPTY,
+                ODMRegistryAPIStandardError.SC400_07_PRODUCT_ID_IS_EMPTY,
                 "Id cannot be cannot be empty");
         }
 
         if(!dataProductService.dataProductExists(id)) {
             throw new NotFoundException(
-                OpenDataMeshAPIStandardError.SC404_01_PRODUCT_NOT_FOUND,
+                ODMRegistryAPIStandardError.SC404_01_PRODUCT_NOT_FOUND,
                 "Data product not found");
         }
 
@@ -294,20 +294,20 @@ public class DataProductVersionController
     ) {
         if(!StringUtils.hasText(id)) {
             throw new BadRequestException(
-                OpenDataMeshAPIStandardError.SC400_07_PRODUCT_ID_IS_EMPTY,
+                ODMRegistryAPIStandardError.SC400_07_PRODUCT_ID_IS_EMPTY,
                 "Id cannot be cannot be empty");
         }
 
         if(!StringUtils.hasText(version)) {
             throw new BadRequestException(
-                OpenDataMeshAPIStandardError.SC400_11_PRODUCT_VERSION_NUMBER_IS_EMPTY,
+                ODMRegistryAPIStandardError.SC400_11_PRODUCT_VERSION_NUMBER_IS_EMPTY,
                 "Data product version number is empty");
         }
         
         
         if(StringUtils.hasText(format) && !(format.equalsIgnoreCase("normalized") || format.equalsIgnoreCase("canonical"))) {
             throw new BadRequestException(
-                OpenDataMeshAPIStandardError.SC400_04_INVALID_FORMAT,
+                ODMRegistryAPIStandardError.SC400_04_INVALID_FORMAT,
                 "Format [" + format + "] is not supported");
         }
         
@@ -320,7 +320,7 @@ public class DataProductVersionController
             serailizedContent = serializer.serialize(dataProductVersionDPDS, format, "json", true);
         } catch (JsonProcessingException e) {
            throw new InternalServerException(
-            OpenDataMeshAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
+            ODMRegistryAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
             "Impossible to serialize data product version raw content", e);
         }
         return serailizedContent;
@@ -371,19 +371,19 @@ public class DataProductVersionController
     ) {
         if(!StringUtils.hasText(id)) {
             throw new BadRequestException(
-                OpenDataMeshAPIStandardError.SC400_07_PRODUCT_ID_IS_EMPTY,
+                ODMRegistryAPIStandardError.SC400_07_PRODUCT_ID_IS_EMPTY,
                 "Id cannot be cannot be empty");
         }
 
         if(!StringUtils.hasText(version)) {
             throw new BadRequestException(
-                OpenDataMeshAPIStandardError.SC400_11_PRODUCT_VERSION_NUMBER_IS_EMPTY,
+                ODMRegistryAPIStandardError.SC400_11_PRODUCT_VERSION_NUMBER_IS_EMPTY,
                 "Data product version number is empty");
         }
 
         if(!dataProductService.dataProductExists(id)) {
             throw new NotFoundException(
-                OpenDataMeshAPIStandardError.SC404_01_PRODUCT_NOT_FOUND,
+                ODMRegistryAPIStandardError.SC404_01_PRODUCT_NOT_FOUND,
                 "Data product not found");
         }
 

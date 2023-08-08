@@ -1,26 +1,27 @@
 package org.opendatamesh.platform.pp.devops.server.exceptions;
 
+import org.opendatamesh.platform.pp.devops.api.resources.ODMDevOpsAPIStandardError;
 import org.springframework.http.HttpStatus;
 
 public abstract class OpenDataMeshAPIException extends RuntimeException{
 
-	OpenDataMeshAPIStandardError error;
+	ODMDevOpsAPIStandardError error;
 
 	public OpenDataMeshAPIException() {
 		super();
 	}
 
-	public OpenDataMeshAPIException(OpenDataMeshAPIStandardError error, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+	public OpenDataMeshAPIException(ODMDevOpsAPIStandardError error, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
 		super(message, cause, enableSuppression, writableStackTrace);
 		setError(error);
 	}
 
-	public OpenDataMeshAPIException(OpenDataMeshAPIStandardError error, String message,Throwable cause) {
+	public OpenDataMeshAPIException(ODMDevOpsAPIStandardError error, String message,Throwable cause) {
 		super(message, cause);
 		setError(error);
 	}
 
-	public OpenDataMeshAPIException(OpenDataMeshAPIStandardError error, String message) {
+	public OpenDataMeshAPIException(ODMDevOpsAPIStandardError error, String message) {
 		super(message);
 		setError(error);
 	}
@@ -29,14 +30,14 @@ public abstract class OpenDataMeshAPIException extends RuntimeException{
 		super(cause);
 	}
 
-	public void setError(OpenDataMeshAPIStandardError error) {
+	public void setError(ODMDevOpsAPIStandardError error) {
 		this.error = error;
 	}
 
 	/**
 	 * @return the error
 	 */
-	public OpenDataMeshAPIStandardError getStandardError() {
+	public ODMDevOpsAPIStandardError getStandardError() {
 		return error;
 	}
 

@@ -1,8 +1,11 @@
 package org.opendatamesh.platform.pp.registry.services;
 
-import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataProductVersion;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.registry.api.v1.exceptions.BadGatewayException;
-import org.opendatamesh.platform.pp.registry.api.v1.exceptions.OpenDataMeshAPIStandardError;
+import org.opendatamesh.platform.pp.registry.api.v1.exceptions.ODMRegistryAPIStandardError;
+import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataProductVersion;
 import org.opendatamesh.platform.pp.registry.resources.v1.policyservice.PolicyName;
 import org.opendatamesh.platform.pp.registry.resources.v1.policyservice.PolicyValidationResponse;
 import org.opendatamesh.platform.pp.registry.resources.v1.policyservice.ValidatedPolicy;
@@ -23,7 +26,7 @@ public class PolicyServiceProxy extends PolicyServiceClient {
     private static final Logger logger = LoggerFactory.getLogger(PolicyServiceProxy.class);
 
     public PolicyServiceProxy(@Value("${policyserviceaddress}") final String serverAddress) {
-        super(serverAddress);
+        super(serverAddress, ObjectMapperFactory.JSON_MAPPER);
     }
 
     // TODO return also why is not compliant
@@ -55,12 +58,12 @@ public class PolicyServiceProxy extends PolicyServiceClient {
             } else {
                 logger.error("There was an error when communicating with Policy service");
                 throw new BadGatewayException(
-                    OpenDataMeshAPIStandardError.SC502_01_POLICY_SERVICE_ERROR,
+                    ODMRegistryAPIStandardError.SC502_01_POLICY_SERVICE_ERROR,
                     "An error occurred while comunicating with the policyService");
             }
         } catch (Exception e) {
             throw new BadGatewayException(
-                    OpenDataMeshAPIStandardError.SC502_01_POLICY_SERVICE_ERROR,
+                    ODMRegistryAPIStandardError.SC502_01_POLICY_SERVICE_ERROR,
                     "An error occurred while comunicating with the policyService: " + e.getMessage());
         }
     }

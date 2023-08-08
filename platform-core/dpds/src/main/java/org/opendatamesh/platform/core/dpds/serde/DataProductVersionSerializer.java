@@ -110,7 +110,7 @@ public class DataProductVersionSerializer {
     private JsonNode getRawContent(InterfaceComponentsDPDS resources, Set<EntityTypeDPDS> inludedPortTypes)
             throws JsonProcessingException {
 
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = ObjectMapperFactory.JSON_MAPPER;
         ObjectNode interfaceComponentsNode = mapper.createObjectNode();
 
         if (inludedPortTypes.contains(EntityTypeDPDS.inputport))
@@ -133,7 +133,7 @@ public class DataProductVersionSerializer {
 
     public JsonNode getRawContent(InternalComponentsDPDS resources) throws JsonProcessingException {
 
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = ObjectMapperFactory.JSON_MAPPER;
         ObjectNode internalComponentsNode = mapper.createObjectNode();
 
         internalComponentsNode.set("lifecycleInfo", resources.getActivityRawContent());
@@ -146,7 +146,7 @@ public class DataProductVersionSerializer {
 
     private ArrayNode getRawContent(List<? extends ComponentDPDS> components) throws JsonProcessingException {
 
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = ObjectMapperFactory.JSON_MAPPER;
 
         ArrayNode interfaceComponentsNode = mapper.createArrayNode();
 

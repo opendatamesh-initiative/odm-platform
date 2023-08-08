@@ -51,11 +51,6 @@ public class Activity {
     @Column(name = "STATUS")
     ActivityStatus status;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @Fetch(value = FetchMode.SUBSELECT)
-    @JoinColumn(name = "ACTIVITY_ID")
-    private List<Task> tasks = new ArrayList<Task>();
-
     @Column(name = "RESULTS")
     String results;
 
@@ -70,27 +65,6 @@ public class Activity {
 
     @Column(name = "FINISHED_AT")
     private Date finishedAt;
-
-	public Task getTask(Long id) {
-        Task task = null;
-
-        for(Task t : tasks) {
-            if(id.equals(t.getId())) task = t;
-        }
-
-		return task;
-	}
-
-	public Task getNextPlannedTask() {
-		Task plannedTask = null;
-        for (Task task : tasks) {
-            if (task.getStatus().equals(TaskStatus.PLANNED)) {
-                plannedTask = task;
-                break;
-            }
-        }
-        return plannedTask;
-	}
 
     @PrePersist
     protected void onCreate() {

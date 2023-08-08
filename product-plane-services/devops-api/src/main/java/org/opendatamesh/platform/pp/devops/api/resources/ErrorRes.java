@@ -1,7 +1,6 @@
-package org.opendatamesh.platform.pp.registry.resources.v1;
+package org.opendatamesh.platform.pp.devops.api.resources;
 
 import lombok.Data;
-import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
 
 import java.util.Date;
 
@@ -32,7 +31,7 @@ public class ErrorRes {
 
 	}
 
-	public ErrorRes(int status, OpenDataMeshAPIStandardError error, String message, String path) {
+	public ErrorRes(int status, ODMDevOpsAPIStandardError error, String message, String path) {
 		super();
 		this.status = status;
 		this.code = error.code();

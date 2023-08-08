@@ -12,6 +12,8 @@ import lombok.Data;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
+
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DataProductVersionDPDS implements Cloneable {
@@ -42,19 +44,13 @@ public class DataProductVersionDPDS implements Cloneable {
 
     @JsonAnySetter
     public void ignored(String name, Object value) {
-        System.out.println(name + " : " + value + " : " + value.getClass().getName());
-    }
-
-    public DataProductVersionDPDS clone() throws CloneNotSupportedException
-    {
-        return (DataProductVersionDPDS) super.clone();
+        //System.out.println(name + " : " + value + " : " + value.getClass().getName());
     }
     
-
     @JsonIgnore
     public void setRawContent(String content) {
         
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = ObjectMapperFactory.JSON_MAPPER;
         try {
             ObjectNode rootNode = (ObjectNode)objectMapper.readTree(content);
             ObjectNode interfaceComponentsNode = (ObjectNode)rootNode.get("interfaceComponents");
@@ -76,8 +72,16 @@ public class DataProductVersionDPDS implements Cloneable {
 
     // TODO this is orrible. Fix asap
     public String toEventString() throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.writeValueAsString(this).replace("versionNumber", "version");
+        return ObjectMapperFactory.JSON_MAPPER.writeValueAsString(this).replace("versionNumber", "version");
     }
+
+    public boolean hasInternalComponents() {
+        return internalComponents != null;    
+    }
+
+    public boolean hasLifecycleInfo() {
+        return hasInternalComponents() && internalComponents.hasLifecycleInfo();
+    }
+
 
 }

@@ -2,21 +2,21 @@ package org.opendatamesh.platform.pp.registry;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Before;
 import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
+import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductResource;
-import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
-import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
+import org.opendatamesh.platform.pp.registry.api.v1.resources.ErrorRes;
+import org.opendatamesh.platform.pp.registry.api.v1.resources.OpenDataMeshAPIStandardError;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.system.SystemProperties;
 import org.springframework.http.HttpStatus;
@@ -33,10 +33,8 @@ import java.util.regex.Pattern;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
-//@@FixMethodOrder(MethodSorters.JVM)
 @TestPropertySource(properties = { "spring.test.context.parallel.enabled=false" })
 @Execution(ExecutionMode.SAME_THREAD)
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 public class DataProductVersionIT extends OpenDataMeshIT {
 
@@ -84,7 +82,6 @@ public class DataProductVersionIT extends OpenDataMeshIT {
     // CREATE Data product version
     // ----------------------------------------
     @Test
-    @Order(1)
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDataProductVersionCreation() throws IOException {
 
@@ -94,10 +91,18 @@ public class DataProductVersionIT extends OpenDataMeshIT {
 
         String descriptorContent = createDataProductVersion(dataProduct1Res.getId(), RESOURCE_DP1_V1);
         verifyBasicContent(descriptorContent);
+        DataProductVersionDPDS dataProductVersion = null;
+		try {
+			dataProductVersion = ObjectMapperFactory.JSON_MAPPER.readValue(descriptorContent, DataProductVersionDPDS.class);
+        } catch (Throwable e) {
+			fail("Impossible to parse descriptor content");
+		} 
+        verifyParsedContent(dataProductVersion);
+
+        
     }
 
     @Test
-    @Order(1)
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDataProductVersionsCreation() throws IOException {
 
@@ -112,7 +117,7 @@ public class DataProductVersionIT extends OpenDataMeshIT {
         descriptor = resourceBuilder.readResourceFromFile(RESOURCE_DP1_V1);
         
         // modify version & re-post
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = ObjectMapperFactory.JSON_MAPPER;
         mapper.setSerializationInclusion(Include.NON_EMPTY);
         JsonNode rootEntity = null;
         try {
@@ -134,7 +139,6 @@ public class DataProductVersionIT extends OpenDataMeshIT {
     // READ Data product version
     // ----------------------------------------
     @Test
-    @Order(2)
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDataProductVersionsReadAll() throws IOException {
 
@@ -156,20 +160,13 @@ public class DataProductVersionIT extends OpenDataMeshIT {
             assertThat(dataProductVersionNumbers[0]).isEqualTo(versionNumber);
         } else {
             fail("Response is empty");
-        }
-        
+        } 
     }
 
     @Test
-    @Order(3)
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    @EnabledIf(expression = "#{environment.acceptsProfiles('testpostgresql', 'dev')}", loadContext = true)
+    //@EnabledIf(expression = "#{environment.acceptsProfiles('testpostgresql', 'dev')}", loadContext = true)
     public void testDataProductVersionsReadOne() throws IOException {
-
-        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa");
-        System.out.println(SystemProperties.get("spring.profile"));
-        System.out.println(SystemProperties.get("spring.profiles.active"));
-        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa");
 
         // create a product and associate to it a version
         DataProductResource dataProduct1Res = createDataProduct(RESOURCE_DP1);
@@ -186,6 +183,18 @@ public class DataProductVersionIT extends OpenDataMeshIT {
         // test response
         verifyResponseEntity(getDataProductVersionResponse, HttpStatus.OK, true);
         verifyBasicContent(getDataProductVersionResponse.getBody());
+        DataProductVersionDPDS dataProductVersion = null;
+		try {
+			dataProductVersion = ObjectMapperFactory.JSON_MAPPER.readValue(getDataProductVersionResponse.getBody(), DataProductVersionDPDS.class);
+        } catch (Throwable e) {
+			fail("Impossible to parse descriptor content");
+		} 
+        verifyParsedContent(dataProductVersion);
+
+       
+        dataProductVersion = registryClient.readOneDataProductVersion(dataProduct1Res.getId(), versionNumber);
+        verifyParsedContent(dataProductVersion);
+        
     }
 
     // ----------------------------------------
@@ -199,7 +208,6 @@ public class DataProductVersionIT extends OpenDataMeshIT {
     // ----------------------------------------
 
     @Test
-    @Order(4)
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     @EnabledIf(expression = "#{environment.acceptsProfiles('testpostgresql', 'dev')}", loadContext = true)
     public void testDataProductVersionDelete()
@@ -238,7 +246,6 @@ public class DataProductVersionIT extends OpenDataMeshIT {
     // ---------------------------------------- }
 
     @Test
-    @Order(5)
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDataProductCreation400Errors() throws IOException {
 
@@ -252,7 +259,6 @@ public class DataProductVersionIT extends OpenDataMeshIT {
     }
 
     @Test
-    @Order(6)
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDataProductCreation422Errors() throws IOException {
 
@@ -309,6 +315,15 @@ public class DataProductVersionIT extends OpenDataMeshIT {
     // ----------------------------------------
     // Verify test resources
     // ----------------------------------------
+
+    private DataProductVersionDPDS verifyParsedContent(DataProductVersionDPDS dpVersion) {
+        assertThat(dpVersion.getInternalComponents()).isNotNull();
+        assertThat(dpVersion.getInternalComponents().getLifecycleInfo()).isNotNull();
+        assertThat(dpVersion.getInternalComponents().getLifecycleInfo().getActivityInfos()).isNotNull();
+        assertThat(dpVersion.getInternalComponents().getLifecycleInfo().getActivityInfos().size()).isEqualTo(2);
+    
+        return dpVersion;
+    }
 
     private JsonNode verifyBasicContent(String responseBody) {
 

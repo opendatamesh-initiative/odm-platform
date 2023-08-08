@@ -1,6 +1,8 @@
 package org.opendatamesh.platform.up.notification.api.clients;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.opendatamesh.platform.core.commons.clients.ODMClient;
 import org.opendatamesh.platform.up.notification.api.resources.ErrorResource;
 import org.opendatamesh.platform.up.notification.api.resources.NotificationResource;
@@ -11,8 +13,8 @@ import java.util.List;
 
 public class MetaServiceClient extends ODMClient {
 
-    public MetaServiceClient(String serverAddress) {
-        super(serverAddress);
+    public MetaServiceClient(String serverAddress, ObjectMapper mapper) {
+        super(serverAddress, mapper);
     }
 
     public ResponseEntity createNotification(

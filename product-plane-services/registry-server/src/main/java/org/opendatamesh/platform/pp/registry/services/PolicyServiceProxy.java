@@ -1,9 +1,10 @@
 package org.opendatamesh.platform.pp.registry.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.opendatamesh.platform.pp.registry.api.v1.resources.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataProductVersion;
 import org.opendatamesh.platform.pp.registry.exceptions.BadGatewayException;
-import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.resources.v1.policyservice.PolicyName;
 import org.opendatamesh.platform.pp.registry.resources.v1.policyservice.PolicyValidationRequest;
 import org.opendatamesh.platform.pp.registry.resources.v1.policyservice.PolicyValidationResponse;

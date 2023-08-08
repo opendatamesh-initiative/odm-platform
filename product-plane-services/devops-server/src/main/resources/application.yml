@@ -3,7 +3,9 @@
 ##########################
 spring:
   profiles:
-    active: dev
+    active: dev 
+    #testmysql 
+    #testpostgresql
 
 ##########################
 # Logging configuration
@@ -14,17 +16,9 @@ logging:
       apache:
         http: INFO
       opendatamesh:
-        dpexperience:
-          api.*: DEBUG
+        platform.*: DEBUG
     httpclient:
       wire: INFO
-    it:
-      quantyca:
-        odm:
-          api:
-            planes:
-              dpexperience.*: DEBUG
-
 
 ##########################
 # Doc configuration
@@ -32,8 +26,6 @@ logging:
 springdoc:
   swagger-ui:
     operationsSorter: alpha
-
-prova: xxxx
 
 
 

@@ -1,6 +1,7 @@
 package org.opendatamesh.platform.pp.registry.api.v1.clients;
 
 import org.opendatamesh.platform.core.commons.clients.ODMClient;
+import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductDescriptorLocationResource;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductResource;
@@ -9,6 +10,8 @@ import org.opendatamesh.platform.pp.registry.api.v1.resources.SchemaResource;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
@@ -16,7 +19,7 @@ import java.util.UUID;
 public class RegistryClient extends ODMClient {
 
     public RegistryClient(String serverAddress) {
-        super(serverAddress);
+        super(serverAddress, ObjectMapperFactory.JSON_MAPPER);
     }
 
     // ======================================================================================
@@ -142,7 +145,17 @@ public class RegistryClient extends ODMClient {
     }
 
     public DataProductVersionDPDS readOneDataProductVersion(String dataProductId, String dataProductVersionNumber) {
-        return getDataProductVersion(dataProductId, dataProductVersionNumber).getBody();
+        String descriptorContent = getDataProductVersion(dataProductId, dataProductVersionNumber, String.class).getBody();
+        DataProductVersionDPDS dpv = null;
+        try {
+			dpv = ObjectMapperFactory.JSON_MAPPER.readValue(descriptorContent, DataProductVersionDPDS.class);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+        return dpv;
+
+        // TODO find how to set default object mapper into resttemplate message converter
+        //return getDataProductVersion(dataProductId, dataProductVersionNumber).getBody();
     }
 
     public ResponseEntity<DataProductVersionDPDS> getDataProductVersion(String dataProductId, String dataProductVersionNumber) {
@@ -320,11 +333,15 @@ public class RegistryClient extends ODMClient {
                 DefinitionResource[].class);
     }
 
-    public ResponseEntity<DefinitionResource> readOneTemplateDefinition(Long definitionId) {
-        return readOneTemplateDefinition(definitionId, DefinitionResource.class);
+    public DefinitionResource readOneTemplateDefinition(Long definitionId) {
+        return getOneTemplateDefinition(definitionId).getBody();
     }
 
-    public <T> ResponseEntity<T> readOneTemplateDefinition(Long definitionId, Class<T> responseType) {
+    public ResponseEntity<DefinitionResource> getOneTemplateDefinition(Long definitionId) {
+        return getOneTemplateDefinition(definitionId, DefinitionResource.class);
+    }
+
+    public <T> ResponseEntity<T> getOneTemplateDefinition(Long definitionId, Class<T> responseType) {
         return rest.getForEntity(
                 apiUrlOfItem(Routes.TEMPLATES),
                 responseType,

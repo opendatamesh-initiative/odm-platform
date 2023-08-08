@@ -8,6 +8,7 @@ import org.opendatamesh.platform.core.dpds.parser.DPDSParser;
 import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
 import org.opendatamesh.platform.core.dpds.parser.ParseResult;
 import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
+import org.opendatamesh.platform.pp.registry.api.v1.resources.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataProduct;
 import org.opendatamesh.platform.pp.registry.database.entities.dataproduct.DataProductVersion;
 import org.opendatamesh.platform.pp.registry.database.repositories.DataProductRepository;
@@ -73,8 +74,7 @@ public class DataProductService {
      *      SC500_DATABASE_ERROR
      */
     public DataProduct createDataProduct(DataProduct dataProduct) {
-
-        if(dataProduct == null) {
+     if(dataProduct == null) {
             throw new InternalServerException(
                 OpenDataMeshAPIStandardError.SC500_00_SERVICE_ERROR,
                 "Data product object cannot be null");
@@ -91,6 +91,7 @@ public class DataProductService {
                 OpenDataMeshAPIStandardError.SC422_04_PRODUCT_ALREADY_EXISTS,
                 "Data product [" + dataProduct.getFullyQualifiedName() + "] already exists");
         }
+   
 
         String uuid = UUID.nameUUIDFromBytes(dataProduct.getFullyQualifiedName().getBytes()).toString();
         if(dataProduct.getId() != null && !dataProduct.getId().equals(uuid)) {
@@ -182,7 +183,7 @@ public class DataProductService {
         if(dataProduct == null){
             throw new NotFoundException(
                 OpenDataMeshAPIStandardError.SC404_01_PRODUCT_NOT_FOUND,
-                "Data Product with [" + dataProductId + "] does not exist");
+                "Data Product with id [" + dataProductId + "] does not exist");
         }
 
         return dataProduct;

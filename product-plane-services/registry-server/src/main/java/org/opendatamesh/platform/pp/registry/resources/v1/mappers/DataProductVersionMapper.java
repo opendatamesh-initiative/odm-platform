@@ -47,7 +47,7 @@ public interface DataProductVersionMapper {
 
     @Named("rawContentToHref")
     static String rawContentToHref(String rawContent) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = ObjectMapperFactory.JSON_MAPPER;
         if (rawContent == null)
             return null;
         ExternalResourceDPDS externalResourceDPDS = objectMapper.readValue(rawContent, ExternalResourceDPDS.class);

@@ -14,6 +14,8 @@ import lombok.ToString;
 
 import java.util.*;
 
+import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
+
 @Data
 @EqualsAndHashCode(callSuper=true)
 @ToString(callSuper = true)
@@ -97,7 +99,7 @@ public class InterfaceComponentsDPDS extends ComponentContainerDPDS{
     @JsonIgnore
     public  ObjectNode getRawContent(Set<EntityTypeDPDS> inludedPortTypes) throws JsonProcessingException {
        
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = ObjectMapperFactory.JSON_MAPPER;
         ObjectNode interfaceComponentNodes = mapper.createObjectNode();
        
         if(inludedPortTypes.contains(EntityTypeDPDS.inputport))

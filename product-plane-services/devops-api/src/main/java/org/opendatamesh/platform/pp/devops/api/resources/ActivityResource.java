@@ -31,6 +31,9 @@ public class ActivityResource {
     @JsonProperty("errors")
     String errors;
 
+    @JsonProperty("createdAt")
+    private Date createdAt;
+
     @JsonProperty("startedAt")
     private Date startedAt;
 

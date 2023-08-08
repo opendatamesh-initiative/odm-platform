@@ -35,6 +35,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Service
 public class ActivityService {
@@ -44,6 +45,9 @@ public class ActivityService {
 
     @Autowired
     ActivityMapper activityMapper;
+
+    @Autowired
+    TaskService taskService;
 
     @Autowired
     DevOpsConfigurations configurations;
@@ -68,9 +72,8 @@ public class ActivityService {
                     "Activity object cannot be null");
         }
 
-
         List<LifecycleActivityInfoDPDS> activitiesInfo = readActivitiesInfo(activity);
-        if (activitiesInfo == null || activitiesInfo.isEmpty())  {
+        if (activitiesInfo == null || activitiesInfo.isEmpty()) {
             throw new UnprocessableEntityException(
                     ODMDevOpsAPIStandardError.SC422_01_ACTIVITY_IS_INVALID,
                     "Liefecycle stage [" + activity.getType() + "] not defined for version ["
@@ -104,8 +107,11 @@ public class ActivityService {
                     t);
         }
 
+        // create tasks associated with the given activity
+        List<Task> tasks = taskService.createTasks(activity.getId(), activitiesInfo);
+    
         if (startAfterCreation) {
-            startActivity(activity, activitiesInfo);
+            startActivity(activity, tasks);
         }
 
         return activity;
@@ -121,29 +127,31 @@ public class ActivityService {
     public Activity startActivity(Long activityId) {
         Activity activity = null;
 
-        if (activityId == null) {
-            throw new BadRequestException(
-                    ODMDevOpsAPIStandardError.SC400_01_ACTIVITY_ID_IS_EMPTY,
-                    "Activity id is empty");
-        }
-
         activity = readActivity(activityId);
-        if (activity == null) {
-            throw new NotFoundException(
-                    ODMDevOpsAPIStandardError.SC404_01_ACTIVITY_NOT_FOUND,
-                    "Activity with id [" + activity.getId() + "] does not existe");
-        }
-
         activity = startActivity(activity);
+
         return activity;
     }
 
     public Activity startActivity(Activity activity) {
-        List<LifecycleActivityInfoDPDS> activitiesInfo = readActivitiesInfo(activity);
-        return startActivity(activity, activitiesInfo);
+
+        if(activity.getStatus().equals(ActivityStatus.PLANNED) == false) {
+            throw new UnprocessableEntityException(
+                ODMDevOpsAPIStandardError.SC422_01_ACTIVITY_IS_INVALID,
+                "Only activities in PLANNED state can be started. Activity with id [" + activity.getId() + "] is in state [" + activity.getStatus() + "]");
+        }
+
+        List<Task> plannedTasks = taskService.searchTasks(activity.getId(), null, TaskStatus.PLANNED);
+        return startActivity(activity, plannedTasks);
     }
 
-    public Activity startActivity(Activity activity, List<LifecycleActivityInfoDPDS> activitiesInfo) {
+    public Activity startActivity(Activity activity, List<Task> plannedTasks) {
+
+        if(activity == null) {
+           throw new InternalServerException(
+                ODMDevOpsAPIStandardError.SC500_00_SERVICE_ERROR,
+                "Activity object cannot be null");
+        }
 
         // verify if there is an alredy running activity
         List<Activity> activities = searchActivities(
@@ -160,81 +168,100 @@ public class ActivityService {
 
         // TODO validate stage transition with policy engine (FROM stage TO stage)
 
-        activity = createTasks(activity, activitiesInfo);
-        Task task = activity.getNextPlannedTask();
-        if (task != null) {
-            startTask(activity, task);
-        } else {
-            stopActivity(activity, true);
-        }
-
-        return activity;
-    }
-
-    private Task startTask(Activity activity, Task taskToStart) {
-        
-        try {
-            taskToStart = startTask(taskToStart);
-            taskToStart.setStartedAt(new Date());  
-            saveActivity(activity);
-        } catch (Throwable t2) { 
-            taskToStart.setStatus(TaskStatus.FAILED);
-            taskToStart.setErrors(t2.getMessage());
-            taskToStart.setStartedAt(new Date());
-            taskToStart.setFinishedAt(taskToStart.getStartedAt()); 
-            stopActivity(activity, false);
-        }
-
-        if (taskToStart.getStatus().equals(TaskStatus.FAILED)) {
-            taskToStart = activity.getTask(taskToStart.getId());
-            taskToStart.setStatus(TaskStatus.FAILED);
-            taskToStart.setStartedAt(new Date());
-            taskToStart.setFinishedAt(taskToStart.getStartedAt()); 
-            stopActivity(activity, false);
-        }
-
-        return taskToStart;
-    }
-
-    // Create tasks and start activity
-    private Activity createTasks(Activity activity, List<LifecycleActivityInfoDPDS> activitiesInfo) {
-
-        for (LifecycleActivityInfoDPDS activityInfo : activitiesInfo) {
-            Task task = createTask(activityInfo);
-            task.setStatus(TaskStatus.PLANNED);
-            activity.getTasks().add(task);
-        }
-
+        // update activity's status
         try {
             activity.setStartedAt(new Date());
             activity.setStatus(ActivityStatus.PROCESSING);
-            activity = saveActivity(activity);
-            logger.info("Activity [" + activity.getType() + "] "
-                    + "on version [" + activity.getDataProductVersion() + "] "
-                    + "of product [" + activity.getDataProductId() + "] succesfully updated");
-
+            saveActivity(activity);
         } catch (Throwable t) {
             throw new InternalServerException(
-                    ODMDevOpsAPIStandardError.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while saving activity [" + activity.getType() + "] "
-                            + "on version [" + activity.getDataProductVersion() + "] "
-                            + "of product [" + activity.getDataProductId() + "]",
-                    t);
-        }
-
+                ODMDevOpsAPIStandardError.SC500_01_DATABASE_ERROR,
+                   "An error occured in the backend database while updating activity [" + activity.getId() + "]",
+                 t);
+        }       
+        
+        // start next planned task if any
+        startNextPlannedTaskAndUpdateParentActivity(activity.getId());
+        
         return activity;
     }
 
+    private Activity stopActivity(Long activityId, boolean success) {
+        Activity activity = readActivity(activityId);
+        return stopActivity(activity, success);
+    }
+
+    // TODO set results or errors of activity while stopping it
     private Activity stopActivity(Activity activity, boolean success) {
-        activity.setFinishedAt(new Date());
+        
+        Date finishedAt = new Date();
+        activity.setFinishedAt(finishedAt);
+
+        List<Task> tasks = taskService.searchTasks(activity.getId(), null, null);
+        for(Task task: tasks) {
+            if(task.getStatus().equals(TaskStatus.PLANNED) 
+            || task.getStatus().equals(TaskStatus.PROCESSING)) {
+                task.setStatus(TaskStatus.ABORTED);
+                task.setFinishedAt(finishedAt);
+                taskService.saveTask(task);
+            }
+        }
+
+        ObjectNode activityOutputNode = ObjectMapperFactory.JSON_MAPPER.createObjectNode();
         if (success) {
+            for(Task task: tasks) {
+                if(task.getStatus().equals(TaskStatus.PROCESSED)) {
+                    activityOutputNode.put(task.getId().toString(), task.getResults());
+                }
+            }
+            try {
+				String output = ObjectMapperFactory.JSON_MAPPER.writeValueAsString(activityOutputNode);
+                activity.setResults(output);
+            } catch (JsonProcessingException e) {
+				logger.warn("Impossible to serialize results aggregate", e);
+			}
+            
             activity.setStatus(ActivityStatus.PROCESSED);
         } else {
+            for(Task task: tasks) {
+                if(task.getStatus().equals(TaskStatus.FAILED)) {
+                    activityOutputNode.put(task.getId().toString(), task.getErrors());
+                }
+            }
+            try {
+				String output = ObjectMapperFactory.JSON_MAPPER.writeValueAsString(activityOutputNode);
+                activity.setErrors(output);
+            } catch (JsonProcessingException e) {
+				logger.warn("Impossible to serialize errors aggregate", e);
+			}
+
             activity.setStatus(ActivityStatus.FAILED);
         }
         activity = saveActivity(activity);
 
         return activity;
+    }
+
+    public Task startNextPlannedTaskAndUpdateParentActivity(Long activityId) {
+        Task startedTask = null;
+
+        List<Task> plannedTasks = taskService.searchTasks(activityId, null, TaskStatus.PLANNED);
+        if (plannedTasks != null && !plannedTasks.isEmpty()) {
+            startedTask = taskService.startTask(plannedTasks.get(0)); 
+            if(startedTask.getStatus().equals(TaskStatus.FAILED)) {
+                stopActivity(activityId, false);
+            }
+        } else { // nothing more to do...
+            stopActivity(activityId, true);
+        }
+
+        return startedTask;
+    }
+
+    public Task stopTaskAndUpdateParentActivity(Long taskId) {
+        Task task = taskService.stopTask(taskId);
+        startNextPlannedTaskAndUpdateParentActivity(task.getActivityId());
+        return task;
     }
 
     // ======================================================================================
@@ -282,7 +309,7 @@ public class ActivityService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMDevOpsAPIStandardError.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while loading data product with id [" + activityId
+                    "An error occured in the backend database while loading activity with id [" + activityId
                             + "]",
                     t);
         }
@@ -299,7 +326,7 @@ public class ActivityService {
     private Activity loadActivity(Long activitytId) {
         Activity activity = null;
 
-        Optional<Activity> activityLookUpResults = activityRepository.findById(activitytId.toString());
+        Optional<Activity> activityLookUpResults = activityRepository.findById(activitytId);
 
         if (activityLookUpResults.isPresent()) {
             activity = activityLookUpResults.get();
@@ -319,10 +346,6 @@ public class ActivityService {
                     "Activity object cannot be null");
         }
 
-        return activityRepository.existsById(activityId.toString());
-    }
-
-    public boolean activityExists(String activityId) {
         return activityRepository.existsById(activityId);
     }
 
@@ -387,7 +410,7 @@ public class ActivityService {
         }
 
         LifecycleInfoDPDS lifecycleInfo = dataProductVersion.getInternalComponents().getLifecycleInfo();
-        activitiesInfo.add( lifecycleInfo.getActivityInfo(activity.getType()) );
+        activitiesInfo.add(lifecycleInfo.getActivityInfo(activity.getType()));
 
         return activitiesInfo;
     }
@@ -419,86 +442,5 @@ public class ActivityService {
         }
 
         return dataProductVersion;
-    }
-
-    private Task createTask(LifecycleActivityInfoDPDS activityInfo) {
-        Task task = null;
-
-        task = new Task();
-        String executorServiceRef = activityInfo.getService().getHref();
-        task.setExecutorRef(executorServiceRef);
-        if (activityInfo.hasTemplate()) {
-            DefinitionResource templateDefinition = readTemplateDefinition(activityInfo.getTemplate());
-            task.setTemplate(templateDefinition.getContent());
-        }
-        if (activityInfo.hasConfigurations()) {
-            String configurationsString = serializeCongigurations(activityInfo.getConfigurations());
-            task.setConfigurations(configurationsString);
-        }
-
-        return task;
-    }
-
-    private Task startTask(Task task) {
-        TaskResource taskRes = null;
-
-        taskRes = activityMapper.toTaskResource(task);
-
-        ExecutorClient odmExecutor = configurations.getExecutorClient(task.getExecutorRef());
-        if (odmExecutor != null) {
-            taskRes.setStartedAt(new Date());
-            taskRes = odmExecutor.createTask(taskRes);
-        } else {
-            taskRes.setErrors("Executor [" + task.getExecutorRef() + "] supported");
-        }
-
-        return activityMapper.toTaskEntity(taskRes);
-    }
-
-    private DefinitionResource readTemplateDefinition(StandardDefinitionDPDS template) {
-        DefinitionResource templateDefinition = null;
-
-        Objects.requireNonNull(template, "Template parameter cannot be null");
-        Objects.requireNonNull(template.getDefinition(), "Property [definition] in template object cannot be null");
-        Objects.requireNonNull(template.getDefinition().getRef(),
-                "Property [$ref] in template definition object cannot be null");
-
-        String ref = template.getDefinition().getRef();
-
-        Long templateId = null;
-        try {
-            templateId = Long.parseLong(ref.substring(ref.lastIndexOf('/') + 1));
-            templateDefinition = configurations.getRegistryClient().readOneTemplateDefinition(templateId);
-            logger.debug("Template definition [" + templateId + "] succesfully read from ODM Registry");
-        } catch (Throwable t) {
-            throw new InternalServerException(
-                    ODMDevOpsAPIStandardError.SC500_00_SERVICE_ERROR,
-                    "An error occured in the backend service while loading template [" + templateId + "]",
-                    t);
-        }
-        if (templateDefinition == null) {
-            throw new NotFoundException(
-                    ODMDevOpsAPIStandardError.SC404_01_ACTIVITY_NOT_FOUND,
-                    "Template with id [" + templateId + "] does not existe");
-        }
-
-        return templateDefinition;
-    }
-
-    private String serializeCongigurations(Map<String, Object> configurations) {
-        String serializedConfigurations = null;
-
-        Objects.requireNonNull(configurations, "Configurations parameter cannot be null");
-
-        try {
-            serializedConfigurations = ObjectMapperFactory.JSON_MAPPER.writeValueAsString(configurations);
-        } catch (JsonProcessingException t) {
-            throw new InternalServerException(
-                    ODMDevOpsAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
-                    "An error occured in the backend service while parsing configurations [" + configurations + "]",
-                    t);
-        }
-
-        return serializedConfigurations;
     }
 }

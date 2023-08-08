@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DefinitionResource;
-import org.opendatamesh.platform.pp.registry.exceptions.OpenDataMeshAPIStandardError;
-import org.opendatamesh.platform.pp.registry.resources.v1.ErrorRes;
+import org.opendatamesh.platform.pp.registry.api.v1.resources.ErrorRes;
+import org.opendatamesh.platform.pp.registry.api.v1.resources.OpenDataMeshAPIStandardError;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
@@ -107,7 +107,7 @@ public class TemplateDefinitionIT extends OpenDataMeshIT {
 
         DefinitionResource templateResource = createTemplate(RESOURCE_TEMPLATE_1);
 
-        ResponseEntity<DefinitionResource> getTemplateResponse = registryClient.readOneTemplateDefinition(templateResource.getId());
+        ResponseEntity<DefinitionResource> getTemplateResponse = registryClient.getOneTemplateDefinition(templateResource.getId());
         DefinitionResource templateRes = getTemplateResponse.getBody();
 
         verifyResponseEntity(getTemplateResponse, HttpStatus.OK, true);
@@ -194,7 +194,7 @@ public class TemplateDefinitionIT extends OpenDataMeshIT {
 
         ResponseEntity<ErrorRes> errorResponse = null;
 
-        errorResponse = registryClient.readOneTemplateDefinition(1L, ErrorRes.class);
+        errorResponse = registryClient.getOneTemplateDefinition(1L, ErrorRes.class);
        
         verifyResponseError(
                 errorResponse,

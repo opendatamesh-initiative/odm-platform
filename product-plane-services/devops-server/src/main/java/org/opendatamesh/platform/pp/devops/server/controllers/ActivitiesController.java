@@ -1,17 +1,18 @@
 package org.opendatamesh.platform.pp.devops.server.controllers;
 
-import org.opendatamesh.platform.pp.devops.api.controllers.AbstractDevOpsController;
+import org.opendatamesh.platform.pp.devops.api.controllers.AbstractActivityController;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityResource;
 import org.opendatamesh.platform.pp.devops.server.database.entities.Activity;
 import org.opendatamesh.platform.pp.devops.server.database.mappers.ActivityMapper;
 import org.opendatamesh.platform.pp.devops.server.services.ActivityService;
+import org.opendatamesh.platform.up.executor.api.resources.TaskResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
-public class ActivitiesController extends AbstractDevOpsController {
+public class ActivitiesController extends AbstractActivityController {
 
     @Autowired
     ActivityService activityService;

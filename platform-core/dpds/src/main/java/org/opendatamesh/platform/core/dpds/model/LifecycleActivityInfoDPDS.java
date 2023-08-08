@@ -26,4 +26,12 @@ public class LifecycleActivityInfoDPDS {
 
     @JsonIgnore
     String rawContent;
+
+    public boolean hasTemplate() {
+        return template != null;
+    }
+
+    public boolean hasConfigurations() {
+        return configurations != null;
+    }
 }

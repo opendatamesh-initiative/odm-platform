@@ -1,5 +1,6 @@
 package org.opendatamesh.platform.pp.registry.exceptions;
 
+import org.opendatamesh.platform.pp.registry.api.v1.resources.OpenDataMeshAPIStandardError;
 import org.springframework.http.HttpStatus;
 
 public abstract class OpenDataMeshAPIException extends RuntimeException{

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.api.ApiParser;
 import org.opendatamesh.platform.core.dpds.exceptions.FetchException;
 import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
@@ -33,7 +34,7 @@ public class DataStoreApiParser extends ApiParser {
             throw new ParseException("Impossible to parse api definition encoded in [" + mediaType + "]");
         }
 
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = ObjectMapperFactory.JSON_MAPPER;
         try {
             ObjectNode apiNode = (ObjectNode)mapper.readTree(rawContent);
             if(!apiNode.has("datastoreapi")) return null;

@@ -1,5 +1,6 @@
 package org.opendatamesh.platform.pp.registry.services;
 
+import org.opendatamesh.platform.pp.registry.api.v1.resources.OpenDataMeshAPIStandardError;
 import org.opendatamesh.platform.pp.registry.database.entities.sharedres.TemplateDefinition;
 import org.opendatamesh.platform.pp.registry.database.repositories.TemplateDefinitionRepository;
 import org.opendatamesh.platform.pp.registry.exceptions.*;

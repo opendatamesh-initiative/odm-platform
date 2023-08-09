@@ -51,20 +51,3 @@ spring:
     clean-on-validation-error: true
 
 
-##############################
-# Policy Module configuration
-##############################
-odm:
-  utilityPlane:
-    policyService:
-      active: false
-      address: http://localhost:9001
-    metaService:
-      active: false
-      address: http://localhost:9002
-
-
-policyserviceaddress: http://localhost:9001
-metaserviceaddress: http://localhost:9002
-skippolicyservice: true
-skipmetaservice: true

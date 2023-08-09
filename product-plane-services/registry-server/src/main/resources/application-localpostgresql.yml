@@ -53,11 +53,3 @@ spring:
     clean-on-validation-error: true
 
 
-##############################
-# Policy Module configuration
-##############################
-policyserviceaddress: http://localhost:9001
-metaserviceaddress: http://localhost:9002
-
-skippolicyservice: false #true
-skipmetaservice: true

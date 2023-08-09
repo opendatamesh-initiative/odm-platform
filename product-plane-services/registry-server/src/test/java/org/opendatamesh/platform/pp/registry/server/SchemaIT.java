@@ -16,7 +16,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 //TODO every update to data product must check and mock the call to the policyservice
 
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
-public class SchemaIT extends OpenDataMeshIT {
+public class SchemaIT extends ODMRegistryIT {
 
 
     // ======================================================================================

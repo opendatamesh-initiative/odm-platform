@@ -20,7 +20,7 @@ import static org.junit.Assert.fail;
 //TODO every update to data product must check and mock the call to the policyservice
 
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
-public class DataProductIT extends OpenDataMeshIT {
+public class DataProductIT extends ODMRegistryIT {
 
     // ======================================================================================
     // HAPPY PATH

@@ -18,7 +18,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
-public class APIDefinitionIT extends OpenDataMeshIT {
+public class APIDefinitionIT extends ODMRegistryIT {
 
     // ======================================================================================
     // HAPPY PATH

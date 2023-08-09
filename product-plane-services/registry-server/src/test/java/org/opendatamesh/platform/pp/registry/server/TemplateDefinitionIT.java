@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
-public class TemplateDefinitionIT extends OpenDataMeshIT {
+public class TemplateDefinitionIT extends ODMRegistryIT {
 
     // ======================================================================================
     // HAPPY PATH

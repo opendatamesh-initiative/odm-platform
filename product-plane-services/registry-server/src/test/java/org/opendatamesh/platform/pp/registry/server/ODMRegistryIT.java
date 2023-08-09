@@ -45,7 +45,7 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 //@ActiveProfiles("testpostgresql")
 //@ActiveProfiles("testmysql")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = { ODMRegistryApp.class })
-public abstract class OpenDataMeshIT {
+public abstract class ODMRegistryIT {
 
     @LocalServerPort
     protected String port;
@@ -57,7 +57,7 @@ public abstract class OpenDataMeshIT {
     @Autowired
     protected ObjectMapper mapper;
 
-    protected Logger logger = LoggerFactory.getLogger(OpenDataMeshIT.class);
+    protected Logger logger = LoggerFactory.getLogger(ODMRegistryIT.class);
 
     protected final String DB_TABLES_POSTGRESQL = "src/test/resources/db/tables_postgresql.txt";
     protected final String DB_TABLES_MYSQL = "src/test/resources/db/tables_mysql.txt";

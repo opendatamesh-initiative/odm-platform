@@ -26,7 +26,7 @@ import java.util.List;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 @Disabled
-public class UploadIT extends OpenDataMeshIT {
+public class UploadIT extends ODMRegistryIT {
 
     // ----------------------------------------
     // CREATE Data product version

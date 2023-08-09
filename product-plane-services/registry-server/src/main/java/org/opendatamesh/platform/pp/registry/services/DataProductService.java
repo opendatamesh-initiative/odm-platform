@@ -121,7 +121,9 @@ public class DataProductService {
         } catch (Throwable t) {
             throw new BadGatewayException(
                     OpenDataMeshAPIStandardError.SC502_05_META_SERVICE_ERROR,
-                    "Impossible to upload data product to metaService", t);
+                    "Impossible to upload data product to metaService: " + t.getMessage(),
+                    t
+            );
         }
        
         return dataProduct;

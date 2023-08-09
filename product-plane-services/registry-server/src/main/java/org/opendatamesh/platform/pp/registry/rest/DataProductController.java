@@ -46,12 +46,9 @@ public class DataProductController
     @Autowired
     private DataProductMapper dataProductMapper;
 
-    
-
     @Autowired
     ObjectMapper objectMapper;
 
-    
     private static final Logger logger = LoggerFactory.getLogger(DataProductController.class);
 
     public DataProductController() { 

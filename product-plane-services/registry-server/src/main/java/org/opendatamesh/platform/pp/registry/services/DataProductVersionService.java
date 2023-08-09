@@ -17,6 +17,7 @@ import org.opendatamesh.platform.pp.registry.resources.v1.observers.EventNotifie
 import org.opendatamesh.platform.pp.registry.resources.v1.policyservice.PolicyName;
 import org.opendatamesh.platform.up.notification.api.resources.EventResource;
 import org.opendatamesh.platform.up.notification.api.resources.EventType;
+import org.opendatamesh.platform.up.policy.api.v1.clients.PolicyServiceClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -129,7 +130,9 @@ public class DataProductVersionService {
         } catch (Throwable t) {
             throw new BadGatewayException(
                     OpenDataMeshAPIStandardError.SC502_05_META_SERVICE_ERROR,
-                    "Impossible to upload data product version to metaService", t);
+                    "Impossible to upload data product version to metaService: " + t.getMessage()
+                    , t
+            );
         }
 
         return dataProductVersion;
@@ -514,7 +517,8 @@ public class DataProductVersionService {
             throw new InternalServerException(
                     OpenDataMeshAPIStandardError.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while deleting data product version",
-                    t);
+                    t
+            );
         }
 
         try {
@@ -528,7 +532,9 @@ public class DataProductVersionService {
         } catch (Throwable t) {
             throw new BadGatewayException(
                     OpenDataMeshAPIStandardError.SC502_05_META_SERVICE_ERROR,
-                    "Impossible to upload data product version to metaService", t);
+                    "Impossible to upload data product version to metaService: " + t.getMessage(),
+                    t
+            );
         }
 
     }
@@ -546,8 +552,9 @@ public class DataProductVersionService {
         } catch (Throwable t) {
             throw new BadGatewayException(
                     OpenDataMeshAPIStandardError.SC502_01_POLICY_SERVICE_ERROR,
-                    "An error occured while invoking policy service to validate data product version ",
-                    t);
+                    "An error occured while invoking policy service to validate data product version: " + t.getMessage(),
+                    t
+            );
         }
 
         return isValid;

@@ -83,8 +83,9 @@ public class NotificationClient extends ODMClient {
 
         ResponseEntity response = mapResponseEntity(deleteNotificationsResponse,
                 HttpStatus.OK,
-                Void.class,
-                ErrorResource[].class);
+                Void.class//,
+                //ErrorResource[].class
+        );
         return response;
 
     }

@@ -361,7 +361,7 @@ public class DataProductVersionIT extends OpenDataMeshIT {
             assertThat(apiDefinitionObject.size()).isEqualTo(1);
             assertThat(apiDefinitionObject.get("$ref")).isNotNull();
             assertThat(apiDefinitionObject.get("$ref").asText())
-                    .matches(Pattern.compile("http://localhost:\\d*/api/v1/pp/apis/\\d*"));
+                    .matches(Pattern.compile("http://localhost:\\d*/api/v1/pp/registry/apis/\\d*"));
         }
 
         JsonNode outputPorts = interfaceComponentsObject.path("outputPorts");
@@ -400,7 +400,7 @@ public class DataProductVersionIT extends OpenDataMeshIT {
         assertThat(template.get("definition")).isNotNull();
         assertThat(template.get("definition").get("$ref")).isNotNull();
         assertThat(template.get("definition").get("$ref").asText())
-                    .matches(Pattern.compile("http://localhost:\\d*/api/v1/pp/templates/\\d*"));
+                    .matches(Pattern.compile("http://localhost:\\d*/api/v1/pp/registry/templates/\\d*"));
         
         
         stage = (ObjectNode)lifecycleInfoObject.get("prod");

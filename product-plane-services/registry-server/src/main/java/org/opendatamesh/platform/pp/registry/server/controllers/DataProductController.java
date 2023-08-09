@@ -272,7 +272,7 @@ public class DataProductController
         if(dataProductRes == null)
             throw new BadRequestException(
                 ODMRegistryAPIStandardError.SC400_10_PRODUCT_IS_EMPTY,
-                "Domain is empty"
+                "Data Product Descriptor is empty"
             );
 
         DataProduct dataProduct = dataProductMapper.toEntity(dataProductRes);

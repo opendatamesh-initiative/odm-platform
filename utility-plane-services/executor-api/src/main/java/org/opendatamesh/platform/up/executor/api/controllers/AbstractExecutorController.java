@@ -21,7 +21,7 @@ public abstract class AbstractExecutorController {
             summary = "Create a new activity",
             description = "Create new activity"
     )
-    public TaskResource createTaskEndpoint(TaskResource task) {
+    public TaskResource createTaskEndpoint(@RequestBody TaskResource task) {
         return createTask(task);
     }  
     

@@ -112,7 +112,7 @@ License.
         <maven.compiler.target>11</maven.compiler.target>
         <maven.compiler.source>11</maven.compiler.source>
         <platform.mainclass>
-            org.opendatamesh.platform.pp.registry.OpenDataMeshApp
+            org.opendatamesh.platform.pp.registry.server.ODMRegistryApp
         </platform.mainclass>
     </properties>
 

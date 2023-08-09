@@ -42,7 +42,7 @@ public class DevOpsClient extends ODMClient {
         queryParams.put("startAfterCreation", Boolean.valueOf(startAfterCreation));
 
         return rest.postForEntity(
-                apiUrl(Routes.ACTIVITIES, null, queryParams),
+                apiUrl(DevOpsAPIRoutes.ACTIVITIES, null, queryParams),
                 getHttpEntity(payload),
                 responseType,
                 queryParams);
@@ -59,7 +59,7 @@ public class DevOpsClient extends ODMClient {
 
     public <T> ResponseEntity<T> getActivities(Class<T> responseType) {
         return rest.getForEntity(
-                apiUrl(Routes.ACTIVITIES),
+                apiUrl(DevOpsAPIRoutes.ACTIVITIES),
                 responseType);
     }
     
@@ -73,7 +73,7 @@ public class DevOpsClient extends ODMClient {
 
     public <T> ResponseEntity<T> getActivity(Long activityId, Class<T> responseType) {
         return rest.getForEntity(
-                apiUrlOfItem(Routes.ACTIVITIES),
+                apiUrlOfItem(DevOpsAPIRoutes.ACTIVITIES),
                 responseType,
                 activityId.toString());
     }
@@ -89,7 +89,7 @@ public class DevOpsClient extends ODMClient {
 
     public <T> ResponseEntity<T> postActivityStart(Long activityId, Class<T> responseType) throws IOException {
         return rest.postForEntity(
-                apiUrl(Routes.ACTIVITIES, "/{id}/start"),
+                apiUrl(DevOpsAPIRoutes.ACTIVITIES, "/{id}/start"),
                 getHttpEntity(""),
                 responseType,
                 activityId.toString());
@@ -106,7 +106,7 @@ public class DevOpsClient extends ODMClient {
 
     public <T> ResponseEntity<T> getActivityStatus(Long activityId, Class<T> responseType) {
         return rest.getForEntity(
-                apiUrl(Routes.ACTIVITIES, "/{id}/status"),
+                apiUrl(DevOpsAPIRoutes.ACTIVITIES, "/{id}/status"),
                 responseType,
                 activityId.toString());
     }
@@ -127,7 +127,7 @@ public class DevOpsClient extends ODMClient {
 
     public <T> ResponseEntity<T> getTasks(Class<T> responseType) {
         return rest.getForEntity(
-                apiUrl(Routes.TASKS),
+                apiUrl(DevOpsAPIRoutes.TASKS),
                 responseType);
     }
 
@@ -142,7 +142,7 @@ public class DevOpsClient extends ODMClient {
 
     public <T> ResponseEntity<T> getTask(Long activityId, Class<T> responseType) {
         return rest.getForEntity(
-                apiUrlOfItem(Routes.TASKS),
+                apiUrlOfItem(DevOpsAPIRoutes.TASKS),
                 responseType,
                 activityId.toString());
     }
@@ -157,7 +157,7 @@ public class DevOpsClient extends ODMClient {
 
     public <T> ResponseEntity<T> postTaskStop(Long taskId, Class<T> responseType) throws IOException {
         return rest.postForEntity(
-                apiUrl(Routes.ACTIVITIES, "/{id}/stop"),
+                apiUrl(DevOpsAPIRoutes.ACTIVITIES, "/{id}/stop"),
                 getHttpEntity(""),
                 responseType,
                 taskId.toString());
@@ -174,7 +174,7 @@ public class DevOpsClient extends ODMClient {
 
     public <T> ResponseEntity<T> getTaskStatus(Long activityId, Class<T> responseType) {
         return rest.getForEntity(
-                apiUrl(Routes.TASKS, "/{id}/status"),
+                apiUrl(DevOpsAPIRoutes.TASKS, "/{id}/status"),
                 responseType,
                 activityId.toString());
     }

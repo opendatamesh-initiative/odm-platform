@@ -5,12 +5,8 @@ app:
   workdir:
 
 server:
-  port: 8001
   error:
     include-message: always
-  servlet:
-    context-path: /api/v1/pp/
-
 
 ############################################
 # Spring, JPA, DB and Flyway configurations

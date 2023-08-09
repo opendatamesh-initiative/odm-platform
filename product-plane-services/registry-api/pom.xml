@@ -210,7 +210,7 @@ License.
                     <execution>
                         <id>pre-integration-test</id>
                          <configuration>
-                            <mainClass>org.opendatamesh.platform.pp.api.OpenDataMeshApp</mainClass>
+                            <mainClass>org.opendatamesh.platform.pp.registry.server.ODMRegistryApp</mainClass>
                             <classesDirectory>../registry-server/target/classes</classesDirectory>
                         </configuration>
                         <goals>
@@ -220,7 +220,7 @@ License.
                     <execution>
                         <id>post-integration-test</id>
                          <configuration>
-                            <mainClass>org.opendatamesh.platform.pp.api.OpenDataMeshApp</mainClass>
+                            <mainClass>org.opendatamesh.platform.pp.registry.server.ODMRegistryApp</mainClass>
                             <classesDirectory>../registry-server/target/classes</classesDirectory>
                         </configuration>
                         <goals>
@@ -238,7 +238,7 @@ License.
                     <execution>
                         <id>start-application</id>
                         <configuration>
-                            <mainClass>org.opendatamesh.platform.pp.api.OpenDataMeshApp</mainClass>
+                            <mainClass>org.opendatamesh.platform.pp.registry.server.ODMRegistryApp</mainClass>
                             <classesDirectory>../registry-server/target/classes</classesDirectory>
                         </configuration>
                         <goals>

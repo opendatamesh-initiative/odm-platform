@@ -10,7 +10,7 @@ import java.util.Optional;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.model.LifecycleActivityInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.StandardDefinitionDPDS;
-import org.opendatamesh.platform.pp.devops.api.clients.Routes;
+import org.opendatamesh.platform.pp.devops.api.clients.DevOpsAPIRoutes;
 import org.opendatamesh.platform.pp.devops.api.resources.ODMDevOpsAPIStandardError;
 import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsConfigurations;
 import org.opendatamesh.platform.pp.devops.server.database.entities.Task;
@@ -128,7 +128,7 @@ public class TaskService {
         try {
             TaskResource taskRes = taskMapper.toResource(task);
             String callbackRef = configurations.getProductPlane().getDevopsService().getAddress();
-            callbackRef += Routes.TASKS;
+            callbackRef += DevOpsAPIRoutes.TASKS;
             callbackRef += "/" + task.getId() + "/stop";
             taskRes.setCallbackRef(callbackRef);
 

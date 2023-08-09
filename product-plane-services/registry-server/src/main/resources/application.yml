@@ -5,6 +5,11 @@ spring:
   profiles:
     active: dev
 
+server:
+  port: 8001
+  servlet:
+    context-path: /api/v1/pp/registry/
+
 ##########################
 # Logging configuration
 ##########################

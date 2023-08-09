@@ -107,6 +107,18 @@ public class ODMClient {
         return urlTemplate;
     }
 
+    protected String apiUrlWithQueryParams(RoutesInterface route, List<String> params) {
+        String ext = "";
+        if(params.size() != 0) {
+            ext = "?";
+            for(int i=0; i<params.size();i++) {
+                if(i!=0) ext += "&";
+                ext += params.get(i);
+            }
+        }
+        return apiUrl(route, ext);
+    }
+
     protected String apiUrlFromString(String servicePath) {
         return serverAddress + servicePath;
     }

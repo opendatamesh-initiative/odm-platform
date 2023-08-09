@@ -58,3 +58,11 @@ spring:
     schemas: ODMREGISTRY
     locations: classpath:db/migration/postgresql
     clean-on-validation-error: true
+
+##########################
+# Registry configurations
+##########################
+policyserviceaddress: http://localhost:9001
+metaserviceaddress: http://localhost:9002
+skippolicyservice: true
+skipmetaservice: true

@@ -8,9 +8,7 @@ server:
   port: ${SPRING_PORT}
   error:
     include-message: always
-  servlet:
-    context-path: /api/v1/pp/
-
+ 
 ############################################
 # Spring, JPA, DB and Flyway configurations
 ############################################

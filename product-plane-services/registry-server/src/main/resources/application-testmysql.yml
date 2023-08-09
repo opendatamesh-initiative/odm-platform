@@ -5,12 +5,8 @@ app:
   workdir:
 
 server:
-  port: 8001
   error:
     include-message: always
-  servlet:
-    context-path: /api/v1/pp/
-
 
 ############################################
 # Spring, JPA, DB and Flyway configurations
@@ -61,12 +57,10 @@ spring:
     #schemas: ODMREGISTRY # not working
     clean-on-validation-error: true
 
-
-##############################
-# Policy Module configuration
-##############################
+##########################
+# Registry configurations
+##########################
 policyserviceaddress: http://localhost:9001
 metaserviceaddress: http://localhost:9002
-
 skippolicyservice: true
 skipmetaservice: true

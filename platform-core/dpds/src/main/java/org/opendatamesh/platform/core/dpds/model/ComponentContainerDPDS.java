@@ -9,10 +9,13 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.util.List;
 
+import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
+
 public abstract class ComponentContainerDPDS {
 
     public void setRawContent(List<? extends ComponentDPDS> components, ArrayNode componentNodes) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = ObjectMapperFactory.JSON_MAPPER;
+        
         for (int i = 0; i < componentNodes.size(); i++) {
             JsonNode componentNode = componentNodes.get(i);
             String rawContent = objectMapper.writeValueAsString(componentNode);
@@ -22,7 +25,7 @@ public abstract class ComponentContainerDPDS {
 
     @JsonIgnore
     public ArrayNode getRawContent(List<? extends ComponentDPDS> components) throws JsonProcessingException  {
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = ObjectMapperFactory.JSON_MAPPER;
 
         ArrayNode componentNodes = objectMapper.createArrayNode();
         for (ComponentDPDS component : components) {

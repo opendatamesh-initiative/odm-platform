@@ -1,6 +1,8 @@
 package org.opendatamesh.platform.up.policy.api.v1.clients;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.opendatamesh.platform.core.commons.clients.ODMClient;
 import org.opendatamesh.platform.up.policy.api.v1.enums.PatchModes;
 import org.opendatamesh.platform.up.policy.api.v1.resources.ErrorResource;
@@ -18,8 +20,8 @@ import java.util.Map;
 
 public class PolicyServiceClient extends ODMClient {
 
-    public PolicyServiceClient(String serverAddress) {
-        super(serverAddress);
+    public PolicyServiceClient(String serverAddress, ObjectMapper mapper) {
+        super(serverAddress, mapper);
     }
 
     // ----------------------------------------

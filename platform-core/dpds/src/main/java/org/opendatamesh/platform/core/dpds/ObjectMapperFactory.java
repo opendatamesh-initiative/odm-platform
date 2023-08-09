@@ -9,18 +9,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import org.opendatamesh.platform.core.dpds.model.BuildInfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.DeployInfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.ProvisionInfoDPDS;
-import org.opendatamesh.platform.core.dpds.serde.BuildInfoResourceDeserializer;
-import org.opendatamesh.platform.core.dpds.serde.DeployInfoResourceDeserializer;
-import org.opendatamesh.platform.core.dpds.serde.ProvisionInfoResourceDeserializer;
+
+import org.opendatamesh.platform.core.dpds.model.LifecycleActivityInfoDPDS;
+import org.opendatamesh.platform.core.dpds.model.LifecycleInfoDPDS;
+import org.opendatamesh.platform.core.dpds.serde.ActivityInfoDeserializer;
+
+import org.opendatamesh.platform.core.dpds.serde.LifecycleInfoDeserializer;
 
 public class ObjectMapperFactory {
 
     public static ObjectMapper JSON_MAPPER;
     public static ObjectMapper YAML_MAPPER;
-    
+
     static {
         JSON_MAPPER = ObjectMapperFactory.createJson();
         YAML_MAPPER = ObjectMapperFactory.createYaml();
@@ -32,7 +32,7 @@ public class ObjectMapperFactory {
         }
         return ObjectMapperFactory.YAML_MAPPER;
     }
-    
+
     protected static ObjectMapper createJson() {
         return create(createJsonFactory());
     }
@@ -50,23 +50,23 @@ public class ObjectMapperFactory {
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         SimpleModule module = new SimpleModule();
-        module.addDeserializer(ProvisionInfoDPDS.class, new ProvisionInfoResourceDeserializer());
-        module.addDeserializer(BuildInfoDPDS.class, new BuildInfoResourceDeserializer());
-        module.addDeserializer(DeployInfoDPDS.class, new DeployInfoResourceDeserializer());
+        module.addDeserializer(LifecycleActivityInfoDPDS.class, new ActivityInfoDeserializer());
+        module.addDeserializer(LifecycleInfoDPDS.class, new LifecycleInfoDeserializer());
+
         mapper.registerModule(module);
-        
+
         return mapper;
     }
 
     private static JsonFactory createJsonFactory() {
         return new JsonFactoryBuilder()
-          .enable(StreamReadFeature.STRICT_DUPLICATE_DETECTION)
-          .build();
+                .enable(StreamReadFeature.STRICT_DUPLICATE_DETECTION)
+                .build();
     }
 
     private static JsonFactory createYamlFactory() {
         return YAMLFactory.builder()
-          .enable(StreamReadFeature.STRICT_DUPLICATE_DETECTION)
-          .build();
+                .enable(StreamReadFeature.STRICT_DUPLICATE_DETECTION)
+                .build();
     }
 }

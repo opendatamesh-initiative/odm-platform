@@ -319,6 +319,42 @@
     ]
   },
   "internalComponents": {
+    "lifecycleInfo": {
+      "dev": {
+        "service": {
+          "$href": "azure-devops"
+        },
+        "template": {
+          "name": "dpdLifecyclePipe",
+          "specification": "spec",
+          "specificationVersion": "2.0",
+          "definition": {
+            "pipeline": "dpdLifecyclePipe",
+            "version": "1.0.0"
+          }
+        },
+        "configurations": {
+          "stage": "DEV"
+        }
+      },
+      "prod": {
+        "service": {
+          "$href": "azure-devops"
+        },
+        "template": {
+          "name": "dpdLifecyclePipe",
+          "specification": "spec",
+          "specificationVersion": "2.0",
+          "definition": {
+            "pipeline": "dpdLifecyclePipe",
+            "version": "1.0.0"
+          }
+        },
+        "configurations": {
+          "stage": "PROD"
+        }
+      }
+    },
     "applicationComponents": [
       {
         "fullyQualifiedName": "urn:dpds:it.quantyca:dataproducts:sampleDomain:tripExecution:1.0.0:applications:modelNormalizationJob",

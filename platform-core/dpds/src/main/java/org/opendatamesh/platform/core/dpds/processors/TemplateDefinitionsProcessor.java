@@ -8,11 +8,8 @@ import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
 import org.opendatamesh.platform.core.dpds.exceptions.UnresolvableReferenceException;
 import org.opendatamesh.platform.core.dpds.model.*;
 import org.opendatamesh.platform.core.dpds.parser.ParseContext;
-import org.opendatamesh.platform.core.dpds.parser.location.UriUtils;
 
 import java.net.URI;
-import java.util.List;
-
 
 public class TemplateDefinitionsProcessor {
 
@@ -31,102 +28,49 @@ public class TemplateDefinitionsProcessor {
             return;
         }
 
-        resolveTemplateObjectsInApp();
-        processTemplateDefinitionsInInfra();
+        resolveTemplateObjectsInLifecycle();
+
     }
 
-    private void resolveTemplateObjectsInApp() throws UnresolvableReferenceException, ParseException {
+    private void resolveTemplateObjectsInLifecycle() throws UnresolvableReferenceException, ParseException {
 
-        List<ApplicationComponentDPDS> applicationComponents = context.getResult().getDescriptorDocument().getInternalComponents()
-                .getApplicationComponents();
-        for (ApplicationComponentDPDS applicationComponent : applicationComponents) {
+        InternalComponentsDPDS internalComponents = context.getResult().getDescriptorDocument().getInternalComponents();
+        if (internalComponents == null)
+            return; // Nothings to do
 
-            ObjectNode applicationNode = null;
-            try {
-                applicationNode = (ObjectNode) mapper.readTree(applicationComponent.getRawContent());
-            } catch (JsonProcessingException e) {
-                throw new ParseException("Impossible to parse descriptor raw cantent", e);
-            }
+        LifecycleInfoDPDS lifecycleInfo = internalComponents.getLifecycleInfo();
+        if (lifecycleInfo == null)
+            return; // Nothings to do
 
-            ObjectNode serviceInfoNode = null;
-            ObjectNode templateNode = null;
-            StandardDefinitionDPDS template = null;
-
-            serviceInfoNode = (ObjectNode) applicationNode.get("buildInfo");
-            if (serviceInfoNode != null && serviceInfoNode.get("template") != null) {
-
-                template = applicationComponent.getBuildInfo().getTemplate();
-                templateNode = (ObjectNode) serviceInfoNode.get("template");
-
-                templateNode = resolveTemplateDefinition(applicationComponent, template.getDefinition(), templateNode);
-                serviceInfoNode.set("template", templateNode);
-            }
-
-            serviceInfoNode = (ObjectNode) applicationNode.get("deployInfo");
-            if (serviceInfoNode != null && serviceInfoNode.get("template") != null) {
-
-                template = applicationComponent.getDeployInfo().getTemplate();
-                templateNode = (ObjectNode) serviceInfoNode.get("template");
-
-                templateNode = resolveTemplateDefinition(applicationComponent, template.getDefinition(), templateNode);
-                serviceInfoNode.set("template", templateNode);
-            }
+        for (LifecycleActivityInfoDPDS activity : lifecycleInfo.getActivityInfos()) {
 
             try {
-                String rawContent = mapper.writeValueAsString(applicationNode);
-                applicationComponent.setRawContent(rawContent);
+                ObjectNode activityNode = (ObjectNode) mapper.readTree(activity.getRawContent());
+                ObjectNode templateNode = (ObjectNode) activityNode.get("template");
+                if (templateNode == null)
+                    continue; // Nothings to do
+                ObjectNode templateDefinitionNode = (ObjectNode) templateNode.get("definition");
+                StandardDefinitionDPDS template = activity.getTemplate();
+
+                if (template != null) {
+                    URI baseUri = context.getLocation().getRootDocumentBaseUri();
+                    templateDefinitionNode = resolveTemplateDefinition(baseUri, template.getDefinition(),
+                            templateDefinitionNode);
+                    templateNode.set("definition", templateDefinitionNode);
+
+                    String rawContent = mapper.writeValueAsString(activityNode);
+                    activity.setRawContent(rawContent);
+                }
             } catch (JsonProcessingException e) {
                 throw new ParseException("Impossible serialize descriptor", e);
             }
+
         }
-    }
 
-    
-    
-    
-    private void processTemplateDefinitionsInInfra() throws UnresolvableReferenceException, ParseException {
-
-        List<InfrastructuralComponentDPDS> infraComponents = context.getResult().getDescriptorDocument().getInternalComponents()
-                .getInfrastructuralComponents();
-
-        if (infraComponents == null || infraComponents.isEmpty()) {
-            return;
-        }
-        
-        for (InfrastructuralComponentDPDS infraComponent : infraComponents) {
-
-            ObjectNode infraNode = null;
-            try {
-                infraNode = (ObjectNode) mapper.readTree(infraComponent.getRawContent());
-            } catch (JsonProcessingException e) {
-                throw new ParseException("Impossible to parse raw content of infrastructural component [" + infraComponent.getFullyQualifiedName() + "]", e);
-            }
-
-            ObjectNode serviceInfoNode = null;
-            ObjectNode templateNode = null;
-            StandardDefinitionDPDS template = null;
-
-            serviceInfoNode = (ObjectNode) infraNode.get("provisionInfo");
-            if (serviceInfoNode != null && serviceInfoNode.get("template") != null) {
-
-                template = infraComponent.getProvisionInfo().getTemplate();
-                templateNode = (ObjectNode) serviceInfoNode.get("template");
-
-                templateNode = resolveTemplateDefinition(infraComponent, template.getDefinition(), templateNode);
-                serviceInfoNode.set("template", templateNode);
-            }
-
-            try {
-                String rawContent = mapper.writeValueAsString(infraNode);
-                infraComponent.setRawContent(rawContent);
-            } catch (JsonProcessingException e) {
-                throw new ParseException("Impossible serialize descriptor", e);
-            }
-        }
     }
 
     private ObjectNode resolveTemplateDefinition(
-            ComponentDPDS component,
+            URI baseUri,
             ReferenceObjectDPDS templateDefinition,
             ObjectNode templateDefinitionNode)
             throws ParseException, UnresolvableReferenceException {
@@ -138,11 +82,10 @@ public class TemplateDefinitionsProcessor {
         String referenceRef = null, templateDefinitionContent = null;
         if (templateDefinitionNode.get("$ref") != null) {
             ref = templateDefinitionNode.get("$ref").asText();
-            
-            URI uri = null, baseUri = null;
+
+            URI uri = null;
             try {
                 uri = new URI(ref).normalize();
-                baseUri = UriUtils.getBaseUri(new URI(component.getOriginalRef()));
                 templateDefinitionContent = context.getLocation().fetchResource(baseUri, uri);
             } catch (Exception e) {
                 try {
@@ -151,24 +94,25 @@ public class TemplateDefinitionsProcessor {
                 } catch (JsonProcessingException e1) {
                     throw new ParseException("Impossible serialize template definition", e1);
                 }
-                /* 
-                throw new UnresolvableReferenceException(
-                        "Impossible to resolve external reference [" + ref + "]",
-                        e);
-                */
             }
 
             referenceRef = context.getOptions().getServerUrl() + "/templates/{templateId}";
             templateDefinitionNode.put("$ref", referenceRef);
+
         } else { // inline
             try {
                 templateDefinitionContent = mapper.writeValueAsString(templateDefinitionNode);
             } catch (JsonProcessingException e) {
                 throw new ParseException("Impossible serialize template definition", e);
             }
+            if (templateDefinitionNode.get("$originalRef") != null) {
+                ref = templateDefinitionNode.get("$originalRef").asText(); // in case it was an internal reference
+            }
             referenceRef = context.getOptions().getServerUrl() + "/templates/{templateId}";
             templateDefinitionNode = mapper.createObjectNode();
             templateDefinitionNode.put("$ref", referenceRef);
+            templateDefinitionNode.put("$originalRef", ref);
+            templateDefinition.setMediaType("application/json");
         }
 
         templateDefinition.setRef(referenceRef);
@@ -178,7 +122,7 @@ public class TemplateDefinitionsProcessor {
         return templateDefinitionNode;
 
     }
-   
+
     public static void resolve(ParseContext context) throws UnresolvableReferenceException, ParseException {
         TemplateDefinitionsProcessor resolver = new TemplateDefinitionsProcessor(context);
         resolver.resolve();

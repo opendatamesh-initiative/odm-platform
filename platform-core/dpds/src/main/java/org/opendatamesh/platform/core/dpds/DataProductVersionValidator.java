@@ -22,7 +22,7 @@ public class DataProductVersionValidator {
     public static final String SCHEMA_URI = "https://raw.githubusercontent.com/opendatamesh-initiative/odm-specification-dpdescriptor/main/schemas/v1.0.0-DRAFT/schema.json";
 
     public DataProductVersionValidator() {
-        mapper = new ObjectMapper();
+        mapper = ObjectMapperFactory.JSON_MAPPER;
         JsonSchemaFactory factory = JsonSchemaFactory.getInstance(VersionFlag.V202012);
         
         try {

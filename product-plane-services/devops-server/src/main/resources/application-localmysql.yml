@@ -5,11 +5,8 @@ app:
   workdir:
 
 server:
-  port: 8001
   error:
     include-message: always
-  servlet:
-    context-path: /api/v1/pp/
 
 
 ############################################
@@ -46,7 +43,7 @@ spring:
   # More: https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html#appendix.application-properties.data-migration
   flyway:
     #enabled: false # To disable
-    url: jdbc:mysql://localhost:3306/odmpdb
+    url: jdbc:mysql://localhost:3306/ODMDEVOPS
     #user: "db"
     #password: "admin"
     user: "root"
@@ -55,13 +52,3 @@ spring:
     #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
     #schemas: flyway # not working
     clean-on-validation-error: true
-
-
-##############################
-# Policy Module configuration
-##############################
-policyserviceaddress: http://localhost:9001
-metaserviceaddress: http://localhost:9002
-
-skippolicyservice: true
-skipmetaservice: true

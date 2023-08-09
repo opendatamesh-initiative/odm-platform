@@ -3,7 +3,16 @@
 ##########################
 spring:
   profiles:
-    active: dev
+    active: dev 
+    #testmysql 
+    #testpostgresql
+
+server:
+  port: 8002
+  error:
+    include-message: always
+  servlet:
+    context-path: /api/v1/pp/devops/
 
 ##########################
 # Logging configuration
@@ -14,17 +23,9 @@ logging:
       apache:
         http: INFO
       opendatamesh:
-        dpexperience:
-          api.*: DEBUG
+        platform.*: DEBUG
     httpclient:
       wire: INFO
-    it:
-      quantyca:
-        odm:
-          api:
-            planes:
-              dpexperience.*: DEBUG
-
 
 ##########################
 # Doc configuration
@@ -33,7 +34,33 @@ springdoc:
   swagger-ui:
     operationsSorter: alpha
 
-prova: xxxx
+##############################
+# ODM configurations
+##############################
+odm:
+  productPlane:
+    registryService:
+      active: true
+      address: http://localhost:8001
+    devopsService:
+      active: true
+      address: http://localhost:8002
+    blueprintService:
+      active: false
+      address: http://localhost:8003
+  utilityPlane:
+    policyServices:
+      open-policy-agent:
+        active: false
+        address: http://localhost:9001
+    notificationServices:
+      blindata:
+        active: false
+        address: http://localhost:9002
+    executorServices:
+      azure-devops:
+        active: true
+        address: http://localhost:9003
 
 
 

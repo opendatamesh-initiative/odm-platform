@@ -5,18 +5,13 @@ app:
   workdir:
 
 server:
-  port: 8001
   error:
     include-message: always
-  servlet:
-    context-path: /api/v1/pp/
 
 ############################################
 # Spring configurations
 ############################################
 spring:
-  # Profile
-  profile: dev
   # JPA configuration
   jpa:
     hibernate:
@@ -53,21 +48,12 @@ spring:
     locations: classpath:db/migration/h2
     clean-on-validation-error: true
 
-
-##############################
-# Policy Module configuration
-##############################
-odm:
-  utilityPlane:
-    policyService:
-      active: false
-      address: http://localhost:9001
-    metaService:
-      active: false
-      address: http://localhost:9002
-
-
+##########################
+# Registry configurations
+##########################
 policyserviceaddress: http://localhost:9001
 metaserviceaddress: http://localhost:9002
 skippolicyservice: true
 skipmetaservice: true
+
+

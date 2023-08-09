@@ -251,25 +251,6 @@ public class UriFetcher implements DescriptorLocation.Fetcher {
         return result;
     }
 
-    @Deprecated
-    private String fetchFromSimpleRemote(URI resourceUri) throws FetchException {
-        String content = "";
-
-        BufferedReader in;
-        try {
-            in = new BufferedReader(
-                    new InputStreamReader(resourceUri.toURL().openStream()));
-            String line;
-            while ((line = in.readLine()) != null)
-                content += line + "\n";
-            in.close();
-        } catch (Exception e) {
-            throw new FetchException("Impossible to fetch uri [" + resourceUri + "]", resourceUri, e);
-        }
-
-        return content;
-    }
-
     private String fetchFromJar(URI resourceUri) throws FetchException {
         String content = "";
 

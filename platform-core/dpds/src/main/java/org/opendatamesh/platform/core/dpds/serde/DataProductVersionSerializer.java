@@ -17,10 +17,9 @@ import java.util.Set;
 @Data
 public class DataProductVersionSerializer {
 
-   public DataProductVersionSerializer() {
+    public DataProductVersionSerializer() {
 
-   }
-   
+    }
 
     public String serialize(
             DataProductVersionDPDS dataProductVersionRes,
@@ -86,8 +85,13 @@ public class DataProductVersionSerializer {
             resultRootNode.set("dataProductDescriptor", rootNode.get("dataProductDescriptor"));
             resultRootNode.set("info", rootNode.get("info"));
 
-            resultRootNode.set("interfaceComponents", getRawContent(dataProductVersion.getInterfaceComponents()));
-            resultRootNode.set("internalComponents", getRawContent(dataProductVersion.getInternalComponents()));
+            if (dataProductVersion.getInterfaceComponents() != null) {
+                resultRootNode.set("interfaceComponents", getRawContent(dataProductVersion.getInterfaceComponents()));
+            }
+            if (dataProductVersion.getInternalComponents() != null) {
+                resultRootNode.set("internalComponents", getRawContent(dataProductVersion.getInternalComponents()));
+            }
+
         }
 
         if (prettyPrint) {
@@ -103,15 +107,10 @@ public class DataProductVersionSerializer {
         return getRawContent(resources, new HashSet<EntityTypeDPDS>(Arrays.asList(EntityTypeDPDS.values())));
     }
 
-    private JsonNode getRawContent(InterfaceComponentsDPDS resources, EntityTypeDPDS inludedPortType)
-            throws JsonProcessingException {
-        return getRawContent(resources, new HashSet<EntityTypeDPDS>(Arrays.asList(new EntityTypeDPDS[] { inludedPortType })));
-    }
-
     private JsonNode getRawContent(InterfaceComponentsDPDS resources, Set<EntityTypeDPDS> inludedPortTypes)
             throws JsonProcessingException {
 
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = ObjectMapperFactory.JSON_MAPPER;
         ObjectNode interfaceComponentsNode = mapper.createObjectNode();
 
         if (inludedPortTypes.contains(EntityTypeDPDS.inputport))
@@ -134,9 +133,10 @@ public class DataProductVersionSerializer {
 
     public JsonNode getRawContent(InternalComponentsDPDS resources) throws JsonProcessingException {
 
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = ObjectMapperFactory.JSON_MAPPER;
         ObjectNode internalComponentsNode = mapper.createObjectNode();
 
+        internalComponentsNode.set("lifecycleInfo", resources.getActivityRawContent());
         internalComponentsNode.set("applicationComponents", getRawContent(resources.getApplicationComponents()));
         internalComponentsNode.set("infrastructuralComponents",
                 getRawContent(resources.getInfrastructuralComponents()));
@@ -146,13 +146,14 @@ public class DataProductVersionSerializer {
 
     private ArrayNode getRawContent(List<? extends ComponentDPDS> components) throws JsonProcessingException {
 
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = ObjectMapperFactory.JSON_MAPPER;
 
         ArrayNode interfaceComponentsNode = mapper.createArrayNode();
 
         for (ComponentDPDS component : components) {
             String componentRawContent = component.getRawContent();
-            JsonNode componentNode = ObjectMapperFactory.getRightMapper(componentRawContent).readTree(componentRawContent);
+            JsonNode componentNode = ObjectMapperFactory.getRightMapper(componentRawContent)
+                    .readTree(componentRawContent);
             interfaceComponentsNode.add(componentNode);
         }
 

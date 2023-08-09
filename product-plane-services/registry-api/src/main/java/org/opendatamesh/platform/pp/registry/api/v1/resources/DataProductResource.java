@@ -1,5 +1,7 @@
 package org.opendatamesh.platform.pp.registry.api.v1.resources;
 
+import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -23,7 +25,7 @@ public class DataProductResource {
     private String domain;
 
     public String toEventString() throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = ObjectMapperFactory.JSON_MAPPER;
         return objectMapper.writeValueAsString(this);
     }
 }

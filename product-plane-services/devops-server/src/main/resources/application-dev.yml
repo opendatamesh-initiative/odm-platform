@@ -5,19 +5,14 @@ app:
   workdir:
 
 server:
-  port: 8581
   error:
     include-message: always
-  servlet:
-    context-path: /api/v1/pp/devops/
 
 ############################################
 # Spring configurations
 ############################################
 spring:
   # JPA configuration
-  # Profile
-  profile: dev
   jpa:
     hibernate:
       ddl-auto: validate
@@ -29,6 +24,7 @@ spring:
         jdbc:
           lob:
             non_contextual_creation: true
+        default_schema: ODMDEVOPS
     database-platform: org.hibernate.dialect.H2Dialect
   # DB
   datasource:
@@ -48,35 +44,6 @@ spring:
     user: sa
     password:
     #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
-    #schemas: flyway
+    schemas: ODMDEVOPS
     locations: classpath:db/migration/h2
     clean-on-validation-error: true
-
-
-##############################
-# Policy Module configuration
-##############################
-odm:
-  product-plane:
-    blueprint-service:
-      active: false
-      address: http://localhost:8480
-    registry-service:
-      active: true
-      address: http://localhost:8481
-    devops-service:
-      active: true
-      address: http://localhost:8482
-  utility-plane:
-    policy-services:
-      open-policy-agent:
-        active: false
-        address: http://localhost:8480
-    executor-services:
-      azure-devops:
-        active: flase
-        address: http://localhost:8481
-    notification-services:
-      blindata:
-        active: false
-        address: http://localhost:8482

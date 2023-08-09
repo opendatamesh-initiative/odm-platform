@@ -1,5 +1,6 @@
 package org.opendatamesh.platform.pp.devops.server.exceptions;
 
+import org.opendatamesh.platform.pp.devops.api.resources.ODMDevOpsAPIStandardError;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -11,22 +12,22 @@ import org.springframework.http.HttpStatus;
  * EXAMPLE: An error occured in the backend database
  * 
  * @see https://www.rfc-editor.org/rfc/rfc9110.html#name-500-internal-server-error
- * @see OpenDataMeshAPIStandardError
+ * @see ODMDevOpsAPIStandardError
  * @see OpenDataMeshAPIExceptionHandler
  */
 public class InternalServerException extends OpenDataMeshAPIException {
 	public InternalServerException() {
 	}
 
-	public InternalServerException(OpenDataMeshAPIStandardError error, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+	public InternalServerException(ODMDevOpsAPIStandardError error, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
 		super(error, message, cause, enableSuppression, writableStackTrace);
 	}
 
-	public InternalServerException(OpenDataMeshAPIStandardError error, String message, Throwable cause) {
+	public InternalServerException(ODMDevOpsAPIStandardError error, String message, Throwable cause) {
 		super(error, message, cause);
 	}
 
-	public InternalServerException(OpenDataMeshAPIStandardError error, String message) {
+	public InternalServerException(ODMDevOpsAPIStandardError error, String message) {
 		super(error, message);
 	}
 

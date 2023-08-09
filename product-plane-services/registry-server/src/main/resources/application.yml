@@ -4,6 +4,13 @@
 spring:
   profiles:
     active: dev
+    #testmysql 
+    #testpostgresql
+
+server:
+  port: 8001
+  servlet:
+    context-path: /api/v1/pp/registry/
 
 ##########################
 # Logging configuration
@@ -32,6 +39,15 @@ logging:
 springdoc:
   swagger-ui:
     operationsSorter: alpha
+
+
+##########################
+# Registry configurations
+##########################
+policyserviceaddress: http://localhost:9001
+metaserviceaddress: http://localhost:9002
+skippolicyservice: true
+skipmetaservice: true
 
 
 

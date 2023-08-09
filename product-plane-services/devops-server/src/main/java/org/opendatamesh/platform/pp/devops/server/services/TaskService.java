@@ -10,15 +10,11 @@ import java.util.Optional;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.model.LifecycleActivityInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.StandardDefinitionDPDS;
-import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatus;
-import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskStatus;
+import org.opendatamesh.platform.pp.devops.api.clients.Routes;
 import org.opendatamesh.platform.pp.devops.api.resources.ODMDevOpsAPIStandardError;
 import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsConfigurations;
-import org.opendatamesh.platform.pp.devops.server.database.entities.Activity;
 import org.opendatamesh.platform.pp.devops.server.database.entities.Task;
-import org.opendatamesh.platform.pp.devops.server.database.mappers.ActivityMapper;
 import org.opendatamesh.platform.pp.devops.server.database.mappers.TaskMapper;
-import org.opendatamesh.platform.pp.devops.server.database.repositories.ActivityRepository;
 import org.opendatamesh.platform.pp.devops.server.database.repositories.TaskRepository;
 import org.opendatamesh.platform.pp.devops.server.exceptions.BadRequestException;
 import org.opendatamesh.platform.pp.devops.server.exceptions.InternalServerException;
@@ -131,6 +127,11 @@ public class TaskService {
     
         try {
             TaskResource taskRes = taskMapper.toResource(task);
+            String callbackRef = configurations.getProductPlane().getDevopsService().getAddress();
+            callbackRef += Routes.TASKS;
+            callbackRef += "/" + task.getId() + "/stop";
+            taskRes.setCallbackRef(callbackRef);
+
             ExecutorClient odmExecutor = configurations.getExecutorClient(task.getExecutorRef());
             if (odmExecutor != null) {
                 taskRes = odmExecutor.createTask(taskRes);

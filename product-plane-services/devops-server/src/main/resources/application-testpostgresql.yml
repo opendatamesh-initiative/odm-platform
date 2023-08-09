@@ -5,11 +5,8 @@ app:
   workdir:
 
 server:
-  port: 8581
   error:
     include-message: always
-  servlet:
-    context-path: /api/v1/pp/devops/
 
 
 ############################################
@@ -62,32 +59,3 @@ spring:
     schemas: ODMDEVOPS
     locations: classpath:db/migration/postgresql
     clean-on-validation-error: true
-
-
-##############################
-# Policy Module configuration
-##############################
-odm:
-  productPlane:
-    registryService:
-      active: true
-      address: http://localhost:8585
-    devopsService:
-      active: true
-      address: http://localhost:8481
-    blueprintService:
-      active: false
-      address: http://localhost:8480
-  utilityPlane:
-    policyServices:
-      open-policy-agent:
-        active: false
-        address: http://localhost:8580
-    executorServices:
-      azure-devops:
-        active: true
-        address: http://localhost:8581
-    notificationServices:
-      blindata:
-        active: false
-        address: http://localhost:8582

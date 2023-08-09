@@ -5,11 +5,8 @@ app:
   workdir:
 
 server:
-  port: 8001
   error:
     include-message: always
-  servlet:
-    context-path: /api/v1/pp/
 
 
 ############################################
@@ -58,13 +55,3 @@ spring:
     schemas: flyway
     locations: classpath:db/migration/postgres
     clean-on-validation-error: true
-
-
-##############################
-# Policy Module configuration
-##############################
-policyserviceaddress: http://localhost:9001
-metaserviceaddress: http://localhost:9002
-
-skippolicyservice: true
-skipmetaservice: true

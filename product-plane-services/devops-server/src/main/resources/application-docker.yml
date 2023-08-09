@@ -8,8 +8,7 @@ server:
   port: ${SPRING_PORT}
   error:
     include-message: always
-  servlet:
-    context-path: /api/v1/pp/
+
 
 ############################################
 # Spring, JPA, DB and Flyway configurations
@@ -56,11 +55,31 @@ spring:
     clean-on-validation-error: true
 
 
-##############################
-# Policy Module configuration
-##############################
-policyserviceaddress: http://${POLICYSERVICE_HOSTNAME}:${POLICYSERVICE_PORT}  #172.17.0.1:9001
-metaserviceaddress: http://${METASERVICE_HOSTNAME}:${METASERVICE_PORT}
 
 skippolicyservice: ${SKIP_POLICYSERVICE}
 skipmetaservice: ${SKIP_METASERVICE}
+
+odm:
+  productPlane:
+    registryService:
+      active: true
+      address: http://localhost:8001
+    devopsService:
+      active: true
+      address: http://localhost:8002
+    blueprintService:
+      active: false
+      address: http://localhost:8003
+  utilityPlane:
+    policyServices:
+      open-policy-agent:
+        active: false
+        address: http://${POLICYSERVICE_HOSTNAME}:${POLICYSERVICE_PORT}
+    notificationServices:
+      blindata:
+        active: false
+        address: http://${METASERVICE_HOSTNAME}:${METASERVICE_PORT}
+    executorServices:
+      azure-devops:
+        active: true
+        address: http://localhost:9003

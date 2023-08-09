@@ -71,7 +71,7 @@ odm:
   productPlane:
     registryService:
       active: true
-      address: http://localhost:8585
+      address: http://localhost:8001
     devopsService:
       active: true
       address: http://localhost:8481
@@ -82,7 +82,7 @@ odm:
     policyServices:
       open-policy-agent:
         active: false
-        address: http://localhost:8580
+        address: http://localhost:9001
     executorServices:
       azure-devops:
         active: true
@@ -90,4 +90,4 @@ odm:
     notificationServices:
       blindata:
         active: false
-        address: http://localhost:8582
+        address: http://localhost:9002

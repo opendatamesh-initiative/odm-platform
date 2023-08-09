@@ -234,7 +234,7 @@ public class DataProductIT extends ODMRegistryIT {
 
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    public void testDataProductUpdate400Errors() throws IOException {
+    public void testDataProductUpdate4xxErrors() throws IOException {
 
         // TEST 1: NULL payload
         ResponseEntity<ErrorRes> errorResponse = registryClient.putDataProduct(null, ErrorRes.class);

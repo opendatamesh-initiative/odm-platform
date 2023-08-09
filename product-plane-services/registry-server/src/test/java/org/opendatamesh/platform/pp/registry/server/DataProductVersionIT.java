@@ -157,7 +157,7 @@ public class DataProductVersionIT extends OpenDataMeshIT {
 
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    //@EnabledIf(expression = "#{environment.acceptsProfiles('testpostgresql', 'dev')}", loadContext = true)
+    @EnabledIf(expression = "#{environment.acceptsProfiles('testpostgresql', 'dev')}", loadContext = true)
     public void testDataProductVersionsReadOne() throws IOException {
 
         // create a product and associate to it a version

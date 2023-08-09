@@ -41,7 +41,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @ExtendWith(SpringExtension.class)
-@ActiveProfiles("dev")
+//@ActiveProfiles("dev")
 //@ActiveProfiles("testpostgresql")
 //@ActiveProfiles("testmysql")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = { ODMRegistryApp.class })
@@ -93,7 +93,6 @@ public abstract class OpenDataMeshIT {
         String[] tableSet;
         if(activeProfile.equals("testpostgresql")) {
             tableSet = Files.readAllLines(new File(DB_TABLES_POSTGRESQL).toPath(), Charset.defaultCharset()).toArray(new String[0]);
-            System.out.println(tableSet);
             JdbcTestUtils.deleteFromTables(
                     jdbcTemplate,
                     tableSet

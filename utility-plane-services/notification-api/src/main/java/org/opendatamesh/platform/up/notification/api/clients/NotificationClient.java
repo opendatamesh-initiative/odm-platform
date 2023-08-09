@@ -2,6 +2,7 @@ package org.opendatamesh.platform.up.notification.api.clients;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.opendatamesh.platform.core.commons.clients.ODMClient;
+import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.up.notification.api.resources.ErrorResource;
 import org.opendatamesh.platform.up.notification.api.resources.NotificationResource;
 import org.springframework.http.HttpMethod;
@@ -14,7 +15,7 @@ import java.util.List;
 public class NotificationClient extends ODMClient {
 
     public NotificationClient(String serverAddress) {
-        super(serverAddress);
+        super(serverAddress, ObjectMapperFactory.JSON_MAPPER);
     }
 
     public ResponseEntity createNotification(
@@ -22,7 +23,7 @@ public class NotificationClient extends ODMClient {
     ) throws JsonProcessingException {
 
         ResponseEntity postNotificationResponse = rest.postForEntity(
-                apiUrl(Routes.METASERVICE_NOTIFICATION),
+                apiUrl(NotificationAPIRoutes.METASERVICE_NOTIFICATION),
                 notificationResource,
                 Object.class
         );
@@ -38,7 +39,7 @@ public class NotificationClient extends ODMClient {
             Long notificationId
     ) throws JsonProcessingException {
         ResponseEntity getNotificationResponse = rest.getForEntity(
-                apiUrlOfItem(Routes.METASERVICE_NOTIFICATION),
+                apiUrlOfItem(NotificationAPIRoutes.METASERVICE_NOTIFICATION),
                 Object.class,
                 notificationId
         );
@@ -60,7 +61,7 @@ public class NotificationClient extends ODMClient {
         if(notificationStatus != null) params.add("notificationStatus=" + notificationStatus);
 
         ResponseEntity getNotificationsResponse = rest.getForEntity(
-                apiUrlWithQueryParams(Routes.METASERVICE_NOTIFICATION, params),
+                apiUrlWithQueryParams(NotificationAPIRoutes.METASERVICE_NOTIFICATION, params),
                 Object.class
         );
 
@@ -74,7 +75,7 @@ public class NotificationClient extends ODMClient {
             Long notificationId
     ) throws JsonProcessingException {
 
-        ResponseEntity deleteNotificationsResponse = rest.exchange(apiUrlOfItem(Routes.METASERVICE_NOTIFICATION),
+        ResponseEntity deleteNotificationsResponse = rest.exchange(apiUrlOfItem(NotificationAPIRoutes.METASERVICE_NOTIFICATION),
                 HttpMethod.DELETE,
                 null,
                 Object.class,

@@ -336,10 +336,11 @@ License.
                         <include>**/*IT.java</include>
                     </includes>
                     <excludes>
-                        <exclude>**/OpenDataMeshIT.java</exclude>
+                        <exclude>**/ODMRegistryIT.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>
+            
             <plugin>
                 <groupId>org.springdoc</groupId>
                 <artifactId>springdoc-openapi-maven-plugin</artifactId>

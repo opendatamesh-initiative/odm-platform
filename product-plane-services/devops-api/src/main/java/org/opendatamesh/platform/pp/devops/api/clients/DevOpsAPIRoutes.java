@@ -9,7 +9,7 @@ public enum DevOpsAPIRoutes implements RoutesInterface {
 
     private final String path;
 
-    private static final String CONTEXT_PATH = "/api/v1/pp/registry";
+    private static final String CONTEXT_PATH = "/api/v1/pp/devops";
 
     DevOpsAPIRoutes(String path) {
         this.path = CONTEXT_PATH + path;

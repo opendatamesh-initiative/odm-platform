@@ -12,14 +12,18 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/tasks")
+@RequestMapping(
+    value = "/tasks",
+    produces = { "application/json" }
+)
 @Validated
 public abstract class AbstractExecutorController {
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = { "application/vnd.odmp.v1+json", 
+        "application/vnd.odmp+json", "application/json"})
     @Operation(
-            summary = "Create a new activity",
-            description = "Create new activity"
+            summary = "Execute task",
+            description = "Execute the provided task"
     )
     public TaskResource createTaskEndpoint(@RequestBody TaskResource task) {
         return createTask(task);

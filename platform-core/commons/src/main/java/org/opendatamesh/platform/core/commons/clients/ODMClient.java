@@ -54,7 +54,6 @@ public class ODMClient {
                Set<Object> modules = m.getObjectMapper().getRegisteredModuleIds();
                System.out.println(modules);
             }
-            System.out.println(c.getClass().getCanonicalName() + "\n" + c.getSupportedMediaTypes());
         }
         //.add(converter);
         //rest.setPort(port);

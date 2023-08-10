@@ -17,9 +17,9 @@ spring:
   profile: localmysql
   # JPA
   jpa:
+    show-sql: true
     hibernate:
-      ddl-auto: none #validate #errors on scripts
-      show-sql: true
+      ddl-auto: none #errors on scripts --> MySql + Hibernate validation want TEXT as VARCHAR(N)
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     properties:
@@ -27,13 +27,12 @@ spring:
         jdbc:
           lob:
             non_contextual_creation: true
-    database-platform: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+    database-platform: org.hibernate.dialect.MySQLDialect
   # DB
   datasource:
     url: jdbc:mysql://localhost:3306/ODMREGISTRY?useSSL=false
     driverClassName: com.mysql.cj.jdbc.Driver
-    #username: db
-    #password: admin
     username: root
     password: root
   h2:
@@ -44,8 +43,6 @@ spring:
   flyway:
     #enabled: false # To disable
     url: jdbc:mysql://localhost:3306/ODMREGISTRY
-    #user: "db"
-    #password: "admin"
     user: "root"
     password: "root"
     locations: classpath:db/migration/mysql

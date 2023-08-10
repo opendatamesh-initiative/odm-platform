@@ -157,7 +157,6 @@ public class DataProductVersionIT extends ODMRegistryIT {
 
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    @EnabledIf(expression = "#{environment.acceptsProfiles('testpostgresql', 'dev')}", loadContext = true)
     public void testDataProductVersionsReadOne() throws IOException {
 
         // create a product and associate to it a version
@@ -165,6 +164,7 @@ public class DataProductVersionIT extends ODMRegistryIT {
         String descriptorContent = createDataProductVersion(dataProduct1Res.getId(), RESOURCE_DP1_V1);
         JsonNode descriptorRootNode = verifyJsonSynatx(descriptorContent);
         String versionNumber = descriptorRootNode.get("info").get("version").asText();
+        System.out.println(descriptorContent);
 
         // read the specific version just created
         ResponseEntity<String> getDataProductVersionResponse = registryClient.getDataProductVersion(

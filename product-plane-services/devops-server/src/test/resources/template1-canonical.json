@@ -1,0 +1,8 @@
+{
+    "id": 1,
+    "name": "dpdLifecyclePipe",
+    "version": "1.0.0",
+    "specification": "spec",
+    "specificationVersion": "2.0",
+    "content": "{\"pipeline\":\"dpdLifecyclePipe\",\"version\":\"1.0.0\"}"
+  }

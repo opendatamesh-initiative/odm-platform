@@ -17,6 +17,7 @@ import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.devops.api.clients.DevOpsClient;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityResource;
 import org.opendatamesh.platform.pp.devops.api.resources.ODMDevOpsAPIStandardError;
+import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsClients;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.ErrorRes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,17 +32,16 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
+import org.springframework.test.web.client.MockRestServiceServer;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-
 //@ActiveProfiles("dev")
 //@ActiveProfiles("testpostgresql")
 //@ActiveProfiles("testmysql")
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = { ODMDevOpsApp.class })
 public abstract class ODMDevOpsIT {
 
@@ -50,39 +50,51 @@ public abstract class ODMDevOpsIT {
 
     protected DevOpsClient devOpsClient;
     protected ResourceBuilder resourceBuilder;
-    
+
     @Autowired
+    DevOpsClients clients;
+
+    MockRestServiceServer registryMockServer;
+    MockRestServiceServer executorMockServer;
+
     protected ObjectMapper mapper;
 
-    protected Logger logger = LoggerFactory.getLogger( ODMDevOpsIT.class);
+    protected Logger logger = LoggerFactory.getLogger(ODMDevOpsIT.class);
 
-    protected final String RESOURCE_ACTIVITY_1 = "src/test/resources/activity-1.json";
-   
+    protected final String RESOURCE_ACTIVITY_1 = "src/test/resources/activity1.json";
+    protected final String RESOURCE_DP_1 = "src/test/resources/dp1.json";
+    protected final String RESOURCE_DPV_1 = "src/test/resources/dp1-v1.json";
+    protected final String RESOURCE_DPV_1_CANONICAL = "src/test/resources/dp1-v1-canonical.json";
+    protected final String TEMPLATE_DEF_1_CANONICAL = "src/test/resources/template1-canonical.json";
+
     @PostConstruct
-    public final void init() {
+    public void init() {
+
+        mapper = ObjectMapperFactory.JSON_MAPPER;
         resourceBuilder = new ResourceBuilder();
         devOpsClient = new DevOpsClient("http://localhost:" + port);
-    }
 
-    @Before
-    public void setup() {
-        // objectMapper = DataProductDescriptor.buildObjectMapper();
+        registryMockServer = MockRestServiceServer.bindTo(clients.getRegistryClient().getRest().getRestTemplate())
+                .ignoreExpectOrder(true)
+                .build();
+
+        executorMockServer = MockRestServiceServer.bindTo(clients.getExecutorClient("azure-devops").getRest())
+                .ignoreExpectOrder(true)
+                .build();
     }
 
     @BeforeEach
-    public void cleanDbState(@Autowired JdbcTemplate jdbcTemplate,  @Autowired Environment environment) {
-        if(Arrays.stream(environment.getActiveProfiles()).findFirst().get().equals("testpostgresql")) {
+    public void cleanDbState(@Autowired JdbcTemplate jdbcTemplate, @Autowired Environment environment) {
+        if (Arrays.stream(environment.getActiveProfiles()).findFirst().get().equals("testpostgresql")) {
             JdbcTestUtils.deleteFromTables(
                     jdbcTemplate,
                     "\"ODMDEVOPS\".\"ACTIVITIES\"",
-                    "\"ODMDEVOPS\".\"TASKS\""
-            );
+                    "\"ODMDEVOPS\".\"TASKS\"");
         } else if (Arrays.stream(environment.getActiveProfiles()).findFirst().get().equals("testmysql")) {
             JdbcTestUtils.deleteFromTables(
                     jdbcTemplate,
                     "ODMDEVOPS.ACTIVITIES",
-                    "ODMDEVOPS.TASKS"
-            );
+                    "ODMDEVOPS.TASKS");
         }
     }
 

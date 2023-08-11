@@ -18,27 +18,6 @@ public class DevOpsConfigurations {
     ProductPlaneConfigs productPlane;
     UtiltyPlaneConfigs utilityPlane;
 
-    public RegistryClient getRegistryClient() {
-        RegistryClient client = null;
-
-        client = new RegistryClient(productPlane.getRegistryService().getAddress());
-        
-        return client;
-    }
-    
-
-    public ExecutorClient getExecutorClient(String adapterName) {
-        ExecutorClient executorClient = null;
-
-        ServiceConfigs serviceConfigs = utilityPlane.getExecutorServices().get(adapterName);
-        if(serviceConfigs != null && serviceConfigs.getActive()) {
-             executorClient = new ExecutorClient(serviceConfigs.getAddress());
-        }
-       
-        return executorClient;
-    }    
-    
-
     @Data
     public static class ProductPlaneConfigs {
         ServiceConfigs registryService;

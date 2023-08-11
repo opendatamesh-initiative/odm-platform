@@ -1,0 +1,234 @@
+{
+  "dataProductDescriptor": "1.0.0",
+  "info": {
+    "entityType": "dataproduct",
+    "fullyQualifiedName": "urn:org.opendatamesh:dataproduct:tripExecution",
+    "domain": "sampleDomain",
+    "name": "tripExecution",
+    "version": "1.0.0",
+    "displayName": "Trip Execution",
+    "description": "Gestione dei viaggi necessari ad eseguire il trasporto della merce dalla sorgente alla destinazione",
+    "x-prop": "custom-prop-value",
+    "owner": {
+      "id": "john.doe@company-xyz.com",
+      "name": "John Doe",
+      "x-prop": "custom-prop-value"
+    },
+    "contactPoints": [
+      {
+        "name": "Support Team Mail",
+        "description": "The mail address of to the team that give support on this product",
+        "channel": "email",
+        "address": "trip-execution-support@company-xyz.com",
+        "x-prop": "custom-prop-value"
+      },
+      {
+        "name": "Issue Tracker",
+        "description": "The address of the issue tracker associated to this product",
+        "channel": "web",
+        "address": "https://readmine.company-xyz.com/trip-execution",
+        "x-prop": "custom-prop-value"
+      }
+    ],
+    "id": "c18b07ba-bb01-3d55-a5bf-feb517a8d901"
+  },
+  "interfaceComponents": {
+    "inputPorts": [
+      {
+        "id": "fa011977-8567-3a57-912f-f62f045463f7",
+        "entityType": "inputport",
+        "fullyQualifiedName": "urn:org.opendatamesh:dataproduct:tripExecution:1.0.0:inputport:tmsTripCDC:1.0.0",
+        "name": "tmsTripCDC",
+        "version": "1.0.0",
+        "displayName": "tms Trip CDC",
+        "description": "input port 1 of data product",
+        "componentGroup": "gruppoA",
+        "x-prop": "custom-prop-value",
+        "promises": {
+          "platform": "onprem:milan-1",
+          "servicesType": "rest-services",
+          "api": {
+            "specification": "custom-api-spec",
+            "version": "1.3.2",
+            "definition": {
+              "$ref": "http://localhost:8001/api/v1/pp/registry/apis/1"
+            }
+          }
+        },
+        "tags": [
+          "tag1",
+          "tag2",
+          "tag3"
+        ],
+        "externalDocs": {
+          "description": "external doc description for input port 1",
+          "mediaType": "text/html",
+          "$href": "http://fakeurl1"
+        }
+      },
+      {
+        "fullyQualifiedName": "urn:org.opendatamesh:dataproduct:tripExecution:1.0.0:inputport:input-port2:1.0.0",
+        "name": "input-port2",
+        "version": "1.0.0",
+        "displayName": "input port 2",
+        "description": "input port 2 of data product",
+        "componentGroup": "gruppoB",
+        "x-prop": "custom-prop-value",
+        "promises": {
+          "platform": "aws:eu-south-1",
+          "servicesType": "streaming-services",
+          "api": {
+            "name": "org.odm.api-1",
+            "version": "1.3.0",
+            "description": "Let's stream!",
+            "specification": "custom-api-spec",
+            "specificationVersion": "1.2.0",
+            "definition": {
+              "$ref": "http://localhost:8001/api/v1/pp/registry/apis/2"
+            }
+          }
+        },
+        "tags": [
+          "tag2",
+          "tag4"
+        ],
+        "externalDocs": {
+          "description": "external doc description for input port 2",
+          "mediaType": "text/html",
+          "$href": "http://fakeurl1"
+        },
+        "entityType": "inputport",
+        "id": "35d4d496-c4f1-32a4-bdc3-282d4be973cc"
+      }
+    ],
+    "outputPorts": [
+      {
+        "fullyQualifiedName": "urn:org.opendatamesh:dataproduct:tripExecution:1.0.0:outputport:output-port1:1.0.0",
+        "name": "output-port1",
+        "version": "1.0.0",
+        "displayName": "output port 1",
+        "description": "output port 1 of data product",
+        "componentGroup": "gruppoA",
+        "x-prop": "custom-prop-value",
+        "promises": {
+          "platform": "aws:eu-south-1",
+          "servicesType": "rest-services",
+          "api": {
+            "name": "reast-api-1",
+            "description": "Rest what else?",
+            "specification": "custom-api-spec",
+            "specificationVersion": "1.3.2",
+            "definition": {
+              "$ref": "http://localhost:8001/api/v1/pp/registry/apis/3"
+            }
+          }
+        },
+        "tags": [
+          "tag1",
+          "tag2",
+          "tag3"
+        ],
+        "externalDocs": {
+          "description": "external doc description for output port 1",
+          "mediaType": "text/html",
+          "$href": "http://fakeurl1"
+        },
+        "entityType": "outputport",
+        "id": "bbf4c3ee-5f56-3040-931b-78f5eb0788e5"
+      }
+    ],
+    "controlPorts": [],
+    "discoveryPorts": [],
+    "observabilityPorts": []
+  },
+  "internalComponents": {
+    "lifecycleInfo": {
+      "qa": {
+        "service": {
+          "$href": "azure-devops"
+        },
+        "template": {
+          "name": "dpdLifecyclePipe",
+          "specification": "spec",
+          "specificationVersion": "2.0",
+          "definition": {
+            "$ref": "http://localhost:8001/api/v1/pp/registry/templates/1",
+            "$originalRef": null
+          }
+        },
+        "configurations": {
+          "stage": "QA"
+        }
+      },
+      "prod": {
+        "service": {
+          "$href": "azure-devops"
+        },
+        "template": {
+          "name": "dpdLifecyclePipe",
+          "specification": "spec",
+          "specificationVersion": "2.0",
+          "definition": {
+            "$ref": "http://localhost:8001/api/v1/pp/registry/templates/1",
+            "$originalRef": null
+          }
+        },
+        "configurations": {
+          "stage": "PROD"
+        }
+      }
+    },
+    "applicationComponents": [
+      {
+        "fullyQualifiedName": "urn:org.opendatamesh:dataproduct:tripExecution:1.0.0:application:modelNormalizationJob:1.1.0",
+        "x-prop": "custom-prop-value",
+        "name": "modelNormalizationJob",
+        "version": "1.1.0",
+        "displayName": "model Normalization Job",
+        "description": "internal app 1 of data product",
+        "consumesFrom": [],
+        "providesTo": [],
+        "dependsOn": [
+          "urn:dpds:it.quantyca:dataproducts:SampleDP:1:infrastructure:stagingArea"
+        ],
+        "componentGroup": "gruppoB",
+        "tags": [
+          "tag1",
+          "tag5"
+        ],
+        "externalDocs": {
+          "description": "external doc description for internal-app-1",
+          "mediaType": "text/html",
+          "$href": "http://fakeurl1"
+        },
+        "entityType": "application",
+        "id": "055555ce-8f32-3bc7-b389-c415ef74d874"
+      }
+    ],
+    "infrastructuralComponents": [
+      {
+        "fullyQualifiedName": "urn:org.opendatamesh:dataproduct:tripExecution:1.0.0:infrastructure:stagingArea:1.1.0",
+        "x-prop": "custom-prop-value",
+        "name": "stagingArea",
+        "version": "1.1.0",
+        "displayName": "staging area",
+        "description": "infrastructure component 1 of data product",
+        "platform": "TBD",
+        "infrastructureType": "storage-resource",
+        "dependsOn": [],
+        "componentGroup": "gruppoC",
+        "tags": [
+          "tag2",
+          "tag4"
+        ],
+        "externalDocs": {
+          "description": "external doc description for infra-component-1",
+          "mediaType": "text/html",
+          "$href": "http://fakeurl1"
+        },
+        "entityType": "infrastructure",
+        "id": "f01e4ca4-54ad-34ca-b225-502e645d3ed7"
+      }
+    ]
+  }
+}

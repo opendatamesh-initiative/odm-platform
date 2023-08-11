@@ -12,6 +12,7 @@ import org.opendatamesh.platform.core.dpds.model.LifecycleActivityInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.StandardDefinitionDPDS;
 import org.opendatamesh.platform.pp.devops.api.clients.DevOpsAPIRoutes;
 import org.opendatamesh.platform.pp.devops.api.resources.ODMDevOpsAPIStandardError;
+import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsClients;
 import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsConfigurations;
 import org.opendatamesh.platform.pp.devops.server.database.entities.Task;
 import org.opendatamesh.platform.pp.devops.server.database.mappers.TaskMapper;
@@ -40,6 +41,9 @@ public class TaskService {
 
     @Autowired
     DevOpsConfigurations configurations;
+
+    @Autowired
+    DevOpsClients clients;
 
     private static final Logger logger = LoggerFactory.getLogger(ActivityService.class);
 
@@ -132,7 +136,7 @@ public class TaskService {
             callbackRef += "/" + task.getId() + "/stop";
             taskRes.setCallbackRef(callbackRef);
 
-            ExecutorClient odmExecutor = configurations.getExecutorClient(task.getExecutorRef());
+            ExecutorClient odmExecutor = clients.getExecutorClient(task.getExecutorRef());
             if (odmExecutor != null) {
                 taskRes = odmExecutor.createTask(taskRes);
             } else {
@@ -326,7 +330,7 @@ public class TaskService {
         Long templateId = null;
         try {
             templateId = Long.parseLong(ref.substring(ref.lastIndexOf('/') + 1));
-            templateDefinition = configurations.getRegistryClient().readOneTemplateDefinition(templateId);
+            templateDefinition = clients.getRegistryClient().readOneTemplateDefinition(templateId);
             logger.debug("Template definition [" + templateId + "] succesfully read from ODM Registry");
         } catch (Throwable t) {
             throw new InternalServerException(

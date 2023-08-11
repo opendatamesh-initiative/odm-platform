@@ -14,6 +14,7 @@ import org.opendatamesh.platform.core.dpds.model.LifecycleInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.StandardDefinitionDPDS;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatus;
 import org.opendatamesh.platform.pp.devops.api.resources.ODMDevOpsAPIStandardError;
+import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsClients;
 import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsConfigurations;
 import org.opendatamesh.platform.pp.devops.server.database.entities.Activity;
 import org.opendatamesh.platform.pp.devops.server.database.entities.Task;
@@ -51,6 +52,9 @@ public class ActivityService {
 
     @Autowired
     DevOpsConfigurations configurations;
+
+    @Autowired
+    DevOpsClients clients;
 
     private static final Logger logger = LoggerFactory.getLogger(ActivityService.class);
 
@@ -432,7 +436,7 @@ public class ActivityService {
         }
 
         try {
-            dataProductVersion = configurations.getRegistryClient().readOneDataProductVersion(
+            dataProductVersion = clients.getRegistryClient().readOneDataProductVersion(
                     activity.getDataProductId(),
                     activity.getDataProductVersion());
         } catch (Throwable t) {

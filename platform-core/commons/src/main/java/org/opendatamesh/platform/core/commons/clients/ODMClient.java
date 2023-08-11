@@ -4,10 +4,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -30,18 +32,21 @@ public class ODMClient {
 
     protected ObjectMapper mapper;
 
-
     public ODMClient(String serverAddress, ObjectMapper mapper) {
+        this(serverAddress, new RestTemplate(), mapper);
+    }
+
+    public ODMClient(String serverAddress, RestTemplate restTemplate, ObjectMapper mapper) {
         this.serverAddress = serverAddress;
         this.mapper = mapper;
-        rest = initRestTemplate();
+        RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder();
+        restTemplateBuilder.configure(restTemplate);
+        rest = initRestTemplate( new TestRestTemplate(restTemplateBuilder) );    
         acceptMediaType = MediaType.APPLICATION_JSON;
         contentMediaType = MediaType.APPLICATION_JSON;
     }
 
-    private TestRestTemplate initRestTemplate() {
-
-        TestRestTemplate restTemplate = new TestRestTemplate();
+    private TestRestTemplate initRestTemplate(TestRestTemplate restTemplate) {
 
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         converter.setObjectMapper(mapper);
@@ -72,23 +77,23 @@ public class ODMClient {
         return restTemplate;
     }
     
-    protected String apiUrlOfItem(RoutesInterface route) {
+    public String apiUrlOfItem(RoutesInterface route) {
         return apiUrl(route, "/{id}", null);
     }
 
-    protected String apiUrlOfItem(RoutesInterface route, Map<String, Object> queryParams) {
+    public String apiUrlOfItem(RoutesInterface route, Map<String, Object> queryParams) {
         return apiUrl(route, "/{id}", queryParams);
     }
 
-    protected String apiUrl(RoutesInterface route) {
+    public String apiUrl(RoutesInterface route) {
         return apiUrl(route, "", null);
     }
 
-    protected String apiUrl(RoutesInterface route, String extension) {
+    public String apiUrl(RoutesInterface route, String extension) {
         return apiUrl(route, extension, null);
     }
 
-    protected String apiUrl(RoutesInterface route, String extension, Map<String, Object> queryParams) {
+    public String apiUrl(RoutesInterface route, String extension, Map<String, Object> queryParams) {
         String urlTemplate = null;
 
         urlTemplate = (extension != null)?

@@ -7,17 +7,20 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import lombok.Data;
+
 import java.util.Collections;
 import java.util.Objects;
 
+@Data
 public class ExecutorClient {
 
     String address;
-    RestTemplate restTemplate;
+    RestTemplate rest;
 
     public ExecutorClient(String address) {
         this.address = Objects.requireNonNull(address);
-        restTemplate = new RestTemplate();
+        rest = new RestTemplate();
     }
 
     public TaskResource createTask(TaskResource task) {
@@ -31,8 +34,8 @@ public class ExecutorClient {
        
         entity = new HttpEntity<TaskResource>(task, headers);
 
-        ResponseEntity<TaskResource> postTaskResponse = restTemplate.postForEntity(
-            apiUrl(Routes.TASKS),
+        ResponseEntity<TaskResource> postTaskResponse = rest.postForEntity(
+            apiUrl(ExecutorAPIRoutes.TASKS),
             entity,
             TaskResource.class);
 
@@ -41,48 +44,27 @@ public class ExecutorClient {
 
     public TaskResource readTask(Long id) {
 
-        ResponseEntity<TaskResource> getTaskResponse =  restTemplate.getForEntity(
-            apiUrlOfItem(Routes.TASKS),
+        ResponseEntity<TaskResource> getTaskResponse =  rest.getForEntity(
+            apiUrlOfItem(ExecutorAPIRoutes.TASKS),
             TaskResource.class,
             id);
 
         return getTaskResponse.getBody();
     }
 
-    protected String apiUrl(Routes route) {
+    public String apiUrl(ExecutorAPIRoutes route) {
         return apiUrl(route, "");
     }
 
-    protected String apiUrl(Routes route, String extension) {
+    public String apiUrl(ExecutorAPIRoutes route, String extension) {
         return apiUrlFromString(route.getPath() + extension);
     }
 
-    protected String apiUrlOfItem(Routes route) {
+    public String apiUrlOfItem(ExecutorAPIRoutes route) {
         return apiUrl(route, "/{id}");
     }
 
-    protected String apiUrlFromString(String routeUrlString) {
+    public String apiUrlFromString(String routeUrlString) {
         return address + routeUrlString;
     }
-
-    private static enum Routes {
-
-        TASKS("/api/v1/up/executor/tasks");
-
-        private final String path;
-
-        private Routes(String path) {
-            this.path = path;
-        }
-
-        @Override
-        public String toString() {
-            return this.path;
-        }
-
-        public String getPath() {
-            return path;
-        }
-    }
-
 }

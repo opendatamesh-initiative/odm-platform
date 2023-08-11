@@ -1,6 +1,10 @@
 package org.opendatamesh.platform.pp.registry.server;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.opendatamesh.platform.pp.registry.api.v1.exceptions.ODMRegistryAPIStandardError;
+import org.opendatamesh.platform.pp.registry.api.v1.resources.ApiToSchemaRelationshipResource;
+import org.opendatamesh.platform.pp.registry.api.v1.resources.ErrorRes;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.SchemaResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -76,6 +80,37 @@ public class SchemaIT extends ODMRegistryIT {
 
     }
 
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    @Disabled // NOT WORKING
+    public void testSchemaReadOneContent() throws IOException {
+
+        // TODO: Fix on the controller/service
+
+        SchemaResource schema = createSchema1();
+
+        ResponseEntity<String> getResponse = registryClient.getSchemaContentById(schema.getId());
+        verifyResponseEntity(getResponse, HttpStatus.OK, true);
+        String content = getResponse.getBody();
+
+        assertThat(content).isEqualTo(schema.getContent());
+
+    }
+
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testSchemaReadOneRelationships() throws IOException {
+
+        SchemaResource schema = createSchema1();
+
+        ResponseEntity<ApiToSchemaRelationshipResource[]> getResponse = registryClient.getSchemaApiRelationshipById(schema.getId());
+        verifyResponseEntity(getResponse, HttpStatus.OK, true);
+        List<ApiToSchemaRelationshipResource> relationships = List.of(getResponse.getBody());
+
+        assertThat(relationships.size()).isEqualTo(0);
+
+    }
+
 
     // ----------------------------------------
     // DELETE Schema
@@ -100,23 +135,91 @@ public class SchemaIT extends ODMRegistryIT {
 
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    public void testSchemaReadOneError404()
-            throws IOException {
+    public void testSchemaCreateError400() throws IOException {
 
-        ResponseEntity<SchemaResource> getResponse = registryClient.getSchemaById(1701l);
-        verifyResponseEntity(getResponse, HttpStatus.NOT_FOUND, false);
+        // TEST 1: NULL payload
+        ResponseEntity<ErrorRes> postResponse = registryClient.postSchema(null, ErrorRes.class);
+        verifyResponseError(
+                postResponse,
+                HttpStatus.BAD_REQUEST,
+                ODMRegistryAPIStandardError.SC400_12_SCHEMA_IS_EMPTY
+        );
 
     }
 
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    public void testSchemaDeleteError404()
+    public void testSchemaCreateError422() throws IOException {
+
+        // TEST 1: Emtpy content
+        SchemaResource schemaResource = createSchema1();
+        String oldContent = schemaResource.getContent();
+        schemaResource.setContent(null);
+        ResponseEntity<ErrorRes> postResponse = registryClient.postSchema(schemaResource, ErrorRes.class);
+        verifyResponseError(
+                postResponse,
+                HttpStatus.UNPROCESSABLE_ENTITY,
+                ODMRegistryAPIStandardError.SC422_08_DEFINITION_DOC_SYNTAX_IS_INVALID
+        );
+
+        // TEST 2: Schema already exists
+        schemaResource.setContent(oldContent);
+        postResponse = registryClient.postSchema(schemaResource, ErrorRes.class);
+        verifyResponseError(
+                postResponse,
+                HttpStatus.UNPROCESSABLE_ENTITY,
+                ODMRegistryAPIStandardError.SC422_11_SCHEMA_ALREADY_EXISTS
+        );
+
+    }
+
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testSchemaReadOneError404()
             throws IOException {
 
-        createSchema1();
+        ResponseEntity<ErrorRes> errorResponse = registryClient.getSchemaById(1701l);
+        verifyResponseError(
+                errorResponse,
+                HttpStatus.NOT_FOUND,
+                ODMRegistryAPIStandardError.SC404_04_SCHEMA_NOT_FOUND
+        );
 
-        ResponseEntity<SchemaResource> deleteResponse = registryClient.deleteSchema(1701l);
-        verifyResponseEntity(deleteResponse, HttpStatus.NOT_FOUND, false);
+    }
+
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    @Disabled // NOT WORKING
+    public void testSchemaReadOneContentError404() throws IOException {
+
+        ResponseEntity<ErrorRes> errorResponse = registryClient.getSchemaContentById(1701l);
+        verifyResponseError(
+                errorResponse,
+                HttpStatus.NOT_FOUND,
+                ODMRegistryAPIStandardError.SC404_04_SCHEMA_NOT_FOUND
+        );
+
+    }
+
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    @Disabled
+    public void testSchemaReadOneRelationshipsError404() throws IOException {
+
+        // NOT EXISTING IN CONTROLLER
+
+    }
+
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testSchemaDeleteError404() throws IOException {
+
+        ResponseEntity<ErrorRes> deleteResponse = registryClient.deleteSchema(1701l);
+        verifyResponseError(
+                deleteResponse,
+                HttpStatus.NOT_FOUND,
+                ODMRegistryAPIStandardError.SC404_04_SCHEMA_NOT_FOUND
+        );
 
     }
    

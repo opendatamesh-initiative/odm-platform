@@ -232,6 +232,40 @@ public class DataProductIT extends ODMRegistryIT {
                 ODMRegistryAPIStandardError.SC422_07_PRODUCT_IS_INVALID);
     }
 
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testDataProductUpdate4xxErrors() throws IOException {
+
+        // TEST 1: NULL payload
+        ResponseEntity<ErrorRes> errorResponse = registryClient.putDataProduct(null, ErrorRes.class);
+        verifyResponseError(
+                errorResponse,
+                HttpStatus.BAD_REQUEST,
+                ODMRegistryAPIStandardError.SC400_10_PRODUCT_IS_EMPTY
+        );
+
+        // TEST 2: Empty fqn
+        DataProductResource dataProductResource = new DataProductResource();
+        dataProductResource.setDescription("test");
+        dataProductResource.setDomain("test");
+        errorResponse = registryClient.putDataProduct(dataProductResource, ErrorRes.class);
+        verifyResponseError(
+                errorResponse,
+                HttpStatus.UNPROCESSABLE_ENTITY,
+                ODMRegistryAPIStandardError.SC422_07_PRODUCT_IS_INVALID
+        );
+
+        // TEST 3: Not found
+        dataProductResource.setFullyQualifiedName("test");
+        errorResponse = registryClient.putDataProduct(dataProductResource, ErrorRes.class);
+        verifyResponseError(
+                errorResponse,
+                HttpStatus.NOT_FOUND,
+                ODMRegistryAPIStandardError.SC404_01_PRODUCT_NOT_FOUND
+        );
+
+    }
+
 
     // ----------------------------------------
     // OTHER ...

@@ -2,14 +2,11 @@ package org.opendatamesh.platform.pp.registry.server;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Before;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
@@ -17,8 +14,6 @@ import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.pp.registry.api.v1.exceptions.ODMRegistryAPIStandardError;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductResource;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.ErrorRes;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
@@ -165,6 +160,7 @@ public class DataProductVersionIT extends ODMRegistryIT {
         String descriptorContent = createDataProductVersion(dataProduct1Res.getId(), RESOURCE_DP1_V1);
         JsonNode descriptorRootNode = verifyJsonSynatx(descriptorContent);
         String versionNumber = descriptorRootNode.get("info").get("version").asText();
+        System.out.println(descriptorContent);
 
         // read the specific version just created
         ResponseEntity<String> getDataProductVersionResponse = registryClient.getDataProductVersion(

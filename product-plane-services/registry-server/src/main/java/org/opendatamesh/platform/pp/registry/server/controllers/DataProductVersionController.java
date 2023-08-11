@@ -311,7 +311,8 @@ public class DataProductVersionController
                 "Format [" + format + "] is not supported");
         }
         
-        DataProductVersion dataProductVersion = dataProductVersionService.readDataProductVersion(id, version);;
+        DataProductVersion dataProductVersion = dataProductVersionService.readDataProductVersion(id, version);
+
         DataProductVersionDPDS dataProductVersionDPDS = dataProductVersionMapper.toResource(dataProductVersion);
         if(format == null) format = "canonical";
         DataProductVersionSerializer serializer = new DataProductVersionSerializer();

@@ -11,6 +11,7 @@ import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.model.LifecycleActivityInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.StandardDefinitionDPDS;
 import org.opendatamesh.platform.pp.devops.api.clients.DevOpsAPIRoutes;
+import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskStatus;
 import org.opendatamesh.platform.pp.devops.api.resources.ODMDevOpsAPIStandardError;
 import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsClients;
 import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsConfigurations;
@@ -78,7 +79,7 @@ public class TaskService {
         }
 
         // TODO (?) control if task already exists
-        task.setStatus(TaskStatus.PLANNED);
+        task.setStatus(ActivityTaskStatus.PLANNED);
         
         try {
             task = saveTask(task);
@@ -109,12 +110,12 @@ public class TaskService {
     public Task startTask(Task task) {
 
         try {
-            task.setStatus(TaskStatus.PROCESSING);
+            task.setStatus(ActivityTaskStatus.PROCESSING);
             task.setStartedAt(new Date());
             saveTask(task);
 
             task = submitTask(task);
-            if (task.getStatus().equals(TaskStatus.FAILED)) {
+            if (task.getStatus().equals(ActivityTaskStatus.FAILED)) {
                 saveTask(task);
             }
         } catch(Throwable t) {
@@ -145,7 +146,7 @@ public class TaskService {
 
             task = taskMapper.toEntity(taskRes);
         } catch(Throwable t) {
-            task.setStatus(TaskStatus.FAILED);
+            task.setStatus(ActivityTaskStatus.FAILED);
             task.setErrors(t.getMessage());
             task.setFinishedAt(new Date());
         }
@@ -160,8 +161,9 @@ public class TaskService {
 
     public Task stopTask(Task task) {
 		try {
-            task.setStatus(TaskStatus.PROCESSED);
+            task.setStatus(ActivityTaskStatus.PROCESSED);
             task.setFinishedAt(new Date());
+            task.setResults("OK");
             saveTask(task);
         } catch(Throwable t) {
              throw new InternalServerException(
@@ -236,7 +238,7 @@ public class TaskService {
     private Task loadTask(Long tasktId) {
         Task task = null;
 
-        Optional<Task> taskLookUpResults = taskRepository.findById(tasktId.toString());
+        Optional<Task> taskLookUpResults = taskRepository.findById(tasktId);
 
         if (taskLookUpResults.isPresent()) {
             task = taskLookUpResults.get();
@@ -256,10 +258,10 @@ public class TaskService {
                     "Task object cannot be null");
         }
 
-        return taskRepository.existsById(taskId.toString());
+        return taskRepository.existsById(taskId);
     }
 
-    public boolean activityExists(String taskId) {
+    public boolean activityExists(Long taskId) {
         return taskRepository.existsById(taskId);
     }
 
@@ -269,7 +271,7 @@ public class TaskService {
     public List<Task> searchTasks(
         Long activityId,
         String executorRef, 
-        TaskStatus status) 
+        ActivityTaskStatus status) 
     {
         List<Task> taskSearchResults = null;
         try {
@@ -286,7 +288,7 @@ public class TaskService {
     private List<Task> findTasks(
         Long activityId,
         String executorRef, 
-        TaskStatus status) 
+        ActivityTaskStatus status) 
     {
         return taskRepository
             .findAll(TaskRepository.Specs.hasMatch(

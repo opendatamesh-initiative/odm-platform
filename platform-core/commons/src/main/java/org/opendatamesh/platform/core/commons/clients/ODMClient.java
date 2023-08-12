@@ -89,6 +89,10 @@ public class ODMClient {
         return apiUrl(route, "", null);
     }
 
+    public String apiUrl(RoutesInterface route, Map<String, Object> queryParams) {
+        return apiUrl(route, "", queryParams);
+    }
+
     public String apiUrl(RoutesInterface route, String extension) {
         return apiUrl(route, extension, null);
     }

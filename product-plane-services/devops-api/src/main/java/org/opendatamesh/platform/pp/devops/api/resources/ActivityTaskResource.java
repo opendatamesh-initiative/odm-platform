@@ -17,11 +17,8 @@ public class ActivityTaskResource  {
     @JsonProperty("activityId")
     String activityId; 
 
-    @JsonIgnore
+    @JsonProperty("executorRef")
     String executorRef; 
-
-    @JsonProperty("callbackRef")
-    String callbackRef; 
     
     @JsonProperty("template")
     String template;  

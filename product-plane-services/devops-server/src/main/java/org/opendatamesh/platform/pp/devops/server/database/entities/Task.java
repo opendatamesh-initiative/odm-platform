@@ -15,7 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
-import org.opendatamesh.platform.up.executor.api.resources.TaskStatus;
+import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskStatus;
 
 @Data
 @Entity(name = "Task")
@@ -42,7 +42,7 @@ public class Task  {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "STATUS")
-    TaskStatus status;
+    ActivityTaskStatus status;
 
     @Column(name = "RESULTS")
     String results;

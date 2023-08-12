@@ -13,6 +13,7 @@ import org.opendatamesh.platform.core.dpds.model.LifecycleActivityInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.LifecycleInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.StandardDefinitionDPDS;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatus;
+import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskStatus;
 import org.opendatamesh.platform.pp.devops.api.resources.ODMDevOpsAPIStandardError;
 import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsClients;
 import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsConfigurations;
@@ -25,10 +26,6 @@ import org.opendatamesh.platform.pp.devops.server.exceptions.ConflictException;
 import org.opendatamesh.platform.pp.devops.server.exceptions.InternalServerException;
 import org.opendatamesh.platform.pp.devops.server.exceptions.NotFoundException;
 import org.opendatamesh.platform.pp.devops.server.exceptions.UnprocessableEntityException;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.DefinitionResource;
-import org.opendatamesh.platform.up.executor.api.clients.ExecutorClient;
-import org.opendatamesh.platform.up.executor.api.resources.TaskResource;
-import org.opendatamesh.platform.up.executor.api.resources.TaskStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -145,7 +142,7 @@ public class ActivityService {
                 "Only activities in PLANNED state can be started. Activity with id [" + activity.getId() + "] is in state [" + activity.getStatus() + "]");
         }
 
-        List<Task> plannedTasks = taskService.searchTasks(activity.getId(), null, TaskStatus.PLANNED);
+        List<Task> plannedTasks = taskService.searchTasks(activity.getId(), null, ActivityTaskStatus.PLANNED);
         return startActivity(activity, plannedTasks);
     }
 
@@ -203,9 +200,9 @@ public class ActivityService {
 
         List<Task> tasks = taskService.searchTasks(activity.getId(), null, null);
         for(Task task: tasks) {
-            if(task.getStatus().equals(TaskStatus.PLANNED) 
-            || task.getStatus().equals(TaskStatus.PROCESSING)) {
-                task.setStatus(TaskStatus.ABORTED);
+            if(task.getStatus().equals(ActivityTaskStatus.PLANNED) 
+            || task.getStatus().equals(ActivityTaskStatus.PROCESSING)) {
+                task.setStatus(ActivityTaskStatus.ABORTED);
                 task.setFinishedAt(finishedAt);
                 taskService.saveTask(task);
             }
@@ -214,7 +211,7 @@ public class ActivityService {
         ObjectNode activityOutputNode = ObjectMapperFactory.JSON_MAPPER.createObjectNode();
         if (success) {
             for(Task task: tasks) {
-                if(task.getStatus().equals(TaskStatus.PROCESSED)) {
+                if(task.getStatus().equals(ActivityTaskStatus.PROCESSED)) {
                     activityOutputNode.put(task.getId().toString(), task.getResults());
                 }
             }
@@ -228,7 +225,7 @@ public class ActivityService {
             activity.setStatus(ActivityStatus.PROCESSED);
         } else {
             for(Task task: tasks) {
-                if(task.getStatus().equals(TaskStatus.FAILED)) {
+                if(task.getStatus().equals(ActivityTaskStatus.FAILED)) {
                     activityOutputNode.put(task.getId().toString(), task.getErrors());
                 }
             }
@@ -249,10 +246,10 @@ public class ActivityService {
     public Task startNextPlannedTaskAndUpdateParentActivity(Long activityId) {
         Task startedTask = null;
 
-        List<Task> plannedTasks = taskService.searchTasks(activityId, null, TaskStatus.PLANNED);
+        List<Task> plannedTasks = taskService.searchTasks(activityId, null, ActivityTaskStatus.PLANNED);
         if (plannedTasks != null && !plannedTasks.isEmpty()) {
             startedTask = taskService.startTask(plannedTasks.get(0)); 
-            if(startedTask.getStatus().equals(TaskStatus.FAILED)) {
+            if(startedTask.getStatus().equals(ActivityTaskStatus.FAILED)) {
                 stopActivity(activityId, false);
             }
         } else { // nothing more to do...

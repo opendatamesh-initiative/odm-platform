@@ -2,10 +2,12 @@ package org.opendatamesh.platform.pp.devops.server.controllers;
 
 import org.opendatamesh.platform.pp.devops.api.controllers.AbstractActivityController;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityResource;
+import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatus;
 import org.opendatamesh.platform.pp.devops.server.database.entities.Activity;
 import org.opendatamesh.platform.pp.devops.server.database.mappers.ActivityMapper;
 import org.opendatamesh.platform.pp.devops.server.services.ActivityService;
 import org.opendatamesh.platform.up.executor.api.resources.TaskResource;
+import org.opendatamesh.platform.up.executor.api.resources.TaskStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -42,8 +44,20 @@ public class ActivitiesController extends AbstractActivityController {
     }
 
     @Override
-    public List<ActivityResource> readActivities() {
-        List<Activity> activities = activityService.readAllActivities();
+    public List<ActivityResource> readActivities(
+        String dataProductId, 
+        String dataProductVersion, 
+        String type, 
+        ActivityStatus status) 
+    {
+        List<Activity> activities = null;
+
+        if(dataProductId != null || dataProductVersion != null || type != null || status != null) {
+            activities = activityService.searchActivities(dataProductId, dataProductVersion, type, status);
+        } else {
+            activities = activityService.readAllActivities();
+        }
+         
         return activityMapper.toResources(activities);
     }
 

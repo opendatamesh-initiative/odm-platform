@@ -59,6 +59,8 @@ public abstract class ODMRegistryIT {
 
     protected final String DB_TABLES_POSTGRESQL = "src/test/resources/db/tables_postgresql.txt";
     protected final String DB_TABLES_MYSQL = "src/test/resources/db/tables_mysql.txt";
+
+    
     protected final String RESOURCE_DP1 = "src/test/resources/test/dataproduct-descriptor/dp1.json";
     protected final String RESOURCE_DP1_UPD = "src/test/resources/test/dataproduct-descriptor/dp1-updated.json";
     protected final String RESOURCE_DP1_V1 = "src/test/resources/test/dataproduct-descriptor/dp1-v1.json";
@@ -80,10 +82,6 @@ public abstract class ODMRegistryIT {
         registryClient = new RegistryClient("http://localhost:" + port);
     }
 
-    @Before
-    public void setup() {
-        // objectMapper = DataProductDescriptor.buildObjectMapper();
-    }
 
     @BeforeEach
     public void cleanDbState(@Autowired JdbcTemplate jdbcTemplate, @Autowired Environment environment) throws IOException {

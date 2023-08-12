@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityResource;
+import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatus;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -70,7 +71,10 @@ public abstract class AbstractActivityController {
         summary = "Start the specified activity",
         description = "Start the activity identified by the input `id` if it has not been started yet"
     )
-    public ActivityResource startActivityEndpoint(Long id) {
+    public ActivityResource startActivityEndpoint( 
+        @Parameter(description = "Idenntifier of the activity")
+        @Valid @PathVariable(value = "id") Long id) 
+    {
         return startActivity(id);
     }
     public abstract ActivityResource startActivity(Long id);
@@ -83,23 +87,37 @@ public abstract class AbstractActivityController {
         summary = "Get the specified activity's status",
         description = "Get the status of activity identified by the input `id`"
     )
-    public String readActivityStatusEndpoint(Long id) {
+    public String readActivityStatusEndpoint( 
+        @Parameter(description = "Idenntifier of the activity")
+        @Valid @PathVariable(value = "id") Long id) 
+    {
         return readActivityStatus(id);
     }
     public abstract String readActivityStatus(Long id);
 
-
-    @GetMapping
+   @GetMapping
     @ResponseStatus(HttpStatus.OK) 
     @Operation(
         summary = "Get all activities",
         description = "Get all ativities"
     )
-    public List<ActivityResource> readActivitiesEndpoint() {
-        return readActivities();
+    public List<ActivityResource> readActivitiesEndpoint(
+        @Parameter(description="Add `dataProductId` parameter to the request to get only activities associated to a specific data product")
+        @RequestParam(required = false, name = "dataProductId") String dataProductId,
+
+        @Parameter(description="Add `dataProductVersion` parameter to the request to get only activities associated to a specific data product version")
+        @RequestParam(required = false, name = "dataProductVersion") String dataProductVersion,
+
+        @Parameter(description="Add `type` parameter to the request to get only activities of the specific type")
+        @RequestParam(required = false, name = "type") String type,
+       
+        @Parameter(description="Add `status` parameter to the request to get only activities in the specific state")
+        @RequestParam(required = false, name = "status") ActivityStatus status
+    ) {
+        return readActivities(dataProductId, dataProductVersion, type, status);
     }
 
-    public abstract List<ActivityResource>  readActivities();
+    public abstract List<ActivityResource>  readActivities(String dataProductId, String dataProductVersion, String type, ActivityStatus status);
 
 
     @GetMapping(
@@ -120,7 +138,10 @@ public abstract class AbstractActivityController {
             )
         )
     })
-    public ActivityResource readActivitiyEndpoint(Long id) {
+    public ActivityResource readActivitiyEndpoint( 
+        @Parameter(description = "Idenntifier of the activity")
+        @Valid @PathVariable(value = "id") Long id) 
+    {
         return readActivitiy(id);
     }
 

@@ -1,53 +1,17 @@
 package org.opendatamesh.platform.pp.devops.server;
 
-import org.docx4j.openpackaging.io.Load;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
-import org.opendatamesh.platform.pp.devops.api.clients.DevOpsClient;
-import org.opendatamesh.platform.pp.devops.api.resources.ActivityResource;
-import org.opendatamesh.platform.pp.devops.server.ActivityIT.MyRequestMatcher;
-import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsClients;
-import org.opendatamesh.platform.pp.registry.api.v1.clients.RegistryAPIRoutes;
-import org.opendatamesh.platform.pp.registry.api.v1.clients.RegistryClient;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.DefinitionResource;
-import org.opendatamesh.platform.up.executor.api.clients.ExecutorAPIRoutes;
-import org.opendatamesh.platform.up.executor.api.resources.TaskResource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.ClientHttpRequest;
-import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.lang.Nullable;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.test.annotation.DirtiesContext.MethodMode;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.client.ExpectedCount;
-import org.springframework.test.web.client.MockRestServiceServer;
-import org.springframework.test.web.client.RequestMatcher;
-import org.springframework.test.web.client.ResponseCreator;
-import org.springframework.test.web.client.match.MockRestRequestMatchers;
-import org.springframework.test.web.client.response.MockRestResponseCreators;
-import org.springframework.util.ObjectUtils;
-
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 
-import javax.annotation.PostConstruct;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.fail;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
+import org.opendatamesh.platform.pp.devops.api.resources.ActivityResource;
+import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatus;
+import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskResource;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
+import org.springframework.test.annotation.DirtiesContext.MethodMode;
 
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 public class ActivityIT extends ODMDevOpsIT {
@@ -62,29 +26,200 @@ public class ActivityIT extends ODMDevOpsIT {
 
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    public void testActivityCreate() throws IOException {
+    public void testCreateActivity() {
 
-        DataProductVersionDPDS dpvRes = resourceBuilder.readResourceFromFile(RESOURCE_DPV_1_CANONICAL,
-                DataProductVersionDPDS.class);
-                
-        String apiResponse = resourceBuilder.readResourceFromFile(RESOURCE_DPV_1_CANONICAL);
-        mockReadOneDataProductVersion(apiResponse, "c18b07ba-bb01-3d55-a5bf-feb517a8d901", "1.0.0");
-        mockCreateTask();
+        createMocksForCreateActivityCall();
 
-        DefinitionResource templateRes = resourceBuilder.readResourceFromFile(TEMPLATE_DEF_1_CANONICAL,
-                DefinitionResource.class);
-        mockReadOneTemplateDefinition(templateRes, "1");
+        ActivityResource activityRes = createTestActivity1(false);
 
-        // TEST 1: create first activity and start it
-        ActivityResource activityRes = null;
-        activityRes = createActivity(RESOURCE_ACTIVITY_1, true);
         assertThat(activityRes.getId()).isNotNull();
         assertThat(activityRes.getDataProductId()).isNotNull();
+        assertThat(activityRes.getDataProductId()).isEqualTo("c18b07ba-bb01-3d55-a5bf-feb517a8d901");
         assertThat(activityRes.getDataProductVersion()).isNotNull();
+        assertThat(activityRes.getDataProductVersion()).isEqualTo("1.0.0");
         assertThat(activityRes.getType()).isNotNull();
+        assertThat(activityRes.getType()).isEqualTo("prod");
         assertThat(activityRes.getStatus()).isNotNull();
+        assertThat(activityRes.getStatus()).isEqualTo(ActivityStatus.PLANNED);
+        assertThat(activityRes.getCreatedAt()).isNotNull();
+        assertThat(activityRes.getStartedAt()).isNull();
+        assertThat(activityRes.getFinishedAt()).isNull();
+    }
+
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testCreateActivityAndStart() throws IOException {
+
+        createMocksForCreateActivityCall();
+
+        ActivityResource activityRes = null;
+        activityRes = createTestActivity1(true);
+        assertThat(activityRes.getId()).isNotNull();
+        assertThat(activityRes.getDataProductId()).isNotNull();
+        assertThat(activityRes.getDataProductId()).isEqualTo("c18b07ba-bb01-3d55-a5bf-feb517a8d901");
+        assertThat(activityRes.getDataProductVersion()).isNotNull();
+        assertThat(activityRes.getDataProductVersion()).isEqualTo("1.0.0");
+        assertThat(activityRes.getType()).isNotNull();
+        assertThat(activityRes.getType()).isEqualTo("prod");
+        assertThat(activityRes.getStatus()).isNotNull();
+        assertThat(activityRes.getStatus()).isEqualTo(ActivityStatus.PROCESSING);
         assertThat(activityRes.getCreatedAt()).isNotNull();
         assertThat(activityRes.getStartedAt()).isNotNull();
+        assertThat(activityRes.getFinishedAt()).isNull();
+    }
+
+    // ----------------------------------------
+    // START/STOP Activity
+    // ----------------------------------------
+
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testStartActivity() {
+
+        createMocksForCreateActivityCall();
+
+        ActivityResource activityRes = createTestActivity1(false);
+
+        ActivityResource startedActivityRes = null;
+        try {
+            startedActivityRes = devOpsClient.startActivity(activityRes.getId());
+        } catch (Throwable t) {
+            fail("An unexpected exception occured while starting activity: " + t.getMessage());
+            t.printStackTrace();
+            return;
+        }
+
+        assertThat(startedActivityRes.getId()).isNotNull();
+        assertThat(startedActivityRes.getDataProductId()).isNotNull();
+        assertThat(startedActivityRes.getDataProductId()).isEqualTo("c18b07ba-bb01-3d55-a5bf-feb517a8d901");
+        assertThat(startedActivityRes.getDataProductVersion()).isNotNull();
+        assertThat(startedActivityRes.getDataProductVersion()).isEqualTo("1.0.0");
+        assertThat(startedActivityRes.getType()).isNotNull();
+        assertThat(startedActivityRes.getType()).isEqualTo("prod");
+        assertThat(startedActivityRes.getStatus()).isNotNull();
+        assertThat(startedActivityRes.getStatus()).isEqualTo(ActivityStatus.PROCESSING);
+        assertThat(startedActivityRes.getCreatedAt()).isNotNull();
+        assertThat(startedActivityRes.getStartedAt()).isNotNull();
+        assertThat(startedActivityRes.getFinishedAt()).isNull();
+    }
+
+    // Note: An activity can be started but not directly stopped.
+    // Activities are stopped when all its tasks are stopped
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testStopActivity() {
+
+        createMocksForCreateActivityCall();
+
+        ActivityResource activityRes = createTestActivity1(true);
+
+        ActivityTaskResource[] taskResources = devOpsClient.searchTasks(activityRes.getId(), null, null);
+        assertThat(taskResources).isNotNull();
+        assertThat(taskResources.length).isEqualTo(1);
+        ActivityTaskResource targetTaskRes = taskResources[0];
+
+        ActivityTaskResource stoppedTaskRes = null;
+        try {
+            stoppedTaskRes = devOpsClient.stopTask(targetTaskRes.getId());
+        } catch (Throwable t) {
+            fail("An unexpected exception occured while stopping task: " + t.getMessage());
+            t.printStackTrace();
+            return;
+        }
+
+        ActivityResource stoppedActivityRes = devOpsClient.readActivity(activityRes.getId());
+        assertThat(stoppedActivityRes.getId()).isNotNull();
+        assertThat(stoppedActivityRes.getDataProductId()).isNotNull();
+        assertThat(stoppedActivityRes.getDataProductId()).isEqualTo("c18b07ba-bb01-3d55-a5bf-feb517a8d901");
+        assertThat(stoppedActivityRes.getDataProductVersion()).isNotNull();
+        assertThat(stoppedActivityRes.getDataProductVersion()).isEqualTo("1.0.0");
+        assertThat(stoppedActivityRes.getType()).isNotNull();
+        assertThat(stoppedActivityRes.getType()).isEqualTo("prod");
+        assertThat(stoppedActivityRes.getStatus()).isNotNull();
+        assertThat(stoppedActivityRes.getStatus()).isEqualTo(ActivityStatus.PROCESSED);
+        assertThat(stoppedActivityRes.getResults()).isNotNull();
+        assertThat(stoppedActivityRes.getResults()).isEqualTo("{\"1\":\"OK\"}");
+        assertThat(stoppedActivityRes.getCreatedAt()).isNotNull();
+        assertThat(stoppedActivityRes.getStartedAt()).isNotNull();
+        assertThat(stoppedActivityRes.getFinishedAt()).isNotNull();
+    }
+
+    // ----------------------------------------
+    // READ Activity's status
+    // ----------------------------------------
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testReadActivityStatusAfterCreate() throws IOException {
+
+        createMocksForCreateActivityCall();
+
+        ActivityResource activityRes = null;
+        activityRes = createTestActivity1(false);
+
+        String status = devOpsClient.readActivityStatus(activityRes.getId());
+        assertThat(status).isNotNull();
+        assertThat(status).isEqualTo(ActivityStatus.PLANNED.toString());
+    }
+
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testReadActivityStatusAfterCreateAndStart() throws IOException {
+
+        createMocksForCreateActivityCall();
+
+        ActivityResource activityRes = null;
+        activityRes = createTestActivity1(true);
+
+        String status = devOpsClient.readActivityStatus(activityRes.getId());
+        assertThat(status).isNotNull();
+        assertThat(status).isEqualTo(ActivityStatus.PROCESSING.toString());
+    }
+
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testReadActivityStatusAfterStart() throws IOException {
+
+        createMocksForCreateActivityCall();
+
+        ActivityResource activityRes = createTestActivity1(false);
+
+        ActivityResource startedActivityRes = null;
+        try {
+            startedActivityRes = devOpsClient.startActivity(activityRes.getId());
+        } catch (Throwable t) {
+            fail("An unexpected exception occured while starting activity: " + t.getMessage());
+            t.printStackTrace();
+            return;
+        }
+        String status = devOpsClient.readActivityStatus(startedActivityRes.getId());
+        assertThat(status).isNotNull();
+        assertThat(status).isEqualTo(ActivityStatus.PROCESSING.toString());
+    }
+
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testReadActivityStatusAfterStop() throws IOException {
+
+        createMocksForCreateActivityCall();
+
+        ActivityResource activityRes = createTestActivity1(true);
+
+        ActivityTaskResource[] taskResources = devOpsClient.searchTasks(activityRes.getId(), null, null);
+        assertThat(taskResources).isNotNull();
+        assertThat(taskResources.length).isEqualTo(1);
+        ActivityTaskResource targetTaskRes = taskResources[0];
+
+        ActivityTaskResource stoppedTaskRes = null;
+        try {
+            stoppedTaskRes = devOpsClient.stopTask(targetTaskRes.getId());
+        } catch (Throwable t) {
+            fail("An unexpected exception occured while stopping task: " + t.getMessage());
+            t.printStackTrace();
+            return;
+        }
+        String status = devOpsClient.readActivityStatus(stoppedTaskRes.getId());
+        assertThat(status).isNotNull();
+        assertThat(status).isEqualTo(ActivityStatus.PROCESSED.toString());
     }
 
     // ----------------------------------------
@@ -92,144 +227,356 @@ public class ActivityIT extends ODMDevOpsIT {
     // ----------------------------------------
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    public void testActivityReadAll() throws IOException {
+    public void testReadActivities() throws IOException {
 
-        ResponseEntity<ActivityResource> postActivityResponse = null;
-        ActivityResource dataActivityRequest;
+        createMocksForCreateActivityCall();
 
-        dataActivityRequest = resourceBuilder.buildActivity(
-                "c18b07ba-bb01-3d55-a5bf-feb517a8d901",
-                "1.0.0",
-                "prod");
-        postActivityResponse = devOpsClient.postActivity(dataActivityRequest, true);
-        verifyResponseEntity(postActivityResponse, HttpStatus.CREATED, true);
+        // TEST 1: create first activity
+        ActivityResource activityRes = null, readActivityRes = null;
+        activityRes = createTestActivity1(true);
 
-        ResponseEntity<ActivityResource[]> getProducteResponse = devOpsClient.getActivities();
-        verifyResponseEntity(getProducteResponse, HttpStatus.OK, true);
-        assertThat(getProducteResponse.getBody().length).isEqualTo(1);
+        ActivityResource[] activityResources = devOpsClient.readAllActivities();
+        assertThat(activityResources).isNotNull();
+        assertThat(activityResources.length).isEqualTo(1);
 
-        // TODO test also content of each data product in the response body
+        readActivityRes = activityResources[0];
+        assertThat(readActivityRes.getId()).isNotNull();
+        assertThat(readActivityRes.getDataProductId()).isNotNull();
+        assertThat(readActivityRes.getDataProductId()).isEqualTo("c18b07ba-bb01-3d55-a5bf-feb517a8d901");
+        assertThat(readActivityRes.getDataProductVersion()).isNotNull();
+        assertThat(readActivityRes.getDataProductVersion()).isEqualTo("1.0.0");
+        assertThat(readActivityRes.getType()).isNotNull();
+        assertThat(readActivityRes.getType()).isEqualTo("prod");
+        assertThat(readActivityRes.getStatus()).isNotNull();
+        assertThat(readActivityRes.getStatus()).isEqualTo(ActivityStatus.PROCESSING);
+        assertThat(readActivityRes.getCreatedAt()).isNotNull();
+        assertThat(readActivityRes.getStartedAt()).isNotNull();
+        assertThat(readActivityRes.getFinishedAt()).isNull();
+
+        assertThat(readActivityRes).isEqualTo(activityRes);
     }
+
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testReadActivityAfterCreate() throws IOException {
+
+        createMocksForCreateActivityCall();
+
+        ActivityResource activityRes = null, readActivityRes = null;
+        activityRes = createTestActivity1(false);
+
+        readActivityRes = devOpsClient.readActivity(activityRes.getId());
+        assertThat(readActivityRes.getId()).isNotNull();
+        assertThat(readActivityRes.getDataProductId()).isNotNull();
+        assertThat(readActivityRes.getDataProductId()).isEqualTo("c18b07ba-bb01-3d55-a5bf-feb517a8d901");
+        assertThat(readActivityRes.getDataProductVersion()).isNotNull();
+        assertThat(readActivityRes.getDataProductVersion()).isEqualTo("1.0.0");
+        assertThat(readActivityRes.getType()).isNotNull();
+        assertThat(readActivityRes.getType()).isEqualTo("prod");
+        assertThat(readActivityRes.getStatus()).isNotNull();
+        assertThat(readActivityRes.getStatus()).isEqualTo(ActivityStatus.PLANNED);
+        assertThat(readActivityRes.getCreatedAt()).isNotNull();
+        assertThat(readActivityRes.getStartedAt()).isNull();
+        assertThat(readActivityRes.getFinishedAt()).isNull();
+
+        assertThat(readActivityRes).isEqualTo(activityRes);
+    }
+
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testReadActivityAfterCreateAndStart() throws IOException {
+
+        createMocksForCreateActivityCall();
+
+        // TEST 1: create first activity
+        ActivityResource activityRes = null, readActivityRes = null;
+        activityRes = createTestActivity1(true);
+
+        readActivityRes = devOpsClient.readActivity(activityRes.getId());
+        assertThat(readActivityRes.getId()).isNotNull();
+        assertThat(readActivityRes.getDataProductId()).isNotNull();
+        assertThat(readActivityRes.getDataProductId()).isEqualTo("c18b07ba-bb01-3d55-a5bf-feb517a8d901");
+        assertThat(readActivityRes.getDataProductVersion()).isNotNull();
+        assertThat(readActivityRes.getDataProductVersion()).isEqualTo("1.0.0");
+        assertThat(readActivityRes.getType()).isNotNull();
+        assertThat(readActivityRes.getType()).isEqualTo("prod");
+        assertThat(readActivityRes.getStatus()).isNotNull();
+        assertThat(readActivityRes.getStatus()).isEqualTo(ActivityStatus.PROCESSING);
+        assertThat(readActivityRes.getCreatedAt()).isNotNull();
+        assertThat(readActivityRes.getStartedAt()).isNotNull();
+        assertThat(readActivityRes.getFinishedAt()).isNull();
+
+        assertThat(readActivityRes).isEqualTo(activityRes);
+    }
+
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testReadActivityAfterStart() throws IOException {
+
+        createMocksForCreateActivityCall();
+
+        ActivityResource activityRes = createTestActivity1(false);
+
+        ActivityResource startedActivityRes = null;
+        try {
+            startedActivityRes = devOpsClient.startActivity(activityRes.getId());
+        } catch (Throwable t) {
+            fail("An unexpected exception occured while starting activity: " + t.getMessage());
+            t.printStackTrace();
+            return;
+        }
+
+        ActivityResource readActivityRes = devOpsClient.readActivity(startedActivityRes.getId());
+        assertThat(readActivityRes.getId()).isNotNull();
+        assertThat(readActivityRes.getDataProductId()).isNotNull();
+        assertThat(readActivityRes.getDataProductId()).isEqualTo("c18b07ba-bb01-3d55-a5bf-feb517a8d901");
+        assertThat(readActivityRes.getDataProductVersion()).isNotNull();
+        assertThat(readActivityRes.getDataProductVersion()).isEqualTo("1.0.0");
+        assertThat(readActivityRes.getType()).isNotNull();
+        assertThat(readActivityRes.getType()).isEqualTo("prod");
+        assertThat(readActivityRes.getStatus()).isNotNull();
+        assertThat(readActivityRes.getStatus()).isEqualTo(ActivityStatus.PROCESSING);
+        assertThat(readActivityRes.getCreatedAt()).isNotNull();
+        assertThat(readActivityRes.getStartedAt()).isNotNull();
+        assertThat(readActivityRes.getFinishedAt()).isNull();
+
+        assertThat(readActivityRes).isEqualTo(startedActivityRes);
+    }
+
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testReadActivityAfterStop() throws IOException {
+
+        createMocksForCreateActivityCall();
+
+        ActivityResource activityRes = createTestActivity1(true);
+
+        ActivityTaskResource[] taskResources = devOpsClient.searchTasks(activityRes.getId(), null, null);
+        assertThat(taskResources).isNotNull();
+        assertThat(taskResources.length).isEqualTo(1);
+        ActivityTaskResource targetTaskRes = taskResources[0];
+
+        ActivityTaskResource stoppedTaskRes = null;
+        try {
+            stoppedTaskRes = devOpsClient.stopTask(targetTaskRes.getId());
+        } catch (Throwable t) {
+            fail("An unexpected exception occured while stopping task: " + t.getMessage());
+            t.printStackTrace();
+            return;
+        }
+
+        ActivityResource readActivityRes = devOpsClient.readActivity(stoppedTaskRes.getId());
+        assertThat(readActivityRes.getId()).isNotNull();
+        assertThat(readActivityRes.getDataProductId()).isNotNull();
+        assertThat(readActivityRes.getDataProductId()).isEqualTo("c18b07ba-bb01-3d55-a5bf-feb517a8d901");
+        assertThat(readActivityRes.getDataProductVersion()).isNotNull();
+        assertThat(readActivityRes.getDataProductVersion()).isEqualTo("1.0.0");
+        assertThat(readActivityRes.getType()).isNotNull();
+        assertThat(readActivityRes.getType()).isEqualTo("prod");
+        assertThat(readActivityRes.getStatus()).isNotNull();
+        assertThat(readActivityRes.getStatus()).isEqualTo(ActivityStatus.PROCESSED);
+        assertThat(readActivityRes.getCreatedAt()).isNotNull();
+        assertThat(readActivityRes.getStartedAt()).isNotNull();
+        assertThat(readActivityRes.getFinishedAt()).isNotNull();
+    }
+
+    // ----------------------------------------
+    // SEARCH Activity
+    // ----------------------------------------
+
+    @Test 
+    @DirtiesContext(methodMode=MethodMode.AFTER_METHOD)
+    public void testSearchActivityByDataProductId() {
+
+        createMocksForCreateActivityCall();
+
+        ActivityResource activityRes = createTestActivity1(true);
+
+        ActivityResource[] activitiesResources = devOpsClient.searchActivities(activityRes.getDataProductId(), null, null, null);
+        assertThat(activitiesResources).isNotNull();
+        assertThat(activitiesResources.length).isEqualTo(1);
+        ActivityResource searchedActivityRes = activitiesResources[0];
+
+        assertThat(searchedActivityRes.getId()).isNotNull();
+        assertThat(searchedActivityRes.getDataProductId()).isNotNull();
+        assertThat(searchedActivityRes.getDataProductId()).isEqualTo("c18b07ba-bb01-3d55-a5bf-feb517a8d901");
+        assertThat(searchedActivityRes.getDataProductVersion()).isNotNull();
+        assertThat(searchedActivityRes.getDataProductVersion()).isEqualTo("1.0.0");
+        assertThat(searchedActivityRes.getType()).isNotNull();
+        assertThat(searchedActivityRes.getType()).isEqualTo("prod");
+        assertThat(searchedActivityRes.getStatus()).isNotNull();
+        assertThat(searchedActivityRes.getStatus()).isEqualTo(ActivityStatus.PROCESSING);
+        assertThat(searchedActivityRes.getCreatedAt()).isNotNull();
+        assertThat(searchedActivityRes.getStartedAt()).isNotNull();
+        assertThat(searchedActivityRes.getFinishedAt()).isNull();
+
+        assertThat(searchedActivityRes).isEqualTo(activityRes);
+    }
+
+    @Test 
+    @DirtiesContext(methodMode=MethodMode.AFTER_METHOD)
+    public void testSearchActivityByDataProductVersion() {
+
+        createMocksForCreateActivityCall();
+
+        ActivityResource activityRes = createTestActivity1(true);
+
+        ActivityResource[] activitiesResources = devOpsClient.searchActivities(null, activityRes.getDataProductVersion(), null, null);
+        assertThat(activitiesResources).isNotNull();
+        assertThat(activitiesResources.length).isEqualTo(1);
+        ActivityResource searchedActivityRes = activitiesResources[0];
+
+        assertThat(searchedActivityRes.getId()).isNotNull();
+        assertThat(searchedActivityRes.getDataProductId()).isNotNull();
+        assertThat(searchedActivityRes.getDataProductId()).isEqualTo("c18b07ba-bb01-3d55-a5bf-feb517a8d901");
+        assertThat(searchedActivityRes.getDataProductVersion()).isNotNull();
+        assertThat(searchedActivityRes.getDataProductVersion()).isEqualTo("1.0.0");
+        assertThat(searchedActivityRes.getType()).isNotNull();
+        assertThat(searchedActivityRes.getType()).isEqualTo("prod");
+        assertThat(searchedActivityRes.getStatus()).isNotNull();
+        assertThat(searchedActivityRes.getStatus()).isEqualTo(ActivityStatus.PROCESSING);
+        assertThat(searchedActivityRes.getCreatedAt()).isNotNull();
+        assertThat(searchedActivityRes.getStartedAt()).isNotNull();
+        assertThat(searchedActivityRes.getFinishedAt()).isNull();
+
+        assertThat(searchedActivityRes).isEqualTo(activityRes);
+    }
+
+    @Test 
+    @DirtiesContext(methodMode=MethodMode.AFTER_METHOD)
+    public void testSearchActivityByType() {
+
+        createMocksForCreateActivityCall();
+
+        ActivityResource activityRes = createTestActivity1(true);
+
+        ActivityResource[] activitiesResources = devOpsClient.searchActivities(null, null, activityRes.getType(), null);
+        assertThat(activitiesResources).isNotNull();
+        assertThat(activitiesResources.length).isEqualTo(1);
+        ActivityResource searchedActivityRes = activitiesResources[0];
+
+        assertThat(searchedActivityRes.getId()).isNotNull();
+        assertThat(searchedActivityRes.getDataProductId()).isNotNull();
+        assertThat(searchedActivityRes.getDataProductId()).isEqualTo("c18b07ba-bb01-3d55-a5bf-feb517a8d901");
+        assertThat(searchedActivityRes.getDataProductVersion()).isNotNull();
+        assertThat(searchedActivityRes.getDataProductVersion()).isEqualTo("1.0.0");
+        assertThat(searchedActivityRes.getType()).isNotNull();
+        assertThat(searchedActivityRes.getType()).isEqualTo("prod");
+        assertThat(searchedActivityRes.getStatus()).isNotNull();
+        assertThat(searchedActivityRes.getStatus()).isEqualTo(ActivityStatus.PROCESSING);
+        assertThat(searchedActivityRes.getCreatedAt()).isNotNull();
+        assertThat(searchedActivityRes.getStartedAt()).isNotNull();
+        assertThat(searchedActivityRes.getFinishedAt()).isNull();
+
+        assertThat(searchedActivityRes).isEqualTo(activityRes);
+    }
+
+    @Test 
+    @DirtiesContext(methodMode=MethodMode.AFTER_METHOD)
+    public void testSearchActivityByStatus() {
+
+        createMocksForCreateActivityCall();
+
+        ActivityResource activityRes = createTestActivity1(true);
+
+        ActivityResource[] activitiesResources = devOpsClient.searchActivities(null, null, null, activityRes.getStatus());
+        assertThat(activitiesResources).isNotNull();
+        assertThat(activitiesResources.length).isEqualTo(1);
+        ActivityResource searchedActivityRes = activitiesResources[0];
+
+        assertThat(searchedActivityRes.getId()).isNotNull();
+        assertThat(searchedActivityRes.getDataProductId()).isNotNull();
+        assertThat(searchedActivityRes.getDataProductId()).isEqualTo("c18b07ba-bb01-3d55-a5bf-feb517a8d901");
+        assertThat(searchedActivityRes.getDataProductVersion()).isNotNull();
+        assertThat(searchedActivityRes.getDataProductVersion()).isEqualTo("1.0.0");
+        assertThat(searchedActivityRes.getType()).isNotNull();
+        assertThat(searchedActivityRes.getType()).isEqualTo("prod");
+        assertThat(searchedActivityRes.getStatus()).isNotNull();
+        assertThat(searchedActivityRes.getStatus()).isEqualTo(ActivityStatus.PROCESSING);
+        assertThat(searchedActivityRes.getCreatedAt()).isNotNull();
+        assertThat(searchedActivityRes.getStartedAt()).isNotNull();
+        assertThat(searchedActivityRes.getFinishedAt()).isNull();
+
+        assertThat(searchedActivityRes).isEqualTo(activityRes);
+    }
+
+    @Test 
+    @DirtiesContext(methodMode=MethodMode.AFTER_METHOD)
+    public void testSearchActivityByAll() {
+
+        createMocksForCreateActivityCall();
+
+        ActivityResource activityRes = createTestActivity1(true);
+
+        ActivityResource[] activitiesResources = devOpsClient.searchActivities(activityRes.getDataProductId(), activityRes.getDataProductVersion(), activityRes.getType(), activityRes.getStatus());
+        assertThat(activitiesResources).isNotNull();
+        assertThat(activitiesResources.length).isEqualTo(1);
+        ActivityResource searchedActivityRes = activitiesResources[0];
+
+        assertThat(searchedActivityRes.getId()).isNotNull();
+        assertThat(searchedActivityRes.getDataProductId()).isNotNull();
+        assertThat(searchedActivityRes.getDataProductId()).isEqualTo("c18b07ba-bb01-3d55-a5bf-feb517a8d901");
+        assertThat(searchedActivityRes.getDataProductVersion()).isNotNull();
+        assertThat(searchedActivityRes.getDataProductVersion()).isEqualTo("1.0.0");
+        assertThat(searchedActivityRes.getType()).isNotNull();
+        assertThat(searchedActivityRes.getType()).isEqualTo("prod");
+        assertThat(searchedActivityRes.getStatus()).isNotNull();
+        assertThat(searchedActivityRes.getStatus()).isEqualTo(ActivityStatus.PROCESSING);
+        assertThat(searchedActivityRes.getCreatedAt()).isNotNull();
+        assertThat(searchedActivityRes.getStartedAt()).isNotNull();
+        assertThat(searchedActivityRes.getFinishedAt()).isNull();
+
+        assertThat(searchedActivityRes).isEqualTo(activityRes);
+    }
+
+    @Test 
+    @DirtiesContext(methodMode=MethodMode.AFTER_METHOD)
+    public void testSearchActivityByNothing() {
+
+        createMocksForCreateActivityCall();
+
+        ActivityResource activityRes = createTestActivity1(true);
+
+        ActivityResource[] activitiesResources = devOpsClient.searchActivities(null, null, null, null);
+        assertThat(activitiesResources).isNotNull();
+        assertThat(activitiesResources.length).isEqualTo(1);
+        ActivityResource searchedActivityRes = activitiesResources[0];
+
+        assertThat(searchedActivityRes.getId()).isNotNull();
+        assertThat(searchedActivityRes.getDataProductId()).isNotNull();
+        assertThat(searchedActivityRes.getDataProductId()).isEqualTo("c18b07ba-bb01-3d55-a5bf-feb517a8d901");
+        assertThat(searchedActivityRes.getDataProductVersion()).isNotNull();
+        assertThat(searchedActivityRes.getDataProductVersion()).isEqualTo("1.0.0");
+        assertThat(searchedActivityRes.getType()).isNotNull();
+        assertThat(searchedActivityRes.getType()).isEqualTo("prod");
+        assertThat(searchedActivityRes.getStatus()).isNotNull();
+        assertThat(searchedActivityRes.getStatus()).isEqualTo(ActivityStatus.PROCESSING);
+        assertThat(searchedActivityRes.getCreatedAt()).isNotNull();
+        assertThat(searchedActivityRes.getStartedAt()).isNotNull();
+        assertThat(searchedActivityRes.getFinishedAt()).isNull();
+
+        assertThat(searchedActivityRes).isEqualTo(activityRes);
+    }
+
+    @Test 
+    @DirtiesContext(methodMode=MethodMode.AFTER_METHOD)
+    public void testSearchActivityMissing() {
+
+        createMocksForCreateActivityCall();
+
+        ActivityResource activityRes = createTestActivity1(true);
+
+        ActivityResource[] activitiesResources = devOpsClient.searchActivities("wrongProductId", "0.0.0", "StageX", null);
+        assertThat(activitiesResources).isNotNull();
+        assertThat(activitiesResources.length).isEqualTo(0);
+    }
+
+     
+
 
     // ======================================================================================
     // ERROR PATH
     // ======================================================================================
 
     // TODO ...
-
-    // ======================================================================================
-    // MOCKS
-    // ======================================================================================
-
-    public void mockReadOneDataProductVersion(String apiResponse, String dataProductId,
-            String dataProductVersion) {
-        logger.debug("  >>>  mockReadOneDataProductVersion");
-
-        String apiUrl = clients.getRegistryClient().apiUrl(RegistryAPIRoutes.DATA_PRODUCTS,
-                "/" + dataProductId + "/versions/" + dataProductVersion);
-
-        /*         
-        String apiResponse = null;
-        try {
-            apiResponse = mapper.writeValueAsString(dpvRes);
-        } catch (JsonProcessingException e) {
-            logger.error("Impossible to serialize data product version resource", e);
-            fail("Impossible to serialize data product version resource [" + dpvRes + "]");
-        }
-        */
-
-        logger.debug(apiResponse);
-        MediaType responseType = clients.getRegistryClient().getContentMediaType();
-
-        // requestTo(apiUrl)
-        try {
-            registryMockServer
-                    .expect(ExpectedCount.once(), new MyRequestMatcher(apiUrl))
-                    //.andExpect(content().contentType(responseType))
-                    .andExpect(method(HttpMethod.GET))
-                    .andRespond(
-                            withSuccess(apiResponse, MediaType.APPLICATION_JSON));
-        } catch (Throwable t) {
-            logger.error("Impossible to create mock for endpoint readOneDataProductVersion", t);
-            fail("Impossible to create mock for endpoint readOneDataProductVersion with url [" + apiUrl + "]");
-        }
-    }
-
-    //http://localhost:8001/api/v1/pp/registry/templates/1
-
-    public void mockReadOneTemplateDefinition(DefinitionResource templateRes, String templateid) {
-        logger.debug("  >>>  mockReadOneTemplateDefinition");
-
-        String apiUrl = clients.getRegistryClient().apiUrl(RegistryAPIRoutes.TEMPLATES,
-                "/" + templateid);
-        String apiResponse = null;
-        
-        try {
-            apiResponse = mapper.writeValueAsString(templateRes);
-        } catch (JsonProcessingException e) {
-            logger.error("Impossible to serialize template def resource", e);
-            fail("Impossible to serialize data product version resource [" + templateRes + "]");
-        }
-        MediaType responseType = clients.getRegistryClient().getContentMediaType();
-
-        // requestTo(apiUrl)
-        try {
-            registryMockServer
-                    .expect(ExpectedCount.manyTimes(), new MyRequestMatcher(apiUrl))
-                    //.andExpect(content().contentType(responseType))
-                    .andExpect(method(HttpMethod.GET))
-                    .andRespond(
-                            withSuccess(apiResponse, MediaType.APPLICATION_JSON));
-        } catch (Throwable t) {
-            logger.error("Impossible to create mock for endpoint readOneTemplateDefinition", t);
-            fail("Impossible to create mock for endpoint readOneDataProductVersion with url [" + apiUrl + "]");
-        }
-    }
-
-    public void mockCreateTask() {
-        logger.debug("  >>>  mockReadOneTemplateDefinition");
-
-        String apiUrl = clients.getExecutorClient("azure-devops").apiUrl(ExecutorAPIRoutes.TASKS);
-        
-        // http://localhost:9003/api/v1/up/executor/tasks
-        try {
-            executorMockServer
-                    .expect(ExpectedCount.manyTimes(), requestTo(apiUrl))
-                    .andExpect(method(HttpMethod.POST))
-                    .andRespond(new MyResponseCreator());
-        } catch (Throwable t) {
-            logger.error("Impossible to create mock for endpoint readOneTemplateDefinition", t);
-            fail("Impossible to create mock for endpoint readOneTemplateDefinition with url [" + apiUrl + "]");
-        }
-    }
-
-
-    public class MyResponseCreator implements  ResponseCreator {
-
-        @Override
-        public ClientHttpResponse createResponse(@Nullable ClientHttpRequest request) throws IOException {
-            return withSuccess(request.getBody().toString(), MediaType.APPLICATION_JSON).createResponse(null);
-        }
-
-    }
-    public class MyRequestMatcher implements RequestMatcher {
-
-        String uriToMatch;
-
-        public MyRequestMatcher(String uriToMatch) {
-            this.uriToMatch = uriToMatch;
-        }
-
-        @Override
-        public void match(ClientHttpRequest request) throws IOException, AssertionError {
-            String requestedUri = request.getURI().toString();
-            logger.debug("uriToMatch [" + uriToMatch+ "]");
-            logger.debug("requestedUri [" + requestedUri+ "]");
-            logger.debug("equals? [" + ObjectUtils.nullSafeEquals(requestedUri, uriToMatch)+ "]");
-
-            
-            org.springframework.test.util.AssertionErrors.assertEquals("Unexpected request", uriToMatch, requestedUri);
-        }
-
-    }
 }

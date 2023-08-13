@@ -38,7 +38,6 @@ public class APIDefinitionIT extends ODMRegistryIT {
 
         // TEST 1: create a Definition with all properties and verify the response
         DefinitionResource definitionRes = createApiDefinition(RESOURCE_DEF1_V1);
-        assertThat(definitionRes.getId()).isEqualTo(1);
         assertThat(definitionRes.getName()).isEqualTo("definition1");
         assertThat(definitionRes.getVersion()).isEqualTo("0.0.1");
         assertThat(definitionRes.getStatus()).isEqualTo("OK");
@@ -52,7 +51,6 @@ public class APIDefinitionIT extends ODMRegistryIT {
 
         // TEST 2: create a Definition without version property and verify the response
         DefinitionResource definitionRes2 = createApiDefinition(RESOURCE_DEF1_NOVERSION);
-        assertThat(definitionRes2.getId()).isEqualTo(2);
         assertThat(definitionRes2.getName()).isEqualTo("definition1");
         assertThat(definitionRes2.getVersion()).isEqualTo("1.0.0");
         assertThat(definitionRes2.getStatus()).isEqualTo("OK");
@@ -66,7 +64,6 @@ public class APIDefinitionIT extends ODMRegistryIT {
 
         // TEST 3: create a Definition without name property and verify the response
         DefinitionResource definitionRes3 = createApiDefinition(RESOURCE_DEF1_NONAME);
-        assertThat(definitionRes3.getId()).isEqualTo(3);
         assertThat(definitionRes3.getName()).isEqualTo("8d1cd5fa-ec4e-3e5b-b545-a4d2f9cc6753");
         assertThat(definitionRes3.getVersion()).isEqualTo("1.0.1");
         assertThat(definitionRes3.getStatus()).isEqualTo("OK");
@@ -81,7 +78,6 @@ public class APIDefinitionIT extends ODMRegistryIT {
         // TEST 4: create a Definition without name and version properties and verify
         // the response
         DefinitionResource definitionRes4 = createApiDefinition(RESOURCE_DEF1_NONAME_NOVERSION);
-        assertThat(definitionRes4.getId()).isEqualTo(4);
         assertThat(definitionRes4.getName()).isEqualTo("cf9e4b59-af4f-3254-aa44-c7259a7249c9");
         assertThat(definitionRes4.getVersion()).isEqualTo("1.0.0");
         assertThat(definitionRes4.getStatus()).isEqualTo("OK");

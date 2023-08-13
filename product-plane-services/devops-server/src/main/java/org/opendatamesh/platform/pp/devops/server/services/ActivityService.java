@@ -1,5 +1,7 @@
 package org.opendatamesh.platform.pp.devops.server.services;
 
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -11,7 +13,6 @@ import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.LifecycleActivityInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.LifecycleInfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.StandardDefinitionDPDS;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatus;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskStatus;
 import org.opendatamesh.platform.pp.devops.api.resources.ODMDevOpsAPIStandardError;
@@ -112,8 +113,10 @@ public class ActivityService {
         List<Task> tasks = taskService.createTasks(activity.getId(), activitiesInfo);
     
         if (startAfterCreation) {
-            startActivity(activity, tasks);
+            activity = startActivity(activity, tasks);
         }
+
+        List<Activity> aaa = activities = loadAllActivities();
 
         return activity;
     }
@@ -137,9 +140,16 @@ public class ActivityService {
     public Activity startActivity(Activity activity) {
 
         if(activity.getStatus().equals(ActivityStatus.PLANNED) == false) {
-            throw new UnprocessableEntityException(
+            if(activity.getStatus().equals(ActivityStatus.PROCESSING)) {
+                throw new ConflictException(
+                ODMDevOpsAPIStandardError.SC409_01_CONCURRENT_ACTIVITIES,
+                "Activity with id [" + activity.getId() + "] is already started");
+            } else {
+                throw new UnprocessableEntityException(
                 ODMDevOpsAPIStandardError.SC422_01_ACTIVITY_IS_INVALID,
                 "Only activities in PLANNED state can be started. Activity with id [" + activity.getId() + "] is in state [" + activity.getStatus() + "]");
+            }
+            
         }
 
         List<Task> plannedTasks = taskService.searchTasks(activity.getId(), null, ActivityTaskStatus.PLANNED);
@@ -171,9 +181,9 @@ public class ActivityService {
 
         // update activity's status
         try {
-            activity.setStartedAt(new Date());
+            activity.setStartedAt(now());
             activity.setStatus(ActivityStatus.PROCESSING);
-            saveActivity(activity);
+            activity = saveActivity(activity);
         } catch (Throwable t) {
             throw new InternalServerException(
                 ODMDevOpsAPIStandardError.SC500_01_DATABASE_ERROR,
@@ -195,7 +205,7 @@ public class ActivityService {
     // TODO set results or errors of activity while stopping it
     private Activity stopActivity(Activity activity, boolean success) {
         
-        Date finishedAt = new Date();
+        LocalDateTime finishedAt = now();
         activity.setFinishedAt(finishedAt);
 
         List<Task> tasks = taskService.searchTasks(activity.getId(), null, null);
@@ -449,5 +459,12 @@ public class ActivityService {
         }
 
         return dataProductVersion;
+    }
+
+    private LocalDateTime now() {
+        LocalDateTime now = LocalDateTime.now();
+        now = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), 
+        now.getHour(), now.getMinute(), now.getSecond(), 0);
+        return now;
     }
 }

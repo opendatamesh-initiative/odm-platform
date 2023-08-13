@@ -27,9 +27,11 @@ public class ODMRestTemplateErrorHandler implements ResponseErrorHandler {
             // handle SERVER_ERROR
         } else if (httpResponse.getStatusCode().series() == HttpStatus.Series.CLIENT_ERROR) {
             // handle CLIENT_ERROR
+            /*
             if (httpResponse.getStatusCode() == HttpStatus.NOT_FOUND) {
                 throw new ODMClientException();
             }
+             */
         }
     }
 }

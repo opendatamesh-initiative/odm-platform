@@ -1,5 +1,6 @@
 package org.opendatamesh.platform.pp.devops.server.services;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -111,7 +112,7 @@ public class TaskService {
 
         try {
             task.setStatus(ActivityTaskStatus.PROCESSING);
-            task.setStartedAt(new Date());
+            task.setStartedAt(now());
             saveTask(task);
 
             if(task.getExecutorRef() != null) {
@@ -122,7 +123,7 @@ public class TaskService {
             } else {
                 task.setResults("Nothing to do. Task succeded by default");
                 task.setStatus(ActivityTaskStatus.PROCESSED);
-                task.setFinishedAt(new Date());
+                task.setFinishedAt(now());
             }
             
         } catch(Throwable t) {
@@ -157,7 +158,7 @@ public class TaskService {
         } catch(Throwable t) {
             task.setStatus(ActivityTaskStatus.FAILED);
             task.setErrors(t.getMessage());
-            task.setFinishedAt(new Date());
+            task.setFinishedAt(now());
         }
        
         return task;
@@ -171,7 +172,7 @@ public class TaskService {
     public Task stopTask(Task task) {
 		try {
             task.setStatus(ActivityTaskStatus.PROCESSED);
-            task.setFinishedAt(new Date());
+            task.setFinishedAt(now());
             task.setResults("OK");
             saveTask(task);
         } catch(Throwable t) {
@@ -373,6 +374,13 @@ public class TaskService {
         }
 
         return serializedConfigurations;
+    }
+
+    private LocalDateTime now() {
+        LocalDateTime now = LocalDateTime.now();
+        now = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), 
+        now.getHour(), now.getMinute(), now.getSecond(), 0);
+        return now;
     }
 
 	

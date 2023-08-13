@@ -3,6 +3,7 @@ package org.opendatamesh.platform.pp.devops.server.database.entities;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -51,16 +52,23 @@ public class Task  {
     String errors;
 
     @Column(name = "CREATED_AT")
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     @Column(name = "STARTED_AT")
-    private Date startedAt;
+    private LocalDateTime startedAt;
 
     @Column(name = "FINISHED_AT")
-    private Date finishedAt;
+    private LocalDateTime finishedAt;
 
     @PrePersist
     protected void onCreate() {
-        createdAt = new Date();
+        createdAt = now();
+    }
+
+    private LocalDateTime now() {
+        LocalDateTime now = LocalDateTime.now();
+        now = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), 
+        now.getHour(), now.getMinute(), now.getSecond(), 0);
+        return now;
     }
 }

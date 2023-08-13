@@ -41,6 +41,7 @@ import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.lang.Nullable;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;

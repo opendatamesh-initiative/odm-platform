@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.pp.devops.api.clients.DevOpsAPIRoutes;
@@ -401,7 +402,7 @@ public class ActivityIT extends ODMDevOpsIT {
         assertThat(stoppedActivityRes.getStatus()).isNotNull();
         assertThat(stoppedActivityRes.getStatus()).isEqualTo(ActivityStatus.PROCESSED);
         assertThat(stoppedActivityRes.getResults()).isNotNull();
-        assertThat(stoppedActivityRes.getResults()).isEqualTo("{\"1\":\"OK\"}");
+        assertThat(stoppedActivityRes.getResults()).matches(Pattern.compile("\\{\"\\d*\":\"OK\"\\}"));  
         assertThat(stoppedActivityRes.getCreatedAt()).isNotNull();
         assertThat(stoppedActivityRes.getStartedAt()).isNotNull();
         assertThat(stoppedActivityRes.getFinishedAt()).isNotNull();

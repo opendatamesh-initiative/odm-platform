@@ -2,6 +2,7 @@ package org.opendatamesh.platform.pp.devops.server.database.entities;
 
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -20,6 +21,8 @@ import javax.persistence.JoinColumns;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.sound.sampled.Port;
 
 import org.hibernate.annotations.Fetch;
@@ -58,16 +61,26 @@ public class Activity {
     String errors;
 
     @Column(name = "CREATED_AT")
-    private Date createdAt;
+    //@Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime createdAt;
 
     @Column(name = "STARTED_AT")
-    private Date startedAt;
+    //@Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime startedAt;
 
     @Column(name = "FINISHED_AT")
-    private Date finishedAt;
+    //@Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime finishedAt;
 
     @PrePersist
     protected void onCreate() {
-        createdAt = new Date();
+        createdAt = now();
+    }
+
+    private LocalDateTime now() {
+        LocalDateTime now = LocalDateTime.now();
+        now = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), 
+        now.getHour(), now.getMinute(), now.getSecond(), 0);
+        return now;
     }
 }

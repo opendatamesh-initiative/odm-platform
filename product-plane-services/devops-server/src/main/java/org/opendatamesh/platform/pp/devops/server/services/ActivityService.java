@@ -251,6 +251,8 @@ public class ActivityService {
             startedTask = taskService.startTask(plannedTasks.get(0)); 
             if(startedTask.getStatus().equals(ActivityTaskStatus.FAILED)) {
                 stopActivity(activityId, false);
+            } else if(startedTask.getStatus().equals(ActivityTaskStatus.PROCESSED)) {
+                stopActivity(activityId, true);
             }
         } else { // nothing more to do...
             stopActivity(activityId, true);
@@ -301,7 +303,7 @@ public class ActivityService {
 
         if (activityId == null) {
             throw new BadRequestException(
-                    ODMDevOpsAPIStandardError.SC400_01_ACTIVITY_ID_IS_EMPTY,
+                    ODMDevOpsAPIStandardError.SC400_50_ACTIVITY_ID_IS_EMPTY,
                     "Activity id is empty");
         }
 
@@ -411,7 +413,11 @@ public class ActivityService {
         }
 
         LifecycleInfoDPDS lifecycleInfo = dataProductVersion.getInternalComponents().getLifecycleInfo();
-        activitiesInfo.add(lifecycleInfo.getActivityInfo(activity.getType()));
+        LifecycleActivityInfoDPDS activityInfo =  lifecycleInfo.getActivityInfo(activity.getType());
+        if(activityInfo != null) {
+            activitiesInfo.add(activityInfo);
+        }
+        
 
         return activitiesInfo;
     }
@@ -438,7 +444,7 @@ public class ActivityService {
                     activity.getDataProductVersion());
         } catch (Throwable t) {
             throw new InternalServerException(
-                    ODMDevOpsAPIStandardError.SC500_00_SERVICE_ERROR,
+                    ODMDevOpsAPIStandardError.SC500_50_REGISTRY_SERVICE_ERROR,
                     "An errror occured while reading data product version from ODM Registry", t);
         }
 

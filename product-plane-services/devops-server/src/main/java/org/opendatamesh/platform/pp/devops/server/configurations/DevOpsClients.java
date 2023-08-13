@@ -8,6 +8,7 @@ import org.opendatamesh.platform.pp.registry.api.v1.clients.RegistryClient;
 import org.opendatamesh.platform.up.executor.api.clients.ExecutorClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import lombok.Data;
 
@@ -19,6 +20,7 @@ public class DevOpsClients {
 
     RegistryClient registryClient;
     Map<String, ExecutorClient> executorsClients; 
+
 
     @Autowired
     public DevOpsClients(DevOpsConfigurations configs) {

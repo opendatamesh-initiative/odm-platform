@@ -1,8 +1,8 @@
 package org.opendatamesh.platform.pp.registry.api.v1.clients;
 
-import org.opendatamesh.platform.core.commons.clients.RoutesInterface;
+import org.opendatamesh.platform.core.commons.clients.ODMApiRoutes;
 
-public enum RegistryAPIRoutes implements RoutesInterface {
+public enum RegistryAPIRoutes implements ODMApiRoutes {
 
     DATA_PRODUCTS("/products"),
     APIS("/apis"),

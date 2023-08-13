@@ -15,19 +15,15 @@ import org.springframework.test.annotation.DirtiesContext.MethodMode;
 public class TaskIT extends ODMDevOpsIT {
 
     // ======================================================================================
-    // HAPPY PATH
+    // CREATE Activity
     // ======================================================================================
-
-    // ----------------------------------------
-    // CREATE Task
-    // ----------------------------------------
 
     // Note: Task cannot be created directly.
     // Tasks are created when the parent activity is created
 
-    // ----------------------------------------
+    // ======================================================================================
     // START/STOP Task
-    // ----------------------------------------
+    // ======================================================================================
 
     // Note: A task can be stopped but not directly started.
     // Tasks are started when the parent activity is started
@@ -102,10 +98,11 @@ public class TaskIT extends ODMDevOpsIT {
         assertThat(stoppedTaskRes.getFinishedAt()).isNotNull();
     }
 
-    // ----------------------------------------
-    // READ Task's status
-    // ----------------------------------------
 
+    // ======================================================================================
+    // READ Task's status
+    // ======================================================================================
+    
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testReadTaskStatusAfterCreate() {
@@ -197,10 +194,11 @@ public class TaskIT extends ODMDevOpsIT {
         assertThat(status).isEqualTo(ActivityTaskStatus.PROCESSED.toString());
     }
 
-    // ----------------------------------------
-    // READ task
-    // ----------------------------------------
 
+    // ======================================================================================
+    // READ task
+    // ======================================================================================
+    
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testReadTasks() {
@@ -360,11 +358,12 @@ public class TaskIT extends ODMDevOpsIT {
         assertThat(readTaskRes).isEqualTo(stoppedTaskRes);
     }
 
-    
-    // ----------------------------------------
+    // ======================================================================================
     // SEARCH task
-    // ----------------------------------------
-
+    // ======================================================================================
+    
+    // TODO create multiple activities to be sure that the search call properly filters results
+    
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testSearchTaskByActivityId() {
@@ -514,10 +513,4 @@ public class TaskIT extends ODMDevOpsIT {
         assertThat(taskResources).isNotNull();
         assertThat(taskResources.length).isEqualTo(0);
     }
-
-    // ======================================================================================
-    // ERROR PATH
-    // ======================================================================================
-
-    // TODO ...
 }

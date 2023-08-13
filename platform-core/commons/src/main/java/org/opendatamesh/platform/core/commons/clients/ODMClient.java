@@ -6,9 +6,11 @@ import lombok.Data;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
+import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -28,7 +30,10 @@ public class ODMClient {
 
     protected MediaType contentMediaType;
 
-    protected TestRestTemplate rest;
+    public TestRestTemplate rest;
+    protected MockRestServiceServer mockServer;
+    protected ClientHttpRequestFactory clientRequestFactory;
+
 
     protected ObjectMapper mapper;
 
@@ -48,6 +53,18 @@ public class ODMClient {
 
     private TestRestTemplate initRestTemplate(TestRestTemplate restTemplate) {
 
+        initRestTemplateMessageConverter(restTemplate);
+        initRestTemplateRequestFactory(restTemplate);
+        initRestTemplateUriTemplateBuilder(restTemplate);
+        
+        restTemplate.getRestTemplate().setErrorHandler(new ODMRestTemplateErrorHandler());
+
+        return restTemplate;
+    }
+
+    // WARNING this method at the moment does nothing
+    // TODO use it to setup DPDSPareser as converter for DPDSDataProductVersion
+    private void initRestTemplateMessageConverter(TestRestTemplate restTemplate) {
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         converter.setObjectMapper(mapper);
         List<HttpMessageConverter<?>>  converters = restTemplate.getRestTemplate().getMessageConverters();
@@ -55,49 +72,70 @@ public class ODMClient {
 
             if(c instanceof MappingJackson2HttpMessageConverter) {
                MappingJackson2HttpMessageConverter m = (MappingJackson2HttpMessageConverter)c;
-              
                Set<Object> modules = m.getObjectMapper().getRegisteredModuleIds();
-               System.out.println(modules);
             }
         }
         //.add(converter);
-        //rest.setPort(port);
-        
+    }
+
+    private void initRestTemplateRequestFactory(TestRestTemplate restTemplate) {
         // TODO this is ok for debugging IT not for executing them while building. Link the behaviour to application context (i.e. debug=>timeout didabled timeout while test=>timeout active)
         HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
         // requestFactory.setConnectTimeout(30000);
         // requestFactory.setReadTimeout(30000);
         restTemplate.getRestTemplate().setRequestFactory(requestFactory);
-        
+    }
+
+    private void initRestTemplateUriTemplateBuilder(TestRestTemplate restTemplate) {
         // add uri template handler because '+' of iso date would not be encoded
         DefaultUriBuilderFactory defaultUriBuilderFactory = new DefaultUriBuilderFactory();
         defaultUriBuilderFactory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.TEMPLATE_AND_VALUES);
         restTemplate.setUriTemplateHandler(defaultUriBuilderFactory);
-
-        return restTemplate;
     }
+
+    public void bindMockServer() {
+        RestTemplate restTemplate = rest.getRestTemplate();
+        clientRequestFactory = restTemplate.getRequestFactory();
+        mockServer = MockRestServiceServer.bindTo(restTemplate)
+                .ignoreExpectOrder(true)
+                .build();
+    }
+
+    public void unbindMockServer() {
+        RestTemplate restTemplate = rest.getRestTemplate();
+        restTemplate.setRequestFactory(clientRequestFactory);
+    }
+
+    public void resetMockServer() {
+        if(mockServer != null && clientRequestFactory != null) {
+            unbindMockServer();
+            bindMockServer();
+        }
+        
+    }
+
     
-    public String apiUrlOfItem(RoutesInterface route) {
+    public String apiUrlOfItem(ODMApiRoutes route) {
         return apiUrl(route, "/{id}", null);
     }
 
-    public String apiUrlOfItem(RoutesInterface route, Map<String, Object> queryParams) {
+    public String apiUrlOfItem(ODMApiRoutes route, Map<String, Object> queryParams) {
         return apiUrl(route, "/{id}", queryParams);
     }
 
-    public String apiUrl(RoutesInterface route) {
+    public String apiUrl(ODMApiRoutes route) {
         return apiUrl(route, "", null);
     }
 
-    public String apiUrl(RoutesInterface route, Map<String, Object> queryParams) {
+    public String apiUrl(ODMApiRoutes route, Map<String, Object> queryParams) {
         return apiUrl(route, "", queryParams);
     }
 
-    public String apiUrl(RoutesInterface route, String extension) {
+    public String apiUrl(ODMApiRoutes route, String extension) {
         return apiUrl(route, extension, null);
     }
 
-    public String apiUrl(RoutesInterface route, String extension, Map<String, Object> queryParams) {
+    public String apiUrl(ODMApiRoutes route, String extension, Map<String, Object> queryParams) {
         String urlTemplate = null;
 
         urlTemplate = (extension != null)?
@@ -115,7 +153,7 @@ public class ODMClient {
         return urlTemplate;
     }
 
-    protected String apiUrlWithQueryParams(RoutesInterface route, List<String> params) {
+    protected String apiUrlWithQueryParams(ODMApiRoutes route, List<String> params) {
         String ext = "";
         if(params.size() != 0) {
             ext = "?";

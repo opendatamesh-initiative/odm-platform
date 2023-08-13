@@ -8,6 +8,8 @@ import org.opendatamesh.platform.pp.registry.api.v1.resources.*;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.util.List;
@@ -20,12 +22,14 @@ public class RegistryClient extends ODMClient {
         super(serverAddress, ObjectMapperFactory.JSON_MAPPER);
     }
 
+    
+
     // ======================================================================================
-    // Proxy services
+    // DATA PRODUCT
     // ======================================================================================
 
     // ----------------------------------------
-    // Data product
+    // CREATE
     // ----------------------------------------
 
     public DataProductResource createDataProduct(Object payload) throws IOException {

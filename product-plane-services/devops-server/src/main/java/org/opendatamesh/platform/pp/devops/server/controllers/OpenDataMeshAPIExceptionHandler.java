@@ -11,8 +11,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -56,8 +59,31 @@ public class OpenDataMeshAPIExceptionHandler extends ResponseEntityExceptionHand
 			logger.error(errorLogMessage);
 		}
 		
-		if (body == null && !HttpStatus.INTERNAL_SERVER_ERROR.equals(status)) {
-			logger.debug("Creating body for unhandled exception", e);
+		if(HttpMessageNotReadableException.class.isAssignableFrom(e.getClass())) { // if something went erong while parsing the request body...
+			headers.setContentType(MediaType.APPLICATION_JSON);
+			String url = getUrl(request);
+			String message = e.getMessage();
+			body = new ErrorRes(
+				status.value(), 
+				ODMDevOpsAPIStandardError.SC400_00_REQUEST_BODY_IS_NOT_READABLE, 
+				message, url);
+		} else if(HttpMediaTypeNotSupportedException.class.isAssignableFrom(e.getClass())) { // if request media type is not supported...
+			headers.setContentType(MediaType.APPLICATION_JSON);
+			String url = getUrl(request);
+			String message = e.getMessage();
+			body = new ErrorRes(
+				status.value(), 
+				ODMDevOpsAPIStandardError.SC415_01_REQUEST_MEDIA_TYPE_NOT_SUPPORTED, 
+				message, url);
+		} else if(HttpMediaTypeNotAcceptableException.class.isAssignableFrom(e.getClass())) { // if request media type is not supported...
+			headers.setContentType(MediaType.APPLICATION_JSON);
+			String url = getUrl(request);
+			String message = e.getMessage();
+			body = new ErrorRes(
+				status.value(), 
+				ODMDevOpsAPIStandardError.SC406_01_RESPONSE_ACCEPTED_MEDIA_TYPES_NOT_SUPPORTED, 
+				message, url);
+		} else if (body == null && !HttpStatus.INTERNAL_SERVER_ERROR.equals(status)) { // if it is an unexpected internal exception...
 			headers.setContentType(MediaType.APPLICATION_JSON);
 			String url = getUrl(request);
 			String message = e.getMessage();

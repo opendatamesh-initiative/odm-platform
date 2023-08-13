@@ -4,7 +4,9 @@ package org.opendatamesh.platform.pp.devops.api.resources;
 public enum ODMDevOpsAPIStandardError {
 
     // Bad Request Exceptions
-    SC400_01_ACTIVITY_ID_IS_EMPTY ("40001", "Activity id is empty"),
+    SC400_00_REQUEST_BODY_IS_NOT_READABLE ("40000", "Request body is not readable"),
+    SC400_50_ACTIVITY_ID_IS_EMPTY ("40050", "Activity id is empty"),
+
     
     SC400_99_PROPERTY_REF_EXCEPTION ("40099", "Property Reference Exception"),
     /* 
@@ -32,6 +34,12 @@ public enum ODMDevOpsAPIStandardError {
     SC404_04_SCHEMA_NOT_FOUND ("40404", "Schema not found"),
     SC404_05_TEMPLATE_NOT_FOUND ("40405", "Template not found"),
     */
+
+    // Not Acceptable Media Type Exception
+    SC406_01_RESPONSE_ACCEPTED_MEDIA_TYPES_NOT_SUPPORTED ("40601", "Response accepted media types not supported"),
+
+    // Unsupported Media Type Exception
+    SC415_01_REQUEST_MEDIA_TYPE_NOT_SUPPORTED ("40015", "Request media type not supported"),
 
     // Unprocessable Entity Exceptions
     SC422_01_ACTIVITY_IS_INVALID ("42201", "Activity is invalid"),
@@ -73,6 +81,10 @@ public enum ODMDevOpsAPIStandardError {
     SC500_00_SERVICE_ERROR ("50000", "Error in the backend service"),
     SC500_01_DATABASE_ERROR ("50001", "Error in the backend database"),
     SC500_02_DESCRIPTOR_ERROR ("50002", "Error in the backend descriptor processor"),
+    SC500_50_REGISTRY_SERVICE_ERROR ("50050", "Error in the backend registry service"),
+    SC500_70_NOTIFICATION_SERVICE_ERROR ("50070", "Error in the backend notification service"),
+    SC500_71_POLICY_SERVICE_ERROR ("50071", "Error in the backend policy service"),
+    SC500_72_EXECUTOR_SERVICE_ERROR ("50072", "Error in the backend executor service"),
 
 
     SC000_TBD ("00000", "TBD");

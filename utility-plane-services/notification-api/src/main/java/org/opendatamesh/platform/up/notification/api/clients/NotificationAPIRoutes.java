@@ -1,8 +1,8 @@
 package org.opendatamesh.platform.up.notification.api.clients;
 
-import org.opendatamesh.platform.core.commons.clients.RoutesInterface;
+import org.opendatamesh.platform.core.commons.clients.ODMApiRoutes;
 
-public enum NotificationAPIRoutes implements RoutesInterface {
+public enum NotificationAPIRoutes implements ODMApiRoutes {
 
     METASERVICE_NOTIFICATION("/api/v1/up/metaservice/notifications");
 

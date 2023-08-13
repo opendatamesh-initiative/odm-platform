@@ -1,8 +1,8 @@
 package org.opendatamesh.platform.pp.devops.api.clients;
 
-import org.opendatamesh.platform.core.commons.clients.RoutesInterface;
+import org.opendatamesh.platform.core.commons.clients.ODMApiRoutes;
 
-public enum DevOpsAPIRoutes implements RoutesInterface {
+public enum DevOpsAPIRoutes implements ODMApiRoutes {
 
     ACTIVITIES("/activities"),
     TASKS("/tasks");

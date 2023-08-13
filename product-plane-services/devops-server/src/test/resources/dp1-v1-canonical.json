@@ -176,6 +176,62 @@
         "configurations": {
           "stage": "PROD"
         }
+      },
+      "stage-noservice": {
+        "template": {
+          "name": "dpdLifecyclePipe",
+          "specification": "spec",
+          "specificationVersion": "2.0",
+          "definition": {
+            "$ref": "http://localhost:8001/api/v1/pp/registry/templates/1",
+            "$originalRef": null
+          }
+        },
+        "configurations": {
+          "stage": "PROD"
+        }
+      },
+      "stage-notemplate": {
+        "service": {
+          "$href": "azure-devops"
+        },
+        "configurations": {
+          "stage": "PROD"
+        }
+      },
+      "stage-noconf": {
+        "service": {
+          "$href": "azure-devops"
+        },
+        "template": {
+          "name": "dpdLifecyclePipe",
+          "specification": "spec",
+          "specificationVersion": "2.0",
+          "definition": {
+            "$ref": "http://localhost:8001/api/v1/pp/registry/templates/1",
+            "$originalRef": null
+          }
+        }
+      },
+      "stage-empty": {
+       
+      },
+      "stage-wrong-executor": {
+        "service": {
+          "$href": "aws-codepipeline"
+        },
+        "template": {
+          "name": "dpdLifecyclePipe",
+          "specification": "spec",
+          "specificationVersion": "2.0",
+          "definition": {
+            "$ref": "http://localhost:8001/api/v1/pp/registry/templates/1",
+            "$originalRef": null
+          }
+        },
+        "configurations": {
+          "stage": "PROD"
+        }
       }
     },
     "applicationComponents": [

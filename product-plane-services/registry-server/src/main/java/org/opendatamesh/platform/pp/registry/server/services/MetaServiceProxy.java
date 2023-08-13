@@ -1,7 +1,5 @@
 package org.opendatamesh.platform.pp.registry.server.services;
 
-
-import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.registry.api.v1.exceptions.BadGatewayException;
 import org.opendatamesh.platform.pp.registry.api.v1.exceptions.ODMRegistryAPIStandardError;
 import org.opendatamesh.platform.up.notification.api.clients.NotificationClient;

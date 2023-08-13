@@ -1,5 +1,7 @@
 package org.opendatamesh.platform.up.executor.api.clients;
 
+import org.opendatamesh.platform.core.commons.clients.ODMClient;
+import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.up.executor.api.resources.TaskResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -9,39 +11,50 @@ import org.springframework.web.client.RestTemplate;
 
 import lombok.Data;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Objects;
 
 @Data
-public class ExecutorClient {
+public class ExecutorClient extends ODMClient {
 
-    String address;
-    RestTemplate rest;
-
-    public ExecutorClient(String address) {
-        this.address = Objects.requireNonNull(address);
-        rest = new RestTemplate();
+    public ExecutorClient(String serverAddress) {
+        super(serverAddress, ObjectMapperFactory.JSON_MAPPER);
     }
 
-    public TaskResource createTask(TaskResource task) {
+    // ======================================================================================
+    // TASK
+    // ======================================================================================
 
-        HttpEntity<TaskResource> entity = null;
+    // ----------------------------------------
+    // CREATE
+    // ----------------------------------------
+    
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-       
-        entity = new HttpEntity<TaskResource>(task, headers);
-
-        ResponseEntity<TaskResource> postTaskResponse = rest.postForEntity(
-            apiUrl(ExecutorAPIRoutes.TASKS),
-            entity,
-            TaskResource.class);
-
-        return postTaskResponse.getBody();
+    public TaskResource createTask(Object payload) throws IOException {
+        return postTask(payload).getBody();
     }
 
+    public ResponseEntity<TaskResource> postTask(
+            Object payload) throws IOException {
+
+        return postTask(payload, TaskResource.class);
+    }
+
+    public <T> ResponseEntity<T> postTask(
+            Object payload, Class<T> responseType) throws IOException {
+
+        return rest.postForEntity(
+                apiUrl(ExecutorAPIRoutes.TASKS),
+                getHttpEntity(payload),
+                responseType);
+    }
+
+    // ----------------------------------------
+    // READ
+    // ----------------------------------------
+
+    
     public TaskResource readTask(Long id) {
 
         ResponseEntity<TaskResource> getTaskResponse =  rest.getForEntity(
@@ -50,21 +63,5 @@ public class ExecutorClient {
             id);
 
         return getTaskResponse.getBody();
-    }
-
-    public String apiUrl(ExecutorAPIRoutes route) {
-        return apiUrl(route, "");
-    }
-
-    public String apiUrl(ExecutorAPIRoutes route, String extension) {
-        return apiUrlFromString(route.getPath() + extension);
-    }
-
-    public String apiUrlOfItem(ExecutorAPIRoutes route) {
-        return apiUrl(route, "/{id}");
-    }
-
-    public String apiUrlFromString(String routeUrlString) {
-        return address + routeUrlString;
     }
 }

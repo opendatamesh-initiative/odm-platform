@@ -1,6 +1,8 @@
 package org.opendatamesh.platform.up.executor.api.clients;
 
-public enum ExecutorAPIRoutes {
+import org.opendatamesh.platform.core.commons.clients.ODMApiRoutes;
+
+public enum ExecutorAPIRoutes implements ODMApiRoutes {
        
         TASKS("/tasks");
 
@@ -18,6 +20,7 @@ public enum ExecutorAPIRoutes {
             return this.path;
         }
 
+        @Override
         public String getPath() {
             return path;
         }

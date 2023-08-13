@@ -7,7 +7,6 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -16,10 +15,8 @@ import java.util.Arrays;
 
 import javax.annotation.PostConstruct;
 
-import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runner.RunWith;
+import org.opendatamesh.platform.core.commons.clients.ODMIntegrationTest;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.devops.api.clients.DevOpsClient;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityResource;
@@ -40,18 +37,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequest;
+import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.lang.Nullable;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.client.RequestMatcher;
 import org.springframework.test.web.client.ResponseCreator;
 import org.springframework.util.ObjectUtils;
+
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -62,7 +58,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 //@ActiveProfiles("testpostgresql")
 //@ActiveProfiles("testmysql")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = { ODMDevOpsApp.class })
-public abstract class ODMDevOpsIT {
+public abstract class ODMDevOpsIT extends ODMIntegrationTest{
 
     @LocalServerPort
     protected String port;
@@ -73,9 +69,6 @@ public abstract class ODMDevOpsIT {
     @Autowired
     DevOpsClients clients;
 
-    MockRestServiceServer registryMockServer;
-    MockRestServiceServer executorMockServer;
-
     protected ObjectMapper mapper;
 
     protected Logger logger = LoggerFactory.getLogger(ODMDevOpsIT.class);
@@ -83,7 +76,6 @@ public abstract class ODMDevOpsIT {
     protected final String DB_TABLES_POSTGRESQL = "src/test/resources/db/tables_postgresql.txt";
     protected final String DB_TABLES_MYSQL = "src/test/resources/db/tables_mysql.txt";
 
-   
     @PostConstruct
     public void init() {
 
@@ -91,13 +83,9 @@ public abstract class ODMDevOpsIT {
         resourceBuilder = new ODMDevOpsResourceBuilder();
         devOpsClient = new DevOpsClient("http://localhost:" + port);
 
-        registryMockServer = MockRestServiceServer.bindTo(clients.getRegistryClient().getRest().getRestTemplate())
-                .ignoreExpectOrder(true)
-                .build();
-
-        executorMockServer = MockRestServiceServer.bindTo(clients.getExecutorClient("azure-devops").getRest())
-                .ignoreExpectOrder(true)
-                .build();
+        bindMockServerToRegistryClient();
+        bindMockServerToExecutorClient();
+  
     }
 
     @BeforeEach
@@ -128,12 +116,12 @@ public abstract class ODMDevOpsIT {
 
     protected ActivityResource createTestActivity1(boolean startAfterCreation) {
         return createActivity(
-            ODMDevOpsResources.RESOURCE_ACTIVITY_1, startAfterCreation);
+                ODMDevOpsResources.RESOURCE_ACTIVITY_1, startAfterCreation);
     }
 
     protected ActivityResource createActivity(String filePath, boolean startAfterCreation) {
         ActivityResource createdActivityRes = null;
-        
+
         ActivityResource activityRes;
         try {
             activityRes = resourceBuilder.readResourceFromFile(filePath, ActivityResource.class);
@@ -143,14 +131,15 @@ public abstract class ODMDevOpsIT {
             return null;
         }
         createdActivityRes = createActivity(activityRes, startAfterCreation);
-        
+
         return createdActivityRes;
     }
 
     protected ActivityResource createActivity(ActivityResource activityRes, boolean startAfterCreation) {
         ActivityResource createdActivityRes = null;
+
+        ResponseEntity<ActivityResource> postActivityResponse = null;
         
-        ResponseEntity<ActivityResource> postActivityResponse = null;;
         try {
             postActivityResponse = devOpsClient.postActivity(activityRes, startAfterCreation);
         } catch (Throwable t) {
@@ -161,7 +150,7 @@ public abstract class ODMDevOpsIT {
 
         verifyResponseEntity(postActivityResponse, HttpStatus.CREATED, true);
         createdActivityRes = postActivityResponse.getBody();
-        
+
         return createdActivityRes;
     }
 
@@ -208,19 +197,83 @@ public abstract class ODMDevOpsIT {
 
     // TODO ...add as needed
 
-     // ======================================================================================
+    // ======================================================================================
     // MOCKS
     // ======================================================================================
 
-    public void createMocksForCreateActivityCall() {
-        try {
-            String apiResponse = resourceBuilder.readResourceFromFile(ODMDevOpsResources.RESOURCE_DPV_1_CANONICAL);
-            mockReadOneDataProductVersion(apiResponse, "c18b07ba-bb01-3d55-a5bf-feb517a8d901", "1.0.0");
-            mockCreateTask();
+    public void resetAllClientsMockServer() {
+        resetRegistryClientMockServer();
+        resetExecutorClientMockServer();
+    }
 
-            DefinitionResource templateRes = resourceBuilder.readResourceFromFile(ODMDevOpsResources.TEMPLATE_DEF_1_CANONICAL,
-                    DefinitionResource.class);
-            mockReadOneTemplateDefinition(templateRes, "1");
+    public void resetRegistryClientMockServer() {
+        clients.getRegistryClient().resetMockServer();
+    }
+
+    public void resetExecutorClientMockServer() {
+        clients.getExecutorClient("azure-devops").resetMockServer();
+    }
+
+    public void bindMockServerToRegistryClient() {
+        clients.getRegistryClient().bindMockServer();
+        /* 
+        RestTemplate restTemplate = clients.getRegistryClient().getRest().getRestTemplate();
+        registryClientRequestFactory = restTemplate.getRequestFactory();
+        registryMockServer = MockRestServiceServer.bindTo(restTemplate)
+                .ignoreExpectOrder(true)
+                .build();
+        */
+    }
+
+    public void unbindMockServerFromRegistryClient() {
+        clients.getRegistryClient().unbindMockServer();
+        //RestTemplate restTemplate = clients.getRegistryClient().getRest().getRestTemplate();
+        //restTemplate.setRequestFactory(registryClientRequestFactory);
+    }
+
+    public void bindMockServerToExecutorClient() {
+        clients.getExecutorClient("azure-devops").bindMockServer();
+        /* 
+        RestTemplate restTemplate =  clients.getExecutorClient("azure-devops").getRest().getRestTemplate();
+        executorClientRequestFactory = restTemplate.getRequestFactory();
+        executorMockServer = MockRestServiceServer.bindTo(restTemplate)
+                .ignoreExpectOrder(true)
+                .build();
+        */
+    }
+
+    public void unbindMockServerFromExecutorClient() {
+        clients.getExecutorClient("azure-devops").unbindMockServer();
+        /* 
+        RestTemplate restTemplate =  clients.getExecutorClient("azure-devops").getRest().getRestTemplate();
+        restTemplate.setRequestFactory(executorClientRequestFactory);
+        */
+    }
+
+    public void createMocksForCreateActivityCall() {
+        createMocksForCreateActivityCall(true, true);
+    }
+
+    public void createMocksForCreateActivityCall(
+            boolean mockRegistry, boolean mockExecutor) {
+        try {
+            if (mockRegistry) {
+                String apiResponse = resourceBuilder.readResourceFromFile(ODMDevOpsResources.RESOURCE_DPV_1_CANONICAL);
+                mockReadOneDataProductVersion(apiResponse, "c18b07ba-bb01-3d55-a5bf-feb517a8d901", "1.0.0");
+
+                DefinitionResource templateRes = resourceBuilder.readResourceFromFile(
+                        ODMDevOpsResources.TEMPLATE_DEF_1_CANONICAL,
+                        DefinitionResource.class);
+                mockReadOneTemplateDefinition(templateRes, "1");
+            } else {
+                unbindMockServerFromRegistryClient();
+            }
+
+            if (mockExecutor) {
+                mockCreateTask();
+            } else {
+                unbindMockServerFromExecutorClient();
+            }
         } catch (IOException e) {
             fail("Impossible to create moks");
             e.printStackTrace();
@@ -251,7 +304,7 @@ public abstract class ODMDevOpsIT {
 
         // requestTo(apiUrl)
         try {
-            registryMockServer
+            clients.getRegistryClient().getMockServer()
                     .expect(ExpectedCount.once(), new MyRequestMatcher(apiUrl))
                     // .andExpect(content().contentType(responseType))
                     .andExpect(method(HttpMethod.GET))
@@ -280,7 +333,7 @@ public abstract class ODMDevOpsIT {
 
         // requestTo(apiUrl)
         try {
-            registryMockServer
+            clients.getRegistryClient().getMockServer()
                     .expect(ExpectedCount.manyTimes(), new MyRequestMatcher(apiUrl))
                     // .andExpect(content().contentType(responseType))
                     .andExpect(method(HttpMethod.GET))
@@ -299,7 +352,7 @@ public abstract class ODMDevOpsIT {
 
         // http://localhost:9003/api/v1/up/executor/tasks
         try {
-            executorMockServer
+            clients.getExecutorClient("azure-devops").getMockServer()
                     .expect(ExpectedCount.manyTimes(), requestTo(apiUrl))
                     .andExpect(method(HttpMethod.POST))
                     .andRespond(new MyResponseCreator());

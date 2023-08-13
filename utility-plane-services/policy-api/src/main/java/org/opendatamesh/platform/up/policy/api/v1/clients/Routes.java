@@ -1,8 +1,8 @@
 package org.opendatamesh.platform.up.policy.api.v1.clients;
 
-import org.opendatamesh.platform.core.commons.clients.RoutesInterface;
+import org.opendatamesh.platform.core.commons.clients.ODMApiRoutes;
 
-public enum Routes implements RoutesInterface {
+public enum Routes implements ODMApiRoutes {
 
     POLICYSERVICE_POLICY("/api/v1/planes/utility/policy-services/opa/policies"),
     POLICYSERVICE_SUITE("/api/v1/planes/utility/policy-services/opa/suites"),

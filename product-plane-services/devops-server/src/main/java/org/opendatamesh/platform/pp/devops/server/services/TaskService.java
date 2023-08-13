@@ -114,10 +114,17 @@ public class TaskService {
             task.setStartedAt(new Date());
             saveTask(task);
 
-            task = submitTask(task);
-            if (task.getStatus().equals(ActivityTaskStatus.FAILED)) {
-                saveTask(task);
+            if(task.getExecutorRef() != null) {
+                task = submitTask(task);
+                if (task.getStatus().equals(ActivityTaskStatus.FAILED)) {
+                    saveTask(task);
+                }
+            } else {
+                task.setResults("Nothing to do. Task succeded by default");
+                task.setStatus(ActivityTaskStatus.PROCESSED);
+                task.setFinishedAt(new Date());
             }
+            
         } catch(Throwable t) {
              throw new InternalServerException(
                 ODMDevOpsAPIStandardError.SC500_01_DATABASE_ERROR,
@@ -141,7 +148,9 @@ public class TaskService {
             if (odmExecutor != null) {
                 taskRes = odmExecutor.createTask(taskRes);
             } else {
-                throw new RuntimeException("Executor [" + task.getExecutorRef() + "] supported");
+                taskRes.setStatus(TaskStatus.FAILED);
+                taskRes.setErrors("Executor [" + task.getExecutorRef() + "] supported");
+                taskRes.setFinishedAt(new Date());
             }
 
             task = taskMapper.toEntity(taskRes);
@@ -212,7 +221,7 @@ public class TaskService {
 
         if (taskId == null) {
             throw new BadRequestException(
-                    ODMDevOpsAPIStandardError.SC400_01_ACTIVITY_ID_IS_EMPTY,
+                    ODMDevOpsAPIStandardError.SC400_50_ACTIVITY_ID_IS_EMPTY,
                     "Task id is empty");
         }
 
@@ -304,7 +313,7 @@ public class TaskService {
 
         task = new Task();
         task.setActivityId(activityId);
-        String executorServiceRef = activityInfo.getService().getHref();
+        String executorServiceRef = activityInfo.getService() != null? activityInfo.getService().getHref(): null;
         task.setExecutorRef(executorServiceRef);
 
         if (activityInfo.hasTemplate()) {
@@ -342,7 +351,7 @@ public class TaskService {
         }
         if (templateDefinition == null) {
             throw new NotFoundException(
-                    ODMDevOpsAPIStandardError.SC404_01_ACTIVITY_NOT_FOUND,
+                    ODMDevOpsAPIStandardError.SC500_00_SERVICE_ERROR,
                     "Template with id [" + templateId + "] does not existe");
         }
 

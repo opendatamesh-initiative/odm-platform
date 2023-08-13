@@ -1,6 +1,6 @@
 package org.opendatamesh.platform.core.commons.clients;
 
-public interface RoutesInterface {
+public interface ODMApiRoutes {
     @Override
     String toString();
     String getPath();

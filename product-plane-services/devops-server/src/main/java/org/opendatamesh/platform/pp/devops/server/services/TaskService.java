@@ -222,7 +222,7 @@ public class TaskService {
 
         if (taskId == null) {
             throw new BadRequestException(
-                    ODMDevOpsAPIStandardError.SC400_50_ACTIVITY_ID_IS_EMPTY,
+                    ODMDevOpsAPIStandardError.SC400_60_TASK_ID_IS_EMPTY,
                     "Task id is empty");
         }
 
@@ -238,7 +238,7 @@ public class TaskService {
 
         if (task == null) {
             throw new NotFoundException(
-                    ODMDevOpsAPIStandardError.SC404_01_ACTIVITY_NOT_FOUND,
+                    ODMDevOpsAPIStandardError.SC404_11_TASK_NOT_FOUND,
                     "Data Product with [" + taskId + "] does not exist");
         }
 

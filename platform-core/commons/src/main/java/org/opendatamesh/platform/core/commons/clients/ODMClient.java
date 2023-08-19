@@ -10,7 +10,12 @@ import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.lang.Nullable;
 import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.util.Assert;
+import org.springframework.web.client.RequestCallback;
+import org.springframework.web.client.ResponseExtractor;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -179,6 +184,17 @@ public class ODMClient {
     protected <T> HttpEntity<T> getHttpEntity(T payload) throws IOException {
         return new HttpEntity<T>(payload, getHeaders());
     }
+
+    // becaus restTemplate does not have such method for patch 
+    public <T> ResponseEntity<T> patchForEntity(String url, @Nullable Object request,
+			Class<T> responseType, Object... uriVariables) throws RestClientException {
+
+		RequestCallback requestCallback = rest.getRestTemplate().httpEntityCallback(request, responseType);
+		ResponseExtractor<ResponseEntity<T>> responseExtractor = rest.getRestTemplate().responseEntityExtractor(responseType);
+		ResponseEntity<T> result = rest.getRestTemplate().execute(url, HttpMethod.PATCH, requestCallback, responseExtractor, uriVariables);
+        Assert.state(result != null, "No result");
+        return result;
+	}
 
     //this method maps the responses of the client based on the response's status code.
     //the mapper returns the passed acceptedClass if the response contains the acceptedStatusCode(s)

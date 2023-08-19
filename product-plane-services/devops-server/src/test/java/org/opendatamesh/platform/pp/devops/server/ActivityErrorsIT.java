@@ -225,9 +225,9 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
         ErrorRes errorRes = response.getBody();
         assertThat(errorRes).isNotNull();
         assertThat(errorRes.getCode())
-                .isEqualTo(ODMDevOpsAPIStandardError.SC406_01_RESPONSE_ACCEPTED_MEDIA_TYPES_NOT_SUPPORTED.code());
+                .isEqualTo(ODMDevOpsAPIStandardError.SC406_01_REQUEST_ACCEPTED_MEDIA_TYPES_NOT_SUPPORTED.code());
         assertThat(errorRes.getDescription()).isEqualTo(
-                ODMDevOpsAPIStandardError.SC406_01_RESPONSE_ACCEPTED_MEDIA_TYPES_NOT_SUPPORTED.description());
+                ODMDevOpsAPIStandardError.SC406_01_REQUEST_ACCEPTED_MEDIA_TYPES_NOT_SUPPORTED.description());
         assertThat(errorRes.getMessage()).isNotNull();
         assertThat(errorRes.getPath()).isEqualTo(DevOpsAPIRoutes.ACTIVITIES.getPath());
         assertThat(errorRes.getStatus()).isEqualTo(HttpStatus.NOT_ACCEPTABLE.value());
@@ -410,7 +410,7 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
         Long wrongActivityId = 50L;
         ResponseEntity<ErrorRes> response = null;
         try {
-            response = devOpsClient.postActivityStart(wrongActivityId, ErrorRes.class);
+            response = devOpsClient.patchActivityStart(wrongActivityId, ErrorRes.class);
         } catch (Throwable t) {
             t.printStackTrace();
             fail("Impossible to get activity: " + t.getMessage());
@@ -457,7 +457,7 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
 
         ResponseEntity<ErrorRes> response = null;
         try {
-            response = devOpsClient.postActivityStart(startedActivityRes.getId(), ErrorRes.class);
+            response = devOpsClient.patchActivityStart(startedActivityRes.getId(), ErrorRes.class);
         } catch (Throwable t) {
             t.printStackTrace();
             fail("Impossible to start activity: " + t.getMessage());
@@ -505,7 +505,7 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
 
         ResponseEntity<ErrorRes> response = null;
         try {
-            response = devOpsClient.postActivityStart(activityRes.getId(), ErrorRes.class);
+            response = devOpsClient.patchActivityStart(activityRes.getId(), ErrorRes.class);
         } catch (Throwable t) {
             t.printStackTrace();
             fail("Impossible to start activity: " + t.getMessage());

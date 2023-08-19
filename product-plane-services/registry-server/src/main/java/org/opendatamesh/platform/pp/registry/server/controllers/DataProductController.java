@@ -38,7 +38,7 @@ import java.util.List;
 @Validated
 @Tag(
     name = "Data Products", 
-    description = "Data Products")
+    description = "Endpoints associated to products collection")
 public class DataProductController 
 {
     @Autowired
@@ -73,7 +73,7 @@ public class DataProductController
     @Operation(
         summary = "Register the the data product",
         description = "Register the provided data product in the Data Product Registry" 
-        //, tags = { "Data Products" }
+     
     )
     @ApiResponses(value = {
         @ApiResponse(

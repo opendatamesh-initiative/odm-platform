@@ -81,7 +81,7 @@ public class OpenDataMeshAPIExceptionHandler extends ResponseEntityExceptionHand
 			String message = e.getMessage();
 			body = new ErrorRes(
 				status.value(), 
-				ODMDevOpsAPIStandardError.SC406_01_RESPONSE_ACCEPTED_MEDIA_TYPES_NOT_SUPPORTED, 
+				ODMDevOpsAPIStandardError.SC406_01_REQUEST_ACCEPTED_MEDIA_TYPES_NOT_SUPPORTED, 
 				message, url);
 		} else if (body == null && !HttpStatus.INTERNAL_SERVER_ERROR.equals(status)) { // if it is an unexpected internal exception...
 			headers.setContentType(MediaType.APPLICATION_JSON);

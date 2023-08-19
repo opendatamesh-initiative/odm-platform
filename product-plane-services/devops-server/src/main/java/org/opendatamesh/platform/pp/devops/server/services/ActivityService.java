@@ -330,7 +330,7 @@ public class ActivityService {
         if (activity == null) {
             throw new NotFoundException(
                     ODMDevOpsAPIStandardError.SC404_01_ACTIVITY_NOT_FOUND,
-                    "Data Product with [" + activityId + "] does not exist");
+                    "Activity with id equals to [" + activityId + "] does not exist");
         }
 
         return activity;

@@ -34,7 +34,7 @@ License.
     <name>ODM Platform Registry Server</name>
     <description>Open Data Mesh Platform's registry service server</description>
     <version>1.0.0</version>
-     <url>https://github.com/opendatamesh-initiative/odm-platform</url>
+    <url>https://github.com/opendatamesh-initiative/odm-platform</url>
 
 
     <licenses>

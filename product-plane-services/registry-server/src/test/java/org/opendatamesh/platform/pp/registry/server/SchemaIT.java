@@ -2,10 +2,10 @@ package org.opendatamesh.platform.pp.registry.server;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.opendatamesh.platform.pp.registry.api.v1.exceptions.ODMRegistryAPIStandardError;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.ApiToSchemaRelationshipResource;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.ErrorRes;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.SchemaResource;
+import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
+import org.opendatamesh.platform.pp.registry.api.resources.ApiToSchemaRelationshipResource;
+import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
+import org.opendatamesh.platform.pp.registry.api.resources.SchemaResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
@@ -142,7 +142,7 @@ public class SchemaIT extends ODMRegistryIT {
         verifyResponseError(
                 postResponse,
                 HttpStatus.BAD_REQUEST,
-                ODMRegistryAPIStandardError.SC400_12_SCHEMA_IS_EMPTY
+                RegistryApiStandardErrors.SC400_12_SCHEMA_IS_EMPTY
         );
 
     }
@@ -159,7 +159,7 @@ public class SchemaIT extends ODMRegistryIT {
         verifyResponseError(
                 postResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                ODMRegistryAPIStandardError.SC422_08_DEFINITION_DOC_SYNTAX_IS_INVALID
+                RegistryApiStandardErrors.SC422_08_DEFINITION_DOC_SYNTAX_IS_INVALID
         );
 
         // TEST 2: Schema already exists
@@ -168,7 +168,7 @@ public class SchemaIT extends ODMRegistryIT {
         verifyResponseError(
                 postResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                ODMRegistryAPIStandardError.SC422_11_SCHEMA_ALREADY_EXISTS
+                RegistryApiStandardErrors.SC422_11_SCHEMA_ALREADY_EXISTS
         );
 
     }
@@ -182,7 +182,7 @@ public class SchemaIT extends ODMRegistryIT {
         verifyResponseError(
                 errorResponse,
                 HttpStatus.NOT_FOUND,
-                ODMRegistryAPIStandardError.SC404_04_SCHEMA_NOT_FOUND
+                RegistryApiStandardErrors.SC404_04_SCHEMA_NOT_FOUND
         );
 
     }
@@ -196,7 +196,7 @@ public class SchemaIT extends ODMRegistryIT {
         verifyResponseError(
                 errorResponse,
                 HttpStatus.NOT_FOUND,
-                ODMRegistryAPIStandardError.SC404_04_SCHEMA_NOT_FOUND
+                RegistryApiStandardErrors.SC404_04_SCHEMA_NOT_FOUND
         );
 
     }
@@ -218,7 +218,7 @@ public class SchemaIT extends ODMRegistryIT {
         verifyResponseError(
                 deleteResponse,
                 HttpStatus.NOT_FOUND,
-                ODMRegistryAPIStandardError.SC404_04_SCHEMA_NOT_FOUND
+                RegistryApiStandardErrors.SC404_04_SCHEMA_NOT_FOUND
         );
 
     }

@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsConfigurations.ServiceConfigs;
-import org.opendatamesh.platform.pp.registry.api.v1.clients.RegistryClient;
+import org.opendatamesh.platform.pp.registry.api.clients.RegistryClient;
 import org.opendatamesh.platform.up.executor.api.clients.ExecutorClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

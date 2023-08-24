@@ -3,7 +3,9 @@
 ##########################
 spring:
   profiles:
-    active: dev
+    active: dev 
+    #testmysql 
+    #testpostgresql
 
 server:
   port: 8001

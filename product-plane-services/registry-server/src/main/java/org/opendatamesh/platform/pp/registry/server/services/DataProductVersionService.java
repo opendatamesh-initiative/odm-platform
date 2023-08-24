@@ -5,6 +5,12 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import org.opendatamesh.platform.core.commons.servers.exceptions.BadGatewayException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.NotFoundException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
+import org.opendatamesh.platform.core.commons.servers.exceptions.UnprocessableEntityException;
+import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproduct.*;
 import org.opendatamesh.platform.pp.registry.server.database.entities.sharedres.ApiDefinition;
 import org.opendatamesh.platform.pp.registry.server.database.entities.sharedres.ApiToSchemaRelationship;
@@ -15,7 +21,6 @@ import org.opendatamesh.platform.pp.registry.server.database.mappers.DataProduct
 import org.opendatamesh.platform.pp.registry.server.database.repositories.DataProductVersionRepository;
 import org.opendatamesh.platform.pp.registry.server.resources.v1.observers.EventNotifier;
 import org.opendatamesh.platform.pp.registry.server.resources.v1.policyservice.PolicyName;
-import org.opendatamesh.platform.pp.registry.api.v1.exceptions.*;
 import org.opendatamesh.platform.up.notification.api.resources.EventResource;
 import org.opendatamesh.platform.up.notification.api.resources.EventType;
 import org.opendatamesh.platform.up.policy.api.v1.clients.PolicyServiceClient;
@@ -74,7 +79,7 @@ public class DataProductVersionService {
             boolean checkGlobalPolicies) {
         if (dataProductVersion == null) {
             throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
+                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "Data product version object cannot be null");
         }
 
@@ -82,7 +87,7 @@ public class DataProductVersionService {
             dataProductVersion.getInfo().getVersionNumber();
             dataProductVersion.getInfo().getFullyQualifiedName();
             throw new UnprocessableEntityException(
-                    ODMRegistryAPIStandardError.SC422_05_VERSION_ALREADY_EXISTS,
+                RegistryApiStandardErrors.SC422_05_VERSION_ALREADY_EXISTS,
                     "Version [" + dataProductVersion.getInfo().getVersionNumber() + "] of data product ["
                             + dataProductVersion.getInfo().getFullyQualifiedName() + "] already exists");
         }
@@ -90,7 +95,7 @@ public class DataProductVersionService {
         // TODO check schemas evolution rules
         if (checkGlobalPolicies && !isCompliantWithGlobalPolicies(dataProductVersion)) {
             throw new UnprocessableEntityException(
-                    ODMRegistryAPIStandardError.SC422_03_DESCRIPTOR_DOC_SEMANTIC_IS_INVALID,
+                RegistryApiStandardErrors.SC422_03_DESCRIPTOR_DOC_SEMANTIC_IS_INVALID,
                     "The data product descriptor is not compliant to one or more global policies");
         }
 
@@ -98,7 +103,7 @@ public class DataProductVersionService {
             saveApiDefinitions(dataProductVersion);
         } catch (Throwable t) {
             throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
+                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "An internal processing error occured while saving API", t);
         }
 
@@ -106,7 +111,7 @@ public class DataProductVersionService {
             saveTemplates(dataProductVersion);
         } catch (Throwable t) {
             throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
+                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "An internal processing error occured while saving templates", t);
         }
 
@@ -114,7 +119,7 @@ public class DataProductVersionService {
             dataProductVersion = saveDataProductVersion(dataProductVersion);
         } catch (Throwable t) {
             throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
+                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while saving version ["
                             + dataProductVersion.getInfo().getVersionNumber() + "] of data product ["
                             + dataProductVersion.getDataProduct().getId() + "]",
@@ -130,7 +135,7 @@ public class DataProductVersionService {
             eventNotifier.notifyEvent(eventResource);
         } catch (Throwable t) {
             throw new BadGatewayException(
-                    ODMRegistryAPIStandardError.SC502_05_META_SERVICE_ERROR,
+                ODMApiCommonErrors.SC502_70_NOTIFICATION_SERVICE_ERROR,
                     "Impossible to upload data product version to metaService: " + t.getMessage()
                     , t
             );
@@ -219,7 +224,7 @@ public class DataProductVersionService {
             }
         } catch (Throwable t) {
             throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
+                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while schema of endpoint [" + endpoint
                             + "]",
                     t);
@@ -255,7 +260,7 @@ public class DataProductVersionService {
             }
         } catch (Throwable t) {
             throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
+                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while saving api of port [" + port.getFullyQualifiedName()
                             + "]",
                     t);
@@ -321,7 +326,7 @@ public class DataProductVersionService {
             }
         } catch (Throwable t) {
             throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
+                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while saving stage [" +  activity.getStageName() + "] of lifecycleInfo object", t);
         }
         
@@ -366,7 +371,7 @@ public class DataProductVersionService {
             }
         } catch (Throwable t) {
             throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
+                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while saving [" + templateDefinitionProperty + "].template of app component [" + component.getFullyQualifiedName()
                             + "]",
                     t);
@@ -401,13 +406,13 @@ public class DataProductVersionService {
     private DataProductVersion readDataProductVersion(DataProductVersion dataProductVersion) {
         if (dataProductVersion == null) {
             throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
+                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "Data product version object cannot be null");
         }
 
         if (dataProductVersion.getDataProduct() == null) {
             throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
+                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "Data product object cannot be null");
         }
         return readDataProductVersion(dataProductVersion.getDataProduct().getId(),
@@ -420,7 +425,7 @@ public class DataProductVersionService {
 
         if (!StringUtils.hasText(dataProductId)) {
             throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
+                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "Data product id cannot be empty");
         }
 
@@ -428,7 +433,7 @@ public class DataProductVersionService {
             dataProductVersion = getDataProductVersion(dataProductId, version);
         } catch (Throwable t) {
             throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
+                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while loading version [" + version + "] of data product ["
                             + dataProductId + "]",
                     t);
@@ -436,7 +441,7 @@ public class DataProductVersionService {
 
         if (dataProductVersion == null) {
             throw new NotFoundException(
-                    ODMRegistryAPIStandardError.SC404_01_PRODUCT_NOT_FOUND,
+                RegistryApiStandardErrors.SC404_01_PRODUCT_NOT_FOUND,
                     "Data product [" + dataProductId + "] does not exist");
         }
 
@@ -460,13 +465,13 @@ public class DataProductVersionService {
     private boolean dataProductVersionExists(DataProductVersion dataProductVersion) {
         if (dataProductVersion == null) {
             throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
+                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "Data product version object cannot be null");
         }
 
         if (dataProductVersion.getDataProduct() == null) {
             throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
+                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "Data product object cannot be null");
         }
 
@@ -490,7 +495,7 @@ public class DataProductVersionService {
             dataProductVersionSearchResult = findDataProductVersions(dataProductId);
         } catch (Throwable t) {
             throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
+                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while searching data product versions",
                     t);
         }
@@ -515,7 +520,7 @@ public class DataProductVersionService {
     public void deleteDataProductVersion(DataProductVersion dataProductVersion) {
         if (dataProductVersion == null) {
             throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
+                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "Data product version object cannot be null");
         }
         deleteDataProductVersion(
@@ -539,7 +544,7 @@ public class DataProductVersionService {
                     + "] succesfully deleted");
         } catch (Throwable t) {
             throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
+                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while deleting data product version",
                     t
             );
@@ -555,7 +560,7 @@ public class DataProductVersionService {
             eventNotifier.notifyEvent(eventResource);
         } catch (Throwable t) {
             throw new BadGatewayException(
-                    ODMRegistryAPIStandardError.SC502_05_META_SERVICE_ERROR,
+                ODMApiCommonErrors.SC502_70_NOTIFICATION_SERVICE_ERROR,
                     "Impossible to upload data product version to metaService: " + t.getMessage(),
                     t
             );
@@ -575,7 +580,7 @@ public class DataProductVersionService {
                     dataProductVersion, PolicyName.dataproduct);
         } catch (Throwable t) {
             throw new BadGatewayException(
-                    ODMRegistryAPIStandardError.SC502_01_POLICY_SERVICE_ERROR,
+                ODMApiCommonErrors.SC502_71_POLICY_SERVICE_ERROR,
                     "An error occured while invoking policy service to validate data product version: " + t.getMessage(),
                     t
             );

@@ -9,18 +9,20 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
+import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
+import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.NotFoundException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.parser.location.UriLocation;
 import org.opendatamesh.platform.core.dpds.serde.DataProductVersionSerializer;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.ErrorRes;
+import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproduct.DataProductVersion;
 import org.opendatamesh.platform.pp.registry.server.database.mappers.DataProductVersionMapper;
 import org.opendatamesh.platform.pp.registry.server.services.DataProductService;
 import org.opendatamesh.platform.pp.registry.server.services.DataProductVersionService;
-import org.opendatamesh.platform.pp.registry.api.v1.exceptions.BadRequestException;
-import org.opendatamesh.platform.pp.registry.api.v1.exceptions.InternalServerException;
-import org.opendatamesh.platform.pp.registry.api.v1.exceptions.NotFoundException;
-import org.opendatamesh.platform.pp.registry.api.v1.exceptions.ODMRegistryAPIStandardError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -144,13 +146,13 @@ public class DataProductVersionController
 
         if(!StringUtils.hasText(id)) {
             throw new BadRequestException(
-                ODMRegistryAPIStandardError.SC400_07_PRODUCT_ID_IS_EMPTY,
+                RegistryApiStandardErrors.SC400_07_PRODUCT_ID_IS_EMPTY,
                 "Id cannot be cannot be empty");
         }
 
         if(!StringUtils.hasText(descriptorContent)) {
             throw new BadRequestException(
-                ODMRegistryAPIStandardError.SC400_01_DESCRIPTOR_IS_EMPTY,
+                RegistryApiStandardErrors.SC400_01_DESCRIPTOR_IS_EMPTY,
                 "Input descriptor document cannot be empty");
         }
 
@@ -165,7 +167,7 @@ public class DataProductVersionController
             serailizedContent = serializer.serialize(dataProductVersionDPDS, "canonical", "json", true);
         } catch (JsonProcessingException e) {
            throw new InternalServerException(
-            ODMRegistryAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
+            ODMApiCommonErrors.SC500_02_DESCRIPTOR_ERROR,
             "Impossible to serialize data product version raw content", e);
         }
         return serailizedContent;
@@ -217,13 +219,13 @@ public class DataProductVersionController
     {
         if(!StringUtils.hasText(id)) {
             throw new BadRequestException(
-                ODMRegistryAPIStandardError.SC400_07_PRODUCT_ID_IS_EMPTY,
+                RegistryApiStandardErrors.SC400_07_PRODUCT_ID_IS_EMPTY,
                 "Id cannot be cannot be empty");
         }
 
         if(!dataProductService.dataProductExists(id)) {
             throw new NotFoundException(
-                ODMRegistryAPIStandardError.SC404_01_PRODUCT_NOT_FOUND,
+                RegistryApiStandardErrors.SC404_01_PRODUCT_NOT_FOUND,
                 "Data product not found");
         }
 
@@ -294,20 +296,20 @@ public class DataProductVersionController
     ) {
         if(!StringUtils.hasText(id)) {
             throw new BadRequestException(
-                ODMRegistryAPIStandardError.SC400_07_PRODUCT_ID_IS_EMPTY,
+                RegistryApiStandardErrors.SC400_07_PRODUCT_ID_IS_EMPTY,
                 "Id cannot be cannot be empty");
         }
 
         if(!StringUtils.hasText(version)) {
             throw new BadRequestException(
-                ODMRegistryAPIStandardError.SC400_11_PRODUCT_VERSION_NUMBER_IS_EMPTY,
+                RegistryApiStandardErrors.SC400_11_PRODUCT_VERSION_NUMBER_IS_EMPTY,
                 "Data product version number is empty");
         }
         
         
         if(StringUtils.hasText(format) && !(format.equalsIgnoreCase("normalized") || format.equalsIgnoreCase("canonical"))) {
             throw new BadRequestException(
-                ODMRegistryAPIStandardError.SC400_04_INVALID_FORMAT,
+                RegistryApiStandardErrors.SC400_04_INVALID_FORMAT,
                 "Format [" + format + "] is not supported");
         }
         
@@ -321,7 +323,7 @@ public class DataProductVersionController
             serailizedContent = serializer.serialize(dataProductVersionDPDS, format, "json", true);
         } catch (JsonProcessingException e) {
            throw new InternalServerException(
-            ODMRegistryAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
+            ODMApiCommonErrors.SC502_70_NOTIFICATION_SERVICE_ERROR,
             "Impossible to serialize data product version raw content", e);
         }
         return serailizedContent;
@@ -372,19 +374,19 @@ public class DataProductVersionController
     ) {
         if(!StringUtils.hasText(id)) {
             throw new BadRequestException(
-                ODMRegistryAPIStandardError.SC400_07_PRODUCT_ID_IS_EMPTY,
+                RegistryApiStandardErrors.SC400_07_PRODUCT_ID_IS_EMPTY,
                 "Id cannot be cannot be empty");
         }
 
         if(!StringUtils.hasText(version)) {
             throw new BadRequestException(
-                ODMRegistryAPIStandardError.SC400_11_PRODUCT_VERSION_NUMBER_IS_EMPTY,
+                RegistryApiStandardErrors.SC400_11_PRODUCT_VERSION_NUMBER_IS_EMPTY,
                 "Data product version number is empty");
         }
 
         if(!dataProductService.dataProductExists(id)) {
             throw new NotFoundException(
-                ODMRegistryAPIStandardError.SC404_01_PRODUCT_NOT_FOUND,
+                RegistryApiStandardErrors.SC404_01_PRODUCT_NOT_FOUND,
                 "Data product not found");
         }
 

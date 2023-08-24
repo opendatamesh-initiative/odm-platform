@@ -42,7 +42,7 @@ public class IdentifierStrategy {
         fqn = String.format(
             "urn:%s:%s:%s", 
             organization,
-            info.getEntityType(),
+            info.getEntityType() + "s", // we can do better than this
             info.getName()
         );
         
@@ -66,7 +66,7 @@ public class IdentifierStrategy {
             "%s:%s:%s:%s:%s", 
             descriptor.getInfo().getFullyQualifiedName(), // product fqn
             descriptor.getInfo().getVersionNumber(), // descriptor version number
-            component.getEntityType(),
+            component.getEntityType() + "s", // we can do better than this
             component.getName(),
             component.getVersion()
         );

@@ -6,8 +6,6 @@ import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatus;
 import org.opendatamesh.platform.pp.devops.server.database.entities.Activity;
 import org.opendatamesh.platform.pp.devops.server.database.mappers.ActivityMapper;
 import org.opendatamesh.platform.pp.devops.server.services.ActivityService;
-import org.opendatamesh.platform.up.executor.api.resources.TaskResource;
-import org.opendatamesh.platform.up.executor.api.resources.TaskStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 

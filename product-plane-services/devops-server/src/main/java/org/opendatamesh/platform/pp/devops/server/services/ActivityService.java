@@ -9,24 +9,26 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.ConflictException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.NotFoundException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
+import org.opendatamesh.platform.core.commons.servers.exceptions.UnprocessableEntityException;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.LifecycleActivityInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.LifecycleInfoDPDS;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatus;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskStatus;
-import org.opendatamesh.platform.pp.devops.api.resources.ODMDevOpsAPIStandardError;
+import org.opendatamesh.platform.pp.devops.api.resources.DevOpsApiStandardErrors;
 import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsClients;
 import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsConfigurations;
 import org.opendatamesh.platform.pp.devops.server.database.entities.Activity;
 import org.opendatamesh.platform.pp.devops.server.database.entities.Task;
 import org.opendatamesh.platform.pp.devops.server.database.mappers.ActivityMapper;
 import org.opendatamesh.platform.pp.devops.server.database.repositories.ActivityRepository;
-import org.opendatamesh.platform.pp.devops.server.exceptions.BadRequestException;
-import org.opendatamesh.platform.pp.devops.server.exceptions.ConflictException;
-import org.opendatamesh.platform.pp.devops.server.exceptions.InternalServerException;
-import org.opendatamesh.platform.pp.devops.server.exceptions.NotFoundException;
-import org.opendatamesh.platform.pp.devops.server.exceptions.UnprocessableEntityException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,14 +72,14 @@ public class ActivityService {
 
         if (activity == null) {
             throw new InternalServerException(
-                    ODMDevOpsAPIStandardError.SC500_00_SERVICE_ERROR,
+                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "Activity object cannot be null");
         }
 
         List<LifecycleActivityInfoDPDS> activitiesInfo = readActivitiesInfo(activity);
         if (activitiesInfo == null || activitiesInfo.isEmpty()) {
             throw new UnprocessableEntityException(
-                    ODMDevOpsAPIStandardError.SC422_01_ACTIVITY_IS_INVALID,
+                    DevOpsApiStandardErrors.SC422_01_ACTIVITY_IS_INVALID,
                     "Liefecycle stage [" + activity.getType() + "] not defined for version ["
                             + activity.getDataProductVersion() + "] of product [" + activity.getDataProductId() + "]");
         }
@@ -89,7 +91,7 @@ public class ActivityService {
 
         if (activities != null && activities.isEmpty() == false) {
             throw new UnprocessableEntityException(
-                    ODMDevOpsAPIStandardError.SC422_02_ACTIVITY_ALREADY_EXISTS,
+                    DevOpsApiStandardErrors.SC422_02_ACTIVITY_ALREADY_EXISTS,
                     "Activity for stage [" + activity.getType() + "] of version ["
                             + activity.getDataProductVersion() + "] of product [" + activity.getDataProductId()
                             + "] already exist");
@@ -102,7 +104,7 @@ public class ActivityService {
                     + "of product [" + activity.getDataProductId() + "] succesfully created");
         } catch (Throwable t) {
             throw new InternalServerException(
-                    ODMDevOpsAPIStandardError.SC500_01_DATABASE_ERROR,
+                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while saving activity [" + activity.getType() + "] "
                             + "on version [" + activity.getDataProductVersion() + "] "
                             + "of product [" + activity.getDataProductId() + "]",
@@ -142,11 +144,11 @@ public class ActivityService {
         if(activity.getStatus().equals(ActivityStatus.PLANNED) == false) {
             if(activity.getStatus().equals(ActivityStatus.PROCESSING)) {
                 throw new ConflictException(
-                ODMDevOpsAPIStandardError.SC409_01_CONCURRENT_ACTIVITIES,
+                DevOpsApiStandardErrors.SC409_01_CONCURRENT_ACTIVITIES,
                 "Activity with id [" + activity.getId() + "] is already started");
             } else {
                 throw new UnprocessableEntityException(
-                ODMDevOpsAPIStandardError.SC422_01_ACTIVITY_IS_INVALID,
+                DevOpsApiStandardErrors.SC422_01_ACTIVITY_IS_INVALID,
                 "Only activities in PLANNED state can be started. Activity with id [" + activity.getId() + "] is in state [" + activity.getStatus() + "]");
             }
             
@@ -160,7 +162,7 @@ public class ActivityService {
 
         if(activity == null) {
            throw new InternalServerException(
-                ODMDevOpsAPIStandardError.SC500_00_SERVICE_ERROR,
+                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                 "Activity object cannot be null");
         }
 
@@ -172,7 +174,7 @@ public class ActivityService {
                 ActivityStatus.PROCESSING);
         if (activities != null && !activities.isEmpty()) {
             throw new ConflictException(
-                    ODMDevOpsAPIStandardError.SC409_01_CONCURRENT_ACTIVITIES,
+                    DevOpsApiStandardErrors.SC409_01_CONCURRENT_ACTIVITIES,
                     "There is already a running activity on version [" + activity.getDataProductId()
                             + "] of data product [" + activity.getDataProductVersion() + "]");
         }
@@ -186,7 +188,7 @@ public class ActivityService {
             activity = saveActivity(activity);
         } catch (Throwable t) {
             throw new InternalServerException(
-                ODMDevOpsAPIStandardError.SC500_01_DATABASE_ERROR,
+                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                    "An error occured in the backend database while updating activity [" + activity.getId() + "]",
                  t);
         }       
@@ -287,7 +289,7 @@ public class ActivityService {
             activities = loadAllActivities();
         } catch (Throwable t) {
             throw new InternalServerException(
-                    ODMDevOpsAPIStandardError.SC500_01_DATABASE_ERROR,
+                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while loading activity",
                     t);
         }
@@ -301,7 +303,7 @@ public class ActivityService {
     public Activity readActivity(Activity activity) {
         if (activity == null) {
             throw new InternalServerException(
-                    ODMDevOpsAPIStandardError.SC500_00_SERVICE_ERROR,
+                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "Activity object cannot be null");
         }
         return readActivity(activity.getId());
@@ -313,7 +315,7 @@ public class ActivityService {
 
         if (activityId == null) {
             throw new BadRequestException(
-                    ODMDevOpsAPIStandardError.SC400_50_ACTIVITY_ID_IS_EMPTY,
+                    DevOpsApiStandardErrors.SC400_50_ACTIVITY_ID_IS_EMPTY,
                     "Activity id is empty");
         }
 
@@ -321,7 +323,7 @@ public class ActivityService {
             activity = loadActivity(activityId);
         } catch (Throwable t) {
             throw new InternalServerException(
-                    ODMDevOpsAPIStandardError.SC500_01_DATABASE_ERROR,
+                    ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while loading activity with id [" + activityId
                             + "]",
                     t);
@@ -329,7 +331,7 @@ public class ActivityService {
 
         if (activity == null) {
             throw new NotFoundException(
-                    ODMDevOpsAPIStandardError.SC404_01_ACTIVITY_NOT_FOUND,
+                    DevOpsApiStandardErrors.SC404_01_ACTIVITY_NOT_FOUND,
                     "Activity with id equals to [" + activityId + "] does not exist");
         }
 
@@ -355,7 +357,7 @@ public class ActivityService {
     private boolean activityExists(Long activityId) {
         if (activityId == null) {
             throw new InternalServerException(
-                    ODMDevOpsAPIStandardError.SC500_00_SERVICE_ERROR,
+                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "Activity object cannot be null");
         }
 
@@ -375,7 +377,7 @@ public class ActivityService {
             activitySearchResults = findActivities(dataProductId, dataProductVersion, type, status);
         } catch (Throwable t) {
             throw new InternalServerException(
-                    ODMDevOpsAPIStandardError.SC500_01_DATABASE_ERROR,
+                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while searching activities",
                     t);
         }
@@ -403,21 +405,21 @@ public class ActivityService {
 
         if (!StringUtils.hasText(activity.getType())) {
             throw new UnprocessableEntityException(
-                    ODMDevOpsAPIStandardError.SC422_01_ACTIVITY_IS_INVALID,
+                    DevOpsApiStandardErrors.SC422_01_ACTIVITY_IS_INVALID,
                     "Activity type property cannot be empty");
         }
 
         DataProductVersionDPDS dataProductVersion = readDataProductVersion(activity);
         if (dataProductVersion == null) {
             throw new UnprocessableEntityException(
-                    ODMDevOpsAPIStandardError.SC422_01_ACTIVITY_IS_INVALID,
+                    DevOpsApiStandardErrors.SC422_01_ACTIVITY_IS_INVALID,
                     "The version [" + activity.getDataProductVersion() + "] of data product ["
                             + activity.getDataProductId() + "] pointed by activity does not exist");
         }
 
         if (dataProductVersion.hasLifecycleInfo() == false) {
             throw new UnprocessableEntityException(
-                    ODMDevOpsAPIStandardError.SC422_01_ACTIVITY_IS_INVALID,
+                    DevOpsApiStandardErrors.SC422_01_ACTIVITY_IS_INVALID,
                     "Liefecycle info not defined for version [" + activity.getDataProductVersion() + "] of product ["
                             + activity.getDataProductId() + "]");
         }
@@ -438,13 +440,13 @@ public class ActivityService {
 
         if (!StringUtils.hasText(activity.getDataProductId())) {
             throw new UnprocessableEntityException(
-                    ODMDevOpsAPIStandardError.SC422_01_ACTIVITY_IS_INVALID,
+                    DevOpsApiStandardErrors.SC422_01_ACTIVITY_IS_INVALID,
                     "Activity productId property cannot be empty");
         }
 
         if (!StringUtils.hasText(activity.getDataProductVersion())) {
             throw new UnprocessableEntityException(
-                    ODMDevOpsAPIStandardError.SC422_01_ACTIVITY_IS_INVALID,
+                    DevOpsApiStandardErrors.SC422_01_ACTIVITY_IS_INVALID,
                     "Activity dataProductVersion property cannot be empty");
         }
 
@@ -454,7 +456,7 @@ public class ActivityService {
                     activity.getDataProductVersion());
         } catch (Throwable t) {
             throw new InternalServerException(
-                    ODMDevOpsAPIStandardError.SC500_50_REGISTRY_SERVICE_ERROR,
+                ODMApiCommonErrors.SC500_50_REGISTRY_SERVICE_ERROR,
                     "An errror occured while reading data product version from ODM Registry", t);
         }
 

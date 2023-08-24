@@ -10,9 +10,10 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
+import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityResource;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatus;
-import org.opendatamesh.platform.pp.devops.api.resources.ErrorRes;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,7 +32,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping(
-        value = "/activities"
+    value = "/activities"
 )
 @Validated
 @Tag(

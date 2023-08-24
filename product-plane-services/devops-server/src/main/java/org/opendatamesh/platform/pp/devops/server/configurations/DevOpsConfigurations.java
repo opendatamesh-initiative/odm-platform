@@ -2,9 +2,6 @@ package org.opendatamesh.platform.pp.devops.server.configurations;
 
 import java.util.Map;
 
-import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsConfigurations.ServiceConfigs;
-import org.opendatamesh.platform.pp.registry.api.v1.clients.RegistryClient;
-import org.opendatamesh.platform.up.executor.api.clients.ExecutorClient;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 

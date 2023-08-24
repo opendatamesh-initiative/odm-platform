@@ -15,14 +15,14 @@ import javax.annotation.PostConstruct;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.opendatamesh.platform.core.commons.clients.ODMIntegrationTest;
+import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
-import org.opendatamesh.platform.pp.registry.api.v1.clients.RegistryClient;
-import org.opendatamesh.platform.pp.registry.api.v1.exceptions.ODMRegistryAPIStandardError;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductDescriptorLocationResource;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductResource;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.DefinitionResource;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.ErrorRes;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.SchemaResource;
+import org.opendatamesh.platform.pp.registry.api.clients.RegistryClient;
+import org.opendatamesh.platform.pp.registry.api.resources.DataProductDescriptorLocationResource;
+import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
+import org.opendatamesh.platform.pp.registry.api.resources.DefinitionResource;
+import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
+import org.opendatamesh.platform.pp.registry.api.resources.SchemaResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,35 +53,21 @@ public abstract class ODMRegistryIT extends ODMIntegrationTest {
 
     protected RegistryClient registryClient;
 
-    protected ResourceBuilder resourceBuilder;
+    protected ODMRegistryResourceBuilder resourceBuilder;
     
     @Autowired
     protected ObjectMapper mapper;
 
-    protected Logger logger = LoggerFactory.getLogger(ODMRegistryIT.class);
-
     protected final String DB_TABLES_POSTGRESQL = "src/test/resources/db/tables_postgresql.txt";
     protected final String DB_TABLES_MYSQL = "src/test/resources/db/tables_mysql.txt";
 
-    
-    protected final String RESOURCE_DP1 = "src/test/resources/test/dataproduct-descriptor/dp1.json";
-    protected final String RESOURCE_DP1_UPD = "src/test/resources/test/dataproduct-descriptor/dp1-updated.json";
-    protected final String RESOURCE_DP1_V1 = "src/test/resources/test/dataproduct-descriptor/dp1-v1.json";
-    
-    //protected final String RESOURCE_DP1_V1_API1 = "src/test/resources/test/dataproduct-descriptor/dp1-v1-api1.json";
-    protected final String RESOURCE_DEF1_V1 = "src/test/resources/test/definition/def1.json";
-    protected final String RESOURCE_DEF1_NOVERSION = "src/test/resources/test/definition/def1-missing-version.json";
-    protected final String RESOURCE_DEF1_NONAME = "src/test/resources/test/definition/def1-missing-name.json";
-    protected final String RESOURCE_DEF1_NONAME_NOVERSION = "src/test/resources/test/definition/def2-missing-name-version.json";
-    
-    protected final String RESOURCE_TEMPLATE_1 = "src/test/resources/test/template/template1.json";
-    protected final String RESOURCE_TEMPLATE_2 = "src/test/resources/test/template/template2.json";
-    protected final String RESOURCE_SCHEMA1 = "src/test/resources/test/schema/schema1.json";
-    protected final String RESOURCE_DPS_URI = "https://raw.githubusercontent.com/opendatamesh-initiative/odm-specification-dpdescriptor/main/examples/tripexecution/data-product-descriptor.json";
-        
+
+    protected Logger logger = LoggerFactory.getLogger(ODMRegistryIT.class);
+
+   
     @PostConstruct
     public final void init() {
-        resourceBuilder = new ResourceBuilder();
+        resourceBuilder = new ODMRegistryResourceBuilder();
         registryClient = new RegistryClient("http://localhost:" + port);
     }
 
@@ -109,18 +95,40 @@ public abstract class ODMRegistryIT extends ODMIntegrationTest {
     // Create test basic resources
     // ======================================================================================
 
-    protected DataProductResource createDataProduct(String filePath) throws IOException {
-        String payload = resourceBuilder.readResourceFromFile(filePath);
-        ResponseEntity<DataProductResource> postProductResponse = registryClient.postDataProduct(payload);
-        verifyResponseEntity(postProductResponse, HttpStatus.CREATED, true);
-        return postProductResponse.getBody();
+    protected DataProductResource createDataProduct(String filePath) {
+
+        DataProductResource createdActivityRes = null;
+
+        DataProductResource activityRes;
+        try {
+            activityRes = resourceBuilder.readResourceFromFile(filePath, DataProductResource.class);
+        } catch (Throwable t) {
+            t.printStackTrace();
+            fail("Impossible to read data product from file: " + t.getMessage());
+            return null;
+        }
+        createdActivityRes = createDataProduct(activityRes);
+
+        return createdActivityRes;
     }
 
-    protected DataProductResource updateDataProduct(String filePath) throws IOException {
-        String payload = resourceBuilder.readResourceFromFile(filePath);
-        ResponseEntity<DataProductResource> putProductResponse = registryClient.putDataProduct(payload);
-        verifyResponseEntity(putProductResponse, HttpStatus.OK, true);
-        return putProductResponse.getBody();
+    protected DataProductResource createDataProduct(DataProductResource dataProductRes) {
+        DataProductResource createdDataProductRes = null;
+
+        ResponseEntity<DataProductResource> postDataProductResponse = null;
+        
+        try {
+            postDataProductResponse = registryClient.postDataProduct(dataProductRes);
+        } catch (Throwable t) {
+            t.printStackTrace();
+            fail("Impossible to create data product: " + t.getMessage());
+            return null;
+        }
+
+        verifyResponseEntity(postDataProductResponse, HttpStatus.CREATED, true);
+        createdDataProductRes = postDataProductResponse.getBody();
+
+        return createdDataProductRes;
     }
 
     protected String createDataProductVersion(String dataProductId, String filePath) throws IOException {
@@ -139,12 +147,40 @@ public abstract class ODMRegistryIT extends ODMIntegrationTest {
         return uploadProductVersionResponse.getBody();
     }
 
+    protected DefinitionResource createApiDefinition(String filePath) {
 
-    protected DefinitionResource createApiDefinition(String filePath) throws IOException {
-        String payload = resourceBuilder.readResourceFromFile(filePath);
-        ResponseEntity<DefinitionResource> postDefinition = registryClient.postApiDefinition(payload);
-        verifyResponseEntity(postDefinition, HttpStatus.CREATED, true);
-        return postDefinition.getBody();
+        DefinitionResource createdApiDefinitionRes = null;
+
+        DefinitionResource apiDefinitionRes;
+        try {
+            apiDefinitionRes = resourceBuilder.readResourceFromFile(filePath, DefinitionResource.class);
+        } catch (Throwable t) {
+            t.printStackTrace();
+            fail("Impossible to read api definition from file: " + t.getMessage());
+            return null;
+        }
+        createdApiDefinitionRes = createApiDefinition(apiDefinitionRes);
+
+        return createdApiDefinitionRes;
+    }
+
+    protected DefinitionResource createApiDefinition(DefinitionResource dataProductRes) {
+        DefinitionResource createdApiDefinitionRes = null;
+
+        ResponseEntity<DefinitionResource> postApiDefinitionResponse = null;
+        
+        try {
+            postApiDefinitionResponse = registryClient.postApiDefinition(dataProductRes);
+        } catch (Throwable t) {
+            t.printStackTrace();
+            fail("Impossible to create api definition: " + t.getMessage());
+            return null;
+        }
+
+        verifyResponseEntity(postApiDefinitionResponse, HttpStatus.CREATED, true);
+        createdApiDefinitionRes = postApiDefinitionResponse.getBody();
+
+        return createdApiDefinitionRes;
     }
 
     protected DefinitionResource createTemplate(String filePath) throws IOException {
@@ -163,8 +199,11 @@ public abstract class ODMRegistryIT extends ODMIntegrationTest {
         return postTemplate.getBody();
     }
 
+
+
+
     protected SchemaResource createSchema1() throws IOException {
-        SchemaResource schemaResource = resourceBuilder.readResourceFromFile(RESOURCE_SCHEMA1, SchemaResource.class);
+        SchemaResource schemaResource = resourceBuilder.readResourceFromFile(ODMRegistryResources.RESOURCE_SCHEMA1, SchemaResource.class);
         ResponseEntity<SchemaResource> postSchemaResponse = registryClient.postSchema(schemaResource);
         verifyResponseEntity(postSchemaResponse, HttpStatus.CREATED, true);
 
@@ -200,7 +239,7 @@ public abstract class ODMRegistryIT extends ODMIntegrationTest {
     protected void verifyResponseError(
             ResponseEntity<ErrorRes> errorResponse,
             HttpStatus status,
-            ODMRegistryAPIStandardError error) {
+            RegistryApiStandardErrors error) {
         assertThat(errorResponse.getStatusCode())
                 .isEqualByComparingTo(status);
         assertThat(errorResponse.getBody().getCode())

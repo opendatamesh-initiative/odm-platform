@@ -2,9 +2,9 @@
   "dataProductDescriptor": "1.0.0",
   "info": {
     "entityType": "invalidType",
-    "fullyQualifiedName": "urn:dpds:it.quantyca:dataproducts:sampleDomain:tripExecution",
-    "domain": "sampleDomain",
-    "name": "tripExecution",
+    "fullyQualifiedName": "urn:dpds:it.quantyca:dataproducts:sampleDomain:testProduct",
+    "domain": "test",
+    "name": "testProduct",
     "version": "1.0.0",
     "displayName": "Trip Execution",
     "description": "Gestione dei viaggi necessari ad eseguire il trasporto della merce dalla sorgente alla destinazione",

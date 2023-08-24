@@ -7,15 +7,10 @@ import java.io.IOException;
 import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.Test;
-import org.opendatamesh.platform.pp.devops.api.clients.DevOpsAPIRoutes;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityResource;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatus;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskResource;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskStatus;
-import org.opendatamesh.platform.pp.devops.api.resources.ErrorRes;
-import org.opendatamesh.platform.pp.devops.api.resources.ODMDevOpsAPIStandardError;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.annotation.DirtiesContext.MethodMode;

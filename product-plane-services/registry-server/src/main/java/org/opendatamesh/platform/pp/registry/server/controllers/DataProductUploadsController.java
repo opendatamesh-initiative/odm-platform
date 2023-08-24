@@ -9,19 +9,21 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
+import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
+import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
 import org.opendatamesh.platform.core.dpds.parser.location.GitLocation;
 import org.opendatamesh.platform.core.dpds.parser.location.UriLocation;
 import org.opendatamesh.platform.core.dpds.serde.DataProductVersionSerializer;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductDescriptorLocationResource;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.ErrorRes;
+import org.opendatamesh.platform.pp.registry.api.resources.DataProductDescriptorLocationResource;
+import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproduct.DataProductVersion;
 import org.opendatamesh.platform.pp.registry.server.database.mappers.DataProductVersionMapper;
 import org.opendatamesh.platform.pp.registry.server.services.DataProductService;
-import org.opendatamesh.platform.pp.registry.api.v1.exceptions.BadRequestException;
-import org.opendatamesh.platform.pp.registry.api.v1.exceptions.InternalServerException;
-import org.opendatamesh.platform.pp.registry.api.v1.exceptions.ODMRegistryAPIStandardError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -141,7 +143,7 @@ public class DataProductUploadsController
 
         } catch (URISyntaxException e) {
             throw new BadRequestException(
-                ODMRegistryAPIStandardError.SC400_05_INVALID_URILIST,
+                RegistryApiStandardErrors.SC400_05_INVALID_URILIST,
                 "Provided URI is invalid [" + descriptorLocationRes.getRootDocumentUri() + "]", e);
         }
         String serverUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
@@ -153,7 +155,7 @@ public class DataProductUploadsController
             serailizedContent = serializer.serialize(dataProductVersionDPDS, "canonical", "json", true);
         } catch (JsonProcessingException e) {
            throw new InternalServerException(
-            ODMRegistryAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
+            ODMApiCommonErrors.SC500_02_DESCRIPTOR_ERROR,
             "Impossible to serialize data product version raw content", e);
         }
         return serailizedContent;
@@ -170,7 +172,7 @@ public class DataProductUploadsController
         String descriptorUriString = null;
         if(!StringUtils.hasText(uriListString) ) {
             throw new BadRequestException(
-                ODMRegistryAPIStandardError.SC400_05_INVALID_URILIST,
+                RegistryApiStandardErrors.SC400_05_INVALID_URILIST,
                 "Request body is empty");
         } 
         String[] uriList = uriListString.split("\r\n");
@@ -180,7 +182,7 @@ public class DataProductUploadsController
         }
         if(descriptorUriString == null) {
             throw new BadRequestException(
-                ODMRegistryAPIStandardError.SC400_05_INVALID_URILIST,
+                RegistryApiStandardErrors.SC400_05_INVALID_URILIST,
                 "Request body does not contain an URI");
         }
         
@@ -189,7 +191,7 @@ public class DataProductUploadsController
             descriptorUri = new URI(uriListString);
         } catch (URISyntaxException e) {
             throw new BadRequestException(
-                ODMRegistryAPIStandardError.SC400_05_INVALID_URILIST,
+                RegistryApiStandardErrors.SC400_05_INVALID_URILIST,
                 "Provided URI is invalid [" + uriListString + "]", e);
         }
 

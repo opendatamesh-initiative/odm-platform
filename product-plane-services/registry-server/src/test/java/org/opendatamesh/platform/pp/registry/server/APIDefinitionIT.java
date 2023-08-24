@@ -1,9 +1,9 @@
 package org.opendatamesh.platform.pp.registry.server;
 
 import org.junit.jupiter.api.Test;
-import org.opendatamesh.platform.pp.registry.api.v1.exceptions.ODMRegistryAPIStandardError;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.DefinitionResource;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.ErrorRes;
+import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
+import org.opendatamesh.platform.pp.registry.api.resources.DefinitionResource;
+import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
 import org.opendatamesh.platform.pp.registry.server.database.entities.sharedres.ApiDefinition;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -32,12 +32,11 @@ public class APIDefinitionIT extends ODMRegistryIT {
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDefinitionCreate() throws IOException {
 
-        //cleanState();
 
         ResponseEntity<ApiDefinition> postProductResponse = null;
 
         // TEST 1: create a Definition with all properties and verify the response
-        DefinitionResource definitionRes = createApiDefinition(RESOURCE_DEF1_V1);
+        DefinitionResource definitionRes = createApiDefinition(ODMRegistryResources.API_DEF1_V1);
         assertThat(definitionRes.getName()).isEqualTo("definition1");
         assertThat(definitionRes.getVersion()).isEqualTo("0.0.1");
         assertThat(definitionRes.getStatus()).isEqualTo("OK");
@@ -50,7 +49,7 @@ public class APIDefinitionIT extends ODMRegistryIT {
         assertThat(definitionRes.getContent()).isEqualTo("Content of test definition");
 
         // TEST 2: create a Definition without version property and verify the response
-        DefinitionResource definitionRes2 = createApiDefinition(RESOURCE_DEF1_NOVERSION);
+        DefinitionResource definitionRes2 = createApiDefinition(ODMRegistryResources.API_DEF1_NOVERSION);
         assertThat(definitionRes2.getName()).isEqualTo("definition1");
         assertThat(definitionRes2.getVersion()).isEqualTo("1.0.0");
         assertThat(definitionRes2.getStatus()).isEqualTo("OK");
@@ -63,7 +62,7 @@ public class APIDefinitionIT extends ODMRegistryIT {
         assertThat(definitionRes2.getContent()).isEqualTo("Content of test definition");
 
         // TEST 3: create a Definition without name property and verify the response
-        DefinitionResource definitionRes3 = createApiDefinition(RESOURCE_DEF1_NONAME);
+        DefinitionResource definitionRes3 = createApiDefinition(ODMRegistryResources.API_DEF1_NONAME);
         assertThat(definitionRes3.getName()).isEqualTo("8d1cd5fa-ec4e-3e5b-b545-a4d2f9cc6753");
         assertThat(definitionRes3.getVersion()).isEqualTo("1.0.1");
         assertThat(definitionRes3.getStatus()).isEqualTo("OK");
@@ -77,7 +76,7 @@ public class APIDefinitionIT extends ODMRegistryIT {
 
         // TEST 4: create a Definition without name and version properties and verify
         // the response
-        DefinitionResource definitionRes4 = createApiDefinition(RESOURCE_DEF1_NONAME_NOVERSION);
+        DefinitionResource definitionRes4 = createApiDefinition(ODMRegistryResources.API_DEF1_NONAME_NOVERSION);
         assertThat(definitionRes4.getName()).isEqualTo("cf9e4b59-af4f-3254-aa44-c7259a7249c9");
         assertThat(definitionRes4.getVersion()).isEqualTo("1.0.0");
         assertThat(definitionRes4.getStatus()).isEqualTo("OK");
@@ -88,7 +87,6 @@ public class APIDefinitionIT extends ODMRegistryIT {
         assertThat(definitionRes4.getSpecificationVersion()).isEqualTo("1.0");
         assertThat(definitionRes4.getContentMediaType()).isEqualTo("plain/text");
         assertThat(definitionRes4.getContent()).isEqualTo("Content of test definition 2");
-
     }
 
     // ----------------------------------------
@@ -100,10 +98,10 @@ public class APIDefinitionIT extends ODMRegistryIT {
 
         //cleanState();
 
-        createApiDefinition(RESOURCE_DEF1_V1);
-        createApiDefinition(RESOURCE_DEF1_NOVERSION);
-        createApiDefinition(RESOURCE_DEF1_NONAME);
-        createApiDefinition(RESOURCE_DEF1_NONAME_NOVERSION);
+        createApiDefinition(ODMRegistryResources.API_DEF1_V1);
+        createApiDefinition(ODMRegistryResources.API_DEF1_NOVERSION);
+        createApiDefinition(ODMRegistryResources.API_DEF1_NONAME);
+        createApiDefinition(ODMRegistryResources.API_DEF1_NONAME_NOVERSION);
 
         ResponseEntity<DefinitionResource[]> getDefinitionResponse = registryClient.readAllApiDefinitions();
         DefinitionResource[] definitionResources = getDefinitionResponse.getBody();
@@ -123,10 +121,10 @@ public class APIDefinitionIT extends ODMRegistryIT {
 
         //cleanState();
 
-        createApiDefinition(RESOURCE_DEF1_V1);
-        createApiDefinition(RESOURCE_DEF1_NOVERSION);
-        createApiDefinition(RESOURCE_DEF1_NONAME);
-        createApiDefinition(RESOURCE_DEF1_NONAME_NOVERSION);
+        createApiDefinition(ODMRegistryResources.API_DEF1_V1);
+        createApiDefinition(ODMRegistryResources.API_DEF1_NOVERSION);
+        createApiDefinition(ODMRegistryResources.API_DEF1_NONAME);
+        createApiDefinition(ODMRegistryResources.API_DEF1_NONAME_NOVERSION);
 
         Optional<String> name = Optional.ofNullable(null);
         Optional<String> version = Optional.of("1.0.0");
@@ -156,7 +154,7 @@ public class APIDefinitionIT extends ODMRegistryIT {
 
         //cleanState();
 
-        DefinitionResource definitionResource = createApiDefinition(RESOURCE_DEF1_V1);
+        DefinitionResource definitionResource = createApiDefinition(ODMRegistryResources.API_DEF1_V1);
 
         ResponseEntity<DefinitionResource> getDefinitionResponse = registryClient
                 .readOneApiDefinition(definitionResource.getId());
@@ -192,7 +190,7 @@ public class APIDefinitionIT extends ODMRegistryIT {
 
         //cleanState();
 
-        DefinitionResource definitionResource = createApiDefinition(RESOURCE_DEF1_V1);
+        DefinitionResource definitionResource = createApiDefinition(ODMRegistryResources.API_DEF1_V1);
 
         ResponseEntity<Void> getDefinitionResponse = registryClient.deleteApiDefinition(definitionResource.getId(),
                 Void.class);
@@ -221,7 +219,7 @@ public class APIDefinitionIT extends ODMRegistryIT {
         String payload = null;
         errorResponse = registryClient.postApiDefinition(payload, ErrorRes.class);
         verifyResponseError(errorResponse,
-                HttpStatus.BAD_REQUEST, ODMRegistryAPIStandardError.SC400_08_STDDEF_IS_EMPTY);
+                HttpStatus.BAD_REQUEST, RegistryApiStandardErrors.SC400_08_STDDEF_IS_EMPTY);
     }
 
     @Test
@@ -238,21 +236,21 @@ public class APIDefinitionIT extends ODMRegistryIT {
 
         ResponseEntity<ErrorRes> errorResponse = null;
 
-        createApiDefinition(RESOURCE_DEF1_V1);
+        createApiDefinition(ODMRegistryResources.API_DEF1_V1);
 
         // TEST 1: try to register the same definition again
-        String payload = resourceBuilder.readResourceFromFile(RESOURCE_DEF1_V1);
+        String payload = resourceBuilder.readResourceFromFile(ODMRegistryResources.API_DEF1_V1);
         errorResponse = registryClient.postApiDefinition(payload, ErrorRes.class);
         verifyResponseError(errorResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                ODMRegistryAPIStandardError.SC422_06_STDDEF_ALREADY_EXISTS);
+                RegistryApiStandardErrors.SC422_06_STDDEF_ALREADY_EXISTS);
 
         // TEST 2: try to register a definition without setting the content
         DefinitionResource definitionRes = resourceBuilder.buildDefinition("api-1", "1.0.0", "application/json", null);
         errorResponse = registryClient.postApiDefinition(definitionRes, ErrorRes.class);
         verifyResponseError(errorResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                ODMRegistryAPIStandardError.SC422_08_DEFINITION_DOC_SYNTAX_IS_INVALID);
+                RegistryApiStandardErrors.SC422_08_DEFINITION_DOC_SYNTAX_IS_INVALID);
 
     }
 
@@ -279,7 +277,7 @@ public class APIDefinitionIT extends ODMRegistryIT {
         verifyResponseError(
                 errorResponse,
                 HttpStatus.NOT_FOUND,
-                ODMRegistryAPIStandardError.SC404_03_STDDEF_NOT_FOUND);
+                RegistryApiStandardErrors.SC404_03_STDDEF_NOT_FOUND);
 
     }
 

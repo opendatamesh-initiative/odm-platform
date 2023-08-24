@@ -12,7 +12,7 @@ import org.opendatamesh.platform.core.dpds.parser.DPDSParser;
 import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
 import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
 import org.opendatamesh.platform.core.dpds.parser.location.UriLocation;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductDescriptorLocationResource;
+import org.opendatamesh.platform.pp.registry.api.resources.DataProductDescriptorLocationResource;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.annotation.DirtiesContext.MethodMode;
@@ -36,7 +36,7 @@ public class UploadIT extends ODMRegistryIT {
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDataProductVersionUriUpload() throws IOException {
         DataProductDescriptorLocationResource descriptorLocation = new DataProductDescriptorLocationResource();
-        descriptorLocation.setRootDocumentUri(RESOURCE_DPS_URI);
+        descriptorLocation.setRootDocumentUri(ODMRegistryResources.RESOURCE_DPS_URI);
         String descriptorContent = uploadDataProductVersion(descriptorLocation);
         try {
             verifyBasicContent(descriptorContent);

@@ -1,34 +1,42 @@
 package org.opendatamesh.platform.pp.registry.server.services;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.opendatamesh.platform.core.dpds.exceptions.*;
+import java.util.List;
+import java.util.Optional;
+
+import org.opendatamesh.platform.core.commons.servers.exceptions.BadGatewayException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.NotFoundException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
+import org.opendatamesh.platform.core.commons.servers.exceptions.UnprocessableEntityException;
+import org.opendatamesh.platform.core.dpds.exceptions.BuildException;
+import org.opendatamesh.platform.core.dpds.exceptions.FetchException;
+import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
+import org.opendatamesh.platform.core.dpds.exceptions.UnresolvableReferenceException;
+import org.opendatamesh.platform.core.dpds.exceptions.ValidationException;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.parser.DPDSParser;
+import org.opendatamesh.platform.core.dpds.parser.IdentifierStrategy;
 import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
 import org.opendatamesh.platform.core.dpds.parser.ParseResult;
 import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
+import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproduct.DataProduct;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproduct.DataProductVersion;
 import org.opendatamesh.platform.pp.registry.server.database.mappers.DataProductMapper;
 import org.opendatamesh.platform.pp.registry.server.database.mappers.DataProductVersionMapper;
 import org.opendatamesh.platform.pp.registry.server.database.repositories.DataProductRepository;
 import org.opendatamesh.platform.pp.registry.server.resources.v1.observers.EventNotifier;
-import org.opendatamesh.platform.pp.registry.api.v1.exceptions.*;
 import org.opendatamesh.platform.up.notification.api.resources.EventResource;
 import org.opendatamesh.platform.up.notification.api.resources.EventType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.criteria.Predicate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class DataProductService {
@@ -60,52 +68,39 @@ public class DataProductService {
     // CREATE
     // ======================================================================================
     
-    /**
-     * 
-     * @param dataProduct 
-     * @return
-     * 
-     * @throws UnprocessableEntityException 
-     *      SC422_DATAPRODUCT_DOC_SEMANTIC_IS_INVALID: fqn empty, invalid id
-     *      SC422_DATAPRODUCT_ALREADY_EXISTS
-     * @throws InternalServerException 
-     *      SC500_SERVICE_ERROR
-     *      SC500_DATABASE_ERROR
-     */
     public DataProduct createDataProduct(DataProduct dataProduct) {
      if(dataProduct == null) {
             throw new InternalServerException(
-                ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
+                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                 "Data product object cannot be null");
         }
 
         if(!StringUtils.hasText(dataProduct.getFullyQualifiedName())) {
             throw new UnprocessableEntityException(
-                ODMRegistryAPIStandardError.SC422_07_PRODUCT_IS_INVALID,
+                RegistryApiStandardErrors.SC422_07_PRODUCT_IS_INVALID,
                 "Data product fullyQualifiedName property cannot be empty");
         }
-        
-        if(searchDataProductsByFQN(dataProduct.getFullyQualifiedName()) != null) {
-            throw new UnprocessableEntityException(
-                ODMRegistryAPIStandardError.SC422_04_PRODUCT_ALREADY_EXISTS,
-                "Data product [" + dataProduct.getFullyQualifiedName() + "] already exists");
-        }
-   
 
-        String uuid = UUID.nameUUIDFromBytes(dataProduct.getFullyQualifiedName().getBytes()).toString();
+        String uuid = IdentifierStrategy.DEFUALT.getId(dataProduct.getFullyQualifiedName());
         if(dataProduct.getId() != null && !dataProduct.getId().equals(uuid)) {
             throw new UnprocessableEntityException(
-                ODMRegistryAPIStandardError.SC422_07_PRODUCT_IS_INVALID,
-                "Data product [" + dataProduct.getFullyQualifiedName() + "] id [" + dataProduct.getId()+ "] is invalid. Expected [" + uuid + "]");
+                RegistryApiStandardErrors.SC422_07_PRODUCT_IS_INVALID,
+                "Data product [" + dataProduct.getFullyQualifiedName() + "] with id [" + dataProduct.getId()+ "] is invalid. Expected [" + uuid + "]");
         }
         dataProduct.setId(uuid);
+        
+        if(loadDataProduct(uuid) != null) {
+            throw new UnprocessableEntityException(
+                RegistryApiStandardErrors.SC422_04_PRODUCT_ALREADY_EXISTS,
+                "Data product [" + dataProduct.getFullyQualifiedName() + "] already exists");
+        }
        
         try {
             dataProduct = saveDataProduct(dataProduct);
             logger.info("Data product [" + dataProduct.getFullyQualifiedName() + "] succesfully created");
         } catch(Throwable t) {
             throw new InternalServerException(
-                ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
+                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                 "An error occured in the backend database while saving data product [" + dataProduct.getFullyQualifiedName() + "]",
                 t);
         }
@@ -120,7 +115,7 @@ public class DataProductService {
             eventNotifier.notifyEvent(eventResource);
         } catch (Throwable t) {
             throw new BadGatewayException(
-                    ODMRegistryAPIStandardError.SC502_05_META_SERVICE_ERROR,
+                ODMApiCommonErrors.SC502_70_NOTIFICATION_SERVICE_ERROR,
                     "Impossible to upload data product to metaService: " + t.getMessage(),
                     t
             );
@@ -143,7 +138,7 @@ public class DataProductService {
             dataProducts = loadAllDataProducts();
         } catch(Throwable t) {
             throw new InternalServerException(
-                ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
+                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                 "An error occured in the backend database while loading data products",
                 t);
         }
@@ -157,18 +152,19 @@ public class DataProductService {
     public DataProduct readDataProduct(DataProduct dataProduct)  {
         if(dataProduct == null) {
             throw new InternalServerException(
-                ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
+                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                 "Data product object cannot be null");
         }
         return readDataProduct(dataProduct.getId());
     }
+
     public DataProduct readDataProduct(String dataProductId)  {
 
         DataProduct dataProduct = null;
         
         if(!StringUtils.hasText(dataProductId)) {
             throw new BadRequestException(
-                ODMRegistryAPIStandardError.SC400_07_PRODUCT_ID_IS_EMPTY,
+                RegistryApiStandardErrors.SC400_07_PRODUCT_ID_IS_EMPTY,
                 "Data product id is empty");
         }
 
@@ -176,14 +172,14 @@ public class DataProductService {
             dataProduct = loadDataProduct(dataProductId);
         } catch(Throwable t) {
             throw new InternalServerException(
-                ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
+                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                 "An error occured in the backend database while loading data product with id [" + dataProductId + "]",
                 t);
         }
        
         if(dataProduct == null){
             throw new NotFoundException(
-                ODMRegistryAPIStandardError.SC404_01_PRODUCT_NOT_FOUND,
+                RegistryApiStandardErrors.SC404_01_PRODUCT_NOT_FOUND,
                 "Data Product with id [" + dataProductId + "] does not exist");
         }
 
@@ -209,7 +205,7 @@ public class DataProductService {
     private boolean dataProductExists(DataProduct dataProduct)  {
         if(dataProduct == null) {
             throw new InternalServerException(
-                ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
+                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                 "Data product object cannot be null");
         }
         return dataProductRepository.existsById(dataProduct.getId());
@@ -223,64 +219,22 @@ public class DataProductService {
     // -------------------------
     // search methods
     // -------------------------
-    public List<DataProduct> searchDataProductsByDomainAndOwner(String domain, String ownerId) {
+    public List<DataProduct> searchDataProducts(String fqn, String domain) {
         List<DataProduct> dataProductSearchResults = null;
         try {
-            dataProductSearchResults = findDataProductsByDomainAndOwner(domain, ownerId);
+            dataProductSearchResults = findDataProducts(fqn, domain);
         } catch(Throwable t) {
             throw new InternalServerException(
-                ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
+                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                 "An error occured in the backend database while searching data products",
                 t);
         }
         return dataProductSearchResults;
     }
 
-    private List<DataProduct> findDataProductsByDomainAndOwner(String domain, String ownerId) {
-        return dataProductRepository.findAll(getDataProductsLookUpQuery(domain, ownerId));
-    }
-
-    // TODO move this code to repository class
-    private Specification<DataProduct> getDataProductsLookUpQuery(String domain, String ownerId) {
-        return (root, query, criteriaBuilder) -> {
-            List<Predicate> predicates = new ArrayList<>();
-            if (domain != null)
-                predicates.add(criteriaBuilder.equal(root.get("domain"), domain));
-            if (ownerId != null)
-                predicates.add(criteriaBuilder.equal(root.get("info").get("owner").get("id"), ownerId));
-            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
-        };
-    }
-
-    public DataProduct searchDataProductsByFQN(String fullyQualifiedName) {
-        DataProduct dataProduct = null;
-        List<DataProduct> dataProductSearchResults = null;
-        try {
-            dataProductSearchResults = findDataProductsByFQN(fullyQualifiedName);
-            if(!dataProductSearchResults.isEmpty()) {
-                dataProduct = dataProductSearchResults.get(0);
-            }
-        } catch(Throwable t) {
-            throw new InternalServerException(
-                ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
-                "An error occured in the backend database while searching data products",
-                t);
-        }
-        return dataProduct;
-    }
-
-    private List<DataProduct> findDataProductsByFQN(String fullyQualifiedName) {
-        return dataProductRepository.findAll(getDataProductsLookUpQuery2(fullyQualifiedName));
-    }
-
-    // TODO move this code to repository class
-    private Specification<DataProduct> getDataProductsLookUpQuery2(String fullyQualifiedName) {
-        return (root, query, criteriaBuilder) -> {
-            List<Predicate> predicates = new ArrayList<>();
-            if (fullyQualifiedName != null)
-                predicates.add(criteriaBuilder.equal(root.get("fullyQualifiedName"), fullyQualifiedName));
-           return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
-        };
+    private List<DataProduct> findDataProducts(String fqn, String domain) {
+        return dataProductRepository
+            .findAll(DataProductRepository.Specs.hasMatch(fqn, domain));
     }
 
 
@@ -293,31 +247,47 @@ public class DataProductService {
 
         if(dataProduct == null) {
             throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
+                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "Data product object cannot be null");
         }
 
-        if(!StringUtils.hasText(dataProduct.getFullyQualifiedName())) {
-            throw new UnprocessableEntityException(
-                    ODMRegistryAPIStandardError.SC422_07_PRODUCT_IS_INVALID,
-                    "Data product fullyQualifiedName property cannot be empty");
+        if(StringUtils.hasText(dataProduct.getId()) && StringUtils.hasText(dataProduct.getFullyQualifiedName())){
+            String generatedUuid = IdentifierStrategy.DEFUALT.getId(dataProduct.getFullyQualifiedName());
+            if(generatedUuid.equals(dataProduct.getId()) == false) {
+                throw new UnprocessableEntityException(
+                    RegistryApiStandardErrors.SC422_07_PRODUCT_IS_INVALID,
+                    "Data product id [" + dataProduct.getId() + "] does not match with fullyQualifiedName [" + dataProduct.getFullyQualifiedName() + "]. Expecyed id is [" + generatedUuid + "]");
+            }
         }
 
-        DataProduct oldDataProduct = searchDataProductsByFQN(dataProduct.getFullyQualifiedName());
+        String uuid = null;
+        if(StringUtils.hasText(dataProduct.getId())) {
+            uuid = dataProduct.getId();
+        } else if(StringUtils.hasText(dataProduct.getFullyQualifiedName())) {
+            uuid = IdentifierStrategy.DEFUALT.getId(dataProduct.getFullyQualifiedName());
+        } else {
+            throw new UnprocessableEntityException(
+                RegistryApiStandardErrors.SC422_07_PRODUCT_IS_INVALID,
+                    "Data product id and fullyQualifiedName properties cannot be both empty");
+        }
+        DataProduct oldDataProduct = loadDataProduct(uuid);
+       
+       
         if(oldDataProduct == null) {
             throw new NotFoundException(
-                    ODMRegistryAPIStandardError.SC404_01_PRODUCT_NOT_FOUND,
-                    "Data product [" + dataProduct.getFullyQualifiedName() + "] doesn't exists");
+                RegistryApiStandardErrors.SC404_01_PRODUCT_NOT_FOUND,
+                    "Data product [" + dataProduct.getFullyQualifiedName() + "] with id [" + dataProduct.getId() + "] doesn't exists");
         }
         dataProduct.setId(oldDataProduct.getId());
+        dataProduct.setFullyQualifiedName(oldDataProduct.getFullyQualifiedName());
 
         try {
             dataProduct = saveDataProduct(dataProduct);
-            logger.info("Data product [" + dataProduct.getFullyQualifiedName() + "] succesfully updated");
+            logger.info("Data product [" + dataProduct.getFullyQualifiedName() + "] with id [" + dataProduct.getId() + "] succesfully updated");
         } catch(Throwable t) {
             throw new InternalServerException(
-                ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
-                "An error occured in the backend database while updating data product [" + dataProduct.getFullyQualifiedName() + "]",
+                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
+                "An error occured in the backend database while updating data product [" + dataProduct.getFullyQualifiedName() + "] with id [" + dataProduct.getId() + "]",
                 t);
         }
 
@@ -331,7 +301,7 @@ public class DataProductService {
             eventNotifier.notifyEvent(eventResource);
         } catch (Throwable t) {
             throw new BadGatewayException(
-                    ODMRegistryAPIStandardError.SC502_05_META_SERVICE_ERROR,
+                ODMApiCommonErrors.SC502_70_NOTIFICATION_SERVICE_ERROR,
                     "Impossible to upload data product version to metaService", t);
         }
 
@@ -342,15 +312,18 @@ public class DataProductService {
     // DELETE
     // ======================================================================================
     
-    public void deleteDataProduct(String dataProductId)  {
+    public DataProduct deleteDataProduct(String dataProductId)  {
+
         DataProduct dataProduct = readDataProduct(dataProductId);
+        
         dataProductVersionService.deleteAllDataProductVersions(dataProduct.getId());
+        
         try {
             dataProductRepository.delete(dataProduct);
             logger.info("Data product with id [" + dataProductId + "] successfully deleted");
         } catch(Throwable t) {
             throw new InternalServerException(
-                ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
+                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                 "An error occured in the backend database while deleting data product",
                 t);
         }
@@ -365,10 +338,11 @@ public class DataProductService {
             eventNotifier.notifyEvent(eventResource);
         } catch (Throwable t) {
             throw new BadGatewayException(
-                    ODMRegistryAPIStandardError.SC502_05_META_SERVICE_ERROR,
+                ODMApiCommonErrors.SC502_70_NOTIFICATION_SERVICE_ERROR,
                     "Impossible to upload data product to metaService", t);
         }
 
+        return dataProduct;
     }
 
 
@@ -404,7 +378,7 @@ public class DataProductService {
     ) {
         if(!StringUtils.hasText(dataProductId)) {
             throw new InternalServerException(
-                ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
+                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                 "Data product id cannot be null");
         }
 
@@ -413,7 +387,7 @@ public class DataProductService {
         dataProductVersion = descriptorToDataProductVersion(descriptorLocation, serverUrl);
         if(!dataProduct.getId().equals(dataProductVersion.getInfo().getDataProductId())) {
             throw new UnprocessableEntityException(
-                ODMRegistryAPIStandardError.SC422_03_DESCRIPTOR_DOC_SEMANTIC_IS_INVALID,
+                RegistryApiStandardErrors.SC422_03_DESCRIPTOR_DOC_SEMANTIC_IS_INVALID,
                 "Data product id [" + dataProduct.getFullyQualifiedName() + "]does not match with the id [" + dataProductVersion.getInfo().getFullyQualifiedName() + "] contained in data product descriptor");
         }
         
@@ -443,13 +417,13 @@ public class DataProductService {
         
         if(dataProductVersion == null) {
             throw new InternalServerException(
-                ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
+                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                 "Data product version object cannot be null");
         }
 
         if(dataProductVersionService.isCompliantWithGlobalPolicies(dataProductVersion)) {
             throw new UnprocessableEntityException(
-                ODMRegistryAPIStandardError.SC422_03_DESCRIPTOR_DOC_SEMANTIC_IS_INVALID,
+                RegistryApiStandardErrors.SC422_03_DESCRIPTOR_DOC_SEMANTIC_IS_INVALID,
                 "Data product descriptor is not compliant with global policies");
         }
         
@@ -463,7 +437,7 @@ public class DataProductService {
                 dataProduct = createDataProduct(dataProduct);
             } else {
                 throw new NotFoundException(
-                    ODMRegistryAPIStandardError.SC404_01_PRODUCT_NOT_FOUND,
+                    RegistryApiStandardErrors.SC404_01_PRODUCT_NOT_FOUND,
                 "Data product [" + dataProductId + "] not found");
             } 
         }
@@ -508,15 +482,15 @@ public class DataProductService {
                 break;
             case RESOLVE_READ_ONLY_PROPERTIES:
                 throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
+                    ODMApiCommonErrors.SC500_02_DESCRIPTOR_ERROR,
             "An error occured in the backend descriptor processor while adding read only properties", e);
             case RESOLVE_STANDARD_DEFINITIONS:
                 throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
+                    ODMApiCommonErrors.SC500_02_DESCRIPTOR_ERROR,
             "An error occured in the backend descriptor processor while resolving standard definitions", e);
             default:
               throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
+                ODMApiCommonErrors.SC500_02_DESCRIPTOR_ERROR,
                     "An error occured in the backend descriptor processor while adding read only properties", e);
           }
     }
@@ -525,19 +499,19 @@ public class DataProductService {
 
         if(e.getCause() instanceof FetchException) {
             throw new UnprocessableEntityException(
-                ODMRegistryAPIStandardError.SC422_01_DESCRIPTOR_URI_IS_INVALID,
+                RegistryApiStandardErrors.SC422_01_DESCRIPTOR_URI_IS_INVALID,
                 "Provided URI cannot be fatched [" + ((FetchException)e.getCause()).getUri() + "]", e);
         } else if(e.getCause() instanceof ParseException) {
             throw new UnprocessableEntityException(
-                ODMRegistryAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
+                RegistryApiStandardErrors.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
                 "Descriptor document it's not a valid JSON document", e);    
         } else if(e.getCause() instanceof ValidationException) {
             throw new UnprocessableEntityException(
-                ODMRegistryAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
+                RegistryApiStandardErrors.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
                 "Descriptor document does not comply with DPDS. The following validation errors has been found during validation [" + ((ValidationException)e.getCause()).getErrors().toString() + "]", e);    
         } else {
             throw new InternalServerException(
-                ODMRegistryAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
+                ODMApiCommonErrors.SC500_02_DESCRIPTOR_ERROR,
                 "An unexpected exception occured while loading root document", e);
         }  
     }
@@ -546,19 +520,19 @@ public class DataProductService {
 
         if(e.getCause() instanceof UnresolvableReferenceException) {
             throw new UnprocessableEntityException(
-                ODMRegistryAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
+                RegistryApiStandardErrors.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
                 "Descriptor document contains unresolvable external references: " + e.getMessage(), e);
         } else if(e.getCause() instanceof ParseException) {
             throw new UnprocessableEntityException(
-                ODMRegistryAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
+                RegistryApiStandardErrors.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
                 "Descriptor document referentiates external resources that are not valid JSON documents", e);
         } else if(e.getCause() instanceof ValidationException) {
             throw new UnprocessableEntityException(
-                ODMRegistryAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
+                RegistryApiStandardErrors.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
                 "Descriptor document does not comply with DPDS. The following validation errors has been found during validation of external references [" + ((ValidationException)e.getCause()).getErrors().toString() + "]", e);
         } else {
             throw new InternalServerException(
-                ODMRegistryAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
+                ODMApiCommonErrors.SC500_02_DESCRIPTOR_ERROR,
                 "An unexpected exception occured while resolving external references", e);
         }  
     }
@@ -567,19 +541,19 @@ public class DataProductService {
 
         if(e.getCause() instanceof UnresolvableReferenceException) {
             throw new UnprocessableEntityException(
-                ODMRegistryAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
+                RegistryApiStandardErrors.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
                 "Descriptor document contains unresolvable internal references", e);
         } else if(e.getCause() instanceof ParseException) {
             throw new UnprocessableEntityException(
-                ODMRegistryAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
+                RegistryApiStandardErrors.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
                 "Descriptor document that referentiates internal resources that are not valid JSON documents", e);
         } else if(e.getCause() instanceof ValidationException) {
             throw new UnprocessableEntityException(
-                ODMRegistryAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
+                RegistryApiStandardErrors.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
                 "Descriptor document does not comply with DPDS. The following validation errors has been found during internal reference validation [" + ((ValidationException)e.getCause()).getErrors().toString() + "]", e);
         } else {
             throw new InternalServerException(
-                ODMRegistryAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
+                ODMApiCommonErrors.SC500_02_DESCRIPTOR_ERROR,
                 "An unexpected exception occured while resolving internal references", e);
         }  
     }

@@ -68,7 +68,7 @@ public class DPDSParserTest {
         assertTrue(descriptor != null);
         assertEquals("1.0.0", descriptor.getDataProductDescriptor());
         assertNotNull(descriptor.getInfo());
-        assertEquals("urn:org.opendatamesh:dataproduct:dpdMinimal", descriptor.getInfo().getFullyQualifiedName());
+        assertEquals("urn:org.opendatamesh:dataproducts:dpdMinimal", descriptor.getInfo().getFullyQualifiedName());
         assertEquals("dpdMinimal", descriptor.getInfo().getName());
         assertEquals("1.0.0", descriptor.getInfo().getVersionNumber());
         assertEquals("testDomain", descriptor.getInfo().getDomain());

@@ -1,7 +1,7 @@
 package org.opendatamesh.platform.pp.registry.server.database.mappers;
 
 import org.mapstruct.Mapper;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.DefinitionResource;
+import org.opendatamesh.platform.pp.registry.api.resources.DefinitionResource;
 import org.opendatamesh.platform.pp.registry.server.database.entities.sharedres.TemplateDefinition;
 
 import java.util.List;

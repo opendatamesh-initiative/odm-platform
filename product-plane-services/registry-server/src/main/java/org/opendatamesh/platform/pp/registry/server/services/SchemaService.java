@@ -1,6 +1,11 @@
 package org.opendatamesh.platform.pp.registry.server.services;
 
-import org.opendatamesh.platform.pp.registry.api.v1.exceptions.*;
+import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.NotFoundException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
+import org.opendatamesh.platform.core.commons.servers.exceptions.UnprocessableEntityException;
+import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
 import org.opendatamesh.platform.pp.registry.server.database.entities.sharedres.ApiToSchemaRelationship;
 import org.opendatamesh.platform.pp.registry.server.database.entities.sharedres.Schema;
 import org.opendatamesh.platform.pp.registry.server.database.repositories.ApiToSchemaRelationshipRepository;
@@ -34,13 +39,13 @@ public class SchemaService {
     public Schema resolveNameAndVersion(Schema schema) {
          if (schema == null) {
             throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
+                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "Schema object cannot be null");
         }
 
         if (!StringUtils.hasText(schema.getContent())) {
             throw new UnprocessableEntityException(
-                    ODMRegistryAPIStandardError.SC422_08_DEFINITION_DOC_SYNTAX_IS_INVALID,
+                RegistryApiStandardErrors.SC422_08_DEFINITION_DOC_SYNTAX_IS_INVALID,
                     "Schema content property cannot be empty");
         }
 
@@ -67,13 +72,13 @@ public class SchemaService {
 
         if (schema == null) {
             throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
+                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "Schema object cannot be null");
         }
 
         if (!StringUtils.hasText(schema.getContent())) {
             throw new UnprocessableEntityException(
-                    ODMRegistryAPIStandardError.SC422_08_DEFINITION_DOC_SYNTAX_IS_INVALID,
+                RegistryApiStandardErrors.SC422_08_DEFINITION_DOC_SYNTAX_IS_INVALID,
                     "Schema content property cannot be empty");
         }
 
@@ -81,7 +86,7 @@ public class SchemaService {
 
         if (schemaExists(schema.getName(), schema.getVersion())) {
             throw new UnprocessableEntityException(
-                    ODMRegistryAPIStandardError.SC422_11_SCHEMA_ALREADY_EXISTS,
+                RegistryApiStandardErrors.SC422_11_SCHEMA_ALREADY_EXISTS,
                     "Schema [" + schema.getName() + "](v. " + schema.getVersion() + ")] already exists");
         }
 
@@ -90,7 +95,7 @@ public class SchemaService {
             logger.info("Schema [" + schema.getId() + "] successfully created");
         } catch (Throwable t) {
             throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
+                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while saving schema",
                     t);
         }
@@ -114,7 +119,7 @@ public class SchemaService {
 
         if (relationshipExists(relationship.getId().getApiId(), relationship.getId().getSchemaId())) {
             throw new UnprocessableEntityException(
-                    ODMRegistryAPIStandardError.SC422_12_SCHEMA_TO_API_REL_ALREADY_EXISTS,
+                RegistryApiStandardErrors.SC422_12_SCHEMA_TO_API_REL_ALREADY_EXISTS,
                     "Schema [" + relationship.getId().getSchemaId()+ " relationship with api " + relationship.getId().getApiId() + "] already exists");
         }
 
@@ -123,7 +128,7 @@ public class SchemaService {
             logger.info("Schema [" + relationship.getId().getSchemaId()+ " relationship with api [" + relationship.getId().getApiId() + "] successfully created");
         } catch (Throwable t) {
             throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
+                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while saving relationship",
                     t);
         }
@@ -142,7 +147,7 @@ public class SchemaService {
     public Schema readOneSchema(Schema schema) {
         if (schema == null) {
             throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
+                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "Schema object cannot be null");
         }
 
@@ -156,7 +161,7 @@ public class SchemaService {
 
         if (schema == null) {
             throw new NotFoundException(
-                    ODMRegistryAPIStandardError.SC404_04_SCHEMA_NOT_FOUND,
+                RegistryApiStandardErrors.SC404_04_SCHEMA_NOT_FOUND,
                     "Schema [" + schemaId + "] does not exist");
         }
 
@@ -180,7 +185,7 @@ public class SchemaService {
     private boolean schemaExists(String name, String version) {
         if (!StringUtils.hasText(name) || !StringUtils.hasText(version)) {
             throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
+                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "name and version property cannot be null");
         }
         return schemaRepository.existsByNameAndVersion(name, version);
@@ -194,7 +199,7 @@ public class SchemaService {
      private boolean relationshipExists(Long apiId, Long schemaId) {
         if (apiId == null ||  schemaId == null) {
             throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
+                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "apiId and schemaId property cannot be null");
         }
         return relationshipRepository.existsByIdApiIdAndIdSchemaId(apiId, schemaId);
@@ -208,7 +213,7 @@ public class SchemaService {
         Schema schema = null;
         if (schemaId == null) {
             throw new BadRequestException(
-                    ODMRegistryAPIStandardError.SC400_13_SCHEMA_ID_IS_EMPTY,
+                RegistryApiStandardErrors.SC400_13_SCHEMA_ID_IS_EMPTY,
                     "Schema id cannot be empty");
         }
 
@@ -216,7 +221,7 @@ public class SchemaService {
             schema = loadSchema(schemaId);
         } catch (Throwable t) {
             throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
+                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while loading schema [" + schemaId + "]",
                     t);
         }
@@ -244,7 +249,7 @@ public class SchemaService {
             schema = schemas.get(0);
         } else {
             throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
+                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while searching schema");
         }
 
@@ -260,7 +265,7 @@ public class SchemaService {
             schemaSearchResults = findSchemas(apiId, name, version);
         } catch (Throwable t) {
             throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
+                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while searching schema",
                     t);
         }
@@ -322,13 +327,13 @@ public class SchemaService {
     public Schema updateSchema(Schema schema) {
         if (schema == null) {
             throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
+                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "Schema object cannot be null");
         }
 
         if (!schemaExists(schema.getId())) {
             throw new NotFoundException(
-                    ODMRegistryAPIStandardError.SC404_04_SCHEMA_NOT_FOUND,
+                RegistryApiStandardErrors.SC404_04_SCHEMA_NOT_FOUND,
                     "Schema [" + schema.getId() + "] does not exist");
         }
 
@@ -337,7 +342,7 @@ public class SchemaService {
             logger.info("Schema [" + schema.getId() + "] successfully updated");
         } catch (Throwable t) {
             throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
+                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while updating schema [" + schema.getId() + "]",
                     t);
         }
@@ -358,7 +363,7 @@ public class SchemaService {
         Schema schema = searchSchema(schemaId);
         if (schema == null) {
             throw new NotFoundException(
-                    ODMRegistryAPIStandardError.SC404_04_SCHEMA_NOT_FOUND,
+                RegistryApiStandardErrors.SC404_04_SCHEMA_NOT_FOUND,
                     "Schema [" + schemaId + "] does not exist");
         }
 
@@ -367,7 +372,7 @@ public class SchemaService {
             logger.info("Schema [" + schemaId + "] successfully deleted");
         } catch (Throwable t) {
             throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
+                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while deleting schema [" + schemaId + "]",
                     t);
         }
@@ -381,25 +386,25 @@ public class SchemaService {
     private void validateRelationship(ApiToSchemaRelationship relationship) throws UnprocessableEntityException {
           if (relationship == null) {
             throw new UnprocessableEntityException(
-                    ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
+                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "Relationship object cannot be null");
         }
 
         if (relationship.getId() == null) {
             throw new UnprocessableEntityException(
-                    ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
+                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "Relationship id property cannot be empty");
         }
 
         if (relationship.getId().getApiId() == null) {
             throw new UnprocessableEntityException(
-                    ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
+                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "Relationship apiId property cannot be empty");
         }
 
         if (relationship.getId().getSchemaId() == null) {
             throw new UnprocessableEntityException(
-                    ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
+                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "Relationship schemaId property cannot be empty");
         }
     }

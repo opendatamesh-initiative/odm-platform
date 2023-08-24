@@ -7,14 +7,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.ApiToSchemaRelationshipResource;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.ErrorRes;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.SchemaResource;
+
+import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
+import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
+import org.opendatamesh.platform.pp.registry.api.resources.ApiToSchemaRelationshipResource;
+import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
+import org.opendatamesh.platform.pp.registry.api.resources.SchemaResource;
 import org.opendatamesh.platform.pp.registry.server.database.entities.sharedres.ApiToSchemaRelationship;
 import org.opendatamesh.platform.pp.registry.server.database.mappers.SchemaMapper;
 import org.opendatamesh.platform.pp.registry.server.services.SchemaService;
-import org.opendatamesh.platform.pp.registry.api.v1.exceptions.BadRequestException;
-import org.opendatamesh.platform.pp.registry.api.v1.exceptions.ODMRegistryAPIStandardError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,7 +109,7 @@ public class SchemaController {
     ) {
         if(schemaResource == null) {
             throw new BadRequestException(
-                ODMRegistryAPIStandardError.SC400_12_SCHEMA_IS_EMPTY,
+                RegistryApiStandardErrors.SC400_12_SCHEMA_IS_EMPTY,
                 "Schema cannot be empty");
         }
 

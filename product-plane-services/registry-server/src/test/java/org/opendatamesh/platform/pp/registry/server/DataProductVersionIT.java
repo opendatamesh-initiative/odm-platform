@@ -9,11 +9,11 @@ import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
-import org.opendatamesh.platform.pp.registry.api.v1.exceptions.ODMRegistryAPIStandardError;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductResource;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.ErrorRes;
+import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
+import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
@@ -72,11 +72,11 @@ public class DataProductVersionIT extends ODMRegistryIT {
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDataProductVersionCreation() throws IOException {
 
-        DataProductResource dataProduct1Res = createDataProduct(RESOURCE_DP1);
+        DataProductResource dataProduct1Res = createDataProduct(ODMRegistryResources.DP1);
         // Note: we do not do more tests on data product here because they are
         // alredy done in DataProductIT
 
-        String descriptorContent = createDataProductVersion(dataProduct1Res.getId(), RESOURCE_DP1_V1);
+        String descriptorContent = createDataProductVersion(dataProduct1Res.getId(), ODMRegistryResources.RESOURCE_DP1_V1);
         verifyBasicContent(descriptorContent);
         DataProductVersionDPDS dataProductVersion = null;
 		try {
@@ -93,15 +93,15 @@ public class DataProductVersionIT extends ODMRegistryIT {
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDataProductVersionsCreation() throws IOException {
 
-        DataProductResource dataProduct1Res = createDataProduct(RESOURCE_DP1);
+        DataProductResource dataProduct1Res = createDataProduct(ODMRegistryResources.DP1);
 
         String descriptor;
         
-        descriptor = createDataProductVersion(dataProduct1Res.getId(), RESOURCE_DP1_V1);
+        descriptor = createDataProductVersion(dataProduct1Res.getId(), ODMRegistryResources.RESOURCE_DP1_V1);
         // TODO verifyBasicContent(descriptor);
 
         // TODO test also resubmitting the response of previous creation (need a fix on server)
-        descriptor = resourceBuilder.readResourceFromFile(RESOURCE_DP1_V1);
+        descriptor = resourceBuilder.readResourceFromFile(ODMRegistryResources.RESOURCE_DP1_V1);
         
         // modify version & re-post
         ObjectMapper mapper = ObjectMapperFactory.JSON_MAPPER;
@@ -130,8 +130,8 @@ public class DataProductVersionIT extends ODMRegistryIT {
     public void testDataProductVersionsReadAll() throws IOException {
 
         // create a product and associate to it a version
-        DataProductResource dataProduct1Res = createDataProduct(RESOURCE_DP1);
-        String descriptorContent = createDataProductVersion(dataProduct1Res.getId(), RESOURCE_DP1_V1);
+        DataProductResource dataProduct1Res = createDataProduct(ODMRegistryResources.DP1);
+        String descriptorContent = createDataProductVersion(dataProduct1Res.getId(), ODMRegistryResources.RESOURCE_DP1_V1);
         JsonNode descriptorRootNode = verifyJsonSynatx(descriptorContent);
         String versionNumber = descriptorRootNode.get("info").get("version").asText();
 
@@ -156,8 +156,8 @@ public class DataProductVersionIT extends ODMRegistryIT {
     public void testDataProductVersionsReadOne() throws IOException {
 
         // create a product and associate to it a version
-        DataProductResource dataProduct1Res = createDataProduct(RESOURCE_DP1);
-        String descriptorContent = createDataProductVersion(dataProduct1Res.getId(), RESOURCE_DP1_V1);
+        DataProductResource dataProduct1Res = createDataProduct(ODMRegistryResources.DP1);
+        String descriptorContent = createDataProductVersion(dataProduct1Res.getId(), ODMRegistryResources.RESOURCE_DP1_V1);
         JsonNode descriptorRootNode = verifyJsonSynatx(descriptorContent);
         String versionNumber = descriptorRootNode.get("info").get("version").asText();
         System.out.println(descriptorContent);
@@ -201,8 +201,8 @@ public class DataProductVersionIT extends ODMRegistryIT {
             throws IOException {
 
         // create a product and associate to it a version
-        DataProductResource dataProduct1Res = createDataProduct(RESOURCE_DP1);
-        String descriptorContent = createDataProductVersion(dataProduct1Res.getId(), RESOURCE_DP1_V1);
+        DataProductResource dataProduct1Res = createDataProduct(ODMRegistryResources.DP1);
+        String descriptorContent = createDataProductVersion(dataProduct1Res.getId(), ODMRegistryResources.RESOURCE_DP1_V1);
         JsonNode descriptorRootNode = verifyJsonSynatx(descriptorContent);
         String versionNumber = descriptorRootNode.get("info").get("version").asText();
 
@@ -236,13 +236,13 @@ public class DataProductVersionIT extends ODMRegistryIT {
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDataProductCreation400Errors() throws IOException {
 
-        DataProductResource dataProduct1Res = createDataProduct(RESOURCE_DP1);
+        DataProductResource dataProduct1Res = createDataProduct(ODMRegistryResources.DP1);
 
         // Test error SC400_01_DESCRIPTOR_IS_EMPTY
         // TODO test also with a null payload (requires a fix on server)
         String payload = " ";
         ResponseEntity<ErrorRes> errorResponse = registryClient.postDataProductVersion(dataProduct1Res.getId(), payload, ErrorRes.class);
-        verifyResponseError(errorResponse, HttpStatus.BAD_REQUEST, ODMRegistryAPIStandardError.SC400_01_DESCRIPTOR_IS_EMPTY);
+        verifyResponseError(errorResponse, HttpStatus.BAD_REQUEST, RegistryApiStandardErrors.SC400_01_DESCRIPTOR_IS_EMPTY);
     }
 
     @Test
@@ -252,13 +252,13 @@ public class DataProductVersionIT extends ODMRegistryIT {
         ResponseEntity<ErrorRes> errorResponse;
        
         // create the product
-        DataProductResource dataProduct1Res = createDataProduct(RESOURCE_DP1);
+        DataProductResource dataProduct1Res = createDataProduct(ODMRegistryResources.DP1);
 
         // Test error SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID
 
         // TODO this should work (fix on server). fqn is optional if name and version are set
         // remove from descriptor fullyQualifiedName property
-        String descriptorContent = resourceBuilder.readResourceFromFile(RESOURCE_DP1_V1);
+        String descriptorContent = resourceBuilder.readResourceFromFile(ODMRegistryResources.RESOURCE_DP1_V1);
         JsonNode descriptorRootEntity = mapper.readTree(descriptorContent);
         ObjectNode infoObject = (ObjectNode) descriptorRootEntity.get("info");
         infoObject.remove("fullyQualifiedName");
@@ -267,26 +267,26 @@ public class DataProductVersionIT extends ODMRegistryIT {
         errorResponse = registryClient.postDataProductVersion(dataProduct1Res.getId(), descriptorContent, ErrorRes.class);
         verifyResponseError(errorResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                ODMRegistryAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID);
+                RegistryApiStandardErrors.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID);
 
         // Test error SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID
         errorResponse = registryClient.postDataProductVersion(dataProduct1Res.getId(), 
             "This is an invalid JSON document", ErrorRes.class);
         verifyResponseError(errorResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                ODMRegistryAPIStandardError.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID);
+                RegistryApiStandardErrors.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID);
 
         // Test error SC422_05_VERSION_ALREADY_EXISTS
 
         // associate the version to the product
-        createDataProductVersion(dataProduct1Res.getId(), RESOURCE_DP1_V1);
+        createDataProductVersion(dataProduct1Res.getId(), ODMRegistryResources.RESOURCE_DP1_V1);
         // and the re associate it
-        descriptorContent = resourceBuilder.readResourceFromFile(RESOURCE_DP1_V1);
+        descriptorContent = resourceBuilder.readResourceFromFile(ODMRegistryResources.RESOURCE_DP1_V1);
         errorResponse = registryClient.postDataProductVersion(dataProduct1Res.getId(), 
             descriptorContent, ErrorRes.class);
         verifyResponseError(errorResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                ODMRegistryAPIStandardError.SC422_05_VERSION_ALREADY_EXISTS);
+                RegistryApiStandardErrors.SC422_05_VERSION_ALREADY_EXISTS);
     }
 
     // ======================================================================================

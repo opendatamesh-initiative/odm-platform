@@ -17,14 +17,14 @@ import javax.annotation.PostConstruct;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.opendatamesh.platform.core.commons.clients.ODMIntegrationTest;
+import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.devops.api.clients.DevOpsClient;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityResource;
-import org.opendatamesh.platform.pp.devops.api.resources.ODMDevOpsAPIStandardError;
+import org.opendatamesh.platform.pp.devops.api.resources.DevOpsApiStandardErrors;
 import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsClients;
-import org.opendatamesh.platform.pp.registry.api.v1.clients.RegistryAPIRoutes;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.DefinitionResource;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.ErrorRes;
+import org.opendatamesh.platform.pp.registry.api.clients.RegistryAPIRoutes;
+import org.opendatamesh.platform.pp.registry.api.resources.DefinitionResource;
 import org.opendatamesh.platform.up.executor.api.clients.ExecutorAPIRoutes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -183,7 +183,7 @@ public abstract class ODMDevOpsIT extends ODMIntegrationTest{
     protected void verifyResponseError(
             ResponseEntity<ErrorRes> errorResponse,
             HttpStatus status,
-            ODMDevOpsAPIStandardError error) {
+            DevOpsApiStandardErrors error) {
         assertThat(errorResponse.getStatusCode())
                 .isEqualByComparingTo(status);
         assertThat(errorResponse.getBody().getCode())

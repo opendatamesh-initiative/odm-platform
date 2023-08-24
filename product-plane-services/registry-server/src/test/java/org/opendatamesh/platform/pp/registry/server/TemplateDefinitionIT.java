@@ -3,9 +3,9 @@ package org.opendatamesh.platform.pp.registry.server;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
-import org.opendatamesh.platform.pp.registry.api.v1.exceptions.ODMRegistryAPIStandardError;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.DefinitionResource;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.ErrorRes;
+import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
+import org.opendatamesh.platform.pp.registry.api.resources.DefinitionResource;
+import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
@@ -32,11 +32,11 @@ public class TemplateDefinitionIT extends ODMRegistryIT {
     public void testTemplateCreate() throws IOException {
 
         // TEST 1: create a Template with all properties and verify the response
-        DefinitionResource templateDefinitionRes = createTemplate(RESOURCE_TEMPLATE_1);
+        DefinitionResource templateDefinitionRes = createTemplate(ODMRegistryResources.RESOURCE_TEMPLATE_1);
         verifyTemplate1(templateDefinitionRes);
 
         // TEST 1: create a Template without name and version
-        templateDefinitionRes = resourceBuilder.readResourceFromFile(RESOURCE_TEMPLATE_1, DefinitionResource.class);
+        templateDefinitionRes = resourceBuilder.readResourceFromFile(ODMRegistryResources.RESOURCE_TEMPLATE_1, DefinitionResource.class);
         templateDefinitionRes.setName(null);
         templateDefinitionRes.setVersion(null);
         templateDefinitionRes = createTemplate(templateDefinitionRes);
@@ -64,8 +64,8 @@ public class TemplateDefinitionIT extends ODMRegistryIT {
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     public void testTemplateReadAll() throws IOException {
 
-        createTemplate(RESOURCE_TEMPLATE_1);
-        createTemplate(RESOURCE_TEMPLATE_2);
+        createTemplate(ODMRegistryResources.RESOURCE_TEMPLATE_1);
+        createTemplate(ODMRegistryResources.RESOURCE_TEMPLATE_2);
 
         ResponseEntity<DefinitionResource[]> getTemplateResponse = registryClient.readAllTemplateDefinitions();
         DefinitionResource[] templateResources = getTemplateResponse.getBody();
@@ -80,8 +80,8 @@ public class TemplateDefinitionIT extends ODMRegistryIT {
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     public void testTemplateSearch() throws IOException {
 
-        createTemplate(RESOURCE_TEMPLATE_1);
-        createTemplate(RESOURCE_TEMPLATE_2);
+        createTemplate(ODMRegistryResources.RESOURCE_TEMPLATE_1);
+        createTemplate(ODMRegistryResources.RESOURCE_TEMPLATE_2);
 
         // TEST 1: search by Media Type
 
@@ -105,7 +105,7 @@ public class TemplateDefinitionIT extends ODMRegistryIT {
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     public void testTemplateReadOne() throws IOException {
 
-        DefinitionResource templateResource = createTemplate(RESOURCE_TEMPLATE_1);
+        DefinitionResource templateResource = createTemplate(ODMRegistryResources.RESOURCE_TEMPLATE_1);
 
         ResponseEntity<DefinitionResource> getTemplateResponse = registryClient.getOneTemplateDefinition(templateResource.getId());
         DefinitionResource templateRes = getTemplateResponse.getBody();
@@ -130,7 +130,7 @@ public class TemplateDefinitionIT extends ODMRegistryIT {
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     public void testTemplateDelete() throws IOException {
 
-        DefinitionResource templateResource = createTemplate(RESOURCE_TEMPLATE_1);
+        DefinitionResource templateResource = createTemplate(ODMRegistryResources.RESOURCE_TEMPLATE_1);
 
         ResponseEntity<Void> getTemplateResponse = registryClient.deleteTemplateDefinition(templateResource.getId(), Void.class);
         verifyResponseEntity(getTemplateResponse, HttpStatus.OK, false);
@@ -155,7 +155,7 @@ public class TemplateDefinitionIT extends ODMRegistryIT {
         String payload = null;
         errorResponse = registryClient.postTemplateDefinition(payload, ErrorRes.class);
         verifyResponseError(errorResponse,
-                HttpStatus.BAD_REQUEST, ODMRegistryAPIStandardError.SC400_14_TEMPLATE_IS_EMPTY);
+                HttpStatus.BAD_REQUEST, RegistryApiStandardErrors.SC400_14_TEMPLATE_IS_EMPTY);
     }
 
     @Test
@@ -164,22 +164,22 @@ public class TemplateDefinitionIT extends ODMRegistryIT {
 
         ResponseEntity<ErrorRes> errorResponse = null;
 
-        createTemplate(RESOURCE_TEMPLATE_1);
+        createTemplate(ODMRegistryResources.RESOURCE_TEMPLATE_1);
 
         // TEST 1: try to register the same template again
 
-        String payload = resourceBuilder.readResourceFromFile(RESOURCE_TEMPLATE_1);
+        String payload = resourceBuilder.readResourceFromFile(ODMRegistryResources.RESOURCE_TEMPLATE_1);
         errorResponse = registryClient.postTemplateDefinition(payload, ErrorRes.class);
         verifyResponseError(errorResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                ODMRegistryAPIStandardError.SC422_13_TEMPLATE_ALREADY_EXISTS);
+                RegistryApiStandardErrors.SC422_13_TEMPLATE_ALREADY_EXISTS);
 
        // TEST 2: try to register a definition without setting the content
         DefinitionResource definitionRes = resourceBuilder.buildDefinition("template-1", "1.0.0", "application/json", null);
         errorResponse = registryClient.postApiDefinition(definitionRes, ErrorRes.class);
         verifyResponseError(errorResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                ODMRegistryAPIStandardError.SC422_08_DEFINITION_DOC_SYNTAX_IS_INVALID);
+                RegistryApiStandardErrors.SC422_08_DEFINITION_DOC_SYNTAX_IS_INVALID);
 
     }
 
@@ -199,7 +199,7 @@ public class TemplateDefinitionIT extends ODMRegistryIT {
         verifyResponseError(
                 errorResponse,
                 HttpStatus.NOT_FOUND,
-                ODMRegistryAPIStandardError.SC404_05_TEMPLATE_NOT_FOUND
+                RegistryApiStandardErrors.SC404_05_TEMPLATE_NOT_FOUND
         );
 
     }
@@ -219,7 +219,7 @@ public class TemplateDefinitionIT extends ODMRegistryIT {
         verifyResponseError(
                 errorResponse,
                 HttpStatus.NOT_FOUND,
-                ODMRegistryAPIStandardError.SC404_05_TEMPLATE_NOT_FOUND
+                RegistryApiStandardErrors.SC404_05_TEMPLATE_NOT_FOUND
         );
 
     }

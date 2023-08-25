@@ -9,6 +9,7 @@ public enum EntityTypeDPDS {
     observabilityport, 
     application, 
     infrastructure,
+    domain,
     template;
 
 

@@ -17,6 +17,7 @@ public enum ODMRegistryAPIStandardError {
     SC400_13_SCHEMA_ID_IS_EMPTY ("40013", "Schema id is empty"),
     SC400_14_TEMPLATE_IS_EMPTY ("40014", "Template is empty"),
     SC400_15_TEMPLATE_ID_IS_EMPTY ("40015", "Template id is empty"),
+    SC400_16_DOMAIN_IS_EMPTY ("40016", "Domain is empty"),
 
     SC400_99_PROPERTY_REF_EXCEPTION ("40099", "Property Reference Exception"),
    
@@ -26,6 +27,7 @@ public enum ODMRegistryAPIStandardError {
     SC404_03_STDDEF_NOT_FOUND ("40403", "Standard definition not found"),
     SC404_04_SCHEMA_NOT_FOUND ("40404", "Schema not found"),
     SC404_05_TEMPLATE_NOT_FOUND ("40405", "Template not found"),
+    SC404_06_DOMAIN_NOT_FOUND ("40406", "Domain not found"),
 
     // Unprocessable Entity Exceptions
     SC422_01_DESCRIPTOR_URI_IS_INVALID ("42201", "Descriptor URI is invalid"),
@@ -43,6 +45,8 @@ public enum ODMRegistryAPIStandardError {
     SC422_12_SCHEMA_TO_API_REL_ALREADY_EXISTS ("42212", "Schema to api relationship alredy exists"),
     SC422_13_TEMPLATE_ALREADY_EXISTS ("42213", "Template already exists"),
     SC422_14_TEMPLATE_DOC_SYNTAX_IS_INVALID ("42214", "Template document is invalid"),
+    SC422_15_DOMAIN_IS_INVALID ("42215", "Domain is invalid"),
+    SC422_16_DOMAIN_ALREADY_EXISTS ("42216", "Domain already exists"),
 
     // Conflict Exceptions
     SC409_01_CONCURRENT_DEPLOYMENT ("40901", "Concurrent deployment task"),

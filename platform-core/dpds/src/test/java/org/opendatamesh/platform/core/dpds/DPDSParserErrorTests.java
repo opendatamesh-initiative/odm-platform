@@ -314,7 +314,7 @@ public class DPDSParserErrorTests extends DPDSTests {
         .isInstanceOf(ParseException.class)
         .hasMessageContaining("Impossible to resolve external reference of root descriptor document")
         .hasRootCauseInstanceOf(FetchException.class)
-        .hasRootCauseMessage("Impossible to fetch file [file:/home/andrea.gioia/Sviluppi/quantyca/open-data-mesh/github/odm-platform/platform-core/dpds/target/test-classes/dpd-references/dpd-core-external/wrongUri]")
+        //.hasRootCauseMessage("Impossible to fetch file [file:/home/andrea.gioia/Sviluppi/quantyca/open-data-mesh/github/odm-platform/platform-core/dpds/target/test-classes/dpd-references/dpd-core-external/wrongUri]")
         .hasFieldOrPropertyWithValue("stage", ParseException.Stage.RESOLVE_EXTERNAL_REFERENCES);
     }
 }

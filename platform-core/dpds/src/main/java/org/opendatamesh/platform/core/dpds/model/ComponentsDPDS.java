@@ -44,19 +44,19 @@ public class ComponentsDPDS {
     @SuppressWarnings("unchecked")
     public <E extends ComponentDPDS> Map<String, E> getComponentsByEntityType(EntityTypeDPDS type){
         switch (type){
-            case inputport:
+            case INPUTPORT:
                 return (Map<String, E>) inputPorts;
-            case outputport:
+            case OUTPUTPORT:
                 return (Map<String, E>) outputPorts;
-            case discoveryport:
+            case DISCOVERYPORT:
                 return (Map<String, E>) discoveryPorts;
-            case controlport:
+            case CONTROLPORT:
                 return (Map<String, E>) controlPorts;
-            case observabilityport:
+            case OBSERVABILITYPORT:
                 return (Map<String, E>) observabilityPorts;
-            case application:
+            case APPLICATION:
                 return (Map<String, E>) applicationComponents;
-            case infrastructure:
+            case INFRASTRUCTURE:
                 return (Map<String, E>) infrastructuralComponents;
             default:
                 throw new RuntimeException("[" + type + "] is not a valid component type");

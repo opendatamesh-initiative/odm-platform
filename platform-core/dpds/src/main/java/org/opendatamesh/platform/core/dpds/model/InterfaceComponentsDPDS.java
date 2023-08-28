@@ -2,6 +2,7 @@ package org.opendatamesh.platform.core.dpds.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -17,38 +18,42 @@ import java.util.*;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 
 @Data
-@EqualsAndHashCode(callSuper=true)
-@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper=false)
+@ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonPropertyOrder({ "inputPorts", "outputPorts",  "discoveryPorts", "observabilityPorts", "controlPorts"})
 public class InterfaceComponentsDPDS extends ComponentContainerDPDS{
 
     @JsonProperty("inputPorts")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private List<PortDPDS> inputPorts = new ArrayList<PortDPDS>();
 
     @JsonProperty("outputPorts")
     private List<PortDPDS> outputPorts = new ArrayList<PortDPDS>();
 
     @JsonProperty("discoveryPorts")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private List<PortDPDS> discoveryPorts = new ArrayList<PortDPDS>();
 
     @JsonProperty("observabilityPorts")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private List<PortDPDS> observabilityPorts = new ArrayList<PortDPDS>();
 
     @JsonProperty("controlPorts")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private List<PortDPDS> controlPorts = new ArrayList<PortDPDS>();
 
     public List<PortDPDS> getPortListByEntityType(EntityTypeDPDS entityType) {
         switch (entityType) {
-            case outputport:
+            case OUTPUTPORT:
                 return outputPorts;
-            case inputport:
+            case INPUTPORT:
                 return inputPorts;
-            case controlport:
+            case CONTROLPORT:
                 return controlPorts;
-            case discoveryport:
+            case DISCOVERYPORT:
                 return discoveryPorts;
-            case observabilityport:
+            case OBSERVABILITYPORT:
                 return observabilityPorts;
             default:
                 return null;
@@ -102,19 +107,19 @@ public class InterfaceComponentsDPDS extends ComponentContainerDPDS{
         ObjectMapper mapper = ObjectMapperFactory.JSON_MAPPER;
         ObjectNode interfaceComponentNodes = mapper.createObjectNode();
        
-        if(inludedPortTypes.contains(EntityTypeDPDS.inputport))
+        if(inludedPortTypes.contains(EntityTypeDPDS.INPUTPORT))
             interfaceComponentNodes.set("inputPorts", getRawContent(inputPorts));
     
-        if(inludedPortTypes.contains(EntityTypeDPDS.outputport))
+        if(inludedPortTypes.contains(EntityTypeDPDS.OUTPUTPORT))
             interfaceComponentNodes.set("outputPorts", getRawContent(outputPorts));
 
-        if(inludedPortTypes.contains(EntityTypeDPDS.controlport))
+        if(inludedPortTypes.contains(EntityTypeDPDS.CONTROLPORT))
             interfaceComponentNodes.set("controlPorts", getRawContent(controlPorts));
 
-        if(inludedPortTypes.contains(EntityTypeDPDS.discoveryport))
+        if(inludedPortTypes.contains(EntityTypeDPDS.DISCOVERYPORT))
             interfaceComponentNodes.set("discoveryPorts", getRawContent(discoveryPorts));
 
-        if(inludedPortTypes.contains(EntityTypeDPDS.observabilityport))
+        if(inludedPortTypes.contains(EntityTypeDPDS.OBSERVABILITYPORT))
             interfaceComponentNodes.set("observabilityPorts", getRawContent(observabilityPorts));
 
         return interfaceComponentNodes;

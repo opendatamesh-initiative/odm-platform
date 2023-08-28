@@ -9,7 +9,7 @@ import org.opendatamesh.platform.core.dpds.api.asyncapi.AsyncApiParser;
 import org.opendatamesh.platform.core.dpds.api.dsapi.DataStoreApiParser;
 import org.opendatamesh.platform.core.dpds.api.openapi.OpenApiParser;
 import org.opendatamesh.platform.core.dpds.exceptions.FetchException;
-import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
+import org.opendatamesh.platform.core.dpds.exceptions.DeserializationException;
 import org.opendatamesh.platform.core.dpds.exceptions.UnresolvableReferenceException;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.PortDPDS;
@@ -34,7 +34,7 @@ public class ApiDefinitionsProcessor {
     }
 
     // Note: to be called after component resolution
-    public void process() throws UnresolvableReferenceException, ParseException {
+    public void process() throws UnresolvableReferenceException, DeserializationException {
 
         DataProductVersionDPDS parsedContent = context.getResult().getDescriptorDocument();
 
@@ -50,37 +50,41 @@ public class ApiDefinitionsProcessor {
     }
 
     private void processApiDefinitions(List<PortDPDS> ports)
-            throws ParseException {
+            throws DeserializationException {
 
         if (ports == null || ports.isEmpty()) {
             return;
         }
 
         for (PortDPDS port : ports) {
+
+            String ref = port.getPromises().getApi().getDefinition().getRef();
+            if(ref != null && ref.startsWith(context.getOptions().getServerUrl())) continue;
+
             ObjectNode portObject = null;
             try {
                 portObject = (ObjectNode)mapper.readTree(port.getRawContent());
             } catch (JsonProcessingException e) {
-                throw new ParseException("Impossible to parse raw content of port [" + port.getFullyQualifiedName() + "]", e);
+                throw new DeserializationException("Impossible to parse raw content of port [" + port.getFullyQualifiedName() + "]", e);
             }
 
             try {
                 resolveApiDefinition(port, portObject);
             } catch (UnresolvableReferenceException | FetchException e) {
-                 throw new ParseException(
+                 throw new DeserializationException(
                         "Impossible to resolve api definition of port [" + port.getFullyQualifiedName() + "]", e);
             }
             try {     
                 parseApiDefinition(port);
             } catch (FetchException e) {
-                throw new ParseException(
+                throw new DeserializationException(
                         "Impossible to parse api definition of port [" + port.getFullyQualifiedName() + "]", e);
             }
         }
     }
 
     private void resolveApiDefinition(PortDPDS port, JsonNode portObject)
-            throws UnresolvableReferenceException, FetchException, ParseException {
+            throws UnresolvableReferenceException, FetchException, DeserializationException {
 
         if(port.hasApiDefinition() == false) return;
         ObjectNode apiDefinitionNode = (ObjectNode) portObject.at("/promises/api/definition");
@@ -111,7 +115,7 @@ public class ApiDefinitionsProcessor {
             try {
                 apiDefinitionContent = mapper.writeValueAsString(apiDefinitionNode);
             } catch (JsonProcessingException e) {
-                throw new ParseException("Impossible serialize api definition", e);
+                throw new DeserializationException("Impossible serialize api definition", e);
             }
             apiDefinitionRef = context.getOptions().getServerUrl() + "/apis/{apiId}";
             ObjectNode apiObject = (ObjectNode) portObject.at("/promises/api");
@@ -129,11 +133,11 @@ public class ApiDefinitionsProcessor {
             String rawContent = mapper.writeValueAsString(portObject);
             port.setRawContent(rawContent);
         } catch (JsonProcessingException e) {
-            throw new ParseException("Impossible serialize descriptor", e);
+            throw new DeserializationException("Impossible serialize descriptor", e);
         }
     }
 
-    private void parseApiDefinition(PortDPDS port) throws FetchException, ParseException {
+    private void parseApiDefinition(PortDPDS port) throws FetchException, DeserializationException {
 
         if (port == null || port.getPromises() == null || port.getPromises().getApi() == null
                 || port.getPromises().getApi().getDefinition() == null)
@@ -161,7 +165,7 @@ public class ApiDefinitionsProcessor {
         }
 
         if (parsedApiDefinition != null) {
-            // we save the sub calss ApiDefinitionReferenceDPDS
+            // we save the sub class ApiDefinitionReferenceDPDS
             DefinitionReferenceDPDS apiDefinition = api.getDefinition();
             parsedApiDefinition.setDescription(apiDefinition.getDescription());
             parsedApiDefinition.setMediaType(apiDefinition.getMediaType());
@@ -172,7 +176,7 @@ public class ApiDefinitionsProcessor {
         }
     }
 
-    public static void process(ParseContext context) throws UnresolvableReferenceException, ParseException {
+    public static void process(ParseContext context) throws UnresolvableReferenceException, DeserializationException {
         ApiDefinitionsProcessor processor = new ApiDefinitionsProcessor(context);
         processor.process();
     }

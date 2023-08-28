@@ -17,6 +17,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.opendatamesh.platform.core.commons.clients.ODMIntegrationTest;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
+import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.pp.registry.api.clients.RegistryClient;
 import org.opendatamesh.platform.pp.registry.api.resources.DataProductDescriptorLocationResource;
 import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
@@ -131,11 +132,27 @@ public abstract class ODMRegistryIT extends ODMIntegrationTest {
         return createdDataProductRes;
     }
 
-    protected String createDataProductVersion(String dataProductId, String filePath) throws IOException {
-        String payload = resourceBuilder.readResourceFromFile(filePath);
-        ResponseEntity<String> postProductVersionResponse = registryClient.postDataProductVersion(
-                dataProductId, payload, String.class);
+    protected String createDataProductVersion(String dataProductId, String filePath) {
+        
+        String descriptorContent = null;
+        try {
+            descriptorContent = resourceBuilder.readResourceFromFile(ODMRegistryResources.RESOURCE_DP1_V1);
+        } catch (IOException t) {
+            t.printStackTrace();
+            fail("Impossible to read data product version from file: " + t.getMessage());
+            return null;
+        }
+
+        ResponseEntity<String> postProductVersionResponse = null;
+        try {
+            postProductVersionResponse = registryClient.postDataProductVersion(dataProductId, descriptorContent, String.class);
+        } catch (Throwable t) {
+            t.printStackTrace();
+            fail("Impossible to post data product version: " + t.getMessage());
+            return null;
+        }
         verifyResponseEntity(postProductVersionResponse, HttpStatus.CREATED, true);
+        
         return postProductVersionResponse.getBody();
     }
 

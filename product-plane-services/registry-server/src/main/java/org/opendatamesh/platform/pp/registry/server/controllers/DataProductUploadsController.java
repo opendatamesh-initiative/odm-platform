@@ -15,10 +15,10 @@ import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestExcep
 import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
+import org.opendatamesh.platform.core.dpds.parser.DPDSSerializer;
 import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
 import org.opendatamesh.platform.core.dpds.parser.location.GitLocation;
 import org.opendatamesh.platform.core.dpds.parser.location.UriLocation;
-import org.opendatamesh.platform.core.dpds.serde.DataProductVersionSerializer;
 import org.opendatamesh.platform.pp.registry.api.resources.DataProductDescriptorLocationResource;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproduct.DataProductVersion;
@@ -149,7 +149,7 @@ public class DataProductUploadsController
         String serverUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
         DataProductVersion dataProductVersion = dataProductService.addDataProductVersion(descriptorLocation, true, serverUrl);
         DataProductVersionDPDS dataProductVersionDPDS = dataProductVersionMapper.toResource(dataProductVersion);
-        DataProductVersionSerializer serializer = new DataProductVersionSerializer();
+        DPDSSerializer serializer = new DPDSSerializer();
         String serailizedContent = null;
         try {
             serailizedContent = serializer.serialize(dataProductVersionDPDS, "canonical", "json", true);

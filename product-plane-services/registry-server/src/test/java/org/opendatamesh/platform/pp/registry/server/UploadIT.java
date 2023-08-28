@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
-import org.opendatamesh.platform.core.dpds.exceptions.BuildException;
+import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.InfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.PortDPDS;
@@ -40,7 +40,7 @@ public class UploadIT extends ODMRegistryIT {
         String descriptorContent = uploadDataProductVersion(descriptorLocation);
         try {
             verifyBasicContent(descriptorContent);
-        } catch (BuildException e) {
+        } catch (ParseException e) {
             Assert.fail(e.getMessage());
         }
     }
@@ -58,7 +58,7 @@ public class UploadIT extends ODMRegistryIT {
         
         try {
             verifyBasicContent(descriptorContent);
-        } catch (BuildException e) {
+        } catch (ParseException e) {
             Assert.fail(e.getMessage());
         }
     }
@@ -82,7 +82,7 @@ public class UploadIT extends ODMRegistryIT {
         try {
             dpv = toDescriptor(descriptorContent);
             Assert.assertEquals(dpv.getInfo().getVersionNumber(), "1.1.0");
-        } catch (BuildException e) {
+        } catch (ParseException e) {
             Assert.fail(e.getMessage());
         }
     }
@@ -106,7 +106,7 @@ public class UploadIT extends ODMRegistryIT {
         try {
             dpv = toDescriptor(descriptorContent);
             Assert.assertEquals(dpv.getInfo().getVersionNumber(), "1.0.0");
-        } catch (BuildException e) {
+        } catch (ParseException e) {
             Assert.fail(e.getMessage());
         }
     }
@@ -129,7 +129,7 @@ public class UploadIT extends ODMRegistryIT {
         try {
             dpv = toDescriptor(descriptorContent);
             Assert.assertEquals(dpv.getInfo().getVersionNumber(), "2.0.0");
-        } catch (BuildException e) {
+        } catch (ParseException e) {
             Assert.fail(e.getMessage());
         }
         /* 
@@ -161,7 +161,7 @@ public class UploadIT extends ODMRegistryIT {
     // Verify test resources
     // ----------------------------------------
 
-    private DataProductVersionDPDS toDescriptor(String descriptorContent) throws BuildException {
+    private DataProductVersionDPDS toDescriptor(String descriptorContent) throws ParseException {
         DPDSParser parser = new DPDSParser();
         DescriptorLocation location = new UriLocation(descriptorContent);
 
@@ -174,7 +174,7 @@ public class UploadIT extends ODMRegistryIT {
         DataProductVersionDPDS dpv = parser.parse(location, options).getDescriptorDocument();
         return dpv;
     }
-    private void verifyBasicContent(String descriptorContent) throws BuildException {
+    private void verifyBasicContent(String descriptorContent) throws ParseException {
         DataProductVersionDPDS dpv = toDescriptor(descriptorContent);
     
         Assert.assertEquals(dpv.getDataProductDescriptor(), "1.0.0");

@@ -10,9 +10,9 @@ import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerE
 import org.opendatamesh.platform.core.commons.servers.exceptions.NotFoundException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
 import org.opendatamesh.platform.core.commons.servers.exceptions.UnprocessableEntityException;
-import org.opendatamesh.platform.core.dpds.exceptions.BuildException;
-import org.opendatamesh.platform.core.dpds.exceptions.FetchException;
 import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
+import org.opendatamesh.platform.core.dpds.exceptions.FetchException;
+import org.opendatamesh.platform.core.dpds.exceptions.DeserializationException;
 import org.opendatamesh.platform.core.dpds.exceptions.UnresolvableReferenceException;
 import org.opendatamesh.platform.core.dpds.exceptions.ValidationException;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
@@ -458,7 +458,7 @@ public class DataProductService {
         try {
             ParseResult result = descriptorParser.parse(descriptorLocation, options);
             descriptor = result.getDescriptorDocument();
-        } catch (BuildException e) {
+        } catch (ParseException e) {
             handleBuildException(e);
         }
      
@@ -469,7 +469,7 @@ public class DataProductService {
         return dataProductVersion;
     }
 
-    private void handleBuildException(BuildException e) {
+    private void handleBuildException(ParseException e) {
         switch(e.getStage()) {
             case LOAD_ROOT_DOC:
                 handleLoadRootDocException(e);
@@ -488,6 +488,10 @@ public class DataProductService {
                 throw new InternalServerException(
                     ODMApiCommonErrors.SC500_02_DESCRIPTOR_ERROR,
             "An error occured in the backend descriptor processor while resolving standard definitions", e);
+            case VALIDATE:
+                throw new UnprocessableEntityException(
+                RegistryApiStandardErrors.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
+                "Descriptor document does not comply with DPDS. The following validation errors has been found during validation [" + ((ValidationException)e.getCause()).getErrors().toString() + "]", e);    
             default:
               throw new InternalServerException(
                 ODMApiCommonErrors.SC500_02_DESCRIPTOR_ERROR,
@@ -495,62 +499,50 @@ public class DataProductService {
           }
     }
 
-    private void handleLoadRootDocException(BuildException e) {
+    private void handleLoadRootDocException(ParseException e) {
 
         if(e.getCause() instanceof FetchException) {
             throw new UnprocessableEntityException(
                 RegistryApiStandardErrors.SC422_01_DESCRIPTOR_URI_IS_INVALID,
                 "Provided URI cannot be fatched [" + ((FetchException)e.getCause()).getUri() + "]", e);
-        } else if(e.getCause() instanceof ParseException) {
+        } else if(e.getCause() instanceof DeserializationException) {
             throw new UnprocessableEntityException(
                 RegistryApiStandardErrors.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
-                "Descriptor document it's not a valid JSON document", e);    
-        } else if(e.getCause() instanceof ValidationException) {
-            throw new UnprocessableEntityException(
-                RegistryApiStandardErrors.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
-                "Descriptor document does not comply with DPDS. The following validation errors has been found during validation [" + ((ValidationException)e.getCause()).getErrors().toString() + "]", e);    
-        } else {
+                "Descriptor document is not a valid JSON document", e);    
+        }  else {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_02_DESCRIPTOR_ERROR,
                 "An unexpected exception occured while loading root document", e);
         }  
     }
 
-    private void handleResolveExternalResourceException(BuildException e) {
+    private void handleResolveExternalResourceException(ParseException e) {
 
         if(e.getCause() instanceof UnresolvableReferenceException) {
             throw new UnprocessableEntityException(
                 RegistryApiStandardErrors.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
                 "Descriptor document contains unresolvable external references: " + e.getMessage(), e);
-        } else if(e.getCause() instanceof ParseException) {
+        } else if(e.getCause() instanceof DeserializationException) {
             throw new UnprocessableEntityException(
                 RegistryApiStandardErrors.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
                 "Descriptor document referentiates external resources that are not valid JSON documents", e);
-        } else if(e.getCause() instanceof ValidationException) {
-            throw new UnprocessableEntityException(
-                RegistryApiStandardErrors.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
-                "Descriptor document does not comply with DPDS. The following validation errors has been found during validation of external references [" + ((ValidationException)e.getCause()).getErrors().toString() + "]", e);
-        } else {
+        }  else {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_02_DESCRIPTOR_ERROR,
                 "An unexpected exception occured while resolving external references", e);
         }  
     }
 
-    private void handleResolveInternalResourceException(BuildException e) {
+    private void handleResolveInternalResourceException(ParseException e) {
 
         if(e.getCause() instanceof UnresolvableReferenceException) {
             throw new UnprocessableEntityException(
                 RegistryApiStandardErrors.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
                 "Descriptor document contains unresolvable internal references", e);
-        } else if(e.getCause() instanceof ParseException) {
+        } else if(e.getCause() instanceof DeserializationException) {
             throw new UnprocessableEntityException(
                 RegistryApiStandardErrors.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
                 "Descriptor document that referentiates internal resources that are not valid JSON documents", e);
-        } else if(e.getCause() instanceof ValidationException) {
-            throw new UnprocessableEntityException(
-                RegistryApiStandardErrors.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
-                "Descriptor document does not comply with DPDS. The following validation errors has been found during internal reference validation [" + ((ValidationException)e.getCause()).getErrors().toString() + "]", e);
         } else {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_02_DESCRIPTOR_ERROR,

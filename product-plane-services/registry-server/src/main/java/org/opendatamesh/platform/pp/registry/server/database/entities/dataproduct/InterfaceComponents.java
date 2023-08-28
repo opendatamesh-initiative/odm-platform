@@ -62,15 +62,15 @@ public class InterfaceComponents {
    
     public List<Port> getPortListByEntityType(EntityTypeDPDS entityType){
         switch (entityType){
-            case outputport:
+            case OUTPUTPORT:
                 return outputPorts;
-            case inputport:
+            case INPUTPORT:
                 return inputPorts;
-            case controlport:
+            case CONTROLPORT:
                 return controlPorts;
-            case discoveryport:
+            case DISCOVERYPORT:
                 return discoveryPorts;
-            case observabilityport:
+            case OBSERVABILITYPORT:
                 return observabilityPorts;
             default:
                 return null;

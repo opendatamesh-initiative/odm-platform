@@ -16,8 +16,8 @@ import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerE
 import org.opendatamesh.platform.core.commons.servers.exceptions.NotFoundException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
+import org.opendatamesh.platform.core.dpds.parser.DPDSSerializer;
 import org.opendatamesh.platform.core.dpds.parser.location.UriLocation;
-import org.opendatamesh.platform.core.dpds.serde.DataProductVersionSerializer;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproduct.DataProductVersion;
 import org.opendatamesh.platform.pp.registry.server.database.mappers.DataProductVersionMapper;
@@ -141,7 +141,7 @@ public class DataProductVersionController
         @PathVariable String id,
 
         @Parameter(description = "A data product descriptor document compliant with [DPDS version 1.0.0-DRAFT](https://dpds.opendatamesh.org/resources/specifications/1.0.0-DRAFT/)")
-        @Valid @RequestBody String descriptorContent
+        @RequestBody String descriptorContent
     )  {
 
         if(!StringUtils.hasText(id)) {
@@ -161,7 +161,7 @@ public class DataProductVersionController
         DataProductVersion dataProductVersion = dataProductService.addDataProductVersion(id, descriptorLocation, serverUrl);
         DataProductVersionDPDS dataProductVersionDPDS = dataProductVersionMapper.toResource(dataProductVersion);
         
-        DataProductVersionSerializer serializer = new DataProductVersionSerializer();
+        DPDSSerializer serializer = new DPDSSerializer();
         String serailizedContent = null;
         try {
             serailizedContent = serializer.serialize(dataProductVersionDPDS, "canonical", "json", true);
@@ -317,7 +317,7 @@ public class DataProductVersionController
 
         DataProductVersionDPDS dataProductVersionDPDS = dataProductVersionMapper.toResource(dataProductVersion);
         if(format == null) format = "canonical";
-        DataProductVersionSerializer serializer = new DataProductVersionSerializer();
+        DPDSSerializer serializer = new DPDSSerializer();
         String serailizedContent = null;
         try {
             serailizedContent = serializer.serialize(dataProductVersionDPDS, format, "json", true);

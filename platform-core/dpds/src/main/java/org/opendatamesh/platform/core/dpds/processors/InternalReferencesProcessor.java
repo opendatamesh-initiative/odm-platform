@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
-import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
+import org.opendatamesh.platform.core.dpds.exceptions.DeserializationException;
 import org.opendatamesh.platform.core.dpds.exceptions.UnresolvableReferenceException;
 import org.opendatamesh.platform.core.dpds.model.LifecycleActivityInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.ComponentDPDS;
@@ -33,27 +33,27 @@ public class InternalReferencesProcessor implements PropertiesProcessor{
     }
 
     @Override
-    public void process() throws ParseException, UnresolvableReferenceException {
+    public void process() throws DeserializationException, UnresolvableReferenceException {
 
         DataProductVersionDPDS parsedContent = context.getResult().getDescriptorDocument();
 
         if (parsedContent.getInterfaceComponents() != null) {
             resolveInternalReferences(parsedContent.getInterfaceComponents().getOutputPorts(),
-                    parsedContent.getComponents(), EntityTypeDPDS.outputport);
+                    parsedContent.getComponents(), EntityTypeDPDS.OUTPUTPORT);
             resolveInternalReferences(parsedContent.getInterfaceComponents().getInputPorts(),
-                    parsedContent.getComponents(), EntityTypeDPDS.inputport);
+                    parsedContent.getComponents(), EntityTypeDPDS.INPUTPORT);
             resolveInternalReferences(parsedContent.getInterfaceComponents().getObservabilityPorts(),
-                    parsedContent.getComponents(), EntityTypeDPDS.observabilityport);
+                    parsedContent.getComponents(), EntityTypeDPDS.OBSERVABILITYPORT);
             resolveInternalReferences(parsedContent.getInterfaceComponents().getDiscoveryPorts(),
-                    parsedContent.getComponents(), EntityTypeDPDS.discoveryport);
+                    parsedContent.getComponents(), EntityTypeDPDS.DISCOVERYPORT);
             resolveInternalReferences(parsedContent.getInterfaceComponents().getControlPorts(),
-                    parsedContent.getComponents(), EntityTypeDPDS.controlport);
+                    parsedContent.getComponents(), EntityTypeDPDS.CONTROLPORT);
         }
         if (parsedContent.getInternalComponents() != null) {
             resolveInternalReferences(parsedContent.getInternalComponents().getApplicationComponents(),
-                    parsedContent.getComponents(), EntityTypeDPDS.application);
+                    parsedContent.getComponents(), EntityTypeDPDS.APPLICATION);
             resolveInternalReferences(parsedContent.getInternalComponents().getInfrastructuralComponents(),
-                    parsedContent.getComponents(), EntityTypeDPDS.infrastructure);
+                    parsedContent.getComponents(), EntityTypeDPDS.INFRASTRUCTURE);
             
             if(parsedContent.getInternalComponents().getLifecycleInfo() != null) {
                 resolveInternalReferences(parsedContent.getInternalComponents().getLifecycleInfo(), parsedContent.getComponents());
@@ -130,7 +130,7 @@ public class InternalReferencesProcessor implements PropertiesProcessor{
         }
     }
 
-    public static void process(ParseContext context)  throws ParseException, UnresolvableReferenceException {
+    public static void process(ParseContext context)  throws DeserializationException, UnresolvableReferenceException {
         InternalReferencesProcessor resolver = new InternalReferencesProcessor(context);
         resolver.process();
     }

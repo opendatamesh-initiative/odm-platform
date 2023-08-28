@@ -1,12 +1,10 @@
 package org.opendatamesh.platform.pp.registry.server;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.fail;
+import static org.assertj.core.api.Assertions.fail;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.core.dpds.parser.IdentifierStrategy;
@@ -14,8 +12,6 @@ import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.annotation.DirtiesContext.MethodMode;
-
-//TODO every update to data product must check and mock the call to the policyservice
 
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 public class DataProductIT extends ODMRegistryIT {

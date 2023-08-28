@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 
 public class RegistryClient extends ODMClient {
 
@@ -163,7 +162,7 @@ public class RegistryClient extends ODMClient {
     }
 
     // ======================================================================================
-    // DATA PRODUCT
+    // DATA PRODUCT VERSION
     // ======================================================================================
 
     public DataProductVersionDPDS createDataProductVersion(String dataProductId, Object payload) throws IOException {

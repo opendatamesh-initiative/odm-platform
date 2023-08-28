@@ -18,8 +18,8 @@ import java.util.List;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 
 @Data
-@EqualsAndHashCode(callSuper=true)
-@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper=false)
+@ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class InternalComponentsDPDS extends ComponentContainerDPDS{
 

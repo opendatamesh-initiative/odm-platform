@@ -2,7 +2,7 @@ package org.opendatamesh.platform.core.dpds.processors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
-import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
+import org.opendatamesh.platform.core.dpds.exceptions.DeserializationException;
 import org.opendatamesh.platform.core.dpds.exceptions.UnresolvableReferenceException;
 import org.opendatamesh.platform.core.dpds.model.ComponentDPDS;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
@@ -23,31 +23,33 @@ public class ExternalReferencesProcessor implements PropertiesProcessor{
     }
 
     @Override
-    public void process() throws UnresolvableReferenceException, ParseException {
+    public void process() throws UnresolvableReferenceException, DeserializationException {
         DataProductVersionDPDS parsedContent =  context.getResult().getDescriptorDocument();
 
         if (parsedContent.getInterfaceComponents() != null) {
             resolveExternalReferences(parsedContent.getInterfaceComponents().getInputPorts(), 
-                    EntityTypeDPDS.inputport);
+                    EntityTypeDPDS.INPUTPORT);
             resolveExternalReferences(parsedContent.getInterfaceComponents().getOutputPorts(),
-                    EntityTypeDPDS.outputport);
+                    EntityTypeDPDS.OUTPUTPORT);
             resolveExternalReferences(parsedContent.getInterfaceComponents().getDiscoveryPorts(),
-                    EntityTypeDPDS.discoveryport);
+                    EntityTypeDPDS.DISCOVERYPORT);
             resolveExternalReferences(parsedContent.getInterfaceComponents().getObservabilityPorts(),
-                    EntityTypeDPDS.observabilityport);
+                    EntityTypeDPDS.OBSERVABILITYPORT);
             resolveExternalReferences(parsedContent.getInterfaceComponents().getControlPorts(),
-                    EntityTypeDPDS.controlport);
+                    EntityTypeDPDS.CONTROLPORT);
         }
+
         if (parsedContent.getInternalComponents() != null) {
             resolveExternalReferences(parsedContent.getInternalComponents().getApplicationComponents(),
-                    EntityTypeDPDS.application);
+                    EntityTypeDPDS.APPLICATION);
             resolveExternalReferences(parsedContent.getInternalComponents().getInfrastructuralComponents(),
-                    EntityTypeDPDS.infrastructure);
+                    EntityTypeDPDS.INFRASTRUCTURE);
         }
     }
 
     private <E extends ComponentDPDS> void resolveExternalReferences(List<E> components,
             EntityTypeDPDS compoEntityType) throws UnresolvableReferenceException {
+        
         for (int i = 0; i < components.size(); i++) {
             E component = components.get(i);
             String ref = component.getRef();
@@ -82,7 +84,7 @@ public class ExternalReferencesProcessor implements PropertiesProcessor{
         return resolvedComponent;
     }
 
-    public static void process(ParseContext context) throws UnresolvableReferenceException, ParseException {
+    public static void process(ParseContext context) throws UnresolvableReferenceException, DeserializationException {
         ExternalReferencesProcessor resolver = new ExternalReferencesProcessor(context);
         resolver.process();
     }

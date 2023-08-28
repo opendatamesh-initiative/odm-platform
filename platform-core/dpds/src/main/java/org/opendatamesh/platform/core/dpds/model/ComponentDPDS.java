@@ -5,11 +5,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 
 @Data
-@JsonIgnoreProperties(value={ "id", "entityType" }, allowGetters=true, ignoreUnknown = true)
-public class ComponentDPDS {
+//@JsonIgnoreProperties(value={ "id", "entityType" }, allowGetters=true, ignoreUnknown = true)
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class ComponentDPDS implements Cloneable {
    
     @JsonProperty("id")
     protected String id;
@@ -18,7 +20,7 @@ public class ComponentDPDS {
     protected String fullyQualifiedName;
     
     @JsonProperty("entityType")
-    protected EntityTypeDPDS entityType;
+    private String entityType;
    
     @JsonProperty("name")
     protected String name;
@@ -44,6 +46,7 @@ public class ComponentDPDS {
     protected String originalRef;
 
     @JsonIgnore
+    @EqualsAndHashCode.Exclude
     protected String rawContent;
 
     @JsonAnySetter

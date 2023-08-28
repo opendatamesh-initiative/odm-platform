@@ -3,7 +3,7 @@ package org.opendatamesh.platform.core.dpds.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.exceptions.FetchException;
-import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
+import org.opendatamesh.platform.core.dpds.exceptions.DeserializationException;
 import org.opendatamesh.platform.core.dpds.model.definitions.ApiDefinitionEndpointDPDS;
 import org.opendatamesh.platform.core.dpds.model.definitions.ApiDefinitionReferenceDPDS;
 import org.opendatamesh.platform.core.dpds.parser.location.UriFetcher;
@@ -30,7 +30,7 @@ public abstract class ApiParser {
         this.fetcher = fetcher;
     }
 
-    public ApiDefinitionReferenceDPDS parse(String rawContent, String mediaType) throws ParseException, FetchException {
+    public ApiDefinitionReferenceDPDS parse(String rawContent, String mediaType) throws DeserializationException, FetchException {
         ApiDefinitionReferenceDPDS api = new ApiDefinitionReferenceDPDS();
         api.setBaseUri(baseUri);
         api.setRawContent(rawContent);
@@ -71,7 +71,7 @@ public abstract class ApiParser {
         return mapper;
     }
 
-    protected abstract List<ApiDefinitionEndpointDPDS> extractEndpoints(String rawContent, String mediaType) throws ParseException, FetchException;
+    protected abstract List<ApiDefinitionEndpointDPDS> extractEndpoints(String rawContent, String mediaType) throws DeserializationException, FetchException;
 
 
 }

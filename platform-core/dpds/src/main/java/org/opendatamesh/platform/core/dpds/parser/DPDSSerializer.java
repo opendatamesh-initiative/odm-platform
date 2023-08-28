@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.core.dpds.serde;
+package org.opendatamesh.platform.core.dpds.parser;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -15,9 +15,9 @@ import java.util.List;
 import java.util.Set;
 
 @Data
-public class DataProductVersionSerializer {
+public class DPDSSerializer {
 
-    public DataProductVersionSerializer() {
+    public DPDSSerializer() {
 
     }
 
@@ -113,20 +113,36 @@ public class DataProductVersionSerializer {
         ObjectMapper mapper = ObjectMapperFactory.JSON_MAPPER;
         ObjectNode interfaceComponentsNode = mapper.createObjectNode();
 
-        if (inludedPortTypes.contains(EntityTypeDPDS.inputport))
-            interfaceComponentsNode.set("inputPorts", getRawContent(resources.getInputPorts()));
+        ArrayNode portsNode = null;
+        if (inludedPortTypes.contains(EntityTypeDPDS.INPUTPORT)) {
+            portsNode = getRawContent(resources.getInputPorts());
+            if (portsNode.size() > 0)
+                interfaceComponentsNode.set(EntityTypeDPDS.INPUTPORT.groupingPropertyName(), portsNode);
+        }
 
-        if (inludedPortTypes.contains(EntityTypeDPDS.outputport))
-            interfaceComponentsNode.set("outputPorts", getRawContent(resources.getOutputPorts()));
+        if (inludedPortTypes.contains(EntityTypeDPDS.OUTPUTPORT)) {
+            portsNode = getRawContent(resources.getOutputPorts());
+            // include event if it is empty to make the validator happy :)
+            interfaceComponentsNode.set(EntityTypeDPDS.OUTPUTPORT.groupingPropertyName(), portsNode);
+        }
 
-        if (inludedPortTypes.contains(EntityTypeDPDS.controlport))
-            interfaceComponentsNode.set("controlPorts", getRawContent(resources.getControlPorts()));
+        if (inludedPortTypes.contains(EntityTypeDPDS.CONTROLPORT)) {
+            portsNode = getRawContent(resources.getControlPorts());
+            if (portsNode.size() > 0)
+                interfaceComponentsNode.set(EntityTypeDPDS.CONTROLPORT.groupingPropertyName(), portsNode);
+        }
 
-        if (inludedPortTypes.contains(EntityTypeDPDS.discoveryport))
-            interfaceComponentsNode.set("discoveryPorts", getRawContent(resources.getDiscoveryPorts()));
+        if (inludedPortTypes.contains(EntityTypeDPDS.DISCOVERYPORT)) {
+            portsNode = getRawContent(resources.getDiscoveryPorts());
+            if (portsNode.size() > 0)
+                interfaceComponentsNode.set(EntityTypeDPDS.DISCOVERYPORT.groupingPropertyName(), portsNode);
+        }
 
-        if (inludedPortTypes.contains(EntityTypeDPDS.observabilityport))
-            interfaceComponentsNode.set("observabilityPorts", getRawContent(resources.getObservabilityPorts()));
+        if (inludedPortTypes.contains(EntityTypeDPDS.OBSERVABILITYPORT)) {
+            portsNode = getRawContent(resources.getObservabilityPorts());
+            if (portsNode.size() > 0)
+                interfaceComponentsNode.set(EntityTypeDPDS.OBSERVABILITYPORT.groupingPropertyName(), portsNode);
+        }
 
         return interfaceComponentsNode;
     }

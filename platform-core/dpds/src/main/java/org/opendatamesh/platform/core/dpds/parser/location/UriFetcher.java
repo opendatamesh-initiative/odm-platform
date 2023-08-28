@@ -279,7 +279,7 @@ public class UriFetcher implements DescriptorLocation.Fetcher {
         return content;
     }
 
-    private String loadFileFromClasspath(URI resourceUri) {
+    private String loadFileFromClasspath(URI resourceUri) throws FetchException {
 
         String content = "";
 
@@ -302,6 +302,8 @@ public class UriFetcher implements DescriptorLocation.Fetcher {
             } catch (IOException e) {
                 throw new RuntimeException("Could not read " + file + " from the classpath", e);
             }
+        } else {
+            throw new FetchException("Impossible to fetch file [" + file + "]", resourceUri);
         }
 
         return content;

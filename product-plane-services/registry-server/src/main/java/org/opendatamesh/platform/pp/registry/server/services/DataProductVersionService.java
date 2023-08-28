@@ -23,7 +23,6 @@ import org.opendatamesh.platform.pp.registry.server.resources.v1.observers.Event
 import org.opendatamesh.platform.pp.registry.server.resources.v1.policyservice.PolicyName;
 import org.opendatamesh.platform.up.notification.api.resources.EventResource;
 import org.opendatamesh.platform.up.notification.api.resources.EventType;
-import org.opendatamesh.platform.up.policy.api.v1.clients.PolicyServiceClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

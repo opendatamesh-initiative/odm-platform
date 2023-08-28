@@ -9,9 +9,7 @@ public class ParseOptions {
     private  String serverUrl;
     IdentifierStrategy identifierStrategy = IdentifierStrategy.DEFUALT;
 
-    private boolean validateRootDocumet = true;
-    private boolean validateExternalRefs = true;
-    private boolean validateInternalRefs = true;
+    private boolean validate = true;
     private boolean validateReadOnlyProperties = false;
 
     private boolean resoveExternalRef = true;

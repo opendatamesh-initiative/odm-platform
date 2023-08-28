@@ -54,6 +54,34 @@ public class DataProductErrorsIT extends ODMRegistryIT {
 
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testCreateDataProductWithEmptyPayload() {
+
+        ResponseEntity<ErrorRes> response = null;
+        try {
+            response = registryClient.postDataProduct("    ", ErrorRes.class);
+        } catch (Throwable t) {
+            t.printStackTrace();
+            fail("Impossible to post data product: " + t.getMessage());
+            return;
+        }
+
+        assertThat(response).isNotNull();
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
+        ErrorRes errorRes = response.getBody();
+        assertThat(errorRes).isNotNull();
+        assertThat(errorRes.getCode())
+                .isEqualTo(ODMApiCommonErrors.SC400_00_REQUEST_BODY_IS_NOT_READABLE.code());
+        assertThat(errorRes.getDescription())
+                .isEqualTo(ODMApiCommonErrors.SC400_00_REQUEST_BODY_IS_NOT_READABLE.description());
+        assertThat(errorRes.getMessage()).isNotNull();
+        assertThat(errorRes.getPath()).isEqualTo(RegistryAPIRoutes.DATA_PRODUCTS.getPath());
+        assertThat(errorRes.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        assertThat(errorRes.getTimestamp()).isNotNull();
+    }
+
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testCreateDataProductWithMissingFqn() {
 
         ResponseEntity<ErrorRes> errorResponse = null;

@@ -18,9 +18,9 @@ public class Component {
     @Column(name="FQN")
     protected String fullyQualifiedName;
 
-    @Enumerated(EnumType.STRING)
+    //@Enumerated(EnumType.STRING)
     @Column(name="ENTITY_TYPE")
-    protected EntityTypeDPDS entityType;
+    protected String entityType;
 
     @Column(name="NAME")
     protected String name;

@@ -13,6 +13,7 @@ import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 
 public abstract class ComponentContainerDPDS {
 
+    @JsonIgnore
     public void setRawContent(List<? extends ComponentDPDS> components, ArrayNode componentNodes) throws JsonProcessingException {
         ObjectMapper objectMapper = ObjectMapperFactory.JSON_MAPPER;
         

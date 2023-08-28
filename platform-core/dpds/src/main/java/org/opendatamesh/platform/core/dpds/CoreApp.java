@@ -4,12 +4,12 @@ import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.PortDPDS;
 import org.opendatamesh.platform.core.dpds.model.definitions.ApiDefinitionReferenceDPDS;
 import org.opendatamesh.platform.core.dpds.parser.DPDSParser;
+import org.opendatamesh.platform.core.dpds.parser.DPDSSerializer;
 import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
 import org.opendatamesh.platform.core.dpds.parser.ParseResult;
 import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
 import org.opendatamesh.platform.core.dpds.parser.location.GitLocation;
 import org.opendatamesh.platform.core.dpds.parser.location.UriLocation;
-import org.opendatamesh.platform.core.dpds.serde.DataProductVersionSerializer;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -58,7 +58,7 @@ public class CoreApp /* implements CommandLineRunner */ {
         DataProductVersionDPDS descriptor = result.getDescriptorDocument();
         System.out.println(descriptor.getInfo().getVersionNumber());
 
-        DataProductVersionSerializer serializer = new DataProductVersionSerializer();
+        DPDSSerializer serializer = new DPDSSerializer();
         String rawContent = serializer.serialize(descriptor, "canonical", "yaml", true);
         System.out.println(rawContent);
 

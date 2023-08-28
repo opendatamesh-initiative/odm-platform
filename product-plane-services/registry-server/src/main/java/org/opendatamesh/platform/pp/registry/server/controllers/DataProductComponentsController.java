@@ -114,7 +114,7 @@ public class DataProductComponentsController
         if(portType == null) {
             entityType = null;
         } else {
-            entityType = EntityTypeDPDS.get(portType);
+            entityType = EntityTypeDPDS.resolvePropertyValue(portType);
             if(entityType == null || !entityType.isPort()){
                 throw new BadRequestException(
                     RegistryApiStandardErrors.SC400_06_INVALID_PORTTYPE,

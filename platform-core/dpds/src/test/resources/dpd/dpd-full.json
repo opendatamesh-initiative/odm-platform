@@ -1,7 +1,6 @@
 {
   "dataProductDescriptor": "1.0.0",
   "info": {
-    "entityType": "invalidType",
     "fullyQualifiedName": "urn:dpds:it.quantyca:dataproducts:sampleDomain:tripExecution",
     "domain": "sampleDomain",
     "name": "tripExecution",
@@ -35,7 +34,6 @@
     "inputPorts": [
       {
         "id": "wrong-id",
-        "entityType": "invalidType",
         "fullyQualifiedName": "urn:dpds:it.quantyca:dataproducts:sampleDomain:tripExecution:1.0.0:inputports:tmsTripCDC",
         "name": "tmsTripCDC",
         "version": "1.0.0",
@@ -319,6 +317,40 @@
     ]
   },
   "internalComponents": {
+    "lifecycleInfo": {
+      "dev": {
+        "service": {
+          "$href": "azure-devops"
+        },
+        "template": {
+          "specification": "spec",
+          "specificationVersion": "2.0",
+          "definition": {
+            "pipeline": "dpdLifecyclePipe",
+            "version": "1.0.0"
+          }
+        },
+        "configurations": {
+          "stage": "DEV"
+        }
+      },
+      "prod": {
+        "service": {
+          "$href": "azure-devops"
+        },
+        "template": {
+          "specification": "spec",
+          "specificationVersion": "2.0",
+          "definition": {
+            "pipeline": "dpdLifecyclePipe",
+            "version": "1.0.0"
+          }
+        },
+        "configurations": {
+          "stage": "PROD"
+        }
+      }
+    },
     "applicationComponents": [
       {
         "fullyQualifiedName": "urn:dpds:it.quantyca:dataproducts:sampleDomain:tripExecution:1.0.0:applications:modelNormalizationJob",
@@ -332,18 +364,6 @@
             "description": "BuildServiceURL",
             "mediaType": "application/json",
             "$href": "http://192.168.1.9:8082/api/v1/planes/utility/integration-services/builds"
-          },
-          "configurations": {
-            "prop-1": "prop-1",
-            "prop-2": "prop-2",
-            "prop-3": "prop-3"
-          }
-        },
-        "deployInfo": {
-          "service": {
-            "description": "Deploy Service URL",
-            "mediaType": "application/json",
-            "$href": "http://192.168.1.9:8083/api/v1/planes/utility/integration-services/deployments"
           },
           "configurations": {
             "prop-1": "prop-1",

@@ -1,0 +1,83 @@
+{
+    "dataProductDescriptor": "1.0.0",
+    "info": {
+        "name": "dpdCore",
+        "version": "1.0.0",
+        "displayName": "Test Product",
+        "description": "This is a test product that contains the core configurations blocks",
+        "domain": "testDomain",
+        "owner": {
+            "id": "john.doe@company-xyz.com",
+            "name": "John Doe"
+        }
+    },
+    "interfaceComponents": {
+        "inputPorts": [
+            {
+                "$ref": "ports/inputPortA.json"
+            }
+        ],
+        "outputPorts": [
+            {
+                "$ref": "ports/outputPortA.json"
+            }
+        ]
+    },
+    "internalComponents": {
+        "lifecycleInfo": {
+            "test": {
+                "service": {
+                    "$href": "{azure-devops}"
+                },
+                "template": {
+                    "name": "testPipeline",
+                    "version": "1.0.0",
+                    "specification": "azure-devops",
+                    "specificationVersion": "1.0.0",
+                    "definition": {
+                        "organization": "andreagioia",
+                        "project": "opendatamesh",
+                        "pipelineId": "3",
+                        "branch": "main"
+                    }
+                },
+                "configurations": {
+                    "stagesToSkip": [
+                        "Deploy"
+                    ]
+                }
+            },
+            "prod": {
+                "service": {
+                    "$href": "{azure-devops}"
+                },
+                "template": {
+                    "name": "testPipeline",
+                    "version": "1.0.0",
+                    "specification": "azure-devops",
+                    "specificationVersion": "1.0.0",
+                    "definition": {
+                        "organization": "andreagioia",
+                        "project": "opendatamesh",
+                        "pipelineId": "3",
+                        "branch": "main"
+                    }
+                },
+                "configurations": {
+                    "stagesToSkip": []
+                }
+            },
+            "deprecated": {}
+        },
+        "applicationComponents": [
+            {
+                "$ref": "apps/appA.json"
+            }
+        ],
+        "infrastructuralComponents": [
+            {
+                "$ref": "infra/infraA.json"
+            }
+        ]
+    }
+}

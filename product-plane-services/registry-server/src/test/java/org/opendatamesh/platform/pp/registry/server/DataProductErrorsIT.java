@@ -6,6 +6,7 @@ import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErr
 import org.opendatamesh.platform.pp.registry.api.clients.RegistryAPIRoutes;
 import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
+import org.opendatamesh.platform.pp.registry.server.utils.ODMRegistryResources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
+
 
 
 @Data
@@ -33,7 +33,10 @@ public abstract class EntityDPDS implements Cloneable {
     @JsonProperty("description")
     protected String description;
     
-   
+    @JsonIgnore
+    public EntityTypeDPDS getType() {
+        return EntityTypeDPDS.resolvePropertyValue(entityType);
+    }
 
    
     @JsonAnySetter

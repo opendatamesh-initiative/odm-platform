@@ -16,16 +16,15 @@ import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.pp.registry.api.clients.RegistryAPIRoutes;
 import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
+import org.opendatamesh.platform.pp.registry.server.utils.ODMRegistryResources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.annotation.DirtiesContext.MethodMode;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.EnabledIf;
 
 import java.io.IOException;
-import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -148,7 +147,7 @@ public class DataProductVersionErrorsIT extends ODMRegistryIT {
 
         String descriptorContent = null;
         try {
-            descriptorContent = resourceBuilder.readResourceFromFile(ODMRegistryResources.RESOURCE_DP1_V1);
+            descriptorContent = resourceBuilder.getContent(ODMRegistryResources.RESOURCE_DP1_V1);
         } catch (IOException t) {
             t.printStackTrace();
             fail("Impossible to read data product version from file: " + t.getMessage());

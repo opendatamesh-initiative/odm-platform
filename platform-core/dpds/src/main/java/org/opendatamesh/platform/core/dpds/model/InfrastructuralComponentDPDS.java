@@ -20,12 +20,5 @@ public class InfrastructuralComponentDPDS extends ComponentDPDS implements Clone
     private String infrastructureType;
 
     @JsonProperty("dependsOn")
-    private List<String> dependsOn = new ArrayList<String>();
-
-    @JsonProperty("tags")
-    private List<String> tags = new ArrayList<String>();
-
-    @JsonProperty("externalDocs")
-    private ExternalResourceDPDS externalDocs;
-  
+    private List<String> dependsOn = new ArrayList<String>();  
 }

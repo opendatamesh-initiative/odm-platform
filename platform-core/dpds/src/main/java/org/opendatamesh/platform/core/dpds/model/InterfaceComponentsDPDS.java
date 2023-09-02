@@ -11,7 +11,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
 import java.util.*;
 
@@ -19,7 +18,6 @@ import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
-@ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonPropertyOrder({ "inputPorts", "outputPorts",  "discoveryPorts", "observabilityPorts", "controlPorts"})
 public class InterfaceComponentsDPDS extends ComponentContainerDPDS{
@@ -43,6 +41,11 @@ public class InterfaceComponentsDPDS extends ComponentContainerDPDS{
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private List<PortDPDS> controlPorts = new ArrayList<PortDPDS>();
 
+    public boolean hasPorts(EntityTypeDPDS entityType) {
+        List<PortDPDS> ports = getPortListByEntityType(entityType);
+        return ports != null && !ports.isEmpty();
+    }
+
     public List<PortDPDS> getPortListByEntityType(EntityTypeDPDS entityType) {
         switch (entityType) {
             case OUTPUTPORT:
@@ -58,70 +61,5 @@ public class InterfaceComponentsDPDS extends ComponentContainerDPDS{
             default:
                 return null;
         }
-    }
-
-    @JsonIgnore
-    public void setRawContent(ObjectNode interfaceComponentsNode) throws JsonProcessingException {
-        ArrayNode componentNodes = null;
-        
-        componentNodes = (ArrayNode)interfaceComponentsNode.get("inputPorts");
-        if (componentNodes != null) {
-            setRawContent(inputPorts, componentNodes);
-        }
-
-        componentNodes = (ArrayNode)interfaceComponentsNode.get("outputPorts");
-        if (componentNodes != null) {
-            setRawContent(outputPorts, componentNodes);
-        }
-      
-
-        componentNodes = (ArrayNode)interfaceComponentsNode.get("controlPorts");
-        if (componentNodes != null) {
-            setRawContent(controlPorts, componentNodes);
-        }
-
-        componentNodes = (ArrayNode)interfaceComponentsNode.get("discoveryPorts");
-        if (componentNodes != null) {
-            setRawContent(discoveryPorts, componentNodes);
-        }
-
-        componentNodes = (ArrayNode)interfaceComponentsNode.get("observabilityPorts");
-        if (componentNodes != null) {
-            setRawContent(observabilityPorts, componentNodes);
-        }
-    }
-
-    @JsonIgnore
-    public  ObjectNode getRawContent() throws JsonProcessingException {
-        return getRawContent( new HashSet<EntityTypeDPDS>(Arrays.asList( EntityTypeDPDS.values())) );
-    }
-
-    @JsonIgnore
-    public  ObjectNode getRawContent(EntityTypeDPDS inludedPortType) throws JsonProcessingException {
-        return getRawContent( new HashSet<EntityTypeDPDS>(Arrays.asList( new EntityTypeDPDS[] {inludedPortType} )) );
-    }
-
-    @JsonIgnore
-    public  ObjectNode getRawContent(Set<EntityTypeDPDS> inludedPortTypes) throws JsonProcessingException {
-       
-        ObjectMapper mapper = ObjectMapperFactory.JSON_MAPPER;
-        ObjectNode interfaceComponentNodes = mapper.createObjectNode();
-       
-        if(inludedPortTypes.contains(EntityTypeDPDS.INPUTPORT))
-            interfaceComponentNodes.set("inputPorts", getRawContent(inputPorts));
-    
-        if(inludedPortTypes.contains(EntityTypeDPDS.OUTPUTPORT))
-            interfaceComponentNodes.set("outputPorts", getRawContent(outputPorts));
-
-        if(inludedPortTypes.contains(EntityTypeDPDS.CONTROLPORT))
-            interfaceComponentNodes.set("controlPorts", getRawContent(controlPorts));
-
-        if(inludedPortTypes.contains(EntityTypeDPDS.DISCOVERYPORT))
-            interfaceComponentNodes.set("discoveryPorts", getRawContent(discoveryPorts));
-
-        if(inludedPortTypes.contains(EntityTypeDPDS.OBSERVABILITYPORT))
-            interfaceComponentNodes.set("observabilityPorts", getRawContent(observabilityPorts));
-
-        return interfaceComponentNodes;
     }
 }

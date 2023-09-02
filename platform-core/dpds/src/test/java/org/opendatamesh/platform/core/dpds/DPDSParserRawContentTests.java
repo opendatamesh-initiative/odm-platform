@@ -3,12 +3,15 @@ package org.opendatamesh.platform.core.dpds;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import static  org.opendatamesh.platform.core.dpds.DescriptorCoreChecker.verifyAll;
+
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.core.dpds.model.ApplicationComponentDPDS;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.InfrastructuralComponentDPDS;
 import org.opendatamesh.platform.core.dpds.model.LifecycleInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.PortDPDS;
+import org.opendatamesh.platform.core.dpds.model.StandardDefinitionDPDS;
 import org.opendatamesh.platform.core.dpds.parser.ParseResult;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -49,8 +52,16 @@ public class DPDSParserRawContentTests extends DPDSTests {
         assertThat(parsedRawContentNode.get("x-prop").asText()).isEqualTo("x-prop-value");
         assertThat(parsedRawContentNode.at("/promises/x-prop")).isNotNull();
         assertThat(parsedRawContentNode.at("/promises/x-prop").asText()).isEqualTo("x-prop-value");
-        assertThat(parsedRawContentNode.at("/promises/api/x-prop")).isNotNull();
-        assertThat(parsedRawContentNode.at("/promises/api/x-prop").asText()).isEqualTo("x-prop-value");
+        StandardDefinitionDPDS api = descriptor.getInterfaceComponents().getInputPorts().get(0).getPromises().getApi();
+        rawContent = api.getRawContent();
+        assertThat(rawContent).isNotNull();
+        try {
+            parsedRawContentNode = (ObjectNode)mapper.readTree(rawContent);
+        } catch(Throwable t) {
+            fail("Impossible to parse api raw content", t);
+        }
+        assertThat(parsedRawContentNode.get("x-prop")).isNotNull();
+        assertThat(parsedRawContentNode.get("x-prop").asText()).isEqualTo("x-prop-value");
 
         PortDPDS outputPort = descriptor.getInterfaceComponents().getOutputPorts().get(0);
         rawContent =  outputPort.getRawContent();
@@ -64,8 +75,16 @@ public class DPDSParserRawContentTests extends DPDSTests {
         assertThat(parsedRawContentNode.get("x-prop").asText()).isEqualTo("x-prop-value");
         assertThat(parsedRawContentNode.at("/promises/x-prop")).isNotNull();
         assertThat(parsedRawContentNode.at("/promises/x-prop").asText()).isEqualTo("x-prop-value");
-        assertThat(parsedRawContentNode.at("/promises/api/x-prop")).isNotNull();
-        assertThat(parsedRawContentNode.at("/promises/api/x-prop").asText()).isEqualTo("x-prop-value");
+        api = descriptor.getInterfaceComponents().getOutputPorts().get(0).getPromises().getApi();
+        rawContent = api.getRawContent();
+        assertThat(rawContent).isNotNull();
+        try {
+            parsedRawContentNode = (ObjectNode)mapper.readTree(rawContent);
+        } catch(Throwable t) {
+            fail("Impossible to parse api raw content", t);
+        }
+        assertThat(parsedRawContentNode.get("x-prop")).isNotNull();
+        assertThat(parsedRawContentNode.get("x-prop").asText()).isEqualTo("x-prop-value");
 
         ApplicationComponentDPDS app = descriptor.getInternalComponents().getApplicationComponents().get(0);
         rawContent =  app.getRawContent();

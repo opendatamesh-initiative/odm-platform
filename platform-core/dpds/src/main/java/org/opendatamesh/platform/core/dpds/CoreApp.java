@@ -52,14 +52,13 @@ public class CoreApp /* implements CommandLineRunner */ {
        
         DPDSParser parser = new DPDSParser();
         ParseOptions options = new ParseOptions();
-        options.setServerUrl( "http://localhost:80/");
+        options.setServerUrl( "http://localhost:80");
 
         ParseResult result = parser.parse(location, options);
         DataProductVersionDPDS descriptor = result.getDescriptorDocument();
         System.out.println(descriptor.getInfo().getVersionNumber());
 
-        DPDSSerializer serializer = new DPDSSerializer();
-        String rawContent = serializer.serialize(descriptor, "canonical", "yaml", true);
+        String rawContent = DPDSSerializer.DEFAULT_YAML_SERIALIZER.serialize(descriptor, "canonical");
         System.out.println(rawContent);
 
         List<PortDPDS> ports = new ArrayList<PortDPDS>();

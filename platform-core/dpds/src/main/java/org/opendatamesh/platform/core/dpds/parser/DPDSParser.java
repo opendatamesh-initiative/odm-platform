@@ -1,6 +1,7 @@
 package org.opendatamesh.platform.core.dpds.parser;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.networknt.schema.ValidationMessage;
 import lombok.Data;
 import org.opendatamesh.platform.core.dpds.DataProductVersionValidator;
@@ -69,13 +70,10 @@ public class DPDSParser {
         try {
             DataProductVersionDPDS descriptorDocument = null;
             String rawContent = context.getLocation().fetchRootDoc();
-            try {
-                descriptorDocument = ObjectMapperFactory.getRightMapper(rawContent).readValue(rawContent,
-                        DataProductVersionDPDS.class);
-            } catch (JsonProcessingException e) {
-                throw new DeserializationException("Root document format is not valid", e);
-            }
-            descriptorDocument.setRawContent(rawContent);
+            context.setMapper(ObjectMapperFactory.getRightMapper(rawContent));
+
+            DPDSDeserializer deserializer = new DPDSDeserializer();
+            descriptorDocument = deserializer.deserialize(rawContent);
             context.getResult().setDescriptorDocument(descriptorDocument);
         } catch (FetchException | DeserializationException e) {
             throw new ParseException("Impossible to parse root descriptor document",
@@ -87,7 +85,7 @@ public class DPDSParser {
 
     private DPDSParser processExternalReferences(ParseContext context) throws ParseException {
         try {
-            ExternalReferencesProcessor.process(context);
+            ReferencesProcessor.process(context);
         } catch (UnresolvableReferenceException | DeserializationException e) {
             throw new ParseException("Impossible to resolve external reference of root descriptor document",
                     ParseException.Stage.RESOLVE_EXTERNAL_REFERENCES, e);
@@ -147,11 +145,11 @@ public class DPDSParser {
         // TODO validate against the right schema version
         DataProductVersionValidator schemaValidator = new DataProductVersionValidator();
 
-        DPDSSerializer serializer = new DPDSSerializer();
+        DPDSSerializer serializer = new DPDSSerializer("json", false);
         String serailizedContent = null;
 
         try {
-            serailizedContent = serializer.serialize(descriptor, "canonical", "json", false);
+            serailizedContent = serializer.serialize(descriptor, "canonical");
         } catch (JsonProcessingException e) {
             throw new DeserializationException("Impossible to serialize data product version raw content", e);
         }

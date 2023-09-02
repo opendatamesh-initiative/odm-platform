@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import static  org.opendatamesh.platform.core.dpds.DescriptorCoreChecker.verifyAll;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -73,7 +75,6 @@ public class DPDSParserTests extends DPDSTests {
     }
 
     @Test
-    @Disabled
     public void parseDpdCoreTestWithExternalRef()  {
 
         ParseResult result = parseDescriptorFromUri(DPDSTestResources.DPD_CORE_WITH_EXTERNAL_REF, null);
@@ -82,7 +83,25 @@ public class DPDSParserTests extends DPDSTests {
         verifyAll(descriptor);
     }
 
+    @Test
+    public void parseDpdCoreTestWithInternalRef()  {
 
+        ParseResult result = parseDescriptorFromUri(DPDSTestResources.DPD_CORE_WITH_INTERNAL_REF, null);
+        DataProductVersionDPDS descriptor = result.getDescriptorDocument();
+        
+        verifyAll(descriptor);
+    }
+
+    @Test
+    public void parseDpdCoreTestWithMixRef()  {
+
+        ParseResult result = parseDescriptorFromUri(DPDSTestResources.DPD_CORE_WITH_MIX_REF, null);
+        DataProductVersionDPDS descriptor = result.getDescriptorDocument();
+        
+        verifyAll(descriptor);
+    }
+
+    
 
     @Test
     public void parseFullDpdTest() throws IOException, ParseException {
@@ -96,7 +115,7 @@ public class DPDSParserTests extends DPDSTests {
         
         DPDSParser parser = new DPDSParser();
         ParseOptions options = new ParseOptions();
-        options.setServerUrl("http://localhost:80/");
+        options.setServerUrl("http://localhost:80");
         
 
         ParseResult result = parser.parse(location, options);

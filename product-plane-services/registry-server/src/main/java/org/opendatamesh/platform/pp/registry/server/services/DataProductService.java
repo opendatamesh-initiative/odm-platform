@@ -388,7 +388,7 @@ public class DataProductService {
         if(!dataProduct.getId().equals(dataProductVersion.getInfo().getDataProductId())) {
             throw new UnprocessableEntityException(
                 RegistryApiStandardErrors.SC422_03_DESCRIPTOR_DOC_SEMANTIC_IS_INVALID,
-                "Data product id [" + dataProduct.getFullyQualifiedName() + "]does not match with the id [" + dataProductVersion.getInfo().getFullyQualifiedName() + "] contained in data product descriptor");
+                "Data product fqn [" + dataProduct.getFullyQualifiedName() + "] does not match with the fqn [" + dataProductVersion.getInfo().getFullyQualifiedName() + "] contained in data product descriptor");
         }
         
         

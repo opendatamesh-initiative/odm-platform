@@ -24,6 +24,8 @@ import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
 import org.opendatamesh.platform.pp.registry.api.resources.DefinitionResource;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
 import org.opendatamesh.platform.pp.registry.api.resources.SchemaResource;
+import org.opendatamesh.platform.pp.registry.server.utils.ODMRegistryResourceBuilder;
+import org.opendatamesh.platform.pp.registry.server.utils.ODMRegistryResources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,13 +98,13 @@ public abstract class ODMRegistryIT extends ODMIntegrationTest {
     // Create test basic resources
     // ======================================================================================
 
-    protected DataProductResource createDataProduct(String filePath) {
+    protected DataProductResource createDataProduct(ODMRegistryResources resource) {
 
         DataProductResource createdActivityRes = null;
 
         DataProductResource activityRes;
         try {
-            activityRes = resourceBuilder.readResourceFromFile(filePath, DataProductResource.class);
+            activityRes = resourceBuilder.readResourceFromFile(resource, DataProductResource.class);
         } catch (Throwable t) {
             t.printStackTrace();
             fail("Impossible to read data product from file: " + t.getMessage());
@@ -132,17 +134,18 @@ public abstract class ODMRegistryIT extends ODMIntegrationTest {
         return createdDataProductRes;
     }
 
-    protected String createDataProductVersion(String dataProductId, String filePath) {
-        
+    protected String getDescriptorContent(ODMRegistryResources resource) {
         String descriptorContent = null;
         try {
-            descriptorContent = resourceBuilder.readResourceFromFile(ODMRegistryResources.RESOURCE_DP1_V1);
+            descriptorContent = resourceBuilder.getContent(resource);
         } catch (IOException t) {
             t.printStackTrace();
             fail("Impossible to read data product version from file: " + t.getMessage());
-            return null;
         }
+        return descriptorContent;
+    }
 
+    protected String createDataProductVersion(String dataProductId, String descriptorContent) {
         ResponseEntity<String> postProductVersionResponse = null;
         try {
             postProductVersionResponse = registryClient.postDataProductVersion(dataProductId, descriptorContent, String.class);
@@ -155,6 +158,10 @@ public abstract class ODMRegistryIT extends ODMIntegrationTest {
         
         return postProductVersionResponse.getBody();
     }
+    protected String createDataProductVersion(String dataProductId, ODMRegistryResources resource) {
+        String descriptorContent = getDescriptorContent(resource);
+        return createDataProductVersion(dataProductId, descriptorContent);
+    }
 
     protected String uploadDataProductVersion(DataProductDescriptorLocationResource descriptorLocation) throws IOException {
         ResponseEntity<String> uploadProductVersionResponse = 
@@ -164,13 +171,14 @@ public abstract class ODMRegistryIT extends ODMIntegrationTest {
         return uploadProductVersionResponse.getBody();
     }
 
-    protected DefinitionResource createApiDefinition(String filePath) {
+    protected DefinitionResource createApiDefinition(ODMRegistryResources resource) {
+
 
         DefinitionResource createdApiDefinitionRes = null;
 
         DefinitionResource apiDefinitionRes;
         try {
-            apiDefinitionRes = resourceBuilder.readResourceFromFile(filePath, DefinitionResource.class);
+            apiDefinitionRes = resourceBuilder.readResourceFromFile(resource, DefinitionResource.class);
         } catch (Throwable t) {
             t.printStackTrace();
             fail("Impossible to read api definition from file: " + t.getMessage());
@@ -200,8 +208,9 @@ public abstract class ODMRegistryIT extends ODMIntegrationTest {
         return createdApiDefinitionRes;
     }
 
-    protected DefinitionResource createTemplate(String filePath) throws IOException {
-        String payload = resourceBuilder.readResourceFromFile(filePath);
+    protected DefinitionResource createTemplate(ODMRegistryResources resource) throws IOException {
+
+        String payload = resourceBuilder.getContent(resource);
         ResponseEntity<DefinitionResource> postTemplate = registryClient.postTemplateDefinition(payload);
         verifyResponseEntity(postTemplate, HttpStatus.CREATED, true);
         return postTemplate.getBody();

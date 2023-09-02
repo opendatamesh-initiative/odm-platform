@@ -538,7 +538,11 @@ public class DataProductVersionService {
         DataProductVersion dataProductVersion = readDataProductVersion(dataProductId, versionNumber);
 
         try {
-            dataProductVersionRepository.delete(dataProductVersion);
+            DataProductVersionId dataProductVersionId = new DataProductVersionId();
+            dataProductVersionId.setDataProductId(dataProductId);
+            dataProductVersionId.setVersionNumber(versionNumber);
+            dataProductVersionRepository.deleteById(dataProductVersionId);
+            //dataProductVersionRepository.delete(dataProductVersion);
             logger.info("Data product version [" + versionNumber + "] of data product [" + dataProductId
                     + "] succesfully deleted");
         } catch (Throwable t) {

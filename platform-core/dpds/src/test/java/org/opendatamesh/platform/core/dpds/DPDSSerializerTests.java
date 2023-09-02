@@ -3,6 +3,8 @@ package org.opendatamesh.platform.core.dpds;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
+import static  org.opendatamesh.platform.core.dpds.DescriptorCoreChecker.verifyAll;
+
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.parser.DPDSSerializer;
@@ -28,7 +30,7 @@ public class DPDSSerializerTests extends DPDSTests {
         DPDSSerializer serializer = new DPDSSerializer();
         String descriptorContent = null;
         try {
-            descriptorContent = serializer.serialize(descriptor, "canonical", "json", true);
+            descriptorContent = DPDSSerializer.DEFAULT_JSON_SERIALIZER.serialize(descriptor, "canonical");
         } catch (Throwable t) {
             fail("Impossible to serialize descriptor", t);
         }
@@ -61,7 +63,7 @@ public class DPDSSerializerTests extends DPDSTests {
         DPDSSerializer serializer = new DPDSSerializer();
         String descriptorContent = null;
         try {
-            descriptorContent = serializer.serialize(descriptor, "canonical", "json", true);
+            descriptorContent = DPDSSerializer.DEFAULT_JSON_SERIALIZER.serialize(descriptor, "canonical");
         } catch (Throwable t) {
             fail("Impossible to serialize descriptor", t);
         }
@@ -71,7 +73,7 @@ public class DPDSSerializerTests extends DPDSTests {
         result = parseDescriptor(new UriLocation(descriptorContent), null);
         descriptor = result.getDescriptorDocument();
         try {
-            descriptorContent = serializer.serialize(descriptor, "canonical", "json", true);
+            descriptorContent = DPDSSerializer.DEFAULT_JSON_SERIALIZER.serialize(descriptor, "canonical");
         } catch (Throwable t) {
             fail("Impossible to serialize descriptor", t);
         }
@@ -81,27 +83,16 @@ public class DPDSSerializerTests extends DPDSTests {
     @Test
     public void parseDpdCoreCanonicalTest() {
 
-        ParseOptions options = new ParseOptions();
-        options.setServerUrl("http://localhost:80/");
-
-        ParseResult result = parseDescriptorFromContent(DPDSTestResources.DPD_CORE, options);
+        ParseResult result = parseDescriptorFromContent(DPDSTestResources.DPD_CORE, null);
         DataProductVersionDPDS descriptorParsedFormSource = result.getDescriptorDocument();
 
 
         String descriptorContent = serializeDescriptor(descriptorParsedFormSource, "canonical", "json");
         System.out.println(descriptorContent);
       
-        result = parseDescriptor(new UriLocation(descriptorContent), options);
+        result = parseDescriptor(new UriLocation(descriptorContent), null);
         DataProductVersionDPDS descriptorParsedFromCanonical = result.getDescriptorDocument();
         
-        assertThat(descriptorParsedFromCanonical).isNotNull();
-        assertThat(descriptorParsedFromCanonical.getDataProductDescriptor()).isEqualTo("1.0.0");
-
-        verifyCoreInfo(descriptorParsedFromCanonical);
-        verifyCoreInterfaces(descriptorParsedFromCanonical);
-        verifyCoreApplicationComponents(descriptorParsedFromCanonical);
-        verifyCoreInfrastructuralComponents(descriptorParsedFromCanonical);
-
-        assertThat(descriptorParsedFormSource).isEqualTo(descriptorParsedFromCanonical);
+        verifyAll(descriptorParsedFromCanonical);
     }
 }

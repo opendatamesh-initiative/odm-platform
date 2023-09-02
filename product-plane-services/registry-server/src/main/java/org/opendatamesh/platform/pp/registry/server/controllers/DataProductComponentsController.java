@@ -17,6 +17,7 @@ import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestExcep
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.EntityTypeDPDS;
 import org.opendatamesh.platform.core.dpds.model.InterfaceComponentsDPDS;
+import org.opendatamesh.platform.core.dpds.parser.DPDSSerializer;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproduct.DataProductVersion;
 import org.opendatamesh.platform.pp.registry.server.database.mappers.DataProductVersionMapper;
@@ -139,15 +140,10 @@ public class DataProductComponentsController
        
 
         switch (format) {
-           case "normalized": //parsed=deserialized and then serialized again
-            ObjectNode interfaceComponentsNpde = null;
-            if(entityType != null) {
-                interfaceComponentsNpde = dataProductVersionDPDS.getInterfaceComponents().getRawContent(entityType);
-            } else {
-                interfaceComponentsNpde = dataProductVersionDPDS.getInterfaceComponents().getRawContent();
-            }
-            return objectMapper.writeValueAsString(interfaceComponentsNpde);
-           case "canonical": //normalized + semantic equalization
+           case "canonical": //parsed=deserialized and then serialized again
+            DPDSSerializer deserializer = DPDSSerializer.DEFAULT_JSON_SERIALIZER;
+            return deserializer.serializeToCanonicalForm(dataProductVersionDPDS.getInterfaceComponents(), entityType);
+           case "normalized": //normalized + semantic equalization
                 return objectMapper.writeValueAsString(dataProductVersionDPDS.getInterfaceComponents());
         }
         throw new BadRequestException(

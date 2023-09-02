@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.pp.registry.api.resources.DefinitionResource;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
+import org.opendatamesh.platform.pp.registry.server.utils.ODMRegistryResources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
@@ -168,7 +169,7 @@ public class TemplateDefinitionIT extends ODMRegistryIT {
 
         // TEST 1: try to register the same template again
 
-        String payload = resourceBuilder.readResourceFromFile(ODMRegistryResources.RESOURCE_TEMPLATE_1);
+        String payload = resourceBuilder.getContent(ODMRegistryResources.RESOURCE_TEMPLATE_1);
         errorResponse = registryClient.postTemplateDefinition(payload, ErrorRes.class);
         verifyResponseError(errorResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,

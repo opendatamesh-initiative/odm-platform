@@ -1,8 +1,6 @@
 package org.opendatamesh.platform.core.dpds.processors;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.exceptions.DeserializationException;
 import org.opendatamesh.platform.core.dpds.model.ComponentDPDS;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
@@ -14,15 +12,13 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 public class ReadOnlyPropertiesProcessor implements PropertiesProcessor {
+    
     ParseContext context;
-    ObjectMapper mapper;
 
     private static final Logger logger = LoggerFactory.getLogger(ReadOnlyPropertiesProcessor.class);
 
     public ReadOnlyPropertiesProcessor(ParseContext context) {
         this.context = context;
-        this.mapper = ObjectMapperFactory.JSON_MAPPER;
-
     }
 
     @Override
@@ -61,7 +57,7 @@ public class ReadOnlyPropertiesProcessor implements PropertiesProcessor {
         String rawContent = descriptor.getRawContent();
         ObjectNode rootNode = null;
         try {
-            rootNode = (ObjectNode) mapper.readTree(rawContent);
+            rootNode = (ObjectNode) context.getMapper().readTree(rawContent);
         } catch (Throwable t) {
             throw new DeserializationException("Impossible to parse descriptor raw cantent", t);
         }
@@ -123,7 +119,7 @@ public class ReadOnlyPropertiesProcessor implements PropertiesProcessor {
 
         rootNode.set("info", infoNode);
         try {
-            descriptor.setRawContent(mapper.writeValueAsString(rootNode));
+            descriptor.setRawContent(context.getMapper().writeValueAsString(rootNode));
         } catch (Throwable t) {
             throw new DeserializationException("Impossible serialize descriptor", t);
         }
@@ -140,7 +136,7 @@ public class ReadOnlyPropertiesProcessor implements PropertiesProcessor {
         for (ComponentDPDS component : components) {
             ObjectNode componentNode;
             try {
-                componentNode = (ObjectNode) mapper.readTree(component.getRawContent());
+                componentNode = (ObjectNode) context.getMapper().readTree(component.getRawContent());
             } catch (Throwable t) {
                 throw new DeserializationException("Impossible to parse component raw cantent", t);
             }
@@ -202,7 +198,7 @@ public class ReadOnlyPropertiesProcessor implements PropertiesProcessor {
             }
 
             try {
-                component.setRawContent(mapper.writeValueAsString(componentNode));
+                component.setRawContent(context.getMapper().writeValueAsString(componentNode));
             } catch (Throwable t) {
                 throw new DeserializationException("Impossible serialize component", t);
             }

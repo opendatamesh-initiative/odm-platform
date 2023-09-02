@@ -5,6 +5,7 @@ import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.pp.registry.api.resources.DefinitionResource;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
 import org.opendatamesh.platform.pp.registry.server.database.entities.sharedres.ApiDefinition;
+import org.opendatamesh.platform.pp.registry.server.utils.ODMRegistryResources;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -239,7 +240,7 @@ public class APIDefinitionIT extends ODMRegistryIT {
         createApiDefinition(ODMRegistryResources.API_DEF1_V1);
 
         // TEST 1: try to register the same definition again
-        String payload = resourceBuilder.readResourceFromFile(ODMRegistryResources.API_DEF1_V1);
+        String payload = resourceBuilder.getContent(ODMRegistryResources.API_DEF1_V1);
         errorResponse = registryClient.postApiDefinition(payload, ErrorRes.class);
         verifyResponseError(errorResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,

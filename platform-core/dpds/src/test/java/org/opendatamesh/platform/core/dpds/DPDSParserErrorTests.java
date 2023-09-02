@@ -266,7 +266,7 @@ public class DPDSParserErrorTests extends DPDSTests {
         DescriptorLocation location = getContentLocation(DPDSTestResources.DPD_CORE_PROPS_READONLY_WRONG);
        
         ParseOptions options = new ParseOptions();
-        options.setServerUrl("http://localhost:80/");
+        options.setServerUrl("http://localhost:80");
         options.setValidateReadOnlyProperties(true);
     
         DPDSParser parser = new DPDSParser();

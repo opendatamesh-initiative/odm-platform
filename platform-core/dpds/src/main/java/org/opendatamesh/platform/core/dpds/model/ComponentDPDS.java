@@ -1,6 +1,8 @@
 package org.opendatamesh.platform.core.dpds.model;
 
-import com.fasterxml.jackson.annotation.JsonAnySetter;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -11,46 +13,39 @@ import lombok.EqualsAndHashCode;
 @Data
 //@JsonIgnoreProperties(value={ "id", "entityType" }, allowGetters=true, ignoreUnknown = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ComponentDPDS implements Cloneable {
-   
-    @JsonProperty("id")
-    protected String id;
+public class ComponentDPDS extends ReferenceableEntityDPDS {
+       
     
-    @JsonProperty("fullyQualifiedName")
-    protected String fullyQualifiedName;
-    
-    @JsonProperty("entityType")
-    private String entityType;
-   
-    @JsonProperty("name")
-    protected String name;
-    
-    @JsonProperty("version")
-    protected String version;
-   
-    @JsonProperty("displayName")
-    protected String displayName;
-    
-    @JsonProperty("description")
-    protected String description;
-    
+
     @JsonProperty("componentGroup")
     protected String componentGroup;
-
-    @JsonProperty("$ref")
-    protected String ref;
-
-    // when the ref is resolved the original location of the actual content is saved here
-    // This field is impoirtant to properly manage relative ref in recursive resolvig procedures 
-    @JsonProperty("$originalRef")
-    protected String originalRef;
 
     @JsonIgnore
     @EqualsAndHashCode.Exclude
     protected String rawContent;
 
-    @JsonAnySetter
-    public void ignored(String name, Object value) {
-        //System.out.println(name + " : " + value + " : " + value.getClass().getName());
+    @JsonProperty("tags")
+    private List<String> tags = new ArrayList<String>();
+
+    @JsonProperty("externalDocs")
+    private ExternalResourceDPDS externalDocs;
+
+    public boolean isReference() {
+        return ref != null;
     }
+
+    public boolean isInternalReference() {
+        return isReference() &&  ref.startsWith("#");
+    }
+
+    public String getInternalReferenceComponentName() {
+        return isInternalReference()? ref.substring(ref.lastIndexOf("/")+1): null;
+    }
+
+    public boolean isExternalReference() {
+        return isReference() &&  !ref.startsWith("#");
+    }
+
+
+
 }

@@ -12,82 +12,110 @@ import org.opendatamesh.platform.core.dpds.exceptions.FetchException;
 import org.opendatamesh.platform.core.dpds.exceptions.DeserializationException;
 import org.opendatamesh.platform.core.dpds.exceptions.UnresolvableReferenceException;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
+import org.opendatamesh.platform.core.dpds.model.EntityTypeDPDS;
+import org.opendatamesh.platform.core.dpds.model.InterfaceComponentsDPDS;
 import org.opendatamesh.platform.core.dpds.model.PortDPDS;
 import org.opendatamesh.platform.core.dpds.model.StandardDefinitionDPDS;
 import org.opendatamesh.platform.core.dpds.model.definitions.ApiDefinitionReferenceDPDS;
 import org.opendatamesh.platform.core.dpds.model.definitions.DefinitionReferenceDPDS;
 import org.opendatamesh.platform.core.dpds.parser.ParseContext;
+import org.opendatamesh.platform.core.dpds.parser.location.UriFetcher;
 import org.opendatamesh.platform.core.dpds.parser.location.UriUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Objects;
 
-public class ApiDefinitionsProcessor {
+public class ApiDefinitionsProcessor implements PropertiesProcessor {
 
     ParseContext context;
-    ObjectMapper mapper;
+
+    private static final Logger logger = LoggerFactory.getLogger(UriFetcher.class);
 
     public ApiDefinitionsProcessor(ParseContext context) {
         this.context = context;
-        this.mapper = ObjectMapperFactory.JSON_MAPPER;
-
     }
 
-    // Note: to be called after component resolution
     public void process() throws UnresolvableReferenceException, DeserializationException {
 
         DataProductVersionDPDS parsedContent = context.getResult().getDescriptorDocument();
+        Objects.requireNonNull(parsedContent, "Impossible to prcess API definitions. Descriptor document is null");
 
-        if (parsedContent.getInterfaceComponents() == null) {
-            return;
-        }
+        InterfaceComponentsDPDS interfaceComponents = parsedContent.getInterfaceComponents();
+        if (interfaceComponents != null) {
+            if(interfaceComponents.hasPorts(EntityTypeDPDS.INPUTPORT)) {
+                processApiDefinitions(interfaceComponents.getInputPorts());
+            }
+            
+            if(interfaceComponents.hasPorts(EntityTypeDPDS.OUTPUTPORT)) {
+                processApiDefinitions(interfaceComponents.getOutputPorts());
+            }
 
-        processApiDefinitions(parsedContent.getInterfaceComponents().getInputPorts());
-        processApiDefinitions(parsedContent.getInterfaceComponents().getOutputPorts());
-        processApiDefinitions(parsedContent.getInterfaceComponents().getDiscoveryPorts());
-        processApiDefinitions(parsedContent.getInterfaceComponents().getObservabilityPorts());
-        processApiDefinitions(parsedContent.getInterfaceComponents().getControlPorts());
+            if(interfaceComponents.hasPorts(EntityTypeDPDS.DISCOVERYPORT)) {
+                processApiDefinitions(interfaceComponents.getDiscoveryPorts());
+            }
+
+            if(interfaceComponents.hasPorts(EntityTypeDPDS.OBSERVABILITYPORT)) {
+                processApiDefinitions(interfaceComponents.getObservabilityPorts());
+            }
+
+            if(interfaceComponents.hasPorts(EntityTypeDPDS.CONTROLPORT)) {
+                processApiDefinitions(interfaceComponents.getControlPorts());
+            }
+
+            logger.info("API definitions sucesfully processed");
+        } else {
+            logger.info("No API definition to process");
+        }       
     }
 
     private void processApiDefinitions(List<PortDPDS> ports)
-            throws DeserializationException {
+            throws UnresolvableReferenceException, DeserializationException {
 
-        if (ports == null || ports.isEmpty()) {
-            return;
-        }
+        Objects.requireNonNull(ports, "Parameter [ports] cannot be null");
 
         for (PortDPDS port : ports) {
 
-            String ref = port.getPromises().getApi().getDefinition().getRef();
-            if(ref != null && ref.startsWith(context.getOptions().getServerUrl())) continue;
+            if(port.hasApiDefinition() == false) {
+                logger.debug("No API definition to process for port [" + port.getName()  + "]");
+                continue;
+            }
 
-            ObjectNode portObject = null;
+            String ref = port.getPromises().getApi().getDefinition().getRef();
+            if(ref != null && ref.startsWith(context.getOptions().getServerUrl())) {
+                logger.debug("API definition for port [" + port.getName()  + "] has been already processed");
+                continue;
+            }
+
+            ObjectNode apiNode = null;
             try {
-                portObject = (ObjectNode)mapper.readTree(port.getRawContent());
+                apiNode = (ObjectNode)context.getMapper().readTree(port.getPromises().getApi().getRawContent());
             } catch (JsonProcessingException e) {
-                throw new DeserializationException("Impossible to parse raw content of port [" + port.getFullyQualifiedName() + "]", e);
+                throw new DeserializationException("Impossible to parse raw content of port [" + port.getName() + "]", e);
             }
 
             try {
-                resolveApiDefinition(port, portObject);
+                resolveApiDefinition(port, apiNode);
             } catch (UnresolvableReferenceException | FetchException e) {
-                 throw new DeserializationException(
-                        "Impossible to resolve api definition of port [" + port.getFullyQualifiedName() + "]", e);
+                 throw new UnresolvableReferenceException(
+                        "Impossible to resolve api definition of port [" + port.getName() + "]", e);
             }
             try {     
                 parseApiDefinition(port);
             } catch (FetchException e) {
                 throw new DeserializationException(
-                        "Impossible to parse api definition of port [" + port.getFullyQualifiedName() + "]", e);
+                        "Impossible to parse api definition of port [" + port.getName() + "]", e);
             }
         }
     }
 
-    private void resolveApiDefinition(PortDPDS port, JsonNode portObject)
+    private void resolveApiDefinition(PortDPDS portResource, ObjectNode apiNode)
             throws UnresolvableReferenceException, FetchException, DeserializationException {
 
-        if(port.hasApiDefinition() == false) return;
-        ObjectNode apiDefinitionNode = (ObjectNode) portObject.at("/promises/api/definition");
+        if(portResource.hasApiDefinition() == false) return;
+        ObjectNode apiDefinitionNode = (ObjectNode) apiNode.get("definition");
         if (apiDefinitionNode.isMissingNode())
             return;
 
@@ -99,7 +127,12 @@ public class ApiDefinitionsProcessor {
             URI uri = null, baseUri = null;
             try {
                 uri = new URI(ref).normalize();
-                baseUri = UriUtils.getBaseUri(new URI(port.getOriginalRef()));  
+                if(portResource.getOriginalRef() != null) {
+                    baseUri = UriUtils.getBaseUri(new URI(portResource.getOriginalRef())); 
+                } else {
+                    baseUri = context.getLocation().getRootDocumentBaseUri();
+                }
+                 
             } catch (Exception e) {
                 throw new UnresolvableReferenceException(
                         "Impossible to resolve external reference [" + ref + "]",
@@ -109,29 +142,29 @@ public class ApiDefinitionsProcessor {
 
             apiDefinitionRef = context.getOptions().getServerUrl() + "/apis/{apiId}";
             apiDefinitionNode.put("$ref", apiDefinitionRef);
-            port.getPromises().getApi().getDefinition().setOriginalRef(ref);
+            portResource.getPromises().getApi().getDefinition().setOriginalRef(ref);
         } else { // inline
             // set apiDefinitionObject as raw content of reference object
             try {
-                apiDefinitionContent = mapper.writeValueAsString(apiDefinitionNode);
+                apiDefinitionContent = context.getMapper().writeValueAsString(apiDefinitionNode);
             } catch (JsonProcessingException e) {
                 throw new DeserializationException("Impossible serialize api definition", e);
             }
             apiDefinitionRef = context.getOptions().getServerUrl() + "/apis/{apiId}";
-            ObjectNode apiObject = (ObjectNode) portObject.at("/promises/api");
-            apiObject.remove("definition");
-            apiDefinitionNode = apiObject.putObject("definition");
+            
+            apiNode.remove("definition");
+            apiDefinitionNode = apiNode.putObject("definition");
             apiDefinitionNode.put("$ref", apiDefinitionRef);
         }
 
-        port.getPromises().getApi().getDefinition().setRef(apiDefinitionRef);
-        port.getPromises().getApi().getDefinition().setOriginalRef(ref);
-        port.getPromises().getApi().getDefinition().setRawContent(apiDefinitionContent);
+        portResource.getPromises().getApi().getDefinition().setRef(apiDefinitionRef);
+        portResource.getPromises().getApi().getDefinition().setOriginalRef(ref);
+        portResource.getPromises().getApi().getDefinition().setRawContent(apiDefinitionContent);
         
 
         try {
-            String rawContent = mapper.writeValueAsString(portObject);
-            port.setRawContent(rawContent);
+            String apiContent = context.getMapper().writeValueAsString(apiNode);
+            portResource.getPromises().getApi().setRawContent(apiContent);
         } catch (JsonProcessingException e) {
             throw new DeserializationException("Impossible serialize descriptor", e);
         }

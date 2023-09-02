@@ -16,7 +16,9 @@
 
 package org.opendatamesh.platform.core.dpds.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import java.util.Arrays;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
@@ -38,12 +40,17 @@ public enum EntityTypeDPDS {
     APPLICATION("application", "applications","applicationComponents"),  
     INFRASTRUCTURE("infrastructure", "infrastructures","infrastructuralComponents"), 
     
+	API("api", "apis","apis"), 
     TEMPLATE("template", "templates","templates");
 
     private static final EntityTypeDPDS[] VALUES;
+	public static final List<EntityTypeDPDS> PORTS;
+	public static final List<EntityTypeDPDS> COMPONENTS;
 
 	static {
 		VALUES = values();
+		PORTS = Arrays.asList(INPUTPORT, OUTPUTPORT, DISCOVERYPORT, CONTROLPORT, OBSERVABILITYPORT);
+		COMPONENTS = Arrays.asList(INPUTPORT, OUTPUTPORT, DISCOVERYPORT, CONTROLPORT, OBSERVABILITYPORT, APPLICATION, INFRASTRUCTURE, API, TEMPLATE);
 	}
 
     private final String propertyValue;
@@ -79,13 +86,20 @@ public enum EntityTypeDPDS {
         return groupingPropertyName;
     }
 
+	/**
+	 * Return a string representation of this entity type.
+	 */
+	@Override
+	public String toString() {
+		return propertyValue;
+	}
+
     /**
 	 * Whether this entity type is a port 
 	 * {@link org.opendatamesh.platform.core.dpds.model.PortDPDS}.
 	 */
     public boolean isPort(){
-        return this.equals(INPUTPORT) || this.equals(OUTPUTPORT) || this.equals(DISCOVERYPORT) 
-            || this.equals(CONTROLPORT) || this.equals(OBSERVABILITYPORT);
+		return PORTS.contains(this);
     }
 
     /**
@@ -93,16 +107,8 @@ public enum EntityTypeDPDS {
 	 * {@link org.opendatamesh.platform.core.dpds.model.ComponentDPDS}.
 	 */
     public boolean isComponent(EntityTypeDPDS e){
-        return isPort() || this.equals(APPLICATION) || this.equals(INFRASTRUCTURE);
+        return COMPONENTS.contains(this);
     }
-
-    /**
-	 * Return a string representation of this entity type.
-	 */
-	@Override
-	public String toString() {
-		return propertyValue;
-	}
 
     /**
 	 * Return the {@code EntityTypeDPDS} enum constant with the specified property value.

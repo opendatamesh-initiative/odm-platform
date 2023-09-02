@@ -22,13 +22,6 @@ public class PortDPDS extends ComponentDPDS {
     @JsonProperty("contracts")
     protected ContractsDPDS contracts;
 
-    @JsonProperty("tags")
-    protected List<String> tags = new ArrayList<>();
-
-    @JsonProperty("externalDocs")
-    protected ExternalResourceDPDS externalDocs;
-
-   
     public boolean hasPromises() {
         return promises != null;
     }

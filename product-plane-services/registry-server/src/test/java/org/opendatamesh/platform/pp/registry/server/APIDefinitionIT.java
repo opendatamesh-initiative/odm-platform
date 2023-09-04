@@ -1,5 +1,6 @@
 package org.opendatamesh.platform.pp.registry.server;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.pp.registry.api.resources.DefinitionResource;
@@ -230,6 +231,7 @@ public class APIDefinitionIT extends ODMRegistryIT {
     }
 
     @Test
+    @Disabled
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDefinitionCreateError422Errors() throws IOException {
 

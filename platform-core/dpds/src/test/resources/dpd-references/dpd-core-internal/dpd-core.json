@@ -14,12 +14,12 @@
     "interfaceComponents": {
         "inputPorts": [
             {
-                "$ref": "#inputPorts/inputPortA"
+                "$ref": "#components/inputPorts/inputPortA"
             }
         ],
         "outputPorts": [
             {
-                "$ref": "#outputPorts/outputPortA"
+                "$ref": "#components/outputPorts/outputPortA"
             }
         ]
     },
@@ -53,12 +53,12 @@
         },
         "applicationComponents": [
             {
-                "$ref": "#applicationComponents/appA"
+                "$ref": "#components/applicationComponents/appA"
             }
         ],
         "infrastructuralComponents": [
             {
-                "$ref": "#infrastructuralComponents/infraA"
+                "$ref": "#components/infrastructuralComponents/infraA"
             }
         ]
     },

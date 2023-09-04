@@ -133,7 +133,22 @@ public enum EntityTypeDPDS {
 	public static EntityTypeDPDS resolvePropertyValue(String propertyValue) {
 		// Use cached VALUES instead of values() to prevent array allocation.
 		for (EntityTypeDPDS type : VALUES) {
-			if (type.propertyValue == propertyValue) {
+			if (type.propertyValue.equals(propertyValue)) {
+				return type;
+			}
+		}
+		return null;
+	}    
+
+	/**
+	 * Resolve the given type property grouping name to an {@code EntityTypeDPDS}, if possible.
+	 * @param statusCode the entity type property grouping name
+	 * @return the corresponding {@code EntityTypeDPDS}, or {@code null} if not found
+	 */
+	public static EntityTypeDPDS resolveGroupingPropertyName(String groupingPropertyName) {
+		// Use cached VALUES instead of values() to prevent array allocation.
+		for (EntityTypeDPDS type : VALUES) {
+			if (type.groupingPropertyName.equals(groupingPropertyName)) {
 				return type;
 			}
 		}

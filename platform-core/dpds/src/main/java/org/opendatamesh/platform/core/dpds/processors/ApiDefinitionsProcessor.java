@@ -195,6 +195,7 @@ public class ApiDefinitionsProcessor implements PropertiesProcessor {
         } else {
             System.out.println("\n\n====\n" + port.getFullyQualifiedName() + "\n====\n\n"
                     + port.getPromises().getApi().getSpecification() + " not supported");
+            //parsedApiDefinition = new ApiDefinitionReferenceDPDS();
         }
 
         if (parsedApiDefinition != null) {

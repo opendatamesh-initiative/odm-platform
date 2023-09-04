@@ -267,15 +267,15 @@ public class DataProductVersionService {
 
         // Once we have the api id we replace the definition content with a reference
         // url
-        ObjectNode portObject = (ObjectNode) objectMapper.readTree(port.getRawContent());
+        ObjectNode standardDefinition = (ObjectNode) objectMapper.readTree(port.getPromises().getApi().getRawContent());
 
-        ObjectNode standardDefinitionContent = (ObjectNode) portObject.at("/promises/api/definition");
+        ObjectNode standardDefinitionContent = (ObjectNode)standardDefinition.get("definition");
         String ref = String.valueOf(standardDefinitionContent.get("$ref"));
         ref = ref.replaceAll("\\{apiId\\}", "" + definition.getId());
         ref = ref.replaceAll("\"", "");
         standardDefinitionContent.put("$ref", ref);
 
-        port.setRawContent(objectMapper.writeValueAsString(portObject));
+        port.getPromises().getApi().setRawContent(objectMapper.writeValueAsString(standardDefinition));
 
         port.getPromises().setApiId(definition.getId());
 
@@ -331,15 +331,15 @@ public class DataProductVersionService {
         
         // Once we have the template id we replace the definition content with a reference
         // url
-        ObjectNode activityNode = (ObjectNode) objectMapper.readTree(activity.getRawContent());
+        ObjectNode templateDefinitionNode = (ObjectNode) objectMapper.readTree(activity.getTemplate().getRawContent());
 
-        ObjectNode templateDefinitionNode = (ObjectNode) activityNode.at("/template/definition");
-        String ref = String.valueOf(templateDefinitionNode.get("$ref"));
+        ObjectNode templateDefinitionContentNode = (ObjectNode) templateDefinitionNode.get("definition");
+        String ref = String.valueOf(templateDefinitionContentNode.get("$ref"));
         ref = ref.replaceAll("\\{templateId\\}", "" + templateDefinition.getId());
         ref = ref.replaceAll("\"", "");
-        templateDefinitionNode.put("$ref", ref);
+        templateDefinitionContentNode.put("$ref", ref);
 
-        activity.setRawContent(objectMapper.writeValueAsString(activityNode));
+        activity.getTemplate().setRawContent(objectMapper.writeValueAsString(templateDefinitionNode));
 
         return templateDefinition;
     }

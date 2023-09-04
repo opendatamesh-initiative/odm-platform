@@ -30,16 +30,7 @@
                     "$href": "{azure-devops}"
                 },
                 "template": {
-                    "name": "testPipeline",
-                    "version": "1.0.0",
-                    "specification": "azure-devops",
-                    "specificationVersion": "1.0.0",
-                    "definition": {
-                        "organization": "andreagioia",
-                        "project": "opendatamesh",
-                        "pipelineId": "3",
-                        "branch": "main"
-                    }
+                    "$ref": "templates/testPipeline.json"
                 },
                 "configurations": {
                     "stagesToSkip": [
@@ -52,16 +43,7 @@
                     "$href": "{azure-devops}"
                 },
                 "template": {
-                    "name": "testPipeline",
-                    "version": "1.0.0",
-                    "specification": "azure-devops",
-                    "specificationVersion": "1.0.0",
-                    "definition": {
-                        "organization": "andreagioia",
-                        "project": "opendatamesh",
-                        "pipelineId": "3",
-                        "branch": "main"
-                    }
+                    "$ref": "templates/testPipeline.json"
                 },
                 "configurations": {
                     "stagesToSkip": []

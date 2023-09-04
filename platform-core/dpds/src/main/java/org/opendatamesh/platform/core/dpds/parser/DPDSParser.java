@@ -36,9 +36,10 @@ public class DPDSParser {
         if (options.isResoveExternalRef())
             processExternalReferences(context);
 
+        /* 
         if (options.isResoveInternalRef())
             processInternalReferences(context);
-    
+        */
         if (options.isResoveReadOnlyProperties())
             processReadOnlyProperties(context);
         

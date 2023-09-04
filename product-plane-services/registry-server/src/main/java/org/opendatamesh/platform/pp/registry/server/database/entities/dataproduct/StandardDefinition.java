@@ -16,6 +16,8 @@ public class StandardDefinition {
     private String specificationVersion;
     
     private DefinitionReference definition;
+
+    private String rawContent;
     
     private ExternalResource externalDocs;
 

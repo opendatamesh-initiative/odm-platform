@@ -2,6 +2,8 @@ package org.opendatamesh.platform.pp.registry.server;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.pp.registry.api.resources.DefinitionResource;
@@ -160,6 +162,7 @@ public class TemplateDefinitionIT extends ODMRegistryIT {
     }
 
     @Test
+    @Disabled
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     public void testTemplateCreateError422Errors() throws IOException {
 

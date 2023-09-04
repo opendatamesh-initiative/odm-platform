@@ -38,6 +38,17 @@ public class ComponentDPDS extends ReferenceableEntityDPDS {
         return isReference() &&  ref.startsWith("#");
     }
 
+    public String getInternalReferenceGroupName() {
+        String entityType = null;
+        if(isInternalReference()) {
+            String[] refTokens = ref.split("/");
+            if(refTokens.length > 1) {
+                entityType = refTokens[1];
+            }
+        }
+        return entityType;
+    }
+
     public String getInternalReferenceComponentName() {
         return isInternalReference()? ref.substring(ref.lastIndexOf("/")+1): null;
     }

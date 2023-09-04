@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.opendatamesh.platform.pp.registry.api.v1.exceptions.BadRequestException;
 import org.opendatamesh.platform.pp.registry.api.v1.exceptions.ODMRegistryAPIStandardError;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductResource;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DomainResource;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.ErrorRes;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproduct.Domain;
@@ -88,7 +87,7 @@ public class DomainController
             responseCode = "422", 
             description = "[Unprocessable Content](https://www.rfc-editor.org/rfc/rfc9110.html#name-422-unprocessable-content)"
             + "\r\n - Error Code 42215 - Domain is invalid"
-            + "\r\n - Error Code 42216 - Domain product already exists",
+            + "\r\n - Error Code 42216 - Domain already exists",
             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
         ),
          @ApiResponse(
@@ -117,16 +116,9 @@ public class DomainController
     }
 
     // ----------------------------------------
-    // READ All Products 
+    // READ All Domains
     // ----------------------------------------
 
-    // TODO add all error responses
-    
-    // TODO find out how to specify in the main response (code 200) that the schema is a 
-    // list of DataProductResource
-    
-    // TODO at the moment ownerId is not part of DataProduct. Add it in the resource, entity 
-    // and database schema then test the serch also on this property
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK) 
@@ -150,7 +142,7 @@ public class DomainController
     }
 
     // ----------------------------------------
-    // READ Product
+    // READ Domain
     // ----------------------------------------
 
     // TODO add all error responses
@@ -183,7 +175,7 @@ public class DomainController
     }
 
     // ----------------------------------------
-    // DELETE Product
+    // DELETE Domain
     // ----------------------------------------
 
     // TODO add all error responses. What happens to all the data products with this domain?
@@ -207,12 +199,8 @@ public class DomainController
     }
 
     // ----------------------------------------
-    // UPDATE Product
+    // UPDATE Domain
     // ----------------------------------------
-    
-    // TODO all properties, except fqn and id, should be editable. Modify to 
-    // pass the new version into request payload. Remove url parameters. Do all
-    // the required test on input and throw exception in needed 
 
     @PutMapping(
         consumes = { "application/vnd.odmp.v1+json", "application/vnd.odmp+json", "application/json"}
@@ -228,7 +216,7 @@ public class DomainController
                     description = "Domain updated",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = DataProductResource.class)
+                            schema = @Schema(implementation = DomainResource.class)
                     )
             ),
             @ApiResponse(
@@ -251,7 +239,7 @@ public class DomainController
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
             )
     })
-    public DomainResource updateProduct(
+    public DomainResource updateDomain(
         @Parameter(
                 description = "A domain object",
                 required = true)

@@ -1,10 +1,12 @@
 package org.opendatamesh.platform.pp.registry.api.v1.clients;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.apache.regexp.RE;
 import org.opendatamesh.platform.core.commons.clients.ODMClient;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.*;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -570,6 +572,100 @@ public class RegistryClient extends ODMClient {
                 getResponse,
                 HttpStatus.OK,
                 String.class
+        );
+
+    }
+
+    // ======================================================================================
+    // DOMAINS
+    // ======================================================================================
+
+    // ----------------------------------------
+    // CREATE
+    // ----------------------------------------
+
+    public ResponseEntity createDomain(
+            Object payload) throws IOException {
+
+        ResponseEntity postNotificationResponse = rest.postForEntity(
+                apiUrl(RegistryAPIRoutes.DOMAINS),
+                getHttpEntity(payload),
+                Object.class);
+
+        ResponseEntity response = mapResponseEntity(postNotificationResponse,
+                HttpStatus.CREATED,
+                DomainResource.class);
+        return response;
+    }
+
+    // ----------------------------------------
+    // READ
+    // ----------------------------------------
+
+    public ResponseEntity readAllDomains() throws JsonProcessingException {
+
+        ResponseEntity getDomainResponse = rest.getForEntity(
+                apiUrl(RegistryAPIRoutes.DOMAINS),
+                Object.class);
+
+        ResponseEntity response = mapResponseEntity(getDomainResponse,
+                HttpStatus.OK,
+                DomainResource[].class);
+        return response;
+    }
+
+    public ResponseEntity getDomainById(String id) throws JsonProcessingException {
+
+        ResponseEntity getResponse =  rest.getForEntity(
+                apiUrlOfItem(RegistryAPIRoutes.DOMAINS),
+                Object.class,
+                id
+        );
+
+        return mapResponseEntity(
+                getResponse,
+                HttpStatus.OK,
+                DomainResource.class
+        );
+    }
+
+
+    // ----------------------------------------
+    // UPDATE
+    // ----------------------------------------
+
+    public ResponseEntity updateDomain(DomainResource domain) throws IOException {
+        ResponseEntity putPolicyResponse = rest.exchange(
+                apiUrl(RegistryAPIRoutes.DOMAINS),
+                HttpMethod.PUT,
+                getHttpEntity(domain),
+                Object.class
+        );
+
+        ResponseEntity response = mapResponseEntity(putPolicyResponse,
+                HttpStatus.OK,
+                DomainResource.class);
+        return response;
+    }
+
+    // ----------------------------------------
+    // DELETE
+    // ----------------------------------------
+
+    public ResponseEntity deleteDomain(String id) throws JsonProcessingException {
+
+        ResponseEntity deleteResponse = rest.exchange(
+                apiUrlOfItem(RegistryAPIRoutes.DOMAINS),
+                HttpMethod.DELETE,
+                null,
+                Object.class,
+                id
+        );
+
+        return mapResponseEntity(
+                deleteResponse,
+                HttpStatus.OK,
+                Void.class
         );
 
     }

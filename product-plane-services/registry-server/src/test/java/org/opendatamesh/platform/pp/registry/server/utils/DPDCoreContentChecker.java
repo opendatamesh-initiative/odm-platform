@@ -121,7 +121,7 @@ public class DPDCoreContentChecker {
 		assertThat(get(promisesNode, "servicesType")).isEqualTo("rest-services");
 		assertThat(get(promisesNode, "x-prop")).isEqualTo("x-prop-value");
 
-		/* 
+		
 		ObjectNode apiNode = (ObjectNode) promisesNode.get("api");
 		assertThat(apiNode).isNotNull();
 		assertThat(get(apiNode, "name")).isEqualTo("reastApi1");
@@ -133,8 +133,7 @@ public class DPDCoreContentChecker {
 
 		ObjectNode apiDefinitionNode = (ObjectNode) apiNode.get("definition");
 		assertThat(apiDefinitionNode).isNotNull();
-		*/
-		//assertThat(get(apiDefinitionNode, "$ref")).matches(Pattern.compile("http://localhost:\\d*/api/v1/pp/registry/apis/\\d*"));
+		assertThat(get(apiDefinitionNode, "$ref")).matches(Pattern.compile("http://localhost:\\d*/api/v1/pp/registry/apis/\\d*"));
 		
 		// Output ports
 		JsonNode outputPortNodes = interfaceComponentsNode.path("outputPorts");
@@ -162,7 +161,6 @@ public class DPDCoreContentChecker {
 		assertThat(get(promisesNode, "servicesType")).isEqualTo("rest-services");
 		assertThat(get(promisesNode, "x-prop")).isEqualTo("x-prop-value");
 
-		/* *
 		apiNode = (ObjectNode) promisesNode.get("api");
 		assertThat(apiNode).isNotNull();
 		assertThat(get(apiNode, "name")).isEqualTo("reastApi2");
@@ -174,8 +172,7 @@ public class DPDCoreContentChecker {
 
 		apiDefinitionNode = (ObjectNode) apiNode.get("definition");
 		assertThat(apiDefinitionNode).isNotNull();
-		*/
-		//assertThat(get(apiDefinitionNode, "$ref")).matches(Pattern.compile("http://localhost:\\d*/api/v1/pp/registry/apis/\\d*"));
+		assertThat(get(apiDefinitionNode, "$ref")).matches(Pattern.compile("http://localhost:\\d*/api/v1/pp/registry/apis/\\d*"));
 
 		return interfaceComponentsNode;
 	}
@@ -242,7 +239,7 @@ public class DPDCoreContentChecker {
 		assertThat(serviceNode).isNotNull();
 		assertThat(get(serviceNode, "$href")).isEqualTo("{azure-devops}");
 		
-		/* 
+		
 		templateNode = (ObjectNode) stageNode.get("template");
 		assertThat(templateNode).isNotNull();
 		assertThat(get(templateNode, "name")).isEqualTo("testPipeline");
@@ -253,8 +250,7 @@ public class DPDCoreContentChecker {
 		templateDefNode = (ObjectNode)templateNode.get("definition");
 		assertThat(templateDefNode).isNotNull();
 		assertThat(get(templateDefNode, "originaRef")).isNull();
-		*/
-		//assertThat(get(templateDefNode, "$ref")).matches(Pattern.compile("http://localhost:\\d*/api/v1/pp/registry/templates/\\d*"));
+		assertThat(get(templateDefNode, "$ref")).matches(Pattern.compile("http://localhost:\\d*/api/v1/pp/registry/templates/\\d*"));
 
 		confNode = (ObjectNode) stageNode.get("configurations");
 		assertThat(confNode).isNotNull();
@@ -271,7 +267,7 @@ public class DPDCoreContentChecker {
 		assertThat(serviceNode).isNotNull();
 		assertThat(get(serviceNode, "$href")).isEqualTo("{azure-devops}");
 		
-		/* 
+		
 		templateNode = (ObjectNode) stageNode.get("template");
 		assertThat(templateNode).isNotNull();
 		assertThat(get(templateNode, "name")).isEqualTo("testPipeline");
@@ -282,8 +278,7 @@ public class DPDCoreContentChecker {
 		templateDefNode = (ObjectNode)templateNode.get("definition");
 		assertThat(templateDefNode).isNotNull();
 		assertThat(get(templateDefNode, "originaRef")).isNull();
-		*/
-		//assertThat(g*/et(templateDefNode, "$ref")).matches(Pattern.compile("http://localhost:\\d*/api/v1/pp/registry/templates/\\d*"));
+		assertThat(get(templateDefNode, "$ref")).matches(Pattern.compile("http://localhost:\\d*/api/v1/pp/registry/templates/\\d*"));
 
 		confNode = (ObjectNode) stageNode.get("configurations");
 		assertThat(confNode).isNotNull();

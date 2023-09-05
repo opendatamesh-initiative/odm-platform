@@ -5,7 +5,16 @@ import org.mapstruct.SubclassMapping;
 import org.opendatamesh.platform.core.dpds.model.*;
 import org.opendatamesh.platform.core.dpds.model.definitions.ApiDefinitionReferenceDPDS;
 import org.opendatamesh.platform.core.dpds.model.definitions.DefinitionReferenceDPDS;
-import org.opendatamesh.platform.pp.registry.server.database.entities.dataproduct.*;
+import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.*;
+import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.core.DefinitionReference;
+import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.core.ExternalResource;
+import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.core.ReferenceObject;
+import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.core.StandardDefinition;
+import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.definitions.ApiDefinitionReference;
+import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.info.Info;
+import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.interfaces.Port;
+import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.internals.ApplicationComponent;
+import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.internals.InfrastructuralComponent;
 
 import java.util.List;
 

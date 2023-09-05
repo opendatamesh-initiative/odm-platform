@@ -12,7 +12,7 @@ import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
 import org.opendatamesh.platform.pp.registry.api.resources.DefinitionResource;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
-import org.opendatamesh.platform.pp.registry.server.database.entities.sharedres.TemplateDefinition;
+import org.opendatamesh.platform.pp.registry.server.database.entities.Template;
 import org.opendatamesh.platform.pp.registry.server.database.mappers.TemplateDefinitionMapper;
 import org.opendatamesh.platform.pp.registry.server.services.TemplateDefinitionService;
 
@@ -126,7 +126,7 @@ public class TemplateDefinitionController {
                 "Template definition cannot be empty");
         }
         
-        TemplateDefinition templateDefinition = templateDefinitionMapper.toEntity(definitionRes);
+        Template templateDefinition = templateDefinitionMapper.toEntity(definitionRes);
         templateDefinition.setStatus("ACTIVE"); // TODO find a better way to manage read-only properties
         templateDefinition.setType("TEMPLATE"); // TODO find a better way to manage read-only properties
         templateDefinition = templateDefinitionService.createDefinition(templateDefinition);
@@ -181,7 +181,7 @@ public class TemplateDefinitionController {
         String specificationVersion
     )
     {
-        List<TemplateDefinition> definitions = templateDefinitionService.searchDefinitions(name, version, type, specification, specificationVersion);
+        List<Template> definitions = templateDefinitionService.searchDefinitions(name, version, type, specification, specificationVersion);
         List<DefinitionResource> definitionResources = templateDefinitionMapper.definitionsToResources(definitions);
         return definitionResources;
     }
@@ -218,7 +218,7 @@ public class TemplateDefinitionController {
         @Parameter(description = "Idenntifier of the Template definition")
         @Valid @PathVariable(value = "id") Long id) 
     {
-        TemplateDefinition definition = templateDefinitionService.readDefinition(id);
+        Template definition = templateDefinitionService.readDefinition(id);
         DefinitionResource definitionResource = templateDefinitionMapper.toResource(definition);
         return definitionResource;
     }

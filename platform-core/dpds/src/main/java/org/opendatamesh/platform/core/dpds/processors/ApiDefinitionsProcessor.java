@@ -1,15 +1,14 @@
 package org.opendatamesh.platform.core.dpds.processors;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
+import java.net.URI;
+import java.util.List;
+import java.util.Objects;
+
 import org.opendatamesh.platform.core.dpds.api.asyncapi.AsyncApiParser;
 import org.opendatamesh.platform.core.dpds.api.dsapi.DataStoreApiParser;
 import org.opendatamesh.platform.core.dpds.api.openapi.OpenApiParser;
-import org.opendatamesh.platform.core.dpds.exceptions.FetchException;
 import org.opendatamesh.platform.core.dpds.exceptions.DeserializationException;
+import org.opendatamesh.platform.core.dpds.exceptions.FetchException;
 import org.opendatamesh.platform.core.dpds.exceptions.UnresolvableReferenceException;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.EntityTypeDPDS;
@@ -24,9 +23,8 @@ import org.opendatamesh.platform.core.dpds.parser.location.UriUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URI;
-import java.util.List;
-import java.util.Objects;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class ApiDefinitionsProcessor implements PropertiesProcessor {
 

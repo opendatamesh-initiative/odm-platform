@@ -13,7 +13,7 @@ import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestExcep
 import org.opendatamesh.platform.pp.registry.api.resources.ApiToSchemaRelationshipResource;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
 import org.opendatamesh.platform.pp.registry.api.resources.SchemaResource;
-import org.opendatamesh.platform.pp.registry.server.database.entities.sharedres.ApiToSchemaRelationship;
+import org.opendatamesh.platform.pp.registry.server.database.entities.ApiToSchemaRelationship;
 import org.opendatamesh.platform.pp.registry.server.database.mappers.SchemaMapper;
 import org.opendatamesh.platform.pp.registry.server.services.SchemaService;
 import org.slf4j.Logger;
@@ -113,7 +113,7 @@ public class SchemaController {
                 "Schema cannot be empty");
         }
 
-        org.opendatamesh.platform.pp.registry.server.database.entities.sharedres.Schema schema = schemaMapper.toEntity(schemaResource);
+        org.opendatamesh.platform.pp.registry.server.database.entities.Schema schema = schemaMapper.toEntity(schemaResource);
         schema = schemaService.createSchema(schema);
         return schemaMapper.toResource(schema);
     }
@@ -162,7 +162,7 @@ public class SchemaController {
         boolean includeContent
     )
     {
-        List<org.opendatamesh.platform.pp.registry.server.database.entities.sharedres.Schema> schemas;
+        List<org.opendatamesh.platform.pp.registry.server.database.entities.Schema> schemas;
         schemas = schemaService.searchSchemas(apiId, name, version);
         List<SchemaResource> schemaResources = schemaMapper.schemasToResources(schemas);
         if(includeContent == false) {
@@ -205,7 +205,7 @@ public class SchemaController {
         @Parameter(description = "Idenntifier of the schema")
         @Valid @PathVariable(value = "id") Long id) 
     {
-        org.opendatamesh.platform.pp.registry.server.database.entities.sharedres.Schema schema;
+        org.opendatamesh.platform.pp.registry.server.database.entities.Schema schema;
         schema = schemaService.readSchema(id);
         SchemaResource schemaResource = schemaMapper.toResource(schema);
         return schemaResource;
@@ -240,7 +240,7 @@ public class SchemaController {
         @Parameter(description = "Idenntifier of the schema")
         @Valid @PathVariable(value = "id") Long id) 
     {
-        org.opendatamesh.platform.pp.registry.server.database.entities.sharedres.Schema schema;
+        org.opendatamesh.platform.pp.registry.server.database.entities.Schema schema;
         schema = schemaService.readSchema(id);
         return schema.getContent();
     }

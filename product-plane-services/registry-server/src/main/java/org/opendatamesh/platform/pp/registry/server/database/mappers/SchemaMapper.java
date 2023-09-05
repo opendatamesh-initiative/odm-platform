@@ -3,8 +3,8 @@ package org.opendatamesh.platform.pp.registry.server.database.mappers;
 import org.mapstruct.Mapper;
 import org.opendatamesh.platform.pp.registry.api.resources.ApiToSchemaRelationshipResource;
 import org.opendatamesh.platform.pp.registry.api.resources.SchemaResource;
-import org.opendatamesh.platform.pp.registry.server.database.entities.sharedres.ApiToSchemaRelationship;
-import org.opendatamesh.platform.pp.registry.server.database.entities.sharedres.Schema;
+import org.opendatamesh.platform.pp.registry.server.database.entities.ApiToSchemaRelationship;
+import org.opendatamesh.platform.pp.registry.server.database.entities.Schema;
 
 import java.util.List;
 

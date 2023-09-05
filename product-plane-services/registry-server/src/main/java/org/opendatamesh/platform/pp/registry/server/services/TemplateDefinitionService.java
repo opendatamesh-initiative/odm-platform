@@ -6,7 +6,7 @@ import org.opendatamesh.platform.core.commons.servers.exceptions.NotFoundExcepti
 import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
 import org.opendatamesh.platform.core.commons.servers.exceptions.UnprocessableEntityException;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
-import org.opendatamesh.platform.pp.registry.server.database.entities.sharedres.TemplateDefinition;
+import org.opendatamesh.platform.pp.registry.server.database.entities.Template;
 import org.opendatamesh.platform.pp.registry.server.database.repositories.TemplateDefinitionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +30,7 @@ public class TemplateDefinitionService {
 
     }
 
-    public TemplateDefinition resolveNameAndVersion(TemplateDefinition definition) {
+    public Template resolveNameAndVersion(Template definition) {
         if (definition == null) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
@@ -60,7 +60,7 @@ public class TemplateDefinitionService {
     // CREATE
     // ======================================================================================
 
-    public TemplateDefinition createDefinition(TemplateDefinition definition) {
+    public Template createDefinition(Template definition) {
 
         if (definition == null) {
             throw new InternalServerException(
@@ -89,7 +89,7 @@ public class TemplateDefinitionService {
         return definition;
     }
 
-    private TemplateDefinition saveDefinition(TemplateDefinition definition) {
+    private Template saveDefinition(Template definition) {
         return templateDefinitionRepository.saveAndFlush(definition);
     }
 
@@ -97,7 +97,7 @@ public class TemplateDefinitionService {
     // READ
     // ======================================================================================
 
-    public TemplateDefinition readOneDefinition(TemplateDefinition definition) {
+    public Template readOneDefinition(Template definition) {
         if (definition == null) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
@@ -107,8 +107,8 @@ public class TemplateDefinitionService {
         return readDefinition(definition.getId());
     }
 
-    public TemplateDefinition readDefinition(Long definitionId) {
-        TemplateDefinition definition = null;
+    public Template readDefinition(Long definitionId) {
+        Template definition = null;
 
         definition = searchDefinition(definitionId);
 
@@ -121,9 +121,9 @@ public class TemplateDefinitionService {
         return definition;
     }
 
-    public TemplateDefinition loadDefinition(Long definitionId) {
-        TemplateDefinition definition = null;
-        Optional<TemplateDefinition> referenceObjectLookUpResults = templateDefinitionRepository.findById(definitionId);
+    public Template loadDefinition(Long definitionId) {
+        Template definition = null;
+        Optional<Template> referenceObjectLookUpResults = templateDefinitionRepository.findById(definitionId);
 
         if (referenceObjectLookUpResults.isPresent()) {
             definition = referenceObjectLookUpResults.get();
@@ -153,8 +153,8 @@ public class TemplateDefinitionService {
     // search methods
     // -------------------------
 
-    public TemplateDefinition searchDefinition(Long definitionId) {
-        TemplateDefinition definition = null;
+    public Template searchDefinition(Long definitionId) {
+        Template definition = null;
         if (definitionId == null) {
             throw new BadRequestException(
                     RegistryApiStandardErrors.SC400_14_TEMPLATE_IS_EMPTY,
@@ -173,7 +173,7 @@ public class TemplateDefinitionService {
         return definition;
     }
 
-    public TemplateDefinition searchDefinition(TemplateDefinition definition) {
+    public Template searchDefinition(Template definition) {
         definition = resolveNameAndVersion(definition);
         return searchDefinition(definition.getName(), definition.getVersion());
     }
@@ -181,12 +181,12 @@ public class TemplateDefinitionService {
     /**
      * @return The definition identified by name and version. Null if not exists
      */
-    public TemplateDefinition searchDefinition(
+    public Template searchDefinition(
             String name,
             String version) {
 
-        TemplateDefinition definition = null;
-        List<TemplateDefinition> definitions = searchDefinitions(name, version, null, null, null);
+        Template definition = null;
+        List<Template> definitions = searchDefinitions(name, version, null, null, null);
         if (definitions == null || definitions.size() == 0) {
             definition = null;
         } else if (definitions.size() == 1) {
@@ -200,13 +200,13 @@ public class TemplateDefinitionService {
         return definition;
     }
 
-    public List<TemplateDefinition> searchDefinitions(
+    public List<Template> searchDefinitions(
             String name,
             String version,
             String type,
             String specification,
             String specificationVersion) {
-        List<TemplateDefinition> definitionSearchResults = null;
+        List<Template> definitionSearchResults = null;
         try {
             definitionSearchResults = findDefinitions(name, version, type, specification, specificationVersion);
         } catch (Throwable t) {
@@ -218,7 +218,7 @@ public class TemplateDefinitionService {
         return definitionSearchResults;
     }
 
-    private List<TemplateDefinition> findDefinitions(
+    private List<Template> findDefinitions(
             String name,
             String version,
             String type,
@@ -234,7 +234,7 @@ public class TemplateDefinitionService {
     // UPDATE
     // ======================================================================================
 
-    public TemplateDefinition updateDefinition(TemplateDefinition definition) {
+    public Template updateDefinition(Template definition) {
         if (definition == null) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
@@ -265,7 +265,7 @@ public class TemplateDefinitionService {
     // ======================================================================================
 
     public void deleteDefinition(Long definitionId) {
-        TemplateDefinition definition = searchDefinition(definitionId);
+        Template definition = searchDefinition(definitionId);
         if (definition == null) {
             throw new NotFoundException(
                     RegistryApiStandardErrors.SC404_05_TEMPLATE_NOT_FOUND,

@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.pp.registry.api.resources.DefinitionResource;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
-import org.opendatamesh.platform.pp.registry.server.database.entities.sharedres.ApiDefinition;
+import org.opendatamesh.platform.pp.registry.server.database.entities.Api;
 import org.opendatamesh.platform.pp.registry.server.utils.ODMRegistryResources;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -35,7 +35,7 @@ public class APIDefinitionIT extends ODMRegistryIT {
     public void testDefinitionCreate() throws IOException {
 
 
-        ResponseEntity<ApiDefinition> postProductResponse = null;
+        ResponseEntity<Api> postProductResponse = null;
 
         // TEST 1: create a Definition with all properties and verify the response
         DefinitionResource definitionRes = createApiDefinition(ODMRegistryResources.API_DEF1_V1);

@@ -1,7 +1,7 @@
 package org.opendatamesh.platform.pp.registry.server.database.repositories;
 
-import org.opendatamesh.platform.pp.registry.server.database.entities.dataproduct.DataProductVersion;
-import org.opendatamesh.platform.pp.registry.server.database.entities.dataproduct.DataProductVersionId;
+import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.DataProductVersion;
+import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.DataProductVersionId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 

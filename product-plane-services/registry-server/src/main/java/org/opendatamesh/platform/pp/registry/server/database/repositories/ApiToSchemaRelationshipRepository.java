@@ -1,8 +1,8 @@
 package org.opendatamesh.platform.pp.registry.server.database.repositories;
 
 
-import org.opendatamesh.platform.pp.registry.server.database.entities.sharedres.ApiToSchemaRelationship;
-import org.opendatamesh.platform.pp.registry.server.database.entities.sharedres.ApiToSchemaRelationship.ApiToSchemaRelationshipId;
+import org.opendatamesh.platform.pp.registry.server.database.entities.ApiToSchemaRelationship;
+import org.opendatamesh.platform.pp.registry.server.database.entities.ApiToSchemaRelationship.ApiToSchemaRelationshipId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 

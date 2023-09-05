@@ -6,8 +6,8 @@ import org.opendatamesh.platform.core.commons.servers.exceptions.NotFoundExcepti
 import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
 import org.opendatamesh.platform.core.commons.servers.exceptions.UnprocessableEntityException;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
-import org.opendatamesh.platform.pp.registry.server.database.entities.sharedres.ApiToSchemaRelationship;
-import org.opendatamesh.platform.pp.registry.server.database.entities.sharedres.Schema;
+import org.opendatamesh.platform.pp.registry.server.database.entities.ApiToSchemaRelationship;
+import org.opendatamesh.platform.pp.registry.server.database.entities.Schema;
 import org.opendatamesh.platform.pp.registry.server.database.repositories.ApiToSchemaRelationshipRepository;
 import org.opendatamesh.platform.pp.registry.server.database.repositories.SchemaRepository;
 import org.slf4j.Logger;

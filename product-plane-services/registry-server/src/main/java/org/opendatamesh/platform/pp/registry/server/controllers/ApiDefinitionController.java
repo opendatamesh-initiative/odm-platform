@@ -12,7 +12,7 @@ import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
 import org.opendatamesh.platform.pp.registry.api.resources.DefinitionResource;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
-import org.opendatamesh.platform.pp.registry.server.database.entities.sharedres.ApiDefinition;
+import org.opendatamesh.platform.pp.registry.server.database.entities.Api;
 import org.opendatamesh.platform.pp.registry.server.database.mappers.ApiDefinitionMapper;
 import org.opendatamesh.platform.pp.registry.server.services.ApiDefinitionService;
 
@@ -125,7 +125,7 @@ public class ApiDefinitionController {
                 "API definition cannot be empty");
         }
         
-        ApiDefinition apiDefinition = definitionMapper.toEntity(definition);
+        Api apiDefinition = definitionMapper.toEntity(definition);
         apiDefinition = apiDefinitionService.createDefinition(apiDefinition);
         return definitionMapper.toResource(apiDefinition);
     }
@@ -178,7 +178,7 @@ public class ApiDefinitionController {
         String specificationVersion
     )
     {
-        List<ApiDefinition> definitions = apiDefinitionService.searchDefinitions(name, version, type, specification, specificationVersion);
+        List<Api> definitions = apiDefinitionService.searchDefinitions(name, version, type, specification, specificationVersion);
         List<DefinitionResource> definitionResources = definitionMapper.definitionsToResources(definitions);
         return definitionResources;
     }
@@ -215,7 +215,7 @@ public class ApiDefinitionController {
         @Parameter(description = "Idenntifier of the API definition")
         @Valid @PathVariable(value = "id") Long id) 
     {
-        ApiDefinition apiDefinition = apiDefinitionService.readDefinition(id);
+        Api apiDefinition = apiDefinitionService.readDefinition(id);
         return definitionMapper.toResource(apiDefinition);
     }
 

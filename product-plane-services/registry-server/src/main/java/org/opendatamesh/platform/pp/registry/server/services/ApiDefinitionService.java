@@ -6,7 +6,7 @@ import org.opendatamesh.platform.core.commons.servers.exceptions.NotFoundExcepti
 import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
 import org.opendatamesh.platform.core.commons.servers.exceptions.UnprocessableEntityException;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
-import org.opendatamesh.platform.pp.registry.server.database.entities.sharedres.ApiDefinition;
+import org.opendatamesh.platform.pp.registry.server.database.entities.Api;
 import org.opendatamesh.platform.pp.registry.server.database.repositories.ApiDefinitionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +30,7 @@ public class ApiDefinitionService {
 
     }
 
-    public ApiDefinition resolveNameAndVersion(ApiDefinition definition) {
+    public Api resolveNameAndVersion(Api definition) {
         if (definition == null) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
@@ -60,7 +60,7 @@ public class ApiDefinitionService {
     // CREATE
     // ======================================================================================
 
-    public ApiDefinition createDefinition(ApiDefinition definition) {
+    public Api createDefinition(Api definition) {
 
         if (definition == null) {
             throw new InternalServerException(
@@ -89,7 +89,7 @@ public class ApiDefinitionService {
         return definition;
     }
 
-    private ApiDefinition saveDefinition(ApiDefinition definition) {
+    private Api saveDefinition(Api definition) {
         return apiDefinitionRepository.saveAndFlush(definition);
     }
 
@@ -97,7 +97,7 @@ public class ApiDefinitionService {
     // READ
     // ======================================================================================
 
-    public ApiDefinition readOneDefinition(ApiDefinition definition) {
+    public Api readOneDefinition(Api definition) {
         if (definition == null) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
@@ -107,8 +107,8 @@ public class ApiDefinitionService {
         return readDefinition(definition.getId());
     }
 
-    public ApiDefinition readDefinition(Long definitionId) {
-        ApiDefinition definition = null;
+    public Api readDefinition(Long definitionId) {
+        Api definition = null;
 
         definition = searchDefinition(definitionId);
 
@@ -121,9 +121,9 @@ public class ApiDefinitionService {
         return definition;
     }
 
-    public ApiDefinition loadDefinition(Long definitionId) {
-        ApiDefinition definition = null;
-        Optional<ApiDefinition> referenceObjectLookUpResults = apiDefinitionRepository.findById(definitionId);
+    public Api loadDefinition(Long definitionId) {
+        Api definition = null;
+        Optional<Api> referenceObjectLookUpResults = apiDefinitionRepository.findById(definitionId);
 
         if (referenceObjectLookUpResults.isPresent()) {
             definition = referenceObjectLookUpResults.get();
@@ -153,8 +153,8 @@ public class ApiDefinitionService {
     // search methods
     // -------------------------
 
-    public ApiDefinition searchDefinition(Long definitionId) {
-        ApiDefinition definition = null;
+    public Api searchDefinition(Long definitionId) {
+        Api definition = null;
         if (definitionId == null) {
             throw new BadRequestException(
                     RegistryApiStandardErrors.SC400_09_STDDEF_ID_IS_EMPTY,
@@ -173,7 +173,7 @@ public class ApiDefinitionService {
         return definition;
     }
 
-    public ApiDefinition searchDefinition(ApiDefinition definition) {
+    public Api searchDefinition(Api definition) {
         definition = resolveNameAndVersion(definition);
         return searchDefinition(definition.getName(), definition.getVersion());
     }
@@ -181,12 +181,12 @@ public class ApiDefinitionService {
     /**
      * @return The definition identified by name and version. Null if not exists
      */
-    public ApiDefinition searchDefinition(
+    public Api searchDefinition(
             String name,
             String version) {
 
-        ApiDefinition definition = null;
-        List<ApiDefinition> definitions = searchDefinitions(name, version, null, null, null);
+        Api definition = null;
+        List<Api> definitions = searchDefinitions(name, version, null, null, null);
         if (definitions == null || definitions.size() == 0) {
             definition = null;
         } else if (definitions.size() == 1) {
@@ -200,13 +200,13 @@ public class ApiDefinitionService {
         return definition;
     }
 
-    public List<ApiDefinition> searchDefinitions(
+    public List<Api> searchDefinitions(
             String name,
             String version,
             String type,
             String specification,
             String specificationVersion) {
-        List<ApiDefinition> definitionSearchResults = null;
+        List<Api> definitionSearchResults = null;
         try {
             definitionSearchResults = findDefinitions(name, version, type, specification, specificationVersion);
         } catch (Throwable t) {
@@ -218,7 +218,7 @@ public class ApiDefinitionService {
         return definitionSearchResults;
     }
 
-    private List<ApiDefinition> findDefinitions(
+    private List<Api> findDefinitions(
             String name,
             String version,
             String type,
@@ -234,7 +234,7 @@ public class ApiDefinitionService {
     // UPDATE
     // ======================================================================================
 
-    public ApiDefinition updateDefinition(ApiDefinition definition) {
+    public Api updateDefinition(Api definition) {
         if (definition == null) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
@@ -265,7 +265,7 @@ public class ApiDefinitionService {
     // ======================================================================================
 
     public void deleteDefinition(Long definitionId) {
-        ApiDefinition definition = searchDefinition(definitionId);
+        Api definition = searchDefinition(definitionId);
         if (definition == null) {
             throw new NotFoundException(
                     RegistryApiStandardErrors.SC404_03_STDDEF_NOT_FOUND,

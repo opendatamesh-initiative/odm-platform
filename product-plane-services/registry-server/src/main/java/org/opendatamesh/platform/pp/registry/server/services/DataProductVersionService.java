@@ -11,12 +11,19 @@ import org.opendatamesh.platform.core.commons.servers.exceptions.NotFoundExcepti
 import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
 import org.opendatamesh.platform.core.commons.servers.exceptions.UnprocessableEntityException;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
-import org.opendatamesh.platform.pp.registry.server.database.entities.dataproduct.*;
-import org.opendatamesh.platform.pp.registry.server.database.entities.sharedres.ApiDefinition;
-import org.opendatamesh.platform.pp.registry.server.database.entities.sharedres.ApiToSchemaRelationship;
-import org.opendatamesh.platform.pp.registry.server.database.entities.sharedres.Schema;
-import org.opendatamesh.platform.pp.registry.server.database.entities.sharedres.TemplateDefinition;
-import org.opendatamesh.platform.pp.registry.server.database.entities.sharedres.ApiToSchemaRelationship.ApiToSchemaRelationshipId;
+import org.opendatamesh.platform.pp.registry.server.database.entities.Api;
+import org.opendatamesh.platform.pp.registry.server.database.entities.ApiToSchemaRelationship;
+import org.opendatamesh.platform.pp.registry.server.database.entities.Schema;
+import org.opendatamesh.platform.pp.registry.server.database.entities.Template;
+import org.opendatamesh.platform.pp.registry.server.database.entities.ApiToSchemaRelationship.ApiToSchemaRelationshipId;
+import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.*;
+import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.core.Component;
+import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.core.StandardDefinition;
+import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.definitions.ApiDefinitionEndpoint;
+import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.definitions.ApiDefinitionReference;
+import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.interfaces.Port;
+import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.internals.LifecycleActivityInfo;
+import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.internals.LifecycleInfo;
 import org.opendatamesh.platform.pp.registry.server.database.mappers.DataProductVersionMapper;
 import org.opendatamesh.platform.pp.registry.server.database.repositories.DataProductVersionRepository;
 import org.opendatamesh.platform.pp.registry.server.resources.v1.observers.EventNotifier;
@@ -164,12 +171,12 @@ public class DataProductVersionService {
 
         for (Port port : ports) {
             Map<ApiDefinitionEndpoint, Schema> schemas = saveApiSchemas(port);
-            ApiDefinition apiDefinition = saveApiDefinition(port);
+            Api apiDefinition = saveApiDefinition(port);
             saveApiToSchemaRelationship(apiDefinition, schemas);
         }
     }
 
-    private void saveApiToSchemaRelationship(ApiDefinition apiDefinition, Map<ApiDefinitionEndpoint, Schema> schemas) {
+    private void saveApiToSchemaRelationship(Api apiDefinition, Map<ApiDefinitionEndpoint, Schema> schemas) {
         for (Map.Entry<ApiDefinitionEndpoint, Schema> entry : schemas.entrySet()) {
             ApiToSchemaRelationship relationship = new ApiToSchemaRelationship();
             relationship.setId(new ApiToSchemaRelationshipId(apiDefinition.getId(), entry.getValue().getId()));
@@ -234,15 +241,15 @@ public class DataProductVersionService {
         return schema;
     }
 
-    private ApiDefinition saveApiDefinition(Port port) throws JsonMappingException, JsonProcessingException {
+    private Api saveApiDefinition(Port port) throws JsonMappingException, JsonProcessingException {
 
-        ApiDefinition definition = null;
+        Api definition = null;
 
         if (port.hasApiDefinition() == false)
             return null;
 
         StandardDefinition api = port.getPromises().getApi();
-        ApiDefinition newApiDefinition = new ApiDefinition(); // why not a mapper?
+        Api newApiDefinition = new Api(); // why not a mapper?
         newApiDefinition.setName(api.getName());
         newApiDefinition.setVersion(api.getVersion());
         newApiDefinition.setDescription(api.getDescription());
@@ -277,8 +284,6 @@ public class DataProductVersionService {
 
         port.getPromises().getApi().setRawContent(objectMapper.writeValueAsString(standardDefinition));
 
-        port.getPromises().setApiId(definition.getId());
-
         return definition;
     }
 
@@ -295,20 +300,19 @@ public class DataProductVersionService {
     
         for (LifecycleActivityInfo activity : lifecycleInfo.getActivityInfos()) {
             if(activity.getTemplate() != null && activity.getTemplate().getDefinition() != null) {
-                TemplateDefinition templateDefinition = saveActivityTemplate(activity);
-                activity.setTemplateId(templateDefinition.getId());
+                saveActivityTemplate(activity);
             }
         }
     }
 
-    private TemplateDefinition saveActivityTemplate(
+    private Template saveActivityTemplate(
         LifecycleActivityInfo activity)
     throws JsonProcessingException {
 
         StandardDefinition template = activity.getTemplate();
-        TemplateDefinition templateDefinition = null;
+        Template templateDefinition = null;
 
-        TemplateDefinition newTemplateDefinition = new TemplateDefinition(); // why not a mapper?
+        Template newTemplateDefinition = new Template(); // why not a mapper?
         newTemplateDefinition.setName(template.getName());
         newTemplateDefinition.setVersion(template.getVersion());
         newTemplateDefinition.setDescription(template.getDescription());
@@ -344,16 +348,16 @@ public class DataProductVersionService {
         return templateDefinition;
     }
 
-    private TemplateDefinition saveComponentTemplate(
+    private Template saveComponentTemplate(
         Component component, 
         String templateDefinitionProperty, 
         StandardDefinition template)
     throws JsonProcessingException {
 
-        TemplateDefinition templateDefinition = null;
+        Template templateDefinition = null;
 
         //StandardDefinition template = component.getProvisionInfo().getTemplate();
-        TemplateDefinition newTemplateDefinition = new TemplateDefinition(); // why not a mapper?
+        Template newTemplateDefinition = new Template(); // why not a mapper?
         newTemplateDefinition.setName(template.getName());
         newTemplateDefinition.setVersion(template.getVersion());
         newTemplateDefinition.setDescription(template.getDescription());

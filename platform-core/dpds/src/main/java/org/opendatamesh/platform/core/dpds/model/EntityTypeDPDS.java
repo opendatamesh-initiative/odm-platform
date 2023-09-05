@@ -46,11 +46,13 @@ public enum EntityTypeDPDS {
     private static final EntityTypeDPDS[] VALUES;
 	public static final List<EntityTypeDPDS> PORTS;
 	public static final List<EntityTypeDPDS> COMPONENTS;
+	public static final List<EntityTypeDPDS> EXTERNAL_COMPONENTS;
 
 	static {
 		VALUES = values();
 		PORTS = Arrays.asList(INPUTPORT, OUTPUTPORT, DISCOVERYPORT, CONTROLPORT, OBSERVABILITYPORT);
 		COMPONENTS = Arrays.asList(INPUTPORT, OUTPUTPORT, DISCOVERYPORT, CONTROLPORT, OBSERVABILITYPORT, APPLICATION, INFRASTRUCTURE, API, TEMPLATE);
+		EXTERNAL_COMPONENTS = Arrays.asList(API, TEMPLATE);
 	}
 
     private final String propertyValue;
@@ -106,8 +108,16 @@ public enum EntityTypeDPDS {
 	 * Whether this entity type is a component 
 	 * {@link org.opendatamesh.platform.core.dpds.model.ComponentDPDS}.
 	 */
-    public boolean isComponent(EntityTypeDPDS e){
+    public boolean isComponent(){
         return COMPONENTS.contains(this);
+    }
+
+	/**
+	 * Whether this entity type is an external component 
+	 * {@link org.opendatamesh.platform.core.dpds.model.ComponentDPDS}.
+	 */
+    public boolean isExternalComponent(){
+        return EXTERNAL_COMPONENTS.contains(this);
     }
 
     /**

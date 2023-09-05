@@ -4,7 +4,12 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.opendatamesh.platform.core.dpds.exceptions.DeserializationException;
 import org.opendatamesh.platform.core.dpds.model.ComponentDPDS;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
+import org.opendatamesh.platform.core.dpds.model.EntityDPDS;
 import org.opendatamesh.platform.core.dpds.model.EntityTypeDPDS;
+import org.opendatamesh.platform.core.dpds.model.InternalComponentsDPDS;
+import org.opendatamesh.platform.core.dpds.model.LifecycleActivityInfoDPDS;
+import org.opendatamesh.platform.core.dpds.model.PortDPDS;
+import org.opendatamesh.platform.core.dpds.model.StandardDefinitionDPDS;
 import org.opendatamesh.platform.core.dpds.parser.ParseContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +17,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 public class ReadOnlyPropertiesProcessor implements PropertiesProcessor {
-    
+
     ParseContext context;
 
     private static final Logger logger = LoggerFactory.getLogger(ReadOnlyPropertiesProcessor.class);
@@ -45,9 +50,20 @@ public class ReadOnlyPropertiesProcessor implements PropertiesProcessor {
             addReadOnlyPropertiesToComponents(descriptor,
                     descriptor.getInternalComponents().getInfrastructuralComponents(),
                     EntityTypeDPDS.INFRASTRUCTURE);
-
+            
+            addReadOnlyPropertiesToLifecycle();
         }
+    }
 
+    private void addReadOnlyPropertiesToLifecycle() throws DeserializationException {
+        DataProductVersionDPDS descriptor = context.getResult().getDescriptorDocument();
+        InternalComponentsDPDS internalComponents = descriptor.getInternalComponents();
+        if(!internalComponents.hasLifecycleInfo()) return;
+        List<LifecycleActivityInfoDPDS> activities = internalComponents.getLifecycleInfo().getActivityInfos();
+        for(LifecycleActivityInfoDPDS activity: activities) {
+            if(!activity.hasTemplate()) continue; 
+            this.addReadOnlyPropertiesToComponent(descriptor, activity.getTemplate(), EntityTypeDPDS.TEMPLATE);
+        }
     }
 
     private void addReadOnlyPropertiesToInfo() throws DeserializationException {
@@ -131,79 +147,119 @@ public class ReadOnlyPropertiesProcessor implements PropertiesProcessor {
             EntityTypeDPDS entityType)
             throws DeserializationException {
 
-        String fqn, uuid;
-
         for (ComponentDPDS component : components) {
-            ObjectNode componentNode;
-            try {
-                componentNode = (ObjectNode) context.getMapper().readTree(component.getRawContent());
-            } catch (Throwable t) {
-                throw new DeserializationException("Impossible to parse component raw cantent", t);
-            }
-
-            // Rewrite "entityType"
-            if (!entityType.equals(component.getEntityType())) {
-                if (context.getOptions().isValidateReadOnlyProperties()) {
-                    throw new DeserializationException("Invalid value [" + component.getEntityType()
-                            + "] for field entityType in component [" + component.getName() + "]. Expected ["
-                            + entityType + "]");
-                } else {
-                    logger.warn("Invalid value [" + component.getEntityType()
-                            + "] for field entityType in component [" + component.getName() + "]. Expected ["
-                            + entityType + "]");
-                }
-            }
-            if (context.getOptions().isRewriteEntityType()) {
-                component.setEntityType(entityType.propertyValue());
-                componentNode.put("entityType", entityType.toString());
-            }
-
-            // Rewrite "fqn"
-            try {
-                fqn = context.getOptions().getIdentifierStrategy().getFqn(descriptor, component);
-            } catch (Throwable t) {
-                throw new DeserializationException("Impossible to calculate component fqn", t);
-            }
-            if (!fqn.equals(component.getFullyQualifiedName())) {
-                if (context.getOptions().isValidateReadOnlyProperties()) {
-                    throw new DeserializationException("Invalid value [" + component.getFullyQualifiedName()
-                            + "] for field fullyQualifiedName in component [" + component.getName() + "]. Expected ["
-                            + fqn + "]");
-                } else {
-                    logger.warn("Invalid value [" + component.getFullyQualifiedName()
-                            + "] for field fullyQualifiedName in component [" + component.getName() + "]. Expected ["
-                            + fqn + "]");
-                }
-            }
-            if (context.getOptions().isRewriteFqn()) {
-                component.setFullyQualifiedName(fqn);
-                componentNode.put("fullyQualifiedName", fqn);
-            }
-
-            // Rewrite "id"
-            fqn = component.getFullyQualifiedName();
-            uuid = context.getOptions().getIdentifierStrategy().getId(fqn);
-            if (!uuid.equals(component.getId())) {
-                if (context.getOptions().isValidateReadOnlyProperties()) {
-                    throw new DeserializationException("Invalid value [" + component.getId()
-                            + "] for field id in component [" + component.getName() + "]. Expected [" + uuid + "]");
-                } else {
-                    logger.warn("Invalid value [" + component.getId()
-                            + "] for field id in component [" + component.getName() + "]. Expected [" + uuid + "]");
-                }
-            }
-            if (context.getOptions().isRewriteId()) {
-                component.setId(uuid);
-                componentNode.put("id", uuid);
-            }
-
-            try {
-                component.setRawContent(context.getMapper().writeValueAsString(componentNode));
-            } catch (Throwable t) {
-                throw new DeserializationException("Impossible serialize component", t);
-            }
-
+            addReadOnlyPropertiesToComponent(descriptor, component, entityType);
         }
+    }
+
+    private void addReadOnlyPropertiesToComponent(
+            DataProductVersionDPDS descriptor,
+            ComponentDPDS component,
+            EntityTypeDPDS entityType)
+            throws DeserializationException {
+
+        ObjectNode componentNode;
+        try {
+            componentNode = (ObjectNode) context.getMapper().readTree(component.getRawContent());
+        } catch (Throwable t) {
+            throw new DeserializationException("Impossible to parse component raw cantent", t);
+        }
+
+        // Rewrite "entityType"
+        setEntityType(component, componentNode, entityType);
+
+        // Rewrite "fqn"
+        setFQN(descriptor, component, componentNode);
+
+        // Rewrite "id"
+        setId(component, componentNode);
+
+        try {
+            component.setRawContent(context.getMapper().writeValueAsString(componentNode));
+        } catch (Throwable t) {
+            throw new DeserializationException("Impossible serialize component", t);
+        }
+
+        if (entityType.isPort()) {
+            PortDPDS port = (PortDPDS) component;
+            if (port.hasApi()) {
+                StandardDefinitionDPDS apiResource = port.getPromises().getApi();
+                addReadOnlyPropertiesToComponent(descriptor, apiResource, EntityTypeDPDS.API);
+            }
+        }
+    }
+
+    private void setEntityType(ComponentDPDS component, ObjectNode componentNode, EntityTypeDPDS entityType)
+            throws DeserializationException {
+        // Rewrite "entityType"
+        if (!entityType.equals(component.getEntityType())) {
+            if (context.getOptions().isValidateReadOnlyProperties()) {
+                throw new DeserializationException("Invalid value [" + component.getEntityType()
+                        + "] for field entityType in component [" + component.getName() + "]. Expected ["
+                        + entityType + "]");
+            } else {
+                logger.warn("Invalid value [" + component.getEntityType()
+                        + "] for field entityType in component [" + component.getName() + "]. Expected ["
+                        + entityType + "]");
+            }
+        }
+        if (context.getOptions().isRewriteEntityType()) {
+            component.setEntityType(entityType.propertyValue());
+            componentNode.put("entityType", entityType.toString());
+        }
+    }
+
+    private void setFQN(
+            DataProductVersionDPDS descriptor,
+            ComponentDPDS component,
+            ObjectNode componentNode)
+            throws DeserializationException {
+
+        String fqn = null;
+
+        try {
+            fqn = context.getOptions().getIdentifierStrategy().getFqn(descriptor, component);
+        } catch (Throwable t) {
+            throw new DeserializationException("Impossible to calculate component fqn", t);
+        }
+        if (!fqn.equals(component.getFullyQualifiedName())) {
+            if (context.getOptions().isValidateReadOnlyProperties()) {
+                throw new DeserializationException("Invalid value [" + component.getFullyQualifiedName()
+                        + "] for field fullyQualifiedName in component [" + component.getName() + "]. Expected ["
+                        + fqn + "]");
+            } else {
+                logger.warn("Invalid value [" + component.getFullyQualifiedName()
+                        + "] for field fullyQualifiedName in component [" + component.getName() + "]. Expected ["
+                        + fqn + "]");
+            }
+        }
+        if (context.getOptions().isRewriteFqn()) {
+            component.setFullyQualifiedName(fqn);
+            componentNode.put("fullyQualifiedName", fqn);
+        }
+    }
+
+    private void setId(
+            ComponentDPDS component,
+            ObjectNode componentNode)
+            throws DeserializationException {
+
+        String fqn = component.getFullyQualifiedName();
+        String uuid = context.getOptions().getIdentifierStrategy().getId(fqn);
+        if (!uuid.equals(component.getId())) {
+            if (context.getOptions().isValidateReadOnlyProperties()) {
+                throw new DeserializationException("Invalid value [" + component.getId()
+                        + "] for field id in component [" + component.getName() + "]. Expected [" + uuid + "]");
+            } else {
+                logger.warn("Invalid value [" + component.getId()
+                        + "] for field id in component [" + component.getName() + "]. Expected [" + uuid + "]");
+            }
+        }
+        if (context.getOptions().isRewriteId()) {
+            component.setId(uuid);
+            componentNode.put("id", uuid);
+        }
+
     }
 
     public static void process(ParseContext context) throws DeserializationException {

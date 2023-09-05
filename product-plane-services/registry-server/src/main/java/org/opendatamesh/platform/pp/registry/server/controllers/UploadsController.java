@@ -14,7 +14,7 @@ import org.opendatamesh.platform.core.dpds.parser.location.UriLocation;
 import org.opendatamesh.platform.pp.registry.api.controllers.AbstractUploadsController;
 import org.opendatamesh.platform.pp.registry.api.resources.DataProductDescriptorLocationResource;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
-import org.opendatamesh.platform.pp.registry.server.database.entities.dataproduct.DataProductVersion;
+import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.DataProductVersion;
 import org.opendatamesh.platform.pp.registry.server.database.mappers.DataProductVersionMapper;
 import org.opendatamesh.platform.pp.registry.server.services.DataProductService;
 import org.slf4j.Logger;

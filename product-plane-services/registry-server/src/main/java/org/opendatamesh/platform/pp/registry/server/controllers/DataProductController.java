@@ -6,7 +6,7 @@ import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestExcep
 import org.opendatamesh.platform.pp.registry.api.controllers.AbstractDataProductController;
 import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
-import org.opendatamesh.platform.pp.registry.server.database.entities.dataproduct.DataProduct;
+import org.opendatamesh.platform.pp.registry.server.database.entities.DataProduct;
 import org.opendatamesh.platform.pp.registry.server.database.mappers.DataProductMapper;
 import org.opendatamesh.platform.pp.registry.server.services.DataProductService;
 import org.slf4j.Logger;

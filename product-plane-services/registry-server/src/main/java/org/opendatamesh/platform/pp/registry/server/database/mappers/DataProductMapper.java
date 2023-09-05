@@ -2,7 +2,7 @@ package org.opendatamesh.platform.pp.registry.server.database.mappers;
 
 import org.mapstruct.Mapper;
 import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
-import org.opendatamesh.platform.pp.registry.server.database.entities.dataproduct.DataProduct;
+import org.opendatamesh.platform.pp.registry.server.database.entities.DataProduct;
 
 import java.util.List;
 

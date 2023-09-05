@@ -1,7 +1,6 @@
 package org.opendatamesh.platform.core.dpds.parser;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.networknt.schema.ValidationMessage;
 import lombok.Data;
 import org.opendatamesh.platform.core.dpds.DataProductVersionValidator;
@@ -35,19 +34,15 @@ public class DPDSParser {
 
         if (options.isResoveExternalRef())
             processExternalReferences(context);
-
-        /* 
-        if (options.isResoveInternalRef())
-            processInternalReferences(context);
-        */
-        if (options.isResoveReadOnlyProperties())
-            processReadOnlyProperties(context);
         
         if (options.isResoveApiDefinitions())
             processApiDefinitions(context);
         
         if (options.isResoveTemplateDefinitions())
             processTemplates(context);
+
+        if (options.isResoveReadOnlyProperties())
+            processReadOnlyProperties(context);
 
         if (context.getOptions().isValidate()) {
             try {
@@ -127,16 +122,6 @@ public class DPDSParser {
                     ParseException.Stage.RESOLVE_STANDARD_DEFINITIONS, e);
         }
 
-        return this;
-    }
-
-    private DPDSParser processInternalReferences(ParseContext context) throws ParseException {
-        try {
-            InternalReferencesProcessor.process(context);
-        } catch (UnresolvableReferenceException | DeserializationException e) {
-            throw new ParseException("Impossible to resolve internal reference of root descriptor document",
-                    ParseException.Stage.RESOLVE_INTERNAL_REFERENCES, e);
-        }
         return this;
     }
 

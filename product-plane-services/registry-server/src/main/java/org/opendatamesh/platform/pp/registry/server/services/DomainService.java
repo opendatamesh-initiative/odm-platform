@@ -2,7 +2,8 @@ package org.opendatamesh.platform.pp.registry.server.services;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.opendatamesh.platform.pp.registry.api.v1.exceptions.*;
+import org.opendatamesh.platform.core.commons.servers.exceptions.*;
+import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproduct.Domain;
 import org.opendatamesh.platform.pp.registry.server.database.mappers.DomainMapper;
 import org.opendatamesh.platform.pp.registry.server.database.repositories.DomainRepository;
@@ -56,28 +57,28 @@ public class DomainService {
     public Domain createDomain(Domain domain) {
         if(domain == null) {
             throw new InternalServerException(
-                ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
+                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                 "Domain object cannot be null");
         }
 
 
         if(!StringUtils.hasText(domain.getFullyQualifiedName())) {
             throw new UnprocessableEntityException(
-                ODMRegistryAPIStandardError.SC422_15_DOMAIN_IS_INVALID,
+                RegistryApiStandardErrors.SC422_15_DOMAIN_IS_INVALID,
                 "Domain fullyQualifiedName property cannot be empty");
         }
 
         String uuid = UUID.nameUUIDFromBytes(domain.getFullyQualifiedName().getBytes()).toString();
         if(domain.getId() != null && !domain.getId().equals(uuid)) {
             throw new UnprocessableEntityException(
-                    ODMRegistryAPIStandardError.SC422_15_DOMAIN_IS_INVALID,
+                    RegistryApiStandardErrors.SC422_15_DOMAIN_IS_INVALID,
                     "Domain [" + domain.getFullyQualifiedName() + "] id [" + domain.getId()+ "] is invalid. Expected [" + uuid + "]");
         }
         domain.setId(uuid);
         
         if(domainExists(domain.getId())) {
             throw new UnprocessableEntityException(
-                ODMRegistryAPIStandardError.SC422_16_DOMAIN_ALREADY_EXISTS,
+                RegistryApiStandardErrors.SC422_16_DOMAIN_ALREADY_EXISTS,
                 "Domain [" + domain.getFullyQualifiedName() + "] already exists");
         }
 
@@ -87,7 +88,7 @@ public class DomainService {
             logger.info("Domain [" + domain.getFullyQualifiedName() + "] successfully created");
         } catch(Throwable t) {
             throw new InternalServerException(
-                ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
+                    ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                 "An error occurred in the backend database while saving domain [" + domain.getFullyQualifiedName() + "]",
                 t);
         }
@@ -108,7 +109,7 @@ public class DomainService {
             domains = loadAllDomains();
         } catch(Throwable t) {
             throw new InternalServerException(
-                ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
+                    ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                 "An error occurred in the backend database while loading domains",
                 t);
         }
@@ -138,7 +139,7 @@ public class DomainService {
         Optional<Domain> domainSearchResults = domainRepository.findById(id);
         if(domainSearchResults.isEmpty()) {
             throw new NotFoundException(
-                    ODMRegistryAPIStandardError.SC404_06_DOMAIN_NOT_FOUND,
+                    RegistryApiStandardErrors.SC404_06_DOMAIN_NOT_FOUND,
                     "Domain with id [" + id + "] doesn't exists");
         }
 
@@ -149,7 +150,7 @@ public class DomainService {
         Optional<Domain> domainSearchResults = domainRepository.findByFullyQualifiedName(fqn);
         if(domainSearchResults.isEmpty()) {
             throw new NotFoundException(
-                    ODMRegistryAPIStandardError.SC404_06_DOMAIN_NOT_FOUND,
+                    RegistryApiStandardErrors.SC404_06_DOMAIN_NOT_FOUND,
                     "Domain with fqn [" + fqn + "] doesn't exists");
         }
 
@@ -165,20 +166,20 @@ public class DomainService {
 
         if(domain == null) {
             throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
+                    ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "Domain cannot be null");
         }
 
         if(!StringUtils.hasText(domain.getFullyQualifiedName())) {
             throw new UnprocessableEntityException(
-                    ODMRegistryAPIStandardError.SC422_15_DOMAIN_IS_INVALID,
+                    RegistryApiStandardErrors.SC422_15_DOMAIN_IS_INVALID,
                     "Domain fullyQualifiedName property cannot be empty");
         }
 
         Domain oldDomain = searchDomainByFQN(domain.getFullyQualifiedName());
         if(oldDomain == null) {
             throw new NotFoundException(
-                    ODMRegistryAPIStandardError.SC404_06_DOMAIN_NOT_FOUND,
+                    RegistryApiStandardErrors.SC404_06_DOMAIN_NOT_FOUND,
                     "Domain [" + oldDomain.getFullyQualifiedName() + "] doesn't exists");
         }
         domain.setId(oldDomain.getId());
@@ -188,7 +189,7 @@ public class DomainService {
             logger.info("Domain [" + domain.getFullyQualifiedName() + "] succesfully updated");
         } catch(Throwable t) {
             throw new InternalServerException(
-                ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
+                    ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                 "An error occurred in the backend database while updating domain [" + domain.getFullyQualifiedName() + "]",
                 t);
         }
@@ -208,7 +209,7 @@ public class DomainService {
             logger.info("Domain with id [" + domainId + "] successfully deleted");
         } catch(Throwable t) {
             throw new InternalServerException(
-                ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
+                    ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                 "An error occurred in the backend database while deleting domain",
                 t);
         }

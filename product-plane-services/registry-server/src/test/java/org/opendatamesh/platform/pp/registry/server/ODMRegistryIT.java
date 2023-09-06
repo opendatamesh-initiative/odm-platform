@@ -19,11 +19,7 @@ import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.pp.registry.api.clients.RegistryClient;
-import org.opendatamesh.platform.pp.registry.api.resources.DataProductDescriptorLocationResource;
-import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
-import org.opendatamesh.platform.pp.registry.api.resources.DefinitionResource;
-import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
-import org.opendatamesh.platform.pp.registry.api.resources.SchemaResource;
+import org.opendatamesh.platform.pp.registry.api.resources.*;
 import org.opendatamesh.platform.pp.registry.server.utils.ODMRegistryResourceBuilder;
 import org.opendatamesh.platform.pp.registry.server.utils.ODMRegistryResources;
 import org.slf4j.Logger;
@@ -238,7 +234,7 @@ public abstract class ODMRegistryIT extends ODMIntegrationTest {
     }
 
     protected DomainResource createDomain1() throws IOException {
-        DomainResource payload = resourceBuilder.readResourceFromFile(RESOURCE_DOMAIN1, DomainResource.class);
+        DomainResource payload = resourceBuilder.readResourceFromFile(ODMRegistryResources.RESOURCE_DOMAIN1, DomainResource.class);
         ResponseEntity<DomainResource> postDomainResponse = registryClient.createDomain(payload);
         verifyResponseEntity(postDomainResponse, HttpStatus.CREATED, true);
         return postDomainResponse.getBody();

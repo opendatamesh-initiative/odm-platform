@@ -1,7 +1,7 @@
 package org.opendatamesh.platform.pp.registry.server.database.mappers;
 
 import org.mapstruct.Mapper;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.DomainResource;
+import org.opendatamesh.platform.pp.registry.api.resources.DomainResource;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproduct.Domain;
 
 import java.util.List;

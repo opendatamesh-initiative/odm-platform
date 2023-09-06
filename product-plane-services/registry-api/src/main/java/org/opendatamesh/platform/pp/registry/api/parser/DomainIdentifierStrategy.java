@@ -1,7 +1,7 @@
-package org.opendatamesh.platform.pp.registry.api.v1.parser;
+package org.opendatamesh.platform.pp.registry.api.parser;
 
 import org.apache.commons.lang3.StringUtils;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.DomainResource;
+import org.opendatamesh.platform.pp.registry.api.resources.DomainResource;
 
 import java.util.UUID;
 

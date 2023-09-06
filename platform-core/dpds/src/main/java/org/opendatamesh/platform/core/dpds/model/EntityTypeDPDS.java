@@ -41,7 +41,8 @@ public enum EntityTypeDPDS {
     INFRASTRUCTURE("infrastructure", "infrastructures","infrastructuralComponents"),
 
 	API("api", "apis","apis"),
-    TEMPLATE("template", "templates","templates");
+    TEMPLATE("template", "templates","templates"),
+	DOMAIN("domain", "domains","domains");
 
     private static final EntityTypeDPDS[] VALUES;
 	public static final List<EntityTypeDPDS> PORTS;
@@ -122,7 +123,7 @@ public enum EntityTypeDPDS {
 
     /**
 	 * Return the {@code EntityTypeDPDS} enum constant with the specified property value.
-	 * @param label the property value of the enum to be returned
+	 * @param propertyValue the property value of the enum to be returned
 	 * @return the enum constant with the specified property value
 	 * @throws IllegalArgumentException if this enum has no constant for the specified property value
 	 */
@@ -137,7 +138,7 @@ public enum EntityTypeDPDS {
 
     /**
 	 * Resolve the given type property value to an {@code EntityTypeDPDS}, if possible.
-	 * @param statusCode the entity type property value
+	 * @param propertyValue the entity type property value
 	 * @return the corresponding {@code EntityTypeDPDS}, or {@code null} if not found
 	 */
 	public static EntityTypeDPDS resolvePropertyValue(String propertyValue) {
@@ -152,7 +153,7 @@ public enum EntityTypeDPDS {
 
 	/**
 	 * Resolve the given type property grouping name to an {@code EntityTypeDPDS}, if possible.
-	 * @param statusCode the entity type property grouping name
+	 * @param groupingPropertyName the entity type property grouping name
 	 * @return the corresponding {@code EntityTypeDPDS}, or {@code null} if not found
 	 */
 	public static EntityTypeDPDS resolveGroupingPropertyName(String groupingPropertyName) {

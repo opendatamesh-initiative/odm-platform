@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.pp.registry.api.v1.resources;
+package org.opendatamesh.platform.pp.registry.api.resources;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.model.EntityTypeDPDS;
-import org.opendatamesh.platform.pp.registry.api.v1.parser.DomainIdentifierStrategy;
+import org.opendatamesh.platform.pp.registry.api.parser.DomainIdentifierStrategy;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)

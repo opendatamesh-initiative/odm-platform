@@ -8,10 +8,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.opendatamesh.platform.pp.registry.api.v1.exceptions.BadRequestException;
-import org.opendatamesh.platform.pp.registry.api.v1.exceptions.ODMRegistryAPIStandardError;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.DomainResource;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.ErrorRes;
+import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
+import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
+import org.opendatamesh.platform.pp.registry.api.resources.DomainResource;
+import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
+import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
+import org.opendatamesh.platform.pp.registry.api.resources.DomainResource;
+import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproduct.Domain;
 import org.opendatamesh.platform.pp.registry.server.database.mappers.DomainMapper;
 import org.opendatamesh.platform.pp.registry.server.services.DomainService;
@@ -106,7 +109,7 @@ public class DomainController
     ) throws Exception {
         if(domainRes == null) {
             throw new BadRequestException(
-                ODMRegistryAPIStandardError.SC400_16_DOMAIN_IS_EMPTY,
+                RegistryApiStandardErrors.SC400_16_DOMAIN_IS_EMPTY,
                 "Domain cannot be empty");
         }
 
@@ -248,7 +251,7 @@ public class DomainController
 
         if(domainRes == null)
             throw new BadRequestException(
-                ODMRegistryAPIStandardError.SC400_16_DOMAIN_IS_EMPTY,
+                    RegistryApiStandardErrors.SC400_16_DOMAIN_IS_EMPTY,
                 "Domain is empty"
             );
 

@@ -1,9 +1,9 @@
 package org.opendatamesh.platform.pp.registry.server;
 
 import org.junit.jupiter.api.Test;
-import org.opendatamesh.platform.pp.registry.api.v1.exceptions.ODMRegistryAPIStandardError;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.DomainResource;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.ErrorRes;
+import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
+import org.opendatamesh.platform.pp.registry.api.resources.DomainResource;
+import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
@@ -137,7 +137,7 @@ public class DomainIT extends ODMRegistryIT {
 
         ResponseEntity<ErrorRes> getDomainResponse;
         getDomainResponse = registryClient.getDomainById(domainRequest.getId());
-        verifyResponseError(getDomainResponse, HttpStatus.NOT_FOUND, ODMRegistryAPIStandardError.SC404_06_DOMAIN_NOT_FOUND);
+        verifyResponseError(getDomainResponse, HttpStatus.NOT_FOUND, RegistryApiStandardErrors.SC404_06_DOMAIN_NOT_FOUND);
     }
 
     // ======================================================================================
@@ -158,7 +158,7 @@ public class DomainIT extends ODMRegistryIT {
         String payload = null;
         errorResponse = registryClient.createDomain(payload);
         verifyResponseError(errorResponse,
-                HttpStatus.BAD_REQUEST, ODMRegistryAPIStandardError.SC400_16_DOMAIN_IS_EMPTY);
+                HttpStatus.BAD_REQUEST, RegistryApiStandardErrors.SC400_16_DOMAIN_IS_EMPTY);
     }
 
     @Test
@@ -173,7 +173,7 @@ public class DomainIT extends ODMRegistryIT {
         errorResponse = registryClient.createDomain(domainRes);
         verifyResponseError(errorResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                ODMRegistryAPIStandardError.SC422_16_DOMAIN_ALREADY_EXISTS);
+                RegistryApiStandardErrors.SC422_16_DOMAIN_ALREADY_EXISTS);
 
 
         // TEST 2: try to register a domain without setting the fqn
@@ -181,14 +181,14 @@ public class DomainIT extends ODMRegistryIT {
         errorResponse = registryClient.createDomain(domainRes);
         verifyResponseError(errorResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                ODMRegistryAPIStandardError.SC422_15_DOMAIN_IS_INVALID);
+                RegistryApiStandardErrors.SC422_15_DOMAIN_IS_INVALID);
         
         // TEST 3: try to register a domain with an empty fqn
         domainRes = resourceBuilder.buildDomain("    ");
         errorResponse = registryClient.createDomain(domainRes);
         verifyResponseError(errorResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                ODMRegistryAPIStandardError.SC422_15_DOMAIN_IS_INVALID);
+                RegistryApiStandardErrors.SC422_15_DOMAIN_IS_INVALID);
         
     
         // TEST 4: try to register a domain setting an id that not match with the fqn
@@ -196,7 +196,7 @@ public class DomainIT extends ODMRegistryIT {
         errorResponse = registryClient.createDomain(domainRes);
         verifyResponseError(errorResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                ODMRegistryAPIStandardError.SC422_15_DOMAIN_IS_INVALID);
+                RegistryApiStandardErrors.SC422_15_DOMAIN_IS_INVALID);
     }
 
     @Test
@@ -209,7 +209,7 @@ public class DomainIT extends ODMRegistryIT {
         verifyResponseError(
                 errorResponse,
                 HttpStatus.BAD_REQUEST,
-                ODMRegistryAPIStandardError.SC400_16_DOMAIN_IS_EMPTY
+                RegistryApiStandardErrors.SC400_16_DOMAIN_IS_EMPTY
         );
 
         // TEST 2: Empty fqn
@@ -218,7 +218,7 @@ public class DomainIT extends ODMRegistryIT {
         verifyResponseError(
                 errorResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                ODMRegistryAPIStandardError.SC422_15_DOMAIN_IS_INVALID
+                RegistryApiStandardErrors.SC422_15_DOMAIN_IS_INVALID
         );
 
         // TEST 3: Not found
@@ -227,7 +227,7 @@ public class DomainIT extends ODMRegistryIT {
         verifyResponseError(
                 errorResponse,
                 HttpStatus.NOT_FOUND,
-                ODMRegistryAPIStandardError.SC404_06_DOMAIN_NOT_FOUND
+                RegistryApiStandardErrors.SC404_06_DOMAIN_NOT_FOUND
         );
 
     }
@@ -240,7 +240,7 @@ public class DomainIT extends ODMRegistryIT {
         verifyResponseError(
                 errorResponse,
                 HttpStatus.NOT_FOUND,
-                ODMRegistryAPIStandardError.SC404_06_DOMAIN_NOT_FOUND
+                RegistryApiStandardErrors.SC404_06_DOMAIN_NOT_FOUND
         );
     }
 
@@ -252,7 +252,7 @@ public class DomainIT extends ODMRegistryIT {
         verifyResponseError(
                 errorResponse,
                 HttpStatus.NOT_FOUND,
-                ODMRegistryAPIStandardError.SC404_06_DOMAIN_NOT_FOUND
+                RegistryApiStandardErrors.SC404_06_DOMAIN_NOT_FOUND
         );
     }
 

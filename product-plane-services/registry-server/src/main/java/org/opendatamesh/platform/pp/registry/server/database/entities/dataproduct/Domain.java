@@ -45,7 +45,7 @@ public class Domain implements Cloneable, Serializable {
     @PrePersist
     protected void onCreate() {
         createdAt = new Date();
-        entityType = EntityTypeDPDS.domain;
+        entityType = EntityTypeDPDS.DOMAIN;
     }
 
     @PostLoad

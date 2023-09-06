@@ -1,6 +1,6 @@
 package org.opendatamesh.platform.pp.registry.server.database.repositories;
 
-import org.opendatamesh.platform.pp.registry.server.database.entities.sharedres.Schema;
+import org.opendatamesh.platform.pp.registry.server.database.entities.Schema;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;

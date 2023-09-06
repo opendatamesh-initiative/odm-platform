@@ -2,10 +2,11 @@ package org.opendatamesh.platform.pp.registry.server.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.opendatamesh.platform.core.commons.servers.exceptions.BadGatewayException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
-import org.opendatamesh.platform.pp.registry.api.v1.exceptions.BadGatewayException;
-import org.opendatamesh.platform.pp.registry.api.v1.exceptions.ODMRegistryAPIStandardError;
-import org.opendatamesh.platform.pp.registry.server.database.entities.dataproduct.DataProductVersion;
+import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
+import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.DataProductVersion;
 import org.opendatamesh.platform.pp.registry.server.resources.v1.policyservice.PolicyName;
 import org.opendatamesh.platform.pp.registry.server.resources.v1.policyservice.PolicyValidationResponse;
 import org.opendatamesh.platform.pp.registry.server.resources.v1.policyservice.ValidatedPolicy;
@@ -58,12 +59,12 @@ public class PolicyServiceProxy extends PolicyServiceClient {
             } else {
                 logger.error("There was an error when communicating with Policy service");
                 throw new BadGatewayException(
-                    ODMRegistryAPIStandardError.SC502_01_POLICY_SERVICE_ERROR,
+                    ODMApiCommonErrors.SC502_71_POLICY_SERVICE_ERROR,
                     "An error occurred while comunicating with the policyService");
             }
         } catch (Exception e) {
             throw new BadGatewayException(
-                    ODMRegistryAPIStandardError.SC502_01_POLICY_SERVICE_ERROR,
+                    ODMApiCommonErrors.SC502_71_POLICY_SERVICE_ERROR,
                     "An error occurred while comunicating with the policyService: " + e.getMessage());
         }
     }

@@ -1,0 +1,21 @@
+{
+    "name": "outputPortA",
+    "version": "1.0.0",
+    "displayName": "Output port A",
+    "description": "Output port A of data product",
+    "componentGroup": "gruppoA",
+    "promises": {
+        "platform": "platformX",
+        "servicesType": "rest-services",
+        "api": {
+            "name": "reastApi2",
+            "version": "1.3.2",
+            "description": "Rest output API",
+            "specification": "custom-api-spec",
+            "specificationVersion": "1.0.0",
+            "definition": {
+                "$ref": "reastApi2.json"
+            }
+        }
+    }
+}

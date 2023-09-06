@@ -1,5 +1,6 @@
 {
-    "fullyQualifiedName": "urn:org.opendatamesh:dataproduct:tripExecution",
-    "description": "This is prod-1",
-    "domain": "Disney"
+    "id": "a9228eb7-3179-3628-ae64-aa5dbb1fcb28",
+    "fullyQualifiedName": "urn:org.opendatamesh:dataproducts:testProduct",
+    "description": "This is test product #1",
+    "domain": "test"
 }

@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.api.ApiParser;
 import org.opendatamesh.platform.core.dpds.exceptions.FetchException;
-import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
+import org.opendatamesh.platform.core.dpds.exceptions.DeserializationException;
 import org.opendatamesh.platform.core.dpds.model.definitions.ApiDefinitionEndpointDPDS;
 import org.opendatamesh.platform.core.dpds.parser.location.UriFetcher;
 
@@ -25,12 +25,12 @@ public class AsyncApiParser extends ApiParser {
     }
 
     @Override
-    protected List<ApiDefinitionEndpointDPDS> extractEndpoints(String rawContent, String mediaType) throws ParseException, FetchException {
+    protected List<ApiDefinitionEndpointDPDS> extractEndpoints(String rawContent, String mediaType) throws DeserializationException, FetchException {
         List<ApiDefinitionEndpointDPDS> endpoints = new ArrayList<ApiDefinitionEndpointDPDS>();
     
 
         if(!"application/json".equalsIgnoreCase(mediaType)) {
-            throw new ParseException("Impossible to parse api definition encoded in [" + mediaType + "]");
+            throw new DeserializationException("Impossible to parse api definition encoded in [" + mediaType + "]");
         }
 
         ObjectMapper mapper = ObjectMapperFactory.JSON_MAPPER;
@@ -84,9 +84,9 @@ public class AsyncApiParser extends ApiParser {
                 }
             }
         } catch (JsonProcessingException e) {
-            throw new ParseException("Impossible to parse api definition", e);
+            throw new DeserializationException("Impossible to parse api definition", e);
         } catch (URISyntaxException e) {
-            throw new ParseException("Impossible to parse api definition", e);
+            throw new DeserializationException("Impossible to parse api definition", e);
         }
     
         

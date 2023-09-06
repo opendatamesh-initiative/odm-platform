@@ -6,13 +6,14 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
+import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
+import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
 import org.opendatamesh.platform.pp.devops.api.clients.DevOpsAPIRoutes;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityResource;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatus;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskResource;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskStatus;
-import org.opendatamesh.platform.pp.devops.api.resources.ErrorRes;
-import org.opendatamesh.platform.pp.devops.api.resources.ODMDevOpsAPIStandardError;
+import org.opendatamesh.platform.pp.devops.api.resources.DevOpsApiStandardErrors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -50,9 +51,9 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
         ErrorRes errorRes = response.getBody();
         assertThat(errorRes).isNotNull();
         assertThat(errorRes).isNotNull();
-        assertThat(errorRes.getCode()).isEqualTo(ODMDevOpsAPIStandardError.SC500_50_REGISTRY_SERVICE_ERROR.code());
+        assertThat(errorRes.getCode()).isEqualTo(ODMApiCommonErrors.SC500_50_REGISTRY_SERVICE_ERROR.code());
         assertThat(errorRes.getDescription())
-                .isEqualTo(ODMDevOpsAPIStandardError.SC500_50_REGISTRY_SERVICE_ERROR.description());
+                .isEqualTo(ODMApiCommonErrors.SC500_50_REGISTRY_SERVICE_ERROR.description());
         assertThat(errorRes.getMessage()).isNotNull();
         assertThat(errorRes.getPath()).isEqualTo(DevOpsAPIRoutes.ACTIVITIES.getPath());
         assertThat(errorRes.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -128,9 +129,9 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
         ErrorRes errorRes = response.getBody();
         assertThat(errorRes).isNotNull();
         assertThat(errorRes.getCode())
-                .isEqualTo(ODMDevOpsAPIStandardError.SC400_00_REQUEST_BODY_IS_NOT_READABLE.code());
+                .isEqualTo(ODMApiCommonErrors.SC400_00_REQUEST_BODY_IS_NOT_READABLE.code());
         assertThat(errorRes.getDescription())
-                .isEqualTo(ODMDevOpsAPIStandardError.SC400_00_REQUEST_BODY_IS_NOT_READABLE.description());
+                .isEqualTo(ODMApiCommonErrors.SC400_00_REQUEST_BODY_IS_NOT_READABLE.description());
         assertThat(errorRes.getMessage()).isNotNull();
         assertThat(errorRes.getPath()).isEqualTo(DevOpsAPIRoutes.ACTIVITIES.getPath());
         assertThat(errorRes.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
@@ -157,9 +158,9 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
         ErrorRes errorRes = response.getBody();
         assertThat(errorRes).isNotNull();
         assertThat(errorRes.getCode())
-                .isEqualTo(ODMDevOpsAPIStandardError.SC400_00_REQUEST_BODY_IS_NOT_READABLE.code());
+                .isEqualTo(ODMApiCommonErrors.SC400_00_REQUEST_BODY_IS_NOT_READABLE.code());
         assertThat(errorRes.getDescription())
-                .isEqualTo(ODMDevOpsAPIStandardError.SC400_00_REQUEST_BODY_IS_NOT_READABLE.description());
+                .isEqualTo(ODMApiCommonErrors.SC400_00_REQUEST_BODY_IS_NOT_READABLE.description());
         assertThat(errorRes.getMessage()).isNotNull();
         assertThat(errorRes.getPath()).isEqualTo(DevOpsAPIRoutes.ACTIVITIES.getPath());
         assertThat(errorRes.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
@@ -191,9 +192,9 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
         ErrorRes errorRes = response.getBody();
         assertThat(errorRes).isNotNull();
         assertThat(errorRes.getCode())
-                .isEqualTo(ODMDevOpsAPIStandardError.SC415_01_REQUEST_MEDIA_TYPE_NOT_SUPPORTED.code());
+                .isEqualTo(ODMApiCommonErrors.SC415_01_REQUEST_MEDIA_TYPE_NOT_SUPPORTED.code());
         assertThat(errorRes.getDescription())
-                .isEqualTo(ODMDevOpsAPIStandardError.SC415_01_REQUEST_MEDIA_TYPE_NOT_SUPPORTED.description());
+                .isEqualTo(ODMApiCommonErrors.SC415_01_REQUEST_MEDIA_TYPE_NOT_SUPPORTED.description());
         assertThat(errorRes.getMessage()).isNotNull();
         assertThat(errorRes.getPath()).isEqualTo(DevOpsAPIRoutes.ACTIVITIES.getPath());
         assertThat(errorRes.getStatus()).isEqualTo(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value());
@@ -225,9 +226,9 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
         ErrorRes errorRes = response.getBody();
         assertThat(errorRes).isNotNull();
         assertThat(errorRes.getCode())
-                .isEqualTo(ODMDevOpsAPIStandardError.SC406_01_RESPONSE_ACCEPTED_MEDIA_TYPES_NOT_SUPPORTED.code());
+                .isEqualTo(ODMApiCommonErrors.SC406_01_REQUEST_ACCEPTED_MEDIA_TYPES_NOT_SUPPORTED.code());
         assertThat(errorRes.getDescription()).isEqualTo(
-                ODMDevOpsAPIStandardError.SC406_01_RESPONSE_ACCEPTED_MEDIA_TYPES_NOT_SUPPORTED.description());
+            ODMApiCommonErrors.SC406_01_REQUEST_ACCEPTED_MEDIA_TYPES_NOT_SUPPORTED.description());
         assertThat(errorRes.getMessage()).isNotNull();
         assertThat(errorRes.getPath()).isEqualTo(DevOpsAPIRoutes.ACTIVITIES.getPath());
         assertThat(errorRes.getStatus()).isEqualTo(HttpStatus.NOT_ACCEPTABLE.value());
@@ -255,9 +256,9 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
 
         ErrorRes errorRes = response.getBody();
         assertThat(errorRes).isNotNull();
-        assertThat(errorRes.getCode()).isEqualTo(ODMDevOpsAPIStandardError.SC422_01_ACTIVITY_IS_INVALID.code());
+        assertThat(errorRes.getCode()).isEqualTo(DevOpsApiStandardErrors.SC422_01_ACTIVITY_IS_INVALID.code());
         assertThat(errorRes.getDescription())
-                .isEqualTo(ODMDevOpsAPIStandardError.SC422_01_ACTIVITY_IS_INVALID.description());
+                .isEqualTo(DevOpsApiStandardErrors.SC422_01_ACTIVITY_IS_INVALID.description());
         assertThat(errorRes.getMessage()).isNotNull();
         assertThat(errorRes.getPath()).isEqualTo(DevOpsAPIRoutes.ACTIVITIES.getPath());
         assertThat(errorRes.getStatus()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY.value());
@@ -286,9 +287,9 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
 
         ErrorRes errorRes = response.getBody();
         assertThat(errorRes).isNotNull();
-        assertThat(errorRes.getCode()).isEqualTo(ODMDevOpsAPIStandardError.SC422_01_ACTIVITY_IS_INVALID.code());
+        assertThat(errorRes.getCode()).isEqualTo(DevOpsApiStandardErrors.SC422_01_ACTIVITY_IS_INVALID.code());
         assertThat(errorRes.getDescription())
-                .isEqualTo(ODMDevOpsAPIStandardError.SC422_01_ACTIVITY_IS_INVALID.description());
+                .isEqualTo(DevOpsApiStandardErrors.SC422_01_ACTIVITY_IS_INVALID.description());
         assertThat(errorRes.getMessage()).isNotNull();
         assertThat(errorRes.getPath()).isEqualTo(DevOpsAPIRoutes.ACTIVITIES.getPath());
         assertThat(errorRes.getStatus()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY.value());
@@ -317,9 +318,9 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
 
         ErrorRes errorRes = response.getBody();
         assertThat(errorRes).isNotNull();
-        assertThat(errorRes.getCode()).isEqualTo(ODMDevOpsAPIStandardError.SC422_01_ACTIVITY_IS_INVALID.code());
+        assertThat(errorRes.getCode()).isEqualTo(DevOpsApiStandardErrors.SC422_01_ACTIVITY_IS_INVALID.code());
         assertThat(errorRes.getDescription())
-                .isEqualTo(ODMDevOpsAPIStandardError.SC422_01_ACTIVITY_IS_INVALID.description());
+                .isEqualTo(DevOpsApiStandardErrors.SC422_01_ACTIVITY_IS_INVALID.description());
         assertThat(errorRes.getMessage()).isNotNull();
         assertThat(errorRes.getPath()).isEqualTo(DevOpsAPIRoutes.ACTIVITIES.getPath());
         assertThat(errorRes.getStatus()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY.value());
@@ -348,9 +349,9 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
 
         ErrorRes errorRes = response.getBody();
         assertThat(errorRes).isNotNull();
-        assertThat(errorRes.getCode()).isEqualTo(ODMDevOpsAPIStandardError.SC422_01_ACTIVITY_IS_INVALID.code());
+        assertThat(errorRes.getCode()).isEqualTo(DevOpsApiStandardErrors.SC422_01_ACTIVITY_IS_INVALID.code());
         assertThat(errorRes.getDescription())
-                .isEqualTo(ODMDevOpsAPIStandardError.SC422_01_ACTIVITY_IS_INVALID.description());
+                .isEqualTo(DevOpsApiStandardErrors.SC422_01_ACTIVITY_IS_INVALID.description());
         assertThat(errorRes.getMessage()).isNotNull();
         assertThat(errorRes.getPath()).isEqualTo(DevOpsAPIRoutes.ACTIVITIES.getPath());
         assertThat(errorRes.getStatus()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY.value());
@@ -388,9 +389,9 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
 
         ErrorRes errorRes = response.getBody();
         assertThat(errorRes).isNotNull();
-        assertThat(errorRes.getCode()).isEqualTo(ODMDevOpsAPIStandardError.SC422_02_ACTIVITY_ALREADY_EXISTS.code());
+        assertThat(errorRes.getCode()).isEqualTo(DevOpsApiStandardErrors.SC422_02_ACTIVITY_ALREADY_EXISTS.code());
         assertThat(errorRes.getDescription())
-                .isEqualTo(ODMDevOpsAPIStandardError.SC422_02_ACTIVITY_ALREADY_EXISTS.description());
+                .isEqualTo(DevOpsApiStandardErrors.SC422_02_ACTIVITY_ALREADY_EXISTS.description());
         assertThat(errorRes.getMessage()).isNotNull();
         assertThat(errorRes.getMessage()).isEqualTo(
                 "Activity for stage [prod] of version [1.0.0] of product [c18b07ba-bb01-3d55-a5bf-feb517a8d901] already exist");
@@ -405,12 +406,12 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
 
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    public void testStartActivityWithWrongId() {
+    public void testStartNotExistingActivity() {
 
         Long wrongActivityId = 50L;
         ResponseEntity<ErrorRes> response = null;
         try {
-            response = devOpsClient.postActivityStart(wrongActivityId, ErrorRes.class);
+            response = devOpsClient.patchActivityStart(wrongActivityId, ErrorRes.class);
         } catch (Throwable t) {
             t.printStackTrace();
             fail("Impossible to get activity: " + t.getMessage());
@@ -422,9 +423,9 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
 
         ErrorRes errorRes = response.getBody();
         assertThat(errorRes).isNotNull();
-        assertThat(errorRes.getCode()).isEqualTo(ODMDevOpsAPIStandardError.SC404_01_ACTIVITY_NOT_FOUND.code());
+        assertThat(errorRes.getCode()).isEqualTo(DevOpsApiStandardErrors.SC404_01_ACTIVITY_NOT_FOUND.code());
         assertThat(errorRes.getDescription())
-                .isEqualTo(ODMDevOpsAPIStandardError.SC404_01_ACTIVITY_NOT_FOUND.description());
+                .isEqualTo(DevOpsApiStandardErrors.SC404_01_ACTIVITY_NOT_FOUND.description());
         assertThat(errorRes.getMessage()).isNotNull();
         assertThat(errorRes.getPath())
                 .isEqualTo(DevOpsAPIRoutes.ACTIVITIES.getPath() + "/" + wrongActivityId + "/start");
@@ -457,7 +458,7 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
 
         ResponseEntity<ErrorRes> response = null;
         try {
-            response = devOpsClient.postActivityStart(startedActivityRes.getId(), ErrorRes.class);
+            response = devOpsClient.patchActivityStart(startedActivityRes.getId(), ErrorRes.class);
         } catch (Throwable t) {
             t.printStackTrace();
             fail("Impossible to start activity: " + t.getMessage());
@@ -469,9 +470,9 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
 
         ErrorRes errorRes = response.getBody();
         assertThat(errorRes).isNotNull();
-        assertThat(errorRes.getCode()).isEqualTo(ODMDevOpsAPIStandardError.SC409_01_CONCURRENT_ACTIVITIES.code());
+        assertThat(errorRes.getCode()).isEqualTo(DevOpsApiStandardErrors.SC409_01_CONCURRENT_ACTIVITIES.code());
         assertThat(errorRes.getDescription())
-                .isEqualTo(ODMDevOpsAPIStandardError.SC409_01_CONCURRENT_ACTIVITIES.description());
+                .isEqualTo(DevOpsApiStandardErrors.SC409_01_CONCURRENT_ACTIVITIES.description());
         assertThat(errorRes.getMessage()).isNotNull();
         assertThat(errorRes.getPath())
                 .isEqualTo(DevOpsAPIRoutes.ACTIVITIES.getPath() + "/" + startedActivityRes.getId() + "/start");
@@ -505,7 +506,7 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
 
         ResponseEntity<ErrorRes> response = null;
         try {
-            response = devOpsClient.postActivityStart(activityRes.getId(), ErrorRes.class);
+            response = devOpsClient.patchActivityStart(activityRes.getId(), ErrorRes.class);
         } catch (Throwable t) {
             t.printStackTrace();
             fail("Impossible to start activity: " + t.getMessage());
@@ -517,9 +518,9 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
 
         ErrorRes errorRes = response.getBody();
         assertThat(errorRes).isNotNull();
-        assertThat(errorRes.getCode()).isEqualTo(ODMDevOpsAPIStandardError.SC422_01_ACTIVITY_IS_INVALID.code());
+        assertThat(errorRes.getCode()).isEqualTo(DevOpsApiStandardErrors.SC422_01_ACTIVITY_IS_INVALID.code());
         assertThat(errorRes.getDescription())
-                .isEqualTo(ODMDevOpsAPIStandardError.SC422_01_ACTIVITY_IS_INVALID.description());
+                .isEqualTo(DevOpsApiStandardErrors.SC422_01_ACTIVITY_IS_INVALID.description());
         assertThat(errorRes.getMessage()).isNotNull();
         assertThat(errorRes.getPath())
                 .isEqualTo(DevOpsAPIRoutes.ACTIVITIES.getPath() + "/" + activityRes.getId() + "/start");
@@ -558,9 +559,9 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
 
         ErrorRes errorRes = response.getBody();
         assertThat(errorRes).isNotNull();
-        assertThat(errorRes.getCode()).isEqualTo(ODMDevOpsAPIStandardError.SC409_01_CONCURRENT_ACTIVITIES.code());
+        assertThat(errorRes.getCode()).isEqualTo(DevOpsApiStandardErrors.SC409_01_CONCURRENT_ACTIVITIES.code());
         assertThat(errorRes.getDescription())
-                .isEqualTo(ODMDevOpsAPIStandardError.SC409_01_CONCURRENT_ACTIVITIES.description());
+                .isEqualTo(DevOpsApiStandardErrors.SC409_01_CONCURRENT_ACTIVITIES.description());
         assertThat(errorRes.getMessage()).isNotNull();
         assertThat(errorRes.getMessage()).isEqualTo(
                 "There is already a running activity on version [c18b07ba-bb01-3d55-a5bf-feb517a8d901] of data product [1.0.0]");
@@ -588,7 +589,7 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
 
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    public void testReadActivityWithWrongId() {
+    public void testReadNotExistingActivity() {
 
         Long wrongActivityId = 50L;
         ResponseEntity<ErrorRes> response = null;
@@ -605,9 +606,9 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
 
         ErrorRes errorRes = response.getBody();
         assertThat(errorRes).isNotNull();
-        assertThat(errorRes.getCode()).isEqualTo(ODMDevOpsAPIStandardError.SC404_01_ACTIVITY_NOT_FOUND.code());
+        assertThat(errorRes.getCode()).isEqualTo(DevOpsApiStandardErrors.SC404_01_ACTIVITY_NOT_FOUND.code());
         assertThat(errorRes.getDescription())
-                .isEqualTo(ODMDevOpsAPIStandardError.SC404_01_ACTIVITY_NOT_FOUND.description());
+                .isEqualTo(DevOpsApiStandardErrors.SC404_01_ACTIVITY_NOT_FOUND.description());
         assertThat(errorRes.getMessage()).isNotNull();
         assertThat(errorRes.getPath()).isEqualTo(DevOpsAPIRoutes.ACTIVITIES.getPath() + "/" + wrongActivityId);
         assertThat(errorRes.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());

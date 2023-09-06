@@ -5,13 +5,11 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
 @EqualsAndHashCode(callSuper=true)
 @ToString(callSuper = true)
-public class PortDPDS extends ComponentDPDS implements Cloneable {
+public class PortDPDS extends ComponentDPDS {
 
     @JsonProperty("promises")
     protected PromisesDPDS promises;
@@ -22,13 +20,6 @@ public class PortDPDS extends ComponentDPDS implements Cloneable {
     @JsonProperty("contracts")
     protected ContractsDPDS contracts;
 
-    @JsonProperty("tags")
-    protected List<String> tags = new ArrayList<>();
-
-    @JsonProperty("externalDocs")
-    protected ExternalResourceDPDS externalDocs;
-
-   
     public boolean hasPromises() {
         return promises != null;
     }
@@ -40,5 +31,29 @@ public class PortDPDS extends ComponentDPDS implements Cloneable {
     public boolean hasApiDefinition() {
         return hasApi() && promises.getApi().getDefinition() != null;
     }
+
+    public PortDPDS cloneWithoutrawContent() {  
+        PortDPDS clonedPort = clone();
+        clonedPort.setRawContent(null);
+        if(clonedPort.hasApiDefinition()){
+            clonedPort.getPromises().getApi().getDefinition().setRawContent(null);
+        }
+        return clonedPort;
+    }  
+
+    @Override
+    public PortDPDS clone() { 
+        PortDPDS clonedPort = null; 
+        try {
+            clonedPort =  (PortDPDS)super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }  
+        return clonedPort;
+    }  
+
+    
+
+
 }
 

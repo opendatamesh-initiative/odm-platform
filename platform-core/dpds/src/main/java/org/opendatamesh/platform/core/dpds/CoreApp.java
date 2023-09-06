@@ -4,12 +4,12 @@ import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.PortDPDS;
 import org.opendatamesh.platform.core.dpds.model.definitions.ApiDefinitionReferenceDPDS;
 import org.opendatamesh.platform.core.dpds.parser.DPDSParser;
+import org.opendatamesh.platform.core.dpds.parser.DPDSSerializer;
 import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
 import org.opendatamesh.platform.core.dpds.parser.ParseResult;
 import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
 import org.opendatamesh.platform.core.dpds.parser.location.GitLocation;
 import org.opendatamesh.platform.core.dpds.parser.location.UriLocation;
-import org.opendatamesh.platform.core.dpds.serde.DataProductVersionSerializer;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -52,14 +52,13 @@ public class CoreApp /* implements CommandLineRunner */ {
        
         DPDSParser parser = new DPDSParser();
         ParseOptions options = new ParseOptions();
-        options.setServerUrl( "http://localhost:80/");
+        options.setServerUrl( "http://localhost:80");
 
         ParseResult result = parser.parse(location, options);
         DataProductVersionDPDS descriptor = result.getDescriptorDocument();
         System.out.println(descriptor.getInfo().getVersionNumber());
 
-        DataProductVersionSerializer serializer = new DataProductVersionSerializer();
-        String rawContent = serializer.serialize(descriptor, "canonical", "yaml", true);
+        String rawContent = DPDSSerializer.DEFAULT_YAML_SERIALIZER.serialize(descriptor, "canonical");
         System.out.println(rawContent);
 
         List<PortDPDS> ports = new ArrayList<PortDPDS>();

@@ -46,42 +46,25 @@ public class DataProductVersionDPDS implements Cloneable {
     public void ignored(String name, Object value) {
         //System.out.println(name + " : " + value + " : " + value.getClass().getName());
     }
-    
-    @JsonIgnore
-    public void setRawContent(String content) {
-        
-        ObjectMapper objectMapper = ObjectMapperFactory.JSON_MAPPER;
-        try {
-            ObjectNode rootNode = (ObjectNode)objectMapper.readTree(content);
-            ObjectNode interfaceComponentsNode = (ObjectNode)rootNode.get("interfaceComponents");
-            if(interfaceComponentsNode != null) {
-                interfaceComponents.setRawContent(interfaceComponentsNode);
-                rootNode.remove("interfaceComponents");
-            }
-            
-            ObjectNode internalComponentsNode = (ObjectNode)rootNode.get("internalComponents");
-            if(internalComponentsNode != null) {
-                internalComponents.setRawContent(internalComponentsNode);
-                rootNode.remove("internalComponents");
-            }
-            rawContent = objectMapper.writeValueAsString(rootNode);
-        } catch  (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     // TODO this is orrible. Fix asap
     public String toEventString() throws JsonProcessingException {
         return ObjectMapperFactory.JSON_MAPPER.writeValueAsString(this).replace("versionNumber", "version");
     }
 
+    public boolean hasInterfaceComponents() {
+        return interfaceComponents != null;    
+    }
+
     public boolean hasInternalComponents() {
         return internalComponents != null;    
+    }
+
+     public boolean hasComponents() {
+        return components != null;    
     }
 
     public boolean hasLifecycleInfo() {
         return hasInternalComponents() && internalComponents.hasLifecycleInfo();
     }
-
-
 }

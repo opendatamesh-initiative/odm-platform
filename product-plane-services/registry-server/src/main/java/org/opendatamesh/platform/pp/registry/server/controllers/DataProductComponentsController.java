@@ -11,13 +11,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
+import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
+import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.EntityTypeDPDS;
 import org.opendatamesh.platform.core.dpds.model.InterfaceComponentsDPDS;
-import org.opendatamesh.platform.pp.registry.api.v1.exceptions.BadRequestException;
-import org.opendatamesh.platform.pp.registry.api.v1.exceptions.ODMRegistryAPIStandardError;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.ErrorRes;
-import org.opendatamesh.platform.pp.registry.server.database.entities.dataproduct.DataProductVersion;
+import org.opendatamesh.platform.core.dpds.parser.DPDSSerializer;
+import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
+import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.DataProductVersion;
 import org.opendatamesh.platform.pp.registry.server.database.mappers.DataProductVersionMapper;
 import org.opendatamesh.platform.pp.registry.server.services.DataProductVersionService;
 import org.slf4j.Logger;
@@ -113,10 +115,10 @@ public class DataProductComponentsController
         if(portType == null) {
             entityType = null;
         } else {
-            entityType = EntityTypeDPDS.get(portType);
+            entityType = EntityTypeDPDS.resolvePropertyValue(portType);
             if(entityType == null || !entityType.isPort()){
                 throw new BadRequestException(
-                    ODMRegistryAPIStandardError.SC400_06_INVALID_PORTTYPE,
+                    RegistryApiStandardErrors.SC400_06_INVALID_PORTTYPE,
                     "Value [" + portType + "] is not a valid port type"
                 );
             }
@@ -127,7 +129,7 @@ public class DataProductComponentsController
         } else {
             if(!format.equals("normalized") || !format.equals("canonical")) {
                 throw new BadRequestException(
-                    ODMRegistryAPIStandardError.SC400_04_INVALID_FORMAT,
+                    RegistryApiStandardErrors.SC400_04_INVALID_FORMAT,
                     "Value [" + format + "] is not a valid format"
                 );
             }
@@ -138,19 +140,14 @@ public class DataProductComponentsController
        
 
         switch (format) {
-           case "normalized": //parsed=deserialized and then serialized again
-            ObjectNode interfaceComponentsNpde = null;
-            if(entityType != null) {
-                interfaceComponentsNpde = dataProductVersionDPDS.getInterfaceComponents().getRawContent(entityType);
-            } else {
-                interfaceComponentsNpde = dataProductVersionDPDS.getInterfaceComponents().getRawContent();
-            }
-            return objectMapper.writeValueAsString(interfaceComponentsNpde);
-           case "canonical": //normalized + semantic equalization
+           case "canonical": //parsed=deserialized and then serialized again
+            DPDSSerializer deserializer = DPDSSerializer.DEFAULT_JSON_SERIALIZER;
+            return deserializer.serializeToCanonicalForm(dataProductVersionDPDS.getInterfaceComponents(), entityType);
+           case "normalized": //normalized + semantic equalization
                 return objectMapper.writeValueAsString(dataProductVersionDPDS.getInterfaceComponents());
         }
         throw new BadRequestException(
-            ODMRegistryAPIStandardError.SC400_04_INVALID_FORMAT,
+            RegistryApiStandardErrors.SC400_04_INVALID_FORMAT,
             "Format [" + format + "] is not supported");
     }
 }

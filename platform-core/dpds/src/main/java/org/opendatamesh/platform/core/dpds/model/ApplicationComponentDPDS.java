@@ -26,10 +26,4 @@ public class ApplicationComponentDPDS extends ComponentDPDS implements Cloneable
     
     @JsonProperty("dependsOn")
     private List<String> dependsOn = new ArrayList<String>();
-
-    @JsonProperty("tags")
-    private List<String> tags = new ArrayList<String>();
-    
-    @JsonProperty("externalDocs")
-    private ExternalResourceDPDS externalDocs;
 }

@@ -9,7 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@JsonIgnoreProperties(value={ "id", "entityType" }, allowGetters=true, ignoreUnknown = true)
+//@JsonIgnoreProperties(value={ "id", "entityType" }, allowGetters=true, ignoreUnknown = true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class InfoDPDS implements Cloneable {
 
     @JsonProperty("id")

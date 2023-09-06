@@ -1,6 +1,6 @@
 package org.opendatamesh.platform.pp.registry.server.database.repositories;
 
-import org.opendatamesh.platform.pp.registry.server.database.entities.sharedres.ApiDefinition;
+import org.opendatamesh.platform.pp.registry.server.database.entities.Api;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -9,12 +9,12 @@ import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.List;
 
-public interface ApiDefinitionRepository extends JpaRepository<ApiDefinition, Long>, JpaSpecificationExecutor<ApiDefinition> {
+public interface ApiDefinitionRepository extends JpaRepository<Api, Long>, JpaSpecificationExecutor<Api> {
 
     public boolean existsByNameAndVersion(String name, String version);
 
     class Specs {
-        static public Specification<ApiDefinition> hasMatch(
+        static public Specification<Api> hasMatch(
             String name, String version, String type,
             String specification,
             String specificationVersion) {

@@ -1,162 +1,400 @@
 package org.opendatamesh.platform.pp.registry.server;
 
-import org.apache.poi.ss.formula.functions.T;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.jupiter.api.Test;
-import org.opendatamesh.platform.pp.registry.api.v1.exceptions.ODMRegistryAPIStandardError;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductResource;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.ErrorRes;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.opendatamesh.platform.core.dpds.parser.IdentifierStrategy;
+import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.annotation.DirtiesContext.MethodMode;
-
-import java.io.IOException;
-import java.util.UUID;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.fail;
-
-//TODO every update to data product must check and mock the call to the policyservice
 
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 public class DataProductIT extends ODMRegistryIT {
 
     // ======================================================================================
-    // HAPPY PATH
+    // CREATE Data Product
     // ======================================================================================
 
-    // ----------------------------------------
-    // CREATE Data product
-    // ----------------------------------------
-
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    public void testDataProductCreate() 
-    throws IOException {
+    public void testCreateDataProductWithAllProperties() {
 
-        ResponseEntity<DataProductResource> postProductResponse = null;
+        DataProductResource dataProductRes = null, createdDataProductRes = null;
 
-        DataProductResource dataProductRequest, dataProductResponse;
-
-        // TEST 1: create first data product
-        dataProductRequest = createDataProduct(RESOURCE_DP1);
-        assertThat(dataProductRequest.getId())
-                .isEqualTo(UUID.nameUUIDFromBytes("urn:org.opendatamesh:dataproduct:tripExecution".getBytes()).toString());
-        assertThat(dataProductRequest.getFullyQualifiedName()).isEqualTo("urn:org.opendatamesh:dataproduct:tripExecution");
-        assertThat(dataProductRequest.getDescription()).isEqualTo("This is prod-1");
-        assertThat(dataProductRequest.getDomain()).isEqualTo("Disney");
-
-        // TEST 2: create another data product setting only the fqn property
-        dataProductRequest = resourceBuilder.buildDataProduct("prod-2", null, null);
-        postProductResponse = registryClient.postDataProduct(dataProductRequest);
-        verifyResponseEntity(postProductResponse, HttpStatus.CREATED, true);
-        dataProductResponse = postProductResponse.getBody();
-        if(dataProductResponse != null) {
-            assertThat(dataProductResponse.getId()).isEqualTo(UUID.nameUUIDFromBytes("prod-2".getBytes()).toString());
-            assertThat(dataProductResponse.getFullyQualifiedName()).isEqualTo("prod-2");
-            assertThat(dataProductResponse.getDescription()).isNull();
-            assertThat(dataProductResponse.getDomain()).isNull();
-        } else {
-            fail("Response body is null");
-        }
+        dataProductRes =  resourceBuilder.buildDataProduct(
+            "a9228eb7-3179-3628-ae64-aa5dbb1fcb28", 
+            "urn:org.opendatamesh:dataproducts:testProduct", 
+            "Test Domain", "This is test product #1");
+        createdDataProductRes = createDataProduct(dataProductRes);
+       
+        assertThat(createdDataProductRes).isNotNull();
         
-        // TEST 3: create another data product setting all properties including the id
-        dataProductRequest = resourceBuilder.buildDataProduct(UUID.nameUUIDFromBytes("prod-3".getBytes()).toString(), "prod-3", "Disney", "This is prod-3");
-        postProductResponse = registryClient.postDataProduct(dataProductRequest);
-        verifyResponseEntity(postProductResponse, HttpStatus.CREATED, true);
-        dataProductResponse = postProductResponse.getBody();
-        if(dataProductResponse != null) {
-            assertThat(dataProductResponse.getId()).isEqualTo(UUID.nameUUIDFromBytes("prod-3".getBytes()).toString());
-            assertThat(dataProductResponse.getFullyQualifiedName()).isEqualTo("prod-3");
-            assertThat(dataProductResponse.getDescription()).isEqualTo("This is prod-3");
-            assertThat(dataProductResponse.getDomain()).isEqualTo("Disney");
-        } else {
-            fail("Response body is null");
+        assertThat(createdDataProductRes.getId()).isEqualTo(dataProductRes.getId());
+        assertThat(createdDataProductRes.getFullyQualifiedName()).isEqualTo(dataProductRes.getFullyQualifiedName());
+        assertThat(createdDataProductRes.getDomain()).isEqualTo(dataProductRes.getDomain());
+        assertThat(createdDataProductRes.getDescription()).isEqualTo(dataProductRes.getDescription());
+        
+        assertThat(createdDataProductRes).isEqualTo(dataProductRes);
+
+        try {
+            DataProductResource readDataProductRes = registryClient.readDataProduct(createdDataProductRes.getId());
+            assertThat(readDataProductRes).isNotNull();
+            assertThat(readDataProductRes).isEqualTo(createdDataProductRes);
+
+            DataProductResource[] readDataProductsRes = registryClient.readAllDataProducts();
+            assertThat(readDataProductsRes).isNotNull();
+            assertThat(readDataProductsRes.length).isEqualTo(1);
+            assertThat(readDataProductsRes[0]).isEqualTo(createdDataProductRes);
+        } catch (Throwable t) {
+            t.printStackTrace();
+            fail("Impossible to read data product: " + t.getMessage());
         }
     }
 
-    // ----------------------------------------
-    // READ Data product
-    // ----------------------------------------
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    public void testDataProductReadAll() throws IOException {
+    public void testCreateDataProductWithOnlyFqnProperty() {
 
-        ResponseEntity<DataProductResource> postProductResponse = null;
-        DataProductResource dataProduct1Request, dataProduct2Request, dataProduct3Request;
+        DataProductResource dataProductRes = null, createdDataProductRes = null;
+
+        dataProductRes = resourceBuilder.buildDataProduct(
+            null, 
+            "urn:org.opendatamesh:dataproducts:testProduct", 
+            null, null);
+        createdDataProductRes = createDataProduct(dataProductRes);
+
+        assertThat(createdDataProductRes).isNotNull();
+        
+        dataProductRes.setId(IdentifierStrategy.DEFUALT.getId(dataProductRes.getFullyQualifiedName()));
+        assertThat(createdDataProductRes.getId()).isEqualTo(dataProductRes.getId());
+        assertThat(createdDataProductRes.getFullyQualifiedName()).isEqualTo(dataProductRes.getFullyQualifiedName());
+        assertThat(createdDataProductRes.getDomain()).isNull();
+        assertThat(createdDataProductRes.getDescription()).isNull();
+        
+        assertThat(createdDataProductRes).isEqualTo(dataProductRes);
+
+        try {
+            DataProductResource readDataProductRes = registryClient.readDataProduct(createdDataProductRes.getId());
+            assertThat(readDataProductRes).isNotNull();
+            assertThat(readDataProductRes).isEqualTo(createdDataProductRes);
+
+            DataProductResource[] readDataProductsRes = registryClient.readAllDataProducts();
+            assertThat(readDataProductsRes).isNotNull();
+            assertThat(readDataProductsRes.length).isEqualTo(1);
+            assertThat(readDataProductsRes[0]).isEqualTo(createdDataProductRes);
+        } catch (Throwable t) {
+            t.printStackTrace();
+            fail("Impossible to read data product: " + t.getMessage());
+        }
+     }
+
+    // ======================================================================================
+    // READ Data Product
+    // ======================================================================================
+
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testReadDataProduct() {
+
+        DataProductResource dataProduct1Res, dataProduct2Res, dataProduct3Res;
     
-        dataProduct1Request = resourceBuilder.buildDataProduct("prod-1", "marketing", "marketing product");
-        postProductResponse = registryClient.postDataProduct(dataProduct1Request);
-        verifyResponseEntity(postProductResponse, HttpStatus.CREATED, true);
-        postProductResponse.getBody();
+        dataProduct1Res = resourceBuilder.buildDataProduct("urn:org.opendatamesh:dataproducts:prod-1", "marketing", "marketing product");
+        dataProduct1Res = createDataProduct(dataProduct1Res);
 
-        dataProduct2Request = resourceBuilder.buildDataProduct("prod-2", "sales", "sales product");
-        postProductResponse = registryClient.postDataProduct(dataProduct2Request);
-        verifyResponseEntity(postProductResponse, HttpStatus.CREATED, true);
-        postProductResponse.getBody();
+        dataProduct2Res = resourceBuilder.buildDataProduct("urn:org.opendatamesh:dataproducts:prod-2", "sales", "sales product");
+        dataProduct2Res = createDataProduct(dataProduct2Res);
         
-        dataProduct3Request = resourceBuilder.buildDataProduct("prod-3", "hr", "hr product");
-        postProductResponse = registryClient.postDataProduct(dataProduct3Request);
-        verifyResponseEntity(postProductResponse, HttpStatus.CREATED, true);
-        postProductResponse.getBody();
+        dataProduct3Res = resourceBuilder.buildDataProduct("urn:org.opendatamesh:dataproducts:prod-3", "hr", "hr product");
+        dataProduct3Res = createDataProduct(dataProduct3Res);
 
-        ResponseEntity<DataProductResource[]> getProducteResponse = registryClient.getDataProducts();
-        verifyResponseEntity(getProducteResponse, HttpStatus.OK, true);
-        assertThat(getProducteResponse.getBody().length).isEqualTo(3);
-
-        // TODO test also content of each data product in the response body
+        DataProductResource readDataProduct1Res = null, readDataProduct2Res = null, readDataProduct3Res = null;
+        try {
+            readDataProduct1Res = registryClient.readDataProduct(dataProduct1Res.getId());
+            readDataProduct2Res = registryClient.readDataProduct(dataProduct2Res.getId());
+            readDataProduct3Res = registryClient.readDataProduct(dataProduct3Res.getId());
+        }  catch (Throwable t) {
+            t.printStackTrace();
+            fail("Impossible to read data products: " + t.getMessage());
+        }
+        
+        assertThat(readDataProduct1Res).isNotNull();
+        assertThat(readDataProduct1Res).isEqualTo(dataProduct1Res);
+        assertThat(readDataProduct2Res).isEqualTo(dataProduct2Res);
+        assertThat(readDataProduct3Res).isEqualTo(dataProduct3Res);
     }
 
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    public void testDataProductSearch() {
-        // TODO test search endpoints (i.e. read with filters)
+    public void testReadDataProducts() {
+
+        DataProductResource dataProduct1Res, dataProduct2Res, dataProduct3Res;
+    
+        dataProduct1Res = resourceBuilder.buildDataProduct("urn:org.opendatamesh:dataproducts:prod-1", "marketing", "marketing product");
+        dataProduct1Res = createDataProduct(dataProduct1Res);
+
+        dataProduct2Res = resourceBuilder.buildDataProduct("urn:org.opendatamesh:dataproducts:prod-2", "sales", "sales product");
+        dataProduct2Res = createDataProduct(dataProduct2Res);
+        
+        dataProduct3Res = resourceBuilder.buildDataProduct("urn:org.opendatamesh:dataproducts:prod-3", "hr", "hr product");
+        dataProduct3Res = createDataProduct(dataProduct3Res);
+
+        DataProductResource[] readDataProductsRes = null;
+        try {
+            readDataProductsRes = registryClient.readAllDataProducts();
+        } catch (Throwable t) {
+            t.printStackTrace();
+            fail("Impossible to read data products: " + t.getMessage());
+        }
+        assertThat(readDataProductsRes).isNotNull();
+        assertThat(readDataProductsRes.length).isEqualTo(3);
+       
+        Map<String,DataProductResource> readDataProductsResMap = new HashMap<String,DataProductResource>();
+        readDataProductsResMap.put(readDataProductsRes[0].getId(), readDataProductsRes[0]);
+        readDataProductsResMap.put(readDataProductsRes[1].getId(), readDataProductsRes[1]);
+        readDataProductsResMap.put(readDataProductsRes[2].getId(), readDataProductsRes[2]);
+        assertThat(readDataProductsResMap.get(dataProduct1Res.getId())).isEqualTo(dataProduct1Res);
+        assertThat(readDataProductsResMap.get(dataProduct2Res.getId())).isEqualTo(dataProduct2Res);
+        assertThat(readDataProductsResMap.get(dataProduct3Res.getId())).isEqualTo(dataProduct3Res);
+    
     }
 
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    public void testDataProductReadOne() throws IOException {
+    public void testSearchDataProductsWithAllFilters() {
+        DataProductResource dataProduct1Res, dataProduct2Res, dataProduct3Res;
+    
+        dataProduct1Res = resourceBuilder.buildDataProduct("urn:org.opendatamesh:dataproducts:prod-1", "marketing", "marketing product");
+        dataProduct1Res = createDataProduct(dataProduct1Res);
 
-        ResponseEntity<DataProductResource> postProductResponse = null;
-        DataProductResource dataProductRequest;
+        dataProduct2Res = resourceBuilder.buildDataProduct("urn:org.opendatamesh:dataproducts:prod-2", "sales", "sales product");
+        dataProduct2Res = createDataProduct(dataProduct2Res);
+        
+        dataProduct3Res = resourceBuilder.buildDataProduct("urn:org.opendatamesh:dataproducts:prod-3", "hr", "hr product");
+        dataProduct3Res = createDataProduct(dataProduct3Res);
 
-        dataProductRequest = resourceBuilder.buildDataProduct("prod-1", "marketing", "marketing product");
-        postProductResponse = registryClient.postDataProduct(dataProductRequest);
-        verifyResponseEntity(postProductResponse, HttpStatus.CREATED, true);
+        DataProductResource[] searchedDataProducts1Res = null,  searchedDataProducts2Res = null,  searchedDataProducts3Res = null;
+        try {
+            searchedDataProducts1Res = registryClient.searchDataProducts(dataProduct1Res.getFullyQualifiedName(), dataProduct1Res.getDomain());
+            searchedDataProducts2Res = registryClient.searchDataProducts(dataProduct2Res.getFullyQualifiedName(), dataProduct2Res.getDomain());
+            searchedDataProducts3Res = registryClient.searchDataProducts(dataProduct3Res.getFullyQualifiedName(), dataProduct3Res.getDomain());
+        } catch (Throwable t) {
+            t.printStackTrace();
+            fail("Impossible to read data products: " + t.getMessage());
+        }
 
-        dataProductRequest = resourceBuilder.buildDataProduct("prod-2", "sales", "sales product");
-        postProductResponse = registryClient.postDataProduct(dataProductRequest);
-        verifyResponseEntity(postProductResponse, HttpStatus.CREATED, true);
+        assertThat(searchedDataProducts1Res).isNotNull();
+        assertThat(searchedDataProducts1Res.length).isEqualTo(1); 
+        assertThat(searchedDataProducts1Res[0]).isEqualTo(dataProduct1Res);
 
-        dataProductRequest = resourceBuilder.buildDataProduct("prod-3", "hr", "hr product");
-        postProductResponse = registryClient.postDataProduct(dataProductRequest);
-        verifyResponseEntity(postProductResponse, HttpStatus.CREATED, true);
+        assertThat(searchedDataProducts2Res).isNotNull();
+        assertThat(searchedDataProducts2Res.length).isEqualTo(1); 
+        assertThat(searchedDataProducts2Res[0]).isEqualTo(dataProduct2Res);
 
-        ResponseEntity<DataProductResource> getDataProductResponse = registryClient.getDataProductByFqn("prod-1");
-        verifyResponseEntity(getDataProductResponse, HttpStatus.OK, true);
-        assertThat(getDataProductResponse.getBody().getDomain()).isEqualTo("marketing");
-
-        // TODO test also other property values
+        assertThat(searchedDataProducts3Res).isNotNull();
+        assertThat(searchedDataProducts3Res.length).isEqualTo(1); 
+        assertThat(searchedDataProducts3Res[0]).isEqualTo(dataProduct3Res);
     }
 
-    // ----------------------------------------
-    // UPDATE Data product
-    // ----------------------------------------
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    public void testDataProductUpdate() throws IOException {
+    public void testSearchDataProductsByFqn() {
+        DataProductResource dataProduct1Res, dataProduct2Res, dataProduct3Res;
+    
+        dataProduct1Res = resourceBuilder.buildDataProduct("urn:org.opendatamesh:dataproducts:prod-1", "marketing", "marketing product");
+        dataProduct1Res = createDataProduct(dataProduct1Res);
 
-        createDataProduct(RESOURCE_DP1);
-        DataProductResource dataProductRes = updateDataProduct(RESOURCE_DP1_UPD);
+        dataProduct2Res = resourceBuilder.buildDataProduct("urn:org.opendatamesh:dataproducts:prod-2", "sales", "sales product 3");
+        dataProduct2Res = createDataProduct(dataProduct2Res);
+        
+        dataProduct3Res = resourceBuilder.buildDataProduct("urn:org.opendatamesh:dataproducts:prod-3", "sales", "sales product 3");
+        dataProduct3Res = createDataProduct(dataProduct3Res);
 
-        // TEST 1: create first data product
-        assertThat(dataProductRes.getId())
-                .isEqualTo(UUID.nameUUIDFromBytes("urn:org.opendatamesh:dataproduct:tripExecution".getBytes()).toString());
-        assertThat(dataProductRes.getFullyQualifiedName()).isEqualTo("urn:org.opendatamesh:dataproduct:tripExecution");
-        assertThat(dataProductRes.getDescription()).isEqualTo("This is prod-1 - updated");
-        assertThat(dataProductRes.getDomain()).isEqualTo("Disney - updated");
+        DataProductResource[] searchedDataProducts1Res = null,  searchedDataProducts2Res = null,  searchedDataProducts3Res = null;
+        try {
+            searchedDataProducts1Res = registryClient.searchDataProducts(dataProduct1Res.getFullyQualifiedName(), null);
+            searchedDataProducts2Res = registryClient.searchDataProducts(dataProduct2Res.getFullyQualifiedName(), null);
+            searchedDataProducts3Res = registryClient.searchDataProducts(dataProduct3Res.getFullyQualifiedName(), null);
+        } catch (Throwable t) {
+            t.printStackTrace();
+            fail("Impossible to read data products: " + t.getMessage());
+        }
 
+        assertThat(searchedDataProducts1Res).isNotNull();
+        assertThat(searchedDataProducts1Res.length).isEqualTo(1); 
+        assertThat(searchedDataProducts1Res[0]).isEqualTo(dataProduct1Res);
+
+        assertThat(searchedDataProducts2Res).isNotNull();
+        assertThat(searchedDataProducts2Res.length).isEqualTo(1); 
+        assertThat(searchedDataProducts2Res[0]).isEqualTo(dataProduct2Res);
+
+        assertThat(searchedDataProducts3Res).isNotNull();
+        assertThat(searchedDataProducts3Res.length).isEqualTo(1); 
+        assertThat(searchedDataProducts3Res[0]).isEqualTo(dataProduct3Res);
+    }
+
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testSearchDataProductsByDomain() {
+        DataProductResource dataProduct1Res, dataProduct2Res, dataProduct3Res;
+    
+        dataProduct1Res = resourceBuilder.buildDataProduct("urn:org.opendatamesh:dataproducts:prod-1", "marketing", "marketing product");
+        dataProduct1Res = createDataProduct(dataProduct1Res);
+
+        dataProduct2Res = resourceBuilder.buildDataProduct("urn:org.opendatamesh:dataproducts:prod-2", "sales", "sales product 3");
+        dataProduct2Res = createDataProduct(dataProduct2Res);
+        
+        dataProduct3Res = resourceBuilder.buildDataProduct("urn:org.opendatamesh:dataproducts:prod-3", "sales", "sales product 3");
+        dataProduct3Res = createDataProduct(dataProduct3Res);
+
+        DataProductResource[] searchedMarketingDataProductsRes = null,  searchedSalesDataProductsRes = null;
+        try {
+            searchedMarketingDataProductsRes = registryClient.searchDataProducts(null, "marketing");
+            searchedSalesDataProductsRes = registryClient.searchDataProducts(null, "sales");
+        } catch (Throwable t) {
+            t.printStackTrace();
+            fail("Impossible to read data products: " + t.getMessage());
+        }
+
+        assertThat(searchedMarketingDataProductsRes).isNotNull();
+        assertThat(searchedMarketingDataProductsRes.length).isEqualTo(1); 
+        assertThat(searchedMarketingDataProductsRes[0]).isEqualTo(dataProduct1Res);
+
+        assertThat(searchedSalesDataProductsRes).isNotNull();
+        assertThat(searchedSalesDataProductsRes.length).isEqualTo(2); 
+        Map<String,DataProductResource> readDataProductsResMap = new HashMap<String,DataProductResource>();
+        readDataProductsResMap.put(searchedSalesDataProductsRes[0].getId(), searchedSalesDataProductsRes[0]);
+        readDataProductsResMap.put(searchedSalesDataProductsRes[1].getId(), searchedSalesDataProductsRes[1]);
+        assertThat(readDataProductsResMap.get(dataProduct2Res.getId())).isEqualTo(dataProduct2Res);
+        assertThat(readDataProductsResMap.get(dataProduct3Res.getId())).isEqualTo(dataProduct3Res);
+    }
+
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testSearchNotExixtingDataProducts() {
+        DataProductResource dataProduct1Res, dataProduct2Res, dataProduct3Res;
+    
+        dataProduct1Res = resourceBuilder.buildDataProduct("urn:org.opendatamesh:dataproducts:prod-1", "marketing", "marketing product");
+        dataProduct1Res = createDataProduct(dataProduct1Res);
+
+        dataProduct2Res = resourceBuilder.buildDataProduct("urn:org.opendatamesh:dataproducts:prod-2", "sales", "sales product 3");
+        dataProduct2Res = createDataProduct(dataProduct2Res);
+        
+        dataProduct3Res = resourceBuilder.buildDataProduct("urn:org.opendatamesh:dataproducts:prod-3", "sales", "sales product 3");
+        dataProduct3Res = createDataProduct(dataProduct3Res);
+
+        DataProductResource[] searchedHrDataProductsRes = null,  searchedWrongFqnDataProductsRes = null;
+        try {
+            searchedWrongFqnDataProductsRes = registryClient.searchDataProducts("wrong-fqn", "marketing");
+            searchedHrDataProductsRes = registryClient.searchDataProducts(dataProduct2Res.getFullyQualifiedName(), "hr");
+           
+        } catch (Throwable t) {
+            t.printStackTrace();
+            fail("Impossible to read data products: " + t.getMessage());
+        }
+
+        assertThat(searchedWrongFqnDataProductsRes).isNotNull();
+        assertThat(searchedWrongFqnDataProductsRes.length).isEqualTo(0); 
+
+        assertThat(searchedHrDataProductsRes).isNotNull();
+        assertThat(searchedHrDataProductsRes.length).isEqualTo(0); 
+        
+    }
+
+    // ======================================================================================
+    // UPDATE Data Product
+    // ======================================================================================
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testDataProductUpdateWithAllProperties() {
+
+        DataProductResource createdDataProductRes = null;
+        createdDataProductRes = resourceBuilder.buildDataProduct(
+            "a9228eb7-3179-3628-ae64-aa5dbb1fcb28", 
+            "urn:org.opendatamesh:dataproducts:testProduct", 
+            "Test Domain",
+            "This is test product #1");
+        createdDataProductRes = createDataProduct(createdDataProductRes);
+
+        DataProductResource updatedDataProductRes = null;
+        createdDataProductRes.setDescription("This is the updated version of test product #1");
+        createdDataProductRes.setDomain("Updated Domain");
+        try {
+            updatedDataProductRes = registryClient.updateDataProduct(createdDataProductRes);
+        } catch (Throwable t) {
+            t.printStackTrace();
+            fail("Impossible to read data products: " + t.getMessage());
+        }
+
+        assertThat(updatedDataProductRes).isNotNull();
+        assertThat(updatedDataProductRes.getId()).isEqualTo(createdDataProductRes.getId());
+        assertThat(updatedDataProductRes.getFullyQualifiedName()).isEqualTo(createdDataProductRes.getFullyQualifiedName());
+        assertThat(updatedDataProductRes.getDomain()).isEqualTo(createdDataProductRes.getDomain());
+        assertThat(updatedDataProductRes.getDescription()).isEqualTo(createdDataProductRes.getDescription());
+    }
+
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testDataProductUpdateWithMissingFqn() {
+
+        DataProductResource createdDataProductRes = null;
+        createdDataProductRes = resourceBuilder.buildDataProduct(
+            "a9228eb7-3179-3628-ae64-aa5dbb1fcb28", 
+            "urn:org.opendatamesh:dataproducts:testProduct", 
+            "Test Domain",
+            "This is test product #1");
+        createdDataProductRes = createDataProduct(createdDataProductRes);
+
+        DataProductResource updatedDataProductRes = null;
+        createdDataProductRes.setFullyQualifiedName(null);
+        createdDataProductRes.setDescription("This is the updated version of test product #1");
+        createdDataProductRes.setDomain("Updated Domain");
+        try {
+            updatedDataProductRes = registryClient.updateDataProduct(createdDataProductRes);
+        } catch (Throwable t) {
+            t.printStackTrace();
+            fail("Impossible to read data products: " + t.getMessage());
+        }
+
+        assertThat(updatedDataProductRes).isNotNull();
+        assertThat(updatedDataProductRes.getId()).isEqualTo(createdDataProductRes.getId());
+        assertThat(updatedDataProductRes.getFullyQualifiedName()).isEqualTo("urn:org.opendatamesh:dataproducts:testProduct");
+        assertThat(updatedDataProductRes.getDomain()).isEqualTo(createdDataProductRes.getDomain());
+        assertThat(updatedDataProductRes.getDescription()).isEqualTo(createdDataProductRes.getDescription());
+    }
+
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testDataProductUpdateWithMissingId() {
+
+        DataProductResource createdDataProductRes = null;
+        createdDataProductRes = resourceBuilder.buildDataProduct(
+            "a9228eb7-3179-3628-ae64-aa5dbb1fcb28", 
+            "urn:org.opendatamesh:dataproducts:testProduct", 
+            "Test Domain",
+            "This is test product #1");
+        createdDataProductRes = createDataProduct(createdDataProductRes);
+
+        DataProductResource updatedDataProductRes = null;
+        createdDataProductRes.setId(null);
+        createdDataProductRes.setDescription("This is the updated version of test product #1");
+        createdDataProductRes.setDomain("Updated Domain");
+        try {
+            updatedDataProductRes = registryClient.updateDataProduct(createdDataProductRes);
+        } catch (Throwable t) {
+            t.printStackTrace();
+            fail("Impossible to read data products: " + t.getMessage());
+        }
+
+        assertThat(updatedDataProductRes).isNotNull();
+        assertThat(updatedDataProductRes.getId()).isEqualTo("a9228eb7-3179-3628-ae64-aa5dbb1fcb28");
+        assertThat(updatedDataProductRes.getFullyQualifiedName()).isEqualTo(createdDataProductRes.getFullyQualifiedName());
+        assertThat(updatedDataProductRes.getDomain()).isEqualTo(createdDataProductRes.getDomain());
+        assertThat(updatedDataProductRes.getDescription()).isEqualTo(createdDataProductRes.getDescription());
     }
 
     // ----------------------------------------
@@ -164,118 +402,34 @@ public class DataProductIT extends ODMRegistryIT {
     // ----------------------------------------
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    public void testDataProductDelete() throws IOException {
+    public void testDataProductDelete() {
 
-        DataProductResource dataProductResource = createDataProduct(RESOURCE_DP1);
-
-        ResponseEntity deleteResponse = registryClient.deleteDataProduct(dataProductResource.getId());
-        verifyResponseEntity(deleteResponse, HttpStatus.OK, false);
-
-    }
-
-    // ======================================================================================
-    // ERROR PATH
-    // ======================================================================================
-
-    // ----------------------------------------
-    // CREATE Data product
-    // ----------------------------------------
-
-    @Test
-    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    public void testDataProductCreateError400Errors() throws IOException {
-
-        ResponseEntity<ErrorRes> errorResponse = null;
-
-        // Test error SC400_01_DESCRIPTOR_IS_EMPTY
-        String payload = null;
-        errorResponse = registryClient.postDataProduct(payload, ErrorRes.class);
-        verifyResponseError(errorResponse,
-                HttpStatus.BAD_REQUEST, ODMRegistryAPIStandardError.SC400_10_PRODUCT_IS_EMPTY);
-    }
-
-    @Test
-    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    public void testDataProductCreateError422Errors() throws IOException {
-
-        ResponseEntity<ErrorRes> errorResponse = null;
-
-        DataProductResource dataProductRes = createDataProduct(RESOURCE_DP1);
-
-        // TEST 1: try to register the same product again
-        errorResponse = registryClient.postDataProduct(dataProductRes, ErrorRes.class);
-        verifyResponseError(errorResponse,
-                HttpStatus.UNPROCESSABLE_ENTITY,
-                ODMRegistryAPIStandardError.SC422_04_PRODUCT_ALREADY_EXISTS);
-
-
-        // TEST 2: try to register a product without setting the fqn
-        dataProductRes = resourceBuilder.buildDataProduct(null, "marketing", "marketing product");
-        errorResponse = registryClient.postDataProduct(dataProductRes, ErrorRes.class);
-        verifyResponseError(errorResponse,
-                HttpStatus.UNPROCESSABLE_ENTITY,
-                ODMRegistryAPIStandardError.SC422_07_PRODUCT_IS_INVALID);
+        DataProductResource createdDataProductRes = null;
         
-        // TEST 3: try to register a product with an empty fqn
-        dataProductRes = resourceBuilder.buildDataProduct("    ", "marketing", "marketing product");
-        errorResponse = registryClient.postDataProduct(dataProductRes, ErrorRes.class);
-        verifyResponseError(errorResponse,
-                HttpStatus.UNPROCESSABLE_ENTITY,
-                ODMRegistryAPIStandardError.SC422_07_PRODUCT_IS_INVALID);
-        
-    
-        // TEST 4: try to register a product setting an id that not match with the fqn
-        dataProductRes = resourceBuilder.buildDataProduct("wrong-id", "prod-5", "marketing", "marketing product");
-        errorResponse = registryClient.postDataProduct(dataProductRes, ErrorRes.class);
-        verifyResponseError(errorResponse,
-                HttpStatus.UNPROCESSABLE_ENTITY,
-                ODMRegistryAPIStandardError.SC422_07_PRODUCT_IS_INVALID);
+        createdDataProductRes = resourceBuilder.buildDataProduct(
+            "a9228eb7-3179-3628-ae64-aa5dbb1fcb28", 
+            "urn:org.opendatamesh:dataproducts:testProduct", 
+            "Test Domain",
+            "This is test product #1");
+        createdDataProductRes = createDataProduct(createdDataProductRes);
+
+        DataProductResource delatedDataProductRes = null;
+        try {
+            delatedDataProductRes = registryClient.deleteDataProduct(createdDataProductRes.getId());
+        } catch (Throwable t) {
+            fail("Impossible to delete data product");
+        }
+        assertThat(delatedDataProductRes).isNotNull();
+        assertThat(delatedDataProductRes).isEqualTo(createdDataProductRes);
+
+        DataProductResource[] dataProductsRes = null;
+        try {
+            dataProductsRes = registryClient.readAllDataProducts();
+        } catch (Throwable t) {
+            fail("Impossible to delete data product");
+        }
+        assertThat(dataProductsRes).isNotNull();
+        assertThat(dataProductsRes.length).isEqualTo(0);
     }
 
-    @Test
-    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    public void testDataProductUpdate4xxErrors() throws IOException {
-
-        // TEST 1: NULL payload
-        ResponseEntity<ErrorRes> errorResponse = registryClient.putDataProduct(null, ErrorRes.class);
-        verifyResponseError(
-                errorResponse,
-                HttpStatus.BAD_REQUEST,
-                ODMRegistryAPIStandardError.SC400_10_PRODUCT_IS_EMPTY
-        );
-
-        // TEST 2: Empty fqn
-        DataProductResource dataProductResource = new DataProductResource();
-        dataProductResource.setDescription("test");
-        dataProductResource.setDomain("test");
-        errorResponse = registryClient.putDataProduct(dataProductResource, ErrorRes.class);
-        verifyResponseError(
-                errorResponse,
-                HttpStatus.UNPROCESSABLE_ENTITY,
-                ODMRegistryAPIStandardError.SC422_07_PRODUCT_IS_INVALID
-        );
-
-        // TEST 3: Not found
-        dataProductResource.setFullyQualifiedName("test");
-        errorResponse = registryClient.putDataProduct(dataProductResource, ErrorRes.class);
-        verifyResponseError(
-                errorResponse,
-                HttpStatus.NOT_FOUND,
-                ODMRegistryAPIStandardError.SC404_01_PRODUCT_NOT_FOUND
-        );
-
-    }
-
-
-    // ----------------------------------------
-    // OTHER ...
-    // ----------------------------------------
-
-    @Test
-    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    public void testDataProductMediaTypeErrors() {
-        // TODO test the acceptable media types for create and update endpoints
-
-        // TODO test one wrong media type for create and update endpoints
-    }
 }

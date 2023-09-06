@@ -13,28 +13,36 @@ import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 
 public abstract class ComponentContainerDPDS {
 
-    public void setRawContent(List<? extends ComponentDPDS> components, ArrayNode componentNodes) throws JsonProcessingException {
+    /* 
+    @JsonIgnore
+    public void setRawContent(
+            List<? extends ComponentDPDS> components,
+            ArrayNode rawContentComponentNodes) throws JsonProcessingException {
+
         ObjectMapper objectMapper = ObjectMapperFactory.JSON_MAPPER;
-        
-        for (int i = 0; i < componentNodes.size(); i++) {
-            JsonNode componentNode = componentNodes.get(i);
+
+        for (int i = 0; i < rawContentComponentNodes.size(); i++) {
+            JsonNode componentNode = rawContentComponentNodes.get(i);
             String rawContent = objectMapper.writeValueAsString(componentNode);
             components.get(i).setRawContent(rawContent);
         }
     }
+    */
 
     @JsonIgnore
-    public ArrayNode getRawContent(List<? extends ComponentDPDS> components) throws JsonProcessingException  {
+    public ArrayNode getRawContent(
+            List<? extends ComponentDPDS> components) throws JsonProcessingException {
+
         ObjectMapper objectMapper = ObjectMapperFactory.JSON_MAPPER;
 
-        ArrayNode componentNodes = objectMapper.createArrayNode();
+        ArrayNode rawContentComponentNodes = objectMapper.createArrayNode();
         for (ComponentDPDS component : components) {
             String componentRawContent = component.getRawContent();
-            ObjectNode componetNode = (ObjectNode)objectMapper.readTree(componentRawContent);
-            componentNodes.add(componetNode);
+            ObjectNode componetNode = (ObjectNode) objectMapper.readTree(componentRawContent);
+            rawContentComponentNodes.add(componetNode);
         }
 
-        return componentNodes;
+        return rawContentComponentNodes;
     }
 
 }

@@ -7,19 +7,34 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.DefinitionResource;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.ErrorRes;
-import org.opendatamesh.platform.pp.registry.server.database.entities.sharedres.ApiDefinition;
+
+import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
+import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
+import org.opendatamesh.platform.pp.registry.api.resources.DefinitionResource;
+import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
+import org.opendatamesh.platform.pp.registry.server.database.entities.Api;
 import org.opendatamesh.platform.pp.registry.server.database.mappers.ApiDefinitionMapper;
 import org.opendatamesh.platform.pp.registry.server.services.ApiDefinitionService;
-import org.opendatamesh.platform.pp.registry.api.v1.exceptions.BadRequestException;
-import org.opendatamesh.platform.pp.registry.api.v1.exceptions.ODMRegistryAPIStandardError;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+
+
+//import org.springframework.web.bind.annotation.*;
+ 
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
 
 import javax.validation.Valid;
 import java.util.List;
@@ -106,11 +121,11 @@ public class ApiDefinitionController {
     ) {
         if(definition == null) {
             throw new BadRequestException(
-                ODMRegistryAPIStandardError.SC400_08_STDDEF_IS_EMPTY,
+                RegistryApiStandardErrors.SC400_08_STDDEF_IS_EMPTY,
                 "API definition cannot be empty");
         }
         
-        ApiDefinition apiDefinition = definitionMapper.toEntity(definition);
+        Api apiDefinition = definitionMapper.toEntity(definition);
         apiDefinition = apiDefinitionService.createDefinition(apiDefinition);
         return definitionMapper.toResource(apiDefinition);
     }
@@ -163,7 +178,7 @@ public class ApiDefinitionController {
         String specificationVersion
     )
     {
-        List<ApiDefinition> definitions = apiDefinitionService.searchDefinitions(name, version, type, specification, specificationVersion);
+        List<Api> definitions = apiDefinitionService.searchDefinitions(name, version, type, specification, specificationVersion);
         List<DefinitionResource> definitionResources = definitionMapper.definitionsToResources(definitions);
         return definitionResources;
     }
@@ -200,7 +215,7 @@ public class ApiDefinitionController {
         @Parameter(description = "Idenntifier of the API definition")
         @Valid @PathVariable(value = "id") Long id) 
     {
-        ApiDefinition apiDefinition = apiDefinitionService.readDefinition(id);
+        Api apiDefinition = apiDefinitionService.readDefinition(id);
         return definitionMapper.toResource(apiDefinition);
     }
 

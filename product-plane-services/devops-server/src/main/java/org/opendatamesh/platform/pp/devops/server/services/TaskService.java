@@ -8,21 +8,22 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.NotFoundException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.model.LifecycleActivityInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.StandardDefinitionDPDS;
 import org.opendatamesh.platform.pp.devops.api.clients.DevOpsAPIRoutes;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskStatus;
-import org.opendatamesh.platform.pp.devops.api.resources.ODMDevOpsAPIStandardError;
+import org.opendatamesh.platform.pp.devops.api.resources.DevOpsApiStandardErrors;
 import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsClients;
 import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsConfigurations;
 import org.opendatamesh.platform.pp.devops.server.database.entities.Task;
 import org.opendatamesh.platform.pp.devops.server.database.mappers.TaskMapper;
 import org.opendatamesh.platform.pp.devops.server.database.repositories.TaskRepository;
-import org.opendatamesh.platform.pp.devops.server.exceptions.BadRequestException;
-import org.opendatamesh.platform.pp.devops.server.exceptions.InternalServerException;
-import org.opendatamesh.platform.pp.devops.server.exceptions.NotFoundException;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.DefinitionResource;
+import org.opendatamesh.platform.pp.registry.api.resources.DefinitionResource;
 import org.opendatamesh.platform.up.executor.api.clients.ExecutorClient;
 import org.opendatamesh.platform.up.executor.api.resources.TaskResource;
 import org.opendatamesh.platform.up.executor.api.resources.TaskStatus;
@@ -75,8 +76,8 @@ public class TaskService {
 
         if (task == null) {
             throw new InternalServerException(
-                    ODMDevOpsAPIStandardError.SC500_00_SERVICE_ERROR,
-                    "Task object cannot be null");
+                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
+                "Task object cannot be null");
         }
 
         // TODO (?) control if task already exists
@@ -87,7 +88,7 @@ public class TaskService {
             logger.info("Task [" + task.getId() + "] succesfully created");
         } catch (Throwable t) {
             throw new InternalServerException(
-                    ODMDevOpsAPIStandardError.SC500_01_DATABASE_ERROR,
+                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while saving task",
                     t);
         }
@@ -128,7 +129,7 @@ public class TaskService {
             
         } catch(Throwable t) {
              throw new InternalServerException(
-                ODMDevOpsAPIStandardError.SC500_01_DATABASE_ERROR,
+                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                 "An error occured in the backend database while saving task",
                 t);
         }
@@ -177,7 +178,7 @@ public class TaskService {
             saveTask(task);
         } catch(Throwable t) {
              throw new InternalServerException(
-                ODMDevOpsAPIStandardError.SC500_01_DATABASE_ERROR,
+                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                 "An error occured in the backend database while saving task",
                 t);
         }
@@ -196,7 +197,7 @@ public class TaskService {
             tasks = loadAllTasks();
         } catch (Throwable t) {
             throw new InternalServerException(
-                    ODMDevOpsAPIStandardError.SC500_01_DATABASE_ERROR,
+                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while loading tasks",
                     t);
         }
@@ -210,7 +211,7 @@ public class TaskService {
     public Task readTask(Task task) {
         if (task == null) {
             throw new InternalServerException(
-                    ODMDevOpsAPIStandardError.SC500_00_SERVICE_ERROR,
+                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "Task object cannot be null");
         }
         return readTask(task.getId());
@@ -222,7 +223,7 @@ public class TaskService {
 
         if (taskId == null) {
             throw new BadRequestException(
-                    ODMDevOpsAPIStandardError.SC400_50_ACTIVITY_ID_IS_EMPTY,
+                    DevOpsApiStandardErrors.SC400_60_TASK_ID_IS_EMPTY,
                     "Task id is empty");
         }
 
@@ -230,7 +231,7 @@ public class TaskService {
             task = loadTask(taskId);
         } catch (Throwable t) {
             throw new InternalServerException(
-                    ODMDevOpsAPIStandardError.SC500_01_DATABASE_ERROR,
+                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while loading task with id [" + taskId
                             + "]",
                     t);
@@ -238,7 +239,7 @@ public class TaskService {
 
         if (task == null) {
             throw new NotFoundException(
-                    ODMDevOpsAPIStandardError.SC404_01_ACTIVITY_NOT_FOUND,
+                    DevOpsApiStandardErrors.SC404_11_TASK_NOT_FOUND,
                     "Data Product with [" + taskId + "] does not exist");
         }
 
@@ -264,7 +265,7 @@ public class TaskService {
     private boolean taskExists(Long taskId) {
         if (taskId == null) {
             throw new InternalServerException(
-                    ODMDevOpsAPIStandardError.SC500_00_SERVICE_ERROR,
+                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "Task object cannot be null");
         }
 
@@ -288,7 +289,7 @@ public class TaskService {
             taskSearchResults = findTasks(activityId, executorRef, status);
         } catch (Throwable t) {
             throw new InternalServerException(
-                    ODMDevOpsAPIStandardError.SC500_01_DATABASE_ERROR,
+                    ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while searching tasks",
                     t);
         }
@@ -346,13 +347,13 @@ public class TaskService {
             logger.debug("Template definition [" + templateId + "] succesfully read from ODM Registry");
         } catch (Throwable t) {
             throw new InternalServerException(
-                    ODMDevOpsAPIStandardError.SC500_00_SERVICE_ERROR,
+                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "An error occured in the backend service while loading template [" + templateId + "]",
                     t);
         }
         if (templateDefinition == null) {
             throw new NotFoundException(
-                    ODMDevOpsAPIStandardError.SC500_00_SERVICE_ERROR,
+                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "Template with id [" + templateId + "] does not existe");
         }
 
@@ -368,7 +369,7 @@ public class TaskService {
             serializedConfigurations = ObjectMapperFactory.JSON_MAPPER.writeValueAsString(configurations);
         } catch (JsonProcessingException t) {
             throw new InternalServerException(
-                    ODMDevOpsAPIStandardError.SC500_02_DESCRIPTOR_ERROR,
+                ODMApiCommonErrors.SC500_02_DESCRIPTOR_ERROR,
                     "An error occured in the backend service while parsing configurations [" + configurations + "]",
                     t);
         }

@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
-import org.opendatamesh.platform.core.dpds.exceptions.BuildException;
+import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.InfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.PortDPDS;
@@ -12,7 +12,8 @@ import org.opendatamesh.platform.core.dpds.parser.DPDSParser;
 import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
 import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
 import org.opendatamesh.platform.core.dpds.parser.location.UriLocation;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductDescriptorLocationResource;
+import org.opendatamesh.platform.pp.registry.api.resources.DataProductDescriptorLocationResource;
+import org.opendatamesh.platform.pp.registry.server.utils.ODMRegistryResources;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.annotation.DirtiesContext.MethodMode;
@@ -36,11 +37,11 @@ public class UploadIT extends ODMRegistryIT {
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDataProductVersionUriUpload() throws IOException {
         DataProductDescriptorLocationResource descriptorLocation = new DataProductDescriptorLocationResource();
-        descriptorLocation.setRootDocumentUri(RESOURCE_DPS_URI);
+        descriptorLocation.setRootDocumentUri(ODMRegistryResources.RESOURCE_DPS_URI.path);
         String descriptorContent = uploadDataProductVersion(descriptorLocation);
         try {
             verifyBasicContent(descriptorContent);
-        } catch (BuildException e) {
+        } catch (ParseException e) {
             Assert.fail(e.getMessage());
         }
     }
@@ -58,7 +59,7 @@ public class UploadIT extends ODMRegistryIT {
         
         try {
             verifyBasicContent(descriptorContent);
-        } catch (BuildException e) {
+        } catch (ParseException e) {
             Assert.fail(e.getMessage());
         }
     }
@@ -82,7 +83,7 @@ public class UploadIT extends ODMRegistryIT {
         try {
             dpv = toDescriptor(descriptorContent);
             Assert.assertEquals(dpv.getInfo().getVersionNumber(), "1.1.0");
-        } catch (BuildException e) {
+        } catch (ParseException e) {
             Assert.fail(e.getMessage());
         }
     }
@@ -106,7 +107,7 @@ public class UploadIT extends ODMRegistryIT {
         try {
             dpv = toDescriptor(descriptorContent);
             Assert.assertEquals(dpv.getInfo().getVersionNumber(), "1.0.0");
-        } catch (BuildException e) {
+        } catch (ParseException e) {
             Assert.fail(e.getMessage());
         }
     }
@@ -129,7 +130,7 @@ public class UploadIT extends ODMRegistryIT {
         try {
             dpv = toDescriptor(descriptorContent);
             Assert.assertEquals(dpv.getInfo().getVersionNumber(), "2.0.0");
-        } catch (BuildException e) {
+        } catch (ParseException e) {
             Assert.fail(e.getMessage());
         }
         /* 
@@ -161,7 +162,7 @@ public class UploadIT extends ODMRegistryIT {
     // Verify test resources
     // ----------------------------------------
 
-    private DataProductVersionDPDS toDescriptor(String descriptorContent) throws BuildException {
+    private DataProductVersionDPDS toDescriptor(String descriptorContent) throws ParseException {
         DPDSParser parser = new DPDSParser();
         DescriptorLocation location = new UriLocation(descriptorContent);
 
@@ -174,7 +175,7 @@ public class UploadIT extends ODMRegistryIT {
         DataProductVersionDPDS dpv = parser.parse(location, options).getDescriptorDocument();
         return dpv;
     }
-    private void verifyBasicContent(String descriptorContent) throws BuildException {
+    private void verifyBasicContent(String descriptorContent) throws ParseException {
         DataProductVersionDPDS dpv = toDescriptor(descriptorContent);
     
         Assert.assertEquals(dpv.getDataProductDescriptor(), "1.0.0");

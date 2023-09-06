@@ -4,35 +4,30 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
-import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
+import org.opendatamesh.platform.core.dpds.exceptions.DeserializationException;
 import org.opendatamesh.platform.core.dpds.exceptions.UnresolvableReferenceException;
 import org.opendatamesh.platform.core.dpds.model.*;
 import org.opendatamesh.platform.core.dpds.parser.ParseContext;
 
 import java.net.URI;
 
-public class TemplateDefinitionsProcessor {
+public class TemplateDefinitionsProcessor implements PropertiesProcessor {
 
     ParseContext context;
-    private ObjectMapper mapper;
 
     public TemplateDefinitionsProcessor(ParseContext context) {
         this.context = context;
-        this.mapper = ObjectMapperFactory.JSON_MAPPER;
     }
 
     // Note: to be called after component resolution
-    public void resolve() throws UnresolvableReferenceException, ParseException {
+    @Override
+    public void process() throws UnresolvableReferenceException, DeserializationException {
 
-        if (context.getResult().getDescriptorDocument().getInterfaceComponents() == null) {
-            return;
-        }
-
-        resolveTemplateObjectsInLifecycle();
+       resolveTemplateObjectsInLifecycle();
 
     }
 
-    private void resolveTemplateObjectsInLifecycle() throws UnresolvableReferenceException, ParseException {
+    private void resolveTemplateObjectsInLifecycle() throws UnresolvableReferenceException, DeserializationException {
 
         InternalComponentsDPDS internalComponents = context.getResult().getDescriptorDocument().getInternalComponents();
         if (internalComponents == null)
@@ -45,10 +40,9 @@ public class TemplateDefinitionsProcessor {
         for (LifecycleActivityInfoDPDS activity : lifecycleInfo.getActivityInfos()) {
 
             try {
-                ObjectNode activityNode = (ObjectNode) mapper.readTree(activity.getRawContent());
-                ObjectNode templateNode = (ObjectNode) activityNode.get("template");
-                if (templateNode == null)
-                    continue; // Nothings to do
+                if(activity.hasTemplate() == false) continue; // Nothings to do
+                ObjectNode templateNode = (ObjectNode) context.getMapper().readTree(activity.getTemplate().getRawContent());
+                                    
                 ObjectNode templateDefinitionNode = (ObjectNode) templateNode.get("definition");
                 StandardDefinitionDPDS template = activity.getTemplate();
 
@@ -58,11 +52,11 @@ public class TemplateDefinitionsProcessor {
                             templateDefinitionNode);
                     templateNode.set("definition", templateDefinitionNode);
 
-                    String rawContent = mapper.writeValueAsString(activityNode);
-                    activity.setRawContent(rawContent);
+                    String rawContent = context.getMapper().writeValueAsString(templateNode);
+                    activity.getTemplate().setRawContent(rawContent);
                 }
             } catch (JsonProcessingException e) {
-                throw new ParseException("Impossible serialize descriptor", e);
+                throw new DeserializationException("Impossible serialize descriptor", e);
             }
 
         }
@@ -73,7 +67,7 @@ public class TemplateDefinitionsProcessor {
             URI baseUri,
             ReferenceObjectDPDS templateDefinition,
             ObjectNode templateDefinitionNode)
-            throws ParseException, UnresolvableReferenceException {
+            throws DeserializationException, UnresolvableReferenceException {
 
         if (templateDefinitionNode == null)
             return null;
@@ -83,6 +77,9 @@ public class TemplateDefinitionsProcessor {
         if (templateDefinitionNode.get("$ref") != null) {
             ref = templateDefinitionNode.get("$ref").asText();
 
+            if (ref.startsWith(context.getOptions().getServerUrl()))
+                return templateDefinitionNode;
+
             URI uri = null;
             try {
                 uri = new URI(ref).normalize();
@@ -90,9 +87,9 @@ public class TemplateDefinitionsProcessor {
             } catch (Exception e) {
                 try {
                     templateDefinitionNode.put("comment", "Unresolvable reference");
-                    templateDefinitionContent = mapper.writeValueAsString(templateDefinitionNode);
+                    templateDefinitionContent = context.getMapper().writeValueAsString(templateDefinitionNode);
                 } catch (JsonProcessingException e1) {
-                    throw new ParseException("Impossible serialize template definition", e1);
+                    throw new DeserializationException("Impossible serialize template definition", e1);
                 }
             }
 
@@ -101,17 +98,18 @@ public class TemplateDefinitionsProcessor {
 
         } else { // inline
             try {
-                templateDefinitionContent = mapper.writeValueAsString(templateDefinitionNode);
+                templateDefinitionContent = context.getMapper().writeValueAsString(templateDefinitionNode);
             } catch (JsonProcessingException e) {
-                throw new ParseException("Impossible serialize template definition", e);
+                throw new DeserializationException("Impossible serialize template definition", e);
             }
             if (templateDefinitionNode.get("$originalRef") != null) {
                 ref = templateDefinitionNode.get("$originalRef").asText(); // in case it was an internal reference
             }
             referenceRef = context.getOptions().getServerUrl() + "/templates/{templateId}";
-            templateDefinitionNode = mapper.createObjectNode();
+            templateDefinitionNode = context.getMapper().createObjectNode();
             templateDefinitionNode.put("$ref", referenceRef);
             templateDefinitionNode.put("$originalRef", ref);
+            templateDefinitionNode.put("mediaType", "application/json");
             templateDefinition.setMediaType("application/json");
         }
 
@@ -123,8 +121,9 @@ public class TemplateDefinitionsProcessor {
 
     }
 
-    public static void resolve(ParseContext context) throws UnresolvableReferenceException, ParseException {
+    public static void resolve(ParseContext context) throws UnresolvableReferenceException, DeserializationException {
         TemplateDefinitionsProcessor resolver = new TemplateDefinitionsProcessor(context);
-        resolver.resolve();
+        resolver.process();
     }
+
 }

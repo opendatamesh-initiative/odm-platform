@@ -6,7 +6,7 @@ import com.networknt.schema.JsonSchema;
 import com.networknt.schema.JsonSchemaFactory;
 import com.networknt.schema.SpecVersion.VersionFlag;
 import com.networknt.schema.ValidationMessage;
-import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
+import org.opendatamesh.platform.core.dpds.exceptions.DeserializationException;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -37,12 +37,12 @@ public class DataProductVersionValidator {
         return errors;
     }
 
-    public Set<ValidationMessage> validateSchema(String rawContent) throws ParseException {
+    public Set<ValidationMessage> validateSchema(String rawContent) throws DeserializationException {
         JsonNode jsonNode;
         try {
             jsonNode = mapper.readTree(rawContent);
         } catch (Throwable t) {
-            throw new ParseException("Descriptor document it's not a valid JSON document", t);
+            throw new DeserializationException("Descriptor document is not a valid JSON document", t);
         } 
         return validateSchema(jsonNode);
     }

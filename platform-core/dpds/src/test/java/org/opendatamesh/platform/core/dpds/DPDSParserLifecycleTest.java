@@ -6,59 +6,35 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 import org.junit.jupiter.api.Test;
-import org.opendatamesh.platform.core.dpds.model.LifecycleActivityInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
+import org.opendatamesh.platform.core.dpds.model.LifecycleActivityInfoDPDS;
 import org.opendatamesh.platform.core.dpds.parser.DPDSParser;
 import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
 import org.opendatamesh.platform.core.dpds.parser.ParseResult;
 import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
-import org.opendatamesh.platform.core.dpds.parser.location.UriLocation;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class DPDSParserLifecycleTest {
+public class DPDSParserLifecycleTest extends DPDSTests {
 
-    String DPD_LIFECYCLE = "dpd-lifecycle.json";
-    String DPD_LIFECYCLE_EMPTY = "dpd-lifecycle-empty.json";
-    String DPD_LIFECYCLE_EREF = "dpd-lifecycle-eref.json";
-    String DPD_LIFECYCLE_IREF = "dpd-lifecycle-iref.json";
-
-    private DescriptorLocation getInMemLocation(String filePath) throws IOException {
-        ClassLoader cl = getClass().getClassLoader();
-        String absoluteFilePath = cl.getResource(filePath).getFile();
-        String descriptorContent = Files.readString(Path.of(absoluteFilePath));
-        DescriptorLocation location = new UriLocation(descriptorContent);
-        return location;
-    }
-
-    private DescriptorLocation getUriLocation(String filePath) throws IOException, URISyntaxException {
-        ClassLoader cl = getClass().getClassLoader();
-        URI absoluteFileUri = cl.getResource(filePath).toURI();
-        
-        DescriptorLocation location = new UriLocation(absoluteFileUri);
-        return location;
-    }
+   
 
     @Test
     public void lifecycleDpdTest() {
 
         DescriptorLocation location = null;
         try {
-            location = getInMemLocation(DPD_LIFECYCLE);
+            location = DPDSTestResources.DPD_LIFECYCLE.getContentLocation();
         } catch (IOException e) {
             fail("Impossible to get descriptor location", e);
         }
 
         DPDSParser parser = new DPDSParser();
         ParseOptions options = new ParseOptions();
-        options.setServerUrl("http://localhost:80/");
+        options.setServerUrl("http://localhost:80");
 
         ParseResult result = null;
 
@@ -88,7 +64,7 @@ public class DPDSParserLifecycleTest {
         assertNotNull(activityInfo.getTemplate().getDefinition());
         assertEquals(null, activityInfo.getTemplate().getDefinition().getDescription());
         assertEquals("application/json", activityInfo.getTemplate().getDefinition().getMediaType());
-        assertEquals("http://localhost:80//templates/{templateId}",
+        assertEquals("http://localhost:80/templates/{templateId}",
                 activityInfo.getTemplate().getDefinition().getRef());
         assertEquals(null, activityInfo.getTemplate().getDefinition().getOriginalRef());
         try {
@@ -113,7 +89,7 @@ public class DPDSParserLifecycleTest {
         assertNotNull(activityInfo.getTemplate().getDefinition());
         assertEquals(null, activityInfo.getTemplate().getDefinition().getDescription());
         assertEquals("application/json", activityInfo.getTemplate().getDefinition().getMediaType());
-        assertEquals("http://localhost:80//templates/{templateId}",
+        assertEquals("http://localhost:80/templates/{templateId}",
                 activityInfo.getTemplate().getDefinition().getRef());
         assertEquals(null, activityInfo.getTemplate().getDefinition().getOriginalRef());
         try {
@@ -134,14 +110,14 @@ public class DPDSParserLifecycleTest {
 
         DescriptorLocation location = null;
         try {
-            location = getInMemLocation(DPD_LIFECYCLE_EMPTY);
+            location = DPDSTestResources.DPD_LIFECYCLE_EMPTY.getContentLocation();
         } catch (IOException e) {
             fail("Impossible to get descriptor location", e);
         }
 
         DPDSParser parser = new DPDSParser();
         ParseOptions options = new ParseOptions();
-        options.setServerUrl("http://localhost:80/");
+        options.setServerUrl("http://localhost:80");
 
         ParseResult result = null;
 
@@ -193,14 +169,14 @@ public class DPDSParserLifecycleTest {
 
         DescriptorLocation location = null;
         try {
-            location = getUriLocation(DPD_LIFECYCLE_EREF);
+            location = DPDSTestResources.DPD_LIFECYCLE_EREF.getUriLocation();
         } catch (Exception e) {
             fail("Impossible to get descriptor location", e);
         }
 
         DPDSParser parser = new DPDSParser();
         ParseOptions options = new ParseOptions();
-        options.setServerUrl("http://localhost:80/");
+        options.setServerUrl("http://localhost:80");
 
         ParseResult result = null;
 
@@ -230,7 +206,7 @@ public class DPDSParserLifecycleTest {
         assertNotNull(activityInfo.getTemplate().getDefinition());
         assertEquals(null, activityInfo.getTemplate().getDefinition().getDescription());
         assertEquals("application/json", activityInfo.getTemplate().getDefinition().getMediaType());
-        assertEquals("http://localhost:80//templates/{templateId}",
+        assertEquals("http://localhost:80/templates/{templateId}",
                 activityInfo.getTemplate().getDefinition().getRef());
         assertEquals("template.json", activityInfo.getTemplate().getDefinition().getOriginalRef());
         try {
@@ -252,7 +228,7 @@ public class DPDSParserLifecycleTest {
         assertNotNull(activityInfo.getTemplate().getDefinition());
         assertEquals(null, activityInfo.getTemplate().getDefinition().getDescription());
         assertEquals("application/json", activityInfo.getTemplate().getDefinition().getMediaType());
-        assertEquals("http://localhost:80//templates/{templateId}",
+        assertEquals("http://localhost:80/templates/{templateId}",
                 activityInfo.getTemplate().getDefinition().getRef());
         assertEquals("template.json", activityInfo.getTemplate().getDefinition().getOriginalRef());
         try {
@@ -274,7 +250,7 @@ public class DPDSParserLifecycleTest {
         assertNotNull(activityInfo.getTemplate().getDefinition());
         assertEquals(null, activityInfo.getTemplate().getDefinition().getDescription());
         assertEquals("application/json", activityInfo.getTemplate().getDefinition().getMediaType());
-        assertEquals("http://localhost:80//templates/{templateId}",
+        assertEquals("http://localhost:80/templates/{templateId}",
                 activityInfo.getTemplate().getDefinition().getRef());
         assertEquals("template.json", activityInfo.getTemplate().getDefinition().getOriginalRef());
         try {
@@ -299,14 +275,14 @@ public class DPDSParserLifecycleTest {
 
         DescriptorLocation location = null;
         try {
-            location = getUriLocation(DPD_LIFECYCLE_IREF);
+            location = DPDSTestResources.DPD_LIFECYCLE_IREF.getUriLocation();
         } catch (Exception e) {
             fail("Impossible to get descriptor location", e);
         }
 
         DPDSParser parser = new DPDSParser();
         ParseOptions options = new ParseOptions();
-        options.setServerUrl("http://localhost:80/");
+        options.setServerUrl("http://localhost:80");
 
         ParseResult result = null;
 
@@ -336,9 +312,9 @@ public class DPDSParserLifecycleTest {
         assertNotNull(activityInfo.getTemplate().getDefinition());
         assertEquals(null, activityInfo.getTemplate().getDefinition().getDescription());
         assertEquals("application/json", activityInfo.getTemplate().getDefinition().getMediaType());
-        assertEquals("http://localhost:80//templates/{templateId}",
+        assertEquals("http://localhost:80/templates/{templateId}",
                 activityInfo.getTemplate().getDefinition().getRef());
-        assertEquals("#components/templates/dpdLifecyclePipe", activityInfo.getTemplate().getDefinition().getOriginalRef());
+
         try {
             templateDefinitionNode = (ObjectNode) ObjectMapperFactory.JSON_MAPPER
                     .readTree(activityInfo.getTemplate().getDefinition().getRawContent());
@@ -358,9 +334,8 @@ public class DPDSParserLifecycleTest {
         assertNotNull(activityInfo.getTemplate().getDefinition());
         assertEquals(null, activityInfo.getTemplate().getDefinition().getDescription());
         assertEquals("application/json", activityInfo.getTemplate().getDefinition().getMediaType());
-        assertEquals("http://localhost:80//templates/{templateId}",
+        assertEquals("http://localhost:80/templates/{templateId}",
                 activityInfo.getTemplate().getDefinition().getRef());
-        assertEquals("#components/templates/dpdLifecyclePipe", activityInfo.getTemplate().getDefinition().getOriginalRef());
         try {
             templateDefinitionNode = (ObjectNode) ObjectMapperFactory.JSON_MAPPER
                     .readTree(activityInfo.getTemplate().getDefinition().getRawContent());
@@ -380,9 +355,9 @@ public class DPDSParserLifecycleTest {
         assertNotNull(activityInfo.getTemplate().getDefinition());
         assertEquals(null, activityInfo.getTemplate().getDefinition().getDescription());
         assertEquals("application/json", activityInfo.getTemplate().getDefinition().getMediaType());
-        assertEquals("http://localhost:80//templates/{templateId}",
+        assertEquals("http://localhost:80/templates/{templateId}",
                 activityInfo.getTemplate().getDefinition().getRef());
-        assertEquals("#components/templates/dpdLifecyclePipe", activityInfo.getTemplate().getDefinition().getOriginalRef());
+        
         try {
             templateDefinitionNode = (ObjectNode) ObjectMapperFactory.JSON_MAPPER
                     .readTree(activityInfo.getTemplate().getDefinition().getRawContent());

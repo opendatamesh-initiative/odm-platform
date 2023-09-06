@@ -1,16 +1,16 @@
 package org.opendatamesh.platform.pp.registry.server.database.mappers;
 
 import org.mapstruct.Mapper;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.DefinitionResource;
-import org.opendatamesh.platform.pp.registry.server.database.entities.sharedres.TemplateDefinition;
+import org.opendatamesh.platform.pp.registry.api.resources.DefinitionResource;
+import org.opendatamesh.platform.pp.registry.server.database.entities.Template;
 
 import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface TemplateDefinitionMapper { 
     
-    TemplateDefinition toEntity(DefinitionResource resource);
-    DefinitionResource toResource(TemplateDefinition entity);
+    Template toEntity(DefinitionResource resource);
+    DefinitionResource toResource(Template entity);
 
-    List<DefinitionResource> definitionsToResources(List<TemplateDefinition> entities);
+    List<DefinitionResource> definitionsToResources(List<Template> entities);
 }

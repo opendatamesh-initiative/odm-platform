@@ -1,7 +1,12 @@
 package org.opendatamesh.platform.pp.registry.server.services;
 
-import org.opendatamesh.platform.pp.registry.api.v1.exceptions.*;
-import org.opendatamesh.platform.pp.registry.server.database.entities.sharedres.ApiDefinition;
+import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.NotFoundException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
+import org.opendatamesh.platform.core.commons.servers.exceptions.UnprocessableEntityException;
+import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
+import org.opendatamesh.platform.pp.registry.server.database.entities.Api;
 import org.opendatamesh.platform.pp.registry.server.database.repositories.ApiDefinitionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,20 +30,19 @@ public class ApiDefinitionService {
 
     }
 
-    public ApiDefinition resolveNameAndVersion(ApiDefinition definition) {
-         if (definition == null) {
+    public Api resolveNameAndVersion(Api definition) {
+        if (definition == null) {
             throw new InternalServerException(
-                ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
+                    ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "Definition object cannot be null");
         }
 
-        if (!StringUtils.hasText(definition.getContent())) {
-            throw new UnprocessableEntityException(
-                ODMRegistryAPIStandardError.SC422_08_DEFINITION_DOC_SYNTAX_IS_INVALID,
-                    "Definition content property cannot be empty");
-        }
-
         if (!StringUtils.hasText(definition.getName())) {
+            if (!StringUtils.hasText(definition.getContent())) {
+                throw new UnprocessableEntityException(
+                        RegistryApiStandardErrors.SC422_08_DEFINITION_DOC_SYNTAX_IS_INVALID,
+                        "If definition name is empty raw content must be valorized");
+            }
             String fqn = UUID.nameUUIDFromBytes(definition.getContent().getBytes()).toString();
             definition.setName(fqn);
             logger.warn("Definition has no name. An UUID type-3 generated from its content will be used as name");
@@ -56,25 +60,19 @@ public class ApiDefinitionService {
     // CREATE
     // ======================================================================================
 
-    public ApiDefinition createDefinition(ApiDefinition definition) {
+    public Api createDefinition(Api definition) {
 
         if (definition == null) {
             throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
+                    ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "Standard definition object cannot be null");
         }
 
-        if (!StringUtils.hasText(definition.getContent())) {
-            throw new UnprocessableEntityException(
-                    ODMRegistryAPIStandardError.SC422_08_DEFINITION_DOC_SYNTAX_IS_INVALID,
-                    "Definition content property cannot be empty");
-        }
-
-       definition = resolveNameAndVersion(definition);
+        definition = resolveNameAndVersion(definition);
 
         if (definitionExists(definition.getName(), definition.getVersion())) {
             throw new UnprocessableEntityException(
-                    ODMRegistryAPIStandardError.SC422_06_STDDEF_ALREADY_EXISTS,
+                    RegistryApiStandardErrors.SC422_06_STDDEF_ALREADY_EXISTS,
                     "Definition [" + definition.getName() + "(v. " + definition.getVersion() + ")] already exists");
         }
 
@@ -83,7 +81,7 @@ public class ApiDefinitionService {
             logger.info("Standard definition [" + definition.getId() + "] successfully created");
         } catch (Throwable t) {
             throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
+                    ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while saving standard definition",
                     t);
         }
@@ -91,7 +89,7 @@ public class ApiDefinitionService {
         return definition;
     }
 
-    private ApiDefinition saveDefinition(ApiDefinition definition) {
+    private Api saveDefinition(Api definition) {
         return apiDefinitionRepository.saveAndFlush(definition);
     }
 
@@ -99,33 +97,33 @@ public class ApiDefinitionService {
     // READ
     // ======================================================================================
 
-    public ApiDefinition readOneDefinition(ApiDefinition definition) {
+    public Api readOneDefinition(Api definition) {
         if (definition == null) {
             throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
+                    ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "Definition object cannot be null");
         }
 
         return readDefinition(definition.getId());
     }
 
-    public ApiDefinition readDefinition(Long definitionId) {
-        ApiDefinition definition = null;
+    public Api readDefinition(Long definitionId) {
+        Api definition = null;
 
         definition = searchDefinition(definitionId);
 
         if (definition == null) {
             throw new NotFoundException(
-                    ODMRegistryAPIStandardError.SC404_03_STDDEF_NOT_FOUND,
+                    RegistryApiStandardErrors.SC404_03_STDDEF_NOT_FOUND,
                     "Definition [" + definitionId + "] does not exist");
         }
 
         return definition;
     }
 
-    public ApiDefinition loadDefinition(Long definitionId) {
-        ApiDefinition definition = null;
-        Optional<ApiDefinition> referenceObjectLookUpResults = apiDefinitionRepository.findById(definitionId);
+    public Api loadDefinition(Long definitionId) {
+        Api definition = null;
+        Optional<Api> referenceObjectLookUpResults = apiDefinitionRepository.findById(definitionId);
 
         if (referenceObjectLookUpResults.isPresent()) {
             definition = referenceObjectLookUpResults.get();
@@ -140,7 +138,7 @@ public class ApiDefinitionService {
     private boolean definitionExists(String name, String version) {
         if (!StringUtils.hasText(name) || !StringUtils.hasText(version)) {
             throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
+                    ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "name and version objects cannot be null");
         }
         return apiDefinitionRepository.existsByNameAndVersion(name, version);
@@ -155,11 +153,11 @@ public class ApiDefinitionService {
     // search methods
     // -------------------------
 
-    public ApiDefinition searchDefinition(Long definitionId) {
-        ApiDefinition definition = null;
+    public Api searchDefinition(Long definitionId) {
+        Api definition = null;
         if (definitionId == null) {
             throw new BadRequestException(
-                    ODMRegistryAPIStandardError.SC400_09_STDDEF_ID_IS_EMPTY,
+                    RegistryApiStandardErrors.SC400_09_STDDEF_ID_IS_EMPTY,
                     "Definition id cannot be empty");
         }
 
@@ -167,7 +165,7 @@ public class ApiDefinitionService {
             definition = loadDefinition(definitionId);
         } catch (Throwable t) {
             throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
+                    ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while loading definition [" + definitionId + "]",
                     t);
         }
@@ -175,51 +173,52 @@ public class ApiDefinitionService {
         return definition;
     }
 
-     public ApiDefinition searchDefinition(ApiDefinition definition) {
+    public Api searchDefinition(Api definition) {
         definition = resolveNameAndVersion(definition);
         return searchDefinition(definition.getName(), definition.getVersion());
     }
+
     /**
      * @return The definition identified by name and version. Null if not exists
      */
-    public ApiDefinition searchDefinition(
+    public Api searchDefinition(
             String name,
             String version) {
 
-        ApiDefinition definition = null;
-        List<ApiDefinition> definitions = searchDefinitions(name, version, null, null, null);
+        Api definition = null;
+        List<Api> definitions = searchDefinitions(name, version, null, null, null);
         if (definitions == null || definitions.size() == 0) {
             definition = null;
         } else if (definitions.size() == 1) {
             definition = definitions.get(0);
         } else {
             throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
+                    ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while searching definitions");
         }
 
         return definition;
     }
 
-    public List<ApiDefinition> searchDefinitions(
+    public List<Api> searchDefinitions(
             String name,
             String version,
             String type,
             String specification,
             String specificationVersion) {
-        List<ApiDefinition> definitionSearchResults = null;
+        List<Api> definitionSearchResults = null;
         try {
             definitionSearchResults = findDefinitions(name, version, type, specification, specificationVersion);
         } catch (Throwable t) {
             throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
+                    ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while searching definitions",
                     t);
         }
         return definitionSearchResults;
     }
 
-    private List<ApiDefinition> findDefinitions(
+    private List<Api> findDefinitions(
             String name,
             String version,
             String type,
@@ -227,23 +226,24 @@ public class ApiDefinitionService {
             String specificationVersion) {
 
         return apiDefinitionRepository
-                .findAll(ApiDefinitionRepository.Specs.hasMatch(name, version, type, specification, specificationVersion));
+                .findAll(ApiDefinitionRepository.Specs.hasMatch(name, version, type, specification,
+                        specificationVersion));
     }
 
     // ======================================================================================
     // UPDATE
     // ======================================================================================
 
-    public ApiDefinition updateDefinition(ApiDefinition definition) {
+    public Api updateDefinition(Api definition) {
         if (definition == null) {
             throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_00_SERVICE_ERROR,
+                    ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "Definition object cannot be null");
         }
 
         if (!definitionExists(definition.getId())) {
             throw new NotFoundException(
-                    ODMRegistryAPIStandardError.SC404_03_STDDEF_NOT_FOUND,
+                    RegistryApiStandardErrors.SC404_03_STDDEF_NOT_FOUND,
                     "Definition [" + definition.getId() + "] does not exist");
         }
 
@@ -252,7 +252,7 @@ public class ApiDefinitionService {
             logger.info("Definition [" + definition.getId() + "] successfully updated");
         } catch (Throwable t) {
             throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
+                    ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while updating definition [" + definition.getId() + "]",
                     t);
         }
@@ -265,10 +265,10 @@ public class ApiDefinitionService {
     // ======================================================================================
 
     public void deleteDefinition(Long definitionId) {
-        ApiDefinition definition = searchDefinition(definitionId);
+        Api definition = searchDefinition(definitionId);
         if (definition == null) {
             throw new NotFoundException(
-                    ODMRegistryAPIStandardError.SC404_03_STDDEF_NOT_FOUND,
+                    RegistryApiStandardErrors.SC404_03_STDDEF_NOT_FOUND,
                     "Definition [" + definitionId + "] does not exist");
         }
 
@@ -277,7 +277,7 @@ public class ApiDefinitionService {
             logger.info("Definition [" + definitionId + "] successfully deleted");
         } catch (Throwable t) {
             throw new InternalServerException(
-                    ODMRegistryAPIStandardError.SC500_01_DATABASE_ERROR,
+                    ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while deleting definition [" + definitionId + "]",
                     t);
         }

@@ -121,19 +121,19 @@ public class DevOpsClient extends ODMClient {
     }
 
     public ActivityResource startActivity(Long activityId) throws IOException {
-        return postActivityStart(activityId).getBody();
+        return patchActivityStart(activityId).getBody();
     }
 
-    public ResponseEntity<ActivityResource> postActivityStart(Long activityId) throws IOException {
-        return postActivityStart(activityId, ActivityResource.class);
+    public ResponseEntity<ActivityResource> patchActivityStart(Long activityId) throws IOException {
+        return patchActivityStart(activityId, ActivityResource.class);
     }
 
-    public <T> ResponseEntity<T> postActivityStart(Long activityId, Class<T> responseType) throws IOException {
-        return rest.postForEntity(
+    public <T> ResponseEntity<T> patchActivityStart(Long activityId, Class<T> responseType) throws IOException {
+        return patchForEntity(
                 apiUrl(DevOpsAPIRoutes.ACTIVITIES, "/{id}/start"),
                 HttpEntity.EMPTY,
                 responseType,
-                activityId);
+                activityId);        
     }
 
     public String readActivityStatus(Long activityId) {
@@ -219,15 +219,15 @@ public class DevOpsClient extends ODMClient {
     }
 
     public ActivityTaskResource stopTask(Long taskId) throws IOException {
-        return postTaskStop(taskId).getBody();
+        return patchTaskStop(taskId).getBody();
     }
 
-    public ResponseEntity<ActivityTaskResource> postTaskStop(Long taskId) throws IOException {
-        return postTaskStop(taskId, ActivityTaskResource.class);
+    public ResponseEntity<ActivityTaskResource> patchTaskStop(Long taskId) throws IOException {
+        return patchTaskStop(taskId, ActivityTaskResource.class);
     }
 
-    public <T> ResponseEntity<T> postTaskStop(Long taskId, Class<T> responseType) throws IOException {
-        return rest.postForEntity(
+    public <T> ResponseEntity<T> patchTaskStop(Long taskId, Class<T> responseType) throws IOException {
+        return patchForEntity(
                 apiUrl(DevOpsAPIRoutes.TASKS, "/{id}/stop"),
                 HttpEntity.EMPTY,
                 responseType,

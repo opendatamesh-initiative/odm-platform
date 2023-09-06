@@ -62,9 +62,18 @@ public class ResourceBuilder {
     public DomainResource buildDomain(String fqn, String name,
                                       String displayName, String summary, String description) throws IOException {
 
+        return buildDomain(null, fqn, name, displayName, summary, description);
+    }
+
+    public DomainResource buildDomain(String fqn) throws IOException {return buildDomain(fqn, null, null, null, null);}
+
+    public DomainResource buildDomain(String id, String fqn, String name,
+                                      String displayName, String summary, String description) throws IOException {
+
         DomainResource domainResource = null;
 
         domainResource = new DomainResource();
+        domainResource.setId(id);
         domainResource.setFullyQualifiedName(fqn);
         domainResource.setName(name);
         domainResource.setDisplayName(displayName);
@@ -73,7 +82,5 @@ public class ResourceBuilder {
 
         return domainResource;
     }
-
-    public DomainResource buildDomain(String fqn) throws IOException {return buildDomain(fqn, null, null, null, null);}
     
 }

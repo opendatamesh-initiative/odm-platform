@@ -2,7 +2,6 @@ package org.opendatamesh.platform.pp.registry.server;
 
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.pp.registry.api.v1.exceptions.ODMRegistryAPIStandardError;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductResource;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.DomainResource;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.ErrorRes;
 import org.springframework.http.HttpStatus;
@@ -15,7 +14,6 @@ import java.io.IOException;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.fail;
 
 
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
@@ -47,17 +45,14 @@ public class DomainIT extends ODMRegistryIT {
     }
 
     // ----------------------------------------
-    // READ Data product
+    // READ Domain
     // ----------------------------------------
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDomainReadAll() throws IOException {
 
-        DomainResource domainRequest;
-
         // create first domain
-        domainRequest = createDomain1();
-
+        DomainResource domainRequest = createDomain1();
 
         // TEST 1: verify first Domain
 
@@ -70,7 +65,7 @@ public class DomainIT extends ODMRegistryIT {
         registryClient.createDomain(domain2);
 
 
-        // TEST 1: verify second Domain
+        // TEST 2: verify second Domain
 
         getDomainResponse = registryClient.readAllDomains();
         verifyResponseEntity(getDomainResponse, HttpStatus.OK, true);
@@ -78,64 +73,71 @@ public class DomainIT extends ODMRegistryIT {
 
 
     }
-/*
+
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    public void testDataProductReadOne() throws IOException {
+    public void testDomainGetOneById() throws IOException {
 
-        ResponseEntity<DataProductResource> postProductResponse = null;
-        DataProductResource dataProductRequest;
+        DomainResource domainRequest = createDomain1();
 
-        dataProductRequest = resourceBuilder.buildDataProduct("prod-1", "marketing", "marketing product");
-        postProductResponse = registryClient.postDataProduct(dataProductRequest);
-        verifyResponseEntity(postProductResponse, HttpStatus.CREATED, true);
+        // TEST 1: get the first domain by its id
 
-        dataProductRequest = resourceBuilder.buildDataProduct("prod-2", "sales", "sales product");
-        postProductResponse = registryClient.postDataProduct(dataProductRequest);
-        verifyResponseEntity(postProductResponse, HttpStatus.CREATED, true);
+        ResponseEntity<DomainResource> getDomainResponse, domainResponseEntity3;
+        getDomainResponse = registryClient.getDomainById(domainRequest.getId());
+        verifyResponseEntity(getDomainResponse, HttpStatus.OK, true);
+        assertThat(getDomainResponse.getBody()).isEqualTo(domainRequest);
 
-        dataProductRequest = resourceBuilder.buildDataProduct("prod-3", "hr", "hr product");
-        postProductResponse = registryClient.postDataProduct(dataProductRequest);
-        verifyResponseEntity(postProductResponse, HttpStatus.CREATED, true);
+        DomainResource domain2 = resourceBuilder.buildDomain("urn:odmp:org.opendatamesh:domains:Domain2");
+        registryClient.createDomain(domain2);
+        DomainResource domain3 = resourceBuilder.buildDomain("urn:odmp:org.opendatamesh:domains:Domain3");
+        domainResponseEntity3 = registryClient.createDomain(domain3);
 
-        ResponseEntity<DataProductResource> getDataProductResponse = registryClient.getDataProductByFqn("prod-1");
-        verifyResponseEntity(getDataProductResponse, HttpStatus.OK, true);
-        assertThat(getDataProductResponse.getBody().getDomain()).isEqualTo("marketing");
-
-        // TODO test also other property values
+        getDomainResponse = registryClient.getDomainById(domainResponseEntity3.getBody().getId());
+        verifyResponseEntity(getDomainResponse, HttpStatus.OK, true);
+        assertThat(getDomainResponse.getBody()).isEqualTo(domainResponseEntity3.getBody());
     }
 
+
+
     // ----------------------------------------
-    // UPDATE Data product
+    // UPDATE Domain
     // ----------------------------------------
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    public void testDataProductUpdate() throws IOException {
+    public void testDomainUpdate() throws IOException {
+        DomainResource domainRequest = createDomain1();
+        domainRequest.setDescription("New description");
+        domainRequest.setDisplayName("New Display Name");
+        domainRequest.setSummary("New summary");
 
-        createDataProduct(RESOURCE_DP1);
-        DataProductResource dataProductRes = updateDataProduct(RESOURCE_DP1_UPD);
+        ResponseEntity<DomainResource> domainUpdatedResponse = registryClient.updateDomain(domainRequest);
+        verifyResponseEntity(domainUpdatedResponse, HttpStatus.OK, true);
+        DomainResource domainUpdated = domainUpdatedResponse.getBody();
 
-        // TEST 1: create first data product
-        assertThat(dataProductRes.getId())
-                .isEqualTo(UUID.nameUUIDFromBytes("urn:org.opendatamesh:dataproduct:tripExecution".getBytes()).toString());
-        assertThat(dataProductRes.getFullyQualifiedName()).isEqualTo("urn:org.opendatamesh:dataproduct:tripExecution");
-        assertThat(dataProductRes.getDescription()).isEqualTo("This is prod-1 - updated");
-        assertThat(dataProductRes.getDomain()).isEqualTo("Disney - updated");
-
+        assertThat(domainUpdated.getId()).isEqualTo(domainRequest.getId());
+        assertThat(domainUpdated.getName()).isEqualTo(domainRequest.getName());
+        assertThat(domainUpdated.getSummary()).isEqualTo("New summary");
+        assertThat(domainUpdated.getDescription()).isEqualTo("New description");
+        assertThat(domainUpdated.getDisplayName()).isEqualTo("New Display Name");
     }
+
+
 
     // ----------------------------------------
     // DELETE Data product
     // ----------------------------------------
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    public void testDataProductDelete() throws IOException {
+    public void testDomainDelete() throws IOException {
 
-        DataProductResource dataProductResource = createDataProduct(RESOURCE_DP1);
+        DomainResource domainRequest = createDomain1();
 
-        ResponseEntity deleteResponse = registryClient.deleteDataProduct(dataProductResource.getId());
+        ResponseEntity deleteResponse = registryClient.deleteDomain(domainRequest.getId());
         verifyResponseEntity(deleteResponse, HttpStatus.OK, false);
 
+        ResponseEntity<ErrorRes> getDomainResponse;
+        getDomainResponse = registryClient.getDomainById(domainRequest.getId());
+        verifyResponseError(getDomainResponse, HttpStatus.NOT_FOUND, ODMRegistryAPIStandardError.SC404_06_DOMAIN_NOT_FOUND);
     }
 
     // ======================================================================================
@@ -143,104 +145,115 @@ public class DomainIT extends ODMRegistryIT {
     // ======================================================================================
 
     // ----------------------------------------
-    // CREATE Data product
+    // CREATE Domain
     // ----------------------------------------
 
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    public void testDataProductCreateError400Errors() throws IOException {
+    public void testDomainCreateError400Errors() throws IOException {
 
         ResponseEntity<ErrorRes> errorResponse = null;
 
-        // Test error SC400_01_DESCRIPTOR_IS_EMPTY
+        // Test error SC400_16_DOMAIN_IS_EMPTY
         String payload = null;
-        errorResponse = registryClient.postDataProduct(payload, ErrorRes.class);
+        errorResponse = registryClient.createDomain(payload);
         verifyResponseError(errorResponse,
-                HttpStatus.BAD_REQUEST, ODMRegistryAPIStandardError.SC400_10_PRODUCT_IS_EMPTY);
+                HttpStatus.BAD_REQUEST, ODMRegistryAPIStandardError.SC400_16_DOMAIN_IS_EMPTY);
     }
 
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    public void testDataProductCreateError422Errors() throws IOException {
+    public void testDomainCreateError422Errors() throws IOException {
 
         ResponseEntity<ErrorRes> errorResponse = null;
 
-        DataProductResource dataProductRes = createDataProduct(RESOURCE_DP1);
+        DomainResource domainRes = createDomain1();
 
-        // TEST 1: try to register the same product again
-        errorResponse = registryClient.postDataProduct(dataProductRes, ErrorRes.class);
+        // TEST 1: try to register the same domain again
+        errorResponse = registryClient.createDomain(domainRes);
         verifyResponseError(errorResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                ODMRegistryAPIStandardError.SC422_04_PRODUCT_ALREADY_EXISTS);
+                ODMRegistryAPIStandardError.SC422_16_DOMAIN_ALREADY_EXISTS);
 
 
-        // TEST 2: try to register a product without setting the fqn
-        dataProductRes = resourceBuilder.buildDataProduct(null, "marketing", "marketing product");
-        errorResponse = registryClient.postDataProduct(dataProductRes, ErrorRes.class);
+        // TEST 2: try to register a domain without setting the fqn
+        domainRes = resourceBuilder.buildDomain(null, null, null, null, null);
+        errorResponse = registryClient.createDomain(domainRes);
         verifyResponseError(errorResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                ODMRegistryAPIStandardError.SC422_07_PRODUCT_IS_INVALID);
+                ODMRegistryAPIStandardError.SC422_15_DOMAIN_IS_INVALID);
         
-        // TEST 3: try to register a product with an empty fqn
-        dataProductRes = resourceBuilder.buildDataProduct("    ", "marketing", "marketing product");
-        errorResponse = registryClient.postDataProduct(dataProductRes, ErrorRes.class);
+        // TEST 3: try to register a domain with an empty fqn
+        domainRes = resourceBuilder.buildDomain("    ");
+        errorResponse = registryClient.createDomain(domainRes);
         verifyResponseError(errorResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                ODMRegistryAPIStandardError.SC422_07_PRODUCT_IS_INVALID);
+                ODMRegistryAPIStandardError.SC422_15_DOMAIN_IS_INVALID);
         
     
-        // TEST 4: try to register a product setting an id that not match with the fqn
-        dataProductRes = resourceBuilder.buildDataProduct("wrong-id", "prod-5", "marketing", "marketing product");
-        errorResponse = registryClient.postDataProduct(dataProductRes, ErrorRes.class);
+        // TEST 4: try to register a domain setting an id that not match with the fqn
+        domainRes = resourceBuilder.buildDomain("wrong-id", null, null, null, null, null);
+        errorResponse = registryClient.createDomain(domainRes);
         verifyResponseError(errorResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                ODMRegistryAPIStandardError.SC422_07_PRODUCT_IS_INVALID);
+                ODMRegistryAPIStandardError.SC422_15_DOMAIN_IS_INVALID);
     }
 
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDataProductUpdate4xxErrors() throws IOException {
 
+        DomainResource domainRes = createDomain1();
         // TEST 1: NULL payload
-        ResponseEntity<ErrorRes> errorResponse = registryClient.putDataProduct(null, ErrorRes.class);
+        ResponseEntity<ErrorRes> errorResponse = registryClient.updateDomain(null);
         verifyResponseError(
                 errorResponse,
                 HttpStatus.BAD_REQUEST,
-                ODMRegistryAPIStandardError.SC400_10_PRODUCT_IS_EMPTY
+                ODMRegistryAPIStandardError.SC400_16_DOMAIN_IS_EMPTY
         );
 
         // TEST 2: Empty fqn
-        DataProductResource dataProductResource = new DataProductResource();
-        dataProductResource.setDescription("test");
-        dataProductResource.setDomain("test");
-        errorResponse = registryClient.putDataProduct(dataProductResource, ErrorRes.class);
+        DomainResource updateDomain = resourceBuilder.buildDomain(null);
+        errorResponse = registryClient.updateDomain(updateDomain);
         verifyResponseError(
                 errorResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                ODMRegistryAPIStandardError.SC422_07_PRODUCT_IS_INVALID
+                ODMRegistryAPIStandardError.SC422_15_DOMAIN_IS_INVALID
         );
 
         // TEST 3: Not found
-        dataProductResource.setFullyQualifiedName("test");
-        errorResponse = registryClient.putDataProduct(dataProductResource, ErrorRes.class);
+        updateDomain.setFullyQualifiedName("test");
+        errorResponse = registryClient.updateDomain(updateDomain);
         verifyResponseError(
                 errorResponse,
                 HttpStatus.NOT_FOUND,
-                ODMRegistryAPIStandardError.SC404_01_PRODUCT_NOT_FOUND
+                ODMRegistryAPIStandardError.SC404_06_DOMAIN_NOT_FOUND
         );
 
     }
 
-
-    // ----------------------------------------
-    // OTHER ...
-    // ----------------------------------------
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testDataProductGet404Error() throws IOException {
+        // TEST: Domain not present
+        ResponseEntity<ErrorRes> errorResponse = registryClient.getDomainById("test-id");
+        verifyResponseError(
+                errorResponse,
+                HttpStatus.NOT_FOUND,
+                ODMRegistryAPIStandardError.SC404_06_DOMAIN_NOT_FOUND
+        );
+    }
 
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    public void testDataProductMediaTypeErrors() {
-        // TODO test the acceptable media types for create and update endpoints
+    public void testDataProductDelete404Error() throws IOException {
+        // TEST: Domain not present
+        ResponseEntity<ErrorRes> errorResponse = registryClient.deleteDomain("test-id");
+        verifyResponseError(
+                errorResponse,
+                HttpStatus.NOT_FOUND,
+                ODMRegistryAPIStandardError.SC404_06_DOMAIN_NOT_FOUND
+        );
+    }
 
-        // TODO test one wrong media type for create and update endpoints
-    }*/
 }

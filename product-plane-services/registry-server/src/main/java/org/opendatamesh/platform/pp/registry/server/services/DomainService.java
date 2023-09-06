@@ -201,7 +201,7 @@ public class DomainService {
     // ======================================================================================
     
     public void deleteDomain(String domainId)  {
-        Domain domain = searchDomain(domainId);
+        Domain domain = searchDomain(domainId); //search if present
         // TODO decide whether delete all the data product with this domain
         try {
             domainRepository.deleteById(domain.getId());

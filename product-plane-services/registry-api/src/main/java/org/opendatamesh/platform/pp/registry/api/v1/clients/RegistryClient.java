@@ -1,17 +1,14 @@
 package org.opendatamesh.platform.pp.registry.api.v1.clients;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.apache.regexp.RE;
 import org.opendatamesh.platform.core.commons.clients.ODMClient;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.pp.registry.api.v1.resources.*;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.web.client.MockRestServiceServer;
-import org.springframework.web.client.RestTemplate;
+
 
 import java.io.IOException;
 import java.util.List;
@@ -614,7 +611,7 @@ public class RegistryClient extends ODMClient {
         return response;
     }
 
-    public ResponseEntity getDomainById(String id) throws JsonProcessingException {
+    public ResponseEntity getDomainById(String id) throws IOException {
 
         ResponseEntity getResponse =  rest.getForEntity(
                 apiUrlOfItem(RegistryAPIRoutes.DOMAINS),

@@ -18,11 +18,7 @@ import org.opendatamesh.platform.core.commons.clients.ODMIntegrationTest;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.registry.api.v1.clients.RegistryClient;
 import org.opendatamesh.platform.pp.registry.api.v1.exceptions.ODMRegistryAPIStandardError;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductDescriptorLocationResource;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.DataProductResource;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.DefinitionResource;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.ErrorRes;
-import org.opendatamesh.platform.pp.registry.api.v1.resources.SchemaResource;
+import org.opendatamesh.platform.pp.registry.api.v1.resources.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +73,9 @@ public abstract class ODMRegistryIT extends ODMIntegrationTest {
     protected final String RESOURCE_TEMPLATE_1 = "src/test/resources/test/template/template1.json";
     protected final String RESOURCE_TEMPLATE_2 = "src/test/resources/test/template/template2.json";
     protected final String RESOURCE_SCHEMA1 = "src/test/resources/test/schema/schema1.json";
+
+    protected final String RESOURCE_DOMAIN1 = "src/test/resources/test/domain/domain1.json";
+
     protected final String RESOURCE_DPS_URI = "https://raw.githubusercontent.com/opendatamesh-initiative/odm-specification-dpdescriptor/main/examples/tripexecution/data-product-descriptor.json";
         
     @PostConstruct
@@ -170,6 +169,13 @@ public abstract class ODMRegistryIT extends ODMIntegrationTest {
 
         return postSchemaResponse.getBody();
 
+    }
+
+    protected DomainResource createDomain1() throws IOException {
+        DomainResource payload = resourceBuilder.readResourceFromFile(RESOURCE_DOMAIN1, DomainResource.class);
+        ResponseEntity<DomainResource> postDomainResponse = registryClient.createDomain(payload);
+        verifyResponseEntity(postDomainResponse, HttpStatus.CREATED, true);
+        return postDomainResponse.getBody();
     }
 
     // ======================================================================================

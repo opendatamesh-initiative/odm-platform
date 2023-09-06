@@ -66,21 +66,21 @@ public class DomainService {
                 ODMRegistryAPIStandardError.SC422_15_DOMAIN_IS_INVALID,
                 "Domain fullyQualifiedName property cannot be empty");
         }
+
+        String uuid = UUID.nameUUIDFromBytes(domain.getFullyQualifiedName().getBytes()).toString();
+        if(domain.getId() != null && !domain.getId().equals(uuid)) {
+            throw new UnprocessableEntityException(
+                    ODMRegistryAPIStandardError.SC422_15_DOMAIN_IS_INVALID,
+                    "Domain [" + domain.getFullyQualifiedName() + "] id [" + domain.getId()+ "] is invalid. Expected [" + uuid + "]");
+        }
+        domain.setId(uuid);
         
         if(domainExists(domain.getId())) {
             throw new UnprocessableEntityException(
                 ODMRegistryAPIStandardError.SC422_16_DOMAIN_ALREADY_EXISTS,
                 "Domain [" + domain.getFullyQualifiedName() + "] already exists");
         }
-   
 
-        String uuid = UUID.nameUUIDFromBytes(domain.getFullyQualifiedName().getBytes()).toString();
-        if(domain.getId() != null && !domain.getId().equals(uuid)) {
-            throw new UnprocessableEntityException(
-                ODMRegistryAPIStandardError.SC422_15_DOMAIN_IS_INVALID,
-                "Domain [" + domain.getFullyQualifiedName() + "] id [" + domain.getId()+ "] is invalid. Expected [" + uuid + "]");
-        }
-        domain.setId(uuid);
        
         try {
             domain = saveDomain(domain);

@@ -34,12 +34,6 @@ public class DomainResource {
     @JsonProperty("description")
     private String description;
 
-    public void initDomainFQNAndID(){
-        setFullyQualifiedName(DomainIdentifierStrategy.DOMAIN_STRATEGY.getFqn(this) );
-        setId( DomainIdentifierStrategy.DOMAIN_STRATEGY.getId(getFullyQualifiedName()));
-    }
-
-
     public String toEventString() throws JsonProcessingException {
         ObjectMapper objectMapper = ObjectMapperFactory.JSON_MAPPER;
         return objectMapper.writeValueAsString(this);

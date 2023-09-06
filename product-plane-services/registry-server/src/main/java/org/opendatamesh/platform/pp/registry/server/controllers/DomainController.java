@@ -109,7 +109,7 @@ public class DomainController
                 ODMRegistryAPIStandardError.SC400_16_DOMAIN_IS_EMPTY,
                 "Domain cannot be empty");
         }
-        domainRes.initDomainFQNAndID();
+
         Domain domain = domainMapper.toEntity(domainRes);
         domain = domainService.createDomain(domain);
         return domainMapper.toResource(domain);

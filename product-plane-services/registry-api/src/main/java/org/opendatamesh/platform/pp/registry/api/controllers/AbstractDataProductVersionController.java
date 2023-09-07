@@ -3,6 +3,7 @@ package org.opendatamesh.platform.pp.registry.api.controllers;
 import java.util.List;
 
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
+import org.opendatamesh.platform.core.dpds.model.ApplicationComponentDPDS;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -233,6 +234,134 @@ public abstract class AbstractDataProductVersionController
     }
 
     public abstract String getDataProductVersion(String id, String version, String format);
+
+    // ======================================================================================
+    // GET /{id}/versions/{version}/applications
+    // ======================================================================================
+
+    @GetMapping(
+            value = "/{id}/versions/{version}/applications"
+    )
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(
+            summary = "Get the application components in the internal components for the specified data product version",
+            description = "Get the application components in the internal components for the data product version identified by `id` and 'version'."
+                    + "The returned value is a descriptor component document compliant with [DPDS version 1.0.0-DRAFT](https://dpds.opendatamesh.org/resources/specifications/1.0.0-DRAFT/)."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "The application components inside the internal components of the specified data product version",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ApplicationComponentDPDS.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "[Bad request](https://www.rfc-editor.org/rfc/rfc9110.html#name-400-bad-request)"
+                            + "\r\n - Error Code 40004 - Invalid format"
+                            + "\r\n - Error Code 40007 - Product id is empty"
+                            + "\r\n - Error Code 40011 - Data product version number is empty",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "[Not Found](https://www.rfc-editor.org/rfc/rfc9110.html#name-404-not-found)"
+                            + "\r\n - Error Code 40401 - Data product not found"
+                            + "\r\n - Error Code 40402 - Data product version not found",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "[Internal Server Error](https://www.rfc-editor.org/rfc/rfc9110.html#name-500-internal-server-error)"
+                            + "\r\n - Error Code 50000 - Error in in the backend service"
+                            + "\r\n - Error Code 50001 - Error in the backend database"
+                            + "\r\n - Error Code 50002 - Error in in the backend descriptor processor",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
+            )
+    })
+    public String getDataProductVersionApplicationsEndpoint(
+            @Parameter(description = "The identifier of the data product")
+            @PathVariable(value = "id") String id,
+
+            @Parameter(description = "The data product version number")
+            @PathVariable(value = "version") String version,
+
+            @Parameter(
+                    description = "Format used to serialize the descriptor component document. Available formats are:"
+                            + "\r\n - normalized: TODO"
+                            + "\r\n - canonical (default): TODO"
+            )
+            @RequestParam(name = "format", required = false) String format
+    ) {
+        return getDataProductVersionApplications(id, version, format);
+    }
+
+    public abstract String getDataProductVersionApplications(String id, String version, String format);
+
+    // ======================================================================================
+    // GET /{id}/versions/{version}/infrastructures
+    // ======================================================================================
+
+    @GetMapping(
+            value = "/{id}/versions/{version}/infrastructures"
+    )
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(
+            summary = "Get the infrastructure components in the internal components for the specified data product version",
+            description = "Get the infrastructure components in the internal components for the data product version identified by `id` and 'version'."
+                    + "The returned value is a descriptor component document compliant with [DPDS version 1.0.0-DRAFT](https://dpds.opendatamesh.org/resources/specifications/1.0.0-DRAFT/)."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "The infrastructure components inside the internal components of the specified data product version",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ApplicationComponentDPDS.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "[Bad request](https://www.rfc-editor.org/rfc/rfc9110.html#name-400-bad-request)"
+                            + "\r\n - Error Code 40004 - Invalid format"
+                            + "\r\n - Error Code 40007 - Product id is empty"
+                            + "\r\n - Error Code 40011 - Data product version number is empty",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "[Not Found](https://www.rfc-editor.org/rfc/rfc9110.html#name-404-not-found)"
+                            + "\r\n - Error Code 40401 - Data product not found"
+                            + "\r\n - Error Code 40402 - Data product version not found",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "[Internal Server Error](https://www.rfc-editor.org/rfc/rfc9110.html#name-500-internal-server-error)"
+                            + "\r\n - Error Code 50000 - Error in in the backend service"
+                            + "\r\n - Error Code 50001 - Error in the backend database"
+                            + "\r\n - Error Code 50002 - Error in in the backend descriptor processor",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
+            )
+    })
+    public String getDataProductVersionInfrastructuresEndpoint(
+            @Parameter(description = "The identifier of the data product")
+            @PathVariable(value = "id") String id,
+
+            @Parameter(description = "The data product version number")
+            @PathVariable(value = "version") String version,
+
+            @Parameter(
+                    description = "Format used to serialize the descriptor component document. Available formats are:"
+                            + "\r\n - normalized : TODO"
+                            + "\r\n - canonical (default): TODO"
+            )
+            @RequestParam(name = "format", required = false) String format
+    ) {
+        return getDataProductVersionInfrastructures(id, version, format);
+    }
+
+    public abstract String getDataProductVersionInfrastructures(String id, String version, String format);
 
     // ======================================================================================
     // DELETE /products/{id}/versions/{version}

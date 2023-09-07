@@ -4,7 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.opendatamesh.platform.core.commons.clients.ODMClient;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
+import org.opendatamesh.platform.core.dpds.model.ApplicationComponentDPDS;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
+import org.opendatamesh.platform.core.dpds.model.InfrastructuralComponentDPDS;
 import org.opendatamesh.platform.pp.registry.api.resources.*;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -253,6 +255,39 @@ public class RegistryClient extends ODMClient {
                 responseType);
 
         return postUploadResponse;
+    }
+
+
+    public ResponseEntity getDataProductVersionApplicationComponents(
+            String id,
+            String version) throws JsonProcessingException {
+
+        ResponseEntity getResponse = rest.getForEntity(
+                apiUrl(RegistryAPIRoutes.DATA_PRODUCT_VERSIONS_APPLICATIONS),
+                Object.class,
+                id,
+                version);
+
+        return mapResponseEntity(
+                getResponse,
+                HttpStatus.OK,
+                ApplicationComponentDPDS[].class);
+    }
+
+    public ResponseEntity getDataProductVersionInfrastructuralComponents(
+            String id,
+            String version) throws JsonProcessingException {
+
+        ResponseEntity getResponse = rest.getForEntity(
+                apiUrl(RegistryAPIRoutes.DATA_PRODUCT_VERSIONS_INFRASTRUCTURES),
+                Object.class,
+                id,
+                version);
+
+        return mapResponseEntity(
+                getResponse,
+                HttpStatus.OK,
+                InfrastructuralComponentDPDS[].class);
     }
 
     // ----------------------------------------

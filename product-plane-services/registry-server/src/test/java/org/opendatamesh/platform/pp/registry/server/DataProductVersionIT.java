@@ -288,7 +288,6 @@ public class DataProductVersionIT extends ODMRegistryIT {
     // ======================================================================================
 
     @Test
-    @Disabled
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDataProductVersionDelete()
             throws IOException {

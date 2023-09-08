@@ -143,6 +143,31 @@ public class DPDSSerializer {
         return writeValueAsString(internalComponentsNode);
     }
 
+    public <T extends ComponentDPDS> String serialize(
+            List<T> components,
+            String form
+    ) throws JsonProcessingException {
+
+        String result = null;
+
+        if (form.equalsIgnoreCase("canonical")) {
+            result = serializeToCanonicalForm(components);
+        } else {
+            result = writeValueAsString(components);
+
+        }
+
+        return result;
+    }
+
+    public <T extends ComponentDPDS> String serializeToCanonicalForm(
+            List<T> components
+    ) throws JsonProcessingException {
+
+        String result = writeValueAsString(getComponetsRawContent(components));
+        return result;
+    }
+
     private JsonNode getRawContent(InterfaceComponentsDPDS resources) throws JsonProcessingException {
         return getInterfaceComponentsRawContent(resources,
                 new HashSet<EntityTypeDPDS>(Arrays.asList(EntityTypeDPDS.values())));

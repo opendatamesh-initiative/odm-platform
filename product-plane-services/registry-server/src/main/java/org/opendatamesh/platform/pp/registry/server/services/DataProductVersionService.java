@@ -22,6 +22,8 @@ import org.opendatamesh.platform.pp.registry.server.database.entities.dataproduc
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.definitions.ApiDefinitionEndpoint;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.definitions.ApiDefinitionReference;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.interfaces.Port;
+import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.internals.ApplicationComponent;
+import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.internals.InfrastructuralComponent;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.internals.LifecycleActivityInfo;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.internals.LifecycleInfo;
 import org.opendatamesh.platform.pp.registry.server.database.mappers.DataProductVersionMapper;
@@ -508,6 +510,38 @@ public class DataProductVersionService {
 
     private List<DataProductVersion> findDataProductVersions(String dataProductId) {
         return dataProductVersionRepository.findByDataProductId(dataProductId);
+    }
+
+    // -------------------------
+    // GET Data Product Components methods
+    // -------------------------
+
+    public List<ApplicationComponent> searchDataProductVersionApplicationComponents(String dataProductId, String version) {
+        DataProductVersion dataProductVersionSearchResult;
+        try {
+            dataProductVersionSearchResult = getDataProductVersion(dataProductId, version);
+        } catch (Throwable t) {
+            throw new InternalServerException(
+                    ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
+                    "An error occured in the backend database while searching data product versions",
+                    t);
+        }
+
+        return dataProductVersionSearchResult.getInternalComponents().getApplicationComponents();
+    }
+
+    public List<InfrastructuralComponent> searchDataProductVersionInfrastructuralComponents(String dataProductId, String version) {
+        DataProductVersion dataProductVersionSearchResult;
+        try {
+            dataProductVersionSearchResult = getDataProductVersion(dataProductId, version);
+        } catch (Throwable t) {
+            throw new InternalServerException(
+                    ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
+                    "An error occured in the backend database while searching data product versions",
+                    t);
+        }
+
+        return dataProductVersionSearchResult.getInternalComponents().getInfrastructuralComponents();
     }
 
     // ======================================================================================

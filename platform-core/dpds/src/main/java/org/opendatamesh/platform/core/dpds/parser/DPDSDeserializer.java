@@ -15,6 +15,7 @@ import org.opendatamesh.platform.core.dpds.model.InternalComponentsDPDS;
 import org.opendatamesh.platform.core.dpds.model.LifecycleActivityInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.LifecycleInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.PortDPDS;
+import org.opendatamesh.platform.core.dpds.model.StandardDefinitionDPDS;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -139,9 +140,18 @@ public class DPDSDeserializer {
             activityNode.put("stageName", stageName);
 
             if (activityResource.hasTemplate()) {
-                JsonNode templateNode = activityNode.remove("template");
+
+                ObjectNode templateNode = (ObjectNode) activityNode.remove("template");
                 activityResource.getTemplate().setRawContent(
                         mapper.writeValueAsString(templateNode));
+
+                if (activityResource.getTemplate().getDefinition() != null) {
+                    if (templateNode.get("definition").get("$ref") == null) {
+                        JsonNode defNode = templateNode.get("definition");
+                        activityResource.getTemplate().getDefinition().setRawContent(
+                                mapper.writeValueAsString(defNode));
+                    }
+                }
             }
 
             activityResource.setRawContent(
@@ -189,10 +199,22 @@ public class DPDSDeserializer {
         if (componentResource instanceof PortDPDS) {
             PortDPDS port = (PortDPDS) componentResource;
             if (port.hasApi()) {
-                JsonNode apiNode = componentNode.at("/promises/api");
+                ObjectNode apiNode = (ObjectNode) componentNode.at("/promises/api");
                 ObjectNode promisesNode = (ObjectNode) componentNode.get("promises");
                 promisesNode.remove("api");
+
                 setComponetRawContent(port.getPromises().getApi(), apiNode, mapper);
+            }
+        }
+
+        if (componentResource instanceof StandardDefinitionDPDS) {
+            StandardDefinitionDPDS sdtDefResource = (StandardDefinitionDPDS) componentResource;
+            if (sdtDefResource.getDefinition() != null) {
+                if (componentNode.get("definition").get("$ref") == null) {
+                    JsonNode defNode = componentNode.get("definition");
+                    sdtDefResource.getDefinition().setRawContent(
+                            mapper.writeValueAsString(defNode));
+                }
             }
         }
 

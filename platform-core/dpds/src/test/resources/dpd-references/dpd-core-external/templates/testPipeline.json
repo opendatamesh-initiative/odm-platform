@@ -4,9 +4,6 @@
     "specification": "azure-devops",
     "specificationVersion": "1.0.0",
     "definition": {
-        "organization": "andreagioia",
-        "project": "opendatamesh",
-        "pipelineId": "3",
-        "branch": "main"
+        "$ref": "testPipelineDef.json"
     }
 }

@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper=true)
 @ToString(callSuper = true)
-public class InfrastructuralComponentDPDS extends ComponentDPDS implements Cloneable {
+public class InfrastructuralComponentDPDS extends ComponentDPDS {
 
     @JsonProperty("platform")
     private String platform;

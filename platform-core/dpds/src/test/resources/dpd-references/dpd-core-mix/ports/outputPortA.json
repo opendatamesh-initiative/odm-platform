@@ -8,7 +8,7 @@
         "platform": "platformX",
         "servicesType": "rest-services",
         "api": {
-            "$ref": "restApi2.json"
+            "$ref": "#components/apis/restApi2"
         }
     }
 }

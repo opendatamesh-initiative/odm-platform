@@ -32,28 +32,5 @@ public class PortDPDS extends ComponentDPDS {
         return hasApi() && promises.getApi().getDefinition() != null;
     }
 
-    public PortDPDS cloneWithoutrawContent() {  
-        PortDPDS clonedPort = clone();
-        clonedPort.setRawContent(null);
-        if(clonedPort.hasApiDefinition()){
-            clonedPort.getPromises().getApi().getDefinition().setRawContent(null);
-        }
-        return clonedPort;
-    }  
-
-    @Override
-    public PortDPDS clone() { 
-        PortDPDS clonedPort = null; 
-        try {
-            clonedPort =  (PortDPDS)super.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }  
-        return clonedPort;
-    }  
-
-    
-
-
 }
 

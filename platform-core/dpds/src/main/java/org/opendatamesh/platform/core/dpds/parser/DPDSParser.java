@@ -37,9 +37,6 @@ public class DPDSParser {
         
         if (options.isResoveApiDefinitions())
             processApiDefinitions(context);
-        
-        if (options.isResoveTemplateDefinitions())
-            processTemplates(context);
 
         if (options.isResoveReadOnlyProperties())
             processReadOnlyProperties(context);
@@ -96,18 +93,6 @@ public class DPDSParser {
         } catch (DeserializationException e) {
             throw new ParseException("Impossible to process read only properties",
                     ParseException.Stage.RESOLVE_READ_ONLY_PROPERTIES, e);
-        }
-
-        return this;
-    }
-
-    private DPDSParser processTemplates(ParseContext context) throws ParseException {
-
-        try {
-            TemplateDefinitionsProcessor.resolve(context);
-        } catch (UnresolvableReferenceException | DeserializationException e) {
-            throw new ParseException("Impossible to process template properties",
-                    ParseException.Stage.RESOLVE_TEMPLATE_PROPERTIES, e);
         }
 
         return this;

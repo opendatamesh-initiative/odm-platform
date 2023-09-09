@@ -13,10 +13,8 @@ import lombok.EqualsAndHashCode;
 @Data
 //@JsonIgnoreProperties(value={ "id", "entityType" }, allowGetters=true, ignoreUnknown = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ComponentDPDS extends ReferenceableEntityDPDS {
+public abstract class ComponentDPDS extends ReferenceableEntityDPDS {
        
-    
-
     @JsonProperty("componentGroup")
     protected String componentGroup;
 

@@ -233,7 +233,7 @@
           "platform": "aws:eu-south-1",
           "servicesType": "rest-services",
           "api": {
-            "name": "reast-api-1",
+            "name": "rest-api-1",
             "description": "Rest what else?",
             "specification": "custom-api-spec",
             "specificationVersion": "1.3.2",

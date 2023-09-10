@@ -133,7 +133,6 @@ public class ApiDefinitionsProcessor implements PropertiesProcessor {
             parsedApiDefinition.setDescription(apiDefinition.getDescription());
             parsedApiDefinition.setMediaType(apiDefinition.getMediaType());
             parsedApiDefinition.setRef(apiDefinition.getRef());
-            parsedApiDefinition.setOriginalRef(apiDefinition.getOriginalRef());
             parsedApiDefinition.setRawContent(apiDefinition.getRawContent());
             api.setDefinition(parsedApiDefinition);
         }

@@ -47,7 +47,7 @@ public class SchemaController {
     @Autowired
     private SchemaMapper schemaMapper;
 
-    private static final Logger logger = LoggerFactory.getLogger(ApiDefinitionController.class);
+    private static final Logger logger = LoggerFactory.getLogger(ApiController.class);
 
     public SchemaController() { 
         logger.debug("Schemas controller succesfully started");
@@ -155,7 +155,7 @@ public class SchemaController {
 
         @Parameter(description="Add `apiId` parameter to the request to get only schemas related to the specific api")
         @RequestParam(required = false, name = "apiId") 
-        Long apiId,
+        String apiId,
 
         @Parameter(description="Add `content` parameter in request to specify to include or not raw content in response. The defualt is false")
         @RequestParam(required = false, defaultValue = "false", name = "content") 

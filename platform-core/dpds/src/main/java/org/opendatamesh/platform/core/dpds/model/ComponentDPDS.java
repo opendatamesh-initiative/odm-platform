@@ -28,32 +28,7 @@ public abstract class ComponentDPDS extends ReferenceableEntityDPDS {
     @JsonProperty("externalDocs")
     private ExternalResourceDPDS externalDocs;
 
-    public boolean isReference() {
-        return ref != null;
-    }
-
-    public boolean isInternalReference() {
-        return isReference() &&  ref.startsWith("#");
-    }
-
-    public String getInternalReferenceGroupName() {
-        String entityType = null;
-        if(isInternalReference()) {
-            String[] refTokens = ref.split("/");
-            if(refTokens.length > 1) {
-                entityType = refTokens[1];
-            }
-        }
-        return entityType;
-    }
-
-    public String getInternalReferenceComponentName() {
-        return isInternalReference()? ref.substring(ref.lastIndexOf("/")+1): null;
-    }
-
-    public boolean isExternalReference() {
-        return isReference() &&  !ref.startsWith("#");
-    }
+    
 
 
 

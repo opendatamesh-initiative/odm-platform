@@ -259,17 +259,17 @@ public class RegistryClient extends ODMClient {
     // API Definition
     // ----------------------------------------
 
-    public DefinitionResource createApiDefinition(Object payload) throws IOException {
-        return postApiDefinition(payload).getBody();
+    public ExternalComponentResource createApi(Object payload) throws IOException {
+        return postApi(payload).getBody();
     }
 
-    public ResponseEntity<DefinitionResource> postApiDefinition(
+    public ResponseEntity<ExternalComponentResource> postApi(
             Object payload) throws IOException {
 
-        return postApiDefinition(payload, DefinitionResource.class);
+        return postApi(payload, ExternalComponentResource.class);
     }
 
-    public <T> ResponseEntity<T> postApiDefinition(
+    public <T> ResponseEntity<T> postApi(
             Object payload, Class<T> responseType) throws IOException {
 
         return rest.postForEntity(
@@ -278,36 +278,56 @@ public class RegistryClient extends ODMClient {
                 responseType);
     }
 
-    public ResponseEntity<DefinitionResource[]> readAllApiDefinitions() {
-        return getApiDefinitions(DefinitionResource[].class);
+    public ExternalComponentResource[] readAllApis() {
+        return getApis().getBody();
     }
 
-    public <T> ResponseEntity<T> getApiDefinitions(Class<T> responseType) {
+    public ResponseEntity<ExternalComponentResource[]> getApis() {
+        return getApis(ExternalComponentResource[].class);
+    }
+
+    public <T> ResponseEntity<T> getApis(Class<T> responseType) {
         return rest.getForEntity(
                 apiUrl(RegistryAPIRoutes.APIS),
                 responseType);
     }
 
-    public ResponseEntity<DefinitionResource> readOneApiDefinition(Long definitionId) {
-        return rest.getForEntity(
-                apiUrlOfItem(RegistryAPIRoutes.APIS),
-                DefinitionResource.class,
-                definitionId);
+    public ExternalComponentResource readApi(String id) {
+        return getApi(id).getBody();
     }
 
-    public <T> ResponseEntity<T> deleteApiDefinition(Long definitionId, Class<T> responseType) {
+    public ResponseEntity<ExternalComponentResource> getApi(String id) {
+        return getApi(id, ExternalComponentResource.class);
+    }
+
+    public <T> ResponseEntity<T> getApi(String id, Class<T> responseType) {
+        return rest.getForEntity(
+                apiUrlOfItem(RegistryAPIRoutes.APIS),
+                responseType,
+                id);
+    }
+
+    public ExternalComponentResource deleteApi(String id) throws IOException {
+        return deleteOneApi(id).getBody();
+    }
+
+    public ResponseEntity<ExternalComponentResource> deleteOneApi(
+            String id) throws IOException {
+        return deleteApi(id, ExternalComponentResource.class);
+    }
+
+    public <T> ResponseEntity<T> deleteApi(String apiId, Class<T> responseType) {
         return rest.exchange(
                 apiUrlOfItem(RegistryAPIRoutes.APIS),
                 HttpMethod.DELETE,
                 null,
                 responseType,
-                definitionId);
+                apiId);
     }
 
-    public ResponseEntity<DefinitionResource[]> searchApiDefinitions(
+    public ResponseEntity<ExternalComponentResource[]> searchApis(
             Optional<String> name,
             Optional<String> version,
-            Optional<String> type,
             Optional<String> specification,
             Optional<String> specificationVersion) {
 
@@ -328,15 +348,6 @@ public class RegistryClient extends ODMClient {
                 urlExtensions = urlExtensions + "&";
             }
             urlExtensions = urlExtensions + "version=" + version.get();
-        }
-        if (type.isPresent()) {
-            if (firstParam) {
-                urlExtensions = urlExtensions + "?";
-                firstParam = false;
-            } else {
-                urlExtensions = urlExtensions + "&";
-            }
-            urlExtensions = urlExtensions + "type=" + type.get();
         }
         if (specification.isPresent()) {
             if (firstParam) {
@@ -358,24 +369,24 @@ public class RegistryClient extends ODMClient {
 
         return rest.getForEntity(
                 apiUrl(RegistryAPIRoutes.APIS, urlExtensions),
-                DefinitionResource[].class);
+                ExternalComponentResource[].class);
     }
 
     // ----------------------------------------
     // Template Definition
     // ----------------------------------------
 
-    public DefinitionResource createTemplateDefinition(Object payload) throws IOException {
-        return postTemplateDefinition(payload).getBody();
+    public ExternalComponentResource createTemplate(Object payload) throws IOException {
+        return postTemplate(payload).getBody();
     }
 
-    public ResponseEntity<DefinitionResource> postTemplateDefinition(
+    public ResponseEntity<ExternalComponentResource> postTemplate(
             Object payload) throws IOException {
 
-        return postTemplateDefinition(payload, DefinitionResource.class);
+        return postTemplate(payload, ExternalComponentResource.class);
     }
 
-    public <T> ResponseEntity<T> postTemplateDefinition(
+    public <T> ResponseEntity<T> postTemplate(
             Object payload, Class<T> responseType) throws IOException {
 
         return rest.postForEntity(
@@ -384,40 +395,58 @@ public class RegistryClient extends ODMClient {
                 responseType);
     }
 
-    public ResponseEntity<DefinitionResource[]> readAllTemplateDefinitions() {
+    public ExternalComponentResource[] readAllTemplates() {
+        return getTemplates().getBody();
+    }
+
+    public ResponseEntity<ExternalComponentResource[]> getTemplates() {
+        return getTemplates(ExternalComponentResource[].class);
+    }
+
+    public <T> ResponseEntity<T> getTemplates(Class<T> responseType) {
         return rest.getForEntity(
                 apiUrl(RegistryAPIRoutes.TEMPLATES),
-                DefinitionResource[].class);
+                responseType);
     }
 
-    public DefinitionResource readOneTemplateDefinition(Long definitionId) {
-        return getOneTemplateDefinition(definitionId).getBody();
+
+    public ExternalComponentResource readTemplate(String id) {
+        return getTemplate(id).getBody();
     }
 
-    public ResponseEntity<DefinitionResource> getOneTemplateDefinition(Long definitionId) {
-        return getOneTemplateDefinition(definitionId, DefinitionResource.class);
+    public ResponseEntity<ExternalComponentResource> getTemplate(String id) {
+        return getTemplate(id, ExternalComponentResource.class);
     }
 
-    public <T> ResponseEntity<T> getOneTemplateDefinition(Long definitionId, Class<T> responseType) {
+    public <T> ResponseEntity<T> getTemplate(String id, Class<T> responseType) {
         return rest.getForEntity(
                 apiUrlOfItem(RegistryAPIRoutes.TEMPLATES),
                 responseType,
-                definitionId);
+                id);
     }
 
-    public <T> ResponseEntity<T> deleteTemplateDefinition(Long definitionId, Class<T> responseType) {
+    public ExternalComponentResource deleteTemplate(String id) {
+        return deleteOneTemplate(id).getBody();
+    }
+
+    public ResponseEntity<ExternalComponentResource> deleteOneTemplate(
+            String id) {
+        return deleteTemplate(id, ExternalComponentResource.class);
+    }
+
+
+    public <T> ResponseEntity<T> deleteTemplate(String id, Class<T> responseType) {
         return rest.exchange(
                 apiUrlOfItem(RegistryAPIRoutes.TEMPLATES),
                 HttpMethod.DELETE,
                 null,
                 responseType,
-                definitionId);
+                id);
     }
 
-    public ResponseEntity<DefinitionResource[]> searchTemplateDefinitions(
+    public ResponseEntity<ExternalComponentResource[]> searchTemplates(
             Optional<String> name,
             Optional<String> version,
-            Optional<String> type,
             Optional<String> specification,
             Optional<String> specificationVersion) {
 
@@ -439,15 +468,6 @@ public class RegistryClient extends ODMClient {
             }
             urlExtensions = urlExtensions + "version=" + version.get();
         }
-        if (type.isPresent()) {
-            if (firstParam) {
-                urlExtensions = urlExtensions + "?";
-                firstParam = false;
-            } else {
-                urlExtensions = urlExtensions + "&";
-            }
-            urlExtensions = urlExtensions + "type=" + type.get();
-        }
         if (specification.isPresent()) {
             if (firstParam) {
                 urlExtensions = urlExtensions + "?";
@@ -468,7 +488,7 @@ public class RegistryClient extends ODMClient {
 
         return rest.getForEntity(
                 apiUrl(RegistryAPIRoutes.TEMPLATES, urlExtensions),
-                DefinitionResource[].class);
+                ExternalComponentResource[].class);
     }
 
     // ----------------------------------------

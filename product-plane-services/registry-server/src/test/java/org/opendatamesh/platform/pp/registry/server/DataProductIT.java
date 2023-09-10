@@ -26,10 +26,7 @@ public class DataProductIT extends ODMRegistryIT {
 
         DataProductResource dataProductRes = null, createdDataProductRes = null;
 
-        dataProductRes =  resourceBuilder.buildDataProduct(
-            "a9228eb7-3179-3628-ae64-aa5dbb1fcb28", 
-            "urn:org.opendatamesh:dataproducts:testProduct", 
-            "Test Domain", "This is test product #1");
+        dataProductRes =  resourceBuilder.buildTestDataProduct();
         createdDataProductRes = createDataProduct(dataProductRes);
        
         assertThat(createdDataProductRes).isNotNull();

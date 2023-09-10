@@ -1,7 +1,6 @@
-package org.opendatamesh.platform.core.dpds;
+package org.opendatamesh.platform.core.dpds.utils;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 
 import java.util.Arrays;
 import java.util.List;

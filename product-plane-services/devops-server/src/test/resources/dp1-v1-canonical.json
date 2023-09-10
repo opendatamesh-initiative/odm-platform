@@ -152,8 +152,7 @@
           "specification": "spec",
           "specificationVersion": "2.0",
           "definition": {
-            "$ref": "http://localhost:8001/api/v1/pp/registry/templates/1",
-            "$originalRef": null
+            "$ref": "http://localhost:8001/api/v1/pp/registry/templates/1"
           }
         },
         "configurations": {
@@ -169,8 +168,7 @@
           "specification": "spec",
           "specificationVersion": "2.0",
           "definition": {
-            "$ref": "http://localhost:8001/api/v1/pp/registry/templates/1",
-            "$originalRef": null
+            "$ref": "http://localhost:8001/api/v1/pp/registry/templates/1"
           }
         },
         "configurations": {
@@ -183,8 +181,7 @@
           "specification": "spec",
           "specificationVersion": "2.0",
           "definition": {
-            "$ref": "http://localhost:8001/api/v1/pp/registry/templates/1",
-            "$originalRef": null
+            "$ref": "http://localhost:8001/api/v1/pp/registry/templates/1"
           }
         },
         "configurations": {
@@ -208,8 +205,7 @@
           "specification": "spec",
           "specificationVersion": "2.0",
           "definition": {
-            "$ref": "http://localhost:8001/api/v1/pp/registry/templates/1",
-            "$originalRef": null
+            "$ref": "http://localhost:8001/api/v1/pp/registry/templates/1"
           }
         }
       },
@@ -225,8 +221,7 @@
           "specification": "spec",
           "specificationVersion": "2.0",
           "definition": {
-            "$ref": "http://localhost:8001/api/v1/pp/registry/templates/1",
-            "$originalRef": null
+            "$ref": "http://localhost:8001/api/v1/pp/registry/templates/1"
           }
         },
         "configurations": {

@@ -10,10 +10,10 @@ import java.util.List;
 
 public interface ApiToSchemaRelationshipRepository extends JpaRepository<ApiToSchemaRelationship, Long>, JpaSpecificationExecutor<ApiToSchemaRelationship> {
 
-    public List<ApiToSchemaRelationship> findByIdApiIdAndIdSchemaId(Long apiId, Long schemaId);
+    public List<ApiToSchemaRelationship> findByIdApiIdAndIdSchemaId(String apiId, Long schemaId);
     public List<ApiToSchemaRelationship> findByOperationId(String operationId);
-    public boolean existsByIdApiIdAndIdSchemaId(Long apiId, Long schemaId);
-    public List<ApiToSchemaRelationship> findByIdApiId(Long apiId);
+    public boolean existsByIdApiIdAndIdSchemaId(String apiId, Long schemaId);
+    public List<ApiToSchemaRelationship> findByIdApiId(String apiId);
     public List<ApiToSchemaRelationship> findByIdSchemaId(Long schemaId);
     public List<ApiToSchemaRelationship> findById(ApiToSchemaRelationshipId relId);
 }

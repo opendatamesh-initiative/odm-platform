@@ -5,9 +5,11 @@ import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerE
 import org.opendatamesh.platform.core.commons.servers.exceptions.NotFoundException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
 import org.opendatamesh.platform.core.commons.servers.exceptions.UnprocessableEntityException;
+import org.opendatamesh.platform.core.dpds.model.EntityTypeDPDS;
+import org.opendatamesh.platform.core.dpds.parser.IdentifierStrategy;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
 import org.opendatamesh.platform.pp.registry.server.database.entities.Api;
-import org.opendatamesh.platform.pp.registry.server.database.repositories.ApiDefinitionRepository;
+import org.opendatamesh.platform.pp.registry.server.database.repositories.ApiRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,114 +18,116 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
-public class ApiDefinitionService {
+public class ApiService {
 
     @Autowired
-    private ApiDefinitionRepository apiDefinitionRepository;
+    private ApiRepository apiRepository;
 
-    private static final Logger logger = LoggerFactory.getLogger(ApiDefinitionService.class);
+    private static final Logger logger = LoggerFactory.getLogger(ApiService.class);
 
-    public ApiDefinitionService() {
+    public ApiService() {
 
-    }
-
-    public Api resolveNameAndVersion(Api definition) {
-        if (definition == null) {
-            throw new InternalServerException(
-                    ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
-                    "Definition object cannot be null");
-        }
-
-        if (!StringUtils.hasText(definition.getName())) {
-            if (!StringUtils.hasText(definition.getContent())) {
-                throw new UnprocessableEntityException(
-                        RegistryApiStandardErrors.SC422_08_DEFINITION_DOC_SYNTAX_IS_INVALID,
-                        "If definition name is empty raw content must be valorized");
-            }
-            String fqn = UUID.nameUUIDFromBytes(definition.getContent().getBytes()).toString();
-            definition.setName(fqn);
-            logger.warn("Definition has no name. An UUID type-3 generated from its content will be used as name");
-        }
-
-        if (!StringUtils.hasText(definition.getVersion())) {
-            definition.setVersion("1.0.0");
-            logger.warn("Definition has no version. Version 1.0.0 will be used as default");
-        }
-
-        return definition;
     }
 
     // ======================================================================================
     // CREATE
     // ======================================================================================
 
-    public Api createDefinition(Api definition) {
+    public Api createApi(Api api) {
 
-        if (definition == null) {
+        if (api == null) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
-                    "Standard definition object cannot be null");
+                    "Api object cannot be null");
         }
 
-        definition = resolveNameAndVersion(definition);
-
-        if (definitionExists(definition.getName(), definition.getVersion())) {
+        if (!StringUtils.hasText(api.getName())) {
             throw new UnprocessableEntityException(
-                    RegistryApiStandardErrors.SC422_06_STDDEF_ALREADY_EXISTS,
-                    "Definition [" + definition.getName() + "(v. " + definition.getVersion() + ")] already exists");
+                    RegistryApiStandardErrors.SC422_08_API_NOT_VALID,
+                    "Property [name] cannot be empty");
+        }
+
+        if (!StringUtils.hasText(api.getVersion())) {
+            throw new UnprocessableEntityException(
+                    RegistryApiStandardErrors.SC422_08_API_NOT_VALID,
+                    "Property [version] cannot be empty");
+        }
+
+        if (!StringUtils.hasText(api.getDefinition())) {
+            throw new UnprocessableEntityException(
+                    RegistryApiStandardErrors.SC422_08_API_NOT_VALID,
+                    "Property [definition] cannot be empty");
+        }
+
+        
+        String fqn = IdentifierStrategy.DEFUALT.getExternalComponentFqn(
+                EntityTypeDPDS.API,
+                api.getName(),
+                api.getVersion());
+
+        String id = IdentifierStrategy.DEFUALT.getId(fqn);
+        
+        api.setId(id);
+        api.setFullyQualifiedName(fqn);
+        api.setEntityType(EntityTypeDPDS.API.propertyValue());
+        
+
+        if (apiExists(id)) {
+            throw new UnprocessableEntityException(
+                    RegistryApiStandardErrors.SC422_07_API_ALREADY_EXISTS,
+                    "Api [" + api.getName() + "(v. " + api.getVersion() + ")] already exists");
         }
 
         try {
-            definition = saveDefinition(definition);
-            logger.info("Standard definition [" + definition.getId() + "] successfully created");
+            api = saveApi(api);
+            logger.info("Api [" + api.getId() + "] successfully created");
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while saving standard definition",
+                    "An error occured in the backend database while saving api",
                     t);
         }
 
-        return definition;
+        return api;
     }
 
-    private Api saveDefinition(Api definition) {
-        return apiDefinitionRepository.saveAndFlush(definition);
+    private Api saveApi(Api api) {
+        return apiRepository.saveAndFlush(api);
     }
 
     // ======================================================================================
     // READ
     // ======================================================================================
 
-    public Api readOneDefinition(Api definition) {
-        if (definition == null) {
+    public Api readOneApi(Api api) {
+        if (api == null) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
-                    "Definition object cannot be null");
+                    "Api object cannot be null");
         }
 
-        return readDefinition(definition.getId());
+        return readApi(api.getId());
     }
 
-    public Api readDefinition(Long definitionId) {
-        Api definition = null;
+    public Api readApi(String id) {
+        Api api = null;
 
-        definition = searchDefinition(definitionId);
+        api = searchApi(id);
 
-        if (definition == null) {
+        if (api == null) {
             throw new NotFoundException(
-                    RegistryApiStandardErrors.SC404_03_STDDEF_NOT_FOUND,
-                    "Definition [" + definitionId + "] does not exist");
+                    RegistryApiStandardErrors.SC404_03_API_NOT_FOUND,
+                    "Api [" + id + "] does not exist");
         }
 
-        return definition;
+        return api;
     }
 
-    public Api loadDefinition(Long definitionId) {
+    public Api loadDefinition(String definitionId) {
         Api definition = null;
-        Optional<Api> referenceObjectLookUpResults = apiDefinitionRepository.findById(definitionId);
+        Optional<Api> referenceObjectLookUpResults = apiRepository.findById(definitionId);
 
         if (referenceObjectLookUpResults.isPresent()) {
             definition = referenceObjectLookUpResults.get();
@@ -141,23 +145,23 @@ public class ApiDefinitionService {
                     ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "name and version objects cannot be null");
         }
-        return apiDefinitionRepository.existsByNameAndVersion(name, version);
+        return apiRepository.existsByNameAndVersion(name, version);
     }
 
-    private boolean definitionExists(Long standardDefinitionId) {
-        return standardDefinitionId != null
-                && apiDefinitionRepository.existsById(standardDefinitionId);
+    private boolean apiExists(String id) {
+        return id != null
+                && apiRepository.existsById(id);
     }
 
     // -------------------------
     // search methods
     // -------------------------
 
-    public Api searchDefinition(Long definitionId) {
+    public Api searchApi(String definitionId) {
         Api definition = null;
         if (definitionId == null) {
             throw new BadRequestException(
-                    RegistryApiStandardErrors.SC400_09_STDDEF_ID_IS_EMPTY,
+                    RegistryApiStandardErrors.SC400_09_API_ID_IS_EMPTY,
                     "Definition id cannot be empty");
         }
 
@@ -174,7 +178,7 @@ public class ApiDefinitionService {
     }
 
     public Api searchDefinition(Api definition) {
-        definition = resolveNameAndVersion(definition);
+        // definition = resolveNameAndVersion(definition);
         return searchDefinition(definition.getName(), definition.getVersion());
     }
 
@@ -186,7 +190,7 @@ public class ApiDefinitionService {
             String version) {
 
         Api definition = null;
-        List<Api> definitions = searchDefinitions(name, version, null, null, null);
+        List<Api> definitions = searchDefinitions(name, version, null, null);
         if (definitions == null || definitions.size() == 0) {
             definition = null;
         } else if (definitions.size() == 1) {
@@ -203,12 +207,11 @@ public class ApiDefinitionService {
     public List<Api> searchDefinitions(
             String name,
             String version,
-            String type,
             String specification,
             String specificationVersion) {
         List<Api> definitionSearchResults = null;
         try {
-            definitionSearchResults = findDefinitions(name, version, type, specification, specificationVersion);
+            definitionSearchResults = findDefinitions(name, version, specification, specificationVersion);
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
@@ -221,12 +224,11 @@ public class ApiDefinitionService {
     private List<Api> findDefinitions(
             String name,
             String version,
-            String type,
             String specification,
             String specificationVersion) {
 
-        return apiDefinitionRepository
-                .findAll(ApiDefinitionRepository.Specs.hasMatch(name, version, type, specification,
+        return apiRepository
+                .findAll(ApiRepository.Specs.hasMatch(name, version, specification,
                         specificationVersion));
     }
 
@@ -241,14 +243,14 @@ public class ApiDefinitionService {
                     "Definition object cannot be null");
         }
 
-        if (!definitionExists(definition.getId())) {
+        if (!apiExists(definition.getId())) {
             throw new NotFoundException(
-                    RegistryApiStandardErrors.SC404_03_STDDEF_NOT_FOUND,
+                    RegistryApiStandardErrors.SC404_03_API_NOT_FOUND,
                     "Definition [" + definition.getId() + "] does not exist");
         }
 
         try {
-            definition = saveDefinition(definition);
+            definition = saveApi(definition);
             logger.info("Definition [" + definition.getId() + "] successfully updated");
         } catch (Throwable t) {
             throw new InternalServerException(
@@ -264,16 +266,16 @@ public class ApiDefinitionService {
     // DELETE
     // ======================================================================================
 
-    public void deleteDefinition(Long definitionId) {
-        Api definition = searchDefinition(definitionId);
+    public void deleteDefinition(String definitionId) {
+        Api definition = searchApi(definitionId);
         if (definition == null) {
             throw new NotFoundException(
-                    RegistryApiStandardErrors.SC404_03_STDDEF_NOT_FOUND,
+                    RegistryApiStandardErrors.SC404_03_API_NOT_FOUND,
                     "Definition [" + definitionId + "] does not exist");
         }
 
         try {
-            apiDefinitionRepository.delete(definition);
+            apiRepository.delete(definition);
             logger.info("Definition [" + definitionId + "] successfully deleted");
         } catch (Throwable t) {
             throw new InternalServerException(

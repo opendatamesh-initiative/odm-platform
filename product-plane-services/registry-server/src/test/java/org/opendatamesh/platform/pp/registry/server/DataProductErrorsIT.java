@@ -102,9 +102,9 @@ public class DataProductErrorsIT extends ODMRegistryIT {
 
         ErrorRes errorRes = errorResponse.getBody();
         assertThat(errorRes).isNotNull();
-        assertThat(errorRes.getCode()).isEqualTo(RegistryApiStandardErrors.SC422_07_PRODUCT_IS_INVALID.code());
+        assertThat(errorRes.getCode()).isEqualTo(RegistryApiStandardErrors.SC422_05_PRODUCT_NOT_VALID.code());
         assertThat(errorRes.getDescription())
-                .isEqualTo(RegistryApiStandardErrors.SC422_07_PRODUCT_IS_INVALID.description());
+                .isEqualTo(RegistryApiStandardErrors.SC422_05_PRODUCT_NOT_VALID.description());
         assertThat(errorRes.getMessage()).isNotNull();
         assertThat(errorRes.getMessage()).isEqualTo("Data product fullyQualifiedName property cannot be empty");
         assertThat(errorRes.getPath()).isEqualTo(RegistryAPIRoutes.DATA_PRODUCTS.getPath());
@@ -133,9 +133,9 @@ public class DataProductErrorsIT extends ODMRegistryIT {
 
         ErrorRes errorRes = errorResponse.getBody();
         assertThat(errorRes).isNotNull();
-        assertThat(errorRes.getCode()).isEqualTo(RegistryApiStandardErrors.SC422_07_PRODUCT_IS_INVALID.code());
+        assertThat(errorRes.getCode()).isEqualTo(RegistryApiStandardErrors.SC422_05_PRODUCT_NOT_VALID.code());
         assertThat(errorRes.getDescription())
-                .isEqualTo(RegistryApiStandardErrors.SC422_07_PRODUCT_IS_INVALID.description());
+                .isEqualTo(RegistryApiStandardErrors.SC422_05_PRODUCT_NOT_VALID.description());
         assertThat(errorRes.getMessage()).isNotNull();
         assertThat(errorRes.getMessage()).isEqualTo("Data product fullyQualifiedName property cannot be empty");
         assertThat(errorRes.getPath()).isEqualTo(RegistryAPIRoutes.DATA_PRODUCTS.getPath());
@@ -164,9 +164,9 @@ public class DataProductErrorsIT extends ODMRegistryIT {
 
         ErrorRes errorRes = errorResponse.getBody();
         assertThat(errorRes).isNotNull();
-        assertThat(errorRes.getCode()).isEqualTo(RegistryApiStandardErrors.SC422_07_PRODUCT_IS_INVALID.code());
+        assertThat(errorRes.getCode()).isEqualTo(RegistryApiStandardErrors.SC422_05_PRODUCT_NOT_VALID.code());
         assertThat(errorRes.getDescription())
-                .isEqualTo(RegistryApiStandardErrors.SC422_07_PRODUCT_IS_INVALID.description());
+                .isEqualTo(RegistryApiStandardErrors.SC422_05_PRODUCT_NOT_VALID.description());
         assertThat(errorRes.getMessage()).isNotNull();
         assertThat(errorRes.getMessage()).startsWith("Data product [prod-5] with id [wrong-id] is invalid.");
         assertThat(errorRes.getPath()).isEqualTo(RegistryAPIRoutes.DATA_PRODUCTS.getPath());
@@ -180,21 +180,19 @@ public class DataProductErrorsIT extends ODMRegistryIT {
 
         ResponseEntity<ErrorRes> errorResponse = null;
 
-        DataProductResource dataProductRes = null;
-        try {
-            dataProductRes = createDataProduct(ODMRegistryResources.DP1);
-        } catch (Throwable t) {
-            t.printStackTrace();
-            fail("Impossible to post activity: " + t.getMessage());
-            return;
-        }
+        DataProductResource createdDataProductRes = null;
+        createdDataProductRes = resourceBuilder.buildDataProduct(
+            "a9228eb7-3179-3628-ae64-aa5dbb1fcb28", 
+            "urn:org.opendatamesh:dataproducts:testProduct", 
+            "Test Domain",
+            "This is test product #1");
+        createdDataProductRes = createDataProduct(createdDataProductRes);
 
-        // TEST 1: try to register the same product again
         try {
-            errorResponse = registryClient.postDataProduct(dataProductRes, ErrorRes.class);
+            errorResponse = registryClient.postDataProduct(createdDataProductRes, ErrorRes.class);
         } catch (Throwable t) {
             t.printStackTrace();
-            fail("Impossible to post activity: " + t.getMessage());
+            fail("Impossible to post data product: " + t.getMessage());
             return;
         }
 
@@ -208,7 +206,7 @@ public class DataProductErrorsIT extends ODMRegistryIT {
                 .isEqualTo(RegistryApiStandardErrors.SC422_04_PRODUCT_ALREADY_EXISTS.description());
         assertThat(errorRes.getMessage()).isNotNull();
         assertThat(errorRes.getMessage()).isEqualTo(
-                "Data product [" + dataProductRes.getFullyQualifiedName() + "] already exists");
+                "Data product [" + createdDataProductRes.getFullyQualifiedName() + "] already exists");
         assertThat(errorRes.getPath()).isEqualTo(RegistryAPIRoutes.DATA_PRODUCTS.getPath());
         assertThat(errorRes.getStatus()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY.value());
         assertThat(errorRes.getTimestamp()).isNotNull();
@@ -300,9 +298,9 @@ public class DataProductErrorsIT extends ODMRegistryIT {
 
         ErrorRes errorRes = errorResponse.getBody();
         assertThat(errorRes).isNotNull();
-        assertThat(errorRes.getCode()).isEqualTo(RegistryApiStandardErrors.SC422_07_PRODUCT_IS_INVALID.code());
+        assertThat(errorRes.getCode()).isEqualTo(RegistryApiStandardErrors.SC422_05_PRODUCT_NOT_VALID.code());
         assertThat(errorRes.getDescription())
-                .isEqualTo(RegistryApiStandardErrors.SC422_07_PRODUCT_IS_INVALID.description());
+                .isEqualTo(RegistryApiStandardErrors.SC422_05_PRODUCT_NOT_VALID.description());
         assertThat(errorRes.getMessage()).isNotNull();
         assertThat(errorRes.getMessage()).isEqualTo("Data product id and fullyQualifiedName properties cannot be both empty");
         assertThat(errorRes.getPath()).isEqualTo(RegistryAPIRoutes.DATA_PRODUCTS.getPath());
@@ -330,9 +328,9 @@ public class DataProductErrorsIT extends ODMRegistryIT {
 
         ErrorRes errorRes = errorResponse.getBody();
         assertThat(errorRes).isNotNull();
-        assertThat(errorRes.getCode()).isEqualTo(RegistryApiStandardErrors.SC422_07_PRODUCT_IS_INVALID.code());
+        assertThat(errorRes.getCode()).isEqualTo(RegistryApiStandardErrors.SC422_05_PRODUCT_NOT_VALID.code());
         assertThat(errorRes.getDescription())
-                .isEqualTo(RegistryApiStandardErrors.SC422_07_PRODUCT_IS_INVALID.description());
+                .isEqualTo(RegistryApiStandardErrors.SC422_05_PRODUCT_NOT_VALID.description());
         assertThat(errorRes.getMessage()).isNotNull();
         assertThat(errorRes.getMessage()).isEqualTo("Data product id and fullyQualifiedName properties cannot be both empty");
         assertThat(errorRes.getPath()).isEqualTo(RegistryAPIRoutes.DATA_PRODUCTS.getPath());
@@ -360,9 +358,9 @@ public class DataProductErrorsIT extends ODMRegistryIT {
 
         ErrorRes errorRes = errorResponse.getBody();
         assertThat(errorRes).isNotNull();
-        assertThat(errorRes.getCode()).isEqualTo(RegistryApiStandardErrors.SC422_07_PRODUCT_IS_INVALID.code());
+        assertThat(errorRes.getCode()).isEqualTo(RegistryApiStandardErrors.SC422_05_PRODUCT_NOT_VALID.code());
         assertThat(errorRes.getDescription())
-                .isEqualTo(RegistryApiStandardErrors.SC422_07_PRODUCT_IS_INVALID.description());
+                .isEqualTo(RegistryApiStandardErrors.SC422_05_PRODUCT_NOT_VALID.description());
         assertThat(errorRes.getMessage()).isNotNull();
         assertThat(errorRes.getMessage()).startsWith("Data product id [id] does not match with fullyQualifiedName [fqn].");
         assertThat(errorRes.getPath()).isEqualTo(RegistryAPIRoutes.DATA_PRODUCTS.getPath());

@@ -26,6 +26,7 @@ import org.opendatamesh.platform.core.dpds.parser.DPDSSerializer;
 import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
 import org.opendatamesh.platform.core.dpds.parser.ParseResult;
 import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
+import org.opendatamesh.platform.core.dpds.utils.DPDSTestResources;
 
 public class DPDSTests {
 

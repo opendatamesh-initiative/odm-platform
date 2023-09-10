@@ -22,6 +22,7 @@ import org.opendatamesh.platform.core.dpds.parser.ParseResult;
 import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
 import org.opendatamesh.platform.core.dpds.parser.location.UriLocation;
 import org.opendatamesh.platform.core.dpds.parser.location.UriUtils;
+import org.opendatamesh.platform.core.dpds.utils.DPDSTestResources;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
@@ -301,7 +302,7 @@ public class DPDSParserErrorTests extends DPDSTests {
         UriLocation location = new UriLocation(descriptorContent);
         URI baseUri = null;
         try {
-            baseUri = UriUtils.getBaseUri(DPDSTestResources.DPD_CORE_WITH_EXTERNAL_REF.getUri());
+            baseUri = UriUtils.getResourcePathUri(DPDSTestResources.DPD_CORE_WITH_EXTERNAL_REF.getUri());
         } catch (IOException e) {
             fail("Impossible to calculate base uri for resource [" + DPDSTestResources.DPD_CORE_WITH_EXTERNAL_REF.path + "]");
         }

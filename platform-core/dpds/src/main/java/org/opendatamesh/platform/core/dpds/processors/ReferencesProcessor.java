@@ -13,17 +13,14 @@ import org.opendatamesh.platform.core.dpds.model.LifecycleActivityInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.LifecycleInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.PortDPDS;
 import org.opendatamesh.platform.core.dpds.model.StandardDefinitionDPDS;
+import org.opendatamesh.platform.core.dpds.model.definitions.DefinitionReferenceDPDS;
 import org.opendatamesh.platform.core.dpds.parser.DPDSDeserializer;
 import org.opendatamesh.platform.core.dpds.parser.ParseContext;
 import org.opendatamesh.platform.core.dpds.parser.location.UriUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -79,12 +76,12 @@ public class ReferencesProcessor implements PropertiesProcessor {
         }
 
         if (internalComponents.hasLifecycleInfo()) {
-            resolveTemplateComponents(internalComponents.getLifecycleInfo());
+            resolveLifecycleInfoComponents(internalComponents.getLifecycleInfo());
         }
 
     }
 
-    private void resolveTemplateComponents(LifecycleInfoDPDS lifecycleResource)
+    private void resolveLifecycleInfoComponents(LifecycleInfoDPDS lifecycleResource)
             throws UnresolvableReferenceException, DeserializationException {
 
         Objects.requireNonNull(lifecycleResource, "Input parameter [lifecycleResource] cannot be null");
@@ -96,115 +93,86 @@ public class ReferencesProcessor implements PropertiesProcessor {
                 continue;
 
             StandardDefinitionDPDS templateResource = acivityResource.getTemplate();
-           
+
             templateResource = resolveComponent(templateResource);
             acivityResource.setTemplate(templateResource);
-            
-
-            URI templateBaseUri = null;
-            if (templateResource.getOriginalRef() != null) {
-                try {
-                    URI portUri = new URI(templateResource.getOriginalRef());
-                    templateBaseUri = UriUtils.getBaseUri(portUri);
-                } catch (URISyntaxException e) {
-                    throw new UnresolvableReferenceException(
-                            "Impossible to resolve external reference [" + templateResource.getOriginalRef() + "]",
-                            e);
-                }
-            } else {
-                templateBaseUri = context.getLocation().getRootDocumentBaseUri();;
-            }
-           
-            if (templateResource.getDefinition() != null) {
-                resolveDefinition(templateResource, templateBaseUri);
-            }
-            
-
         }
     }
 
     private <E extends ComponentDPDS> void resolveComponents(List<E> components)
             throws UnresolvableReferenceException, DeserializationException {
 
-        URI baseUri = context.getLocation().getRootDocumentBaseUri();
-        resolveComponents(components, baseUri);
-    }
-
-    private <E extends ComponentDPDS> void resolveComponents(List<E> components, URI baseURI)
-            throws UnresolvableReferenceException, DeserializationException {
-
         for (int i = 0; i < components.size(); i++) {
             E component = null;
 
             component = components.get(i);
-            component = resolveComponent(component, baseURI);
+            component = resolveComponent(component);
             components.set(i, component);
         }
     }
 
     private <E extends ComponentDPDS> E resolveComponent(E component)
             throws UnresolvableReferenceException, DeserializationException {
-        URI baseUri = context.getLocation().getRootDocumentBaseUri();
-        return resolveComponent(component, baseUri);
-    }
 
-    private <E extends ComponentDPDS> E resolveComponent(E component, URI baseUri)
-            throws UnresolvableReferenceException, DeserializationException {
-
-        URI componentBaseUri = null;
+        String componentRef = null;
         if (component.isExternalReference()) {
-            component = resolveComponentFromExternalRef(component, baseUri);
-            componentBaseUri = baseUri;
+            componentRef = component.getRef();
+            component = resolveComponentFromExternalRef(component);
         } else if (component.isInternalReference()) {
             component = resolveComponentFromInternalRef(component);
-            componentBaseUri = context.getLocation().getRootDocumentBaseUri();
         }
 
-        if (component.getOriginalRef() != null) {
-            try {
-                URI portUri = new URI(component.getOriginalRef());
-                componentBaseUri = UriUtils.getBaseUri(portUri);
-            } catch (URISyntaxException e) {
-                throw new UnresolvableReferenceException(
-                        "Impossible to resolve external reference [" + component.getOriginalRef() + "]",
-                        e);
-            }
-        } 
+        URI componentAbsoulutePathUri = null;
+        try {
+            if (componentRef != null) {
+                componentAbsoulutePathUri = UriUtils.getResourceAbsolutePathUri(component.getBaseUri(), new URI(componentRef));
+            } 
+        } catch (Throwable t) {
+            throw new UnresolvableReferenceException(
+                    "Impossible to resolve absolute path uri of component [" + component.getName() + "]", t);
+        }
 
+    
         if (component instanceof PortDPDS) {
-            PortDPDS port = (PortDPDS)component;
-            if(port.hasApi()) {
-                StandardDefinitionDPDS api = resolveComponent(port.getPromises().getApi(), componentBaseUri);
+            PortDPDS port = (PortDPDS) component;
+            if (port.hasApi()) {
+                port.getPromises().getApi().setBaseUri(componentAbsoulutePathUri);
+                StandardDefinitionDPDS api = resolveComponent(port.getPromises().getApi());
                 port.getPromises().setApi(api);
             }
         }
 
-        
         if (component instanceof StandardDefinitionDPDS) {
-            StandardDefinitionDPDS stdDef = (StandardDefinitionDPDS)component;
-            if (stdDef.getDefinition() != null) {
-                resolveDefinition(stdDef, componentBaseUri);
-            }
+            resolveDefinition((StandardDefinitionDPDS) component, componentAbsoulutePathUri);
         }
-
 
         return component;
     }
 
     @SuppressWarnings("unchecked")
-    private <E extends ComponentDPDS> E resolveComponentFromExternalRef(E component, URI baseURI)
+    private <E extends ComponentDPDS> E resolveComponentFromExternalRef(E component)
             throws UnresolvableReferenceException {
 
         E resolvedComponent = null;
 
+        Objects.requireNonNull(component, "Input parameter [component] cannot be null");
+
+        if (component.isExternalReference() == false)
+            return component; // nothings to do here
+
+        if (component.getBaseUri() == null)
+            component.setBaseUri(context.getLocation().getRootDocumentBaseUri());
+
         try {
-            URI uri = new URI(component.getRef()).normalize();
-            String contentContent = context.getLocation().fetchResource(baseURI, uri);
+            URI uri = UriUtils.getResourceAbsoluteUri(component.getBaseUri(), component.getRefUri());
+            String contentContent = context.getLocation().fetchResource(uri);
 
             DPDSDeserializer deserializer = new DPDSDeserializer();
             resolvedComponent = (E) deserializer.deserializeComponent(contentContent, component.getClass());
+            resolvedComponent.setBaseUri(component.getBaseUri());
+            resolvedComponent.setOriginalRef(component.getRef());
             resolvedComponent.setRawContent(contentContent);
-            resolvedComponent.setOriginalRef(baseURI.resolve(uri).toString());
+
         } catch (Throwable t) {
             throw new UnresolvableReferenceException(
                     "Impossible to resolve external reference [" + component.getRef() + "]",
@@ -229,123 +197,48 @@ public class ReferencesProcessor implements PropertiesProcessor {
                 throw new UnresolvableReferenceException(
                         "Impossible to resolve internal reference [" + component.getRef() + "]");
             }
+            resolvedComponent.setBaseUri(component.getBaseUri());
+            resolvedComponent.setOriginalRef(component.getRef());
         } else { // nothinh to do
             resolvedComponent = component;
         }
+
+        resolvedComponent.setBaseUri(context.getLocation().getRootDocumentBaseUri());
+
         return resolvedComponent;
     }
 
-    private void resolveDefinition(StandardDefinitionDPDS standardDefinitionResource, URI baseUri)
+    private void resolveDefinition(StandardDefinitionDPDS stdDefResource, URI stdDefAbsoulutePathUri)
             throws UnresolvableReferenceException, DeserializationException {
 
-        Objects.requireNonNull(standardDefinitionResource,
+        Objects.requireNonNull(stdDefResource,
                 "Input parameter [standardDefinitionResource] cannot be null");
-        Objects.requireNonNull(standardDefinitionResource.getDefinition(),
-                "Input parameter [standardDefinitionResource] must have a definition");
 
-        if (standardDefinitionResource.getDefinition().getRef() != null) {
-            resolveDefinitionFromRef(standardDefinitionResource, baseUri);
-        } else if (standardDefinitionResource.getDefinition().getRawContent() != null) {
-            resolveDefinitionFromContent(standardDefinitionResource);
-        } else {
-            throw new UnresolvableReferenceException(
-                    "Definition is missing. No ref and no content.");
-        }
-    }
+        DefinitionReferenceDPDS defResource = stdDefResource.getDefinition();
 
-    private void resolveDefinitionFromRef(StandardDefinitionDPDS stdDefResource, URI baseURI)
-            throws UnresolvableReferenceException, DeserializationException {
+        if (defResource == null || defResource.isRef() == false)
+            return; // nothings to do here
 
-        Objects.requireNonNull(stdDefResource.getDefinition());
-        Objects.requireNonNull(stdDefResource.getDefinition().getRef());
-
-        ObjectNode stdDefNode = null, defNode = null;
-        try {
-            stdDefNode = (ObjectNode) context.getMapper().readTree(stdDefResource.getRawContent());
-            defNode = (ObjectNode) stdDefNode.get("definition");
-            if (defNode == null) {
-                logger.warn("No definition raw content for stdDef [" + stdDefResource.getName() + "]");
-                return;
-            }
-        } catch (JsonProcessingException e) {
-            throw new DeserializationException(
-                    "Impossible to parse raw content of stdDef [" + stdDefResource.getName() + "]", e);
-        }
-
-        String defRef = null, defContent = null;
-        String ref = stdDefResource.getDefinition().getRef();
+        String defContent = null;
+        String ref = defResource.getRef();
 
         if (ref != null && ref.startsWith(context.getOptions().getServerUrl())) {
             logger.debug("Definition for stdDef [" + stdDefResource.getName() + "] has been already processed");
             return;
         }
 
-        URI uri = null;
         try {
-            uri = new URI(ref).normalize();
-            if (baseURI == null) {
-                baseURI = context.getLocation().getRootDocumentBaseUri();
+            if(stdDefAbsoulutePathUri == null) {
+                stdDefAbsoulutePathUri = context.getLocation().getRootDocumentBaseUri();
             }
-            defContent = context.getLocation().fetchResource(baseURI, uri);
-        } catch (Exception e) {
+            defContent = context.getLocation().fetchResource(stdDefAbsoulutePathUri, new URI(defResource.getRef()));
+        } catch (Throwable t) {
             throw new UnresolvableReferenceException(
                     "Impossible to resolve external reference [" + ref + "]",
-                    e);
-        }
-       
-        defRef = context.getOptions().getServerUrl() + "/apis/{apiId}";
-        defRef = context.getOptions().getServerUrl() + "/templates/{templateId}";
-        
-        defNode.put("$ref", defRef);
-        stdDefResource.getDefinition().setOriginalRef(ref);
-
-    
-        stdDefResource.getDefinition().setRef(defRef);
-        stdDefResource.getDefinition().setRawContent(defContent);
-
-        try {
-            String apiContent = context.getMapper().writeValueAsString(stdDefNode);
-            stdDefResource.setRawContent(apiContent);
-        } catch (JsonProcessingException e) {
-            throw new DeserializationException("Impossible serialize descriptor", e);
-        }
-    }
-
-    // TODO move into deserializer
-    private void resolveDefinitionFromContent(StandardDefinitionDPDS apiResource)
-            throws UnresolvableReferenceException, DeserializationException {
-
-        Objects.requireNonNull(apiResource.getDefinition());
-        Objects.requireNonNull(apiResource.getDefinition().getRawContent());
-
-        ObjectNode apiNode = null, apiDefinitionNode = null;
-        try {
-            apiNode = (ObjectNode) context.getMapper().readTree(apiResource.getRawContent());
-            apiDefinitionNode = (ObjectNode) apiNode.get("definition");
-        } catch (JsonProcessingException e) {
-            throw new DeserializationException(
-                    "Impossible to parse raw content of API [" + apiResource.getName() + "]", e);
+                    t);
         }
 
-        String apiDefinitionRef = null;
-
-        apiDefinitionRef = context.getOptions().getServerUrl() + "/apis/{apiId}";
-        //apiDefinitionRef = context.getOptions().getServerUrl() + "/templates/{templateId}";
-        
-
-        apiNode.remove("definition");
-        apiDefinitionNode = apiNode.putObject("definition");
-        apiDefinitionNode.put("$ref", apiDefinitionRef);
-
-        apiResource.getDefinition().setRef(apiDefinitionRef);
-        apiResource.getDefinition().setMediaType("application/json");
-
-        try {
-            String apiContent = context.getMapper().writeValueAsString(apiNode);
-            apiResource.setRawContent(apiContent);
-        } catch (JsonProcessingException e) {
-            throw new DeserializationException("Impossible serialize descriptor", e);
-        }
+        defResource.setRawContent(defContent);
     }
 
     public static void process(ParseContext context) throws UnresolvableReferenceException, DeserializationException {

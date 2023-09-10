@@ -77,14 +77,14 @@ public class DataProductService {
 
         if(!StringUtils.hasText(dataProduct.getFullyQualifiedName())) {
             throw new UnprocessableEntityException(
-                RegistryApiStandardErrors.SC422_07_PRODUCT_IS_INVALID,
+                RegistryApiStandardErrors.SC422_05_PRODUCT_NOT_VALID,
                 "Data product fullyQualifiedName property cannot be empty");
         }
 
         String uuid = IdentifierStrategy.DEFUALT.getId(dataProduct.getFullyQualifiedName());
         if(dataProduct.getId() != null && !dataProduct.getId().equals(uuid)) {
             throw new UnprocessableEntityException(
-                RegistryApiStandardErrors.SC422_07_PRODUCT_IS_INVALID,
+                RegistryApiStandardErrors.SC422_05_PRODUCT_NOT_VALID,
                 "Data product [" + dataProduct.getFullyQualifiedName() + "] with id [" + dataProduct.getId()+ "] is invalid. Expected [" + uuid + "]");
         }
         dataProduct.setId(uuid);
@@ -255,7 +255,7 @@ public class DataProductService {
             String generatedUuid = IdentifierStrategy.DEFUALT.getId(dataProduct.getFullyQualifiedName());
             if(generatedUuid.equals(dataProduct.getId()) == false) {
                 throw new UnprocessableEntityException(
-                    RegistryApiStandardErrors.SC422_07_PRODUCT_IS_INVALID,
+                    RegistryApiStandardErrors.SC422_05_PRODUCT_NOT_VALID,
                     "Data product id [" + dataProduct.getId() + "] does not match with fullyQualifiedName [" + dataProduct.getFullyQualifiedName() + "]. Expecyed id is [" + generatedUuid + "]");
             }
         }
@@ -267,7 +267,7 @@ public class DataProductService {
             uuid = IdentifierStrategy.DEFUALT.getId(dataProduct.getFullyQualifiedName());
         } else {
             throw new UnprocessableEntityException(
-                RegistryApiStandardErrors.SC422_07_PRODUCT_IS_INVALID,
+                RegistryApiStandardErrors.SC422_05_PRODUCT_NOT_VALID,
                     "Data product id and fullyQualifiedName properties cannot be both empty");
         }
         DataProduct oldDataProduct = loadDataProduct(uuid);
@@ -387,13 +387,14 @@ public class DataProductService {
         dataProductVersion = descriptorToDataProductVersion(descriptorLocation, serverUrl);
         if(!dataProduct.getId().equals(dataProductVersion.getInfo().getDataProductId())) {
             throw new UnprocessableEntityException(
-                RegistryApiStandardErrors.SC422_03_DESCRIPTOR_DOC_SEMANTIC_IS_INVALID,
+                RegistryApiStandardErrors.SC422_03_DESCRIPTOR_NOT_COMPLIANT,
                 "Data product fqn [" + dataProduct.getFullyQualifiedName() + "] does not match with the fqn [" + dataProductVersion.getInfo().getFullyQualifiedName() + "] contained in data product descriptor");
         }
         
         
-        return addDataProductVersion(dataProductVersion, false);
+        return addDataProductVersion(dataProductVersion, false, serverUrl);
     }
+
 
 
     public DataProductVersion addDataProductVersion(
@@ -404,7 +405,7 @@ public class DataProductService {
 
         DataProductVersion dataProductVersion = null;
         dataProductVersion = descriptorToDataProductVersion(descriptorLocation, serverUrl);
-        return addDataProductVersion(dataProductVersion, createDataProductIfNotExists);
+        return addDataProductVersion(dataProductVersion, createDataProductIfNotExists, serverUrl);
     }
 
    
@@ -412,7 +413,7 @@ public class DataProductService {
     //TODO check schemas evolution rules
     private DataProductVersion addDataProductVersion (
         DataProductVersion dataProductVersion, 
-        boolean createDataProductIfNotExists) 
+        boolean createDataProductIfNotExists, String serverUrl) 
     {
         
         if(dataProductVersion == null) {
@@ -423,7 +424,7 @@ public class DataProductService {
 
         if(dataProductVersionService.isCompliantWithGlobalPolicies(dataProductVersion)) {
             throw new UnprocessableEntityException(
-                RegistryApiStandardErrors.SC422_03_DESCRIPTOR_DOC_SEMANTIC_IS_INVALID,
+                RegistryApiStandardErrors.SC422_03_DESCRIPTOR_NOT_COMPLIANT,
                 "Data product descriptor is not compliant with global policies");
         }
         
@@ -442,7 +443,7 @@ public class DataProductService {
             } 
         }
 
-        dataProductVersion = dataProductVersionService.createDataProductVersion(dataProductVersion, false);
+        dataProductVersion = dataProductVersionService.createDataProductVersion(dataProductVersion, false, serverUrl);
 
         return dataProductVersion;
     }
@@ -490,7 +491,7 @@ public class DataProductService {
             "An error occured in the backend descriptor processor while resolving standard definitions", e);
             case VALIDATE:
                 throw new UnprocessableEntityException(
-                RegistryApiStandardErrors.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
+                RegistryApiStandardErrors.SC422_02_DESCRIPTOR_NOT_VALID,
                 "Descriptor document does not comply with DPDS. The following validation errors has been found during validation [" + ((ValidationException)e.getCause()).getErrors().toString() + "]", e);    
             default:
               throw new InternalServerException(
@@ -503,11 +504,11 @@ public class DataProductService {
 
         if(e.getCause() instanceof FetchException) {
             throw new UnprocessableEntityException(
-                RegistryApiStandardErrors.SC422_01_DESCRIPTOR_URI_IS_INVALID,
+                RegistryApiStandardErrors.SC422_01_DESCRIPTOR_URI_NOT_VALID,
                 "Provided URI cannot be fatched [" + ((FetchException)e.getCause()).getUri() + "]", e);
         } else if(e.getCause() instanceof DeserializationException) {
             throw new UnprocessableEntityException(
-                RegistryApiStandardErrors.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
+                RegistryApiStandardErrors.SC422_02_DESCRIPTOR_NOT_VALID,
                 "Descriptor document is not a valid JSON document", e);    
         }  else {
             throw new InternalServerException(
@@ -520,11 +521,11 @@ public class DataProductService {
 
         if(e.getCause() instanceof UnresolvableReferenceException) {
             throw new UnprocessableEntityException(
-                RegistryApiStandardErrors.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
+                RegistryApiStandardErrors.SC422_02_DESCRIPTOR_NOT_VALID,
                 "Descriptor document contains unresolvable external references: " + e.getMessage(), e);
         } else if(e.getCause() instanceof DeserializationException) {
             throw new UnprocessableEntityException(
-                RegistryApiStandardErrors.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
+                RegistryApiStandardErrors.SC422_02_DESCRIPTOR_NOT_VALID,
                 "Descriptor document referentiates external resources that are not valid JSON documents", e);
         }  else {
             throw new InternalServerException(
@@ -537,11 +538,11 @@ public class DataProductService {
 
         if(e.getCause() instanceof UnresolvableReferenceException) {
             throw new UnprocessableEntityException(
-                RegistryApiStandardErrors.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
+                RegistryApiStandardErrors.SC422_02_DESCRIPTOR_NOT_VALID,
                 "Descriptor document contains unresolvable internal references", e);
         } else if(e.getCause() instanceof DeserializationException) {
             throw new UnprocessableEntityException(
-                RegistryApiStandardErrors.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID,
+                RegistryApiStandardErrors.SC422_02_DESCRIPTOR_NOT_VALID,
                 "Descriptor document that referentiates internal resources that are not valid JSON documents", e);
         } else {
             throw new InternalServerException(

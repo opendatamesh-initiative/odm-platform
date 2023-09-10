@@ -19,6 +19,7 @@ import org.opendatamesh.platform.pp.registry.server.database.entities.ApiToSchem
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.*;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.core.Component;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.core.StandardDefinition;
+import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.core.TemplateStandardDefinition;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.definitions.ApiDefinitionEndpoint;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.definitions.ApiDefinitionReference;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.interfaces.Port;
@@ -48,10 +49,10 @@ public class DataProductVersionService {
     private DataProductVersionRepository dataProductVersionRepository;
 
     @Autowired
-    private ApiDefinitionService apiService;
+    private ApiService apiService;
 
     @Autowired
-    private TemplateDefinitionService templateService;
+    private TemplateService templateService;
 
     @Autowired
     private SchemaService schemaService;
@@ -77,12 +78,13 @@ public class DataProductVersionService {
     // CREATE
     // ======================================================================================
 
-    protected DataProductVersion createDataProductVersion(DataProductVersion dataProductVersion) {
-        return createDataProductVersion(dataProductVersion, true);
+    protected DataProductVersion createDataProductVersion(DataProductVersion dataProductVersion, String serverUrl) {
+        return createDataProductVersion(dataProductVersion, true,serverUrl);
     }
 
-    protected DataProductVersion createDataProductVersion(DataProductVersion dataProductVersion,
-            boolean checkGlobalPolicies) {
+    protected DataProductVersion createDataProductVersion(
+        DataProductVersion dataProductVersion,
+            boolean checkGlobalPolicies, String serverUrl) {
         if (dataProductVersion == null) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
@@ -93,7 +95,7 @@ public class DataProductVersionService {
             dataProductVersion.getInfo().getVersionNumber();
             dataProductVersion.getInfo().getFullyQualifiedName();
             throw new UnprocessableEntityException(
-                RegistryApiStandardErrors.SC422_05_VERSION_ALREADY_EXISTS,
+                RegistryApiStandardErrors.SC422_06_VERSION_ALREADY_EXISTS,
                     "Version [" + dataProductVersion.getInfo().getVersionNumber() + "] of data product ["
                             + dataProductVersion.getInfo().getFullyQualifiedName() + "] already exists");
         }
@@ -101,12 +103,12 @@ public class DataProductVersionService {
         // TODO check schemas evolution rules
         if (checkGlobalPolicies && !isCompliantWithGlobalPolicies(dataProductVersion)) {
             throw new UnprocessableEntityException(
-                RegistryApiStandardErrors.SC422_03_DESCRIPTOR_DOC_SEMANTIC_IS_INVALID,
+                RegistryApiStandardErrors.SC422_03_DESCRIPTOR_NOT_COMPLIANT,
                     "The data product descriptor is not compliant to one or more global policies");
         }
 
         try {
-            saveApiDefinitions(dataProductVersion);
+            saveApis(dataProductVersion, serverUrl);
         } catch (Throwable t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
@@ -114,7 +116,7 @@ public class DataProductVersionService {
         }
 
         try {
-            saveTemplates(dataProductVersion);
+            saveTemplates(dataProductVersion, serverUrl);
         } catch (Throwable t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
@@ -154,24 +156,24 @@ public class DataProductVersionService {
         return dataProductVersionRepository.saveAndFlush(dataProductVersion);
     }
 
-    private void saveApiDefinitions(DataProductVersion dataProductVersion)
+    private void saveApis(DataProductVersion dataProductVersion, String serverUrl)
             throws JsonProcessingException {
         if (dataProductVersion != null && dataProductVersion.getInterfaceComponents() != null) {
-            saveApiDefinitions(dataProductVersion.getInterfaceComponents().getInputPorts());
-            saveApiDefinitions(dataProductVersion.getInterfaceComponents().getOutputPorts());
-            saveApiDefinitions(dataProductVersion.getInterfaceComponents().getDiscoveryPorts());
-            saveApiDefinitions(dataProductVersion.getInterfaceComponents().getObservabilityPorts());
-            saveApiDefinitions(dataProductVersion.getInterfaceComponents().getControlPorts());
+            saveApis(dataProductVersion.getInterfaceComponents().getInputPorts(), serverUrl);
+            saveApis(dataProductVersion.getInterfaceComponents().getOutputPorts(), serverUrl);
+            saveApis(dataProductVersion.getInterfaceComponents().getDiscoveryPorts(), serverUrl);
+            saveApis(dataProductVersion.getInterfaceComponents().getObservabilityPorts(), serverUrl);
+            saveApis(dataProductVersion.getInterfaceComponents().getControlPorts(), serverUrl);
         }
     }
 
-    private void saveApiDefinitions(List<Port> ports) throws JsonProcessingException {
+    private void saveApis(List<Port> ports, String serverUrl) throws JsonProcessingException {
         if (ports == null || ports.size() == 0)
             return;
 
         for (Port port : ports) {
             Map<ApiDefinitionEndpoint, Schema> schemas = saveApiSchemas(port);
-            Api apiDefinition = saveApiDefinition(port);
+            Api apiDefinition = saveApi(port, serverUrl);
             saveApiToSchemaRelationship(apiDefinition, schemas);
         }
     }
@@ -241,29 +243,35 @@ public class DataProductVersionService {
         return schema;
     }
 
-    private Api saveApiDefinition(Port port) throws JsonMappingException, JsonProcessingException {
+    private Api saveApi(Port port, String serverUrl) throws JsonMappingException, JsonProcessingException {
 
-        Api definition = null;
+        Api api = null;
 
         if (port.hasApiDefinition() == false)
             return null;
 
-        StandardDefinition api = port.getPromises().getApi();
-        Api newApiDefinition = new Api(); // why not a mapper?
-        newApiDefinition.setName(api.getName());
-        newApiDefinition.setVersion(api.getVersion());
-        newApiDefinition.setDescription(api.getDescription());
-        newApiDefinition.setSpecification(api.getSpecification());
-        newApiDefinition.setSpecificationVersion(api.getSpecificationVersion());
-        newApiDefinition.setContent(api.getDefinition().getRawContent());
+        StandardDefinition apiStdDef = port.getPromises().getApi();
+        Api newApi = new Api();
+        newApi.setId(apiStdDef.getId());
+        newApi.setFullyQualifiedName(apiStdDef.getFullyQualifiedName());
+        newApi.setEntityType(apiStdDef.getEntityType());
+        newApi.setName(apiStdDef.getName());
+        newApi.setDisplayName(apiStdDef.getDisplayName());
+        newApi.setVersion(apiStdDef.getVersion());
+        newApi.setDescription(apiStdDef.getDescription());
+        newApi.setSpecification(apiStdDef.getSpecification());
+        newApi.setSpecificationVersion(apiStdDef.getSpecificationVersion());
+        newApi.setDefinitionMediaType(apiStdDef.getDefinition().getMediaType());
+        newApi.setDefinition(apiStdDef.getDefinition().getRawContent());
 
-        // Api is created first to obtain the id used after for replacing api definition
-        // content with a reference url
+        
         try {
-            definition = apiService.searchDefinition(newApiDefinition);
-            if (definition == null) {
-                definition = apiService.createDefinition(newApiDefinition);
+            api = apiService.searchDefinition(newApi);
+            if (api == null) {
+                api = apiService.createApi(newApi);
             }
+            apiStdDef.getDefinition().setOriginalRef(apiStdDef.getDefinition().getRef());
+            apiStdDef.getDefinition().setRef(serverUrl + "/apis/" + api.getId());
         } catch (Throwable t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
@@ -272,128 +280,66 @@ public class DataProductVersionService {
                     t);
         }
 
-        // Once we have the api id we replace the definition content with a reference
-        // url
-        ObjectNode standardDefinition = (ObjectNode) objectMapper.readTree(port.getPromises().getApi().getRawContent());
-
-        ObjectNode standardDefinitionContent = (ObjectNode)standardDefinition.get("definition");
-        String ref = String.valueOf(standardDefinitionContent.get("$ref"));
-        ref = ref.replaceAll("\\{apiId\\}", "" + definition.getId());
-        ref = ref.replaceAll("\"", "");
-        standardDefinitionContent.put("$ref", ref);
-
-        port.getPromises().getApi().setRawContent(objectMapper.writeValueAsString(standardDefinition));
-
-        return definition;
+        return api;
     }
 
-    private void saveTemplates(DataProductVersion dataProductVersion) throws JsonProcessingException {
+    private void saveTemplates(DataProductVersion dataProductVersion, String serverUrl) throws JsonProcessingException {
         
         if (dataProductVersion.hasLifecycleInfo()) {
             saveLifecycleInfoTemplates(
-                    dataProductVersion.getInternalComponents().getLifecycleInfo());
+                    dataProductVersion.getInternalComponents().getLifecycleInfo(), serverUrl);
         }
     }
 
-      private void saveLifecycleInfoTemplates(LifecycleInfo lifecycleInfo)
+      private void saveLifecycleInfoTemplates(LifecycleInfo lifecycleInfo, String serverUrl)
             throws JsonProcessingException {
     
         for (LifecycleActivityInfo activity : lifecycleInfo.getActivityInfos()) {
             if(activity.getTemplate() != null && activity.getTemplate().getDefinition() != null) {
-                saveActivityTemplate(activity);
+                saveTemplate(activity.getTemplate(), serverUrl); 
             }
         }
     }
 
-    private Template saveActivityTemplate(
-        LifecycleActivityInfo activity)
+    private Template saveTemplate(
+        TemplateStandardDefinition templateStdDef, String serverUrl)
     throws JsonProcessingException {
 
-        StandardDefinition template = activity.getTemplate();
-        Template templateDefinition = null;
+        
 
-        Template newTemplateDefinition = new Template(); // why not a mapper?
-        newTemplateDefinition.setName(template.getName());
-        newTemplateDefinition.setVersion(template.getVersion());
-        newTemplateDefinition.setDescription(template.getDescription());
-        newTemplateDefinition.setSpecification(template.getSpecification());
-        newTemplateDefinition.setSpecificationVersion(template.getSpecificationVersion());
-        newTemplateDefinition.setContent(template.getDefinition().getRawContent());
+        Template template = new Template(); // why not a mapper?
+        template.setId(templateStdDef.getId());
+        template.setFullyQualifiedName(templateStdDef.getFullyQualifiedName());
+        template.setEntityType(templateStdDef.getEntityType());
+        template.setName(templateStdDef.getName());
+        template.setDisplayName(templateStdDef.getDisplayName());
+        template.setVersion(templateStdDef.getVersion());
+        template.setDescription(templateStdDef.getDescription());
+        template.setSpecification(templateStdDef.getSpecification());
+        template.setSpecificationVersion(templateStdDef.getSpecificationVersion());
+        template.setDefinitionMediaType(templateStdDef.getDefinition().getMediaType());
+        template.setDefinition(templateStdDef.getDefinition().getRawContent());
 
-        // Api is created first to obtain the id used after for replacing api definition
-        // content with a reference url
         try {
-            templateDefinition = templateService.searchDefinition(newTemplateDefinition);
-            if (templateDefinition == null) {
-                templateDefinition = templateService.createDefinition(newTemplateDefinition);
+            Template existingTemplate = templateService.searchDefinition(template);
+            if (existingTemplate == null) {
+                template = templateService.createTemplate(template);
+            } else {
+                template = existingTemplate;
             }
+
+            templateStdDef.getDefinition().setOriginalRef(templateStdDef.getDefinition().getRef());
+            templateStdDef.getDefinition().setRef(serverUrl + "/templates/" + template.getId());
         } catch (Throwable t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while saving stage [" +  activity.getStageName() + "] of lifecycleInfo object", t);
+                    "An error occured in the backend database while saving template [" +  templateStdDef.getName() + "]", t);
         }
         
-        // Once we have the template id we replace the definition content with a reference
-        // url
-        ObjectNode templateDefinitionNode = (ObjectNode) objectMapper.readTree(activity.getTemplate().getRawContent());
-
-        ObjectNode templateDefinitionContentNode = (ObjectNode) templateDefinitionNode.get("definition");
-        String ref = String.valueOf(templateDefinitionContentNode.get("$ref"));
-        ref = ref.replaceAll("\\{templateId\\}", "" + templateDefinition.getId());
-        ref = ref.replaceAll("\"", "");
-        templateDefinitionContentNode.put("$ref", ref);
-
-        activity.getTemplate().setRawContent(objectMapper.writeValueAsString(templateDefinitionNode));
-
-        return templateDefinition;
+        return template;
     }
 
-    private Template saveComponentTemplate(
-        Component component, 
-        String templateDefinitionProperty, 
-        StandardDefinition template)
-    throws JsonProcessingException {
-
-        Template templateDefinition = null;
-
-        //StandardDefinition template = component.getProvisionInfo().getTemplate();
-        Template newTemplateDefinition = new Template(); // why not a mapper?
-        newTemplateDefinition.setName(template.getName());
-        newTemplateDefinition.setVersion(template.getVersion());
-        newTemplateDefinition.setDescription(template.getDescription());
-        newTemplateDefinition.setSpecification(template.getSpecification());
-        newTemplateDefinition.setSpecificationVersion(template.getSpecificationVersion());
-        newTemplateDefinition.setContent(template.getDefinition().getRawContent());
-
-        // Api is created first to obtain the id used after for replacing api definition
-        // content with a reference url
-        try {
-            templateDefinition = templateService.searchDefinition(newTemplateDefinition);
-            if (templateDefinition == null) {
-                templateDefinition = templateService.createDefinition(newTemplateDefinition);
-            }
-        } catch (Throwable t) {
-            throw new InternalServerException(
-                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while saving [" + templateDefinitionProperty + "].template of app component [" + component.getFullyQualifiedName()
-                            + "]",
-                    t);
-        }
-        
-        // Once we have the template id we replace the definition content with a reference
-        // url
-        ObjectNode componentObject = (ObjectNode) objectMapper.readTree(component.getRawContent());
-
-        ObjectNode templateDefinitionNode = (ObjectNode) componentObject.at("/" + templateDefinitionProperty + "/template");
-        String ref = String.valueOf(templateDefinitionNode.get("$ref"));
-        ref = ref.replaceAll("\\{templateId\\}", "" + templateDefinition.getId());
-        ref = ref.replaceAll("\"", "");
-        templateDefinitionNode.put("$ref", ref);
-
-        component.setRawContent(objectMapper.writeValueAsString(componentObject));
-
-        return templateDefinition;
-    }
+    
 
     
 

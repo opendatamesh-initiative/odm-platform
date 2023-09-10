@@ -34,8 +34,8 @@ public interface DataProductVersionMapper {
     ApplicationComponent applicationComponentResourceToApplicationComponent(ApplicationComponentDPDS applicationComponentDPDS);
     InfrastructuralComponent infrastructuralComponentResourceToInfrastructuralComponent(InfrastructuralComponentDPDS infrastructuralComponentDPDS);
 
-    StandardDefinition toEntity(StandardDefinitionDPDS resource);
-    StandardDefinitionDPDS toResource(StandardDefinition entity);
+    //StandardDefinition toEntity(StandardDefinitionDPDS resource);
+    //StandardDefinitionDPDS toResource(StandardDefinition entity);
 
     ReferenceObject toEntity(ReferenceObjectDPDS resource);
     ReferenceObjectDPDS toResource(ReferenceObject entity);

@@ -3,6 +3,7 @@ package org.opendatamesh.platform.core.dpds.parser;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.exceptions.DeserializationException;
@@ -57,7 +58,7 @@ public class DPDSDeserializer {
         return componentResource;
     }
 
-    public void setRootEntityRawContent(DataProductVersionDPDS descriptorResource, String descriptorContent,
+    private void setRootEntityRawContent(DataProductVersionDPDS descriptorResource, String descriptorContent,
             ObjectMapper mapper)
             throws DeserializationException {
 
@@ -112,7 +113,7 @@ public class DPDSDeserializer {
 
         ObjectNode lifecycleNode = (ObjectNode) internalComponentsNode.get("lifecycleInfo");
         if (lifecycleNode != null) {
-            setActivityRawContent(internalComponents.getLifecycleInfo(), lifecycleNode, mapper);
+            setActivitiesRawContent(internalComponents.getLifecycleInfo(), lifecycleNode, mapper);
         }
 
         ArrayNode applicationComponentNodes = (ArrayNode) internalComponentsNode.get("applicationComponents");
@@ -127,7 +128,7 @@ public class DPDSDeserializer {
         }
     }
 
-    public void setActivityRawContent(
+    public void setActivitiesRawContent(
             LifecycleInfoDPDS lifecycleInfoResource,
             ObjectNode lifecycleInfoNode,
             ObjectMapper mapper) throws JsonProcessingException {
@@ -142,16 +143,7 @@ public class DPDSDeserializer {
             if (activityResource.hasTemplate()) {
 
                 ObjectNode templateNode = (ObjectNode) activityNode.remove("template");
-                activityResource.getTemplate().setRawContent(
-                        mapper.writeValueAsString(templateNode));
-
-                if (activityResource.getTemplate().getDefinition() != null) {
-                    if (templateNode.get("definition").get("$ref") == null) {
-                        JsonNode defNode = templateNode.get("definition");
-                        activityResource.getTemplate().getDefinition().setRawContent(
-                                mapper.writeValueAsString(defNode));
-                    }
-                }
+                setComponetRawContent(activityResource.getTemplate(), templateNode, mapper);
             }
 
             activityResource.setRawContent(
@@ -159,17 +151,23 @@ public class DPDSDeserializer {
         }
     }
 
+    
+
     private void setSharedComponentsRawContent(
             ComponentsDPDS sharedComponentsResource,
             ObjectNode sharedComponentsNode,
             ObjectMapper mapper) throws JsonProcessingException {
+
+        Objects.requireNonNull(sharedComponentsResource, "Input parameter [sharedComponentsResource] cannot be null");
+        Objects.requireNonNull(sharedComponentsNode, "Input parameter [sharedComponentsNode] cannot be null");
+        Objects.requireNonNull(mapper, "Input parameter [mapper] cannot be null");
 
         for (EntityTypeDPDS entityType : EntityTypeDPDS.COMPONENTS) {
 
             ObjectNode componentNodes = (ObjectNode) sharedComponentsNode.get(entityType.groupingPropertyName());
             if (componentNodes != null) {
                 for (Entry<String, JsonNode> p : componentNodes.properties()) {
-                    JsonNode componentNode = p.getValue();
+                    ObjectNode componentNode = (ObjectNode)p.getValue();
                     ComponentDPDS componentResource = sharedComponentsResource.getComponentsByEntityType(entityType)
                             .get(p.getKey());
 
@@ -184,6 +182,10 @@ public class DPDSDeserializer {
             ArrayNode componentNodes,
             ObjectMapper mapper) throws JsonProcessingException {
 
+        Objects.requireNonNull(componentResources, "Input parameter [componentResources] cannot be null");
+        Objects.requireNonNull(componentNodes, "Input parameter [componentNodes] cannot be null");
+        Objects.requireNonNull(mapper, "Input parameter [mapper] cannot be null");
+        
         for (int i = 0; i < componentNodes.size(); i++) {
             ObjectNode componentNode = (ObjectNode) componentNodes.get(i);
             ComponentDPDS componentResource = componentResources.get(i);
@@ -193,8 +195,12 @@ public class DPDSDeserializer {
 
     public void setComponetRawContent(
             ComponentDPDS componentResource,
-            JsonNode componentNode,
+            ObjectNode componentNode,
             ObjectMapper mapper) throws JsonProcessingException {
+
+        Objects.requireNonNull(componentResource, "Input parameter [componentResource] cannot be null");
+        Objects.requireNonNull(componentNode, "Input parameter [componentNode] cannot be null");
+        Objects.requireNonNull(mapper, "Input parameter [mapper] cannot be null");
 
         if (componentResource instanceof PortDPDS) {
             PortDPDS port = (PortDPDS) componentResource;
@@ -210,10 +216,10 @@ public class DPDSDeserializer {
         if (componentResource instanceof StandardDefinitionDPDS) {
             StandardDefinitionDPDS sdtDefResource = (StandardDefinitionDPDS) componentResource;
             if (sdtDefResource.getDefinition() != null) {
-                if (componentNode.get("definition").get("$ref") == null) {
-                    JsonNode defNode = componentNode.get("definition");
+                ObjectNode definitionNode = (ObjectNode)componentNode.remove("definition");
+                if (definitionNode.get("$ref") == null) {
                     sdtDefResource.getDefinition().setRawContent(
-                            mapper.writeValueAsString(defNode));
+                            mapper.writeValueAsString(definitionNode));
                 }
             }
         }

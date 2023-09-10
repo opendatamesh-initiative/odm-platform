@@ -1,5 +1,7 @@
 package org.opendatamesh.platform.core.dpds.model;
 
+import java.net.URI;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -20,9 +22,21 @@ public class ReferenceObjectDPDS {
     private String ref;
 
     @JsonIgnore
-    private String originalRef;
+    private URI baseUri;
     
     @JsonIgnore
     @EqualsAndHashCode.Exclude
     protected String rawContent;
+
+    public boolean isRef() {
+        return ref != null;
+    }
+
+    public boolean isResolvedRef() {
+        return isRef() && rawContent != null;
+    }
+
+    public boolean isInline() {
+        return rawContent != null && ref == null;
+    }
 }

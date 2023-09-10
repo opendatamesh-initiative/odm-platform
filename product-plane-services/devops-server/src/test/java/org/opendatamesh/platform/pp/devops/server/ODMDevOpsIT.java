@@ -24,7 +24,7 @@ import org.opendatamesh.platform.pp.devops.api.resources.ActivityResource;
 import org.opendatamesh.platform.pp.devops.api.resources.DevOpsApiStandardErrors;
 import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsClients;
 import org.opendatamesh.platform.pp.registry.api.clients.RegistryAPIRoutes;
-import org.opendatamesh.platform.pp.registry.api.resources.DefinitionResource;
+import org.opendatamesh.platform.pp.registry.api.resources.ExternalComponentResource;
 import org.opendatamesh.platform.up.executor.api.clients.ExecutorAPIRoutes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -262,9 +262,9 @@ public abstract class ODMDevOpsIT extends ODMIntegrationTest{
                 String apiResponse = resourceBuilder.readResourceFromFile(ODMDevOpsResources.RESOURCE_DPV_1_CANONICAL);
                 mockReadOneDataProductVersion(apiResponse, "c18b07ba-bb01-3d55-a5bf-feb517a8d901", "1.0.0");
 
-                DefinitionResource templateRes = resourceBuilder.readResourceFromFile(
+                ExternalComponentResource templateRes = resourceBuilder.readResourceFromFile(
                         ODMDevOpsResources.TEMPLATE_DEF_1_CANONICAL,
-                        DefinitionResource.class);
+                        ExternalComponentResource.class);
                 mockReadOneTemplateDefinition(templateRes, "1");
             } else {
                 unbindMockServerFromRegistryClient();
@@ -317,7 +317,7 @@ public abstract class ODMDevOpsIT extends ODMIntegrationTest{
         }
     }
 
-    public void mockReadOneTemplateDefinition(DefinitionResource templateRes, String templateid) {
+    public void mockReadOneTemplateDefinition(ExternalComponentResource templateRes, String templateid) {
         logger.debug("  >>>  mockReadOneTemplateDefinition");
 
         String apiUrl = clients.getRegistryClient().apiUrl(RegistryAPIRoutes.TEMPLATES,

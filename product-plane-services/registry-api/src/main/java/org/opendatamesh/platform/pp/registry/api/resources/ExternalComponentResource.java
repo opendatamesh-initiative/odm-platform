@@ -1,25 +1,31 @@
 package org.opendatamesh.platform.pp.registry.api.resources;
 
+import java.util.Date;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-
+// API & TEMPLATES:    todo make it abstract
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DefinitionResource {
+public class ExternalComponentResource {
 
     @JsonProperty("id")
-    private Long id;
+    String id;
 
+    @JsonProperty("fullyQualifiedName")
+    protected String fullyQualifiedName;
+
+    @JsonProperty("entityType")
+    protected String entityType;
+    
     @JsonProperty("name")
     private String name;
 
     @JsonProperty("version")
     private String version;
-
-    @JsonProperty("status")
-    private String status;
 
     @JsonProperty("displayName")
     private String displayName;
@@ -27,18 +33,23 @@ public class DefinitionResource {
     @JsonProperty("description")
     private String description;
 
-    @JsonProperty("type")
-    private String type;
-
     @JsonProperty("specification")
     private String specification;
 
     @JsonProperty("specificationVersion")
     private String specificationVersion;
 
-    @JsonProperty("contentMediaType")
-    private String contentMediaType;
+    @JsonProperty("definitionMediaType")
+    private String definitionMediaType;
 
-    @JsonProperty("content")
-    private String content;
+    @JsonProperty("definition")
+    private String definition;
+
+    @EqualsAndHashCode.Exclude
+    @JsonProperty("createdAt")
+    protected Date createdAt;
+
+    @EqualsAndHashCode.Exclude
+    @JsonProperty("updatedAt")
+    protected Date updatedAt;
 }

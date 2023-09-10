@@ -6,13 +6,16 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
+import org.opendatamesh.platform.core.dpds.model.ApplicationComponentDPDS;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
+import org.opendatamesh.platform.core.dpds.model.InfrastructuralComponentDPDS;
 import org.opendatamesh.platform.core.dpds.parser.DPDSParser;
 import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
 import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
@@ -258,6 +261,48 @@ public class DataProductVersionIT extends ODMRegistryIT {
     }
 
     // ======================================================================================
+    // READ Data Product Version Components
+    // ======================================================================================
+
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testGetDataProductVersionApplicationComponents() throws JsonProcessingException {
+
+        DataProductResource createdDataProductRes = null;
+        createdDataProductRes = resourceBuilder.buildDataProduct(
+                "f350cab5-992b-32f7-9c90-79bca1bf10be",
+                "urn:org.opendatamesh:dataproducts:dpdCore",
+                "Test Domain",
+                "This is test product #1");
+        createdDataProductRes = createDataProduct(createdDataProductRes);
+
+        String descriptorContent = createDataProductVersion(createdDataProductRes.getId(), ODMRegistryResources.DPD_CORE_PROPS_CUSTOM);
+
+        ResponseEntity<ApplicationComponentDPDS[]> applicationComponentDPDSResponse = registryClient.getDataProductVersionApplicationComponents(createdDataProductRes.getId(), "1.0.0");
+        verifyResponseEntity(applicationComponentDPDSResponse, HttpStatus.OK, true);
+        assertThat(applicationComponentDPDSResponse.getBody().length).isEqualTo(1);
+    }
+
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testGetDataProductVersionInfrastructuralComponents() throws JsonProcessingException {
+
+        DataProductResource createdDataProductRes = null;
+        createdDataProductRes = resourceBuilder.buildDataProduct(
+                "f350cab5-992b-32f7-9c90-79bca1bf10be",
+                "urn:org.opendatamesh:dataproducts:dpdCore",
+                "Test Domain",
+                "This is test product #1");
+        createdDataProductRes = createDataProduct(createdDataProductRes);
+
+        String descriptorContent = createDataProductVersion(createdDataProductRes.getId(), ODMRegistryResources.DPD_CORE_PROPS_CUSTOM);
+
+        ResponseEntity<InfrastructuralComponentDPDS[]> infrastructuralComponentDPDSResponse = registryClient.getDataProductVersionInfrastructuralComponents(createdDataProductRes.getId(), "1.0.0");
+        verifyResponseEntity(infrastructuralComponentDPDSResponse, HttpStatus.OK, true);
+        assertThat(infrastructuralComponentDPDSResponse.getBody().length).isEqualTo(1);
+    }
+
+    // ======================================================================================
     // UPDATE Data Product Version
     // ======================================================================================
 
@@ -268,8 +313,8 @@ public class DataProductVersionIT extends ODMRegistryIT {
     // ======================================================================================
 
     @Test
-    @Disabled
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    @EnabledIf(expression = "#{environment.acceptsProfiles('testpostgresql', 'dev')}", loadContext = true)
     public void testDataProductVersionDelete()
             throws IOException {
 

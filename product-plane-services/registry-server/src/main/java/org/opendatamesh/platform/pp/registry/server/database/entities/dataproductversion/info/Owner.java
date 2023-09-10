@@ -20,6 +20,6 @@ public class Owner {
     @Column(name = "NAME")
     private String name;
 
-    @OneToMany(mappedBy="info.owner", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy="info.owner", fetch = FetchType.EAGER)
     public List<DataProductVersion> dataproduct;
 }

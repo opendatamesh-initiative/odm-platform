@@ -300,6 +300,7 @@ public class DataProductVersionIT extends ODMRegistryIT {
         ResponseEntity<InfrastructuralComponentDPDS[]> infrastructuralComponentDPDSResponse = registryClient.getDataProductVersionInfrastructuralComponents(createdDataProductRes.getId(), "1.0.0");
         verifyResponseEntity(infrastructuralComponentDPDSResponse, HttpStatus.OK, true);
         assertThat(infrastructuralComponentDPDSResponse.getBody().length).isEqualTo(1);
+
     }
 
     // ======================================================================================

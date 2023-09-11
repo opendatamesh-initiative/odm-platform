@@ -1,58 +1,21 @@
 package org.opendatamesh.platform.pp.registry.server.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 
-import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
+import org.opendatamesh.platform.pp.registry.api.controllers.AbstractApiController;
 import org.opendatamesh.platform.pp.registry.api.resources.ExternalComponentResource;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
 import org.opendatamesh.platform.pp.registry.server.database.entities.Api;
 import org.opendatamesh.platform.pp.registry.server.database.mappers.ApiDefinitionMapper;
 import org.opendatamesh.platform.pp.registry.server.services.ApiService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
-
-
-//import org.springframework.web.bind.annotation.*;
- 
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-
-import javax.validation.Valid;
-import java.util.List;
-
 @RestController
-@RequestMapping(
-    value =  "/apis", 
-    produces = { 
-        "application/vnd.odmp.v1+json", 
-        "application/vnd.odmp+json", 
-        "application/json"
-    }
-)
-@Validated
-@Tag(
-    name = "APIs", 
-    description = "API's definitions")
-public class ApiController {
+public class ApiController extends AbstractApiController {
 
     @Autowired
     private ApiService apiDefinitionService;
@@ -62,205 +25,47 @@ public class ApiController {
 
     private static final Logger logger = LoggerFactory.getLogger(ApiController.class);
 
-    public ApiController() { 
+    public ApiController() {
         logger.debug("Standard api definitions controller successfully started");
     }
 
-    // ======================================================================================
-    // DEFINITIONS
-    // ======================================================================================
-    
-    // ----------------------------------------
-    // CREATE Definition 
-    // ----------------------------------------
-   
-    @PostMapping(
-        consumes = { "application/vnd.odmp.v1+json", 
-        "application/vnd.odmp+json", "application/json"}
-    )
-    @ResponseStatus(HttpStatus.CREATED) 
-    @Operation(
-        summary = "Register the  API definition",
-        description = "Register the provided API definition in the Data Product Registry" 
-    )
-    @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "201", 
-            description = "API definition registered", 
-            content = @Content(
-                mediaType = "application/json", 
-                schema = @Schema(implementation = ExternalComponentResource.class)
-            )
-        ),
-        @ApiResponse(
-                responseCode = "400",
-                description = "[Bad Request](https://www.rfc-editor.org/rfc/rfc9110.html#name-400-bad-request)"
-                        + "\r\n - Error Code 40008 - Standard Definition is empty",
-                content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
-        ),
-        @ApiResponse(
-            responseCode = "422", 
-            description = "[Unprocessable Content](https://www.rfc-editor.org/rfc/rfc9110.html#name-422-unprocessable-content)"
-            + "\r\n - Error Code 42206 - Definition already exists"
-            + "\r\n - Error Code 42208 - Definition document is invalid",
-            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
-        ),
-         @ApiResponse(
-            responseCode = "500", 
-            description = "[Internal Server Error](https://www.rfc-editor.org/rfc/rfc9110.html#name-500-internal-server-error)"
-            + "\r\n - Error Code 50000 - Error in the backend service"
-            + "\r\n - Error Code 50001 - Error in in the backend database",
-            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
-        )
-    })
-    public ExternalComponentResource createDefinition(
-        @Parameter( 
-            description = "An API definition object", 
-            required = true)
-        @Valid @RequestBody(required=false)  ExternalComponentResource definition
-    ) {
-        if(definition == null) {
+    @Override
+    public ExternalComponentResource createApi(
+            ExternalComponentResource apiRes) {
+
+        if (apiRes == null) {
             throw new BadRequestException(
-                RegistryApiStandardErrors.SC400_08_API_IS_EMPTY,
-                "API definition cannot be empty");
+                    RegistryApiStandardErrors.SC400_08_API_IS_EMPTY,
+                    "API definition cannot be empty");
         }
-        
-        Api apiDefinition = definitionMapper.toEntity(definition);
+
+        Api apiDefinition = definitionMapper.toEntity(apiRes);
         apiDefinition = apiDefinitionService.createApi(apiDefinition);
         return definitionMapper.toResource(apiDefinition);
     }
 
-    // ----------------------------------------
-    // READ All definitions
-    // ----------------------------------------
+    @Override
+    public List<ExternalComponentResource> getApis(
+            String name,
+            String version,
+            String specification,
+            String specificationVersion) {
 
-    @GetMapping
-    @ResponseStatus(HttpStatus.OK) 
-    @Operation(
-        summary = "Get all registered API definitions",
-        description = "Get all API definitions registered in the Data Product Registry."
-    )
-    @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "200", 
-            description = "The list of all registered API definitions", 
-            content = @Content(
-                mediaType = "application/json", 
-                schema = @Schema(implementation = List.class)
-            )
-        ),
-        @ApiResponse(
-                responseCode = "500",
-                description = "[Internal Server Error](https://www.rfc-editor.org/rfc/rfc9110.html#name-500-internal-server-error)"
-                        + "\r\n - Error Code 50001 - Error in in the backend database",
-                content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
-        )
-    })
-    public List<ExternalComponentResource> readAllDefinitions(
-        @Parameter(description="Add `name` parameter to the request to get only definitions with the specific name")
-        @RequestParam(required = false, name = "name") 
-        String name, 
-
-        @Parameter(description="Add `version` parameter to the request to get only definitions with the specific version")
-        @RequestParam(required = false, name = "version") 
-        String version, 
-        
-        @Parameter(description="Add `type` parameter to the request to get only definitions with the specific type")
-        @RequestParam(required = false, name = "type") 
-        String type, 
-
-        @Parameter(description="Add `specification` parameter to the request to get only definitions with the specific specification")
-        @RequestParam(required = false, name = "specification") 
-        String specification,
-
-        @Parameter(description="Add `specificationVersion` parameter to the request to get only definitions with teh specific specification version")
-        @RequestParam(required = false, name = "specificationVersion") 
-        String specificationVersion
-    )
-    {
-        List<Api> definitions = apiDefinitionService.searchDefinitions(name, version, specification, specificationVersion);
+        List<Api> definitions = apiDefinitionService.searchDefinitions(name, version, specification,
+                specificationVersion);
         List<ExternalComponentResource> definitionResources = definitionMapper.definitionsToResources(definitions);
         return definitionResources;
     }
 
-    // ----------------------------------------
-    // READ Definition
-    // ----------------------------------------
-
-    @GetMapping(
-        value = "/{id}"
-    )
-    @ResponseStatus(HttpStatus.OK)
-    @Operation(
-        summary = "Get the specified API definition",
-        description = "Get the API definition identified by the input `id`"
-    )
-    @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "200", 
-            description = "The requested definition", 
-            content = @Content(
-                mediaType = "application/json", 
-                schema = @Schema(implementation = ExternalComponentResource.class)
-            )
-        ),
-        @ApiResponse(
-                responseCode = "404",
-                description = "[Not Found](https://www.rfc-editor.org/rfc/rfc9110.html#name-404-not-found)"
-                        + "\r\n - Error Code 40403 - Standard Definition not found",
-                content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
-        )
-    })
-    public ExternalComponentResource readOneDefinition(
-        @Parameter(description = "Idenntifier of the API definition")
-        @Valid @PathVariable(value = "id") String id) 
-    {
+    @Override
+    public ExternalComponentResource getApi(String id) {
         Api apiDefinition = apiDefinitionService.readApi(id);
         return definitionMapper.toResource(apiDefinition);
     }
 
-    // ----------------------------------------
-    // UPDATE Definition
-    // ----------------------------------------
-
-    // Definitions are immutable ojects, the cannot be updated after creations
-
-
-    // ----------------------------------------
-    // DELETE Definition
-    // ----------------------------------------
-
-     // TODO add all error responses
-
-     @DeleteMapping(
-        value = "/{id}"
-     )
-     @ResponseStatus(HttpStatus.OK)
-     @Operation(
-             summary = "Delete the specified API definition",
-             description = "Delete the API definition identified by the input `id`"
-     )
-     @ApiResponses(value = {
-             @ApiResponse(
-                     responseCode = "404",
-                     description = "[Not Found](https://www.rfc-editor.org/rfc/rfc9110.html#name-404-not-found)"
-                             + "\r\n - Error Code 40403 - Standard Definition not found",
-                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
-             ),
-             @ApiResponse(
-                     responseCode = "500",
-                     description = "[Internal Server Error](https://www.rfc-editor.org/rfc/rfc9110.html#name-500-internal-server-error)"
-                             + "\r\n - Error Code 50001 - Error in in the backend database",
-                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
-             )
-     })
-    public void deleteDefinition(
-        @Parameter(description = "Identifier of the definition")
-        @PathVariable String id
-    )
-    {
+    @Override
+    public void deleteApi(String id) {
         apiDefinitionService.deleteDefinition(id);
     }
 
-    
 }

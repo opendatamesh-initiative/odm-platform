@@ -52,4 +52,13 @@ spring:
     locations: classpath:db/migration/postgresql
     clean-on-validation-error: true
 
-
+odm:
+  utilityPlane:
+    policyServices:
+      open-policy-agent:
+        active: false
+        address: http://localhost:9001
+    notificationServices:
+      blindata:
+        active: false
+        address: http://localhost:9002

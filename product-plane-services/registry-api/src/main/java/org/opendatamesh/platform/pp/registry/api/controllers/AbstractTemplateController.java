@@ -47,23 +47,44 @@ public abstract class AbstractTemplateController {
     // POST /templates
     // ===============================================================================
 
-    @PostMapping(consumes = { "application/vnd.odmp.v1+json",
-            "application/vnd.odmp+json", "application/json" })
-    @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Register the  Template definition", description = "Register the provided Template definition in the Data Product Registry")
+    @PostMapping(
+        consumes = { "application/vnd.odmp.v1+json", 
+        "application/vnd.odmp+json", "application/json"}
+    )
+    @ResponseStatus(HttpStatus.CREATED) 
+    @Operation(
+        summary = "Register the  Template definition",
+        description = "Register the provided Template definition in the Data Product Registry" 
+    )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Template definition registered", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExternalComponentResource.class))),
-            @ApiResponse(responseCode = "400", description = "[Bad Request](https://www.rfc-editor.org/rfc/rfc9110.html#name-400-bad-request)"
-                    + "\r\n - Error Code 40008 - Standard Definition is empty", content = {
-                            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class)) }),
-            @ApiResponse(responseCode = "422", description = "[Unprocessable Content](https://www.rfc-editor.org/rfc/rfc9110.html#name-422-unprocessable-content)"
-                    + "\r\n - Error Code 42206 - Definition already exists"
-                    + "\r\n - Error Code 42208 - Definition document is invalid", content = {
-                            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class)) }),
-            @ApiResponse(responseCode = "500", description = "[Internal Server Error](https://www.rfc-editor.org/rfc/rfc9110.html#name-500-internal-server-error)"
-                    + "\r\n - Error Code 50000 - Error in the backend service"
-                    + "\r\n - Error Code 50001 - Error in in the backend database", content = {
-                            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class)) })
+        @ApiResponse(
+            responseCode = "201", 
+            description = "Template definition registered", 
+            content = @Content(
+                mediaType = "application/json", 
+                schema = @Schema(implementation = ExternalComponentResource.class)
+            )
+        ),
+        @ApiResponse(
+                responseCode = "400",
+                description = "[Bad Request](https://www.rfc-editor.org/rfc/rfc9110.html#name-400-bad-request)"
+                        + "\r\n - Error Code 40008 - Standard Definition is empty",
+                content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
+        ),
+        @ApiResponse(
+            responseCode = "422", 
+            description = "[Unprocessable Content](https://www.rfc-editor.org/rfc/rfc9110.html#name-422-unprocessable-content)"
+            + "\r\n - Error Code 42206 - Definition already exists"
+            + "\r\n - Error Code 42208 - Definition document is invalid",
+            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
+        ),
+         @ApiResponse(
+            responseCode = "500", 
+            description = "[Internal Server Error](https://www.rfc-editor.org/rfc/rfc9110.html#name-500-internal-server-error)"
+            + "\r\n - Error Code 50000 - Error in the backend service"
+            + "\r\n - Error Code 50001 - Error in in the backend database",
+            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
+        )
     })
     public ExternalComponentResource createTemplateEndpoint(
             @Parameter(description = "An Template definition object", required = true) @RequestBody(required = false) ExternalComponentResource definitionRes) {

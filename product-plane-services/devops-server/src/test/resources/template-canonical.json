@@ -1,0 +1,11 @@
+{
+	"id": "65f81a2f-65d8-3f03-9dff-ba598ba0292c",
+	"fullyQualifiedName": "urn:org.opendatamesh:templates:testPipeline:1.0.0",
+	"entityType": "template",
+	"name": "testPipeline",
+	"version": "1.0.0",
+	"specification": "azure-devops",
+	"specificationVersion": "1.0.0",
+	"definition": "{\"organization\":\"andreagioia\",\"project\":\"opendatamesh\",\"pipelineId\":\"3\",\"branch\":\"main\"}",
+	"createdAt": "2023-09-10T22:09:57.972+00:00"
+}

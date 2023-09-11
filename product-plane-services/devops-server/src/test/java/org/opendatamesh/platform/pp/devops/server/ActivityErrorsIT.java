@@ -34,7 +34,7 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
 
         createMocksForCreateActivityCall(false, true);
 
-        ActivityResource postedActivityRes = resourceBuilder.buildActivity("c18b07ba-bb01-3d55-a5bf-feb517a8d901",
+        ActivityResource postedActivityRes = resourceBuilder.buildActivity("f350cab5-992b-32f7-9c90-79bca1bf10be",
                 "1.0.0", "prod");
         ResponseEntity<ErrorRes> response = null;
         try {
@@ -68,10 +68,10 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
 
         // NOTE because activity is just created and not started executor service should
         // not be called
-        ActivityResource activityRes = createTestActivity1(false);
+        ActivityResource activityRes = createTestActivity(false);
         assertThat(activityRes.getId()).isNotNull();
         assertThat(activityRes.getDataProductId()).isNotNull();
-        assertThat(activityRes.getDataProductId()).isEqualTo("c18b07ba-bb01-3d55-a5bf-feb517a8d901");
+        assertThat(activityRes.getDataProductId()).isEqualTo("f350cab5-992b-32f7-9c90-79bca1bf10be");
         assertThat(activityRes.getDataProductVersion()).isNotNull();
         assertThat(activityRes.getDataProductVersion()).isEqualTo("1.0.0");
         assertThat(activityRes.getType()).isNotNull();
@@ -91,10 +91,10 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
 
         // NOTE because the call to executor service fails the activity and relative
         // tasks are terminated with FAILED status
-        ActivityResource activityRes = createTestActivity1(true);
+        ActivityResource activityRes = createTestActivity(true);
         assertThat(activityRes.getId()).isNotNull();
         assertThat(activityRes.getDataProductId()).isNotNull();
-        assertThat(activityRes.getDataProductId()).isEqualTo("c18b07ba-bb01-3d55-a5bf-feb517a8d901");
+        assertThat(activityRes.getDataProductId()).isEqualTo("f350cab5-992b-32f7-9c90-79bca1bf10be");
         assertThat(activityRes.getDataProductVersion()).isNotNull();
         assertThat(activityRes.getDataProductVersion()).isEqualTo("1.0.0");
         assertThat(activityRes.getType()).isNotNull();
@@ -206,7 +206,7 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
     public void testCreateActivityAcceptingUnsupportedMediaType() {
         createMocksForCreateActivityCall();
 
-        ActivityResource postedActivityRes = resourceBuilder.buildActivity("c18b07ba-bb01-3d55-a5bf-feb517a8d901",
+        ActivityResource postedActivityRes = resourceBuilder.buildActivity("f350cab5-992b-32f7-9c90-79bca1bf10be",
                 "1.0.0", "prod");
         ResponseEntity<ErrorRes> response = null;
         try {
@@ -271,7 +271,7 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
 
         createMocksForCreateActivityCall();
 
-        ActivityResource postedActivityRes = resourceBuilder.buildActivity("c18b07ba-bb01-3d55-a5bf-feb517a8d901", null,
+        ActivityResource postedActivityRes = resourceBuilder.buildActivity("f350cab5-992b-32f7-9c90-79bca1bf10be", null,
                 "prod");
         ResponseEntity<ErrorRes> response = null;
         try {
@@ -302,7 +302,7 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
 
         createMocksForCreateActivityCall();
 
-        ActivityResource postedActivityRes = resourceBuilder.buildActivity("c18b07ba-bb01-3d55-a5bf-feb517a8d901",
+        ActivityResource postedActivityRes = resourceBuilder.buildActivity("f350cab5-992b-32f7-9c90-79bca1bf10be",
                 "1.0.0", null);
         ResponseEntity<ErrorRes> response = null;
         try {
@@ -333,7 +333,7 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
 
         createMocksForCreateActivityCall();
 
-        ActivityResource postedActivityRes = resourceBuilder.buildActivity("c18b07ba-bb01-3d55-a5bf-feb517a8d901",
+        ActivityResource postedActivityRes = resourceBuilder.buildActivity("f350cab5-992b-32f7-9c90-79bca1bf10be",
                 "1.0.0", "xxx");
         ResponseEntity<ErrorRes> response = null;
         try {
@@ -363,7 +363,7 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
     public void testCreateSameActivityMultipleTimes() {
 
         createMocksForCreateActivityCall();
-        ActivityResource postedActivityRes = resourceBuilder.buildActivity("c18b07ba-bb01-3d55-a5bf-feb517a8d901",
+        ActivityResource postedActivityRes = resourceBuilder.buildActivity("f350cab5-992b-32f7-9c90-79bca1bf10be",
                 "1.0.0", "prod");
         try {
             ActivityResource firstCreatedActivityRes = devOpsClient.createActivity(postedActivityRes, false);
@@ -394,7 +394,7 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
                 .isEqualTo(DevOpsApiStandardErrors.SC422_02_ACTIVITY_ALREADY_EXISTS.description());
         assertThat(errorRes.getMessage()).isNotNull();
         assertThat(errorRes.getMessage()).isEqualTo(
-                "Activity for stage [prod] of version [1.0.0] of product [c18b07ba-bb01-3d55-a5bf-feb517a8d901] already exist");
+                "Activity for stage [prod] of version [1.0.0] of product [f350cab5-992b-32f7-9c90-79bca1bf10be] already exist");
         assertThat(errorRes.getPath()).isEqualTo(DevOpsAPIRoutes.ACTIVITIES.getPath());
         assertThat(errorRes.getStatus()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY.value());
         assertThat(errorRes.getTimestamp()).isNotNull();
@@ -441,7 +441,7 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
 
         ActivityResource startedActivityRes = null;
         try {
-            ActivityResource activityRes = createTestActivity1(false);
+            ActivityResource activityRes = createTestActivity(false);
             startedActivityRes = devOpsClient.startActivity(activityRes.getId());
         } catch (Throwable t) {
             fail("Impossible to start activity " + t.getMessage());
@@ -485,7 +485,7 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
     public void testStartAlreadyProcessedActivity() {
         createMocksForCreateActivityCall();
 
-        ActivityResource activityRes = createTestActivity1(true);
+        ActivityResource activityRes = createTestActivity(true);
 
         ActivityTaskResource[] taskResources = devOpsClient.searchTasks(activityRes.getId(), null, null);
         assertThat(taskResources).isNotNull();
@@ -533,8 +533,8 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
     public void testStartMultipleActivitiesOnSameDataProductVersion() {
 
         createMocksForCreateActivityCall();
-        ActivityResource postedActivityRes = resourceBuilder.buildActivity("c18b07ba-bb01-3d55-a5bf-feb517a8d901",
-                "1.0.0", "qa");
+     
+        ActivityResource postedActivityRes = buildTestActivity();
         try {
             ActivityResource firstCreatedActivityRes = devOpsClient.createActivity(postedActivityRes, true);
         } catch (Throwable t) {
@@ -547,7 +547,7 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
         createMocksForCreateActivityCall();
         ResponseEntity<ErrorRes> response = null;
         try {
-            postedActivityRes.setType("prod");
+            postedActivityRes.setType("test");
             response = devOpsClient.postActivity(postedActivityRes, true, ErrorRes.class);
         } catch (Throwable t) {
             t.printStackTrace();
@@ -564,13 +564,13 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
                 .isEqualTo(DevOpsApiStandardErrors.SC409_01_CONCURRENT_ACTIVITIES.description());
         assertThat(errorRes.getMessage()).isNotNull();
         assertThat(errorRes.getMessage()).isEqualTo(
-                "There is already a running activity on version [c18b07ba-bb01-3d55-a5bf-feb517a8d901] of data product [1.0.0]");
+                "There is already a running activity on version [f350cab5-992b-32f7-9c90-79bca1bf10be] of data product [1.0.0]");
         assertThat(errorRes.getPath()).isEqualTo(DevOpsAPIRoutes.ACTIVITIES.getPath());
         assertThat(errorRes.getStatus()).isEqualTo(HttpStatus.CONFLICT.value());
         assertThat(errorRes.getTimestamp()).isNotNull();
 
-        ActivityResource[] activityResources = devOpsClient.searchActivities("c18b07ba-bb01-3d55-a5bf-feb517a8d901",
-                "1.0.0", "prod", null);
+        ActivityResource[] activityResources = devOpsClient.searchActivities("f350cab5-992b-32f7-9c90-79bca1bf10be",
+                "1.0.0", "test", null);
         assertThat(activityResources).isNotNull();
         assertThat(activityResources.length).isEqualTo(1);
         ActivityResource searchedActivityRes = activityResources[0];

@@ -32,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.core.env.Environment;
+import org.springframework.data.geo.Distance;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -114,8 +115,27 @@ public abstract class ODMDevOpsIT extends ODMIntegrationTest{
     // ======================================================================================
     // Create test basic resources
     // ======================================================================================
+    
+    protected ActivityResource buildTestActivity() {
+        return buildActivity(
+            "f350cab5-992b-32f7-9c90-79bca1bf10be", 
+            "1.0.0", "prod");
+    }
+    protected ActivityResource buildActivity(
+        String dataProductId,
+        String dataProductVersion,
+        String type) {
+        
+        ActivityResource activity = new ActivityResource();
 
-    protected ActivityResource createTestActivity1(boolean startAfterCreation) {
+        activity.setDataProductId(dataProductId);
+        activity.setDataProductVersion(dataProductVersion);
+        activity.setType(type);
+
+        return activity;
+    }
+
+    protected ActivityResource createTestActivity(boolean startAfterCreation) {
         return createActivity(
                 ODMDevOpsResources.RESOURCE_ACTIVITY_1, startAfterCreation);
     }
@@ -131,6 +151,7 @@ public abstract class ODMDevOpsIT extends ODMIntegrationTest{
             fail("Impossible to read activity from file: " + t.getMessage());
             return null;
         }
+        
         createdActivityRes = createActivity(activityRes, startAfterCreation);
 
         return createdActivityRes;
@@ -260,12 +281,12 @@ public abstract class ODMDevOpsIT extends ODMIntegrationTest{
         try {
             if (mockRegistry) {
                 String apiResponse = resourceBuilder.readResourceFromFile(ODMDevOpsResources.RESOURCE_DPV_1_CANONICAL);
-                mockReadOneDataProductVersion(apiResponse, "c18b07ba-bb01-3d55-a5bf-feb517a8d901", "1.0.0");
+                mockReadOneDataProductVersion(apiResponse, "f350cab5-992b-32f7-9c90-79bca1bf10be", "1.0.0");
 
                 ExternalComponentResource templateRes = resourceBuilder.readResourceFromFile(
                         ODMDevOpsResources.TEMPLATE_DEF_1_CANONICAL,
                         ExternalComponentResource.class);
-                mockReadOneTemplateDefinition(templateRes, "1");
+                mockReadOneTemplateDefinition(templateRes, "65f81a2f-65d8-3f03-9dff-ba598ba0292c");
             } else {
                 unbindMockServerFromRegistryClient();
             }
@@ -317,11 +338,11 @@ public abstract class ODMDevOpsIT extends ODMIntegrationTest{
         }
     }
 
-    public void mockReadOneTemplateDefinition(ExternalComponentResource templateRes, String templateid) {
+    public void mockReadOneTemplateDefinition(ExternalComponentResource templateRes, String templateId) {
         logger.debug("  >>>  mockReadOneTemplateDefinition");
 
         String apiUrl = clients.getRegistryClient().apiUrl(RegistryAPIRoutes.TEMPLATES,
-                "/" + templateid);
+                "/" + templateId);
         String apiResponse = null;
 
         try {

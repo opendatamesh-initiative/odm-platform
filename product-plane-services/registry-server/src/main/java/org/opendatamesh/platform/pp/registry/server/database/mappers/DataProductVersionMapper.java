@@ -34,7 +34,9 @@ public interface DataProductVersionMapper {
     ApplicationComponent applicationComponentResourceToApplicationComponent(ApplicationComponentDPDS applicationComponentDPDS);
     InfrastructuralComponent infrastructuralComponentResourceToInfrastructuralComponent(InfrastructuralComponentDPDS infrastructuralComponentDPDS);
 
-   
+    List<ApplicationComponentDPDS> applicationComponentsToApplicationComponentResources(List<ApplicationComponent> entities);
+    List<InfrastructuralComponentDPDS> infrastructuralComponentsToInfrastructuralComponentResources(List<InfrastructuralComponent> entities);
+
     //StandardDefinition toEntity(StandardDefinitionDPDS resource);
     //StandardDefinitionDPDS toResource(StandardDefinition entity);
 
@@ -50,18 +52,4 @@ public interface DataProductVersionMapper {
 
     ExternalResource toEntity(ExternalResourceDPDS resource);
     ExternalResourceDPDS toResource(ExternalResource entity);
-
-    /* 
-    @Mapping(source = "rawContent", target = "href", qualifiedByName = "rawContentToHref")
-    ExternalResource toEntityTemplate(ReferenceObjectDPDS resource);
-
-    @Named("rawContentToHref")
-    static String rawContentToHref(String rawContent) throws JsonProcessingException {
-        ObjectMapper objectMapper = ObjectMapperFactory.JSON_MAPPER;
-        if (rawContent == null)
-            return null;
-        ExternalResourceDPDS externalResourceDPDS = objectMapper.readValue(rawContent, ExternalResourceDPDS.class);
-        return externalResourceDPDS.getHref();
-    }
-    */
 }

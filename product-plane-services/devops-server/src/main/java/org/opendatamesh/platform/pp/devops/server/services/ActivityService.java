@@ -118,8 +118,6 @@ public class ActivityService {
             activity = startActivity(activity, tasks);
         }
 
-        List<Activity> aaa = activities = loadAllActivities();
-
         return activity;
     }
 

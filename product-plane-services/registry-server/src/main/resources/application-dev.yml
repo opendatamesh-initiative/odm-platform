@@ -14,14 +14,14 @@ server:
 spring:
   # JPA configuration
   jpa:
-    show-sql: true
+    #show-sql: true
     hibernate:
       ddl-auto: validate
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     properties:
       hibernate:
-        format_sql: true
+        #format_sql: true
         jdbc:
           lob:
             non_contextual_creation: true

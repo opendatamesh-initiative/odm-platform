@@ -2,8 +2,7 @@ package org.opendatamesh.platform.core.dpds;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
-
-import static  org.opendatamesh.platform.core.dpds.DescriptorCoreChecker.verifyAll;
+import static org.opendatamesh.platform.core.dpds.utils.DescriptorCoreChecker.verifyAll;
 
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.core.dpds.model.ApplicationComponentDPDS;
@@ -13,6 +12,7 @@ import org.opendatamesh.platform.core.dpds.model.LifecycleInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.PortDPDS;
 import org.opendatamesh.platform.core.dpds.model.StandardDefinitionDPDS;
 import org.opendatamesh.platform.core.dpds.parser.ParseResult;
+import org.opendatamesh.platform.core.dpds.utils.DPDSTestResources;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;

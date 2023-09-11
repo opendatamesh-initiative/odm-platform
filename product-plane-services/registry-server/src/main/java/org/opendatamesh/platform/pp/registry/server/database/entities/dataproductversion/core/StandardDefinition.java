@@ -1,6 +1,7 @@
 package org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.core;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 
@@ -10,7 +11,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper=true)
 @MappedSuperclass
-public class StandardDefinition extends ExternalComponent {
+public abstract class StandardDefinition extends ExternalComponent {
       
     @Column(name="SPECIFICATION")
     private String specification;
@@ -18,7 +19,7 @@ public class StandardDefinition extends ExternalComponent {
     @Column(name="SPECIFICATION_VERSION")
     private String specificationVersion;
     
-    @Transient
+    @Embedded
     private DefinitionReference definition;
 
     @Transient

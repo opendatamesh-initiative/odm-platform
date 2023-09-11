@@ -15,6 +15,7 @@ import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErr
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.model.LifecycleActivityInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.StandardDefinitionDPDS;
+import org.opendatamesh.platform.core.dpds.parser.IdentifierStrategy;
 import org.opendatamesh.platform.pp.devops.api.clients.DevOpsAPIRoutes;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskStatus;
 import org.opendatamesh.platform.pp.devops.api.resources.DevOpsApiStandardErrors;
@@ -23,7 +24,7 @@ import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsConfigura
 import org.opendatamesh.platform.pp.devops.server.database.entities.Task;
 import org.opendatamesh.platform.pp.devops.server.database.mappers.TaskMapper;
 import org.opendatamesh.platform.pp.devops.server.database.repositories.TaskRepository;
-import org.opendatamesh.platform.pp.registry.api.resources.DefinitionResource;
+import org.opendatamesh.platform.pp.registry.api.resources.ExternalComponentResource;
 import org.opendatamesh.platform.up.executor.api.clients.ExecutorClient;
 import org.opendatamesh.platform.up.executor.api.resources.TaskResource;
 import org.opendatamesh.platform.up.executor.api.resources.TaskStatus;
@@ -319,8 +320,8 @@ public class TaskService {
         task.setExecutorRef(executorServiceRef);
 
         if (activityInfo.hasTemplate()) {
-            DefinitionResource templateDefinition = readTemplateDefinition(activityInfo.getTemplate());
-            task.setTemplate(templateDefinition.getContent());
+            ExternalComponentResource template = readTemplateDefinition(activityInfo.getTemplate());
+            task.setTemplate(template.getDefinition());
         }
         if (activityInfo.hasConfigurations()) {
             String configurationsString = serializeCongigurations(activityInfo.getConfigurations());
@@ -330,20 +331,20 @@ public class TaskService {
         return task;
     }
 
-    private DefinitionResource readTemplateDefinition(StandardDefinitionDPDS template) {
-        DefinitionResource templateDefinition = null;
+    private ExternalComponentResource readTemplateDefinition(StandardDefinitionDPDS template) {
+        ExternalComponentResource templateDefinition = null;
 
         Objects.requireNonNull(template, "Template parameter cannot be null");
         Objects.requireNonNull(template.getDefinition(), "Property [definition] in template object cannot be null");
         Objects.requireNonNull(template.getDefinition().getRef(),
                 "Property [$ref] in template definition object cannot be null");
 
-        String ref = template.getDefinition().getRef();
+      
+        String templateId = IdentifierStrategy.DEFUALT.getId(
+             template.getFullyQualifiedName());
 
-        Long templateId = null;
         try {
-            templateId = Long.parseLong(ref.substring(ref.lastIndexOf('/') + 1));
-            templateDefinition = clients.getRegistryClient().readOneTemplateDefinition(templateId);
+            templateDefinition = clients.getRegistryClient().readTemplate(templateId);
             logger.debug("Template definition [" + templateId + "] succesfully read from ODM Registry");
         } catch (Throwable t) {
             throw new InternalServerException(

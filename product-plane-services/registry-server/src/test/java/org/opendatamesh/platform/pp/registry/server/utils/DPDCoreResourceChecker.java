@@ -1,12 +1,10 @@
 package org.opendatamesh.platform.pp.registry.server.utils;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import org.opendatamesh.platform.core.dpds.model.ApplicationComponentDPDS;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
@@ -38,7 +36,7 @@ public class DPDCoreResourceChecker {
         verifyLifecycle(descriptor);
     }
 
-    public static void verifyCoreInfo(DataProductVersionDPDS descriptor) {
+     public static void verifyCoreInfo(DataProductVersionDPDS descriptor) {
         InfoDPDS info = descriptor.getInfo();
         assertThat(info).isNotNull();
         assertThat(info.getDataProductId()).isEqualTo("f350cab5-992b-32f7-9c90-79bca1bf10be");
@@ -52,7 +50,7 @@ public class DPDCoreResourceChecker {
         assertThat(info.getOwner().getName()).isEqualTo("John Doe");
     }
 
-    public static void verifyCoreInterfaces(DataProductVersionDPDS descriptor) {
+    public static  void verifyCoreInterfaces(DataProductVersionDPDS descriptor) {
 
         InterfaceComponentsDPDS interfaces = descriptor.getInterfaceComponents();
         assertThat(interfaces).isNotNull();
@@ -77,15 +75,13 @@ public class DPDCoreResourceChecker {
         assertThat(promises).isNotNull();
         assertThat(promises.getPlatform()).isEqualTo("platformX");
         assertThat(promises.getServicesType()).isEqualTo("rest-services");
-        /* 
         assertThat(promises.getApi()).isNotNull();
-        assertThat(promises.getApi().getName()).isEqualTo("reastApi1");
+        assertThat(promises.getApi().getName()).isEqualTo("restApi1");
         assertThat(promises.getApi().getVersion()).isEqualTo("1.3.2");
         assertThat(promises.getApi().getDescription()).isEqualTo("Rest input API");
         assertThat(promises.getApi().getSpecification()).isEqualTo("custom-api-spec");
         assertThat(promises.getApi().getSpecificationVersion()).isEqualTo("1.0.0");
         assertThat(promises.getApi().getDefinition()).isNotNull();
-        */
 
         assertThat(interfaces.getOutputPorts()).isNotNull();
         assertThat(interfaces.getOutputPorts().size()).isEqualTo(1);
@@ -103,15 +99,14 @@ public class DPDCoreResourceChecker {
         assertThat(promises).isNotNull();
         assertThat(promises.getPlatform()).isEqualTo("platformX");
         assertThat(promises.getServicesType()).isEqualTo("rest-services");
-        /* 
         assertThat(promises.getApi()).isNotNull();
-        assertThat(promises.getApi().getName()).isEqualTo("reastApi2");
+        assertThat(promises.getApi().getName()).isEqualTo("restApi2");
         assertThat(promises.getApi().getVersion()).isEqualTo("1.3.2");
         assertThat(promises.getApi().getDescription()).isEqualTo("Rest output API");
         assertThat(promises.getApi().getSpecification()).isEqualTo("custom-api-spec");
         assertThat(promises.getApi().getSpecificationVersion()).isEqualTo("1.0.0");
         assertThat(promises.getApi().getDefinition()).isNotNull();
-        */
+
     }
 
     public static void verifyCoreApplicationComponents(DataProductVersionDPDS descriptor) {
@@ -139,7 +134,7 @@ public class DPDCoreResourceChecker {
                 .isEqualTo("urn:org.opendatamesh:dataproducts:dpdCore:1.0.0:infrastructures:infraA:1.1.0");
     }
 
-    public static void verifyCoreInfrastructuralComponents(DataProductVersionDPDS descriptor) {
+    public static  void verifyCoreInfrastructuralComponents(DataProductVersionDPDS descriptor) {
         InternalComponentsDPDS internals = descriptor.getInternalComponents();
         assertThat(internals).isNotNull();
         assertThat(internals.getInfrastructuralComponents()).isNotNull();
@@ -159,7 +154,7 @@ public class DPDCoreResourceChecker {
         assertThat(infra.getComponentGroup()).isEqualTo("gruppoC");
     }
 
-    public static void verifyLifecycle(DataProductVersionDPDS descriptor) {
+    public static  void verifyLifecycle(DataProductVersionDPDS descriptor) {
         InternalComponentsDPDS internals = descriptor.getInternalComponents();
         assertThat(internals).isNotNull();
 
@@ -178,7 +173,6 @@ public class DPDCoreResourceChecker {
         ExternalResourceDPDS service = activity.getService();
         assertThat(service).isNotNull();
         assertThat(service.getHref()).isEqualTo("{azure-devops}");
-        /*
         StandardDefinitionDPDS template = activity.getTemplate();
         assertThat(template).isNotNull();
         assertThat(template.getName()).isEqualTo("testPipeline");
@@ -187,10 +181,7 @@ public class DPDCoreResourceChecker {
         assertThat(template.getSpecificationVersion()).isEqualTo("1.0.0");
         DefinitionReferenceDPDS definition = template.getDefinition();
         assertThat(definition).isNotNull();
-        assertThat(definition.getOriginalRef()).isNull();
-        */
-        //assertThat(definition.getRef()).matches(Pattern.compile("http://localhost:\\d*/api/v1/pp/registry/templates/\\d*"));
-        
+        //assertThat(definition.getRef()).isEqualTo("http://localhost:80/templates/{templateId}");
         Map<String, Object> configurations = activity.getConfigurations();
         assertThat(configurations).isNotNull();
         assertThat(configurations.get("stagesToSkip")).isEqualTo(Arrays.asList("Deploy"));
@@ -201,7 +192,6 @@ public class DPDCoreResourceChecker {
         service = activity.getService();
         assertThat(service).isNotNull();
         assertThat(service.getHref()).isEqualTo("{azure-devops}");
-        /* 
         template = activity.getTemplate();
         assertThat(template).isNotNull();
         assertThat(template.getName()).isEqualTo("testPipeline");
@@ -210,9 +200,7 @@ public class DPDCoreResourceChecker {
         assertThat(template.getSpecificationVersion()).isEqualTo("1.0.0");
         definition = template.getDefinition();
         assertThat(definition).isNotNull();
-        assertThat(definition.getOriginalRef()).isNull();
-        */
-        //assertThat(definition.getRef()).matches(Pattern.compile("http://localhost:\\d*/api/v1/pp/registry/templates/\\d*"));
+        //assertThat(definition.getRef()).isEqualTo("http://localhost:80/templates/{templateId}");
         configurations = activity.getConfigurations();
         assertThat(configurations).isNotNull();
         assertThat(configurations.get("stagesToSkip")).isEqualTo(Arrays.asList());

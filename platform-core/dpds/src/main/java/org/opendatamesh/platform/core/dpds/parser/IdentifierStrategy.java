@@ -3,11 +3,11 @@ package org.opendatamesh.platform.core.dpds.parser;
 import org.apache.commons.lang3.StringUtils;
 import org.opendatamesh.platform.core.dpds.model.ComponentDPDS;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
-import org.opendatamesh.platform.core.dpds.model.EntityDPDS;
 import org.opendatamesh.platform.core.dpds.model.EntityTypeDPDS;
 import org.opendatamesh.platform.core.dpds.model.InfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.StandardDefinitionDPDS;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class IdentifierStrategy {
@@ -62,36 +62,36 @@ public class IdentifierStrategy {
         String fqn = null;
 
         if (component.getType() == null)
-                throw new RuntimeException(
-                        "Impossible to define fqn of component because the entity type is empty: " + component);
+            throw new RuntimeException(
+                    "Impossible to define fqn of component because the entity type is empty: " + component);
 
-        if (!component.getType().isComponent() )
-                throw new RuntimeException(
-                        "Impossible to define fqn of component because its type [" + component.getType() + "] is not a component type: " + component);
+        if (!component.getType().isComponent())
+            throw new RuntimeException(
+                    "Impossible to define fqn of component because its type [" + component.getType()
+                            + "] is not a component type: " + component);
 
         if (component.getType().isExternalComponent()) {
             if (StringUtils.isBlank(component.getName())) {
                 String definition = null;
-                if(component.getType() == EntityTypeDPDS.API
-                || component.getType() == EntityTypeDPDS.TEMPLATE) {
-                    StandardDefinitionDPDS stdDef = (StandardDefinitionDPDS)component;
-                    definition = stdDef.getDefinition()!= null? stdDef.getDefinition().getRawContent(): null;
-                    if(StringUtils.isBlank(definition)) {
+                if (component.getType() == EntityTypeDPDS.API
+                        || component.getType() == EntityTypeDPDS.TEMPLATE) {
+                    StandardDefinitionDPDS stdDef = (StandardDefinitionDPDS) component;
+                    definition = stdDef.getDefinition() != null ? stdDef.getDefinition().getRawContent() : null;
+                    if (StringUtils.isBlank(definition)) {
                         throw new RuntimeException(
-                            "If definition name is empty raw content must be valorized");
+                                "If definition name is empty raw content must be valorized");
                     }
                     String name = UUID.nameUUIDFromBytes(definition.getBytes()).toString();
                     stdDef.setName(name);
                 } else {
                     throw new RuntimeException(
-                        "Impossible to define fqn of component because the name is empty: " + component);
+                            "Impossible to define fqn of component because the name is empty: " + component);
                 }
             }
-              
+
             if (StringUtils.isBlank(component.getVersion())) {
                 component.setVersion("1.0.0");
             }
-               
 
             fqn = String.format(
                     "urn:%s:%s:%s:%s",
@@ -124,6 +124,60 @@ public class IdentifierStrategy {
                     component.getName(),
                     component.getVersion());
         }
+
+        return fqn;
+    }
+
+    public String getExternalComponentFqn(ComponentDPDS component) {
+        String fqn = null;
+
+        Objects.requireNonNull(component, "Parameter [component] cannot be null");
+        if (!component.getType().isExternalComponent()) {
+            throw new IllegalArgumentException("Component must be external");
+        }
+
+        if (StringUtils.isBlank(component.getName())) {
+            String definition = null;
+            if (component.getType() == EntityTypeDPDS.API
+                    || component.getType() == EntityTypeDPDS.TEMPLATE) {
+                StandardDefinitionDPDS stdDef = (StandardDefinitionDPDS) component;
+                definition = stdDef.getDefinition() != null ? stdDef.getDefinition().getRawContent() : null;
+                if (StringUtils.isBlank(definition)) {
+                    throw new RuntimeException(
+                            "If definition name is empty raw content must be valorized");
+                }
+                String name = UUID.nameUUIDFromBytes(definition.getBytes()).toString();
+                stdDef.setName(name);
+            } else {
+                throw new RuntimeException(
+                        "Impossible to define fqn of component because the name is empty: " + component);
+            }
+        }
+
+        if (StringUtils.isBlank(component.getVersion())) {
+            component.setVersion("1.0.0");
+        }
+
+        fqn = getExternalComponentFqn(
+            component.getType(),
+            component.getName(),
+            component.getVersion()
+        );
+        
+        return fqn;
+    }
+
+    public String getExternalComponentFqn(
+        EntityTypeDPDS type, 
+        String name, 
+        String version) {
+        
+        String fqn = String.format(
+                "urn:%s:%s:%s:%s",
+                organization,
+                type.collectionName(),
+                name,
+                version);
 
         return fqn;
     }

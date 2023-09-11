@@ -1,15 +1,20 @@
 package org.opendatamesh.platform.pp.registry.server.utils;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
+import org.opendatamesh.platform.core.dpds.model.EntityTypeDPDS;
 import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
 import org.opendatamesh.platform.pp.registry.api.resources.DefinitionResource;
 import org.opendatamesh.platform.pp.registry.api.resources.DomainResource;
+import org.opendatamesh.platform.pp.registry.api.resources.ExternalComponentResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,6 +22,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Date;
 import java.util.Objects;
 
 public class ODMRegistryResourceBuilder {
@@ -38,79 +44,34 @@ public class ODMRegistryResourceBuilder {
         logger.debug("File [" + resource.getPath() + "] succesfully read");
         
         return fileContent;
-
-        /* 
-        String content = "";
-
-       try {
-            Path p = Path.of(path);
-            if (Files.exists(p)) {
-                content = FileUtils.readFileToString(p.toFile(), StandardCharsets.UTF_8.displayName());
-            } else {
-                content = loadFileFromClasspath(path);
-            }
-        } catch (IOException e) {
-            throw new IOException("Impossible to get resource [" + path + "] content", e);
-        }
-
-        return content;
-        */
     }
 
     private Path getPath(ODMRegistryResources resource) {
-        //return Paths.get(resource.getPath());
-      
         ClassLoader cl = getClass().getClassLoader();
         String absoluteFilePath = cl.getResource(resource.getPath()).getFile();
         return Path.of(absoluteFilePath);
 
     }
 
-    public <T> T readResourceFromFile(ODMRegistryResources resource, Class<T> resourceType) throws IOException {
+    public <T> T getObject(ODMRegistryResources resource, Class<T> resourceType) throws IOException {
         String fileContent = getContent(resource);
         return mapper.readValue(fileContent, resourceType);
     }
 
     
 
-    private String loadFileFromClasspath(String location) throws IOException {
-
-        String content = "";
-
-        String file = FilenameUtils.separatorsToUnix(location);
-
-        InputStream inputStream = ODMRegistryResources.class.getResourceAsStream(file);
-
-        if (inputStream == null) {
-            inputStream = ODMRegistryResources.class.getClassLoader().getResourceAsStream(file);
-        }
-
-        if (inputStream == null) {
-            inputStream = ClassLoader.getSystemResourceAsStream(file);
-        }
-
-        if (inputStream != null) {
-            try {
-                content = IOUtils.toString(inputStream, Charset.forName(StandardCharsets.UTF_8.displayName()));
-            } catch (IOException e) {
-                throw new RuntimeException("Could not read " + file + " from the classpath", e);
-            }
-        } else {
-            throw new IOException("Impossible to get resource [" + location + "] content from classpath");
-        }
-
-        return content;
-    }
-
-
-
-
-
-
+    
     public DataProductResource buildDataProduct(String fqn, String domain, String descriptione) {
         return buildDataProduct(null, fqn, domain, descriptione);
     }
 
+    public DataProductResource buildTestDataProduct() {
+        return buildDataProduct(
+            "f350cab5-992b-32f7-9c90-79bca1bf10be", 
+            "urn:org.opendatamesh:dataproducts:dpdCore", 
+            "Test Domain",
+            "This is test product #1");
+    }
     public DataProductResource buildDataProduct(String id,
             String fqn, String domain, String description)  {
        
@@ -125,14 +86,54 @@ public class ODMRegistryResourceBuilder {
         return dataProductRes;
     }
 
-    public DefinitionResource buildDefinition(String name, String version, String contentMediaType, String content) {
-        DefinitionResource definitionRes;
+    public ExternalComponentResource buildTestApi() {
+        return buildDefinition(
+            "b461ea5e-de52-3509-a297-ebaac9c49e67", 
+            "urn:org.opendatamesh:apis:api-1:1.0.0", 
+            EntityTypeDPDS.API.propertyValue(), 
+            "api-1", "1.0.0", 
+            "Api 1", "Test Api", 
+            "custom-spec", "1.0", 
+            "plain/text", "api definition");
+    }
 
-        definitionRes = new DefinitionResource();
+    public ExternalComponentResource buildTestTemplate() {
+        return buildDefinition(
+            "d3fdbe13-eac8-32b8-b884-0f5a3ccd16e8", 
+            "urn:org.opendatamesh:templates:template-1:1.0.0", 
+            EntityTypeDPDS.TEMPLATE.propertyValue(), 
+            "template-1", "1.0.0", 
+            "Template 1", "Test Template", 
+            "custom-spec", "1.0", 
+            "plain/text", "template definition");
+    }
+
+    public ExternalComponentResource buildDefinition(
+        String id, 
+        String fqn, 
+        String entityType, 
+        String name, 
+        String version, 
+        String displayName, 
+        String description, 
+        String specification, 
+        String specificationVersion, 
+        String definitionMediaType, 
+        String definition) {
+        ExternalComponentResource definitionRes;
+
+        definitionRes = new ExternalComponentResource();
+        definitionRes.setId(id);
+        definitionRes.setFullyQualifiedName(fqn);
+        definitionRes.setEntityType(entityType);
         definitionRes.setName(name);
         definitionRes.setVersion(version);
-        definitionRes.setContentMediaType(contentMediaType);
-        definitionRes.setContent(content);
+        definitionRes.setDisplayName(displayName);
+        definitionRes.setDescription(description);
+        definitionRes.setSpecification(specification);
+        definitionRes.setSpecificationVersion(specificationVersion);
+        definitionRes.setDefinitionMediaType(definitionMediaType);
+        definitionRes.setDefinition(definition);
 
         return definitionRes;
     }

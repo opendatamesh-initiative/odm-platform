@@ -33,7 +33,7 @@ public class TaskIT extends ODMDevOpsIT {
 
         createMocksForCreateActivityCall();
 
-        ActivityResource activityRes = createTestActivity1(false);
+        ActivityResource activityRes = createTestActivity(false);
 
         ActivityResource startedActivityRes = null;
         try {
@@ -53,8 +53,8 @@ public class TaskIT extends ODMDevOpsIT {
         assertThat(readTaskRes).isNotNull();
         assertThat(readTaskRes.getId()).isNotNull();
         assertThat(readTaskRes.getExecutorRef()).isEqualTo("azure-devops");
-        assertThat(readTaskRes.getTemplate()).isEqualTo("{\"pipeline\":\"dpdLifecyclePipe\",\"version\":\"1.0.0\"}");
-        assertThat(readTaskRes.getConfigurations()).isEqualTo("{\"stage\":\"PROD\"}");
+        assertThat(readTaskRes.getTemplate()).isEqualTo("{\"organization\":\"andreagioia\",\"project\":\"opendatamesh\",\"pipelineId\":\"3\",\"branch\":\"main\"}");
+        assertThat(readTaskRes.getConfigurations()).isEqualTo("{\"stagesToSkip\":[]}");
         assertThat(readTaskRes.getStatus()).isEqualTo(ActivityTaskStatus.PROCESSING);
         assertThat(readTaskRes.getResults()).isNull();
         assertThat(readTaskRes.getErrors()).isNull();
@@ -69,7 +69,7 @@ public class TaskIT extends ODMDevOpsIT {
 
         createMocksForCreateActivityCall();
 
-        ActivityResource activityRes = createTestActivity1(true);
+        ActivityResource activityRes = createTestActivity(true);
 
         ActivityTaskResource[] taskResources = devOpsClient.searchTasks(activityRes.getId(), null, null);
         assertThat(taskResources).isNotNull();
@@ -87,8 +87,8 @@ public class TaskIT extends ODMDevOpsIT {
         assertThat(stoppedTaskRes).isNotNull();
         assertThat(stoppedTaskRes.getId()).isNotNull();
         assertThat(stoppedTaskRes.getExecutorRef()).isEqualTo("azure-devops");
-        assertThat(stoppedTaskRes.getTemplate()).isEqualTo("{\"pipeline\":\"dpdLifecyclePipe\",\"version\":\"1.0.0\"}");
-        assertThat(stoppedTaskRes.getConfigurations()).isEqualTo("{\"stage\":\"PROD\"}");
+        assertThat(stoppedTaskRes.getTemplate()).isEqualTo("{\"organization\":\"andreagioia\",\"project\":\"opendatamesh\",\"pipelineId\":\"3\",\"branch\":\"main\"}");
+        assertThat(stoppedTaskRes.getConfigurations()).isEqualTo("{\"stagesToSkip\":[]}");
         assertThat(stoppedTaskRes.getStatus()).isEqualTo(ActivityTaskStatus.PROCESSED);
         assertThat(stoppedTaskRes.getResults()).isNotNull();
         assertThat(stoppedTaskRes.getResults()).isEqualTo("OK");
@@ -109,7 +109,7 @@ public class TaskIT extends ODMDevOpsIT {
 
         createMocksForCreateActivityCall();
 
-        ActivityResource activityRes = createTestActivity1(false);
+        ActivityResource activityRes = createTestActivity(false);
 
         ActivityTaskResource[] tasks = devOpsClient.searchTasks(activityRes.getId(), null, null);
         assertThat(tasks).isNotNull();
@@ -128,7 +128,7 @@ public class TaskIT extends ODMDevOpsIT {
         createMocksForCreateActivityCall();
 
         ActivityResource activityRes = null;
-        activityRes = createTestActivity1(true);
+        activityRes = createTestActivity(true);
 
         ActivityTaskResource[] tasks = devOpsClient.searchTasks(activityRes.getId(), null, null);
         assertThat(tasks).isNotNull();
@@ -146,7 +146,7 @@ public class TaskIT extends ODMDevOpsIT {
 
         createMocksForCreateActivityCall();
 
-        ActivityResource activityRes = createTestActivity1(false);
+        ActivityResource activityRes = createTestActivity(false);
 
         ActivityResource startedActivityRes = null;
         try {
@@ -173,7 +173,7 @@ public class TaskIT extends ODMDevOpsIT {
 
         createMocksForCreateActivityCall();
 
-        ActivityResource activityRes = createTestActivity1(true);
+        ActivityResource activityRes = createTestActivity(true);
 
         ActivityTaskResource[] taskResources = devOpsClient.searchTasks(activityRes.getId(), null, null);
         assertThat(taskResources).isNotNull();
@@ -206,7 +206,7 @@ public class TaskIT extends ODMDevOpsIT {
         createMocksForCreateActivityCall();
 
         ActivityResource activityRes = null;
-        activityRes = createTestActivity1(true);
+        activityRes = createTestActivity(true);
 
         ActivityTaskResource[] tasks = devOpsClient.readAllTasks();
         assertThat(tasks).isNotNull();
@@ -215,8 +215,8 @@ public class TaskIT extends ODMDevOpsIT {
         assertThat(task).isNotNull();
         assertThat(task.getId()).isNotNull();
         assertThat(task.getExecutorRef()).isEqualTo("azure-devops");
-        assertThat(task.getTemplate()).isEqualTo("{\"pipeline\":\"dpdLifecyclePipe\",\"version\":\"1.0.0\"}");
-        assertThat(task.getConfigurations()).isEqualTo("{\"stage\":\"PROD\"}");
+        assertThat(task.getTemplate()).isEqualTo("{\"organization\":\"andreagioia\",\"project\":\"opendatamesh\",\"pipelineId\":\"3\",\"branch\":\"main\"}");
+        assertThat(task.getConfigurations()).isEqualTo("{\"stagesToSkip\":[]}");
         assertThat(task.getStatus()).isEqualTo(ActivityTaskStatus.PROCESSING);
         assertThat(task.getResults()).isNull();
         assertThat(task.getErrors()).isNull();
@@ -232,7 +232,7 @@ public class TaskIT extends ODMDevOpsIT {
         createMocksForCreateActivityCall();
 
         ActivityResource activityRes = null;
-        activityRes = createTestActivity1(false);
+        activityRes = createTestActivity(false);
 
         ActivityTaskResource[] tasks = devOpsClient.searchTasks(activityRes.getId(), null, null);
         assertThat(tasks).isNotNull();
@@ -243,8 +243,8 @@ public class TaskIT extends ODMDevOpsIT {
         assertThat(readTaskRes).isNotNull();
         assertThat(readTaskRes.getId()).isNotNull();
         assertThat(readTaskRes.getExecutorRef()).isEqualTo("azure-devops");
-        assertThat(readTaskRes.getTemplate()).isEqualTo("{\"pipeline\":\"dpdLifecyclePipe\",\"version\":\"1.0.0\"}");
-        assertThat(readTaskRes.getConfigurations()).isEqualTo("{\"stage\":\"PROD\"}");
+        assertThat(readTaskRes.getTemplate()).isEqualTo("{\"organization\":\"andreagioia\",\"project\":\"opendatamesh\",\"pipelineId\":\"3\",\"branch\":\"main\"}");
+        assertThat(readTaskRes.getConfigurations()).isEqualTo("{\"stagesToSkip\":[]}");
         assertThat(readTaskRes.getStatus()).isEqualTo(ActivityTaskStatus.PLANNED);
         assertThat(readTaskRes.getResults()).isNull();
         assertThat(readTaskRes.getErrors()).isNull();
@@ -262,7 +262,7 @@ public class TaskIT extends ODMDevOpsIT {
         createMocksForCreateActivityCall();
 
         ActivityResource activityRes = null;
-        activityRes = createTestActivity1(true);
+        activityRes = createTestActivity(true);
 
         ActivityTaskResource[] taskResources = devOpsClient.searchTasks(activityRes.getId(), null, null);
         assertThat(taskResources).isNotNull();
@@ -273,8 +273,8 @@ public class TaskIT extends ODMDevOpsIT {
         assertThat(readTaskRes).isNotNull();
         assertThat(readTaskRes.getId()).isNotNull();
         assertThat(readTaskRes.getExecutorRef()).isEqualTo("azure-devops");
-        assertThat(readTaskRes.getTemplate()).isEqualTo("{\"pipeline\":\"dpdLifecyclePipe\",\"version\":\"1.0.0\"}");
-        assertThat(readTaskRes.getConfigurations()).isEqualTo("{\"stage\":\"PROD\"}");
+        assertThat(readTaskRes.getTemplate()).isEqualTo("{\"organization\":\"andreagioia\",\"project\":\"opendatamesh\",\"pipelineId\":\"3\",\"branch\":\"main\"}");
+        assertThat(readTaskRes.getConfigurations()).isEqualTo("{\"stagesToSkip\":[]}");
         assertThat(readTaskRes.getStatus()).isEqualTo(ActivityTaskStatus.PROCESSING);
         assertThat(readTaskRes.getResults()).isNull();
         assertThat(readTaskRes.getErrors()).isNull();
@@ -290,7 +290,7 @@ public class TaskIT extends ODMDevOpsIT {
 
         createMocksForCreateActivityCall();
 
-        ActivityResource activityRes = createTestActivity1(false);
+        ActivityResource activityRes = createTestActivity(false);
 
         ActivityResource startedActivityRes = null;
         try {
@@ -310,8 +310,8 @@ public class TaskIT extends ODMDevOpsIT {
         assertThat(readTaskRes).isNotNull();
         assertThat(readTaskRes.getId()).isNotNull();
         assertThat(readTaskRes.getExecutorRef()).isEqualTo("azure-devops");
-        assertThat(readTaskRes.getTemplate()).isEqualTo("{\"pipeline\":\"dpdLifecyclePipe\",\"version\":\"1.0.0\"}");
-        assertThat(readTaskRes.getConfigurations()).isEqualTo("{\"stage\":\"PROD\"}");
+        assertThat(readTaskRes.getTemplate()).isEqualTo("{\"organization\":\"andreagioia\",\"project\":\"opendatamesh\",\"pipelineId\":\"3\",\"branch\":\"main\"}");
+        assertThat(readTaskRes.getConfigurations()).isEqualTo("{\"stagesToSkip\":[]}");
         assertThat(readTaskRes.getStatus()).isEqualTo(ActivityTaskStatus.PROCESSING);
         assertThat(readTaskRes.getResults()).isNull();
         assertThat(readTaskRes.getErrors()).isNull();
@@ -326,7 +326,7 @@ public class TaskIT extends ODMDevOpsIT {
 
         createMocksForCreateActivityCall();
 
-        ActivityResource activityRes = createTestActivity1(true);
+        ActivityResource activityRes = createTestActivity(true);
 
         ActivityTaskResource[] taskResources = devOpsClient.searchTasks(activityRes.getId(), null, null);
         assertThat(taskResources).isNotNull();
@@ -346,8 +346,8 @@ public class TaskIT extends ODMDevOpsIT {
         assertThat(readTaskRes).isNotNull();
         assertThat(readTaskRes.getId()).isNotNull();
         assertThat(readTaskRes.getExecutorRef()).isEqualTo("azure-devops");
-        assertThat(readTaskRes.getTemplate()).isEqualTo("{\"pipeline\":\"dpdLifecyclePipe\",\"version\":\"1.0.0\"}");
-        assertThat(readTaskRes.getConfigurations()).isEqualTo("{\"stage\":\"PROD\"}");
+        assertThat(readTaskRes.getTemplate()).isEqualTo("{\"organization\":\"andreagioia\",\"project\":\"opendatamesh\",\"pipelineId\":\"3\",\"branch\":\"main\"}");
+        assertThat(readTaskRes.getConfigurations()).isEqualTo("{\"stagesToSkip\":[]}");
         assertThat(readTaskRes.getStatus()).isEqualTo(ActivityTaskStatus.PROCESSED);
         assertThat(readTaskRes.getResults()).isEqualTo("OK");
         assertThat(readTaskRes.getErrors()).isNull();
@@ -371,7 +371,7 @@ public class TaskIT extends ODMDevOpsIT {
         createMocksForCreateActivityCall();
 
         ActivityResource activityRes = null;
-        activityRes = createTestActivity1(true);
+        activityRes = createTestActivity(true);
 
         ActivityTaskResource[] taskResources = devOpsClient.searchTasks(activityRes.getId(), null, null);
         assertThat(taskResources).isNotNull();
@@ -381,8 +381,8 @@ public class TaskIT extends ODMDevOpsIT {
         assertThat(searchedTask).isNotNull();
         assertThat(searchedTask.getId()).isNotNull();
         assertThat(searchedTask.getExecutorRef()).isEqualTo("azure-devops");
-        assertThat(searchedTask.getTemplate()).isEqualTo("{\"pipeline\":\"dpdLifecyclePipe\",\"version\":\"1.0.0\"}");
-        assertThat(searchedTask.getConfigurations()).isEqualTo("{\"stage\":\"PROD\"}");
+        assertThat(searchedTask.getTemplate()).isEqualTo("{\"organization\":\"andreagioia\",\"project\":\"opendatamesh\",\"pipelineId\":\"3\",\"branch\":\"main\"}");
+        assertThat(searchedTask.getConfigurations()).isEqualTo("{\"stagesToSkip\":[]}");
         assertThat(searchedTask.getStatus()).isEqualTo(ActivityTaskStatus.PROCESSING);
         assertThat(searchedTask.getResults()).isNull();
         assertThat(searchedTask.getErrors()).isNull();
@@ -398,7 +398,7 @@ public class TaskIT extends ODMDevOpsIT {
         createMocksForCreateActivityCall();
 
         ActivityResource activityRes = null;
-        activityRes = createTestActivity1(true);
+        activityRes = createTestActivity(true);
 
         ActivityTaskResource[] taskResources = devOpsClient.searchTasks(null, null, ActivityTaskStatus.PROCESSING);
         assertThat(taskResources).isNotNull();
@@ -408,8 +408,8 @@ public class TaskIT extends ODMDevOpsIT {
         assertThat(searchedTask).isNotNull();
         assertThat(searchedTask.getId()).isNotNull();
         assertThat(searchedTask.getExecutorRef()).isEqualTo("azure-devops");
-        assertThat(searchedTask.getTemplate()).isEqualTo("{\"pipeline\":\"dpdLifecyclePipe\",\"version\":\"1.0.0\"}");
-        assertThat(searchedTask.getConfigurations()).isEqualTo("{\"stage\":\"PROD\"}");
+        assertThat(searchedTask.getTemplate()).isEqualTo("{\"organization\":\"andreagioia\",\"project\":\"opendatamesh\",\"pipelineId\":\"3\",\"branch\":\"main\"}");
+        assertThat(searchedTask.getConfigurations()).isEqualTo("{\"stagesToSkip\":[]}");
         assertThat(searchedTask.getStatus()).isEqualTo(ActivityTaskStatus.PROCESSING);
         assertThat(searchedTask.getResults()).isNull();
         assertThat(searchedTask.getErrors()).isNull();
@@ -425,7 +425,7 @@ public class TaskIT extends ODMDevOpsIT {
         createMocksForCreateActivityCall();
 
         ActivityResource activityRes = null;
-        activityRes = createTestActivity1(true);
+        activityRes = createTestActivity(true);
 
         ActivityTaskResource[] taskResources = devOpsClient.searchTasks(null, "azure-devops", null);
         assertThat(taskResources).isNotNull();
@@ -435,8 +435,8 @@ public class TaskIT extends ODMDevOpsIT {
         assertThat(searchedTask).isNotNull();
         assertThat(searchedTask.getId()).isNotNull();
         assertThat(searchedTask.getExecutorRef()).isEqualTo("azure-devops");
-        assertThat(searchedTask.getTemplate()).isEqualTo("{\"pipeline\":\"dpdLifecyclePipe\",\"version\":\"1.0.0\"}");
-        assertThat(searchedTask.getConfigurations()).isEqualTo("{\"stage\":\"PROD\"}");
+        assertThat(searchedTask.getTemplate()).isEqualTo("{\"organization\":\"andreagioia\",\"project\":\"opendatamesh\",\"pipelineId\":\"3\",\"branch\":\"main\"}");
+        assertThat(searchedTask.getConfigurations()).isEqualTo("{\"stagesToSkip\":[]}");
         assertThat(searchedTask.getStatus()).isEqualTo(ActivityTaskStatus.PROCESSING);
         assertThat(searchedTask.getResults()).isNull();
         assertThat(searchedTask.getErrors()).isNull();
@@ -452,7 +452,7 @@ public class TaskIT extends ODMDevOpsIT {
         createMocksForCreateActivityCall();
 
         ActivityResource activityRes = null;
-        activityRes = createTestActivity1(true);
+        activityRes = createTestActivity(true);
 
         ActivityTaskResource[] taskResources = devOpsClient.searchTasks(activityRes.getId(), "azure-devops",
                 ActivityTaskStatus.PROCESSING);
@@ -463,8 +463,8 @@ public class TaskIT extends ODMDevOpsIT {
         assertThat(searchedTask).isNotNull();
         assertThat(searchedTask.getId()).isNotNull();
         assertThat(searchedTask.getExecutorRef()).isEqualTo("azure-devops");
-        assertThat(searchedTask.getTemplate()).isEqualTo("{\"pipeline\":\"dpdLifecyclePipe\",\"version\":\"1.0.0\"}");
-        assertThat(searchedTask.getConfigurations()).isEqualTo("{\"stage\":\"PROD\"}");
+        assertThat(searchedTask.getTemplate()).isEqualTo("{\"organization\":\"andreagioia\",\"project\":\"opendatamesh\",\"pipelineId\":\"3\",\"branch\":\"main\"}");
+        assertThat(searchedTask.getConfigurations()).isEqualTo("{\"stagesToSkip\":[]}");
         assertThat(searchedTask.getStatus()).isEqualTo(ActivityTaskStatus.PROCESSING);
         assertThat(searchedTask.getResults()).isNull();
         assertThat(searchedTask.getErrors()).isNull();
@@ -480,7 +480,7 @@ public class TaskIT extends ODMDevOpsIT {
         createMocksForCreateActivityCall();
 
         ActivityResource activityRes = null;
-        activityRes = createTestActivity1(true);
+        activityRes = createTestActivity(true);
 
         ActivityTaskResource[] taskResources = devOpsClient.searchTasks(null, null, null);
         assertThat(taskResources).isNotNull();
@@ -490,8 +490,8 @@ public class TaskIT extends ODMDevOpsIT {
         assertThat(searchedTask).isNotNull();
         assertThat(searchedTask.getId()).isNotNull();
         assertThat(searchedTask.getExecutorRef()).isEqualTo("azure-devops");
-        assertThat(searchedTask.getTemplate()).isEqualTo("{\"pipeline\":\"dpdLifecyclePipe\",\"version\":\"1.0.0\"}");
-        assertThat(searchedTask.getConfigurations()).isEqualTo("{\"stage\":\"PROD\"}");
+        assertThat(searchedTask.getTemplate()).isEqualTo("{\"organization\":\"andreagioia\",\"project\":\"opendatamesh\",\"pipelineId\":\"3\",\"branch\":\"main\"}");
+        assertThat(searchedTask.getConfigurations()).isEqualTo("{\"stagesToSkip\":[]}");
         assertThat(searchedTask.getStatus()).isEqualTo(ActivityTaskStatus.PROCESSING);
         assertThat(searchedTask.getResults()).isNull();
         assertThat(searchedTask.getErrors()).isNull();
@@ -507,7 +507,7 @@ public class TaskIT extends ODMDevOpsIT {
         createMocksForCreateActivityCall();
 
         ActivityResource activityRes = null;
-        activityRes = createTestActivity1(true);
+        activityRes = createTestActivity(true);
 
         ActivityTaskResource[] taskResources = devOpsClient.searchTasks(234L, "xxx", ActivityTaskStatus.PLANNED);
         assertThat(taskResources).isNotNull();

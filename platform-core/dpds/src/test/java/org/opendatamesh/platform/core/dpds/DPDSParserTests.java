@@ -3,8 +3,7 @@ package org.opendatamesh.platform.core.dpds;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import static  org.opendatamesh.platform.core.dpds.DescriptorCoreChecker.verifyAll;
+import static org.opendatamesh.platform.core.dpds.utils.DescriptorCoreChecker.verifyAll;
 
 import java.io.IOException;
 import java.util.List;
@@ -22,6 +21,7 @@ import org.opendatamesh.platform.core.dpds.parser.DPDSParser;
 import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
 import org.opendatamesh.platform.core.dpds.parser.ParseResult;
 import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
+import org.opendatamesh.platform.core.dpds.utils.DPDSTestResources;
 
 public class DPDSParserTests extends DPDSTests {
 

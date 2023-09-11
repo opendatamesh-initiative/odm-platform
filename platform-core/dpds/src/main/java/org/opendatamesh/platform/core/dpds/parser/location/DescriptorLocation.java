@@ -15,12 +15,13 @@ public interface DescriptorLocation {
     public void close() throws FetchException;
     public String fetchRootDoc() throws FetchException;
     public String fetchResource(URI baseURI, URI resourceUri) throws FetchException;
+    public String fetchResource(URI resourceUri) throws FetchException;
 
     public static interface Fetcher {
         /**
          * 
          * @param baseUri the base uri used to resolve the resource uri. Must be absolute
-         * @param resourceUri the of the resource to fetch. It should be relative. 
+         * @param resourceUri the uri of the resource to fetch. It should be relative. 
          * If it is absolute the base uri is ignored. No exception is thrown. 
          * Anyway in this case is better to just call the fetch method below.
          * @return the content fatched from uri

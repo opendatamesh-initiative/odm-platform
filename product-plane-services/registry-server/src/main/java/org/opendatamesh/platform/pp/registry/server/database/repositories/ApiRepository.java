@@ -9,13 +9,14 @@ import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.List;
 
-public interface ApiDefinitionRepository extends JpaRepository<Api, Long>, JpaSpecificationExecutor<Api> {
+public interface ApiRepository extends JpaRepository<Api, String>, JpaSpecificationExecutor<Api> {
 
     public boolean existsByNameAndVersion(String name, String version);
 
     class Specs {
         static public Specification<Api> hasMatch(
-            String name, String version, String type,
+            String name, 
+            String version,
             String specification,
             String specificationVersion) {
 			
@@ -27,9 +28,7 @@ public interface ApiDefinitionRepository extends JpaRepository<Api, Long>, JpaSp
                 if (version != null) {
                     predicates.add(criteriaBuilder.equal(root.get("version"), version));
                 }
-                if (type != null) {
-                    predicates.add(criteriaBuilder.equal(root.get("type"), type));
-                }
+
                 if (specification != null) {
                     predicates.add(criteriaBuilder.equal(root.get("specification"), specification));
                 }

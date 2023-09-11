@@ -37,7 +37,6 @@ public abstract class EntityDPDS implements Cloneable {
     public EntityTypeDPDS getType() {
         return EntityTypeDPDS.resolvePropertyValue(entityType);
     }
-
    
     @JsonAnySetter
     public void ignored(String name, Object value) {

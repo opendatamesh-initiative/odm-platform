@@ -1,18 +1,15 @@
 package org.opendatamesh.platform.pp.registry.server;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.junit.Before;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
+
+import java.io.IOException;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
-import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
-import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.pp.registry.api.clients.RegistryAPIRoutes;
 import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
@@ -23,11 +20,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.annotation.DirtiesContext.MethodMode;
 import org.springframework.test.context.TestPropertySource;
-
-import java.io.IOException;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.fail;
 
 @TestPropertySource(properties = { "spring.test.context.parallel.enabled=false" })
 @Execution(ExecutionMode.SAME_THREAD)
@@ -42,7 +34,9 @@ public class DataProductVersionErrorsIT extends ODMRegistryIT {
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testCreateDPVersionWithMissingPayload() {
 
-        DataProductResource dataProductRes = createDataProduct(ODMRegistryResources.DP1);
+        DataProductResource dataProductRes = null;
+        dataProductRes = resourceBuilder.buildTestDataProduct();
+        dataProductRes = createDataProduct(dataProductRes);
 
         String payload = null;
         ResponseEntity<ErrorRes> response;
@@ -74,7 +68,9 @@ public class DataProductVersionErrorsIT extends ODMRegistryIT {
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testCreateDPVersionWitEmptyPayload() {
 
-        DataProductResource dataProductRes = createDataProduct(ODMRegistryResources.DP1);
+        DataProductResource dataProductRes = null;
+        dataProductRes = resourceBuilder.buildTestDataProduct();
+        dataProductRes = createDataProduct(dataProductRes);
 
         String payload = "    ";
         ResponseEntity<ErrorRes> response;
@@ -107,7 +103,9 @@ public class DataProductVersionErrorsIT extends ODMRegistryIT {
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testCreateDPVersionWitMalformedPayload() {
 
-        DataProductResource dataProductRes = createDataProduct(ODMRegistryResources.DP1);
+        DataProductResource dataProductRes = null;
+        dataProductRes = resourceBuilder.buildTestDataProduct();
+        dataProductRes = createDataProduct(dataProductRes);
 
         String payload = "This is an invalid JSON document";
         ResponseEntity<ErrorRes> response;
@@ -125,9 +123,9 @@ public class DataProductVersionErrorsIT extends ODMRegistryIT {
         ErrorRes errorRes = response.getBody();
         assertThat(errorRes).isNotNull();
         assertThat(errorRes.getCode())
-                .isEqualTo(RegistryApiStandardErrors.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID.code());
+                .isEqualTo(RegistryApiStandardErrors.SC422_02_DESCRIPTOR_NOT_VALID.code());
         assertThat(errorRes.getDescription())
-                .isEqualTo(RegistryApiStandardErrors.SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID.description());
+                .isEqualTo(RegistryApiStandardErrors.SC422_02_DESCRIPTOR_NOT_VALID.description());
         assertThat(errorRes.getMessage()).isNotNull();
         assertThat(errorRes.getMessage()).isEqualTo("Descriptor document is not a valid JSON document");
         assertThat(errorRes.getPath())
@@ -140,14 +138,16 @@ public class DataProductVersionErrorsIT extends ODMRegistryIT {
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testCreateSameDPVersionMultipleTimes() {
 
-        DataProductResource dataProductRes = createDataProduct(ODMRegistryResources.DP1);
+        DataProductResource dataProductRes = null;
+        dataProductRes = resourceBuilder.buildTestDataProduct();
+        dataProductRes = createDataProduct(dataProductRes);
 
         createDataProductVersion(
-            dataProductRes.getId(), ODMRegistryResources.RESOURCE_DP1_V1);
+            dataProductRes.getId(), ODMRegistryResources.DPD_CORE_PROPS_CUSTOM);
 
         String descriptorContent = null;
         try {
-            descriptorContent = resourceBuilder.getContent(ODMRegistryResources.RESOURCE_DP1_V1);
+            descriptorContent = resourceBuilder.getContent(ODMRegistryResources.DPD_CORE_PROPS_CUSTOM);
         } catch (IOException t) {
             t.printStackTrace();
             fail("Impossible to read data product version from file: " + t.getMessage());
@@ -168,11 +168,11 @@ public class DataProductVersionErrorsIT extends ODMRegistryIT {
         ErrorRes errorRes = response.getBody();
         assertThat(errorRes).isNotNull();
         assertThat(errorRes.getCode())
-                .isEqualTo(RegistryApiStandardErrors.SC422_05_VERSION_ALREADY_EXISTS.code());
+                .isEqualTo(RegistryApiStandardErrors.SC422_06_VERSION_ALREADY_EXISTS.code());
         assertThat(errorRes.getDescription())
-                .isEqualTo(RegistryApiStandardErrors.SC422_05_VERSION_ALREADY_EXISTS.description());
+                .isEqualTo(RegistryApiStandardErrors.SC422_06_VERSION_ALREADY_EXISTS.description());
         assertThat(errorRes.getMessage()).isNotNull();
-        assertThat(errorRes.getMessage()).isEqualTo("Version [1.0.0] of data product [urn:org.opendatamesh:dataproducts:testProduct] already exists");
+        assertThat(errorRes.getMessage()).isEqualTo("Version [1.0.0] of data product [urn:org.opendatamesh:dataproducts:dpdCore] already exists");
         assertThat(errorRes.getPath())
                 .isEqualTo(RegistryAPIRoutes.DATA_PRODUCTS.getPath() + "/" + dataProductRes.getId() + "/versions");
         assertThat(errorRes.getStatus()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY.value());

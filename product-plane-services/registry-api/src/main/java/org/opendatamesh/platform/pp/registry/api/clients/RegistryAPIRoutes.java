@@ -5,6 +5,8 @@ import org.opendatamesh.platform.core.commons.clients.ODMApiRoutes;
 public enum RegistryAPIRoutes implements ODMApiRoutes {
 
     DATA_PRODUCTS("/products"),
+    DATA_PRODUCT_VERSIONS_APPLICATIONS("/products/{id}/versions/{version}/applications"),
+    DATA_PRODUCT_VERSIONS_INFRASTRUCTURES("/products/{id}/versions/{version}/infrastructures"),
     APIS("/apis"),
     SCHEMAS("/schemas"),
     TEMPLATES("/templates"),

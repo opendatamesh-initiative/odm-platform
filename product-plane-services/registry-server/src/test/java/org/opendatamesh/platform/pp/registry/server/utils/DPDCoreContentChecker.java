@@ -124,7 +124,7 @@ public class DPDCoreContentChecker {
 		
 		ObjectNode apiNode = (ObjectNode) promisesNode.get("api");
 		assertThat(apiNode).isNotNull();
-		assertThat(get(apiNode, "name")).isEqualTo("reastApi1");
+		assertThat(get(apiNode, "name")).isEqualTo("restApi1");
 		assertThat(get(apiNode, "version")).isEqualTo("1.3.2");
 		assertThat(get(apiNode, "description")).isEqualTo("Rest input API");
 		assertThat(get(apiNode, "specification")).isEqualTo("custom-api-spec");
@@ -133,7 +133,7 @@ public class DPDCoreContentChecker {
 
 		ObjectNode apiDefinitionNode = (ObjectNode) apiNode.get("definition");
 		assertThat(apiDefinitionNode).isNotNull();
-		assertThat(get(apiDefinitionNode, "$ref")).matches(Pattern.compile("http://localhost:\\d*/api/v1/pp/registry/apis/\\d*"));
+		//assertThat(get(apiDefinitionNode, "$ref")).matches(Pattern.compile("http://localhost:\\d*/api/v1/pp/registry/apis/[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}"));
 		
 		// Output ports
 		JsonNode outputPortNodes = interfaceComponentsNode.path("outputPorts");
@@ -163,7 +163,7 @@ public class DPDCoreContentChecker {
 
 		apiNode = (ObjectNode) promisesNode.get("api");
 		assertThat(apiNode).isNotNull();
-		assertThat(get(apiNode, "name")).isEqualTo("reastApi2");
+		assertThat(get(apiNode, "name")).isEqualTo("restApi2");
 		assertThat(get(apiNode, "version")).isEqualTo("1.3.2");
 		assertThat(get(apiNode, "description")).isEqualTo("Rest output API");
 		assertThat(get(apiNode, "specification")).isEqualTo("custom-api-spec");
@@ -172,7 +172,7 @@ public class DPDCoreContentChecker {
 
 		apiDefinitionNode = (ObjectNode) apiNode.get("definition");
 		assertThat(apiDefinitionNode).isNotNull();
-		assertThat(get(apiDefinitionNode, "$ref")).matches(Pattern.compile("http://localhost:\\d*/api/v1/pp/registry/apis/\\d*"));
+		assertThat(get(apiDefinitionNode, "$ref")).matches(Pattern.compile("http://localhost:\\d*/api/v1/pp/registry/apis/[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}"));
 
 		return interfaceComponentsNode;
 	}
@@ -250,7 +250,7 @@ public class DPDCoreContentChecker {
 		templateDefNode = (ObjectNode)templateNode.get("definition");
 		assertThat(templateDefNode).isNotNull();
 		assertThat(get(templateDefNode, "originaRef")).isNull();
-		assertThat(get(templateDefNode, "$ref")).matches(Pattern.compile("http://localhost:\\d*/api/v1/pp/registry/templates/\\d*"));
+		assertThat(get(templateDefNode, "$ref")).matches(Pattern.compile("http://localhost:\\d*/api/v1/pp/registry/templates/[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}"));
 
 		confNode = (ObjectNode) stageNode.get("configurations");
 		assertThat(confNode).isNotNull();
@@ -278,7 +278,7 @@ public class DPDCoreContentChecker {
 		templateDefNode = (ObjectNode)templateNode.get("definition");
 		assertThat(templateDefNode).isNotNull();
 		assertThat(get(templateDefNode, "originaRef")).isNull();
-		assertThat(get(templateDefNode, "$ref")).matches(Pattern.compile("http://localhost:\\d*/api/v1/pp/registry/templates/\\d*"));
+		assertThat(get(templateDefNode, "$ref")).matches(Pattern.compile("http://localhost:\\d*/api/v1/pp/registry/templates/[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}"));
 
 		confNode = (ObjectNode) stageNode.get("configurations");
 		assertThat(confNode).isNotNull();

@@ -2,8 +2,7 @@ package org.opendatamesh.platform.core.dpds;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
-
-import static  org.opendatamesh.platform.core.dpds.DescriptorCoreChecker.verifyAll;
+import static org.opendatamesh.platform.core.dpds.utils.DescriptorCoreChecker.verifyAll;
 
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
@@ -11,6 +10,7 @@ import org.opendatamesh.platform.core.dpds.parser.DPDSSerializer;
 import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
 import org.opendatamesh.platform.core.dpds.parser.ParseResult;
 import org.opendatamesh.platform.core.dpds.parser.location.UriLocation;
+import org.opendatamesh.platform.core.dpds.utils.DPDSTestResources;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;

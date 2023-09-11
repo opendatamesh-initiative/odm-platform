@@ -6,19 +6,22 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
+import org.opendatamesh.platform.core.dpds.model.ApplicationComponentDPDS;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
+import org.opendatamesh.platform.core.dpds.model.InfrastructuralComponentDPDS;
 import org.opendatamesh.platform.core.dpds.parser.DPDSParser;
 import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
 import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
 import org.opendatamesh.platform.core.dpds.parser.location.UriLocation;
 import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
-import org.opendatamesh.platform.pp.registry.api.resources.DefinitionResource;
+import org.opendatamesh.platform.pp.registry.api.resources.ExternalComponentResource;
 import org.opendatamesh.platform.pp.registry.server.utils.DPDCoreContentChecker;
 import org.opendatamesh.platform.pp.registry.server.utils.DPDCoreResourceChecker;
 import org.opendatamesh.platform.pp.registry.server.utils.ODMRegistryResourceChecker;
@@ -49,11 +52,7 @@ public class DataProductVersionIT extends ODMRegistryIT {
     public void testCreateDPVersion() {
 
         DataProductResource createdDataProductRes = null;
-        createdDataProductRes = resourceBuilder.buildDataProduct(
-                "f350cab5-992b-32f7-9c90-79bca1bf10be",
-                "urn:org.opendatamesh:dataproducts:dpdCore",
-                "Test Domain",
-                "This is test product #1");
+        createdDataProductRes = resourceBuilder.buildTestDataProduct();
         createdDataProductRes = createDataProduct(createdDataProductRes);
 
         String descriptorContent = createDataProductVersion(createdDataProductRes.getId(), ODMRegistryResources.DPD_CORE_PROPS_CUSTOM);
@@ -105,14 +104,10 @@ public class DataProductVersionIT extends ODMRegistryIT {
     public void testCreateMultipleDPVersions() {
 
         DataProductResource createdDataProductRes = null;
-        createdDataProductRes = resourceBuilder.buildDataProduct(
-                "f350cab5-992b-32f7-9c90-79bca1bf10be",
-                "urn:org.opendatamesh:dataproducts:dpdCore",
-                "Test Domain",
-                "This is test product #1");
+        createdDataProductRes = resourceBuilder.buildTestDataProduct();
         createdDataProductRes = createDataProduct(createdDataProductRes);
 
-        String descriptorContent = getDescriptorContent(ODMRegistryResources.DPD_CORE_PROPS_CUSTOM);
+        String descriptorContent = getResourceContent(ODMRegistryResources.DPD_CORE_PROPS_CUSTOM);
         String createdDescriptorContent = createDataProductVersion(createdDataProductRes.getId(), descriptorContent);
         DPDCoreContentChecker.verifyAll(createdDescriptorContent);
 
@@ -131,9 +126,9 @@ public class DataProductVersionIT extends ODMRegistryIT {
         assertThat(versions).isNotNull();
         assertThat(versions.length).isEqualTo(2);
 
-        DefinitionResource[] apis = null;
+        ExternalComponentResource[] apis = null;
         try {
-            apis =  registryClient.readAllApiDefinitions().getBody();
+            apis =  registryClient.readAllApis();
         } catch (Throwable t) {
             t.printStackTrace();
             fail("Impossible to read apis of data product [" + createdDataProductRes.getId() + "]: " + t.getMessage());
@@ -141,9 +136,9 @@ public class DataProductVersionIT extends ODMRegistryIT {
         assertThat(apis).isNotNull();
         assertThat(apis.length).isEqualTo(2);
 
-        DefinitionResource[] templates = null;
+        ExternalComponentResource[] templates = null;
         try {
-            templates =  registryClient.readAllTemplateDefinitions().getBody();
+            templates =  registryClient.getTemplates().getBody();
         } catch (Throwable t) {
             t.printStackTrace();
             fail("Impossible to read templates of data product [" + createdDataProductRes.getId() + "]: " + t.getMessage());
@@ -157,11 +152,7 @@ public class DataProductVersionIT extends ODMRegistryIT {
     public void testCreateDPVersionFromPreviousVersion() {
 
         DataProductResource createdDataProductRes = null;
-        createdDataProductRes = resourceBuilder.buildDataProduct(
-                "f350cab5-992b-32f7-9c90-79bca1bf10be",
-                "urn:org.opendatamesh:dataproducts:dpdCore",
-                "Test Domain",
-                "This is test product #1");
+        createdDataProductRes = resourceBuilder.buildTestDataProduct();
         createdDataProductRes = createDataProduct(createdDataProductRes);
 
 
@@ -185,9 +176,9 @@ public class DataProductVersionIT extends ODMRegistryIT {
         assertThat(versions).isNotNull();
         assertThat(versions.length).isEqualTo(2);
 
-        DefinitionResource[] apis = null;
+        ExternalComponentResource[] apis = null;
         try {
-            apis =  registryClient.readAllApiDefinitions().getBody();
+            apis =  registryClient.readAllApis();
         } catch (Throwable t) {
             t.printStackTrace();
             fail("Impossible to read apis of data product [" + createdDataProductRes.getId() + "]: " + t.getMessage());
@@ -195,9 +186,9 @@ public class DataProductVersionIT extends ODMRegistryIT {
         assertThat(apis).isNotNull();
         assertThat(apis.length).isEqualTo(2);
 
-        DefinitionResource[] templates = null;
+        ExternalComponentResource[] templates = null;
         try {
-            templates =  registryClient.readAllTemplateDefinitions().getBody();
+            templates =  registryClient.getTemplates().getBody();
         } catch (Throwable t) {
             t.printStackTrace();
             fail("Impossible to read templates of data product [" + createdDataProductRes.getId() + "]: " + t.getMessage());
@@ -214,14 +205,10 @@ public class DataProductVersionIT extends ODMRegistryIT {
     public void testDataProductVersionsReadAll() throws IOException {
 
         DataProductResource createdDataProductRes = null;
-        createdDataProductRes = resourceBuilder.buildDataProduct(
-                "f350cab5-992b-32f7-9c90-79bca1bf10be",
-                "urn:org.opendatamesh:dataproducts:dpdCore",
-                "Test Domain",
-                "This is test product #1");
+        createdDataProductRes = resourceBuilder.buildTestDataProduct();
         createdDataProductRes = createDataProduct(createdDataProductRes);
 
-        String descriptorContent = getDescriptorContent(ODMRegistryResources.DPD_CORE_PROPS_CUSTOM);
+        String descriptorContent = getResourceContent(ODMRegistryResources.DPD_CORE_PROPS_CUSTOM);
         String createdDescriptorContent = createDataProductVersion(createdDataProductRes.getId(), descriptorContent);
         DPDCoreContentChecker.verifyAll(createdDescriptorContent);
 
@@ -248,14 +235,10 @@ public class DataProductVersionIT extends ODMRegistryIT {
     public void testDataProductVersionsReadOne() throws IOException {
 
          DataProductResource createdDataProductRes = null;
-        createdDataProductRes = resourceBuilder.buildDataProduct(
-                "f350cab5-992b-32f7-9c90-79bca1bf10be",
-                "urn:org.opendatamesh:dataproducts:dpdCore",
-                "Test Domain",
-                "This is test product #1");
+        createdDataProductRes = resourceBuilder.buildTestDataProduct();
         createdDataProductRes = createDataProduct(createdDataProductRes);
 
-        String descriptorContent = getDescriptorContent(ODMRegistryResources.DPD_CORE_PROPS_CUSTOM);
+        String descriptorContent = getResourceContent(ODMRegistryResources.DPD_CORE_PROPS_CUSTOM);
         String createdDescriptorContent = createDataProductVersion(createdDataProductRes.getId(), descriptorContent);
         DPDCoreContentChecker.verifyAll(createdDescriptorContent);
 
@@ -278,6 +261,48 @@ public class DataProductVersionIT extends ODMRegistryIT {
     }
 
     // ======================================================================================
+    // READ Data Product Version Components
+    // ======================================================================================
+
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testGetDataProductVersionApplicationComponents() throws JsonProcessingException {
+
+        DataProductResource createdDataProductRes = null;
+        createdDataProductRes = resourceBuilder.buildDataProduct(
+                "f350cab5-992b-32f7-9c90-79bca1bf10be",
+                "urn:org.opendatamesh:dataproducts:dpdCore",
+                "Test Domain",
+                "This is test product #1");
+        createdDataProductRes = createDataProduct(createdDataProductRes);
+
+        String descriptorContent = createDataProductVersion(createdDataProductRes.getId(), ODMRegistryResources.DPD_CORE_PROPS_CUSTOM);
+
+        ResponseEntity<ApplicationComponentDPDS[]> applicationComponentDPDSResponse = registryClient.getDataProductVersionApplicationComponents(createdDataProductRes.getId(), "1.0.0");
+        verifyResponseEntity(applicationComponentDPDSResponse, HttpStatus.OK, true);
+        assertThat(applicationComponentDPDSResponse.getBody().length).isEqualTo(1);
+    }
+
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testGetDataProductVersionInfrastructuralComponents() throws JsonProcessingException {
+
+        DataProductResource createdDataProductRes = null;
+        createdDataProductRes = resourceBuilder.buildDataProduct(
+                "f350cab5-992b-32f7-9c90-79bca1bf10be",
+                "urn:org.opendatamesh:dataproducts:dpdCore",
+                "Test Domain",
+                "This is test product #1");
+        createdDataProductRes = createDataProduct(createdDataProductRes);
+
+        String descriptorContent = createDataProductVersion(createdDataProductRes.getId(), ODMRegistryResources.DPD_CORE_PROPS_CUSTOM);
+
+        ResponseEntity<InfrastructuralComponentDPDS[]> infrastructuralComponentDPDSResponse = registryClient.getDataProductVersionInfrastructuralComponents(createdDataProductRes.getId(), "1.0.0");
+        verifyResponseEntity(infrastructuralComponentDPDSResponse, HttpStatus.OK, true);
+        assertThat(infrastructuralComponentDPDSResponse.getBody().length).isEqualTo(1);
+    }
+
+    // ======================================================================================
     // UPDATE Data Product Version
     // ======================================================================================
 
@@ -288,20 +313,16 @@ public class DataProductVersionIT extends ODMRegistryIT {
     // ======================================================================================
 
     @Test
-    @Disabled
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    @EnabledIf(expression = "#{environment.acceptsProfiles('testpostgresql', 'dev')}", loadContext = true)
     public void testDataProductVersionDelete()
             throws IOException {
 
         DataProductResource createdDataProductRes = null;
-        createdDataProductRes = resourceBuilder.buildDataProduct(
-                "f350cab5-992b-32f7-9c90-79bca1bf10be",
-                "urn:org.opendatamesh:dataproducts:dpdCore",
-                "Test Domain",
-                "This is test product #1");
+        createdDataProductRes = resourceBuilder.buildTestDataProduct();
         createdDataProductRes = createDataProduct(createdDataProductRes);
 
-        String descriptorContent = getDescriptorContent(ODMRegistryResources.DPD_CORE_PROPS_CUSTOM);
+        String descriptorContent = getResourceContent(ODMRegistryResources.DPD_CORE_PROPS_CUSTOM);
         String createdDescriptorContent = createDataProductVersion(createdDataProductRes.getId(), descriptorContent);
         DPDCoreContentChecker.verifyAll(createdDescriptorContent);
 

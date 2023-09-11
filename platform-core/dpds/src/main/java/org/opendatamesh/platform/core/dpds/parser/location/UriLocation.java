@@ -37,7 +37,7 @@ public class UriLocation implements DescriptorLocation {
 
     void setDescriptorUri(URI descriptorUri) {
         rootDocumentUri = descriptorUri.normalize();
-        rootDocumentBaseUri = UriUtils.getBaseUri(rootDocumentUri);
+        rootDocumentBaseUri = UriUtils.getResourcePathUri(rootDocumentUri);
         rootDocumentFileName = UriUtils.getResourceName(rootDocumentUri);
     }
 
@@ -59,6 +59,14 @@ public class UriLocation implements DescriptorLocation {
             throw new FetchException("Impossible to fecth a closed location", resourceUri);
         }
         return fetcher.fetch(baseURI, resourceUri);
+    }
+
+    @Override
+    public String fetchResource(URI resourceUri) throws FetchException {
+        if(opened == false) {
+            throw new FetchException("Impossible to fecth a closed location", resourceUri);
+        }
+        return fetcher.fetch(resourceUri);
     }
 
     public void setEncoding(String encoding) {

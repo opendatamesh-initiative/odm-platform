@@ -38,14 +38,13 @@ public class Info implements Serializable, Cloneable{
     @Column(name = "DESCRIPTION")
     private String description;
     
-    @ManyToOne(cascade = CascadeType.ALL, optional = false)
+    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, optional = false) // intervenire qui
     @JoinColumn(name = "OWNER_ID", referencedColumnName = "ID")
     private Owner owner;
     
     @Embedded
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "DPV_INFO_CONTACT_POINTS", schema="ODMREGISTRY", joinColumns = {@JoinColumn(name = "DATA_PRODUCT_ID"), @JoinColumn(name = "VERSION_NUMBER")})
-    //@Column(name = "CONTACT_POINT_ID") 
     @Fetch(value = FetchMode.SUBSELECT)
-    private List<ContactPoint> contactPoints = new ArrayList<ContactPoint>();   
+    private List<ContactPoint> contactPoints = new ArrayList<ContactPoint>();
 }

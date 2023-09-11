@@ -45,7 +45,7 @@ public class SchemaService {
 
         if (!StringUtils.hasText(schema.getContent())) {
             throw new UnprocessableEntityException(
-                RegistryApiStandardErrors.SC422_08_DEFINITION_DOC_SYNTAX_IS_INVALID,
+                RegistryApiStandardErrors.SC422_08_API_NOT_VALID,
                     "Schema content property cannot be empty");
         }
 
@@ -78,7 +78,7 @@ public class SchemaService {
 
         if (!StringUtils.hasText(schema.getContent())) {
             throw new UnprocessableEntityException(
-                RegistryApiStandardErrors.SC422_08_DEFINITION_DOC_SYNTAX_IS_INVALID,
+                RegistryApiStandardErrors.SC422_08_API_NOT_VALID,
                     "Schema content property cannot be empty");
         }
 
@@ -196,7 +196,7 @@ public class SchemaService {
                 && schemaRepository.existsById(schemaId);
     }
 
-     private boolean relationshipExists(Long apiId, Long schemaId) {
+     private boolean relationshipExists(String apiId, Long schemaId) {
         if (apiId == null ||  schemaId == null) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
@@ -257,7 +257,7 @@ public class SchemaService {
     }
 
     public List<Schema> searchSchemas(
-            Long apiId,
+            String apiId,
             String name,
             String version) {
         List<Schema> schemaSearchResults = null;
@@ -273,7 +273,7 @@ public class SchemaService {
     }
 
     private List<Schema> findSchemas(
-            Long apiId,
+            String apiId,
             String name,
             String version) {
 

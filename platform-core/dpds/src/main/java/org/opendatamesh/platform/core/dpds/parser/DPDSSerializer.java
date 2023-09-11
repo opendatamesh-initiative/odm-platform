@@ -143,6 +143,31 @@ public class DPDSSerializer {
         return writeValueAsString(internalComponentsNode);
     }
 
+    public <T extends ComponentDPDS> String serialize(
+            List<T> components,
+            String form
+    ) throws JsonProcessingException {
+
+        String result = null;
+
+        if (form.equalsIgnoreCase("canonical")) {
+            result = serializeToCanonicalForm(components);
+        } else {
+            result = writeValueAsString(components);
+
+        }
+
+        return result;
+    }
+
+    public <T extends ComponentDPDS> String serializeToCanonicalForm(
+            List<T> components
+    ) throws JsonProcessingException {
+
+        String result = writeValueAsString(getComponetsRawContent(components));
+        return result;
+    }
+
     private JsonNode getRawContent(InterfaceComponentsDPDS resources) throws JsonProcessingException {
         return getInterfaceComponentsRawContent(resources,
                 new HashSet<EntityTypeDPDS>(Arrays.asList(EntityTypeDPDS.values())));
@@ -219,17 +244,19 @@ public class DPDSSerializer {
 
     private ObjectNode getActivityRawContent(LifecycleInfoDPDS lifecycleInfo) throws JsonProcessingException {
 
-        if (lifecycleInfo == null)
-            return null; // nothing to do
+        if (lifecycleInfo == null) return null; // nothing to do
+
+
         ObjectMapper mapper = ObjectMapperFactory.JSON_MAPPER;
         ObjectNode lifecycleNode = mapper.createObjectNode();
+        
         for (LifecycleActivityInfoDPDS activity : lifecycleInfo.getActivityInfos()) {
             ObjectNode activityNode = (ObjectNode) mapper.readTree(activity.getRawContent());
             String stageName = activityNode.get("stageName").asText();
             activityNode.remove("stageName");
             
             if(activity.hasTemplate()) {
-                ObjectNode templateNode = (ObjectNode) mapper.readTree(activity.getTemplate().getRawContent());
+                ObjectNode templateNode = getComponetRawContent(activity.getTemplate());
                 activityNode.set("template", templateNode);
             }
 
@@ -256,16 +283,30 @@ public class DPDSSerializer {
         ObjectNode componentNode = null;
 
         String componentContent = componentResource.getRawContent();
-        componentNode = (ObjectNode) ObjectMapperFactory.getRightMapper(componentContent)
-                .readTree(componentContent);
+        ObjectMapper mapper = ObjectMapperFactory.getRightMapper(componentContent);
+        componentNode = (ObjectNode) mapper.readTree(componentContent);
 
         if (componentResource instanceof PortDPDS) {
             PortDPDS portResource = (PortDPDS) componentResource;
             if (portResource.hasApi()) {
-                String apiContent = portResource.getPromises().getApi().getRawContent();
-                JsonNode apiNode = ObjectMapperFactory.getRightMapper(apiContent).readTree(apiContent);
+                ObjectNode apiNode = getComponetRawContent(portResource.getPromises().getApi());
                 ObjectNode promisesNode = (ObjectNode) componentNode.get("promises");
                 promisesNode.set("api", apiNode);
+            }
+        }
+
+        if (componentResource instanceof StandardDefinitionDPDS) { 
+            StandardDefinitionDPDS stdDefRes = (StandardDefinitionDPDS)componentResource;
+           
+            if(stdDefRes.getDefinition() != null) {
+                ObjectNode defNode = null;
+                if(stdDefRes.getDefinition().isRef()) {
+                    defNode = mapper.valueToTree(stdDefRes.getDefinition());
+                } else {
+                    defNode = (ObjectNode)mapper.readTree(stdDefRes.getDefinition().getRawContent());
+                }
+
+                componentNode.set("definition", defNode);
             }
         }
 

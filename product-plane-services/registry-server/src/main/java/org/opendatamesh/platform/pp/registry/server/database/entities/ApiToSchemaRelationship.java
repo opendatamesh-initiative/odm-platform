@@ -21,11 +21,11 @@ public class ApiToSchemaRelationship {
     String outputMediaType;
 
     @Transient
-    public Long getApiId() {
+    public String getApiId() {
         return (id == null ? null: id.getApiId());
     }
 
-    public void setApiId(Long apiId) {
+    public void setApiId(String apiId) {
         if(id == null) id = new ApiToSchemaRelationshipId();
         id.setApiId(apiId);
     }
@@ -44,7 +44,7 @@ public class ApiToSchemaRelationship {
     @Data
     public static class ApiToSchemaRelationshipId implements Serializable {
         @Column(name = "API_ID")
-        Long apiId;
+        String apiId;
         
         @Column(name = "SCHEMA_ID")
         Long schemaId;
@@ -52,7 +52,7 @@ public class ApiToSchemaRelationship {
         public ApiToSchemaRelationshipId() {           
         }
 
-        public ApiToSchemaRelationshipId(Long apiId, Long schemaId) {
+        public ApiToSchemaRelationshipId(String apiId, Long schemaId) {
             this.apiId = apiId;
             this.schemaId = schemaId;
         }

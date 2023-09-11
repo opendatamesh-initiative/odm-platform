@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.core.dpds;
+package org.opendatamesh.platform.core.dpds.utils;
 
 import java.io.IOException;
 import java.io.InputStream;

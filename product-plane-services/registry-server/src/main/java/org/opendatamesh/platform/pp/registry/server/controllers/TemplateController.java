@@ -10,20 +10,20 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
-import org.opendatamesh.platform.pp.registry.api.resources.DefinitionResource;
+import org.opendatamesh.platform.pp.registry.api.resources.ExternalComponentResource;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
-import org.opendatamesh.platform.pp.registry.server.database.entities.Api;
-import org.opendatamesh.platform.pp.registry.server.database.mappers.ApiDefinitionMapper;
-import org.opendatamesh.platform.pp.registry.server.services.ApiDefinitionService;
+import org.opendatamesh.platform.pp.registry.server.database.entities.Template;
+import org.opendatamesh.platform.pp.registry.server.database.mappers.TemplateDefinitionMapper;
+import org.opendatamesh.platform.pp.registry.server.services.TemplateService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.HttpStatus;
+
 import org.springframework.validation.annotation.Validated;
 
-
-//import org.springframework.web.bind.annotation.*;
  
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,7 +41,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(
-    value =  "/apis", 
+    value =  "/templates", 
     produces = { 
         "application/vnd.odmp.v1+json", 
         "application/vnd.odmp+json", 
@@ -50,20 +50,20 @@ import java.util.List;
 )
 @Validated
 @Tag(
-    name = "APIs", 
-    description = "API's definitions")
-public class ApiDefinitionController {
+    name = "Templates", 
+    description = "Tempates's definitions")
+public class TemplateController {
 
     @Autowired
-    private ApiDefinitionService apiDefinitionService;
+    private TemplateService templateDefinitionService;
 
     @Autowired
-    private ApiDefinitionMapper definitionMapper;
+    private TemplateDefinitionMapper templateDefinitionMapper;
 
-    private static final Logger logger = LoggerFactory.getLogger(ApiDefinitionController.class);
+    private static final Logger logger = LoggerFactory.getLogger(TemplateController.class);
 
-    public ApiDefinitionController() { 
-        logger.debug("Standard api definitions controller successfully started");
+    public TemplateController() { 
+        logger.debug("Standard Template definitions controller successfully started");
     }
 
     // ======================================================================================
@@ -80,16 +80,16 @@ public class ApiDefinitionController {
     )
     @ResponseStatus(HttpStatus.CREATED) 
     @Operation(
-        summary = "Register the  API definition",
-        description = "Register the provided API definition in the Data Product Registry" 
+        summary = "Register the  Template definition",
+        description = "Register the provided Template definition in the Data Product Registry" 
     )
     @ApiResponses(value = {
         @ApiResponse(
             responseCode = "201", 
-            description = "API definition registered", 
+            description = "Template definition registered", 
             content = @Content(
                 mediaType = "application/json", 
-                schema = @Schema(implementation = DefinitionResource.class)
+                schema = @Schema(implementation = ExternalComponentResource.class)
             )
         ),
         @ApiResponse(
@@ -113,21 +113,22 @@ public class ApiDefinitionController {
             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
         )
     })
-    public DefinitionResource createDefinition(
+    public ExternalComponentResource createDefinition(
         @Parameter( 
-            description = "An API definition object", 
+            description = "An Template definition object", 
             required = true)
-        @Valid @RequestBody(required=false)  DefinitionResource definition
+        @Valid @RequestBody(required=false)  ExternalComponentResource definitionRes
     ) {
-        if(definition == null) {
+
+        if(definitionRes == null) {
             throw new BadRequestException(
-                RegistryApiStandardErrors.SC400_08_STDDEF_IS_EMPTY,
-                "API definition cannot be empty");
+                RegistryApiStandardErrors.SC400_14_TEMPLATE_IS_EMPTY,
+                "Template definition cannot be empty");
         }
         
-        Api apiDefinition = definitionMapper.toEntity(definition);
-        apiDefinition = apiDefinitionService.createDefinition(apiDefinition);
-        return definitionMapper.toResource(apiDefinition);
+        Template templateDefinition = templateDefinitionMapper.toEntity(definitionRes);
+        templateDefinition = templateDefinitionService.createTemplate(templateDefinition);
+        return templateDefinitionMapper.toResource(templateDefinition);
     }
 
     // ----------------------------------------
@@ -137,13 +138,13 @@ public class ApiDefinitionController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK) 
     @Operation(
-        summary = "Get all registered API definitions",
-        description = "Get all API definitions registered in the Data Product Registry."
+        summary = "Get all registered Template definitions",
+        description = "Get all Template definitions registered in the Data Product Registry."
     )
     @ApiResponses(value = {
         @ApiResponse(
             responseCode = "200", 
-            description = "The list of all registered API definitions", 
+            description = "The list of all registered Template definitions", 
             content = @Content(
                 mediaType = "application/json", 
                 schema = @Schema(implementation = List.class)
@@ -156,7 +157,7 @@ public class ApiDefinitionController {
                 content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
         )
     })
-    public List<DefinitionResource> readAllDefinitions(
+    public List<ExternalComponentResource> readAllDefinitions(
         @Parameter(description="Add `name` parameter to the request to get only definitions with the specific name")
         @RequestParam(required = false, name = "name") 
         String name, 
@@ -178,8 +179,8 @@ public class ApiDefinitionController {
         String specificationVersion
     )
     {
-        List<Api> definitions = apiDefinitionService.searchDefinitions(name, version, type, specification, specificationVersion);
-        List<DefinitionResource> definitionResources = definitionMapper.definitionsToResources(definitions);
+        List<Template> definitions = templateDefinitionService.searchDefinitions(name, version, specification, specificationVersion);
+        List<ExternalComponentResource> definitionResources = templateDefinitionMapper.definitionsToResources(definitions);
         return definitionResources;
     }
 
@@ -192,8 +193,8 @@ public class ApiDefinitionController {
     )
     @ResponseStatus(HttpStatus.OK)
     @Operation(
-        summary = "Get the specified API definition",
-        description = "Get the API definition identified by the input `id`"
+        summary = "Get the specified Template definition",
+        description = "Get the Template definition identified by the input `id`"
     )
     @ApiResponses(value = {
         @ApiResponse(
@@ -201,7 +202,7 @@ public class ApiDefinitionController {
             description = "The requested definition", 
             content = @Content(
                 mediaType = "application/json", 
-                schema = @Schema(implementation = DefinitionResource.class)
+                schema = @Schema(implementation = ExternalComponentResource.class)
             )
         ),
         @ApiResponse(
@@ -211,12 +212,13 @@ public class ApiDefinitionController {
                 content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
         )
     })
-    public DefinitionResource readOneDefinition(
-        @Parameter(description = "Idenntifier of the API definition")
-        @Valid @PathVariable(value = "id") Long id) 
+    public ExternalComponentResource readOneDefinition(
+        @Parameter(description = "Idenntifier of the Template definition")
+        @Valid @PathVariable(value = "id") String id) 
     {
-        Api apiDefinition = apiDefinitionService.readDefinition(id);
-        return definitionMapper.toResource(apiDefinition);
+        Template definition = templateDefinitionService.readDefinition(id);
+        ExternalComponentResource definitionResource = templateDefinitionMapper.toResource(definition);
+        return definitionResource;
     }
 
     // ----------------------------------------
@@ -237,8 +239,8 @@ public class ApiDefinitionController {
      )
      @ResponseStatus(HttpStatus.OK)
      @Operation(
-             summary = "Delete the specified API definition",
-             description = "Delete the API definition identified by the input `id`"
+             summary = "Delete the specified Template definition",
+             description = "Delete the Template definition identified by the input `id`"
      )
      @ApiResponses(value = {
              @ApiResponse(
@@ -256,10 +258,10 @@ public class ApiDefinitionController {
      })
     public void deleteDefinition(
         @Parameter(description = "Identifier of the definition")
-        @PathVariable Long id
+        @PathVariable String id
     )
     {
-        apiDefinitionService.deleteDefinition(id);
+        templateDefinitionService.deleteDefinition(id);
     }
 
     

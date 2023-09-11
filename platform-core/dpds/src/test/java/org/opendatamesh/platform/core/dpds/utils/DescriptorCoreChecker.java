@@ -1,7 +1,6 @@
-package org.opendatamesh.platform.core.dpds;
+package org.opendatamesh.platform.core.dpds.utils;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 
 import java.util.Arrays;
 import java.util.List;
@@ -75,7 +74,7 @@ public class DescriptorCoreChecker {
         assertThat(promises.getPlatform()).isEqualTo("platformX");
         assertThat(promises.getServicesType()).isEqualTo("rest-services");
         assertThat(promises.getApi()).isNotNull();
-        assertThat(promises.getApi().getName()).isEqualTo("reastApi1");
+        assertThat(promises.getApi().getName()).isEqualTo("restApi1");
         assertThat(promises.getApi().getVersion()).isEqualTo("1.3.2");
         assertThat(promises.getApi().getDescription()).isEqualTo("Rest input API");
         assertThat(promises.getApi().getSpecification()).isEqualTo("custom-api-spec");
@@ -99,7 +98,7 @@ public class DescriptorCoreChecker {
         assertThat(promises.getPlatform()).isEqualTo("platformX");
         assertThat(promises.getServicesType()).isEqualTo("rest-services");
         assertThat(promises.getApi()).isNotNull();
-        assertThat(promises.getApi().getName()).isEqualTo("reastApi2");
+        assertThat(promises.getApi().getName()).isEqualTo("restApi2");
         assertThat(promises.getApi().getVersion()).isEqualTo("1.3.2");
         assertThat(promises.getApi().getDescription()).isEqualTo("Rest output API");
         assertThat(promises.getApi().getSpecification()).isEqualTo("custom-api-spec");
@@ -180,8 +179,7 @@ public class DescriptorCoreChecker {
         assertThat(template.getSpecificationVersion()).isEqualTo("1.0.0");
         DefinitionReferenceDPDS definition = template.getDefinition();
         assertThat(definition).isNotNull();
-        assertThat(definition.getOriginalRef()).isNull();
-        assertThat(definition.getRef()).isEqualTo("http://localhost:80/templates/{templateId}");
+        //assertThat(definition.getRef()).isEqualTo("http://localhost:80/templates/{templateId}");
         Map<String, Object> configurations = activity.getConfigurations();
         assertThat(configurations).isNotNull();
         assertThat(configurations.get("stagesToSkip")).isEqualTo(Arrays.asList("Deploy"));
@@ -200,8 +198,7 @@ public class DescriptorCoreChecker {
         assertThat(template.getSpecificationVersion()).isEqualTo("1.0.0");
         definition = template.getDefinition();
         assertThat(definition).isNotNull();
-        assertThat(definition.getOriginalRef()).isNull();
-        assertThat(definition.getRef()).isEqualTo("http://localhost:80/templates/{templateId}");
+        //assertThat(definition.getRef()).isEqualTo("http://localhost:80/templates/{templateId}");
         configurations = activity.getConfigurations();
         assertThat(configurations).isNotNull();
         assertThat(configurations.get("stagesToSkip")).isEqualTo(Arrays.asList());

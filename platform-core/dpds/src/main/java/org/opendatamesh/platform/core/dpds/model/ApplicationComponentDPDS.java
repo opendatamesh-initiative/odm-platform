@@ -11,7 +11,8 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper=true)
 @ToString(callSuper = true)
-public class ApplicationComponentDPDS extends ComponentDPDS implements Cloneable {
+public class ApplicationComponentDPDS extends ComponentDPDS {
+
 
     @JsonProperty("platform")
     private String platform;
@@ -26,4 +27,5 @@ public class ApplicationComponentDPDS extends ComponentDPDS implements Cloneable
     
     @JsonProperty("dependsOn")
     private List<String> dependsOn = new ArrayList<String>();
+
 }

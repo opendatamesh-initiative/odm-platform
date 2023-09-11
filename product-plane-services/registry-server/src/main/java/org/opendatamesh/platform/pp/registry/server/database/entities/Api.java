@@ -2,16 +2,23 @@ package org.opendatamesh.platform.pp.registry.server.database.entities;
 
 import lombok.Data;
 
+import java.util.Date;
+
 import javax.persistence.*;
 
 @Data
-@Entity(name = "ApiDefinition")
+@Entity(name = "Api")
 @Table(name = "APIS", schema="ODMREGISTRY")
 public class Api {
     @Id
-    @Column(name = "ID")
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    Long id;
+    @Column(name="ID")
+    String id;
+
+    @Column(name="FQN")
+    protected String fullyQualifiedName;
+
+    @Column(name="ENTITY_TYPE")
+    protected String entityType;
     
     @Column(name = "NAME")
     private String name;
@@ -19,17 +26,11 @@ public class Api {
     @Column(name = "VERSION")
     private String version;
 
-    @Column(name = "STATUS")
-    private String status;
-
     @Column(name = "DISPLAY_NAME")
     private String displayName;
 
     @Column(name = "DESCRIPTION")
     private String description;
-
-    @Column(name = "TYPE")
-    private String type;
 
     @Column(name = "SPECIFICATION")
     private String specification;
@@ -37,9 +38,24 @@ public class Api {
     @Column(name = "SPECIFICATION_VERSION")
     private String specificationVersion;
 
-    @Column(name = "CONTENT_MEDIA_TYPE")
-    private String contentMediaType;
+    @Column(name = "DEFINITION_MEDIA_TYPE")
+    private String definitionMediaType;
 
-    @Column(name = "CONTENT")
-    private String content;
+    @Column(name = "DEFINITION")
+    private String definition;
+
+    @Column(name="CREATED_AT")
+    protected Date createdAt;
+
+    @Column(name="UPDATED_AT")
+    protected Date updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = new Date();
+    }
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = new Date();
+    }
 }

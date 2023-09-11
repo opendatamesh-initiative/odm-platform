@@ -3,7 +3,6 @@ package org.opendatamesh.platform.core.commons.servers.exceptions;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

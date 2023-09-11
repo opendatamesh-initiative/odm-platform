@@ -159,7 +159,7 @@ public class SchemaIT extends ODMRegistryIT {
         verifyResponseError(
                 postResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                RegistryApiStandardErrors.SC422_08_DEFINITION_DOC_SYNTAX_IS_INVALID
+                RegistryApiStandardErrors.SC422_08_API_NOT_VALID
         );
 
         // TEST 2: Schema already exists

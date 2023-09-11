@@ -54,10 +54,12 @@ spring:
 ##########################
 odm:
   utilityPlane:
-    policyService:
-      active: false
-      address: http://localhost:4242
-    metaService:
-      active: false
-      address: http://localhost:8595
+    policyServices:
+      open-policy-agent:
+        active: false
+        address: http://localhost:9001
+    notificationServices:
+      blindata:
+        active: false
+        address: http://localhost:9002
 

@@ -58,9 +58,11 @@ spring:
 ##############################
 odm:
   utilityPlane:
-    policyService:
-      active: ${POLICYSERVICE_ACTIVE}
-      address: http://${POLICYSERVICE_HOSTNAME}:${POLICYSERVICE_PORT}
-    metaService:
-      active: ${METASERVICE_ACTIVE}
-      address: http://${METASERVICE_HOSTNAME}:${METASERVICE_PORT}
+    policyServices:
+      open-policy-agent:
+        active: ${POLICYSERVICE_ACTIVE}
+        address: http://${POLICYSERVICE_HOSTNAME}:${POLICYSERVICE_PORT}
+    notificationServices:
+      blindata:
+        active: ${METASERVICE_ACTIVE}
+        address: http://${METASERVICE_HOSTNAME}:${METASERVICE_PORT}

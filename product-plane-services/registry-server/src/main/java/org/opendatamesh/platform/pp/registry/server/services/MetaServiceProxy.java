@@ -18,7 +18,7 @@ public class MetaServiceProxy extends NotificationClient {
 
     private static final Logger logger = LoggerFactory.getLogger(MetaServiceProxy.class);
 
-    public MetaServiceProxy(@Value("${odm.utilityPlane.metaService.address}") final String serverAddress) {
+    public MetaServiceProxy(@Value("${odm.utilityPlane.notificationServices.blindata.address}") final String serverAddress) {
         super(serverAddress);
     }
 
@@ -33,7 +33,7 @@ public class MetaServiceProxy extends NotificationClient {
 
             if(responseEntity.getStatusCode().is2xxSuccessful()){
                 notification = (NotificationResource) responseEntity.getBody();
-                logger.debug("Successfuly loaded information to Meta service system: " + notification.toString());
+                logger.debug("Successfully loaded information to Meta service system: " + notification.toString());
             } else {
                 ErrorResource error = (ErrorResource) responseEntity.getBody();
                 throw new BadGatewayException(

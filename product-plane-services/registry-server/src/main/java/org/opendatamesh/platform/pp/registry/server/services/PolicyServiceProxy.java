@@ -21,12 +21,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class PolicyServiceProxy extends PolicyServiceClient {
 
-    @Value("${odm.utilityPlane.policyService.active}")
+    @Value("${odm.utilityPlane.policyServices.open-policy-agent.active}")
     private String policyServiceActive;
 
     private static final Logger logger = LoggerFactory.getLogger(PolicyServiceProxy.class);
 
-    public PolicyServiceProxy(@Value("${odm.utilityPlane.policyService.address}") final String serverAddress) {
+    public PolicyServiceProxy(@Value("${odm.utilityPlane.policyServices.open-policy-agent.address}") final String serverAddress) {
         super(serverAddress, ObjectMapperFactory.JSON_MAPPER);
     }
 

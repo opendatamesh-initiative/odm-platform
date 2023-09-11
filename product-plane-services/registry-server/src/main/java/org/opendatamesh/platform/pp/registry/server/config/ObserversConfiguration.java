@@ -13,8 +13,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ObserversConfiguration {
 
-    @Value("${odm.utilityPlane.metaService.active}")
-    private Boolean metaServiceActive;
+    @Value("${odm.utilityPlane.notificationServices.blindata.active}")
+    private Boolean notificationServiceActive;
 
     @Autowired
     MetaServiceObserver metaServiceObserver;
@@ -28,7 +28,7 @@ public class ObserversConfiguration {
         EventNotifier eventNotifier = new EventNotifier();
 
         // Add observers
-        if(!metaServiceActive) {
+        if(!notificationServiceActive) {
             logger.debug("Skipping meta service");
         } else {
             eventNotifier.addObserver(metaServiceObserver);

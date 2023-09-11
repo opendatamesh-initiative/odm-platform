@@ -54,10 +54,13 @@ spring:
 
 
 ##############################
-# Policy Module configuration
+# Utility Plane Modules configuration
 ##############################
-skippolicyservice: ${SKIP_POLICYSERVICE}
-skipmetaservice: ${SKIP_METASERVICE}
-
-policyserviceaddress: http://${POLICYSERVICE_HOSTNAME}:${POLICYSERVICE_PORT}  #172.17.0.1:9001
-metaserviceaddress: http://${METASERVICE_HOSTNAME}:${METASERVICE_PORT}
+odm:
+  utilityPlane:
+    policyService:
+      active: ${POLICYSERVICE_ACTIVE}
+      address: http://${POLICYSERVICE_HOSTNAME}:${POLICYSERVICE_PORT}
+    metaService:
+      active: ${METASERVICE_ACTIVE}
+      address: http://${METASERVICE_HOSTNAME}:${METASERVICE_PORT}

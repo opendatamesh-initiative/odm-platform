@@ -13,8 +13,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ObserversConfiguration {
 
-    @Value("${skipmetaservice}")
-    private Boolean skipmetaservice;
+    @Value("${odm.utilityPlane.metaService.active}")
+    private Boolean metaServiceActive;
 
     @Autowired
     MetaServiceObserver metaServiceObserver;
@@ -28,7 +28,7 @@ public class ObserversConfiguration {
         EventNotifier eventNotifier = new EventNotifier();
 
         // Add observers
-        if(skipmetaservice) {
+        if(!metaServiceActive) {
             logger.debug("Skipping meta service");
         } else {
             eventNotifier.addObserver(metaServiceObserver);

@@ -18,7 +18,7 @@ public class MetaServiceProxy extends NotificationClient {
 
     private static final Logger logger = LoggerFactory.getLogger(MetaServiceProxy.class);
 
-    public MetaServiceProxy(@Value("${metaserviceaddress}") final String serverAddress) {
+    public MetaServiceProxy(@Value("${odm.utilityPlane.metaService.address}") final String serverAddress) {
         super(serverAddress);
     }
 

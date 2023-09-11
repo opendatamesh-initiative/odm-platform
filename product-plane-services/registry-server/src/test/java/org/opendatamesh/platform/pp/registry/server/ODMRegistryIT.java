@@ -67,7 +67,7 @@ public abstract class ODMRegistryIT extends ODMIntegrationTest {
 
     protected Logger logger = LoggerFactory.getLogger(ODMRegistryIT.class);
 
-   
+
     @PostConstruct
     public final void init() {
         resourceBuilder = new ODMRegistryResourceBuilder();
@@ -143,7 +143,7 @@ public abstract class ODMRegistryIT extends ODMIntegrationTest {
         DataProductResource createdDataProductRes = null;
 
         ResponseEntity<DataProductResource> postDataProductResponse = null;
-        
+
         try {
             postDataProductResponse = registryClient.postDataProduct(dataProductRes);
         } catch (Throwable t) {
@@ -170,7 +170,7 @@ public abstract class ODMRegistryIT extends ODMIntegrationTest {
             return null;
         }
         verifyResponseEntity(postProductVersionResponse, HttpStatus.CREATED, true);
-        
+
         return postProductVersionResponse.getBody();
     }
     protected String createDataProductVersion(String dataProductId, ODMRegistryResources resource) {
@@ -244,10 +244,8 @@ public abstract class ODMRegistryIT extends ODMIntegrationTest {
 
         return createdTemplateRes;
     }
-
-
-
-
+  
+  
 
     protected SchemaResource createSchema1() throws IOException {
         SchemaResource schemaResource = resourceBuilder.getObject(ODMRegistryResources.RESOURCE_SCHEMA1, SchemaResource.class);
@@ -256,6 +254,13 @@ public abstract class ODMRegistryIT extends ODMIntegrationTest {
 
         return postSchemaResponse.getBody();
 
+    }
+
+    protected DomainResource createDomain1() throws IOException {
+        DomainResource payload = resourceBuilder.readResourceFromFile(ODMRegistryResources.RESOURCE_DOMAIN1, DomainResource.class);
+        ResponseEntity<DomainResource> postDomainResponse = registryClient.createDomain(payload);
+        verifyResponseEntity(postDomainResponse, HttpStatus.CREATED, true);
+        return postDomainResponse.getBody();
     }
 
     // ======================================================================================

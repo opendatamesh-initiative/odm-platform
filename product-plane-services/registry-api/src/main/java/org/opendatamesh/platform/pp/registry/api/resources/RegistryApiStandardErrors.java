@@ -21,6 +21,7 @@ public enum RegistryApiStandardErrors implements ODMApiStandardErrors {
     SC400_13_SCHEMA_ID_IS_EMPTY ("40013", "Schema id is empty"),
     SC400_14_TEMPLATE_IS_EMPTY ("40014", "Template is empty"),
     SC400_15_TEMPLATE_ID_IS_EMPTY ("40015", "Template id is empty"),
+    SC400_16_DOMAIN_IS_EMPTY ("40016", "Domain is empty"),
 
     // Not Found Exceptions
     SC404_01_PRODUCT_NOT_FOUND ("40401", "Data product not found"),
@@ -28,6 +29,7 @@ public enum RegistryApiStandardErrors implements ODMApiStandardErrors {
     SC404_03_API_NOT_FOUND ("40403", "Api not found"),
     SC404_04_SCHEMA_NOT_FOUND ("40404", "Schema not found"),
     SC404_05_TEMPLATE_NOT_FOUND ("40405", "Template not found"),
+    SC404_06_DOMAIN_NOT_FOUND ("40406", "Domain not found"),
 
     // Unprocessable Entity Exceptions
     SC422_01_DESCRIPTOR_URI_NOT_VALID ("42201", "Descriptor URI is not valid"),
@@ -48,6 +50,9 @@ public enum RegistryApiStandardErrors implements ODMApiStandardErrors {
     
     SC422_13_TEMPLATE_ALREADY_EXISTS ("42213", "Template already exists"),
     SC422_14_TEMPLATE_NOT_VALID ("42214", "Template document is not valid"),
+
+    SC422_15_DOMAIN_IS_INVALID ("42215", "Domain is invalid"),
+    SC422_16_DOMAIN_ALREADY_EXISTS ("42216", "Domain already exists"),
 
     // Conflict Exceptions
     SC409_01_CONCURRENT_DEPLOYMENT ("40901", "Concurrent deployment task");

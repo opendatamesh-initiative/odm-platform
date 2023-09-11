@@ -638,6 +638,101 @@ public class RegistryClient extends ODMClient {
 
     }
 
+    // ======================================================================================
+    // DOMAINS
+    // ======================================================================================
+
+    // ----------------------------------------
+    // CREATE
+    // ----------------------------------------
+
+    public ResponseEntity createDomain(
+            Object payload) throws IOException {
+
+        ResponseEntity postNotificationResponse = rest.postForEntity(
+                apiUrl(RegistryAPIRoutes.DOMAINS),
+                getHttpEntity(payload),
+                Object.class);
+
+        ResponseEntity response = mapResponseEntity(postNotificationResponse,
+                HttpStatus.CREATED,
+                DomainResource.class);
+        return response;
+    }
+
+    // ----------------------------------------
+    // READ
+    // ----------------------------------------
+
+    public ResponseEntity readAllDomains() throws JsonProcessingException {
+
+        ResponseEntity getDomainResponse = rest.getForEntity(
+                apiUrl(RegistryAPIRoutes.DOMAINS),
+                Object.class);
+
+        ResponseEntity response = mapResponseEntity(getDomainResponse,
+                HttpStatus.OK,
+                DomainResource[].class);
+        return response;
+    }
+
+    public ResponseEntity getDomainById(String id) throws IOException {
+
+        ResponseEntity getResponse =  rest.getForEntity(
+                apiUrlOfItem(RegistryAPIRoutes.DOMAINS),
+                Object.class,
+                id
+        );
+
+        return mapResponseEntity(
+                getResponse,
+                HttpStatus.OK,
+                DomainResource.class
+        );
+    }
+
+
+    // ----------------------------------------
+    // UPDATE
+    // ----------------------------------------
+
+    public ResponseEntity updateDomain(DomainResource domain) throws IOException {
+        ResponseEntity putPolicyResponse = rest.exchange(
+                apiUrl(RegistryAPIRoutes.DOMAINS),
+                HttpMethod.PUT,
+                getHttpEntity(domain),
+                Object.class
+        );
+
+        ResponseEntity response = mapResponseEntity(putPolicyResponse,
+                HttpStatus.OK,
+                DomainResource.class);
+        return response;
+    }
+
+    // ----------------------------------------
+    // DELETE
+    // ----------------------------------------
+
+    public ResponseEntity deleteDomain(String id) throws JsonProcessingException {
+
+        ResponseEntity deleteResponse = rest.exchange(
+                apiUrlOfItem(RegistryAPIRoutes.DOMAINS),
+                HttpMethod.DELETE,
+                null,
+                Object.class,
+                id
+        );
+
+        return mapResponseEntity(
+                deleteResponse,
+                HttpStatus.OK,
+                Void.class
+        );
+
+    }
+
+
     // ----------------------------------------
     // Utils
     // ----------------------------------------

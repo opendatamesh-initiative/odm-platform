@@ -21,19 +21,19 @@ import org.springframework.stereotype.Service;
 @Service
 public class PolicyServiceProxy extends PolicyServiceClient {
 
-    @Value("${skippolicyservice}")
-    private String skippolicyservice;
+    @Value("${odm.utilityPlane.policyServices.open-policy-agent.active}")
+    private String policyServiceActive;
 
     private static final Logger logger = LoggerFactory.getLogger(PolicyServiceProxy.class);
 
-    public PolicyServiceProxy(@Value("${policyserviceaddress}") final String serverAddress) {
+    public PolicyServiceProxy(@Value("${odm.utilityPlane.policyServices.open-policy-agent.address}") final String serverAddress) {
         super(serverAddress, ObjectMapperFactory.JSON_MAPPER);
     }
 
     // TODO return also why is not compliant
     public Boolean validateDataProductVersion(DataProductVersion dataProductVersion, PolicyName policyName) {
 
-        if (skippolicyservice.equals("true")) {
+        if (policyServiceActive.equals("false")) {
             logger.debug("Skipping policy service");
             return true;
         }

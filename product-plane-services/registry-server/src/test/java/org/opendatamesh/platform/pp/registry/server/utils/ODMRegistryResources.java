@@ -16,6 +16,8 @@ public enum ODMRegistryResources {
 
      
     RESOURCE_SCHEMA1("test/schema/schema1.json"),
+
+    RESOURCE_DOMAIN1("test/domain/domain1.json"),
     
     RESOURCE_DPS_URI("https://raw.githubusercontent.com/opendatamesh-initiative/odm-specification-dpdescriptor/main/examples/tripexecution/data-product-descriptor.json");
 

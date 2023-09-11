@@ -1,26 +1,17 @@
 package org.opendatamesh.platform.pp.registry.server.utils;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.model.EntityTypeDPDS;
 import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
+import org.opendatamesh.platform.pp.registry.api.resources.DomainResource;
 import org.opendatamesh.platform.pp.registry.api.resources.ExternalComponentResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.assertThat;
-
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Date;
 import java.util.Objects;
 
 public class ODMRegistryResourceBuilder {
@@ -56,9 +47,7 @@ public class ODMRegistryResourceBuilder {
         return mapper.readValue(fileContent, resourceType);
     }
 
-    
 
-    
     public DataProductResource buildDataProduct(String fqn, String domain, String descriptione) {
         return buildDataProduct(null, fqn, domain, descriptione);
     }
@@ -135,5 +124,28 @@ public class ODMRegistryResourceBuilder {
 
         return definitionRes;
     }
-    
+
+    public DomainResource buildDomain(String fqn, String name,
+                                      String displayName, String summary, String description) throws IOException {
+
+        return buildDomain(null, fqn, name, displayName, summary, description);
+    }
+
+    public DomainResource buildDomain(String fqn) throws IOException {return buildDomain(fqn, null, null, null, null);}
+
+    public DomainResource buildDomain(String id, String fqn, String name,
+                                      String displayName, String summary, String description) throws IOException {
+
+        DomainResource domainResource = null;
+
+        domainResource = new DomainResource();
+        domainResource.setId(id);
+        domainResource.setFullyQualifiedName(fqn);
+        domainResource.setName(name);
+        domainResource.setDisplayName(displayName);
+        domainResource.setDescription(description);
+        domainResource.setSummary(summary);
+
+        return domainResource;
+    }
 }

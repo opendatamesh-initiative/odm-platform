@@ -1,0 +1,7 @@
+{
+  "fullyQualifiedName": "urn:odmp:org.opendatamesh:domains:Disney",
+  "name":  "Disney",
+  "displayName": "Disney Domain",
+  "summary":  "",
+  "description": "Domain for all Disney entities"
+}

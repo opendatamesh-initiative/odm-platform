@@ -28,20 +28,21 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * @see <a href="https://dpds.opendatamesh.org/resources/specifications/1.0.0-DRAFT/#object-types">DPDS Object Types</a>
  */
 public enum EntityTypeDPDS {
-    
-    DATAPRODUCT("dataproduct", "dataproducts","dataProducts"), 
-    
-    INPUTPORT("inputport", "inputports","inputPorts"),  
-    OUTPUTPORT("outputport", "outputports","outputPorts"), 
-    DISCOVERYPORT("discoveryport", "discoveryports","discoveryPorts"),  
-    CONTROLPORT("controlport", "controlports","controlPorts"),  
-    OBSERVABILITYPORT("observabilityport", "observabilityports","observabilityPorts"), 
-    
-    APPLICATION("application", "applications","applicationComponents"),  
-    INFRASTRUCTURE("infrastructure", "infrastructures","infrastructuralComponents"), 
-    
-	API("api", "apis","apis"), 
-    TEMPLATE("template", "templates","templates");
+
+    DATAPRODUCT("dataproduct", "dataproducts","dataProducts"),
+
+    INPUTPORT("inputport", "inputports","inputPorts"),
+    OUTPUTPORT("outputport", "outputports","outputPorts"),
+    DISCOVERYPORT("discoveryport", "discoveryports","discoveryPorts"),
+    CONTROLPORT("controlport", "controlports","controlPorts"),
+    OBSERVABILITYPORT("observabilityport", "observabilityports","observabilityPorts"),
+
+    APPLICATION("application", "applications","applicationComponents"),
+    INFRASTRUCTURE("infrastructure", "infrastructures","infrastructuralComponents"),
+
+	API("api", "apis","apis"),
+    TEMPLATE("template", "templates","templates"),
+	DOMAIN("domain", "domains","domains");
 
     private static final EntityTypeDPDS[] VALUES;
 	public static final List<EntityTypeDPDS> PORTS;
@@ -58,7 +59,7 @@ public enum EntityTypeDPDS {
     private final String propertyValue;
     private final String collectionName;
     private final String groupingPropertyName;
-    
+
 
     private EntityTypeDPDS(String propertyValue, String collectionName, String groupingPropertyName) {
         this.propertyValue = propertyValue;
@@ -97,7 +98,7 @@ public enum EntityTypeDPDS {
 	}
 
     /**
-	 * Whether this entity type is a port 
+	 * Whether this entity type is a port
 	 * {@link org.opendatamesh.platform.core.dpds.model.PortDPDS}.
 	 */
     public boolean isPort(){
@@ -105,7 +106,7 @@ public enum EntityTypeDPDS {
     }
 
     /**
-	 * Whether this entity type is a component 
+	 * Whether this entity type is a component
 	 * {@link org.opendatamesh.platform.core.dpds.model.ComponentDPDS}.
 	 */
     public boolean isComponent(){
@@ -113,7 +114,7 @@ public enum EntityTypeDPDS {
     }
 
 	/**
-	 * Whether this entity type is an external component 
+	 * Whether this entity type is an external component
 	 * {@link org.opendatamesh.platform.core.dpds.model.ComponentDPDS}.
 	 */
     public boolean isExternalComponent(){
@@ -122,7 +123,7 @@ public enum EntityTypeDPDS {
 
     /**
 	 * Return the {@code EntityTypeDPDS} enum constant with the specified property value.
-	 * @param label the property value of the enum to be returned
+	 * @param propertyValue the property value of the enum to be returned
 	 * @return the enum constant with the specified property value
 	 * @throws IllegalArgumentException if this enum has no constant for the specified property value
 	 */
@@ -137,7 +138,7 @@ public enum EntityTypeDPDS {
 
     /**
 	 * Resolve the given type property value to an {@code EntityTypeDPDS}, if possible.
-	 * @param statusCode the entity type property value
+	 * @param propertyValue the entity type property value
 	 * @return the corresponding {@code EntityTypeDPDS}, or {@code null} if not found
 	 */
 	public static EntityTypeDPDS resolvePropertyValue(String propertyValue) {
@@ -148,11 +149,11 @@ public enum EntityTypeDPDS {
 			}
 		}
 		return null;
-	}    
+	}
 
 	/**
 	 * Resolve the given type property grouping name to an {@code EntityTypeDPDS}, if possible.
-	 * @param statusCode the entity type property grouping name
+	 * @param groupingPropertyName the entity type property grouping name
 	 * @return the corresponding {@code EntityTypeDPDS}, or {@code null} if not found
 	 */
 	public static EntityTypeDPDS resolveGroupingPropertyName(String groupingPropertyName) {
@@ -163,5 +164,5 @@ public enum EntityTypeDPDS {
 			}
 		}
 		return null;
-	}    
+	}
 }

@@ -35,8 +35,6 @@ import java.io.IOException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
-@TestPropertySource(properties = { "spring.test.context.parallel.enabled=false" })
-@Execution(ExecutionMode.SAME_THREAD)
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 public class DataProductVersionIT extends ODMRegistryIT {
 

@@ -19,7 +19,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none #validate #errors on scripts
-      show-sql: true
+      #show-sql: true
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     properties:

@@ -17,7 +17,7 @@ spring:
   profile: localmysql
   # JPA
   jpa:
-    show-sql: true
+    #show-sql: true
     hibernate:
       ddl-auto: none #errors on scripts --> MySql + Hibernate validation want TEXT as VARCHAR(N)
       naming:

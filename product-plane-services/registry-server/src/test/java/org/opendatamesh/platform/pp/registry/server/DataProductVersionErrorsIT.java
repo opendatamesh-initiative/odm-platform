@@ -19,10 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.annotation.DirtiesContext.MethodMode;
-import org.springframework.test.context.TestPropertySource;
 
-@TestPropertySource(properties = { "spring.test.context.parallel.enabled=false" })
-@Execution(ExecutionMode.SAME_THREAD)
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 public class DataProductVersionErrorsIT extends ODMRegistryIT {
 

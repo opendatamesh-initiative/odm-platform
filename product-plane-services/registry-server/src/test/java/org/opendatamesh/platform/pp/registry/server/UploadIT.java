@@ -22,9 +22,6 @@ import org.springframework.test.context.TestPropertySource;
 import java.io.IOException;
 import java.util.List;
 
-@TestPropertySource(properties = { "spring.test.context.parallel.enabled=false" })
-@Execution(ExecutionMode.SAME_THREAD)
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 @Disabled
 public class UploadIT extends ODMRegistryIT {
@@ -33,7 +30,6 @@ public class UploadIT extends ODMRegistryIT {
     // CREATE Data product version
     // ----------------------------------------
     @Test
-    @Order(1)
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDataProductVersionUriUpload() throws IOException {
         DataProductDescriptorLocationResource descriptorLocation = new DataProductDescriptorLocationResource();
@@ -47,7 +43,6 @@ public class UploadIT extends ODMRegistryIT {
     }
 
     @Test
-    @Order(2)
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDataProductVersionGitUpload() throws IOException {
         DataProductDescriptorLocationResource descriptorLocation = new DataProductDescriptorLocationResource();
@@ -66,7 +61,6 @@ public class UploadIT extends ODMRegistryIT {
 
     @Test
     @Disabled
-    @Order(3)
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDataProductVersionDevOpsUploadMain() throws IOException {
         DataProductDescriptorLocationResource descriptorLocation = new DataProductDescriptorLocationResource();
@@ -90,7 +84,6 @@ public class UploadIT extends ODMRegistryIT {
 
     @Test
     @Disabled
-    @Order(4)
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDataProductVersionDevOpsUploadTag() throws IOException {
         DataProductDescriptorLocationResource descriptorLocation = new DataProductDescriptorLocationResource();
@@ -114,7 +107,6 @@ public class UploadIT extends ODMRegistryIT {
 
     @Test
     @Disabled
-    @Order(5)
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDataProductVersionDevOpsUploadBranch() throws IOException {
         DataProductDescriptorLocationResource descriptorLocation = new DataProductDescriptorLocationResource();

@@ -17,7 +17,7 @@ spring:
   profile: localpostgresql
   # JPA
   jpa:
-    show-sql: true
+    #show-sql: true
     hibernate:
       ddl-auto: validate #none
       naming:

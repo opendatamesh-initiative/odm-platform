@@ -20,7 +20,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
-      show-sql: true
+      #show-sql: true
       naming:
         implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl

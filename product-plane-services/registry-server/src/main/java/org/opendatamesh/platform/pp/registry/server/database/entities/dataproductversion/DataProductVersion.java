@@ -84,7 +84,6 @@ public class DataProductVersion implements Cloneable, Serializable {
     /**
      * 
      * @param dataProduct a data product
-     * @param dataProductVersion the data product version
      * @return true if the referred product match with the one passed as input, false otherwise
      */
     public boolean isVersionOf(DataProduct dataProduct) {

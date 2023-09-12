@@ -212,12 +212,12 @@ docker-compose build --no-cache
 
 You can invoke REST endpoints through *OpenAPI UI* available at the following url:
 
-* [http://localhost:8001/api/v1/pp/swagger-ui/index.html](http://localhost:8001/api/v1/pp/swagger-ui/index.html)
+* [http://localhost:8001/api/v1/pp/registry/swagger-ui/index.html](http://localhost:8001/api/v1/pp/swagger-ui/index.html)
 
 ## Database 
 
 If the application is running using an in memory instance of H2 database you can check the database content through H2 Web Console available at the following url:
 
-* [http://localhost:8001/api/v1/pp/h2-console](http://localhost:8001/api/v1/pp/h2-console)
+* [http://localhost:8001/api/v1/pp/registry/h2-console](http://localhost:8001/api/v1/pp/h2-console)
 
 In all cases you can also use your favourite sql client providing the proper connection parameters

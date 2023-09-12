@@ -52,3 +52,29 @@ spring:
     #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
     #schemas: flyway # not working
     clean-on-validation-error: true
+
+
+odm:
+  productPlane:
+    registryService:
+      active: true
+      address: http://localhost:8001
+    devopsService:
+      active: true
+      address: http://localhost:8002
+    blueprintService:
+      active: false
+      address: http://localhost:8003
+  utilityPlane:
+    policyServices:
+      open-policy-agent:
+        active: false
+        address: http://localhost:9001
+    notificationServices:
+      blindata:
+        active: false
+        address: http://localhost:9002
+    executorServices:
+      azure-devops:
+        active: true
+        address: http://localhost:9003

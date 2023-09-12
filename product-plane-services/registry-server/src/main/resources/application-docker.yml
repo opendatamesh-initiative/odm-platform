@@ -53,9 +53,9 @@ spring:
     clean-on-validation-error: true
 
 
-##############################
-# Utility Plane Modules configuration
-##############################
+#############################
+# ODM projects configurations
+#############################
 odm:
   utilityPlane:
     policyServices:

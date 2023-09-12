@@ -9,7 +9,6 @@ server:
   error:
     include-message: always
 
-
 ############################################
 # Spring, JPA, DB and Flyway configurations
 ############################################
@@ -54,11 +53,6 @@ spring:
     locations: classpath:db/migration/${FLYWAY_SCRIPTS_DIR}
     clean-on-validation-error: true
 
-
-
-skippolicyservice: ${SKIP_POLICYSERVICE}
-skipmetaservice: ${SKIP_METASERVICE}
-
 odm:
   productPlane:
     registryService:
@@ -73,11 +67,11 @@ odm:
   utilityPlane:
     policyServices:
       open-policy-agent:
-        active: false
+        active: ${POLICYSERVICE_ACTIVE}
         address: http://${POLICYSERVICE_HOSTNAME}:${POLICYSERVICE_PORT}
     notificationServices:
       blindata:
-        active: false
+        active: ${METASERVICE_ACTIVE}
         address: http://${METASERVICE_HOSTNAME}:${METASERVICE_PORT}
     executorServices:
       azure-devops:

@@ -49,9 +49,9 @@ spring:
     locations: classpath:db/migration/h2
     clean-on-validation-error: true
 
-##########################
-# Registry configurations
-##########################
+#############################
+# ODM projects configurations
+#############################
 odm:
   utilityPlane:
     policyServices:

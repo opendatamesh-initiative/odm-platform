@@ -59,9 +59,9 @@ spring:
     locations: classpath:db/migration/postgresql
     clean-on-validation-error: true
 
-##########################
-# Registry configurations
-##########################
+#############################
+# ODM projects configurations
+#############################
 odm:
   utilityPlane:
     policyServices:

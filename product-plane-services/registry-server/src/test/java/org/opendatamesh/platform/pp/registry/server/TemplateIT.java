@@ -36,7 +36,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class TemplateIT extends ODMRegistryIT {
 
     // ======================================================================================
-    // CREATE Api
+    // CREATE Template
     // ======================================================================================
 
     @Test

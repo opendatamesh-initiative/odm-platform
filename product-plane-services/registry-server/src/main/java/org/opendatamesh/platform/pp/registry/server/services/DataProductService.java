@@ -422,7 +422,7 @@ public class DataProductService {
                 "Data product version object cannot be null");
         }
 
-        if(dataProductVersionService.isCompliantWithGlobalPolicies(dataProductVersion)) {
+        if(!dataProductVersionService.isCompliantWithGlobalPolicies(dataProductVersion)) {
             throw new UnprocessableEntityException(
                 RegistryApiStandardErrors.SC422_03_DESCRIPTOR_NOT_COMPLIANT,
                 "Data product descriptor is not compliant with global policies");

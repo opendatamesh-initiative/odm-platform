@@ -563,7 +563,7 @@ public class DataProductVersionService {
         Boolean isValid = false;
 
         try {
-            policyServiceProxy.validateDataProductVersion(
+            isValid = policyServiceProxy.validateDataProductVersion(
                     dataProductVersion, PolicyName.dataproduct);
         } catch (Throwable t) {
             throw new BadGatewayException(

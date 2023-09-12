@@ -55,7 +55,8 @@ public enum RegistryApiStandardErrors implements ODMApiStandardErrors {
     SC422_16_DOMAIN_ALREADY_EXISTS ("42216", "Domain already exists"),
 
     // Conflict Exceptions
-    SC409_01_CONCURRENT_DEPLOYMENT ("40901", "Concurrent deployment task");
+    SC409_01_CONCURRENT_DEPLOYMENT ("40901", "Concurrent deployment task"),
+    SC409_02_DOMAIN_CAN_NOT_BE_DELETED ("40901", "At least one data product is associated with the domain");
     
     private final String code;   
     private final String description; 

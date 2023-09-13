@@ -126,7 +126,7 @@ public class DomainIT extends ODMRegistryIT {
 
 
     // ----------------------------------------
-    // DELETE Data product
+    // DELETE Owner
     // ----------------------------------------
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)

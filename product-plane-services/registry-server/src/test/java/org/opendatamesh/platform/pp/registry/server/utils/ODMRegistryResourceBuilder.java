@@ -6,6 +6,7 @@ import org.opendatamesh.platform.core.dpds.model.EntityTypeDPDS;
 import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
 import org.opendatamesh.platform.pp.registry.api.resources.DomainResource;
 import org.opendatamesh.platform.pp.registry.api.resources.ExternalComponentResource;
+import org.opendatamesh.platform.pp.registry.api.resources.OwnerResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -147,5 +148,16 @@ public class ODMRegistryResourceBuilder {
         domainResource.setSummary(summary);
 
         return domainResource;
+    }
+
+    public OwnerResource buildOwner(String id, String name) throws IOException {
+
+        OwnerResource ownerResource = null;
+
+        ownerResource = new OwnerResource();
+        ownerResource.setId(id);
+        ownerResource.setName(name);
+
+        return ownerResource;
     }
 }

@@ -732,6 +732,100 @@ public class RegistryClient extends ODMClient {
 
     }
 
+    // ======================================================================================
+    // OWNER
+    // ======================================================================================
+
+    // ----------------------------------------
+    // CREATE
+    // ----------------------------------------
+
+    public ResponseEntity createOwner(
+            Object payload) throws IOException {
+
+        ResponseEntity postNotificationResponse = rest.postForEntity(
+                apiUrl(RegistryAPIRoutes.OWNERS),
+                getHttpEntity(payload),
+                Object.class);
+
+        ResponseEntity response = mapResponseEntity(postNotificationResponse,
+                HttpStatus.CREATED,
+                OwnerResource.class);
+        return response;
+    }
+
+    // ----------------------------------------
+    // READ
+    // ----------------------------------------
+
+    public ResponseEntity readAllOwners() throws JsonProcessingException {
+
+        ResponseEntity getDomainResponse = rest.getForEntity(
+                apiUrl(RegistryAPIRoutes.OWNERS),
+                Object.class);
+
+        ResponseEntity response = mapResponseEntity(getDomainResponse,
+                HttpStatus.OK,
+                OwnerResource[].class);
+        return response;
+    }
+
+    public ResponseEntity getOwnerById(String id) throws IOException {
+
+        ResponseEntity getResponse =  rest.getForEntity(
+                apiUrlOfItem(RegistryAPIRoutes.OWNERS),
+                Object.class,
+                id
+        );
+
+        return mapResponseEntity(
+                getResponse,
+                HttpStatus.OK,
+                OwnerResource.class
+        );
+    }
+
+
+    // ----------------------------------------
+    // UPDATE
+    // ----------------------------------------
+
+    public ResponseEntity updateOwner(OwnerResource owner) throws IOException {
+        ResponseEntity putPolicyResponse = rest.exchange(
+                apiUrl(RegistryAPIRoutes.OWNERS),
+                HttpMethod.PUT,
+                getHttpEntity(owner),
+                Object.class
+        );
+
+        ResponseEntity response = mapResponseEntity(putPolicyResponse,
+                HttpStatus.OK,
+                OwnerResource.class);
+        return response;
+    }
+
+    // ----------------------------------------
+    // DELETE
+    // ----------------------------------------
+
+    public ResponseEntity deleteOwner(String id) throws JsonProcessingException {
+
+        ResponseEntity deleteResponse = rest.exchange(
+                apiUrlOfItem(RegistryAPIRoutes.OWNERS),
+                HttpMethod.DELETE,
+                null,
+                Object.class,
+                id
+        );
+
+        return mapResponseEntity(
+                deleteResponse,
+                HttpStatus.OK,
+                Void.class
+        );
+
+    }
+
 
     // ----------------------------------------
     // Utils

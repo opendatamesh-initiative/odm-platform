@@ -11,8 +11,8 @@ public enum RegistryAPIRoutes implements ODMApiRoutes {
     SCHEMAS("/schemas"),
     TEMPLATES("/templates"),
     DATA_PRODUCTS_UPLOADS("/uploads"),
-
-    DOMAINS("/domains");
+    DOMAINS("/domains"),
+    OWNERS("/owners");
 
 
     private final String path;

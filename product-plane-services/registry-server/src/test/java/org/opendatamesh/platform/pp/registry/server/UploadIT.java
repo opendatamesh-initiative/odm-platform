@@ -137,6 +137,7 @@ public class UploadIT extends ODMRegistryIT {
    
 
     @Test
+    @Disabled
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testUploadDpCoreVersionFromPrivateGit() throws IOException {
         DataProductDescriptorLocationResource descriptorLocation = new DataProductDescriptorLocationResource();

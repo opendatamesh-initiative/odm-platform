@@ -20,7 +20,7 @@ import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
 import org.opendatamesh.platform.core.dpds.parser.location.UriLocation;
 import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
 import org.opendatamesh.platform.pp.registry.api.resources.ExternalComponentResource;
-import org.opendatamesh.platform.pp.registry.server.utils.ODMRegistryResources;
+import org.opendatamesh.platform.pp.registry.server.utils.ODMRegistryTestResources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
@@ -70,7 +70,7 @@ public class TemplateIT extends ODMRegistryIT {
         createdDataProductRes = resourceBuilder.buildTestDataProduct();
         createdDataProductRes = createDataProduct(createdDataProductRes);
 
-        String descriptorContent = createDataProductVersion(createdDataProductRes.getId(), ODMRegistryResources.DPD_CORE_PROPS_CUSTOM);
+        String descriptorContent = createDataProductVersion(createdDataProductRes.getId(), ODMRegistryTestResources.DPD_CORE);
         DataProductVersionDPDS dataProductVersion = null;
         System.out.println(descriptorContent);
         

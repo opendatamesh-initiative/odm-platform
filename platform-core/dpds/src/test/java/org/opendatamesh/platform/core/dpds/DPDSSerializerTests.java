@@ -2,7 +2,6 @@ package org.opendatamesh.platform.core.dpds;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
-import static org.opendatamesh.platform.core.dpds.utils.DescriptorCoreChecker.verifyAll;
 
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
@@ -88,11 +87,10 @@ public class DPDSSerializerTests extends DPDSTests {
 
 
         String descriptorContent = serializeDescriptor(descriptorParsedFormSource, "canonical", "json");
-        System.out.println(descriptorContent);
-      
+              
         result = parseDescriptor(new UriLocation(descriptorContent), null);
         DataProductVersionDPDS descriptorParsedFromCanonical = result.getDescriptorDocument();
         
-        verifyAll(descriptorParsedFromCanonical);
+        DPDSTestResources.DPD_CORE.getObjectChecker().verifyAll(descriptorParsedFromCanonical);
     }
 }

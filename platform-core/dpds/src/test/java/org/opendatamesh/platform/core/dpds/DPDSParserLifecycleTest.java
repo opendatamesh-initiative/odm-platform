@@ -29,8 +29,8 @@ public class DPDSParserLifecycleTest extends DPDSTests {
         DescriptorLocation location = null;
         try {
             location = DPDSTestResources.DPD_LIFECYCLE.getContentLocation();
-        } catch (IOException e) {
-            fail("Impossible to get descriptor location", e);
+        } catch (Throwable t) {
+            fail("Impossible to get descriptor location", t);
         }
 
         DPDSParser parser = new DPDSParser();
@@ -110,8 +110,8 @@ public class DPDSParserLifecycleTest extends DPDSTests {
         DescriptorLocation location = null;
         try {
             location = DPDSTestResources.DPD_LIFECYCLE_EMPTY.getContentLocation();
-        } catch (IOException e) {
-            fail("Impossible to get descriptor location", e);
+        } catch (Throwable t) {
+            fail("Impossible to get descriptor location", t);
         }
 
         DPDSParser parser = new DPDSParser();

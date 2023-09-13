@@ -3,37 +3,22 @@ package org.opendatamesh.platform.pp.registry.server.utils;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
-import org.opendatamesh.platform.core.dpds.model.ApplicationComponentDPDS;
-import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.EntityTypeDPDS;
-import org.opendatamesh.platform.core.dpds.model.ExternalResourceDPDS;
-import org.opendatamesh.platform.core.dpds.model.InfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.InfrastructuralComponentDPDS;
-import org.opendatamesh.platform.core.dpds.model.InterfaceComponentsDPDS;
-import org.opendatamesh.platform.core.dpds.model.InternalComponentsDPDS;
-import org.opendatamesh.platform.core.dpds.model.LifecycleActivityInfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.LifecycleInfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.PortDPDS;
-import org.opendatamesh.platform.core.dpds.model.PromisesDPDS;
-import org.opendatamesh.platform.core.dpds.model.StandardDefinitionDPDS;
-import org.opendatamesh.platform.core.dpds.model.definitions.DefinitionReferenceDPDS;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class DPDCoreContentChecker {
+public class DPDCoreContentChecker implements ResourceContentChecker {
 
-	public static JsonNode verifyAll(String rootEntityContent) {
+	@Override
+	public JsonNode verifyAll(String rootEntityContent) {
 		ObjectMapper mapper = ObjectMapperFactory.getRightMapper(rootEntityContent);
 		mapper.setSerializationInclusion(Include.NON_EMPTY);
 		JsonNode rootEntityNode = null;
@@ -45,7 +30,8 @@ public class DPDCoreContentChecker {
 		return verifyDescriptorContent(rootEntityNode);
 	}
 
-	public static JsonNode verifyDescriptorContent(JsonNode rootEntity) {
+	@Override
+	public JsonNode verifyDescriptorContent(JsonNode rootEntity) {
 
 		assertThat(rootEntity).isNotNull();
 		assertThat(rootEntity.get("dataProductDescriptor").asText())
@@ -64,12 +50,8 @@ public class DPDCoreContentChecker {
 		return rootEntity;
 	}
 
-	private static String get(ObjectNode node, String propertyName) {
-		JsonNode propertyValue = node.get(propertyName);
-		return propertyValue == null ? null : propertyValue.asText();
-	}
-
-	public static JsonNode verifyInfoContent(ObjectNode infoNode) {
+	@Override
+	public JsonNode verifyInfoContent(ObjectNode infoNode) {
 
 		assertThat(infoNode).isNotNull();
 		assertThat(get(infoNode, "id")).isEqualTo("f350cab5-992b-32f7-9c90-79bca1bf10be");
@@ -91,7 +73,8 @@ public class DPDCoreContentChecker {
 		return infoNode;
 	}
 
-	public static JsonNode verifyInterfaceComponentsContent(ObjectNode interfaceComponentsNode) {
+	@Override
+	public JsonNode verifyInterfaceComponentsContent(ObjectNode interfaceComponentsNode) {
 
 		assertThat(interfaceComponentsNode).isNotNull();
 
@@ -177,7 +160,8 @@ public class DPDCoreContentChecker {
 		return interfaceComponentsNode;
 	}
 
-	public static JsonNode verifyApplicationComponentsContent(ArrayNode appComponentNodes) {
+	@Override
+	public JsonNode verifyApplicationComponentsContent(ArrayNode appComponentNodes) {
 		assertThat(appComponentNodes).isNotNull();
 		assertThat(appComponentNodes.size()).isEqualTo(1);
 
@@ -205,7 +189,8 @@ public class DPDCoreContentChecker {
 		return appComponentNodes;
 	}
 
-	public static JsonNode verifyInfrastructuralComponentsContent(ArrayNode infraComponents) {
+	@Override
+	public JsonNode verifyInfrastructuralComponentsContent(ArrayNode infraComponents) {
 
 		assertThat(infraComponents).isNotNull();
 		assertThat(infraComponents.size()).isEqualTo(1);
@@ -228,7 +213,8 @@ public class DPDCoreContentChecker {
 		return infraComponents;
 	}
 
-	public static JsonNode verifyLifecycleContent(ObjectNode lifecycleNode) {
+	@Override
+	public JsonNode verifyLifecycleContent(ObjectNode lifecycleNode) {
 		assertThat(lifecycleNode).isNotNull();
 		ObjectNode stageNode = null, serviceNode = null, templateNode = null, templateDefNode = null, confNode = null;
 
@@ -294,5 +280,10 @@ public class DPDCoreContentChecker {
 		assertThat(stageNode.get("configurations")).isNull();
 
 		return lifecycleNode;
+	}
+
+	private static String get(ObjectNode node, String propertyName) {
+		JsonNode propertyValue = node.get(propertyName);
+		return propertyValue == null ? null : propertyValue.asText();
 	}
 }

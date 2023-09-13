@@ -83,7 +83,7 @@ public class DPDSParserErrorTests extends DPDSTests {
         try {
             descriptorContent = DPDSTestResources.DPD_CORE.getContent();
         } catch (Throwable t) {
-            fail("Impossible to get descriptor location from path [" + DPDSTestResources.DPD_CORE.path + "]", t);
+            fail("Impossible to get descriptor location from path [" + DPDSTestResources.DPD_CORE.localPath + "]", t);
         }
 
         try {
@@ -91,7 +91,7 @@ public class DPDSParserErrorTests extends DPDSTests {
             rootEntity.remove("dataProductDescriptor");
             descriptorContent = ObjectMapperFactory.JSON_MAPPER.writeValueAsString(rootEntity);
         } catch (Throwable t) {
-            fail("Impossible to parese descriptor read from path [" + DPDSTestResources.DPD_CORE.path + "]", t);
+            fail("Impossible to parese descriptor read from path [" + DPDSTestResources.DPD_CORE.localPath + "]", t);
         }
         DescriptorLocation location = new UriLocation(descriptorContent);
 
@@ -113,7 +113,7 @@ public class DPDSParserErrorTests extends DPDSTests {
         try {
             descriptorContent = DPDSTestResources.DPD_CORE.getContent();
         } catch (Throwable t) {
-            fail("Impossible to get descriptor location from path [" + DPDSTestResources.DPD_CORE.path + "]", t);
+            fail("Impossible to get descriptor location from path [" + DPDSTestResources.DPD_CORE.localPath + "]", t);
         }
 
         try {
@@ -122,7 +122,7 @@ public class DPDSParserErrorTests extends DPDSTests {
             infoNode.remove("name");
             descriptorContent = ObjectMapperFactory.JSON_MAPPER.writeValueAsString(rootEntity);
         } catch (Throwable t) {
-            fail("Impossible to parese descriptor read from path [" + DPDSTestResources.DPD_CORE.path + "]", t);
+            fail("Impossible to parese descriptor read from path [" + DPDSTestResources.DPD_CORE.localPath + "]", t);
         }
         DescriptorLocation location = new UriLocation(descriptorContent);
 
@@ -143,7 +143,7 @@ public class DPDSParserErrorTests extends DPDSTests {
         try {
             descriptorContent = DPDSTestResources.DPD_CORE.getContent();
         } catch (Throwable t) {
-            fail("Impossible to get descriptor location from path [" + DPDSTestResources.DPD_CORE.path + "]", t);
+            fail("Impossible to get descriptor location from path [" + DPDSTestResources.DPD_CORE.localPath + "]", t);
         }
 
         try {
@@ -152,7 +152,7 @@ public class DPDSParserErrorTests extends DPDSTests {
             infoNode.remove("version");
             descriptorContent = ObjectMapperFactory.JSON_MAPPER.writeValueAsString(rootEntity);
         } catch (Throwable t) {
-            fail("Impossible to parese descriptor read from path [" + DPDSTestResources.DPD_CORE.path + "]", t);
+            fail("Impossible to parese descriptor read from path [" + DPDSTestResources.DPD_CORE.localPath + "]", t);
         }
         DescriptorLocation location = new UriLocation(descriptorContent);
 
@@ -173,7 +173,7 @@ public class DPDSParserErrorTests extends DPDSTests {
         try {
             descriptorContent = DPDSTestResources.DPD_CORE.getContent();
         } catch (Throwable t) {
-            fail("Impossible to get descriptor location from path [" + DPDSTestResources.DPD_CORE.path + "]", t);
+            fail("Impossible to get descriptor location from path [" + DPDSTestResources.DPD_CORE.localPath + "]", t);
         }
 
         try {
@@ -182,7 +182,7 @@ public class DPDSParserErrorTests extends DPDSTests {
             infoNode.remove("owner");
             descriptorContent = ObjectMapperFactory.JSON_MAPPER.writeValueAsString(rootEntity);
         } catch (Throwable t) {
-            fail("Impossible to parese descriptor read from path [" + DPDSTestResources.DPD_CORE.path + "]", t);
+            fail("Impossible to parese descriptor read from path [" + DPDSTestResources.DPD_CORE.localPath + "]", t);
         }
         DescriptorLocation location = new UriLocation(descriptorContent);
 
@@ -204,7 +204,7 @@ public class DPDSParserErrorTests extends DPDSTests {
         try {
             descriptorContent = DPDSTestResources.DPD_CORE.getContent();
         } catch (Throwable t) {
-            fail("Impossible to get descriptor location from path [" + DPDSTestResources.DPD_CORE.path + "]", t);
+            fail("Impossible to get descriptor location from path [" + DPDSTestResources.DPD_CORE.localPath + "]", t);
         }
 
         try {
@@ -215,7 +215,7 @@ public class DPDSParserErrorTests extends DPDSTests {
             port.remove("name");
             descriptorContent = ObjectMapperFactory.JSON_MAPPER.writeValueAsString(rootEntity);
         } catch (Throwable t) {
-            fail("Impossible to parese descriptor read from path [" + DPDSTestResources.DPD_CORE.path + "]", t);
+            fail("Impossible to parese descriptor read from path [" + DPDSTestResources.DPD_CORE.localPath + "]", t);
         }
         DescriptorLocation location = new UriLocation(descriptorContent);
 
@@ -236,7 +236,7 @@ public class DPDSParserErrorTests extends DPDSTests {
         try {
             descriptorContent = DPDSTestResources.DPD_CORE.getContent();
         } catch (Throwable t) {
-            fail("Impossible to get descriptor location from path [" + DPDSTestResources.DPD_CORE.path + "]", t);
+            fail("Impossible to get descriptor location from path [" + DPDSTestResources.DPD_CORE.localPath + "]", t);
         }
 
         try {
@@ -247,7 +247,7 @@ public class DPDSParserErrorTests extends DPDSTests {
             port.remove("version");
             descriptorContent = ObjectMapperFactory.JSON_MAPPER.writeValueAsString(rootEntity);
         } catch (Throwable t) {
-            fail("Impossible to parese descriptor read from path [" + DPDSTestResources.DPD_CORE.path + "]", t);
+            fail("Impossible to parese descriptor read from path [" + DPDSTestResources.DPD_CORE.localPath + "]", t);
         }
         DescriptorLocation location = new UriLocation(descriptorContent);
 
@@ -287,7 +287,7 @@ public class DPDSParserErrorTests extends DPDSTests {
         try {
             descriptorContent = DPDSTestResources.DPD_CORE_WITH_EXTERNAL_REF.getContent();
         } catch (Throwable t) {
-            fail("Impossible to get descriptor location from path [" + DPDSTestResources.DPD_CORE_WITH_EXTERNAL_REF.path + "]", t);
+            fail("Impossible to get descriptor location from path [" + DPDSTestResources.DPD_CORE_WITH_EXTERNAL_REF.localPath + "]", t);
         }
 
         try {
@@ -297,14 +297,14 @@ public class DPDSParserErrorTests extends DPDSTests {
             port.put("$ref", "wrongUri");
             descriptorContent = ObjectMapperFactory.JSON_MAPPER.writeValueAsString(rootEntity);
         } catch (Throwable t) {
-            fail("Impossible to parese descriptor read from path [" + DPDSTestResources.DPD_CORE_WITH_EXTERNAL_REF.path + "]", t);
+            fail("Impossible to parese descriptor read from path [" + DPDSTestResources.DPD_CORE_WITH_EXTERNAL_REF.localPath + "]", t);
         }
         UriLocation location = new UriLocation(descriptorContent);
         URI baseUri = null;
         try {
-            baseUri = UriUtils.getResourcePathUri(DPDSTestResources.DPD_CORE_WITH_EXTERNAL_REF.getUri());
+            baseUri = UriUtils.getResourcePathUri(DPDSTestResources.DPD_CORE_WITH_EXTERNAL_REF.getLocalUri());
         } catch (IOException e) {
-            fail("Impossible to calculate base uri for resource [" + DPDSTestResources.DPD_CORE_WITH_EXTERNAL_REF.path + "]");
+            fail("Impossible to calculate base uri for resource [" + DPDSTestResources.DPD_CORE_WITH_EXTERNAL_REF.localPath + "]");
         }
         location.setRootDocumentBaseUri(baseUri);
 

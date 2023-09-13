@@ -1,214 +1,153 @@
 package org.opendatamesh.platform.pp.registry.server;
 
-import org.junit.Assert;
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
+import java.io.IOException;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
-import org.opendatamesh.platform.core.dpds.model.InfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.PortDPDS;
 import org.opendatamesh.platform.core.dpds.parser.DPDSParser;
 import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
 import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
 import org.opendatamesh.platform.core.dpds.parser.location.UriLocation;
 import org.opendatamesh.platform.pp.registry.api.resources.DataProductDescriptorLocationResource;
-import org.opendatamesh.platform.pp.registry.server.utils.ODMRegistryResources;
+import org.opendatamesh.platform.pp.registry.server.utils.ODMRegistryTestResources;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.annotation.DirtiesContext.MethodMode;
-import org.springframework.test.context.TestPropertySource;
-
-import java.io.IOException;
-import java.util.List;
 
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
-@Disabled
 public class UploadIT extends ODMRegistryIT {
 
-    // ----------------------------------------
-    // CREATE Data product version
-    // ----------------------------------------
+   
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    public void testDataProductVersionUriUpload() throws IOException {
+    public void testUploadDpCoreVersionFromUri()  {
         DataProductDescriptorLocationResource descriptorLocation = new DataProductDescriptorLocationResource();
-        descriptorLocation.setRootDocumentUri(ODMRegistryResources.RESOURCE_DPS_URI.path);
+        descriptorLocation.setRootDocumentUri(ODMRegistryTestResources.DPD_CORE.getRemotePath());
         String descriptorContent = uploadDataProductVersion(descriptorLocation);
-        try {
-            verifyBasicContent(descriptorContent);
-        } catch (ParseException e) {
-            Assert.fail(e.getMessage());
-        }
+        ODMRegistryTestResources.DPD_CORE.getContentChecker().verifyAll(descriptorContent);
     }
 
+    
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    public void testDataProductVersionGitUpload() throws IOException {
+    public void testUploadDpCoreVersionFromPublicGit()  {
         DataProductDescriptorLocationResource descriptorLocation = new DataProductDescriptorLocationResource();
-        descriptorLocation.setRootDocumentUri("examples/tripexecution/data-product-descriptor.json");
+        descriptorLocation.setRootDocumentUri(ODMRegistryTestResources.DPD_CORE.getRepoPath());
         DataProductDescriptorLocationResource.Git git = new DataProductDescriptorLocationResource.Git();
-        git.setRepositorySshUri("git@github.com:opendatamesh-initiative/odm-specification-dpdescriptor.git");
+        git.setRepositorySshUri(ODMRegistryTestResources.DPD_CORE.getRepo());
         descriptorLocation.setGit(git);
         String descriptorContent = uploadDataProductVersion(descriptorLocation);
-        
-        try {
-            verifyBasicContent(descriptorContent);
-        } catch (ParseException e) {
-            Assert.fail(e.getMessage());
-        }
+        ODMRegistryTestResources.DPD_CORE.getContentChecker().verifyAll(descriptorContent);
+    }
+    
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testUploadDpCoreWithExternalRefVersionFromPublicGit() {
+        DataProductDescriptorLocationResource descriptorLocation = new DataProductDescriptorLocationResource();
+        descriptorLocation.setRootDocumentUri(ODMRegistryTestResources.DPD_CORE_WITH_EXTERNAL_REF.getRepoPath());
+        DataProductDescriptorLocationResource.Git git = new DataProductDescriptorLocationResource.Git();
+        git.setRepositorySshUri(ODMRegistryTestResources.DPD_CORE_WITH_EXTERNAL_REF.getRepo());
+        descriptorLocation.setGit(git);
+        String descriptorContent = uploadDataProductVersion(descriptorLocation);
+        ODMRegistryTestResources.DPD_CORE.getContentChecker().verifyAll(descriptorContent);
     }
 
     @Test
-    @Disabled
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    public void testDataProductVersionDevOpsUploadMain() throws IOException {
+    public void testUploadDpCoreWithInternalRefVersionPublicGit() {
         DataProductDescriptorLocationResource descriptorLocation = new DataProductDescriptorLocationResource();
-        descriptorLocation.setRootDocumentUri("data-product-descriptor.json");
+        descriptorLocation.setRootDocumentUri(ODMRegistryTestResources.DPD_CORE_WITH_INTERNAL_REF.getRepoPath());
         DataProductDescriptorLocationResource.Git git = new DataProductDescriptorLocationResource.Git();
-        git.setRepositorySshUri("git@ssh.dev.azure.com:v3/andreagioia/opendatamesh/odm-dpds-examples");
-        git.setBranch(null);
+        git.setRepositorySshUri(ODMRegistryTestResources.DPD_CORE_WITH_INTERNAL_REF.getRepo());
+        descriptorLocation.setGit(git);
+        String descriptorContent = uploadDataProductVersion(descriptorLocation);
+        ODMRegistryTestResources.DPD_CORE.getContentChecker().verifyAll(descriptorContent);
+    }
+
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testUploadDpCoreWithMixRefVersionPublicGit() {
+        DataProductDescriptorLocationResource descriptorLocation = new DataProductDescriptorLocationResource();
+        descriptorLocation.setRootDocumentUri(ODMRegistryTestResources.DPD_CORE_WITH_MIX_REF.getRepoPath());
+        DataProductDescriptorLocationResource.Git git = new DataProductDescriptorLocationResource.Git();
+        git.setRepositorySshUri(ODMRegistryTestResources.DPD_CORE_WITH_MIX_REF.getRepo());
+        descriptorLocation.setGit(git);
+        String descriptorContent = uploadDataProductVersion(descriptorLocation);
+        ODMRegistryTestResources.DPD_CORE.getContentChecker().verifyAll(descriptorContent);
+    }
+
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testUploadDpCoreVersionFromPublicGitBranch()  {
+
+        DataProductDescriptorLocationResource descriptorLocation = new DataProductDescriptorLocationResource();
+        descriptorLocation.setRootDocumentUri(ODMRegistryTestResources.DPD_CORE.getRepoPath());
+        DataProductDescriptorLocationResource.Git git = new DataProductDescriptorLocationResource.Git();
+        git.setRepositorySshUri(ODMRegistryTestResources.DPD_CORE.getRepo());
+        git.setBranch("test");
         git.setTag(null);
         descriptorLocation.setGit(git);
-        
         String descriptorContent = uploadDataProductVersion(descriptorLocation);
+        //ODMRegistryTestResources.DPD_CORE.getContentChecker().verifyAll(descriptorContent);
 
         DataProductVersionDPDS dpv = null;
         try {
-            dpv = toDescriptor(descriptorContent);
-            Assert.assertEquals(dpv.getInfo().getVersionNumber(), "1.1.0");
+            DPDSParser parser = new DPDSParser();
+            DescriptorLocation location = new UriLocation(descriptorContent);
+            ParseOptions options = new ParseOptions();
+            options.setServerUrl("http://localhost");
+            dpv = parser.parse(location, options).getDescriptorDocument();
+            assertThat(dpv.getInfo().getVersionNumber()).isEqualTo("2.0.0");
         } catch (ParseException e) {
-            Assert.fail(e.getMessage());
+            fail(e.getMessage(), e);
         }
     }
 
     @Test
-    @Disabled
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    public void testDataProductVersionDevOpsUploadTag() throws IOException {
+    public void testUploadDpCoreVersionFromPublicGitTag() throws IOException {
         DataProductDescriptorLocationResource descriptorLocation = new DataProductDescriptorLocationResource();
-        descriptorLocation.setRootDocumentUri("data-product-descriptor.json");
+        descriptorLocation.setRootDocumentUri(ODMRegistryTestResources.DPD_CORE.getRepoPath());
         DataProductDescriptorLocationResource.Git git = new DataProductDescriptorLocationResource.Git();
-        git.setRepositorySshUri("git@ssh.dev.azure.com:v3/andreagioia/opendatamesh/odm-dpds-examples");
+        git.setRepositorySshUri(ODMRegistryTestResources.DPD_CORE.getRepo());
         git.setBranch(null);
-        git.setTag("v1.0.0");
+        git.setTag("v0.9.0");
         descriptorLocation.setGit(git);
-        
         String descriptorContent = uploadDataProductVersion(descriptorLocation);
+        //ODMRegistryTestResources.DPD_CORE.getContentChecker().verifyAll(descriptorContent);
 
         DataProductVersionDPDS dpv = null;
         try {
-            dpv = toDescriptor(descriptorContent);
-            Assert.assertEquals(dpv.getInfo().getVersionNumber(), "1.0.0");
+            DPDSParser parser = new DPDSParser();
+            DescriptorLocation location = new UriLocation(descriptorContent);
+            ParseOptions options = new ParseOptions();
+            options.setServerUrl("http://localhost");
+            dpv = parser.parse(location, options).getDescriptorDocument();
+            assertThat(dpv.getInfo().getVersionNumber()).isEqualTo("0.9.0");
         } catch (ParseException e) {
-            Assert.fail(e.getMessage());
+            fail(e.getMessage(), e);
         }
     }
+
+   
 
     @Test
-    @Disabled
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    public void testDataProductVersionDevOpsUploadBranch() throws IOException {
+    public void testUploadDpCoreVersionFromPrivateGit() throws IOException {
         DataProductDescriptorLocationResource descriptorLocation = new DataProductDescriptorLocationResource();
-        descriptorLocation.setRootDocumentUri("data-product-descriptor.json");
+        descriptorLocation.setRootDocumentUri(ODMRegistryTestResources.DPD_CORE.getRepoPath());
         DataProductDescriptorLocationResource.Git git = new DataProductDescriptorLocationResource.Git();
-        git.setRepositorySshUri("git@ssh.dev.azure.com:v3/andreagioia/opendatamesh/odm-dpds-examples");
-        git.setBranch("dev");
-        git.setTag(null);
+        git.setRepositorySshUri("git@ssh.dev.azure.com:v3/andreagioia/opendatamesh/odm-demo");
         descriptorLocation.setGit(git);
-        
         String descriptorContent = uploadDataProductVersion(descriptorLocation);
-        DataProductVersionDPDS dpv = null;
-        try {
-            dpv = toDescriptor(descriptorContent);
-            Assert.assertEquals(dpv.getInfo().getVersionNumber(), "2.0.0");
-        } catch (ParseException e) {
-            Assert.fail(e.getMessage());
-        }
-        /* 
-        descriptorLocation.getGit().setBranch(null);
-        descriptorLocation.getGit().setTag("v1.0.0");
-        descriptorContent = uploadDataProductVersion(descriptorLocation);
-        dpv = null;
-        try {
-            dpv = toDescriptor(descriptorContent);
-            Assert.assertEquals(dpv.getInfo().getVersionNumber(), "1.0.0");
-        } catch (BuildException e) {
-            Assert.fail(e.getMessage());
-        }
-        */
+        ODMRegistryTestResources.DPD_CORE.getContentChecker().verifyAll(descriptorContent);
     }
 
 
-    // ======================================================================================
-    // PRIVATE METHODS
-    // ======================================================================================
-
-    // ----------------------------------------
-    // Create test resources
-    // ----------------------------------------
-
-    // TODO ...as needed
-
-    // ----------------------------------------
-    // Verify test resources
-    // ----------------------------------------
-
-    private DataProductVersionDPDS toDescriptor(String descriptorContent) throws ParseException {
-        DPDSParser parser = new DPDSParser();
-        DescriptorLocation location = new UriLocation(descriptorContent);
-
-        ParseOptions options = new ParseOptions();
-        options.setResoveExternalRef(false);
-        options.setResoveInternalRef(false);
-        options.setResoveReadOnlyProperties(false);
-        options.setResoveApiDefinitions(false);
-        options.setResoveTemplateDefinitions(false);
-        DataProductVersionDPDS dpv = parser.parse(location, options).getDescriptorDocument();
-        return dpv;
-    }
-    private void verifyBasicContent(String descriptorContent) throws ParseException {
-        DataProductVersionDPDS dpv = toDescriptor(descriptorContent);
-    
-        Assert.assertEquals(dpv.getDataProductDescriptor(), "1.0.0");
-
-        InfoDPDS info = dpv.getInfo();
-        Assert.assertNotNull(info);
-        Assert.assertEquals(info.getName(), "tripExecution");
-        Assert.assertEquals(info.getVersionNumber(), "1.2.3"); //FIXME!
-        Assert.assertEquals(info.getDomain(), "Transport Management");
-        Assert.assertEquals(info.getFullyQualifiedName(), "urn:org.opendatamesh:dataproduct:tripExecution");
-        //Assert.assertEquals(info.getEntityType(), "dataproduct");
-        //Assert.assertEquals(info.getDataProductId(), "3187c1fa-dd44-344a-a5b5-a4e86677b5dd"); //FIXME!
    
-        List<PortDPDS> ports = dpv.getInterfaceComponents().getInputPorts();
-        Assert.assertNotNull(ports);
-        Assert.assertEquals(ports.size(), 1);
-
-        ports = dpv.getInterfaceComponents().getOutputPorts();
-        Assert.assertNotNull(ports);
-        Assert.assertEquals(ports.size(), 2);
-    
-        PortDPDS port = ports.get(0);
-        Assert.assertEquals(port.getFullyQualifiedName(), "urn:org.opendatamesh:dataproduct:tripExecution:1.2.3:outputport:tripStatus:1.2.0");
-        Assert.assertNotNull( port.getPromises().getApi().getDefinition().getRef() ); // FIXME!
-        //Assert.assertEquals(port.getEntityType(), "outputport");
-        //Assert.assertEquals(port.getId(), "3497405b-7034-3989-98d5-c67318f05806"); 
-   
-        port = ports.get(1);
-        Assert.assertEquals(port.getFullyQualifiedName(), "urn:org.opendatamesh:dataproduct:tripExecution:1.2.3:outputport:tripEvents:1.2.0");
-        Assert.assertNotNull( port.getPromises().getApi().getDefinition().getRef() ) ; // FIXME!
-        //Assert.assertEquals(port.getEntityType(), "outputport");
-        //Assert.assertEquals(port.getId(), "62b02846-2cf0-35fa-95b5-7cf24402748b"); 
-
-        ports = dpv.getInterfaceComponents().getObservabilityPorts();
-        Assert.assertNotNull(ports);
-        Assert.assertEquals(ports.size(), 1);
-        
-        port = ports.get(0);
-        Assert.assertEquals(port.getFullyQualifiedName(), "urn:org.opendatamesh:dataproduct:tripExecution:1.2.3:observabilityport:helthMetrics:1.2.0");
-        Assert.assertNotNull( port.getPromises().getApi().getDefinition().getRef() ); // FIXME!
-        //Assert.assertEquals(port.getEntityType(), "observabilityport");
-        //Assert.assertEquals(port.getId(), "c96180ea-90bb-31b7-b6e6-0ebc0cebadcc"); 
-    }
 }

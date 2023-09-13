@@ -9,7 +9,7 @@ import org.opendatamesh.platform.pp.registry.api.clients.RegistryAPIRoutes;
 import org.opendatamesh.platform.pp.registry.api.resources.ExternalComponentResource;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
 import org.opendatamesh.platform.pp.registry.server.database.entities.Api;
-import org.opendatamesh.platform.pp.registry.server.utils.ODMRegistryResources;
+import org.opendatamesh.platform.pp.registry.server.utils.ODMRegistryTestResources;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -222,7 +222,7 @@ public class ReferencesProcessor implements PropertiesProcessor {
         String defContent = null;
         String ref = defResource.getRef();
 
-        if (ref != null && ref.startsWith(context.getOptions().getServerUrl())) {
+        if (ref != null && context.getOptions().getServerUrl() != null && ref.startsWith(context.getOptions().getServerUrl())) {
             logger.debug("Definition for stdDef [" + stdDefResource.getName() + "] has been already processed");
             return;
         }

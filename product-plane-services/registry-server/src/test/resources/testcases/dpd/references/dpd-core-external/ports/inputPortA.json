@@ -1,0 +1,16 @@
+{
+    "name": "inputPortA",
+    "version": "1.0.0",
+    "displayName": "Input port A",
+    "description": "Input port A of data product",
+    "componentGroup": "gruppoA",
+    "promises": {
+        "platform": "platformX",
+        "servicesType": "rest-services",
+        "api": {
+            "$ref": "restApi1.json"
+        },
+        "x-prop":"x-prop-value"
+    },
+    "x-prop":"x-prop-value"
+}

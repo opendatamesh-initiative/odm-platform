@@ -47,6 +47,11 @@ public class DPDSTests {
         return parseDescriptor(location, options);
     }
 
+    protected ParseResult parseDescriptorFromGit(DPDSTestResources resource, ParseOptions options) {
+        DescriptorLocation location = getGitLocation(resource);
+        return parseDescriptor(location, options);
+    }
+
     protected ParseResult parseDescriptor(DescriptorLocation location, ParseOptions options) {
 
         ParseResult result = null;
@@ -71,7 +76,7 @@ public class DPDSTests {
         try {
             location = resource.getContentLocation();
         } catch (Throwable t) {
-            fail("Impossible to get descriptor location fomp path [" + resource.path + "]", t);
+            fail("Impossible to get descriptor location fomp path [" + resource.localPath + "]", t);
         }
 
         return location;
@@ -82,7 +87,18 @@ public class DPDSTests {
         try {
             location = resource.getUriLocation();
         } catch (Throwable t) {
-            fail("Impossible to get descriptor location fomp path [" + resource.path + "]", t);
+            fail("Impossible to get descriptor location fomp path [" + resource.localPath + "]", t);
+        }
+
+        return location;
+    }
+
+    protected DescriptorLocation getGitLocation(DPDSTestResources resource) {
+        DescriptorLocation location = null;
+        try {
+            location = resource.getGitLocation();
+        } catch (Throwable t) {
+            fail("Impossible to get descriptor location fomp git [" + resource.repoPath + "]", t);
         }
 
         return location;

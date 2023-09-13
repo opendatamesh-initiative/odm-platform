@@ -13,7 +13,7 @@ import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErr
 import org.opendatamesh.platform.pp.registry.api.clients.RegistryAPIRoutes;
 import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
-import org.opendatamesh.platform.pp.registry.server.utils.ODMRegistryResources;
+import org.opendatamesh.platform.pp.registry.server.utils.ODMRegistryTestResources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
@@ -140,11 +140,11 @@ public class DataProductVersionErrorsIT extends ODMRegistryIT {
         dataProductRes = createDataProduct(dataProductRes);
 
         createDataProductVersion(
-            dataProductRes.getId(), ODMRegistryResources.DPD_CORE_PROPS_CUSTOM);
+            dataProductRes.getId(), ODMRegistryTestResources.DPD_CORE);
 
         String descriptorContent = null;
         try {
-            descriptorContent = resourceBuilder.getContent(ODMRegistryResources.DPD_CORE_PROPS_CUSTOM);
+            descriptorContent = ODMRegistryTestResources.DPD_CORE.getContent();
         } catch (IOException t) {
             t.printStackTrace();
             fail("Impossible to read data product version from file: " + t.getMessage());

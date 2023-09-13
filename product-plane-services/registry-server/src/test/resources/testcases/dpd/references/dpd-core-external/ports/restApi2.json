@@ -1,0 +1,11 @@
+{
+    "name": "restApi2",
+    "version": "1.3.2",
+    "description": "Rest output API",
+    "specification": "custom-api-spec",
+    "specificationVersion": "1.0.0",
+    "definition": {
+        "$ref": "../apis/restApi2Def.json"
+    },
+    "x-prop":"x-prop-value"
+}

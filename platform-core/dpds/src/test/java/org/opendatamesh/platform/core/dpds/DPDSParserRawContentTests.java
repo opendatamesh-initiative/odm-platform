@@ -2,7 +2,6 @@ package org.opendatamesh.platform.core.dpds;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.opendatamesh.platform.core.dpds.utils.DescriptorCoreChecker.verifyAll;
 
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.core.dpds.model.ApplicationComponentDPDS;
@@ -22,9 +21,9 @@ public class DPDSParserRawContentTests extends DPDSTests {
     @Test
     public void parseDpdCoreRawContentCustomPropsTest()  {
 
-        ParseResult result = parseDescriptorFromContent(DPDSTestResources.DPD_CORE_PROPS_CUSTOM, null);
+        ParseResult result = parseDescriptorFromContent(DPDSTestResources.DPD_CORE, null);
         DataProductVersionDPDS descriptor = result.getDescriptorDocument();
-        verifyAll(descriptor);
+        DPDSTestResources.DPD_CORE.getObjectChecker().verifyAll(descriptor);
 
         ObjectMapper mapper = ObjectMapperFactory.JSON_MAPPER;
         ObjectNode parsedRawContentNode = null;

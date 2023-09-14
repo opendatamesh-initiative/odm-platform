@@ -25,14 +25,6 @@ import java.util.List;
 @IdClass(DataProductVersionId.class)
 public class DataProductVersion implements Cloneable, Serializable {
 
-    @Autowired
-    @Transient
-    private Environment environment;
-
-    @Autowired
-    @Transient
-    private EntityManagerFactory entityManagerFactory;
-
     @Id
     @Column(name = "DATA_PRODUCT_ID")
     private String dataProductId;

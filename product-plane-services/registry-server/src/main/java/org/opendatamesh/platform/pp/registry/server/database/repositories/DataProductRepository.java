@@ -31,4 +31,6 @@ public interface DataProductRepository
             };
         }
     }
+
+    List<DataProduct> findByDomain(String domain);
 }

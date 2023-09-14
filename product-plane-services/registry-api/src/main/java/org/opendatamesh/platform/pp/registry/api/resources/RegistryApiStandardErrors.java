@@ -22,6 +22,7 @@ public enum RegistryApiStandardErrors implements ODMApiStandardErrors {
     SC400_14_TEMPLATE_IS_EMPTY ("40014", "Template is empty"),
     SC400_15_TEMPLATE_ID_IS_EMPTY ("40015", "Template id is empty"),
     SC400_16_DOMAIN_IS_EMPTY ("40016", "Domain is empty"),
+    SC400_17_OWNER_IS_EMPTY ("40017", "Owner is empty"),
 
     // Not Found Exceptions
     SC404_01_PRODUCT_NOT_FOUND ("40401", "Data product not found"),
@@ -30,6 +31,7 @@ public enum RegistryApiStandardErrors implements ODMApiStandardErrors {
     SC404_04_SCHEMA_NOT_FOUND ("40404", "Schema not found"),
     SC404_05_TEMPLATE_NOT_FOUND ("40405", "Template not found"),
     SC404_06_DOMAIN_NOT_FOUND ("40406", "Domain not found"),
+    SC404_06_OWNER_NOT_FOUND ("40407", "Owner not found"),
 
     // Unprocessable Entity Exceptions
     SC422_01_DESCRIPTOR_URI_NOT_VALID ("42201", "Descriptor URI is not valid"),
@@ -53,9 +55,13 @@ public enum RegistryApiStandardErrors implements ODMApiStandardErrors {
 
     SC422_15_DOMAIN_IS_INVALID ("42215", "Domain is invalid"),
     SC422_16_DOMAIN_ALREADY_EXISTS ("42216", "Domain already exists"),
+    SC422_17_OWNER_IS_INVALID ("42217", "Owner is invalid"),
+    SC422_18_OWNER_ALREADY_EXISTS ("42218", "Owner already exists"),
 
     // Conflict Exceptions
-    SC409_01_CONCURRENT_DEPLOYMENT ("40901", "Concurrent deployment task");
+    SC409_01_CONCURRENT_DEPLOYMENT ("40901", "Concurrent deployment task"),
+    SC409_02_DOMAIN_CAN_NOT_BE_DELETED ("40902", "At least one data product is associated with the domain"),
+    SC409_03_OWNER_CAN_NOT_BE_DELETED ("40903", "At least one data product is associated with the owner");
     
     private final String code;   
     private final String description; 

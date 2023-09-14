@@ -259,6 +259,13 @@ public abstract class ODMRegistryIT extends ODMIntegrationTest {
         return postDomainResponse.getBody();
     }
 
+    protected OwnerResource createOwner1() throws IOException {
+        OwnerResource ownerResource = resourceBuilder.buildOwner("test@test.it", "IT Department");
+        ResponseEntity<OwnerResource> ownerResponse = registryClient.createOwner(ownerResource);
+        verifyResponseEntity(ownerResponse, HttpStatus.CREATED, true);
+        return ownerResponse.getBody();
+    }
+
     // ======================================================================================
     // Verify test basic resources
     // ======================================================================================

@@ -40,7 +40,6 @@ public class OwnerIT extends ODMRegistryIT {
         assertThat(ownerResourceResponse.getId()).isEqualTo("test@test.it");
         assertThat(ownerResourceResponse.getName()).isEqualTo("IT Department");
 
-
     }
 
     // ----------------------------------------

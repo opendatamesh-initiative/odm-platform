@@ -1,9 +1,11 @@
 package org.opendatamesh.platform.pp.registry.server;
 
 import org.junit.jupiter.api.Test;
+import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
 import org.opendatamesh.platform.pp.registry.api.resources.DomainResource;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
+import org.opendatamesh.platform.pp.registry.server.utils.ODMRegistryTestResources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
@@ -124,7 +126,7 @@ public class DomainIT extends ODMRegistryIT {
 
 
     // ----------------------------------------
-    // DELETE Data product
+    // DELETE Owner
     // ----------------------------------------
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
@@ -201,7 +203,7 @@ public class DomainIT extends ODMRegistryIT {
 
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    public void testDataProductUpdate4xxErrors() throws IOException {
+    public void testDomainUpdate4xxErrors() throws IOException {
 
         DomainResource domainRes = createDomain1();
         // TEST 1: NULL payload
@@ -234,7 +236,7 @@ public class DomainIT extends ODMRegistryIT {
 
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    public void testDataProductGet404Error() throws IOException {
+    public void testDomainGet404Error() throws IOException {
         // TEST: Domain not present
         ResponseEntity<ErrorRes> errorResponse = registryClient.getDomainById("test-id");
         verifyResponseError(
@@ -244,15 +246,47 @@ public class DomainIT extends ODMRegistryIT {
         );
     }
 
+    // ----------------------------------------
+    // CREATE Domain
+    // ----------------------------------------
+
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    public void testDataProductDelete404Error() throws IOException {
+    public void testDomainDelete404Error() throws IOException {
         // TEST: Domain not present
         ResponseEntity<ErrorRes> errorResponse = registryClient.deleteDomain("test-id");
         verifyResponseError(
                 errorResponse,
                 HttpStatus.NOT_FOUND,
                 RegistryApiStandardErrors.SC404_06_DOMAIN_NOT_FOUND
+        );
+    }
+
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testDomainDelete409Error() throws IOException {
+        DataProductResource createdDataProductRes = resourceBuilder.buildTestDataProduct();
+        createdDataProductRes = createDataProduct(createdDataProductRes);
+
+        String descriptorContent = createDataProductVersion(createdDataProductRes.getId(), ODMRegistryTestResources.DPD_CORE);
+        DomainResource domainResource = resourceBuilder.buildDomain("urn:odmp:org.opendatamesh:domains:testDomain", "Test Domain", null, null, null);
+        ResponseEntity<DomainResource> domainResourceResponse= registryClient.createDomain(domainResource);
+
+        // TEST: Domain not present
+        ResponseEntity errorResponse = registryClient.deleteDomain(domainResourceResponse.getBody().getId());
+        verifyResponseError(
+                errorResponse,
+                HttpStatus.CONFLICT,
+                RegistryApiStandardErrors.SC409_02_DOMAIN_CAN_NOT_BE_DELETED
+        );
+
+        registryClient.deleteDataProduct(createdDataProductRes.getId());
+
+        ResponseEntity okResponse = registryClient.deleteDomain(domainResourceResponse.getBody().getId());
+        verifyResponseEntity(
+                okResponse,
+                HttpStatus.OK,
+                false
         );
     }
 

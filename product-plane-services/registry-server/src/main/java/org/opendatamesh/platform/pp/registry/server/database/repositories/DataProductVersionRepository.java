@@ -13,4 +13,6 @@ public interface DataProductVersionRepository extends JpaRepository<DataProductV
 
     List<DataProductVersion> findByDataProductId(String id);
     Optional<DataProductVersion> findByDataProductIdAndVersionNumber(String dataProductId, String versionNumber);
+
+    List<DataProductVersion> findByInfo_Owner_Id(String id);
 }

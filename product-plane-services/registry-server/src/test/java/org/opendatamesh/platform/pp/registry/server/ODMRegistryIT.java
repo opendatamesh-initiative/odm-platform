@@ -42,8 +42,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @ExtendWith(SpringExtension.class)
 //@ActiveProfiles("dev")
-@ActiveProfiles("testpostgresql")
-//@ActiveProfiles("testmysql")
+//@ActiveProfiles("testpostgresql")
+@ActiveProfiles("testmysql")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = { ODMRegistryApp.class })
 public abstract class ODMRegistryIT extends ODMIntegrationTest {
 
@@ -257,6 +257,13 @@ public abstract class ODMRegistryIT extends ODMIntegrationTest {
         ResponseEntity<DomainResource> postDomainResponse = registryClient.createDomain(payload);
         verifyResponseEntity(postDomainResponse, HttpStatus.CREATED, true);
         return postDomainResponse.getBody();
+    }
+
+    protected OwnerResource createOwner1() throws IOException {
+        OwnerResource ownerResource = resourceBuilder.buildOwner("test@test.it", "IT Department");
+        ResponseEntity<OwnerResource> ownerResponse = registryClient.createOwner(ownerResource);
+        verifyResponseEntity(ownerResponse, HttpStatus.CREATED, true);
+        return ownerResponse.getBody();
     }
 
     // ======================================================================================

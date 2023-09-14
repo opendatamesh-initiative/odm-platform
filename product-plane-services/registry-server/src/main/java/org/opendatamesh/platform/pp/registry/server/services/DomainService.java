@@ -4,8 +4,10 @@ package org.opendatamesh.platform.pp.registry.server.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.platform.core.commons.servers.exceptions.*;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
+import org.opendatamesh.platform.pp.registry.server.database.entities.DataProduct;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproduct.Domain;
 import org.opendatamesh.platform.pp.registry.server.database.mappers.DomainMapper;
+import org.opendatamesh.platform.pp.registry.server.database.repositories.DataProductRepository;
 import org.opendatamesh.platform.pp.registry.server.database.repositories.DomainRepository;
 import org.opendatamesh.platform.pp.registry.server.resources.v1.observers.EventNotifier;
 import org.slf4j.Logger;
@@ -23,6 +25,9 @@ public class DomainService {
 
     @Autowired
     private DomainRepository domainRepository;
+
+    @Autowired
+    private DataProductRepository dataProductRepository;
 
     @Autowired
     ObjectMapper objectMapper;
@@ -203,16 +208,26 @@ public class DomainService {
     
     public void deleteDomain(String domainId)  {
         Domain domain = searchDomain(domainId); //search if present
-        // TODO decide whether delete all the data product with this domain
-        try {
-            domainRepository.deleteById(domain.getId());
-            logger.info("Domain with id [" + domainId + "] successfully deleted");
-        } catch(Throwable t) {
-            throw new InternalServerException(
-                    ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                "An error occurred in the backend database while deleting domain",
-                t);
-        }
 
+        List<DataProduct> dataProducts = dataProductRepository.findByDomain(domain.getName()); //for now the search is done by the domain name (in the future it may need the domain id)
+
+        if(dataProducts.isEmpty()) {
+            try {
+
+                domainRepository.deleteById(domain.getId());
+                logger.info("Domain with id [" + domainId + "] successfully deleted");
+
+            } catch (Throwable t) {
+                throw new InternalServerException(
+                        ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
+                        "An error occurred in the backend database while deleting domain",
+                        t);
+            }
+        }
+        else {
+            throw new ConflictException(
+                    RegistryApiStandardErrors.SC409_02_DOMAIN_CAN_NOT_BE_DELETED,
+                    "Domain [" + domain.getFullyQualifiedName() + "] has at least one Data Product associated, therefore can't be deleted");
+        }
     }
 }

@@ -21,7 +21,7 @@ import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.pp.registry.api.clients.RegistryClient;
 import org.opendatamesh.platform.pp.registry.api.resources.*;
 import org.opendatamesh.platform.pp.registry.server.utils.ODMRegistryResourceBuilder;
-import org.opendatamesh.platform.pp.registry.server.utils.ODMRegistryResources;
+import org.opendatamesh.platform.pp.registry.server.utils.ODMRegistryTestResources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,10 +94,10 @@ public abstract class ODMRegistryIT extends ODMIntegrationTest {
     // Create test basic resources
     // ======================================================================================
 
-    protected String getResourceContent(ODMRegistryResources resource) {
+    protected String getResourceContent(ODMRegistryTestResources resource) {
         String result = null;
         try {
-            result = resourceBuilder.getContent(resource);
+            result = resource.getContent();
         } catch (IOException t) {
             t.printStackTrace();
             fail("Impossible to read data product version from file: " + t.getMessage());
@@ -105,11 +105,11 @@ public abstract class ODMRegistryIT extends ODMIntegrationTest {
         return result;
     }
 
-    protected <T> T getResourceObject(ODMRegistryResources resource, Class<T> resourceType) {
+    protected <T> T getResourceObject(ODMRegistryTestResources resource, Class<T> resourceType) {
         T result = null;
         
         try {
-            result = resourceBuilder.getObject(resource, resourceType);
+            result = resource.getObject(resourceType);
         } catch (Throwable t) {
             t.printStackTrace();
             fail("Impossible to read resource from file: " + t.getMessage());
@@ -118,13 +118,13 @@ public abstract class ODMRegistryIT extends ODMIntegrationTest {
         return result;
     }
 
-    protected DataProductResource createDataProduct(ODMRegistryResources resource) {
+    protected DataProductResource createDataProduct(ODMRegistryTestResources resource) {
 
         DataProductResource createdActivityRes = null;
 
         DataProductResource activityRes;
         try {
-            activityRes = resourceBuilder.getObject(resource, DataProductResource.class);
+            activityRes = resource.getObject(DataProductResource.class);
         } catch (Throwable t) {
             t.printStackTrace();
             fail("Impossible to read data product from file: " + t.getMessage());
@@ -169,7 +169,7 @@ public abstract class ODMRegistryIT extends ODMIntegrationTest {
 
         return postProductVersionResponse.getBody();
     }
-    protected String createDataProductVersion(String dataProductId, ODMRegistryResources resource) {
+    protected String createDataProductVersion(String dataProductId, ODMRegistryTestResources resource) {
         String descriptorContent = getResourceContent(resource);
         return createDataProductVersion(dataProductId, descriptorContent);
     }
@@ -193,7 +193,7 @@ public abstract class ODMRegistryIT extends ODMIntegrationTest {
 
 
   
-    protected ExternalComponentResource createApi(ODMRegistryResources resource) {
+    protected ExternalComponentResource createApi(ODMRegistryTestResources resource) {
         ExternalComponentResource apiDefinitionRes = getResourceObject(resource, ExternalComponentResource.class);
         return createApi(apiDefinitionRes);
     }
@@ -217,7 +217,7 @@ public abstract class ODMRegistryIT extends ODMIntegrationTest {
         return createdApiRes;
     }
 
-    protected ExternalComponentResource createTemplate(ODMRegistryResources resource) {
+    protected ExternalComponentResource createTemplate(ODMRegistryTestResources resource) {
         ExternalComponentResource templateRes = getResourceObject(resource, ExternalComponentResource.class);
         return createTemplate(templateRes);
     }
@@ -244,7 +244,7 @@ public abstract class ODMRegistryIT extends ODMIntegrationTest {
   
 
     protected SchemaResource createSchema1() throws IOException {
-        SchemaResource schemaResource = resourceBuilder.getObject(ODMRegistryResources.RESOURCE_SCHEMA1, SchemaResource.class);
+        SchemaResource schemaResource = ODMRegistryTestResources.RESOURCE_SCHEMA1.getObject(SchemaResource.class);
         ResponseEntity<SchemaResource> postSchemaResponse = registryClient.postSchema(schemaResource);
         verifyResponseEntity(postSchemaResponse, HttpStatus.CREATED, true);
 
@@ -253,7 +253,7 @@ public abstract class ODMRegistryIT extends ODMIntegrationTest {
     }
 
     protected DomainResource createDomain1() throws IOException {
-        DomainResource payload = resourceBuilder.getObject(ODMRegistryResources.RESOURCE_DOMAIN1, DomainResource.class);
+        DomainResource payload = ODMRegistryTestResources.RESOURCE_DOMAIN1.getObject(DomainResource.class);
         ResponseEntity<DomainResource> postDomainResponse = registryClient.createDomain(payload);
         verifyResponseEntity(postDomainResponse, HttpStatus.CREATED, true);
         return postDomainResponse.getBody();

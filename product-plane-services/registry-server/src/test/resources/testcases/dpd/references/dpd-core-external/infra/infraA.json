@@ -1,0 +1,10 @@
+{
+    "name": "infraA",
+    "version": "1.1.0",
+    "displayName": "Infra A",
+    "description": "Infrastructure component A of data product",
+    "platform": "platformX",
+    "infrastructureType": "storage-resource",
+    "componentGroup": "gruppoC",
+    "x-prop":"x-prop-value"
+  }

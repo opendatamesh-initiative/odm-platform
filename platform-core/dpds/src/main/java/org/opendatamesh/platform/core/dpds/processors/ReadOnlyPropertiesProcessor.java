@@ -2,13 +2,13 @@ package org.opendatamesh.platform.core.dpds.processors;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.opendatamesh.platform.core.dpds.exceptions.DeserializationException;
-import org.opendatamesh.platform.core.dpds.model.ComponentDPDS;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
-import org.opendatamesh.platform.core.dpds.model.EntityTypeDPDS;
-import org.opendatamesh.platform.core.dpds.model.InternalComponentsDPDS;
-import org.opendatamesh.platform.core.dpds.model.LifecycleActivityInfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.PortDPDS;
-import org.opendatamesh.platform.core.dpds.model.StandardDefinitionDPDS;
+import org.opendatamesh.platform.core.dpds.model.core.ComponentDPDS;
+import org.opendatamesh.platform.core.dpds.model.core.EntityTypeDPDS;
+import org.opendatamesh.platform.core.dpds.model.core.StandardDefinitionDPDS;
+import org.opendatamesh.platform.core.dpds.model.interfaces.PortDPDS;
+import org.opendatamesh.platform.core.dpds.model.internals.InternalComponentsDPDS;
+import org.opendatamesh.platform.core.dpds.model.internals.LifecycleTaskInfoDPDS;
 import org.opendatamesh.platform.core.dpds.parser.ParseContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,10 +58,10 @@ public class ReadOnlyPropertiesProcessor implements PropertiesProcessor {
         DataProductVersionDPDS descriptor = context.getResult().getDescriptorDocument();
         InternalComponentsDPDS internalComponents = descriptor.getInternalComponents();
         if(!internalComponents.hasLifecycleInfo()) return;
-        List<LifecycleActivityInfoDPDS> activities = internalComponents.getLifecycleInfo().getActivityInfos();
-        for(LifecycleActivityInfoDPDS activity: activities) {
-            if(!activity.hasTemplate()) continue; 
-            this.addReadOnlyPropertiesToComponent(descriptor, activity.getTemplate(), EntityTypeDPDS.TEMPLATE);
+        List<LifecycleTaskInfoDPDS> tasksInfo = internalComponents.getLifecycleInfo().getTasksInfo();
+        for(LifecycleTaskInfoDPDS taskInfo: tasksInfo) {
+            if(!taskInfo.hasTemplate()) continue; 
+            this.addReadOnlyPropertiesToComponent(descriptor, taskInfo.getTemplate(), EntityTypeDPDS.TEMPLATE);
         }
     }
 

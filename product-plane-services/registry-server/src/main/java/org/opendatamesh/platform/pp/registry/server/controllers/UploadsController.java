@@ -55,8 +55,10 @@ public class UploadsController extends AbstractUploadsController {
             if(descriptorLocationRes.getGit() != null 
                 && StringUtils.hasText(descriptorLocationRes.getGit().getRepositorySshUri())) {
                 descriptorLocation = new GitLocation(
-                    descriptorLocationRes.getGit().getRepositorySshUri(), descriptorUri,
-                    descriptorLocationRes.getGit().getBranch(), descriptorLocationRes.getGit().getTag()
+                    descriptorLocationRes.getGit().getRepositorySshUri(), 
+                    descriptorUri,
+                    descriptorLocationRes.getGit().getBranch(), 
+                    descriptorLocationRes.getGit().getTag()
                 );
             } else {
                 descriptorLocation = new UriLocation(descriptorUri);
@@ -80,42 +82,5 @@ public class UploadsController extends AbstractUploadsController {
             "Impossible to serialize data product version raw content", e);
         }
         return serailizedContent;
-    }
-
-
-    // ----------------
-    // Private methods
-    // ----------------
-
-    // @see https://www.iana.org/assignments/media-types/text/uri-list
-    private URI getUriFromUriListString(String uriListString) {
-        
-        String descriptorUriString = null;
-        if(!StringUtils.hasText(uriListString) ) {
-            throw new BadRequestException(
-                RegistryApiStandardErrors.SC400_05_INVALID_URILIST,
-                "Request body is empty");
-        } 
-        String[] uriList = uriListString.split("\r\n");
-        for(String uri: uriList) {
-            if(uri.trim().startsWith("#")) continue;
-            else {descriptorUriString = uri.trim(); break;}
-        }
-        if(descriptorUriString == null) {
-            throw new BadRequestException(
-                RegistryApiStandardErrors.SC400_05_INVALID_URILIST,
-                "Request body does not contain an URI");
-        }
-        
-        URI descriptorUri = null;
-        try {
-            descriptorUri = new URI(uriListString);
-        } catch (URISyntaxException e) {
-            throw new BadRequestException(
-                RegistryApiStandardErrors.SC400_05_INVALID_URILIST,
-                "Provided URI is invalid [" + uriListString + "]", e);
-        }
-
-        return descriptorUri;
     }
 }

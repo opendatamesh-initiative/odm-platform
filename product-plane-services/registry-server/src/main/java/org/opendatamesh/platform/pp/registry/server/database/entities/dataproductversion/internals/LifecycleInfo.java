@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -26,5 +25,5 @@ public class LifecycleInfo {
             @JoinColumn(name = "DATA_PRODUCT_ID"),
             @JoinColumn(name = "DATA_PRODUCT_VERSION")
     })
-    private List<LifecycleActivityInfo> activityInfos = new ArrayList<LifecycleActivityInfo>();
+    private List<LifecycleTaskInfo> tasksInfo = new ArrayList<LifecycleTaskInfo>();
 }

@@ -25,7 +25,7 @@ import org.opendatamesh.platform.pp.registry.server.database.entities.dataproduc
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.interfaces.Port;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.internals.ApplicationComponent;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.internals.InfrastructuralComponent;
-import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.internals.LifecycleActivityInfo;
+import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.internals.LifecycleTaskInfo;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.internals.LifecycleInfo;
 import org.opendatamesh.platform.pp.registry.server.database.mappers.DataProductVersionMapper;
 import org.opendatamesh.platform.pp.registry.server.database.repositories.DataProductVersionRepository;
@@ -296,7 +296,7 @@ public class DataProductVersionService {
       private void saveLifecycleInfoTemplates(LifecycleInfo lifecycleInfo, String serverUrl)
             throws JsonProcessingException {
     
-        for (LifecycleActivityInfo activity : lifecycleInfo.getActivityInfos()) {
+        for (LifecycleTaskInfo activity : lifecycleInfo.getTasksInfo()) {
             if(activity.getTemplate() != null && activity.getTemplate().getDefinition() != null) {
                 saveTemplate(activity.getTemplate(), serverUrl); 
             }
@@ -563,7 +563,7 @@ public class DataProductVersionService {
         Boolean isValid = false;
 
         try {
-            policyServiceProxy.validateDataProductVersion(
+            isValid = policyServiceProxy.validateDataProductVersion(
                     dataProductVersion, PolicyName.dataproduct);
         } catch (Throwable t) {
             throw new BadGatewayException(

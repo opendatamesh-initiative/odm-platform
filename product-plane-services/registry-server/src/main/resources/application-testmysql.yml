@@ -57,9 +57,9 @@ spring:
     #schemas: ODMREGISTRY # not working
     clean-on-validation-error: true
 
-##########################
-# Registry configurations
-##########################
+#############################
+# ODM projects configurations
+#############################
 odm:
   utilityPlane:
     policyServices:

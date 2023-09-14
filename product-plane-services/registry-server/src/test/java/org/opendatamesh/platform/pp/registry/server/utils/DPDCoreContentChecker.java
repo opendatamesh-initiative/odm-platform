@@ -3,37 +3,22 @@ package org.opendatamesh.platform.pp.registry.server.utils;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
-import org.opendatamesh.platform.core.dpds.model.ApplicationComponentDPDS;
-import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
-import org.opendatamesh.platform.core.dpds.model.EntityTypeDPDS;
-import org.opendatamesh.platform.core.dpds.model.ExternalResourceDPDS;
-import org.opendatamesh.platform.core.dpds.model.InfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.InfrastructuralComponentDPDS;
-import org.opendatamesh.platform.core.dpds.model.InterfaceComponentsDPDS;
-import org.opendatamesh.platform.core.dpds.model.InternalComponentsDPDS;
-import org.opendatamesh.platform.core.dpds.model.LifecycleActivityInfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.LifecycleInfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.PortDPDS;
-import org.opendatamesh.platform.core.dpds.model.PromisesDPDS;
-import org.opendatamesh.platform.core.dpds.model.StandardDefinitionDPDS;
-import org.opendatamesh.platform.core.dpds.model.definitions.DefinitionReferenceDPDS;
+import org.opendatamesh.platform.core.dpds.model.core.EntityTypeDPDS;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class DPDCoreContentChecker {
+public class DPDCoreContentChecker implements ResourceContentChecker {
 
-	public static JsonNode verifyAll(String rootEntityContent) {
+	@Override
+	public JsonNode verifyAll(String rootEntityContent) {
 		ObjectMapper mapper = ObjectMapperFactory.getRightMapper(rootEntityContent);
 		mapper.setSerializationInclusion(Include.NON_EMPTY);
 		JsonNode rootEntityNode = null;
@@ -45,7 +30,8 @@ public class DPDCoreContentChecker {
 		return verifyDescriptorContent(rootEntityNode);
 	}
 
-	public static JsonNode verifyDescriptorContent(JsonNode rootEntity) {
+	@Override
+	public JsonNode verifyDescriptorContent(JsonNode rootEntity) {
 
 		assertThat(rootEntity).isNotNull();
 		assertThat(rootEntity.get("dataProductDescriptor").asText())
@@ -64,12 +50,8 @@ public class DPDCoreContentChecker {
 		return rootEntity;
 	}
 
-	private static String get(ObjectNode node, String propertyName) {
-		JsonNode propertyValue = node.get(propertyName);
-		return propertyValue == null ? null : propertyValue.asText();
-	}
-
-	public static JsonNode verifyInfoContent(ObjectNode infoNode) {
+	@Override
+	public JsonNode verifyInfoContent(ObjectNode infoNode) {
 
 		assertThat(infoNode).isNotNull();
 		assertThat(get(infoNode, "id")).isEqualTo("f350cab5-992b-32f7-9c90-79bca1bf10be");
@@ -91,7 +73,8 @@ public class DPDCoreContentChecker {
 		return infoNode;
 	}
 
-	public static JsonNode verifyInterfaceComponentsContent(ObjectNode interfaceComponentsNode) {
+	@Override
+	public JsonNode verifyInterfaceComponentsContent(ObjectNode interfaceComponentsNode) {
 
 		assertThat(interfaceComponentsNode).isNotNull();
 
@@ -177,7 +160,8 @@ public class DPDCoreContentChecker {
 		return interfaceComponentsNode;
 	}
 
-	public static JsonNode verifyApplicationComponentsContent(ArrayNode appComponentNodes) {
+	@Override
+	public JsonNode verifyApplicationComponentsContent(ArrayNode appComponentNodes) {
 		assertThat(appComponentNodes).isNotNull();
 		assertThat(appComponentNodes.size()).isEqualTo(1);
 
@@ -205,7 +189,8 @@ public class DPDCoreContentChecker {
 		return appComponentNodes;
 	}
 
-	public static JsonNode verifyInfrastructuralComponentsContent(ArrayNode infraComponents) {
+	@Override
+	public JsonNode verifyInfrastructuralComponentsContent(ArrayNode infraComponents) {
 
 		assertThat(infraComponents).isNotNull();
 		assertThat(infraComponents.size()).isEqualTo(1);
@@ -228,19 +213,23 @@ public class DPDCoreContentChecker {
 		return infraComponents;
 	}
 
-	public static JsonNode verifyLifecycleContent(ObjectNode lifecycleNode) {
+	@Override
+	public JsonNode verifyLifecycleContent(ObjectNode lifecycleNode) {
 		assertThat(lifecycleNode).isNotNull();
-		ObjectNode stageNode = null, serviceNode = null, templateNode = null, templateDefNode = null, confNode = null;
+		ArrayNode stageTasksNode = null;
+		ObjectNode taskNode = null, serviceNode = null, templateNode = null, templateDefNode = null, confNode = null;
 
 		// TEST
-		stageNode = (ObjectNode) lifecycleNode.get("test");
-		assertThat(stageNode).isNotNull();
-		serviceNode = (ObjectNode) stageNode.get("service");
+		stageTasksNode = (ArrayNode) lifecycleNode.get("test");
+		assertThat(stageTasksNode).isNotNull();
+		taskNode = (ObjectNode)stageTasksNode.get(0);
+		assertThat(taskNode).isNotNull();
+		serviceNode = (ObjectNode) taskNode.get("service");
 		assertThat(serviceNode).isNotNull();
 		assertThat(get(serviceNode, "$href")).isEqualTo("{azure-devops}");
 		
 		
-		templateNode = (ObjectNode) stageNode.get("template");
+		templateNode = (ObjectNode) taskNode.get("template");
 		assertThat(templateNode).isNotNull();
 		assertThat(get(templateNode, "name")).isEqualTo("testPipeline");
 		assertThat(get(templateNode, "version")).isEqualTo("1.0.0");
@@ -252,7 +241,7 @@ public class DPDCoreContentChecker {
 		assertThat(get(templateDefNode, "originaRef")).isNull();
 		assertThat(get(templateDefNode, "$ref")).matches(Pattern.compile("http://localhost:\\d*/api/v1/pp/registry/templates/[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}"));
 
-		confNode = (ObjectNode) stageNode.get("configurations");
+		confNode = (ObjectNode) taskNode.get("configurations");
 		assertThat(confNode).isNotNull();
 		assertThat(confNode.get("stagesToSkip")).isNotNull();
 		assertThat(confNode.get("stagesToSkip").isArray()).isTrue();
@@ -261,14 +250,16 @@ public class DPDCoreContentChecker {
 		assertThat(confNode.get("stagesToSkip").get(0).asText()).isEqualTo("Deploy");
 
 		// PROD
-		stageNode = (ObjectNode) lifecycleNode.get("prod");
-		assertThat(stageNode).isNotNull();
-		serviceNode = (ObjectNode) stageNode.get("service");
+		stageTasksNode = (ArrayNode) lifecycleNode.get("prod");
+		assertThat(stageTasksNode).isNotNull();
+		taskNode = (ObjectNode)stageTasksNode.get(0);
+		assertThat(taskNode).isNotNull();
+		serviceNode = (ObjectNode) taskNode.get("service");
 		assertThat(serviceNode).isNotNull();
 		assertThat(get(serviceNode, "$href")).isEqualTo("{azure-devops}");
 		
 		
-		templateNode = (ObjectNode) stageNode.get("template");
+		templateNode = (ObjectNode) taskNode.get("template");
 		assertThat(templateNode).isNotNull();
 		assertThat(get(templateNode, "name")).isEqualTo("testPipeline");
 		assertThat(get(templateNode, "version")).isEqualTo("1.0.0");
@@ -280,19 +271,26 @@ public class DPDCoreContentChecker {
 		assertThat(get(templateDefNode, "originaRef")).isNull();
 		assertThat(get(templateDefNode, "$ref")).matches(Pattern.compile("http://localhost:\\d*/api/v1/pp/registry/templates/[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}"));
 
-		confNode = (ObjectNode) stageNode.get("configurations");
+		confNode = (ObjectNode) taskNode.get("configurations");
 		assertThat(confNode).isNotNull();
 		assertThat(confNode.get("stagesToSkip")).isNotNull();
 		assertThat(confNode.get("stagesToSkip").isArray()).isTrue();
 		assertThat(confNode.get("stagesToSkip").size()).isEqualTo(0);
 
-		// PROD
-		stageNode = (ObjectNode) lifecycleNode.get("deprecated");
-		assertThat(stageNode).isNotNull();
-		assertThat(stageNode.get("service")).isNull();
-		assertThat(stageNode.get("template")).isNull();
-		assertThat(stageNode.get("configurations")).isNull();
+		// DEPRECATED
+		stageTasksNode = (ArrayNode) lifecycleNode.get("deprecated");
+		assertThat(stageTasksNode).isNotNull();
+		taskNode = (ObjectNode)stageTasksNode.get(0);
+		assertThat(taskNode).isNotNull();
+		assertThat(taskNode.get("service")).isNull();
+		assertThat(taskNode.get("template")).isNull();
+		assertThat(taskNode.get("configurations")).isNull();
 
 		return lifecycleNode;
+	}
+
+	private static String get(ObjectNode node, String propertyName) {
+		JsonNode propertyValue = node.get(propertyName);
+		return propertyValue == null ? null : propertyValue.asText();
 	}
 }

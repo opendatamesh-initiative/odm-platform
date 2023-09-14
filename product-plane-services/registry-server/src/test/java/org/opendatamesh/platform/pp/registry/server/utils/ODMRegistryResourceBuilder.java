@@ -2,7 +2,7 @@ package org.opendatamesh.platform.pp.registry.server.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
-import org.opendatamesh.platform.core.dpds.model.EntityTypeDPDS;
+import org.opendatamesh.platform.core.dpds.model.core.EntityTypeDPDS;
 import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
 import org.opendatamesh.platform.pp.registry.api.resources.DomainResource;
 import org.opendatamesh.platform.pp.registry.api.resources.ExternalComponentResource;
@@ -11,44 +11,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Objects;
+
 
 public class ODMRegistryResourceBuilder {
-
-    ObjectMapper mapper;
 
     private static final Logger logger = LoggerFactory.getLogger(ODMRegistryResourceBuilder.class);
 
     public ODMRegistryResourceBuilder() {
-        mapper = ObjectMapperFactory.JSON_MAPPER;
     }
     
-    public String getContent(ODMRegistryResources resource) throws IOException {
-        String fileContent = null;
-
-        Objects.requireNonNull(resource, "Parameter [resource] cannot be null");
-
-        fileContent = Files.readString(getPath(resource));
-        logger.debug("File [" + resource.getPath() + "] succesfully read");
-        
-        return fileContent;
-    }
-
-    private Path getPath(ODMRegistryResources resource) {
-        ClassLoader cl = getClass().getClassLoader();
-        String absoluteFilePath = cl.getResource(resource.getPath()).getFile();
-        return Path.of(absoluteFilePath);
-
-    }
-
-    public <T> T getObject(ODMRegistryResources resource, Class<T> resourceType) throws IOException {
-        String fileContent = getContent(resource);
-        return mapper.readValue(fileContent, resourceType);
-    }
-
-
     public DataProductResource buildDataProduct(String fqn, String domain, String descriptione) {
         return buildDataProduct(null, fqn, domain, descriptione);
     }

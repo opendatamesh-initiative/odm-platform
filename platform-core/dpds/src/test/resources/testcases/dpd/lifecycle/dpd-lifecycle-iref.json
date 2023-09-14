@@ -1,0 +1,73 @@
+{
+  "dataProductDescriptor": "1.0.0",
+  "info": {
+    "fullyQualifiedName": "urn:dpds:orm.opendatamesh:dataproducts:dpdLifecycle",
+    "name": "dpdLifecycle",
+    "version": "1.0.0",
+    "domain": "testDomain",
+    "owner": {
+      "id": "john.doe@company-xyz.com"
+    }
+  },
+  "interfaceComponents": {
+    "outputPorts": []
+  },
+  "internalComponents": {
+    "lifecycleInfo": {
+      "dev": [
+        {
+          "service": {
+            "$href": "{azure-devops}"
+          },
+          "template": {
+            "$ref": "#components/templates/dpdLifecyclePipe"
+          },
+          "configurations": {
+            "stage": "DEVS"
+          }
+        }
+      ],
+      "qa": [
+        {
+          "service": {
+            "$href": "{azure-devops}"
+          },
+          "template": {
+            "$ref": "#components/templates/dpdLifecyclePipe"
+          },
+          "configurations": {
+            "stage": "QA"
+          }
+        }
+      ],
+      "prod": [
+        {
+          "service": {
+            "$href": "{azure-devops}"
+          },
+          "template": {
+            "$ref": "#components/templates/dpdLifecyclePipe"
+          },
+          "configurations": {
+            "stage": "PROD"
+          }
+        }
+      ],
+      "deprecated": [
+        {}
+      ]
+    }
+  },
+  "components": {
+    "templates": {
+      "dpdLifecyclePipe": {
+        "specification": "spec",
+        "specificationVersion": "2.0",
+        "definition": {
+          "pipeline": "dpdLifecyclePipe",
+          "version": "1.0.0"
+        }
+      }
+    }
+  }
+}

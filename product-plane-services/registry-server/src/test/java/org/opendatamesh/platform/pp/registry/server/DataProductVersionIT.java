@@ -10,24 +10,22 @@ import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
-import org.opendatamesh.platform.core.dpds.model.ApplicationComponentDPDS;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
-import org.opendatamesh.platform.core.dpds.model.InfrastructuralComponentDPDS;
+import org.opendatamesh.platform.core.dpds.model.internals.ApplicationComponentDPDS;
+import org.opendatamesh.platform.core.dpds.model.internals.InfrastructuralComponentDPDS;
 import org.opendatamesh.platform.core.dpds.parser.DPDSParser;
 import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
 import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
 import org.opendatamesh.platform.core.dpds.parser.location.UriLocation;
 import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
 import org.opendatamesh.platform.pp.registry.api.resources.ExternalComponentResource;
-import org.opendatamesh.platform.pp.registry.server.utils.DPDCoreContentChecker;
-import org.opendatamesh.platform.pp.registry.server.utils.DPDCoreResourceChecker;
-import org.opendatamesh.platform.pp.registry.server.utils.ODMRegistryResources;
+
+import org.opendatamesh.platform.pp.registry.server.utils.ODMRegistryTestResources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.annotation.DirtiesContext.MethodMode;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.EnabledIf;
 
 import java.io.IOException;
@@ -50,8 +48,8 @@ public class DataProductVersionIT extends ODMRegistryIT {
         createdDataProductRes = resourceBuilder.buildTestDataProduct();
         createdDataProductRes = createDataProduct(createdDataProductRes);
 
-        String descriptorContent = createDataProductVersion(createdDataProductRes.getId(), ODMRegistryResources.DPD_CORE_PROPS_CUSTOM);
-        DPDCoreContentChecker.verifyAll(descriptorContent);
+        String descriptorContent = createDataProductVersion(createdDataProductRes.getId(), ODMRegistryTestResources.DPD_CORE);
+        ODMRegistryTestResources.DPD_CORE.getContentChecker().verifyAll(descriptorContent);
 
         DataProductVersionDPDS dataProductVersion = null;
         
@@ -67,7 +65,7 @@ public class DataProductVersionIT extends ODMRegistryIT {
         } catch (ParseException e) {
             fail("Impossible to parse descriptor content");
         }
-        DPDCoreResourceChecker.verifyAll(dataProductVersion);
+        ODMRegistryTestResources.DPD_CORE.getObjectChecker().verifyAll(dataProductVersion);
         
         try {
             ObjectMapper mapper = ObjectMapperFactory.getRightMapper(descriptorContent);
@@ -76,7 +74,7 @@ public class DataProductVersionIT extends ODMRegistryIT {
         } catch (Throwable e) {
             fail("Impossible to parse descriptor content");
         }
-        DPDCoreResourceChecker.verifyAll(dataProductVersion);
+        ODMRegistryTestResources.DPD_CORE.getObjectChecker().verifyAll(dataProductVersion);
     }
 
     private String changeDescriptorVersion(String descriptorContent, String newVersion) {
@@ -102,9 +100,9 @@ public class DataProductVersionIT extends ODMRegistryIT {
         createdDataProductRes = resourceBuilder.buildTestDataProduct();
         createdDataProductRes = createDataProduct(createdDataProductRes);
 
-        String descriptorContent = getResourceContent(ODMRegistryResources.DPD_CORE_PROPS_CUSTOM);
+        String descriptorContent = getResourceContent(ODMRegistryTestResources.DPD_CORE);
         String createdDescriptorContent = createDataProductVersion(createdDataProductRes.getId(), descriptorContent);
-        DPDCoreContentChecker.verifyAll(createdDescriptorContent);
+        ODMRegistryTestResources.DPD_CORE.getContentChecker().verifyAll(createdDescriptorContent);
 
         // Change version number
         String newVersionDescriptorContent = changeDescriptorVersion(descriptorContent, "2.0.0");
@@ -151,8 +149,8 @@ public class DataProductVersionIT extends ODMRegistryIT {
         createdDataProductRes = createDataProduct(createdDataProductRes);
 
 
-        String createdDescriptorContent = createDataProductVersion(createdDataProductRes.getId(), ODMRegistryResources.DPD_CORE_PROPS_CUSTOM);
-        DPDCoreContentChecker.verifyAll(createdDescriptorContent);
+        String createdDescriptorContent = createDataProductVersion(createdDataProductRes.getId(), ODMRegistryTestResources.DPD_CORE);
+        ODMRegistryTestResources.DPD_CORE.getContentChecker().verifyAll(createdDescriptorContent);
 
         // Change version number
         String newVersionDescriptorContent = changeDescriptorVersion(createdDescriptorContent, "2.0.0");
@@ -203,9 +201,9 @@ public class DataProductVersionIT extends ODMRegistryIT {
         createdDataProductRes = resourceBuilder.buildTestDataProduct();
         createdDataProductRes = createDataProduct(createdDataProductRes);
 
-        String descriptorContent = getResourceContent(ODMRegistryResources.DPD_CORE_PROPS_CUSTOM);
+        String descriptorContent = getResourceContent(ODMRegistryTestResources.DPD_CORE);
         String createdDescriptorContent = createDataProductVersion(createdDataProductRes.getId(), descriptorContent);
-        DPDCoreContentChecker.verifyAll(createdDescriptorContent);
+        ODMRegistryTestResources.DPD_CORE.getContentChecker().verifyAll(createdDescriptorContent);
 
         // Change version number
         String newVersionDescriptorContent = changeDescriptorVersion(descriptorContent, "2.0.0");
@@ -233,9 +231,9 @@ public class DataProductVersionIT extends ODMRegistryIT {
         createdDataProductRes = resourceBuilder.buildTestDataProduct();
         createdDataProductRes = createDataProduct(createdDataProductRes);
 
-        String descriptorContent = getResourceContent(ODMRegistryResources.DPD_CORE_PROPS_CUSTOM);
+        String descriptorContent = getResourceContent(ODMRegistryTestResources.DPD_CORE);
         String createdDescriptorContent = createDataProductVersion(createdDataProductRes.getId(), descriptorContent);
-        DPDCoreContentChecker.verifyAll(createdDescriptorContent);
+        ODMRegistryTestResources.DPD_CORE.getContentChecker().verifyAll(createdDescriptorContent);
 
         // Change version number
         String newVersionDescriptorContent = changeDescriptorVersion(descriptorContent, "2.0.0");
@@ -251,7 +249,7 @@ public class DataProductVersionIT extends ODMRegistryIT {
         // test response
         verifyResponseEntity(getDataProductVersionResponse, HttpStatus.OK, true);
         
-        DPDCoreContentChecker.verifyAll(getDataProductVersionResponse.getBody());
+        ODMRegistryTestResources.DPD_CORE.getContentChecker().verifyAll(createdDescriptorContent);
 
     }
 
@@ -271,7 +269,7 @@ public class DataProductVersionIT extends ODMRegistryIT {
                 "This is test product #1");
         createdDataProductRes = createDataProduct(createdDataProductRes);
 
-        String descriptorContent = createDataProductVersion(createdDataProductRes.getId(), ODMRegistryResources.DPD_CORE_PROPS_CUSTOM);
+        String descriptorContent = createDataProductVersion(createdDataProductRes.getId(), ODMRegistryTestResources.DPD_CORE);
 
         ResponseEntity<ApplicationComponentDPDS[]> applicationComponentDPDSResponse = registryClient.getDataProductVersionApplicationComponents(createdDataProductRes.getId(), "1.0.0");
         verifyResponseEntity(applicationComponentDPDSResponse, HttpStatus.OK, true);
@@ -290,7 +288,7 @@ public class DataProductVersionIT extends ODMRegistryIT {
                 "This is test product #1");
         createdDataProductRes = createDataProduct(createdDataProductRes);
 
-        String descriptorContent = createDataProductVersion(createdDataProductRes.getId(), ODMRegistryResources.DPD_CORE_PROPS_CUSTOM);
+        String descriptorContent = createDataProductVersion(createdDataProductRes.getId(), ODMRegistryTestResources.DPD_CORE);
 
         ResponseEntity<InfrastructuralComponentDPDS[]> infrastructuralComponentDPDSResponse = registryClient.getDataProductVersionInfrastructuralComponents(createdDataProductRes.getId(), "1.0.0");
         verifyResponseEntity(infrastructuralComponentDPDSResponse, HttpStatus.OK, true);
@@ -318,9 +316,9 @@ public class DataProductVersionIT extends ODMRegistryIT {
         createdDataProductRes = resourceBuilder.buildTestDataProduct();
         createdDataProductRes = createDataProduct(createdDataProductRes);
 
-        String descriptorContent = getResourceContent(ODMRegistryResources.DPD_CORE_PROPS_CUSTOM);
+        String descriptorContent = getResourceContent(ODMRegistryTestResources.DPD_CORE);
         String createdDescriptorContent = createDataProductVersion(createdDataProductRes.getId(), descriptorContent);
-        DPDCoreContentChecker.verifyAll(createdDescriptorContent);
+        ODMRegistryTestResources.DPD_CORE.getContentChecker().verifyAll(createdDescriptorContent);
 
         // Change version number
         String newVersionDescriptorContent = changeDescriptorVersion(descriptorContent, "2.0.0");
@@ -354,7 +352,7 @@ public class DataProductVersionIT extends ODMRegistryIT {
         verifyResponseEntity(getAllDataProductVersionsResponse, HttpStatus.OK, true);
         String readDescriptorContent = getDataProductVersionsResponse.getBody();
 
-        DPDCoreContentChecker.verifyAll(readDescriptorContent);
+        ODMRegistryTestResources.DPD_CORE.getContentChecker().verifyAll(createdDescriptorContent);
     }   
 
     // ======================================================================================

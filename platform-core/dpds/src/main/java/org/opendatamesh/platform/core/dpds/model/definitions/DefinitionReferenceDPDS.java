@@ -1,12 +1,12 @@
 package org.opendatamesh.platform.core.dpds.model.definitions;
 
 
+import org.opendatamesh.platform.core.dpds.model.core.ReferenceObjectDPDS;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-
-import org.opendatamesh.platform.core.dpds.model.ReferenceObjectDPDS;
 
 @Data
 @EqualsAndHashCode(callSuper=true)

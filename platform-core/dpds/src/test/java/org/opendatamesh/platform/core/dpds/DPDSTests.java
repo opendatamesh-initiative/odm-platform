@@ -7,20 +7,20 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.opendatamesh.platform.core.dpds.model.ApplicationComponentDPDS;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
-import org.opendatamesh.platform.core.dpds.model.EntityTypeDPDS;
-import org.opendatamesh.platform.core.dpds.model.ExternalResourceDPDS;
-import org.opendatamesh.platform.core.dpds.model.InfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.InfrastructuralComponentDPDS;
-import org.opendatamesh.platform.core.dpds.model.InterfaceComponentsDPDS;
-import org.opendatamesh.platform.core.dpds.model.InternalComponentsDPDS;
-import org.opendatamesh.platform.core.dpds.model.LifecycleActivityInfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.LifecycleInfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.PortDPDS;
-import org.opendatamesh.platform.core.dpds.model.PromisesDPDS;
-import org.opendatamesh.platform.core.dpds.model.StandardDefinitionDPDS;
+import org.opendatamesh.platform.core.dpds.model.core.EntityTypeDPDS;
+import org.opendatamesh.platform.core.dpds.model.core.ExternalResourceDPDS;
+import org.opendatamesh.platform.core.dpds.model.core.StandardDefinitionDPDS;
 import org.opendatamesh.platform.core.dpds.model.definitions.DefinitionReferenceDPDS;
+import org.opendatamesh.platform.core.dpds.model.info.InfoDPDS;
+import org.opendatamesh.platform.core.dpds.model.interfaces.InterfaceComponentsDPDS;
+import org.opendatamesh.platform.core.dpds.model.interfaces.PortDPDS;
+import org.opendatamesh.platform.core.dpds.model.interfaces.PromisesDPDS;
+import org.opendatamesh.platform.core.dpds.model.internals.ApplicationComponentDPDS;
+import org.opendatamesh.platform.core.dpds.model.internals.InfrastructuralComponentDPDS;
+import org.opendatamesh.platform.core.dpds.model.internals.InternalComponentsDPDS;
+import org.opendatamesh.platform.core.dpds.model.internals.LifecycleInfoDPDS;
+import org.opendatamesh.platform.core.dpds.model.internals.LifecycleTaskInfoDPDS;
 import org.opendatamesh.platform.core.dpds.parser.DPDSParser;
 import org.opendatamesh.platform.core.dpds.parser.DPDSSerializer;
 import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
@@ -44,6 +44,11 @@ public class DPDSTests {
 
     protected ParseResult parseDescriptorFromUri(DPDSTestResources resource, ParseOptions options) {
         DescriptorLocation location = getUriLocation(resource);
+        return parseDescriptor(location, options);
+    }
+
+    protected ParseResult parseDescriptorFromGit(DPDSTestResources resource, ParseOptions options) {
+        DescriptorLocation location = getGitLocation(resource);
         return parseDescriptor(location, options);
     }
 
@@ -71,7 +76,7 @@ public class DPDSTests {
         try {
             location = resource.getContentLocation();
         } catch (Throwable t) {
-            fail("Impossible to get descriptor location fomp path [" + resource.path + "]", t);
+            fail("Impossible to get descriptor location fomp path [" + resource.localPath + "]", t);
         }
 
         return location;
@@ -82,7 +87,18 @@ public class DPDSTests {
         try {
             location = resource.getUriLocation();
         } catch (Throwable t) {
-            fail("Impossible to get descriptor location fomp path [" + resource.path + "]", t);
+            fail("Impossible to get descriptor location fomp path [" + resource.localPath + "]", t);
+        }
+
+        return location;
+    }
+
+    protected DescriptorLocation getGitLocation(DPDSTestResources resource) {
+        DescriptorLocation location = null;
+        try {
+            location = resource.getGitLocation();
+        } catch (Throwable t) {
+            fail("Impossible to get descriptor location fomp git [" + resource.repoPath + "]", t);
         }
 
         return location;

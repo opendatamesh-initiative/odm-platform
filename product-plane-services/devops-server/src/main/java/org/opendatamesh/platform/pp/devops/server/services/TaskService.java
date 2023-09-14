@@ -13,8 +13,8 @@ import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerE
 import org.opendatamesh.platform.core.commons.servers.exceptions.NotFoundException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
-import org.opendatamesh.platform.core.dpds.model.LifecycleActivityInfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.StandardDefinitionDPDS;
+import org.opendatamesh.platform.core.dpds.model.core.StandardDefinitionDPDS;
+import org.opendatamesh.platform.core.dpds.model.internals.LifecycleTaskInfoDPDS;
 import org.opendatamesh.platform.core.dpds.parser.IdentifierStrategy;
 import org.opendatamesh.platform.pp.devops.api.clients.DevOpsAPIRoutes;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskStatus;
@@ -60,11 +60,11 @@ public class TaskService {
     // ======================================================================================
 
     // Create tasks and start activity
-    public List<Task> createTasks(Long activityId, List<LifecycleActivityInfoDPDS> activitiesInfo) {
+    public List<Task> createTasks(Long activityId, List<LifecycleTaskInfoDPDS> activitiesInfo) {
 
         List<Task> tasks = new ArrayList<Task>();
 
-        for (LifecycleActivityInfoDPDS activityInfo : activitiesInfo) {
+        for (LifecycleTaskInfoDPDS activityInfo : activitiesInfo) {
             Task task = buildTask(activityId, activityInfo);
             task = createTask(task);
             tasks.add(task);
@@ -311,7 +311,7 @@ public class TaskService {
     // other methods
     // -------------------------
 
-    private Task buildTask(Long activityId, LifecycleActivityInfoDPDS activityInfo) {
+    private Task buildTask(Long activityId, LifecycleTaskInfoDPDS activityInfo) {
         Task task = null;
 
         task = new Task();

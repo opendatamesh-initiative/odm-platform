@@ -50,6 +50,9 @@ spring:
     #schemas: flyway # not working
     clean-on-validation-error: true
 
+#############################
+# ODM projects configurations
+#############################
 odm:
   utilityPlane:
     policyServices:

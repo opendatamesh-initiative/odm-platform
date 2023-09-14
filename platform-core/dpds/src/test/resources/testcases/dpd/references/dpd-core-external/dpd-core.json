@@ -1,0 +1,70 @@
+{
+    "dataProductDescriptor": "1.0.0",
+    "info": {
+        "name": "dpdCore",
+        "version": "1.0.0",
+        "displayName": "Test Product",
+        "description": "This is a test product that contains the core configurations blocks",
+        "domain": "testDomain",
+        "owner": {
+            "id": "john.doe@company-xyz.com",
+            "name": "John Doe"
+        },
+        "x-prop":"x-prop-value"
+    },
+    "interfaceComponents": {
+        "inputPorts": [
+            {
+                "$ref": "ports/inputPortA.json"
+            }
+        ],
+        "outputPorts": [
+            {
+                "$ref": "ports/outputPortA.json"
+            }
+        ]
+    },
+    "internalComponents": {
+        "lifecycleInfo": {
+            "test": [{
+                "service": {
+                    "$href": "{azure-devops}"
+                },
+                "template": {
+                    "$ref": "templates/testPipeline.json"
+                },
+                "configurations": {
+                    "stagesToSkip": [
+                        "Deploy"
+                    ]
+                },
+                "x-prop":"x-prop-value"
+            }],
+            "prod": [{
+                "service": {
+                    "$href": "{azure-devops}"
+                },
+                "template": {
+                    "$ref": "templates/testPipeline.json"
+                },
+                "configurations": {
+                    "stagesToSkip": []
+                },
+                "x-prop":"x-prop-value"
+            }],
+            "deprecated": [{
+                "x-prop":"x-prop-value"
+            }]
+        },
+        "applicationComponents": [
+            {
+                "$ref": "apps/appA.json"
+            }
+        ],
+        "infrastructuralComponents": [
+            {
+                "$ref": "infra/infraA.json"
+            }
+        ]
+    }
+}

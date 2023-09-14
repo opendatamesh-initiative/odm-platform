@@ -5,7 +5,7 @@ import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
 import org.opendatamesh.platform.pp.registry.api.resources.DomainResource;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
-import org.opendatamesh.platform.pp.registry.server.utils.ODMRegistryResources;
+import org.opendatamesh.platform.pp.registry.server.utils.ODMRegistryTestResources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
@@ -268,7 +268,7 @@ public class DomainIT extends ODMRegistryIT {
         DataProductResource createdDataProductRes = resourceBuilder.buildTestDataProduct();
         createdDataProductRes = createDataProduct(createdDataProductRes);
 
-        String descriptorContent = createDataProductVersion(createdDataProductRes.getId(), ODMRegistryResources.DPD_CORE_PROPS_CUSTOM);
+        String descriptorContent = createDataProductVersion(createdDataProductRes.getId(), ODMRegistryTestResources.DPD_CORE);
         DomainResource domainResource = resourceBuilder.buildDomain("urn:odmp:org.opendatamesh:domains:testDomain", "Test Domain", null, null, null);
         ResponseEntity<DomainResource> domainResourceResponse= registryClient.createDomain(domainResource);
 

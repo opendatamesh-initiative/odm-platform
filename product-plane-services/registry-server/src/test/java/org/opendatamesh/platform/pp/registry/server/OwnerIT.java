@@ -5,7 +5,7 @@ import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
 import org.opendatamesh.platform.pp.registry.api.resources.OwnerResource;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
-import org.opendatamesh.platform.pp.registry.server.utils.ODMRegistryResources;
+import org.opendatamesh.platform.pp.registry.server.utils.ODMRegistryTestResources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
@@ -240,7 +240,7 @@ public class OwnerIT extends ODMRegistryIT {
         DataProductResource createdDataProductRes = resourceBuilder.buildTestDataProduct();
         createdDataProductRes = createDataProduct(createdDataProductRes);
 
-        String descriptorContent = createDataProductVersion(createdDataProductRes.getId(), ODMRegistryResources.DPD_CORE_PROPS_CUSTOM);
+        String descriptorContent = createDataProductVersion(createdDataProductRes.getId(), ODMRegistryTestResources.DPD_CORE);
 
         // TEST: Owner not present
         ResponseEntity errorResponse = registryClient.deleteOwner("john.doe@company-xyz.com");

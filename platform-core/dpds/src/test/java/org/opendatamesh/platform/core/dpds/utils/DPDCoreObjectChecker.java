@@ -7,20 +7,20 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.opendatamesh.platform.core.dpds.model.ApplicationComponentDPDS;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
-import org.opendatamesh.platform.core.dpds.model.EntityTypeDPDS;
-import org.opendatamesh.platform.core.dpds.model.ExternalResourceDPDS;
-import org.opendatamesh.platform.core.dpds.model.InfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.InfrastructuralComponentDPDS;
-import org.opendatamesh.platform.core.dpds.model.InterfaceComponentsDPDS;
-import org.opendatamesh.platform.core.dpds.model.InternalComponentsDPDS;
-import org.opendatamesh.platform.core.dpds.model.LifecycleActivityInfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.LifecycleInfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.PortDPDS;
-import org.opendatamesh.platform.core.dpds.model.PromisesDPDS;
-import org.opendatamesh.platform.core.dpds.model.StandardDefinitionDPDS;
+import org.opendatamesh.platform.core.dpds.model.core.EntityTypeDPDS;
+import org.opendatamesh.platform.core.dpds.model.core.ExternalResourceDPDS;
+import org.opendatamesh.platform.core.dpds.model.core.StandardDefinitionDPDS;
 import org.opendatamesh.platform.core.dpds.model.definitions.DefinitionReferenceDPDS;
+import org.opendatamesh.platform.core.dpds.model.info.InfoDPDS;
+import org.opendatamesh.platform.core.dpds.model.interfaces.InterfaceComponentsDPDS;
+import org.opendatamesh.platform.core.dpds.model.interfaces.PortDPDS;
+import org.opendatamesh.platform.core.dpds.model.interfaces.PromisesDPDS;
+import org.opendatamesh.platform.core.dpds.model.internals.ApplicationComponentDPDS;
+import org.opendatamesh.platform.core.dpds.model.internals.InfrastructuralComponentDPDS;
+import org.opendatamesh.platform.core.dpds.model.internals.InternalComponentsDPDS;
+import org.opendatamesh.platform.core.dpds.model.internals.LifecycleInfoDPDS;
+import org.opendatamesh.platform.core.dpds.model.internals.LifecycleTaskInfoDPDS;
 
 
 public class DPDCoreObjectChecker implements ResourceObjectChecker {
@@ -167,19 +167,22 @@ public class DPDCoreObjectChecker implements ResourceObjectChecker {
         LifecycleInfoDPDS lifecycle = internals.getLifecycleInfo();
         assertThat(lifecycle).isNotNull();
 
-        List<LifecycleActivityInfoDPDS> activities = lifecycle.getActivityInfos();
-        assertThat(activities).isNotNull();
-        assertThat(activities.size()).isEqualTo(3);
+        List<LifecycleTaskInfoDPDS> tasksinfo = lifecycle.getTasksInfo();
+        assertThat(tasksinfo).isNotNull();
+        assertThat(tasksinfo.size()).isEqualTo(3);
 
-        LifecycleActivityInfoDPDS activity = null;
+        List<LifecycleTaskInfoDPDS> tasksInfo = null;
+        LifecycleTaskInfoDPDS taskInfo = null;
 
         // TEST
-        activity = lifecycle.getActivityInfo("test");
-        assertThat(activity).isNotNull();
-        ExternalResourceDPDS service = activity.getService();
+        tasksInfo = lifecycle.getTasksInfo("test");
+        assertThat(tasksInfo).isNotNull();
+        taskInfo = tasksInfo.get(0);
+        assertThat(taskInfo).isNotNull();
+        ExternalResourceDPDS service = taskInfo.getService();
         assertThat(service).isNotNull();
         assertThat(service.getHref()).isEqualTo("{azure-devops}");
-        StandardDefinitionDPDS template = activity.getTemplate();
+        StandardDefinitionDPDS template = taskInfo.getTemplate();
         assertThat(template).isNotNull();
         assertThat(template.getName()).isEqualTo("testPipeline");
         assertThat(template.getVersion()).isEqualTo("1.0.0");
@@ -188,17 +191,19 @@ public class DPDCoreObjectChecker implements ResourceObjectChecker {
         DefinitionReferenceDPDS definition = template.getDefinition();
         assertThat(definition).isNotNull();
         //assertThat(definition.getRef()).isEqualTo("http://localhost:80/templates/{templateId}");
-        Map<String, Object> configurations = activity.getConfigurations();
+        Map<String, Object> configurations = taskInfo.getConfigurations();
         assertThat(configurations).isNotNull();
         assertThat(configurations.get("stagesToSkip")).isEqualTo(Arrays.asList("Deploy"));
 
         // PROD
-        activity = lifecycle.getActivityInfo("prod");
-        assertThat(activity).isNotNull();
-        service = activity.getService();
+        tasksInfo = lifecycle.getTasksInfo("prod");
+        assertThat(tasksInfo).isNotNull();
+        taskInfo = tasksInfo.get(0);
+        assertThat(taskInfo).isNotNull();
+        service = taskInfo.getService();
         assertThat(service).isNotNull();
         assertThat(service.getHref()).isEqualTo("{azure-devops}");
-        template = activity.getTemplate();
+        template = taskInfo.getTemplate();
         assertThat(template).isNotNull();
         assertThat(template.getName()).isEqualTo("testPipeline");
         assertThat(template.getVersion()).isEqualTo("1.0.0");
@@ -207,15 +212,17 @@ public class DPDCoreObjectChecker implements ResourceObjectChecker {
         definition = template.getDefinition();
         assertThat(definition).isNotNull();
         //assertThat(definition.getRef()).isEqualTo("http://localhost:80/templates/{templateId}");
-        configurations = activity.getConfigurations();
+        configurations = taskInfo.getConfigurations();
         assertThat(configurations).isNotNull();
         assertThat(configurations.get("stagesToSkip")).isEqualTo(Arrays.asList());
 
         // DEPRECATED
-        activity = lifecycle.getActivityInfo("deprecated");
-        assertThat(activity).isNotNull();
-        assertThat(activity.getService()).isNull();
-        assertThat(activity.getTemplate()).isNull();
-        assertThat(activity.getConfigurations()).isNull();
+        tasksInfo = lifecycle.getTasksInfo("deprecated");
+        assertThat(tasksInfo).isNotNull();
+        taskInfo = tasksInfo.get(0);
+        assertThat(taskInfo).isNotNull();
+        assertThat(taskInfo.getService()).isNull();
+        assertThat(taskInfo.getTemplate()).isNull();
+        assertThat(taskInfo.getConfigurations()).isNull();
     }
 }

@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package org.opendatamesh.platform.core.dpds.model;
+package org.opendatamesh.platform.core.dpds.model.core;
 
 import java.util.Arrays;
 import java.util.List;
+
+import org.opendatamesh.platform.core.dpds.model.interfaces.PortDPDS;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
@@ -99,7 +101,7 @@ public enum EntityTypeDPDS {
 
     /**
 	 * Whether this entity type is a port
-	 * {@link org.opendatamesh.platform.core.dpds.model.PortDPDS}.
+	 * {@link org.opendatamesh.platform.core.dpds.model.interfaces.PortDPDS}.
 	 */
     public boolean isPort(){
 		return PORTS.contains(this);
@@ -107,7 +109,7 @@ public enum EntityTypeDPDS {
 
     /**
 	 * Whether this entity type is a component
-	 * {@link org.opendatamesh.platform.core.dpds.model.ComponentDPDS}.
+	 * {@link org.opendatamesh.platform.core.dpds.model.core.ComponentDPDS}.
 	 */
     public boolean isComponent(){
         return COMPONENTS.contains(this);
@@ -115,7 +117,7 @@ public enum EntityTypeDPDS {
 
 	/**
 	 * Whether this entity type is an external component
-	 * {@link org.opendatamesh.platform.core.dpds.model.ComponentDPDS}.
+	 * {@link org.opendatamesh.platform.core.dpds.model.core.ComponentDPDS}.
 	 */
     public boolean isExternalComponent(){
         return EXTERNAL_COMPONENTS.contains(this);

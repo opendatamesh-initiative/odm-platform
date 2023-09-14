@@ -110,7 +110,7 @@
       "id" : "d1d74ccd-0a90-3c13-8bb5-6628fec44fbe"
     } ],
     "lifecycleInfo" : {
-      "test" : {
+      "test" : [{
         "x-prop" : "x-prop-value",
         "service" : {
           "$href" : "azure-devops"
@@ -132,8 +132,8 @@
             "$ref" : "http://localhost:40551/api/v1/pp/registry/templates/65f81a2f-65d8-3f03-9dff-ba598ba0292c"
           }
         }
-      },
-      "prod" : {
+      }],
+      "prod" : [{
         "x-prop" : "x-prop-value",
         "service" : {
           "$href" : "azure-devops"
@@ -155,8 +155,8 @@
             "$ref" : "http://localhost:40551/api/v1/pp/registry/templates/65f81a2f-65d8-3f03-9dff-ba598ba0292c"
           }
         }
-      },
-      "stage-notemplate" : {
+      }],
+      "stage-notemplate" : [{
         "x-prop" : "x-prop-value",
         "service" : {
           "$href" : "azure-devops"
@@ -164,8 +164,8 @@
         "configurations" : {
           "stagesToSkip" : [ ]
         }
-      },
-      "stage-noconf" : {
+      }],
+      "stage-noconf" : [{
         "x-prop" : "x-prop-value",
         "service" : {
           "$href" : "azure-devops"
@@ -184,8 +184,8 @@
             "$ref" : "http://localhost:40551/api/v1/pp/registry/templates/65f81a2f-65d8-3f03-9dff-ba598ba0292c"
           }
         }
-      },
-      "stage-noservice" : {
+      }],
+      "stage-noservice" : [{
         "x-prop" : "x-prop-value",
         "configurations" : {
           "stagesToSkip" : [ ]
@@ -204,11 +204,11 @@
             "$ref" : "http://localhost:40551/api/v1/pp/registry/templates/65f81a2f-65d8-3f03-9dff-ba598ba0292c"
           }
         }
-      },
-      "stage-empty" : { 
+      }],
+      "stage-empty" : [{ 
 
-      },
-      "stage-wrong-executor" : {
+      }],
+      "stage-wrong-executor" : [{
         "x-prop" : "x-prop-value",
         "service" : {
           "$href" : "wrong-executor"
@@ -230,7 +230,7 @@
             "$ref" : "http://localhost:40551/api/v1/pp/registry/templates/65f81a2f-65d8-3f03-9dff-ba598ba0292c"
           }
         }
-      }
+      }]
     }
   }
 }

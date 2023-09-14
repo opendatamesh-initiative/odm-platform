@@ -3,7 +3,7 @@ package org.opendatamesh.platform.pp.registry.server.database.entities.dataprodu
 import lombok.Data;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.opendatamesh.platform.core.dpds.model.LifecycleInfoDPDS;
+import org.opendatamesh.platform.core.dpds.model.internals.LifecycleInfoDPDS;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -43,8 +43,8 @@ public class InternalComponents {
 
     public boolean hasLifecycleInfo() {
         return lifecycleInfo != null 
-            && lifecycleInfo.getActivityInfos() != null 
-            && !lifecycleInfo.getActivityInfos().isEmpty();
+            && lifecycleInfo.getTasksInfo() != null 
+            && !lifecycleInfo.getTasksInfo().isEmpty();
     }
 
 }

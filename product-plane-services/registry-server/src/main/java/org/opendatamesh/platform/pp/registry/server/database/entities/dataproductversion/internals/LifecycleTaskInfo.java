@@ -12,26 +12,30 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.core.ExternalResource;
-import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.core.StandardDefinition;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.core.TemplateStandardDefinition;
 import org.opendatamesh.platform.pp.registry.server.utils.HashMapConverter;
 
 import lombok.Data;
 
 @Data
-@Entity( name = "ActivityInfo" )
-@Table( name = "DPV_ACTIVITY_INFOS", schema="ODMREGISTRY")
-public class LifecycleActivityInfo {
+@Entity( name = "LifecycleTaskInfo" )
+@Table( name = "DPV_TASK_INFOS", schema="ODMREGISTRY")
+public class LifecycleTaskInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ID")
     private Long id;
 
+    @Column(name = "NAME")
+    private String name;
+
     @Column(name = "STAGE")
     private String stageName;
+
+    @Column(name = "EXEC_ORDER")
+    private Integer order;
     
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "SERVICE_ID", referencedColumnName = "ID")

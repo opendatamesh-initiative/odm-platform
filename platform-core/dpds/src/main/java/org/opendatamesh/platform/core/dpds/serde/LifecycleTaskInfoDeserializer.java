@@ -7,29 +7,29 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
-import org.opendatamesh.platform.core.dpds.model.LifecycleActivityInfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.ExternalResourceDPDS;
-import org.opendatamesh.platform.core.dpds.model.StandardDefinitionDPDS;
+import org.opendatamesh.platform.core.dpds.model.core.ExternalResourceDPDS;
+import org.opendatamesh.platform.core.dpds.model.core.StandardDefinitionDPDS;
+import org.opendatamesh.platform.core.dpds.model.internals.LifecycleTaskInfoDPDS;
 
 import java.io.IOException;
 import java.util.Map;
 
-public class ActivityInfoDeserializer extends StdDeserializer<LifecycleActivityInfoDPDS> {
+public class LifecycleTaskInfoDeserializer extends StdDeserializer<LifecycleTaskInfoDPDS> {
 
-    public ActivityInfoDeserializer() {
+    public LifecycleTaskInfoDeserializer() {
         this(null);
     }
 
-    public ActivityInfoDeserializer(Class<?> vc) {
+    public LifecycleTaskInfoDeserializer(Class<?> vc) {
         super(vc);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public LifecycleActivityInfoDPDS deserialize(JsonParser jp, DeserializationContext ctxt)
+    public LifecycleTaskInfoDPDS deserialize(JsonParser jp, DeserializationContext ctxt)
             throws IOException, JsonProcessingException {
         
-        LifecycleActivityInfoDPDS infoResource = new LifecycleActivityInfoDPDS();   
+        LifecycleTaskInfoDPDS infoResource = new LifecycleTaskInfoDPDS();   
 
         ObjectCodec codec = jp.getCodec();
         JsonNode node = codec.readTree(jp);

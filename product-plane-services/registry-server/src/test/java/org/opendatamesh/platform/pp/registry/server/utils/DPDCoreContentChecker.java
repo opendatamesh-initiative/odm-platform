@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.fail;
 import java.util.regex.Pattern;
 
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
-import org.opendatamesh.platform.core.dpds.model.EntityTypeDPDS;
+import org.opendatamesh.platform.core.dpds.model.core.EntityTypeDPDS;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -216,17 +216,20 @@ public class DPDCoreContentChecker implements ResourceContentChecker {
 	@Override
 	public JsonNode verifyLifecycleContent(ObjectNode lifecycleNode) {
 		assertThat(lifecycleNode).isNotNull();
-		ObjectNode stageNode = null, serviceNode = null, templateNode = null, templateDefNode = null, confNode = null;
+		ArrayNode stageTasksNode = null;
+		ObjectNode taskNode = null, serviceNode = null, templateNode = null, templateDefNode = null, confNode = null;
 
 		// TEST
-		stageNode = (ObjectNode) lifecycleNode.get("test");
-		assertThat(stageNode).isNotNull();
-		serviceNode = (ObjectNode) stageNode.get("service");
+		stageTasksNode = (ArrayNode) lifecycleNode.get("test");
+		assertThat(stageTasksNode).isNotNull();
+		taskNode = (ObjectNode)stageTasksNode.get(0);
+		assertThat(taskNode).isNotNull();
+		serviceNode = (ObjectNode) taskNode.get("service");
 		assertThat(serviceNode).isNotNull();
 		assertThat(get(serviceNode, "$href")).isEqualTo("{azure-devops}");
 		
 		
-		templateNode = (ObjectNode) stageNode.get("template");
+		templateNode = (ObjectNode) taskNode.get("template");
 		assertThat(templateNode).isNotNull();
 		assertThat(get(templateNode, "name")).isEqualTo("testPipeline");
 		assertThat(get(templateNode, "version")).isEqualTo("1.0.0");
@@ -238,7 +241,7 @@ public class DPDCoreContentChecker implements ResourceContentChecker {
 		assertThat(get(templateDefNode, "originaRef")).isNull();
 		assertThat(get(templateDefNode, "$ref")).matches(Pattern.compile("http://localhost:\\d*/api/v1/pp/registry/templates/[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}"));
 
-		confNode = (ObjectNode) stageNode.get("configurations");
+		confNode = (ObjectNode) taskNode.get("configurations");
 		assertThat(confNode).isNotNull();
 		assertThat(confNode.get("stagesToSkip")).isNotNull();
 		assertThat(confNode.get("stagesToSkip").isArray()).isTrue();
@@ -247,14 +250,16 @@ public class DPDCoreContentChecker implements ResourceContentChecker {
 		assertThat(confNode.get("stagesToSkip").get(0).asText()).isEqualTo("Deploy");
 
 		// PROD
-		stageNode = (ObjectNode) lifecycleNode.get("prod");
-		assertThat(stageNode).isNotNull();
-		serviceNode = (ObjectNode) stageNode.get("service");
+		stageTasksNode = (ArrayNode) lifecycleNode.get("prod");
+		assertThat(stageTasksNode).isNotNull();
+		taskNode = (ObjectNode)stageTasksNode.get(0);
+		assertThat(taskNode).isNotNull();
+		serviceNode = (ObjectNode) taskNode.get("service");
 		assertThat(serviceNode).isNotNull();
 		assertThat(get(serviceNode, "$href")).isEqualTo("{azure-devops}");
 		
 		
-		templateNode = (ObjectNode) stageNode.get("template");
+		templateNode = (ObjectNode) taskNode.get("template");
 		assertThat(templateNode).isNotNull();
 		assertThat(get(templateNode, "name")).isEqualTo("testPipeline");
 		assertThat(get(templateNode, "version")).isEqualTo("1.0.0");
@@ -266,18 +271,20 @@ public class DPDCoreContentChecker implements ResourceContentChecker {
 		assertThat(get(templateDefNode, "originaRef")).isNull();
 		assertThat(get(templateDefNode, "$ref")).matches(Pattern.compile("http://localhost:\\d*/api/v1/pp/registry/templates/[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}"));
 
-		confNode = (ObjectNode) stageNode.get("configurations");
+		confNode = (ObjectNode) taskNode.get("configurations");
 		assertThat(confNode).isNotNull();
 		assertThat(confNode.get("stagesToSkip")).isNotNull();
 		assertThat(confNode.get("stagesToSkip").isArray()).isTrue();
 		assertThat(confNode.get("stagesToSkip").size()).isEqualTo(0);
 
-		// PROD
-		stageNode = (ObjectNode) lifecycleNode.get("deprecated");
-		assertThat(stageNode).isNotNull();
-		assertThat(stageNode.get("service")).isNull();
-		assertThat(stageNode.get("template")).isNull();
-		assertThat(stageNode.get("configurations")).isNull();
+		// DEPRECATED
+		stageTasksNode = (ArrayNode) lifecycleNode.get("deprecated");
+		assertThat(stageTasksNode).isNotNull();
+		taskNode = (ObjectNode)stageTasksNode.get(0);
+		assertThat(taskNode).isNotNull();
+		assertThat(taskNode.get("service")).isNull();
+		assertThat(taskNode.get("template")).isNull();
+		assertThat(taskNode.get("configurations")).isNull();
 
 		return lifecycleNode;
 	}

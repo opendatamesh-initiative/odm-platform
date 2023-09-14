@@ -3,17 +3,17 @@ package org.opendatamesh.platform.core.dpds.processors;
 import org.opendatamesh.platform.core.dpds.exceptions.DeserializationException;
 
 import org.opendatamesh.platform.core.dpds.exceptions.UnresolvableReferenceException;
-import org.opendatamesh.platform.core.dpds.model.ComponentDPDS;
-import org.opendatamesh.platform.core.dpds.model.ComponentsDPDS;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
-import org.opendatamesh.platform.core.dpds.model.EntityTypeDPDS;
-import org.opendatamesh.platform.core.dpds.model.InterfaceComponentsDPDS;
-import org.opendatamesh.platform.core.dpds.model.InternalComponentsDPDS;
-import org.opendatamesh.platform.core.dpds.model.LifecycleActivityInfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.LifecycleInfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.PortDPDS;
-import org.opendatamesh.platform.core.dpds.model.StandardDefinitionDPDS;
+import org.opendatamesh.platform.core.dpds.model.core.ComponentDPDS;
+import org.opendatamesh.platform.core.dpds.model.core.ComponentsDPDS;
+import org.opendatamesh.platform.core.dpds.model.core.EntityTypeDPDS;
+import org.opendatamesh.platform.core.dpds.model.core.StandardDefinitionDPDS;
 import org.opendatamesh.platform.core.dpds.model.definitions.DefinitionReferenceDPDS;
+import org.opendatamesh.platform.core.dpds.model.interfaces.InterfaceComponentsDPDS;
+import org.opendatamesh.platform.core.dpds.model.interfaces.PortDPDS;
+import org.opendatamesh.platform.core.dpds.model.internals.InternalComponentsDPDS;
+import org.opendatamesh.platform.core.dpds.model.internals.LifecycleInfoDPDS;
+import org.opendatamesh.platform.core.dpds.model.internals.LifecycleTaskInfoDPDS;
 import org.opendatamesh.platform.core.dpds.parser.DPDSDeserializer;
 import org.opendatamesh.platform.core.dpds.parser.ParseContext;
 import org.opendatamesh.platform.core.dpds.parser.location.UriUtils;
@@ -86,9 +86,9 @@ public class ReferencesProcessor implements PropertiesProcessor {
 
         Objects.requireNonNull(lifecycleResource, "Input parameter [lifecycleResource] cannot be null");
 
-        List<LifecycleActivityInfoDPDS> acivityResources = lifecycleResource.getActivityInfos();
+        List<LifecycleTaskInfoDPDS> acivityResources = lifecycleResource.getTasksInfo();
 
-        for (LifecycleActivityInfoDPDS acivityResource : acivityResources) {
+        for (LifecycleTaskInfoDPDS acivityResource : acivityResources) {
             if (acivityResource.hasTemplate() == false)
                 continue;
 

@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.core.dpds.model;
+package org.opendatamesh.platform.core.dpds.model.info;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

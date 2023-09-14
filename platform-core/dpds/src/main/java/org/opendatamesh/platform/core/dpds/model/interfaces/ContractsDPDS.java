@@ -1,4 +1,6 @@
-package org.opendatamesh.platform.core.dpds.model;
+package org.opendatamesh.platform.core.dpds.model.interfaces;
+
+import org.opendatamesh.platform.core.dpds.model.core.SpecificationExtensionPointDPDS;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

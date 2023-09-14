@@ -14,9 +14,9 @@
   },
   "internalComponents": {
       "lifecycleInfo": {
-        "dev": {
+        "dev": [{
           "service": {
-            "$href": "azure-devops"
+            "$href": "{azure-devops}"
           },
           "template": {
             "specification": "spec",
@@ -29,10 +29,10 @@
           "configurations": {
             "stage": "DEV"
           }
-        },
-        "prod": {
+        }],
+        "prod": [{
           "service": {
-            "$href": "azure-devops"
+            "$href": "{azure-devops}"
           },
           "template": {
             "specification": "spec",
@@ -45,7 +45,7 @@
           "configurations": {
             "stage": "PROD"
           }
-        }
+        }]
       }
     }
   }

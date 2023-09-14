@@ -2,7 +2,7 @@ package org.opendatamesh.platform.pp.registry.server.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
-import org.opendatamesh.platform.core.dpds.model.EntityTypeDPDS;
+import org.opendatamesh.platform.core.dpds.model.core.EntityTypeDPDS;
 import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
 import org.opendatamesh.platform.pp.registry.api.resources.DomainResource;
 import org.opendatamesh.platform.pp.registry.api.resources.ExternalComponentResource;

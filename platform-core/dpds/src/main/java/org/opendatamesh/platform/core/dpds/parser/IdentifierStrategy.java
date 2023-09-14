@@ -1,11 +1,11 @@
 package org.opendatamesh.platform.core.dpds.parser;
 
 import org.apache.commons.lang3.StringUtils;
-import org.opendatamesh.platform.core.dpds.model.ComponentDPDS;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
-import org.opendatamesh.platform.core.dpds.model.EntityTypeDPDS;
-import org.opendatamesh.platform.core.dpds.model.InfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.StandardDefinitionDPDS;
+import org.opendatamesh.platform.core.dpds.model.core.ComponentDPDS;
+import org.opendatamesh.platform.core.dpds.model.core.EntityTypeDPDS;
+import org.opendatamesh.platform.core.dpds.model.core.StandardDefinitionDPDS;
+import org.opendatamesh.platform.core.dpds.model.info.InfoDPDS;
 
 import java.util.Objects;
 import java.util.UUID;

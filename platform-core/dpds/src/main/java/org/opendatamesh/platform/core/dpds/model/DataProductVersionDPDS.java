@@ -13,6 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
+import org.opendatamesh.platform.core.dpds.model.core.ComponentsDPDS;
+import org.opendatamesh.platform.core.dpds.model.core.ExternalResourceDPDS;
+import org.opendatamesh.platform.core.dpds.model.info.InfoDPDS;
+import org.opendatamesh.platform.core.dpds.model.interfaces.InterfaceComponentsDPDS;
+import org.opendatamesh.platform.core.dpds.model.internals.InternalComponentsDPDS;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)

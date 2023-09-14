@@ -72,7 +72,7 @@
   },
   "internalComponents": {
     "lifecycleInfo": {
-      "test": {
+      "test": [{
         "service": {
           "$href": "{azure-devops}"
         },
@@ -91,8 +91,8 @@
         "configurations": {
           "stagesToSkip": ["Deploy"]
         }
-      },
-      "prod": {
+      }],
+      "prod": [{
         "service": {
           "$href": "{azure-devops}"
         },
@@ -111,8 +111,8 @@
         "configurations": {
           "stagesToSkip": []
         }
-      },
-      "deprecated": { }
+      }],
+      "deprecated": [{ }]
     },
     "applicationComponents": [
       {

@@ -9,12 +9,12 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
-import org.opendatamesh.platform.core.dpds.model.ApplicationComponentDPDS;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
-import org.opendatamesh.platform.core.dpds.model.InfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.InfrastructuralComponentDPDS;
-import org.opendatamesh.platform.core.dpds.model.InterfaceComponentsDPDS;
-import org.opendatamesh.platform.core.dpds.model.InternalComponentsDPDS;
+import org.opendatamesh.platform.core.dpds.model.info.InfoDPDS;
+import org.opendatamesh.platform.core.dpds.model.interfaces.InterfaceComponentsDPDS;
+import org.opendatamesh.platform.core.dpds.model.internals.ApplicationComponentDPDS;
+import org.opendatamesh.platform.core.dpds.model.internals.InfrastructuralComponentDPDS;
+import org.opendatamesh.platform.core.dpds.model.internals.InternalComponentsDPDS;
 import org.opendatamesh.platform.core.dpds.parser.DPDSParser;
 import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
 import org.opendatamesh.platform.core.dpds.parser.ParseResult;
@@ -65,25 +65,7 @@ public class DPDSParserTests extends DPDSTests {
         DPDSTestResources.DPD_CORE.getObjectChecker().verifyAll(descriptor);
     }
 
-    @Test
-    public void parseDpdCoreFromUriTest() {
-
-        ParseResult result = parseDescriptorFromUri(DPDSTestResources.DPD_CORE, null);
-        DataProductVersionDPDS descriptor = result.getDescriptorDocument();
-
-        DPDSTestResources.DPD_CORE.getObjectChecker().verifyAll(descriptor);
-    }
-
-    
-
-    @Test
-    public void parseDpdCoreFromGitTest()  {
-
-        ParseResult result = parseDescriptorFromGit(DPDSTestResources.DPD_CORE, null);
-        DataProductVersionDPDS descriptor = result.getDescriptorDocument();
-        DPDSTestResources.DPD_CORE.getObjectChecker().verifyAll(descriptor);
-    }
-
+   
     @Test
     public void parseDpdCorePropsReadonlyTest() {
 
@@ -96,25 +78,7 @@ public class DPDSParserTests extends DPDSTests {
     @Test
     public void parseDpdCoreTestWithExternalRef() {
 
-        ParseResult result = parseDescriptorFromUri(DPDSTestResources.DPD_CORE_WITH_EXTERNAL_REF, null);
-        DataProductVersionDPDS descriptor = result.getDescriptorDocument();
-
-        DPDSTestResources.DPD_CORE.getObjectChecker().verifyAll(descriptor);
-    }
-
-    @Test
-    public void parseDpdCoreTestWithExternalRefFromUri() {
-
-        ParseResult result = parseDescriptorFromUri(DPDSTestResources.DPD_CORE_WITH_EXTERNAL_REF, null);
-        DataProductVersionDPDS descriptor = result.getDescriptorDocument();
-
-        DPDSTestResources.DPD_CORE.getObjectChecker().verifyAll(descriptor);
-    }
-
-    @Test
-    public void parseDpdCoreTestWithExternalRefFromGit() {
-
-        ParseResult result = parseDescriptorFromGit(DPDSTestResources.DPD_CORE_WITH_EXTERNAL_REF, null);
+        ParseResult result = parseDescriptorFromContent(DPDSTestResources.DPD_CORE_WITH_EXTERNAL_REF, null);
         DataProductVersionDPDS descriptor = result.getDescriptorDocument();
 
         DPDSTestResources.DPD_CORE.getObjectChecker().verifyAll(descriptor);
@@ -130,6 +94,33 @@ public class DPDSParserTests extends DPDSTests {
     }
 
     @Test
+    public void parseDpdCoreTestWithMixRef() {
+
+        ParseResult result = parseDescriptorFromContent(DPDSTestResources.DPD_CORE_WITH_MIX_REF, null);
+        DataProductVersionDPDS descriptor = result.getDescriptorDocument();
+
+        DPDSTestResources.DPD_CORE.getObjectChecker().verifyAll(descriptor);
+    }
+
+    @Test
+    public void parseDpdCoreFromUri() {
+
+        ParseResult result = parseDescriptorFromUri(DPDSTestResources.DPD_CORE, null);
+        DataProductVersionDPDS descriptor = result.getDescriptorDocument();
+
+        DPDSTestResources.DPD_CORE.getObjectChecker().verifyAll(descriptor);
+    }
+    
+    @Test
+    public void parseDpdCoreTestWithExternalRefFromUri() {
+
+        ParseResult result = parseDescriptorFromUri(DPDSTestResources.DPD_CORE_WITH_EXTERNAL_REF, null);
+        DataProductVersionDPDS descriptor = result.getDescriptorDocument();
+
+        DPDSTestResources.DPD_CORE.getObjectChecker().verifyAll(descriptor);
+    }
+
+    @Test
     public void parseDpdCoreTestWithInternalRefFromUri() {
 
         ParseResult result = parseDescriptorFromUri(DPDSTestResources.DPD_CORE_WITH_INTERNAL_REF, null);
@@ -137,29 +128,38 @@ public class DPDSParserTests extends DPDSTests {
 
         DPDSTestResources.DPD_CORE.getObjectChecker().verifyAll(descriptor);
     }
-
-    @Test
-    public void parseDpdCoreTestWithInternalGit() {
-
-        ParseResult result = parseDescriptorFromGit(DPDSTestResources.DPD_CORE_WITH_INTERNAL_REF, null);
-        DataProductVersionDPDS descriptor = result.getDescriptorDocument();
-
-        DPDSTestResources.DPD_CORE.getObjectChecker().verifyAll(descriptor);
-    }
-
-    @Test
-    public void parseDpdCoreTestWithMixRef() {
-
-        ParseResult result = parseDescriptorFromUri(DPDSTestResources.DPD_CORE_WITH_MIX_REF, null);
-        DataProductVersionDPDS descriptor = result.getDescriptorDocument();
-
-        DPDSTestResources.DPD_CORE.getObjectChecker().verifyAll(descriptor);
-    }
-
     @Test
     public void parseDpdCoreTestWithMixRefFromUri() {
 
         ParseResult result = parseDescriptorFromUri(DPDSTestResources.DPD_CORE_WITH_MIX_REF, null);
+        DataProductVersionDPDS descriptor = result.getDescriptorDocument();
+
+        DPDSTestResources.DPD_CORE.getObjectChecker().verifyAll(descriptor);
+    }
+
+    
+    @Test
+    public void parseDpdCoreFromGitTest()  {
+
+        ParseResult result = parseDescriptorFromGit(DPDSTestResources.DPD_CORE, null);
+        DataProductVersionDPDS descriptor = result.getDescriptorDocument();
+        DPDSTestResources.DPD_CORE.getObjectChecker().verifyAll(descriptor);
+    }
+
+
+    @Test
+    public void parseDpdCoreTestWithExternalRefFromGit() {
+
+        ParseResult result = parseDescriptorFromGit(DPDSTestResources.DPD_CORE_WITH_EXTERNAL_REF, null);
+        DataProductVersionDPDS descriptor = result.getDescriptorDocument();
+
+        DPDSTestResources.DPD_CORE.getObjectChecker().verifyAll(descriptor);
+    }
+    
+    @Test
+    public void parseDpdCoreTestWithInternalGit() {
+
+        ParseResult result = parseDescriptorFromGit(DPDSTestResources.DPD_CORE_WITH_INTERNAL_REF, null);
         DataProductVersionDPDS descriptor = result.getDescriptorDocument();
 
         DPDSTestResources.DPD_CORE.getObjectChecker().verifyAll(descriptor);
@@ -173,6 +173,7 @@ public class DPDSParserTests extends DPDSTests {
 
         DPDSTestResources.DPD_CORE.getObjectChecker().verifyAll(descriptor);
     }
+
 
 
     @Test

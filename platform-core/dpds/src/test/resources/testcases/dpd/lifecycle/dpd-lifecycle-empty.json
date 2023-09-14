@@ -13,15 +13,18 @@
     "outputPorts": []
   },
   "internalComponents": {
-      "lifecycleInfo": {
-        "dev": {
+    "lifecycleInfo": {
+      "dev": [
+        {
           "service": {
-            "$href": "azure-devops"
+            "$href": "{azure-devops}"
           }
-        },
-        "qa": {
+        }
+      ],
+      "qa": [
+        {
           "service": {
-            "$href": "azure-devops"
+            "$href": "{azure-devops}"
           },
           "template": {
             "specification": "spec",
@@ -31,10 +34,12 @@
               "version": "1.0.0"
             }
           }
-        },
-        "prod": {
+        }
+      ],
+      "prod": [
+        {
           "service": {
-            "$href": "azure-devops"
+            "$href": "{azure-devops}"
           },
           "template": {
             "specification": "spec",
@@ -47,10 +52,11 @@
           "configurations": {
             "stage": "PROD"
           }
-        },
-        "deprecated": {
-         
         }
-      }
+      ],
+      "deprecated": [
+        {}
+      ]
     }
   }
+}

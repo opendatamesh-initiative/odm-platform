@@ -1,8 +1,8 @@
 package org.opendatamesh.platform.core.dpds;
 
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
-import org.opendatamesh.platform.core.dpds.model.PortDPDS;
 import org.opendatamesh.platform.core.dpds.model.definitions.ApiDefinitionReferenceDPDS;
+import org.opendatamesh.platform.core.dpds.model.interfaces.PortDPDS;
 import org.opendatamesh.platform.core.dpds.parser.DPDSParser;
 import org.opendatamesh.platform.core.dpds.parser.DPDSSerializer;
 import org.opendatamesh.platform.core.dpds.parser.ParseOptions;

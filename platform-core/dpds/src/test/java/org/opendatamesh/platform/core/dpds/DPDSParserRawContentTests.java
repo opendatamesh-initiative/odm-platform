@@ -3,13 +3,16 @@ package org.opendatamesh.platform.core.dpds;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
-import org.opendatamesh.platform.core.dpds.model.ApplicationComponentDPDS;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
-import org.opendatamesh.platform.core.dpds.model.InfrastructuralComponentDPDS;
-import org.opendatamesh.platform.core.dpds.model.LifecycleInfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.PortDPDS;
-import org.opendatamesh.platform.core.dpds.model.StandardDefinitionDPDS;
+import org.opendatamesh.platform.core.dpds.model.core.StandardDefinitionDPDS;
+import org.opendatamesh.platform.core.dpds.model.interfaces.PortDPDS;
+import org.opendatamesh.platform.core.dpds.model.internals.ApplicationComponentDPDS;
+import org.opendatamesh.platform.core.dpds.model.internals.InfrastructuralComponentDPDS;
+import org.opendatamesh.platform.core.dpds.model.internals.LifecycleInfoDPDS;
+import org.opendatamesh.platform.core.dpds.model.internals.LifecycleTaskInfoDPDS;
 import org.opendatamesh.platform.core.dpds.parser.ParseResult;
 import org.opendatamesh.platform.core.dpds.utils.DPDSTestResources;
 
@@ -109,7 +112,12 @@ public class DPDSParserRawContentTests extends DPDSTests {
 
         LifecycleInfoDPDS  lifecycle =  descriptor.getInternalComponents().getLifecycleInfo();
         
-        rawContent = lifecycle.getActivityInfo("test").getRawContent();
+        List<LifecycleTaskInfoDPDS>  tasksInfo = null;
+        
+        tasksInfo = lifecycle.getTasksInfo("test");
+        assertThat(tasksInfo).isNotNull();
+        assertThat(tasksInfo).size().isEqualTo(1);
+        rawContent = tasksInfo.get(0).getRawContent();
         assertThat(rawContent).isNotNull();
         try {
             parsedRawContentNode = (ObjectNode)mapper.readTree(rawContent);
@@ -120,17 +128,10 @@ public class DPDSParserRawContentTests extends DPDSTests {
         assertThat(parsedRawContentNode.get("x-prop").asText()).isEqualTo("x-prop-value");
 
         
-        rawContent = lifecycle.getActivityInfo("prod").getRawContent();
-        assertThat(rawContent).isNotNull();
-        try {
-            parsedRawContentNode = (ObjectNode)mapper.readTree(rawContent);
-        } catch(Throwable t) {
-            fail("Impossible to parse activity raw content", t);
-        }
-        assertThat(parsedRawContentNode.get("x-prop")).isNotNull();
-        assertThat(parsedRawContentNode.get("x-prop").asText()).isEqualTo("x-prop-value");
-
-        rawContent = lifecycle.getActivityInfo("prod").getRawContent();
+        tasksInfo = lifecycle.getTasksInfo("prod");
+        assertThat(tasksInfo).isNotNull();
+        assertThat(tasksInfo).size().isEqualTo(1);
+        rawContent = tasksInfo.get(0).getRawContent();
         assertThat(rawContent).isNotNull();
         try {
             parsedRawContentNode = (ObjectNode)mapper.readTree(rawContent);

@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.core.dpds.model;
+package org.opendatamesh.platform.core.dpds.model.internals;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
+import org.opendatamesh.platform.core.dpds.model.core.ComponentContainerDPDS;
 
 @Data
 @EqualsAndHashCode(callSuper=false)

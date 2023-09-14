@@ -13,21 +13,24 @@
     "outputPorts": []
   },
   "internalComponents": {
-      "lifecycleInfo": {
-        "dev": {
+    "lifecycleInfo": {
+      "dev": [
+        {
           "service": {
-            "$href": "azure-devops"
-          }, 
+            "$href": "{azure-devops}"
+          },
           "template": {
             "$ref": "#components/templates/dpdLifecyclePipe"
           },
           "configurations": {
             "stage": "DEVS"
           }
-        }, 
-        "qa": {
+        }
+      ],
+      "qa": [
+        {
           "service": {
-            "$href": "azure-devops"
+            "$href": "{azure-devops}"
           },
           "template": {
             "$ref": "#components/templates/dpdLifecyclePipe"
@@ -35,10 +38,12 @@
           "configurations": {
             "stage": "QA"
           }
-        },
-        "prod": {
+        }
+      ],
+      "prod": [
+        {
           "service": {
-            "$href": "azure-devops"
+            "$href": "{azure-devops}"
           },
           "template": {
             "$ref": "#components/templates/dpdLifecyclePipe"
@@ -46,23 +51,23 @@
           "configurations": {
             "stage": "PROD"
           }
-        },
-        "deprecated": {
-         
         }
-      }
-    },
-
-    "components": {
-      "templates": {
-        "dpdLifecyclePipe": {
-          "specification": "spec",
-          "specificationVersion": "2.0",
-          "definition": {
-            "pipeline": "dpdLifecyclePipe",
-            "version": "1.0.0"
-          }
+      ],
+      "deprecated": [
+        {}
+      ]
+    }
+  },
+  "components": {
+    "templates": {
+      "dpdLifecyclePipe": {
+        "specification": "spec",
+        "specificationVersion": "2.0",
+        "definition": {
+          "pipeline": "dpdLifecyclePipe",
+          "version": "1.0.0"
         }
       }
     }
   }
+}

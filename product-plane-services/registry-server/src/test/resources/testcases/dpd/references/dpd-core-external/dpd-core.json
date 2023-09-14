@@ -26,7 +26,7 @@
     },
     "internalComponents": {
         "lifecycleInfo": {
-            "test": {
+            "test": [{
                 "service": {
                     "$href": "{azure-devops}"
                 },
@@ -39,8 +39,8 @@
                     ]
                 },
                 "x-prop":"x-prop-value"
-            },
-            "prod": {
+            }],
+            "prod": [{
                 "service": {
                     "$href": "{azure-devops}"
                 },
@@ -51,10 +51,10 @@
                     "stagesToSkip": []
                 },
                 "x-prop":"x-prop-value"
-            },
-            "deprecated": {
+            }],
+            "deprecated": [{
                 "x-prop":"x-prop-value"
-            }
+            }]
         },
         "applicationComponents": [
             {

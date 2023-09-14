@@ -7,16 +7,16 @@ import java.util.Objects;
 
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.exceptions.DeserializationException;
-import org.opendatamesh.platform.core.dpds.model.ComponentDPDS;
-import org.opendatamesh.platform.core.dpds.model.ComponentsDPDS;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
-import org.opendatamesh.platform.core.dpds.model.EntityTypeDPDS;
-import org.opendatamesh.platform.core.dpds.model.InterfaceComponentsDPDS;
-import org.opendatamesh.platform.core.dpds.model.InternalComponentsDPDS;
-import org.opendatamesh.platform.core.dpds.model.LifecycleActivityInfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.LifecycleInfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.PortDPDS;
-import org.opendatamesh.platform.core.dpds.model.StandardDefinitionDPDS;
+import org.opendatamesh.platform.core.dpds.model.core.ComponentDPDS;
+import org.opendatamesh.platform.core.dpds.model.core.ComponentsDPDS;
+import org.opendatamesh.platform.core.dpds.model.core.EntityTypeDPDS;
+import org.opendatamesh.platform.core.dpds.model.core.StandardDefinitionDPDS;
+import org.opendatamesh.platform.core.dpds.model.interfaces.InterfaceComponentsDPDS;
+import org.opendatamesh.platform.core.dpds.model.interfaces.PortDPDS;
+import org.opendatamesh.platform.core.dpds.model.internals.InternalComponentsDPDS;
+import org.opendatamesh.platform.core.dpds.model.internals.LifecycleInfoDPDS;
+import org.opendatamesh.platform.core.dpds.model.internals.LifecycleTaskInfoDPDS;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -113,7 +113,7 @@ public class DPDSDeserializer {
 
         ObjectNode lifecycleNode = (ObjectNode) internalComponentsNode.get("lifecycleInfo");
         if (lifecycleNode != null) {
-            setActivitiesRawContent(internalComponents.getLifecycleInfo(), lifecycleNode, mapper);
+            setTasksInfoRawContent(internalComponents.getLifecycleInfo(), lifecycleNode, mapper);
         }
 
         ArrayNode applicationComponentNodes = (ArrayNode) internalComponentsNode.get("applicationComponents");
@@ -128,7 +128,7 @@ public class DPDSDeserializer {
         }
     }
 
-    public void setActivitiesRawContent(
+    public void setTasksInfoRawContent(
             LifecycleInfoDPDS lifecycleInfoResource,
             ObjectNode lifecycleInfoNode,
             ObjectMapper mapper) throws JsonProcessingException {
@@ -136,22 +136,25 @@ public class DPDSDeserializer {
         Iterator<String> stageIterator = lifecycleInfoNode.fieldNames();
         while (stageIterator.hasNext()) {
             String stageName = stageIterator.next();
-            LifecycleActivityInfoDPDS activityResource = lifecycleInfoResource.getActivityInfo(stageName);
-            ObjectNode activityNode = (ObjectNode) lifecycleInfoNode.get(stageName);
-            activityNode.put("stageName", stageName);
+            List<LifecycleTaskInfoDPDS> tasksInfoRes = lifecycleInfoResource.getTasksInfo(stageName);
+            ArrayNode tasksInfoNode = (ArrayNode) lifecycleInfoNode.get(stageName);
 
-            if (activityResource.hasTemplate()) {
+            for (int i = 0; i < tasksInfoNode.size(); i++) {
+                LifecycleTaskInfoDPDS taskInfoRes = tasksInfoRes.get(i); // this is dangerous
+                ObjectNode taskInfoNode = (ObjectNode) tasksInfoNode.get(i);
+                taskInfoNode.put("stageName", stageName);
 
-                ObjectNode templateNode = (ObjectNode) activityNode.remove("template");
-                setComponetRawContent(activityResource.getTemplate(), templateNode, mapper);
+                if (taskInfoRes.hasTemplate()) {
+
+                    ObjectNode templateNode = (ObjectNode) taskInfoNode.remove("template");
+                    setComponetRawContent(taskInfoRes.getTemplate(), templateNode, mapper);
+                }
+
+                taskInfoRes.setRawContent(
+                        mapper.writeValueAsString(taskInfoNode));
             }
-
-            activityResource.setRawContent(
-                    mapper.writeValueAsString(activityNode));
         }
     }
-
-    
 
     private void setSharedComponentsRawContent(
             ComponentsDPDS sharedComponentsResource,
@@ -167,7 +170,7 @@ public class DPDSDeserializer {
             ObjectNode componentNodes = (ObjectNode) sharedComponentsNode.get(entityType.groupingPropertyName());
             if (componentNodes != null) {
                 for (Entry<String, JsonNode> p : componentNodes.properties()) {
-                    ObjectNode componentNode = (ObjectNode)p.getValue();
+                    ObjectNode componentNode = (ObjectNode) p.getValue();
                     ComponentDPDS componentResource = sharedComponentsResource.getComponentsByEntityType(entityType)
                             .get(p.getKey());
 
@@ -185,7 +188,7 @@ public class DPDSDeserializer {
         Objects.requireNonNull(componentResources, "Input parameter [componentResources] cannot be null");
         Objects.requireNonNull(componentNodes, "Input parameter [componentNodes] cannot be null");
         Objects.requireNonNull(mapper, "Input parameter [mapper] cannot be null");
-        
+
         for (int i = 0; i < componentNodes.size(); i++) {
             ObjectNode componentNode = (ObjectNode) componentNodes.get(i);
             ComponentDPDS componentResource = componentResources.get(i);
@@ -216,7 +219,7 @@ public class DPDSDeserializer {
         if (componentResource instanceof StandardDefinitionDPDS) {
             StandardDefinitionDPDS sdtDefResource = (StandardDefinitionDPDS) componentResource;
             if (sdtDefResource.getDefinition() != null) {
-                ObjectNode definitionNode = (ObjectNode)componentNode.remove("definition");
+                ObjectNode definitionNode = (ObjectNode) componentNode.remove("definition");
                 if (definitionNode.get("$ref") == null) {
                     sdtDefResource.getDefinition().setRawContent(
                             mapper.writeValueAsString(definitionNode));

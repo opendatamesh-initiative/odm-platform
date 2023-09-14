@@ -17,8 +17,8 @@ import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErr
 import org.opendatamesh.platform.core.commons.servers.exceptions.UnprocessableEntityException;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
-import org.opendatamesh.platform.core.dpds.model.LifecycleActivityInfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.LifecycleInfoDPDS;
+import org.opendatamesh.platform.core.dpds.model.internals.LifecycleInfoDPDS;
+import org.opendatamesh.platform.core.dpds.model.internals.LifecycleTaskInfoDPDS;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatus;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskStatus;
 import org.opendatamesh.platform.pp.devops.api.resources.DevOpsApiStandardErrors;
@@ -76,7 +76,7 @@ public class ActivityService {
                     "Activity object cannot be null");
         }
 
-        List<LifecycleActivityInfoDPDS> activitiesInfo = readActivitiesInfo(activity);
+        List<LifecycleTaskInfoDPDS> activitiesInfo = readTasksInfo(activity);
         if (activitiesInfo == null || activitiesInfo.isEmpty()) {
             throw new UnprocessableEntityException(
                     DevOpsApiStandardErrors.SC422_01_ACTIVITY_IS_INVALID,
@@ -397,9 +397,9 @@ public class ActivityService {
     // other methods
     // -------------------------
 
-    private List<LifecycleActivityInfoDPDS> readActivitiesInfo(Activity activity) {
+    private List<LifecycleTaskInfoDPDS> readTasksInfo(Activity activity) {
 
-        List<LifecycleActivityInfoDPDS> activitiesInfo = new ArrayList<LifecycleActivityInfoDPDS>();
+        List<LifecycleTaskInfoDPDS> tasksInfoRes = new ArrayList<LifecycleTaskInfoDPDS>();
 
         if (!StringUtils.hasText(activity.getType())) {
             throw new UnprocessableEntityException(
@@ -423,13 +423,18 @@ public class ActivityService {
         }
 
         LifecycleInfoDPDS lifecycleInfo = dataProductVersion.getInternalComponents().getLifecycleInfo();
-        LifecycleActivityInfoDPDS activityInfo =  lifecycleInfo.getActivityInfo(activity.getType());
-        if(activityInfo != null) {
-            activitiesInfo.add(activityInfo);
+        List<LifecycleTaskInfoDPDS> stageTasksInfoRes = lifecycleInfo.getTasksInfo(activity.getType());
+        if(stageTasksInfoRes != null) {
+            tasksInfoRes.addAll(stageTasksInfoRes);
+        }
+        if(tasksInfoRes.size() > 1) { // for the moment ...
+            throw new UnprocessableEntityException(
+                    DevOpsApiStandardErrors.SC422_01_ACTIVITY_IS_INVALID,
+                    "Devops module is unable to prcess activities with more than one task associated");
         }
         
 
-        return activitiesInfo;
+        return tasksInfoRes;
     }
 
     private DataProductVersionDPDS readDataProductVersion(Activity activity) {

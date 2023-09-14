@@ -44,7 +44,7 @@
     ],
     "outputPorts": [
       {
-        "id": "aa6d1c54-e402-3a42-91fb-b793fae93153", 
+        "id": "aa6d1c54-e402-3a42-91fb-b793fae93153",
         "fullyQualifiedName": "urn:org.opendatameshx:dataproducts:dpdCore:1.0.0:outputports:outputPortA:1.0.0",
         "entityType": "outputportx",
         "name": "outputPortA",
@@ -72,47 +72,55 @@
   },
   "internalComponents": {
     "lifecycleInfo": {
-      "test": {
-        "service": {
-          "$href": "{azure-devops}"
-        },
-        "template": {
-          "name": "testPipeline",
-          "version": "1.0.0",
-          "specification": "azure-devops",
-          "specificationVersion": "1.0.0",
-          "definition": {
-            "organization": "andreagioia",
-            "project": "opendatamesh",
-            "pipelineId": "3",
-            "branch": "main"
+      "test": [
+        {
+          "service": {
+            "$href": "{azure-devops}"
+          },
+          "template": {
+            "name": "testPipeline",
+            "version": "1.0.0",
+            "specification": "azure-devops",
+            "specificationVersion": "1.0.0",
+            "definition": {
+              "organization": "andreagioia",
+              "project": "opendatamesh",
+              "pipelineId": "3",
+              "branch": "main"
+            }
+          },
+          "configurations": {
+            "stagesToSkip": [
+              "Deploy"
+            ]
           }
-        },
-        "configurations": {
-          "stagesToSkip": ["Deploy"]
         }
-      },
-      "prod": {
-        "service": {
-          "$href": "{azure-devops}"
-        },
-        "template": {
-          "name": "testPipeline",
-          "version": "1.0.0",
-          "specification": "azure-devops",
-          "specificationVersion": "1.0.0",
-          "definition": {
-            "organization": "andreagioia",
-            "project": "opendatamesh",
-            "pipelineId": "3",
-            "branch": "main"
+      ],
+      "prod": [
+        {
+          "service": {
+            "$href": "{azure-devops}"
+          },
+          "template": {
+            "name": "testPipeline",
+            "version": "1.0.0",
+            "specification": "azure-devops",
+            "specificationVersion": "1.0.0",
+            "definition": {
+              "organization": "andreagioia",
+              "project": "opendatamesh",
+              "pipelineId": "3",
+              "branch": "main"
+            }
+          },
+          "configurations": {
+            "stagesToSkip": []
           }
-        },
-        "configurations": {
-          "stagesToSkip": []
         }
-      },
-      "deprecated": { }
+      ],
+      "deprecated": [
+        {}
+      ]
     },
     "applicationComponents": [
       {

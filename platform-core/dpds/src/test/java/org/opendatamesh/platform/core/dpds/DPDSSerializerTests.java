@@ -85,7 +85,6 @@ public class DPDSSerializerTests extends DPDSTests {
         ParseResult result = parseDescriptorFromContent(DPDSTestResources.DPD_CORE, null);
         DataProductVersionDPDS descriptorParsedFormSource = result.getDescriptorDocument();
 
-
         String descriptorContent = serializeDescriptor(descriptorParsedFormSource, "canonical", "json");
               
         result = parseDescriptor(new UriLocation(descriptorContent), null);

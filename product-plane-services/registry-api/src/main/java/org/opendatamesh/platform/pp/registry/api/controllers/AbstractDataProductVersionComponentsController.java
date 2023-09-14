@@ -14,8 +14,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
-import org.opendatamesh.platform.core.dpds.model.EntityTypeDPDS;
-import org.opendatamesh.platform.core.dpds.model.InterfaceComponentsDPDS;
+import org.opendatamesh.platform.core.dpds.model.core.EntityTypeDPDS;
+import org.opendatamesh.platform.core.dpds.model.interfaces.InterfaceComponentsDPDS;
 import org.opendatamesh.platform.core.dpds.parser.DPDSSerializer;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
 

@@ -6,10 +6,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
-import org.opendatamesh.platform.core.dpds.model.LifecycleActivityInfoDPDS;
+import org.opendatamesh.platform.core.dpds.model.internals.LifecycleTaskInfoDPDS;
 import org.opendatamesh.platform.core.dpds.parser.DPDSParser;
 import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
 import org.opendatamesh.platform.core.dpds.parser.ParseResult;
@@ -46,62 +47,68 @@ public class DPDSParserLifecycleTest extends DPDSTests {
         }
 
         DataProductVersionDPDS descriptor = result.getDescriptorDocument();
-        LifecycleActivityInfoDPDS activityInfo = null;
+        LifecycleTaskInfoDPDS taskInfo = null;
         ObjectNode templateDefinitionNode = null;
 
         assertTrue(descriptor != null);
         assertNotNull(descriptor.getInternalComponents());
         assertNotNull(descriptor.getInternalComponents().getLifecycleInfo());
-        assertNotNull(descriptor.getInternalComponents().getLifecycleInfo().getActivityInfos());
-        assertEquals(2, descriptor.getInternalComponents().getLifecycleInfo().getActivityInfos().size());
+        assertNotNull(descriptor.getInternalComponents().getLifecycleInfo().getTasksInfo());
+        assertEquals(2, descriptor.getInternalComponents().getLifecycleInfo().getTasksInfo().size());
 
-        activityInfo = descriptor.getInternalComponents().getLifecycleInfo().getActivityInfo("dev");
-        assertNotNull(activityInfo);
-        assertNotNull(activityInfo.getService());
-        assertEquals("azure-devops", activityInfo.getService().getHref());
-        assertNotNull(activityInfo.getTemplate());
-        assertEquals("spec", activityInfo.getTemplate().getSpecification());
-        assertEquals("2.0", activityInfo.getTemplate().getSpecificationVersion());
-        assertNotNull(activityInfo.getTemplate().getDefinition());
-        assertEquals(null, activityInfo.getTemplate().getDefinition().getDescription());
+        List<LifecycleTaskInfoDPDS> tasksInfo = null;
+
+        tasksInfo = descriptor.getInternalComponents().getLifecycleInfo().getTasksInfo("dev");
+        assertNotNull(tasksInfo);
+        taskInfo = tasksInfo.get(0);
+        assertNotNull(taskInfo);
+        assertNotNull(taskInfo.getService());
+        assertEquals("{azure-devops}", taskInfo.getService().getHref());
+        assertNotNull(taskInfo.getTemplate());
+        assertEquals("spec", taskInfo.getTemplate().getSpecification());
+        assertEquals("2.0", taskInfo.getTemplate().getSpecificationVersion());
+        assertNotNull(taskInfo.getTemplate().getDefinition());
+        assertEquals(null, taskInfo.getTemplate().getDefinition().getDescription());
         //assertEquals("application/json", activityInfo.getTemplate().getDefinition().getMediaType());
         //assertEquals("http://localhost:80/templates/{templateId}", activityInfo.getTemplate().getDefinition().getRef());
         //assertEquals(null, activityInfo.getTemplate().getDefinition().getOriginalRef());
         try {
             templateDefinitionNode = (ObjectNode) ObjectMapperFactory.JSON_MAPPER
-                    .readTree(activityInfo.getTemplate().getDefinition().getRawContent());
+                    .readTree(taskInfo.getTemplate().getDefinition().getRawContent());
         } catch (JsonProcessingException e) {
             fail("Impossible to parse template definition", e);
         }
         assertEquals("dpdLifecyclePipe", templateDefinitionNode.get("pipeline").asText());
         assertEquals("1.0.0", templateDefinitionNode.get("version").asText());
-        assertNotNull(activityInfo.getConfigurations());
-        assertEquals(1, activityInfo.getConfigurations().size());
-        assertEquals("DEV", activityInfo.getConfigurations().get("stage"));
+        assertNotNull(taskInfo.getConfigurations());
+        assertEquals(1, taskInfo.getConfigurations().size());
+        assertEquals("DEV", taskInfo.getConfigurations().get("stage"));
 
-        activityInfo = descriptor.getInternalComponents().getLifecycleInfo().getActivityInfo("prod");
-        assertNotNull(activityInfo);
-        assertNotNull(activityInfo.getService());
-        assertEquals("azure-devops", activityInfo.getService().getHref());
-        assertNotNull(activityInfo.getTemplate());
-        assertEquals("spec", activityInfo.getTemplate().getSpecification());
-        assertEquals("2.0", activityInfo.getTemplate().getSpecificationVersion());
-        assertNotNull(activityInfo.getTemplate().getDefinition());
-        assertEquals(null, activityInfo.getTemplate().getDefinition().getDescription());
+        tasksInfo = descriptor.getInternalComponents().getLifecycleInfo().getTasksInfo("prod");
+        assertNotNull(tasksInfo);
+        taskInfo = tasksInfo.get(0);
+        assertNotNull(taskInfo);
+        assertNotNull(taskInfo.getService());
+        assertEquals("{azure-devops}", taskInfo.getService().getHref());
+        assertNotNull(taskInfo.getTemplate());
+        assertEquals("spec", taskInfo.getTemplate().getSpecification());
+        assertEquals("2.0", taskInfo.getTemplate().getSpecificationVersion());
+        assertNotNull(taskInfo.getTemplate().getDefinition());
+        assertEquals(null, taskInfo.getTemplate().getDefinition().getDescription());
         //assertEquals("application/json", activityInfo.getTemplate().getDefinition().getMediaType());
         //assertEquals("http://localhost:80/templates/{templateId}", activityInfo.getTemplate().getDefinition().getRef());
         //assertEquals(null, activityInfo.getTemplate().getDefinition().getOriginalRef());
         try {
             templateDefinitionNode = (ObjectNode) ObjectMapperFactory.JSON_MAPPER
-                    .readTree(activityInfo.getTemplate().getDefinition().getRawContent());
+                    .readTree(taskInfo.getTemplate().getDefinition().getRawContent());
         } catch (JsonProcessingException e) {
             fail("Impossible to parse template definition", e);
         }
         assertEquals("dpdLifecyclePipe", templateDefinitionNode.get("pipeline").asText());
         assertEquals("1.0.0", templateDefinitionNode.get("version").asText());
-        assertNotNull(activityInfo.getConfigurations());
-        assertEquals(1, activityInfo.getConfigurations().size());
-        assertEquals("PROD", activityInfo.getConfigurations().get("stage"));
+        assertNotNull(taskInfo.getConfigurations());
+        assertEquals(1, taskInfo.getConfigurations().size());
+        assertEquals("PROD", taskInfo.getConfigurations().get("stage"));
     }
 
     @Test
@@ -128,38 +135,47 @@ public class DPDSParserLifecycleTest extends DPDSTests {
 
         DataProductVersionDPDS descriptor = result.getDescriptorDocument();
 
-        LifecycleActivityInfoDPDS activityInfo = null;
+        List<LifecycleTaskInfoDPDS> tasksInfo = null;
+        LifecycleTaskInfoDPDS taskInfo = null;
         ObjectNode templateDefinitionNode = null;
 
         assertTrue(descriptor != null);
         assertNotNull(descriptor.getInternalComponents());
         assertNotNull(descriptor.getInternalComponents().getLifecycleInfo());
-        assertNotNull(descriptor.getInternalComponents().getLifecycleInfo().getActivityInfos());
-        assertEquals(4, descriptor.getInternalComponents().getLifecycleInfo().getActivityInfos().size());
+        assertNotNull(descriptor.getInternalComponents().getLifecycleInfo().getTasksInfo());
+        assertEquals(4, descriptor.getInternalComponents().getLifecycleInfo().getTasksInfo().size());
 
-        activityInfo = descriptor.getInternalComponents().getLifecycleInfo().getActivityInfo("dev");
-        assertNotNull(activityInfo);
-        assertNotNull(activityInfo.getService());
-        assertEquals(null, activityInfo.getTemplate());
-        assertEquals(null, activityInfo.getConfigurations());
+        tasksInfo = descriptor.getInternalComponents().getLifecycleInfo().getTasksInfo("dev");
+        assertNotNull(tasksInfo);
+        taskInfo = tasksInfo.get(0);
+        assertNotNull(taskInfo);
+        assertNotNull(taskInfo.getService());
+        assertEquals(null, taskInfo.getTemplate());
+        assertEquals(null, taskInfo.getConfigurations());
 
-        activityInfo = descriptor.getInternalComponents().getLifecycleInfo().getActivityInfo("qa");
-        assertNotNull(activityInfo);
-        assertNotNull(activityInfo.getService());
-        assertNotNull(activityInfo.getTemplate());
-        assertEquals(null, activityInfo.getConfigurations());
+        tasksInfo = descriptor.getInternalComponents().getLifecycleInfo().getTasksInfo("qa");
+        assertNotNull(tasksInfo);
+        taskInfo = tasksInfo.get(0);
+        assertNotNull(taskInfo);
+        assertNotNull(taskInfo.getService());
+        assertNotNull(taskInfo.getTemplate());
+        assertEquals(null, taskInfo.getConfigurations());
 
-        activityInfo = descriptor.getInternalComponents().getLifecycleInfo().getActivityInfo("prod");
-        assertNotNull(activityInfo);
-        assertNotNull(activityInfo.getService());
-        assertNotNull(activityInfo.getTemplate());
-        assertNotNull(activityInfo.getConfigurations());
+        tasksInfo = descriptor.getInternalComponents().getLifecycleInfo().getTasksInfo("prod");
+        assertNotNull(tasksInfo);
+        taskInfo = tasksInfo.get(0);
+        assertNotNull(taskInfo);
+        assertNotNull(taskInfo.getService());
+        assertNotNull(taskInfo.getTemplate());
+        assertNotNull(taskInfo.getConfigurations());
 
-        activityInfo = descriptor.getInternalComponents().getLifecycleInfo().getActivityInfo("deprecated");
-        assertNotNull(activityInfo);
-        assertEquals(null, activityInfo.getService());
-        assertEquals(null, activityInfo.getTemplate());
-        assertEquals(null, activityInfo.getConfigurations());
+        tasksInfo = descriptor.getInternalComponents().getLifecycleInfo().getTasksInfo("deprecated");
+        assertNotNull(tasksInfo);
+        taskInfo = tasksInfo.get(0);
+        assertNotNull(taskInfo);
+        assertEquals(null, taskInfo.getService());
+        assertEquals(null, taskInfo.getTemplate());
+        assertEquals(null, taskInfo.getConfigurations());
 
     }
 
@@ -187,29 +203,32 @@ public class DPDSParserLifecycleTest extends DPDSTests {
 
         DataProductVersionDPDS descriptor = result.getDescriptorDocument();
 
-        LifecycleActivityInfoDPDS activityInfo = null;
+        List<LifecycleTaskInfoDPDS> tasksInfo = null;
+        LifecycleTaskInfoDPDS taskInfo = null;
         ObjectNode templateDefinitionNode = null;
 
         assertTrue(descriptor != null);
         assertNotNull(descriptor.getInternalComponents());
         assertNotNull(descriptor.getInternalComponents().getLifecycleInfo());
-        assertNotNull(descriptor.getInternalComponents().getLifecycleInfo().getActivityInfos());
-        assertEquals(4, descriptor.getInternalComponents().getLifecycleInfo().getActivityInfos().size());
+        assertNotNull(descriptor.getInternalComponents().getLifecycleInfo().getTasksInfo());
+        assertEquals(4, descriptor.getInternalComponents().getLifecycleInfo().getTasksInfo().size());
 
         //DEV
-        activityInfo = descriptor.getInternalComponents().getLifecycleInfo().getActivityInfo("dev");
-        assertNotNull(activityInfo);
-        assertNotNull(activityInfo.getTemplate());
-        assertEquals("spec", activityInfo.getTemplate().getSpecification());
-        assertEquals("2.0", activityInfo.getTemplate().getSpecificationVersion());
-        assertNotNull(activityInfo.getTemplate().getDefinition());
-        assertEquals(null, activityInfo.getTemplate().getDefinition().getDescription());
+        tasksInfo = descriptor.getInternalComponents().getLifecycleInfo().getTasksInfo("dev");
+        assertNotNull(tasksInfo);
+        taskInfo = tasksInfo.get(0);
+        assertNotNull(taskInfo);
+        assertNotNull(taskInfo.getTemplate());
+        assertEquals("spec", taskInfo.getTemplate().getSpecification());
+        assertEquals("2.0", taskInfo.getTemplate().getSpecificationVersion());
+        assertNotNull(taskInfo.getTemplate().getDefinition());
+        assertEquals(null, taskInfo.getTemplate().getDefinition().getDescription());
         //assertEquals("application/json", activityInfo.getTemplate().getDefinition().getMediaType());
         //assertEquals("http://localhost:80/templates/{templateId}", activityInfo.getTemplate().getDefinition().getRef());
         //assertEquals("template.json", activityInfo.getTemplate().getDefinition().getOriginalRef());
         try {
             templateDefinitionNode = (ObjectNode) ObjectMapperFactory.JSON_MAPPER
-                    .readTree(activityInfo.getTemplate().getDefinition().getRawContent());
+                    .readTree(taskInfo.getTemplate().getDefinition().getRawContent());
         } catch (JsonProcessingException e) {
             fail("Impossible to parse template definition", e);
         }
@@ -217,20 +236,22 @@ public class DPDSParserLifecycleTest extends DPDSTests {
         assertEquals("1.0.0", templateDefinitionNode.get("version").asText());
 
         // QA
-        activityInfo = descriptor.getInternalComponents().getLifecycleInfo().getActivityInfo("qa");
-        assertNotNull(activityInfo);
-        assertNotNull(activityInfo.getTemplate());
-        assertNotNull(activityInfo.getTemplate());
-        assertEquals("spec", activityInfo.getTemplate().getSpecification());
-        assertEquals("2.0", activityInfo.getTemplate().getSpecificationVersion());
-        assertNotNull(activityInfo.getTemplate().getDefinition());
-        assertEquals(null, activityInfo.getTemplate().getDefinition().getDescription());
+        tasksInfo = descriptor.getInternalComponents().getLifecycleInfo().getTasksInfo("qa");
+        assertNotNull(tasksInfo);
+        taskInfo = tasksInfo.get(0);
+        assertNotNull(taskInfo);
+        assertNotNull(taskInfo.getTemplate());
+        assertNotNull(taskInfo.getTemplate());
+        assertEquals("spec", taskInfo.getTemplate().getSpecification());
+        assertEquals("2.0", taskInfo.getTemplate().getSpecificationVersion());
+        assertNotNull(taskInfo.getTemplate().getDefinition());
+        assertEquals(null, taskInfo.getTemplate().getDefinition().getDescription());
         //assertEquals("application/json", activityInfo.getTemplate().getDefinition().getMediaType());
         //assertEquals("http://localhost:80/templates/{templateId}", activityInfo.getTemplate().getDefinition().getRef());
         //assertEquals("template.json", activityInfo.getTemplate().getDefinition().getOriginalRef());
         try {
             templateDefinitionNode = (ObjectNode) ObjectMapperFactory.JSON_MAPPER
-                    .readTree(activityInfo.getTemplate().getDefinition().getRawContent());
+                    .readTree(taskInfo.getTemplate().getDefinition().getRawContent());
         } catch (JsonProcessingException e) {
             fail("Impossible to parse template definition", e);
         }
@@ -238,20 +259,22 @@ public class DPDSParserLifecycleTest extends DPDSTests {
         assertEquals("1.0.0", templateDefinitionNode.get("version").asText());
 
         // PROD
-        activityInfo = descriptor.getInternalComponents().getLifecycleInfo().getActivityInfo("prod");
-        assertNotNull(activityInfo);
-        assertNotNull(activityInfo.getTemplate());
-        assertNotNull(activityInfo.getTemplate());
-        assertEquals("spec", activityInfo.getTemplate().getSpecification());
-        assertEquals("2.0", activityInfo.getTemplate().getSpecificationVersion());
-        assertNotNull(activityInfo.getTemplate().getDefinition());
-        assertEquals(null, activityInfo.getTemplate().getDefinition().getDescription());
+        tasksInfo = descriptor.getInternalComponents().getLifecycleInfo().getTasksInfo("prod");
+        assertNotNull(tasksInfo);
+        taskInfo = tasksInfo.get(0);
+        assertNotNull(taskInfo);
+        assertNotNull(taskInfo.getTemplate());
+        assertNotNull(taskInfo.getTemplate());
+        assertEquals("spec", taskInfo.getTemplate().getSpecification());
+        assertEquals("2.0", taskInfo.getTemplate().getSpecificationVersion());
+        assertNotNull(taskInfo.getTemplate().getDefinition());
+        assertEquals(null, taskInfo.getTemplate().getDefinition().getDescription());
         //assertEquals("application/json", activityInfo.getTemplate().getDefinition().getMediaType());
         //assertEquals("http://localhost:80/templates/{templateId}", activityInfo.getTemplate().getDefinition().getRef());
         //assertEquals("template.json", activityInfo.getTemplate().getDefinition().getOriginalRef());
         try {
             templateDefinitionNode = (ObjectNode) ObjectMapperFactory.JSON_MAPPER
-                    .readTree(activityInfo.getTemplate().getDefinition().getRawContent());
+                    .readTree(taskInfo.getTemplate().getDefinition().getRawContent());
         } catch (JsonProcessingException e) {
             fail("Impossible to parse template definition", e);
         }
@@ -259,11 +282,13 @@ public class DPDSParserLifecycleTest extends DPDSTests {
         assertEquals("1.0.0", templateDefinitionNode.get("version").asText());
 
         // DEPRECATED
-        activityInfo = descriptor.getInternalComponents().getLifecycleInfo().getActivityInfo("deprecated");
-        assertNotNull(activityInfo);
-        assertEquals(null, activityInfo.getService());
-        assertEquals(null, activityInfo.getTemplate());
-        assertEquals(null, activityInfo.getConfigurations());
+        tasksInfo = descriptor.getInternalComponents().getLifecycleInfo().getTasksInfo("deprecated");
+        assertNotNull(tasksInfo);
+        taskInfo = tasksInfo.get(0);
+        assertNotNull(taskInfo);
+        assertEquals(null, taskInfo.getService());
+        assertEquals(null, taskInfo.getTemplate());
+        assertEquals(null, taskInfo.getConfigurations());
     }
 
     @Test
@@ -290,29 +315,32 @@ public class DPDSParserLifecycleTest extends DPDSTests {
 
         DataProductVersionDPDS descriptor = result.getDescriptorDocument();
 
-        LifecycleActivityInfoDPDS activityInfo = null;
+        List<LifecycleTaskInfoDPDS> tasksInfo = null;
+        LifecycleTaskInfoDPDS taskInfo = null;
         ObjectNode templateDefinitionNode = null;
 
         assertTrue(descriptor != null);
         assertNotNull(descriptor.getInternalComponents());
         assertNotNull(descriptor.getInternalComponents().getLifecycleInfo());
-        assertNotNull(descriptor.getInternalComponents().getLifecycleInfo().getActivityInfos());
-        assertEquals(4, descriptor.getInternalComponents().getLifecycleInfo().getActivityInfos().size());
+        assertNotNull(descriptor.getInternalComponents().getLifecycleInfo().getTasksInfo());
+        assertEquals(4, descriptor.getInternalComponents().getLifecycleInfo().getTasksInfo().size());
 
         //DEV
-        activityInfo = descriptor.getInternalComponents().getLifecycleInfo().getActivityInfo("dev");
-        assertNotNull(activityInfo);
-        assertNotNull(activityInfo.getTemplate());
-        assertEquals("spec", activityInfo.getTemplate().getSpecification());
-        assertEquals("2.0", activityInfo.getTemplate().getSpecificationVersion());
-        assertNotNull(activityInfo.getTemplate().getDefinition());
-        assertEquals(null, activityInfo.getTemplate().getDefinition().getDescription());
+        tasksInfo = descriptor.getInternalComponents().getLifecycleInfo().getTasksInfo("dev");
+        assertNotNull(tasksInfo);
+        taskInfo = tasksInfo.get(0);
+        assertNotNull(taskInfo);
+        assertNotNull(taskInfo.getTemplate());
+        assertEquals("spec", taskInfo.getTemplate().getSpecification());
+        assertEquals("2.0", taskInfo.getTemplate().getSpecificationVersion());
+        assertNotNull(taskInfo.getTemplate().getDefinition());
+        assertEquals(null, taskInfo.getTemplate().getDefinition().getDescription());
         //assertEquals("application/json", activityInfo.getTemplate().getDefinition().getMediaType());
         //assertEquals("http://localhost:80/templates/{templateId}", activityInfo.getTemplate().getDefinition().getRef());
 
         try {
             templateDefinitionNode = (ObjectNode) ObjectMapperFactory.JSON_MAPPER
-                    .readTree(activityInfo.getTemplate().getDefinition().getRawContent());
+                    .readTree(taskInfo.getTemplate().getDefinition().getRawContent());
         } catch (JsonProcessingException e) {
             fail("Impossible to parse template definition", e);
         }
@@ -320,19 +348,21 @@ public class DPDSParserLifecycleTest extends DPDSTests {
         assertEquals("1.0.0", templateDefinitionNode.get("version").asText());
 
         // QA
-        activityInfo = descriptor.getInternalComponents().getLifecycleInfo().getActivityInfo("qa");
-        assertNotNull(activityInfo);
-        assertNotNull(activityInfo.getTemplate());
-        assertNotNull(activityInfo.getTemplate());
-        assertEquals("spec", activityInfo.getTemplate().getSpecification());
-        assertEquals("2.0", activityInfo.getTemplate().getSpecificationVersion());
-        assertNotNull(activityInfo.getTemplate().getDefinition());
-        assertEquals(null, activityInfo.getTemplate().getDefinition().getDescription());
+        tasksInfo = descriptor.getInternalComponents().getLifecycleInfo().getTasksInfo("qa");
+        assertNotNull(tasksInfo);
+        taskInfo = tasksInfo.get(0);
+        assertNotNull(taskInfo);
+        assertNotNull(taskInfo.getTemplate());
+        assertNotNull(taskInfo.getTemplate());
+        assertEquals("spec", taskInfo.getTemplate().getSpecification());
+        assertEquals("2.0", taskInfo.getTemplate().getSpecificationVersion());
+        assertNotNull(taskInfo.getTemplate().getDefinition());
+        assertEquals(null, taskInfo.getTemplate().getDefinition().getDescription());
         //assertEquals("application/json", activityInfo.getTemplate().getDefinition().getMediaType());
         //assertEquals("http://localhost:80/templates/{templateId}", activityInfo.getTemplate().getDefinition().getRef());
         try {
             templateDefinitionNode = (ObjectNode) ObjectMapperFactory.JSON_MAPPER
-                    .readTree(activityInfo.getTemplate().getDefinition().getRawContent());
+                    .readTree(taskInfo.getTemplate().getDefinition().getRawContent());
         } catch (JsonProcessingException e) {
             fail("Impossible to parse template definition", e);
         }
@@ -340,20 +370,22 @@ public class DPDSParserLifecycleTest extends DPDSTests {
         assertEquals("1.0.0", templateDefinitionNode.get("version").asText());
 
         // PROD
-        activityInfo = descriptor.getInternalComponents().getLifecycleInfo().getActivityInfo("prod");
-        assertNotNull(activityInfo);
-        assertNotNull(activityInfo.getTemplate());
-        assertNotNull(activityInfo.getTemplate());
-        assertEquals("spec", activityInfo.getTemplate().getSpecification());
-        assertEquals("2.0", activityInfo.getTemplate().getSpecificationVersion());
-        assertNotNull(activityInfo.getTemplate().getDefinition());
-        assertEquals(null, activityInfo.getTemplate().getDefinition().getDescription());
+        tasksInfo = descriptor.getInternalComponents().getLifecycleInfo().getTasksInfo("prod");
+        assertNotNull(tasksInfo);
+        taskInfo = tasksInfo.get(0);
+        assertNotNull(taskInfo);
+        assertNotNull(taskInfo.getTemplate());
+        assertNotNull(taskInfo.getTemplate());
+        assertEquals("spec", taskInfo.getTemplate().getSpecification());
+        assertEquals("2.0", taskInfo.getTemplate().getSpecificationVersion());
+        assertNotNull(taskInfo.getTemplate().getDefinition());
+        assertEquals(null, taskInfo.getTemplate().getDefinition().getDescription());
         //assertEquals("application/json", activityInfo.getTemplate().getDefinition().getMediaType());
         //assertEquals("http://localhost:80/templates/{templateId}", activityInfo.getTemplate().getDefinition().getRef());
         
         try {
             templateDefinitionNode = (ObjectNode) ObjectMapperFactory.JSON_MAPPER
-                    .readTree(activityInfo.getTemplate().getDefinition().getRawContent());
+                    .readTree(taskInfo.getTemplate().getDefinition().getRawContent());
         } catch (JsonProcessingException e) {
             fail("Impossible to parse template definition", e);
         }
@@ -362,11 +394,13 @@ public class DPDSParserLifecycleTest extends DPDSTests {
 
 
 
-        activityInfo = descriptor.getInternalComponents().getLifecycleInfo().getActivityInfo("deprecated");
-        assertNotNull(activityInfo);
-        assertEquals(null, activityInfo.getService());
-        assertEquals(null, activityInfo.getTemplate());
-        assertEquals(null, activityInfo.getConfigurations());
+        tasksInfo = descriptor.getInternalComponents().getLifecycleInfo().getTasksInfo("deprecated");
+        assertNotNull(tasksInfo);
+        taskInfo = tasksInfo.get(0);
+        assertNotNull(taskInfo);
+        assertEquals(null, taskInfo.getService());
+        assertEquals(null, taskInfo.getTemplate());
+        assertEquals(null, taskInfo.getConfigurations());
     }
 
 }

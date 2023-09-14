@@ -15,8 +15,8 @@ import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestExcep
 import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
-import org.opendatamesh.platform.core.dpds.model.EntityTypeDPDS;
-import org.opendatamesh.platform.core.dpds.model.InterfaceComponentsDPDS;
+import org.opendatamesh.platform.core.dpds.model.core.EntityTypeDPDS;
+import org.opendatamesh.platform.core.dpds.model.interfaces.InterfaceComponentsDPDS;
 import org.opendatamesh.platform.core.dpds.parser.DPDSSerializer;
 import org.opendatamesh.platform.pp.registry.api.controllers.AbstractDataProductVersionComponentsController;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;

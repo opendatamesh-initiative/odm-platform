@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.core.dpds.model;
+package org.opendatamesh.platform.core.dpds.model.interfaces;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -15,6 +15,8 @@ import lombok.EqualsAndHashCode;
 import java.util.*;
 
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
+import org.opendatamesh.platform.core.dpds.model.core.ComponentContainerDPDS;
+import org.opendatamesh.platform.core.dpds.model.core.EntityTypeDPDS;
 
 @Data
 @EqualsAndHashCode(callSuper=false)

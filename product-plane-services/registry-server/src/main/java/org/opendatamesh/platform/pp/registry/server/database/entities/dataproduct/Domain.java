@@ -1,9 +1,11 @@
 package org.opendatamesh.platform.pp.registry.server.database.entities.dataproduct;
 
 import lombok.Data;
-import org.opendatamesh.platform.core.dpds.model.EntityTypeDPDS;
 
 import javax.persistence.*;
+
+import org.opendatamesh.platform.core.dpds.model.core.EntityTypeDPDS;
+
 import java.io.Serializable;
 import java.util.Date;
 

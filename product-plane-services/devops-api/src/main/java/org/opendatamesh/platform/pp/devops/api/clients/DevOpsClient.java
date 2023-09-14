@@ -53,25 +53,25 @@ public class DevOpsClient extends ODMClient {
     public ActivityResource[] searchActivities(
             String dataProductId,
             String dataProductVersion,
-            String type,
+            String stage,
             ActivityStatus status) 
     {
-        return getActivities(dataProductId, dataProductVersion, type, status).getBody();
+        return getActivities(dataProductId, dataProductVersion, stage, status).getBody();
     }
 
     public ResponseEntity<ActivityResource[]> getActivities(
             String dataProductId,
             String dataProductVersion,
-            String type,
+            String stage,
             ActivityStatus status)
     {
-        return getActivities(dataProductId, dataProductVersion, type, status, ActivityResource[].class);
+        return getActivities(dataProductId, dataProductVersion, stage, status, ActivityResource[].class);
     }
 
     public <T> ResponseEntity<T> getActivities(
         String dataProductId,
         String dataProductVersion,
-        String type,
+        String stage,
         ActivityStatus status,
         Class<T> responseType)
     {
@@ -80,8 +80,8 @@ public class DevOpsClient extends ODMClient {
             queryParams.put("dataProductId", dataProductId);
         if (dataProductVersion != null)
             queryParams.put("dataProductVersion", dataProductVersion);
-        if (type != null)
-            queryParams.put("type", type);
+        if (stage != null)
+            queryParams.put("type", stage);
         if (status != null)
             queryParams.put("status", status);
 

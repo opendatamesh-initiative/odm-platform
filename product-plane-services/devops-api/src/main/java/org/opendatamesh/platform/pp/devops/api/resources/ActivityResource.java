@@ -19,8 +19,8 @@ public class ActivityResource {
     @JsonProperty("dataProductVersion")
     private String dataProductVersion;
 
-    @JsonProperty("type")
-    String type;
+    @JsonProperty("stage")
+    String stage;
 
     @JsonProperty("status")
     ActivityStatus status;
@@ -64,10 +64,10 @@ public class ActivityResource {
                 return false;
         } else if (!dataProductVersion.equals(other.dataProductVersion))
             return false;
-        if (type == null) {
-            if (other.type != null)
+        if (stage == null) {
+            if (other.stage != null)
                 return false;
-        } else if (!type.equals(other.type))
+        } else if (!stage.equals(other.stage))
             return false;
         if (status != other.status)
             return false;
@@ -106,7 +106,7 @@ public class ActivityResource {
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((dataProductId == null) ? 0 : dataProductId.hashCode());
         result = prime * result + ((dataProductVersion == null) ? 0 : dataProductVersion.hashCode());
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
+        result = prime * result + ((stage == null) ? 0 : stage.hashCode());
         result = prime * result + ((status == null) ? 0 : status.hashCode());
         result = prime * result + ((results == null) ? 0 : results.hashCode());
         result = prime * result + ((errors == null) ? 0 : errors.hashCode());

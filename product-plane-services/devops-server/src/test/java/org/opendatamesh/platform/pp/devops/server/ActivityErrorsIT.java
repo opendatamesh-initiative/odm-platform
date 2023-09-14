@@ -74,8 +74,8 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
         assertThat(activityRes.getDataProductId()).isEqualTo("f350cab5-992b-32f7-9c90-79bca1bf10be");
         assertThat(activityRes.getDataProductVersion()).isNotNull();
         assertThat(activityRes.getDataProductVersion()).isEqualTo("1.0.0");
-        assertThat(activityRes.getType()).isNotNull();
-        assertThat(activityRes.getType()).isEqualTo("prod");
+        assertThat(activityRes.getStage()).isNotNull();
+        assertThat(activityRes.getStage()).isEqualTo("prod");
         assertThat(activityRes.getStatus()).isNotNull();
         assertThat(activityRes.getStatus()).isEqualTo(ActivityStatus.PLANNED);
         assertThat(activityRes.getCreatedAt()).isNotNull();
@@ -97,8 +97,8 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
         assertThat(activityRes.getDataProductId()).isEqualTo("f350cab5-992b-32f7-9c90-79bca1bf10be");
         assertThat(activityRes.getDataProductVersion()).isNotNull();
         assertThat(activityRes.getDataProductVersion()).isEqualTo("1.0.0");
-        assertThat(activityRes.getType()).isNotNull();
-        assertThat(activityRes.getType()).isEqualTo("prod");
+        assertThat(activityRes.getStage()).isNotNull();
+        assertThat(activityRes.getStage()).isEqualTo("prod");
         assertThat(activityRes.getStatus()).isNotNull();
         assertThat(activityRes.getStatus()).isEqualTo(ActivityStatus.FAILED);
         assertThat(activityRes.getErrors()).isNotNull();
@@ -547,7 +547,7 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
         createMocksForCreateActivityCall();
         ResponseEntity<ErrorRes> response = null;
         try {
-            postedActivityRes.setType("test");
+            postedActivityRes.setStage("test");
             response = devOpsClient.postActivity(postedActivityRes, true, ErrorRes.class);
         } catch (Throwable t) {
             t.printStackTrace();

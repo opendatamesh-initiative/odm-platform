@@ -17,7 +17,7 @@ public interface ActivityRepository extends JpaRepository<Activity, Long>, JpaSp
         static public Specification<Activity> hasMatch(
             String dataProductId,
             String dataProductVersion,
-            String type,
+            String stage,
             ActivityStatus status) {
 			
             return (root, query, criteriaBuilder) -> {
@@ -28,8 +28,8 @@ public interface ActivityRepository extends JpaRepository<Activity, Long>, JpaSp
                 if (dataProductVersion != null) {
                     predicates.add(criteriaBuilder.equal(root.get("dataProductVersion"), dataProductVersion));
                 }
-                if (type != null) {
-                    predicates.add(criteriaBuilder.equal(root.get("type"), type));
+                if (stage != null) {
+                    predicates.add(criteriaBuilder.equal(root.get("stage"), stage));
                 }
                 if (status != null) {
                     predicates.add(criteriaBuilder.equal(root.get("status"), status));

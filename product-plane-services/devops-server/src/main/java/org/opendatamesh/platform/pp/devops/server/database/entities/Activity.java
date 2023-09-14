@@ -32,8 +32,8 @@ public class Activity {
     @Column(name = "DATA_PRODUCT_VERSION")
     private String dataProductVersion;
 
-    @Column(name = "TYPE")
-    String type;
+    @Column(name = "STAGE")
+    String stage;
     
     @Enumerated(EnumType.STRING)
     @Column(name = "STATUS")

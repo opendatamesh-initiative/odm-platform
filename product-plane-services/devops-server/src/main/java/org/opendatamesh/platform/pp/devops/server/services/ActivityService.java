@@ -80,32 +80,32 @@ public class ActivityService {
         if (activitiesInfo == null || activitiesInfo.isEmpty()) {
             throw new UnprocessableEntityException(
                     DevOpsApiStandardErrors.SC422_01_ACTIVITY_IS_INVALID,
-                    "Liefecycle stage [" + activity.getType() + "] not defined for version ["
+                    "Liefecycle stage [" + activity.getStage() + "] not defined for version ["
                             + activity.getDataProductVersion() + "] of product [" + activity.getDataProductId() + "]");
         }
 
         activity.setStatus(ActivityStatus.PLANNED);
         List<Activity> activities = searchActivities(
-                activity.getDataProductId(), activity.getDataProductVersion(), activity.getType(),
+                activity.getDataProductId(), activity.getDataProductVersion(), activity.getStage(),
                 activity.getStatus());
 
         if (activities != null && activities.isEmpty() == false) {
             throw new UnprocessableEntityException(
                     DevOpsApiStandardErrors.SC422_02_ACTIVITY_ALREADY_EXISTS,
-                    "Activity for stage [" + activity.getType() + "] of version ["
+                    "Activity for stage [" + activity.getStage() + "] of version ["
                             + activity.getDataProductVersion() + "] of product [" + activity.getDataProductId()
                             + "] already exist");
         }
 
         try {
             activity = saveActivity(activity);
-            logger.info("Activity [" + activity.getType() + "] "
+            logger.info("Activity [" + activity.getStage() + "] "
                     + "on version [" + activity.getDataProductVersion() + "] "
                     + "of product [" + activity.getDataProductId() + "] succesfully created");
         } catch (Throwable t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while saving activity [" + activity.getType() + "] "
+                    "An error occured in the backend database while saving activity [" + activity.getStage() + "] "
                             + "on version [" + activity.getDataProductVersion() + "] "
                             + "of product [" + activity.getDataProductId() + "]",
                     t);
@@ -401,7 +401,7 @@ public class ActivityService {
 
         List<LifecycleTaskInfoDPDS> tasksInfoRes = new ArrayList<LifecycleTaskInfoDPDS>();
 
-        if (!StringUtils.hasText(activity.getType())) {
+        if (!StringUtils.hasText(activity.getStage())) {
             throw new UnprocessableEntityException(
                     DevOpsApiStandardErrors.SC422_01_ACTIVITY_IS_INVALID,
                     "Activity type property cannot be empty");
@@ -423,7 +423,7 @@ public class ActivityService {
         }
 
         LifecycleInfoDPDS lifecycleInfo = dataProductVersion.getInternalComponents().getLifecycleInfo();
-        List<LifecycleTaskInfoDPDS> stageTasksInfoRes = lifecycleInfo.getTasksInfo(activity.getType());
+        List<LifecycleTaskInfoDPDS> stageTasksInfoRes = lifecycleInfo.getTasksInfo(activity.getStage());
         if(stageTasksInfoRes != null) {
             tasksInfoRes.addAll(stageTasksInfoRes);
         }

@@ -9,6 +9,8 @@ import org.opendatamesh.platform.pp.registry.server.database.entities.dataproduc
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.info.Info;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.interfaces.InterfaceComponents;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.internals.InternalComponents;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -22,6 +24,14 @@ import java.util.List;
 @Table(name = "DP_VERSIONS", schema="ODMREGISTRY")
 @IdClass(DataProductVersionId.class)
 public class DataProductVersion implements Cloneable, Serializable {
+
+    @Autowired
+    @Transient
+    private Environment environment;
+
+    @Autowired
+    @Transient
+    private EntityManagerFactory entityManagerFactory;
 
     @Id
     @Column(name = "DATA_PRODUCT_ID")
@@ -116,7 +126,7 @@ public class DataProductVersion implements Cloneable, Serializable {
     }
 
     @PostLoad
-    protected void onRead() {
+    protected void onRead() throws NoSuchFieldException {
         getInfo().setDataProductId(dataProductId);
         getInfo().setVersionNumber(versionNumber);
     }

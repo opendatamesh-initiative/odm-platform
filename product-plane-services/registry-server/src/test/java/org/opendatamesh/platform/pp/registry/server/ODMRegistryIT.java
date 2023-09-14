@@ -43,7 +43,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @ExtendWith(SpringExtension.class)
 //@ActiveProfiles("dev")
 //@ActiveProfiles("testpostgresql")
-//@ActiveProfiles("testmysql")
+@ActiveProfiles("testmysql")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = { ODMRegistryApp.class })
 public abstract class ODMRegistryIT extends ODMIntegrationTest {
 

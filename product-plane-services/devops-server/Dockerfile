@@ -2,10 +2,12 @@ FROM openjdk:17-alpine
 
 VOLUME /tmp
 
-ADD platform-core/dpds/target/odm-platform-core-dpds-*.jar ./
-ADD product-plane-services/registry-api/target/odm-platform-pp-registry-api-*.jar ./
-ADD utility-plane-services/notification-api/target/odm-platform-up-notification-api-*.jar ./
-COPY product-plane-services/registry-server/target/odm-platform-pp-registry-server-*.jar ./application.jar
+ADD ./platform-core/dpds/target/odm-platform-core-dpds-*.jar ./
+ADD ./product-plane-services/registry-api/target/odm-platform-pp-registry-api-*.jar ./
+ADD ./product-plane-services/devops-api/target/odm-platform-pp-devops-api-*.jar ./
+ADD ./utility-plane-services/notification-api/target/odm-platform-up-notification-api-*.jar ./
+ADD ./utility-plane-services/executor-api/target/odm-platform-up-executor-api-*.jar ./
+COPY ./product-plane-services/devops-server/target/odm-platform-pp-devops-server-*.jar ./application.jar
 
 ARG SPRING_PROFILES_ACTIVE=docker
 ARG SPRING_PORT=8002
@@ -14,7 +16,7 @@ ARG JAVA_OPTS
 ARG DATABASE_URL=jdbc:postgresql://localhost:5432/odmpdb
 ARG DATABASE_USERNAME=usr
 ARG DATABASE_PASSWORD=pwd
-ARG FLYWAY_SCHEMA=odmpdb
+ARG FLYWAY_SCHEMA=ODMDEVOPS
 ARG FLYWAY_SCRIPTS_DIR=postgres
 ARG H2_CONSOLE_ENABLED=false
 ARG H2_CONSOLE_PATH=h2-console

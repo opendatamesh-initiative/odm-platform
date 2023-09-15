@@ -17,10 +17,8 @@ import lombok.Data;
 public class DevOpsClients {
 
     DevOpsConfigurations configs;
-
     RegistryClient registryClient;
     Map<String, ExecutorClient> executorsClients; 
-
 
     @Autowired
     public DevOpsClients(DevOpsConfigurations configs) {

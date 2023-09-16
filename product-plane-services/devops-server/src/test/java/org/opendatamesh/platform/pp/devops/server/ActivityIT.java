@@ -9,8 +9,10 @@ import java.util.regex.Pattern;
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityResource;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatus;
+import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatusResource;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskResource;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskStatus;
+import org.opendatamesh.platform.pp.devops.api.resources.TaskStatusResource;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.annotation.DirtiesContext.MethodMode;
@@ -129,12 +131,25 @@ public class ActivityIT extends ODMDevOpsIT {
             return;
         }
 
-        ActivityResource startedActivityRes = null;
+        ActivityStatusResource statusRes = null;
         try {
-            startedActivityRes = devOpsClient.startActivity(activityRes.getId());
+            statusRes = devOpsClient.startActivity(activityRes.getId());
         } catch (Throwable t) {
             fail("An unexpected exception occured while starting activity: " + t.getMessage());
             t.printStackTrace();
+            return;
+        }
+
+        assertThat(statusRes).isNotNull();
+        assertThat(statusRes.getStatus()).isEqualTo(ActivityStatus.PROCESSING);
+
+
+        ActivityResource startedActivityRes = null;
+        try {
+            startedActivityRes = devOpsClient.readActivity(activityRes.getId());
+        } catch (Throwable t) {
+            t.printStackTrace();
+            fail("Impossible to post activity: " + t.getMessage());
             return;
         }
 
@@ -165,12 +180,24 @@ public class ActivityIT extends ODMDevOpsIT {
             return;
         }
 
-        ActivityResource startedActivityRes = null;
+        ActivityStatusResource statusRes = null;
         try {
-            startedActivityRes = devOpsClient.startActivity(createdActivityRes.getId());
+            statusRes = devOpsClient.startActivity(createdActivityRes.getId());
         } catch (Throwable t) {
             fail("An unexpected exception occured while starting activity: " + t.getMessage());
             t.printStackTrace();
+            return;
+        }
+
+        assertThat(statusRes).isNotNull();
+        assertThat(statusRes.getStatus()).isEqualTo(ActivityStatus.PROCESSING);
+
+        ActivityResource startedActivityRes = null;
+        try {
+            startedActivityRes = devOpsClient.readActivity(createdActivityRes.getId());
+        } catch (Throwable t) {
+            t.printStackTrace();
+            fail("Impossible to post activity: " + t.getMessage());
             return;
         }
 
@@ -202,14 +229,27 @@ public class ActivityIT extends ODMDevOpsIT {
             return;
         }
 
-        ActivityResource startedActivityRes = null;
+        ActivityStatusResource statusRes = null;
         try {
-            startedActivityRes = devOpsClient.startActivity(createdActivityRes.getId());
+            statusRes = devOpsClient.startActivity(createdActivityRes.getId());
         } catch (Throwable t) {
             fail("An unexpected exception occured while starting activity: " + t.getMessage());
             t.printStackTrace();
             return;
         }
+
+        assertThat(statusRes).isNotNull();
+        assertThat(statusRes.getStatus()).isEqualTo(ActivityStatus.PROCESSING);
+
+        ActivityResource startedActivityRes = null;
+        try {
+            startedActivityRes = devOpsClient.readActivity(createdActivityRes.getId());
+        } catch (Throwable t) {
+            t.printStackTrace();
+            fail("Impossible to post activity: " + t.getMessage());
+            return;
+        }
+
 
         assertThat(startedActivityRes.getId()).isNotNull();
         assertThat(startedActivityRes.getId()).isNotNull();
@@ -239,14 +279,27 @@ public class ActivityIT extends ODMDevOpsIT {
             return;
         }
 
-        ActivityResource startedActivityRes = null;
+        ActivityStatusResource statusRes = null;
         try {
-            startedActivityRes = devOpsClient.startActivity(createdActivityRes.getId());
+            statusRes = devOpsClient.startActivity(createdActivityRes.getId());
         } catch (Throwable t) {
             fail("An unexpected exception occured while starting activity: " + t.getMessage());
             t.printStackTrace();
             return;
         }
+
+        assertThat(statusRes).isNotNull();
+        assertThat(statusRes.getStatus()).isEqualTo(ActivityStatus.PROCESSED);
+
+        ActivityResource startedActivityRes = null;
+        try {
+            startedActivityRes = devOpsClient.readActivity(createdActivityRes.getId());
+        } catch (Throwable t) {
+            t.printStackTrace();
+            fail("Impossible to post activity: " + t.getMessage());
+            return;
+        }
+
 
         assertThat(startedActivityRes.getId()).isNotNull();
         assertThat(startedActivityRes.getId()).isNotNull();
@@ -276,14 +329,27 @@ public class ActivityIT extends ODMDevOpsIT {
             return;
         }
 
-        ActivityResource startedActivityRes = null;
+        ActivityStatusResource statusRes = null;
         try {
-            startedActivityRes = devOpsClient.startActivity(createdActivityRes.getId());
+            statusRes = devOpsClient.startActivity(createdActivityRes.getId());
         } catch (Throwable t) {
             fail("An unexpected exception occured while starting activity: " + t.getMessage());
             t.printStackTrace();
             return;
         }
+
+        assertThat(statusRes).isNotNull();
+        assertThat(statusRes.getStatus()).isEqualTo(ActivityStatus.PROCESSED);
+
+        ActivityResource startedActivityRes = null;
+        try {
+            startedActivityRes = devOpsClient.readActivity(createdActivityRes.getId());
+        } catch (Throwable t) {
+            t.printStackTrace();
+            fail("Impossible to post activity: " + t.getMessage());
+            return;
+        }
+
 
         assertThat(startedActivityRes.getId()).isNotNull();
         assertThat(startedActivityRes.getId()).isNotNull();
@@ -314,14 +380,27 @@ public class ActivityIT extends ODMDevOpsIT {
             return;
         }
 
-        ActivityResource startedActivityRes = null;
+       ActivityStatusResource statusRes = null;
         try {
-            startedActivityRes = devOpsClient.startActivity(createdActivityRes.getId());
+            statusRes = devOpsClient.startActivity(createdActivityRes.getId());
         } catch (Throwable t) {
             fail("An unexpected exception occured while starting activity: " + t.getMessage());
             t.printStackTrace();
             return;
         }
+
+        assertThat(statusRes).isNotNull();
+        assertThat(statusRes.getStatus()).isEqualTo(ActivityStatus.FAILED);
+
+        ActivityResource startedActivityRes = null;
+        try {
+            startedActivityRes = devOpsClient.readActivity(createdActivityRes.getId());
+        } catch (Throwable t) {
+            t.printStackTrace();
+            fail("Impossible to post activity: " + t.getMessage());
+            return;
+        }
+
 
         assertThat(startedActivityRes.getId()).isNotNull();
         assertThat(startedActivityRes.getDataProductId()).isEqualTo(activityRes.getDataProductId());
@@ -348,9 +427,9 @@ public class ActivityIT extends ODMDevOpsIT {
         assertThat(taskResources.length).isEqualTo(1);
         ActivityTaskResource targetTaskRes = taskResources[0];
 
-        ActivityTaskResource stoppedTaskRes = null;
+        TaskStatusResource taskStatusRes = null;
         try {
-            stoppedTaskRes = devOpsClient.stopTask(targetTaskRes.getId());
+            taskStatusRes = devOpsClient.stopTask(targetTaskRes.getId());
         } catch (Throwable t) {
             fail("An unexpected exception occured while stopping task: " + t.getMessage());
             t.printStackTrace();
@@ -382,9 +461,9 @@ public class ActivityIT extends ODMDevOpsIT {
         ActivityResource activityRes = null;
         activityRes = createTestActivity(false);
 
-        String status = devOpsClient.readActivityStatus(activityRes.getId());
-        assertThat(status).isNotNull();
-        assertThat(status).isEqualTo(ActivityStatus.PLANNED.toString());
+        ActivityStatusResource statusRes = devOpsClient.readActivityStatus(activityRes.getId());
+        assertThat(statusRes).isNotNull();
+        assertThat(statusRes.getStatus()).isEqualTo(ActivityStatus.PLANNED);
     }
 
     @Test
@@ -396,9 +475,9 @@ public class ActivityIT extends ODMDevOpsIT {
         ActivityResource activityRes = null;
         activityRes = createTestActivity(true);
 
-        String status = devOpsClient.readActivityStatus(activityRes.getId());
-        assertThat(status).isNotNull();
-        assertThat(status).isEqualTo(ActivityStatus.PROCESSING.toString());
+        ActivityStatusResource statusRes = devOpsClient.readActivityStatus(activityRes.getId());
+        assertThat(statusRes).isNotNull();
+        assertThat(statusRes.getStatus()).isEqualTo(ActivityStatus.PROCESSING);
     }
 
     @Test
@@ -409,17 +488,18 @@ public class ActivityIT extends ODMDevOpsIT {
 
         ActivityResource activityRes = createTestActivity(false);
 
-        ActivityResource startedActivityRes = null;
+        ActivityStatusResource statusRes = null;
         try {
-            startedActivityRes = devOpsClient.startActivity(activityRes.getId());
+            statusRes = devOpsClient.startActivity(activityRes.getId());
         } catch (Throwable t) {
             fail("An unexpected exception occured while starting activity: " + t.getMessage());
             t.printStackTrace();
             return;
         }
-        String status = devOpsClient.readActivityStatus(startedActivityRes.getId());
-        assertThat(status).isNotNull();
-        assertThat(status).isEqualTo(ActivityStatus.PROCESSING.toString());
+
+        statusRes = devOpsClient.readActivityStatus(activityRes.getId());
+        assertThat(statusRes).isNotNull();
+        assertThat(statusRes.getStatus()).isEqualTo(ActivityStatus.PROCESSING);
     }
 
     @Test
@@ -435,17 +515,17 @@ public class ActivityIT extends ODMDevOpsIT {
         assertThat(taskResources.length).isEqualTo(1);
         ActivityTaskResource targetTaskRes = taskResources[0];
 
-        ActivityTaskResource stoppedTaskRes = null;
         try {
-            stoppedTaskRes = devOpsClient.stopTask(targetTaskRes.getId());
+            devOpsClient.stopTask(targetTaskRes.getId());
         } catch (Throwable t) {
             fail("An unexpected exception occured while stopping task: " + t.getMessage());
             t.printStackTrace();
             return;
         }
-        String status = devOpsClient.readActivityStatus(stoppedTaskRes.getId());
-        assertThat(status).isNotNull();
-        assertThat(status).isEqualTo(ActivityStatus.PROCESSED.toString());
+
+        ActivityStatusResource statusRes = devOpsClient.readActivityStatus(activityRes.getId());
+        assertThat(statusRes).isNotNull();
+        assertThat(statusRes.getStatus()).isEqualTo(ActivityStatus.PROCESSED);
     }
 
     // ======================================================================================
@@ -540,16 +620,16 @@ public class ActivityIT extends ODMDevOpsIT {
         activityRes = buildTestActivity();
         createdActivityRes = createActivity(activityRes, false);
 
-        ActivityResource startedActivityRes = null;
+        ActivityStatusResource statusRes = null;
         try {
-            startedActivityRes = devOpsClient.startActivity(createdActivityRes.getId());
+            statusRes = devOpsClient.startActivity(createdActivityRes.getId());
         } catch (Throwable t) {
             fail("An unexpected exception occured while starting activity: " + t.getMessage());
             t.printStackTrace();
             return;
         }
 
-        ActivityResource readActivityRes = devOpsClient.readActivity(startedActivityRes.getId());
+        ActivityResource readActivityRes = devOpsClient.readActivity(createdActivityRes.getId());
         assertThat(readActivityRes.getId()).isNotNull();
         assertThat(readActivityRes.getDataProductId()).isEqualTo(activityRes.getDataProductId());
         assertThat(readActivityRes.getDataProductVersion()).isEqualTo(activityRes.getDataProductVersion());
@@ -558,8 +638,6 @@ public class ActivityIT extends ODMDevOpsIT {
         assertThat(readActivityRes.getCreatedAt()).isNotNull();
         assertThat(readActivityRes.getStartedAt()).isNotNull();
         assertThat(readActivityRes.getFinishedAt()).isNull();
-
-        assertThat(readActivityRes).isEqualTo(startedActivityRes);
     }
 
     @Test
@@ -578,7 +656,7 @@ public class ActivityIT extends ODMDevOpsIT {
         assertThat(taskResources.length).isEqualTo(1);
         ActivityTaskResource targetTaskRes = taskResources[0];
 
-        ActivityTaskResource stoppedTaskRes = null;
+        TaskStatusResource stoppedTaskRes = null;
         try {
             stoppedTaskRes = devOpsClient.stopTask(targetTaskRes.getId());
         } catch (Throwable t) {
@@ -587,7 +665,7 @@ public class ActivityIT extends ODMDevOpsIT {
             return;
         }
 
-        ActivityResource readActivityRes = devOpsClient.readActivity(stoppedTaskRes.getId());
+        ActivityResource readActivityRes = devOpsClient.readActivity(createdActivityRes.getId());
         assertThat(readActivityRes.getId()).isNotNull();
         assertThat(readActivityRes.getDataProductId()).isEqualTo(activityRes.getDataProductId());
         assertThat(readActivityRes.getDataProductVersion()).isEqualTo(activityRes.getDataProductVersion());

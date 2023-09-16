@@ -11,9 +11,11 @@ import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErr
 import org.opendatamesh.platform.pp.devops.api.clients.DevOpsAPIRoutes;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityResource;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatus;
+import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatusResource;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskResource;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskStatus;
 import org.opendatamesh.platform.pp.devops.api.resources.DevOpsApiStandardErrors;
+import org.opendatamesh.platform.pp.devops.api.resources.TaskStatusResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -428,7 +430,7 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
                 .isEqualTo(DevOpsApiStandardErrors.SC404_01_ACTIVITY_NOT_FOUND.description());
         assertThat(errorRes.getMessage()).isNotNull();
         assertThat(errorRes.getPath())
-                .isEqualTo(DevOpsAPIRoutes.ACTIVITIES.getPath() + "/" + wrongActivityId + "/start");
+                .isEqualTo(DevOpsAPIRoutes.ACTIVITIES.getPath() + "/" + wrongActivityId + "/status");
         assertThat(errorRes.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
         assertThat(errorRes.getTimestamp()).isNotNull();
     }
@@ -439,26 +441,26 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
 
         createMocksForCreateActivityCall();
 
-        ActivityResource startedActivityRes = null;
+        ActivityResource activityRes = null;
+        ActivityStatusResource statusRes = null;
         try {
-            ActivityResource activityRes = createTestActivity(false);
-            startedActivityRes = devOpsClient.startActivity(activityRes.getId());
+            activityRes = createTestActivity(false);
+            statusRes = devOpsClient.startActivity(activityRes.getId());
         } catch (Throwable t) {
             fail("Impossible to start activity " + t.getMessage());
             t.printStackTrace();
             return;
         }
 
-        assertThat(startedActivityRes).isNotNull();
-        assertThat(startedActivityRes.getId()).isNotNull();
-        assertThat(startedActivityRes.getStatus()).isEqualTo(ActivityStatus.PROCESSING);
+        assertThat(statusRes).isNotNull();
+        assertThat(statusRes.getStatus()).isEqualTo(ActivityStatus.PROCESSING);
 
         resetAllClientsMockServer();
         createMocksForCreateActivityCall();
 
         ResponseEntity<ErrorRes> response = null;
         try {
-            response = devOpsClient.patchActivityStart(startedActivityRes.getId(), ErrorRes.class);
+            response = devOpsClient.patchActivityStart(activityRes.getId(), ErrorRes.class);
         } catch (Throwable t) {
             t.printStackTrace();
             fail("Impossible to start activity: " + t.getMessage());
@@ -475,7 +477,7 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
                 .isEqualTo(DevOpsApiStandardErrors.SC409_01_CONCURRENT_ACTIVITIES.description());
         assertThat(errorRes.getMessage()).isNotNull();
         assertThat(errorRes.getPath())
-                .isEqualTo(DevOpsAPIRoutes.ACTIVITIES.getPath() + "/" + startedActivityRes.getId() + "/start");
+                .isEqualTo(DevOpsAPIRoutes.ACTIVITIES.getPath() + "/" + activityRes.getId() + "/status");
         assertThat(errorRes.getStatus()).isEqualTo(HttpStatus.CONFLICT.value());
         assertThat(errorRes.getTimestamp()).isNotNull();
     }
@@ -492,9 +494,9 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
         assertThat(taskResources.length).isEqualTo(1);
         ActivityTaskResource targetTaskRes = taskResources[0];
 
-        ActivityTaskResource stoppedTaskRes = null;
+        TaskStatusResource statusRes = null;
         try {
-            stoppedTaskRes = devOpsClient.stopTask(targetTaskRes.getId());
+            statusRes = devOpsClient.stopTask(targetTaskRes.getId());
         } catch (Throwable t) {
             fail("An unexpected exception occured while stopping task: " + t.getMessage());
             t.printStackTrace();
@@ -523,7 +525,7 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
                 .isEqualTo(DevOpsApiStandardErrors.SC422_01_ACTIVITY_IS_INVALID.description());
         assertThat(errorRes.getMessage()).isNotNull();
         assertThat(errorRes.getPath())
-                .isEqualTo(DevOpsAPIRoutes.ACTIVITIES.getPath() + "/" + activityRes.getId() + "/start");
+                .isEqualTo(DevOpsAPIRoutes.ACTIVITIES.getPath() + "/" + activityRes.getId() + "/status");
         assertThat(errorRes.getStatus()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY.value());
         assertThat(errorRes.getTimestamp()).isNotNull();
     }

@@ -12,8 +12,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
+import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityResource;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatus;
+import org.opendatamesh.platform.pp.devops.api.resources.DevOpsApiStandardErrors;
+import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatusResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -134,7 +137,7 @@ public abstract class AbstractActivityController {
     );
 
     // ===============================================================================
-    // PATCH /activities/{id}/start  
+    // PATCH /activities/{id}/status?action=start  
     // ===============================================================================
     @Operation(
         summary = "Start the specified activity",
@@ -143,11 +146,17 @@ public abstract class AbstractActivityController {
     @ApiResponses(value = {
         @ApiResponse(
             responseCode = "200", 
-            description = "The activity to start", 
+            description = "The status of the activity after the action execution", 
             content = @Content(
                 mediaType = "application/json", 
-                schema = @Schema(implementation = ActivityResource.class)
+                schema = @Schema(implementation = ActivityStatusResource.class)
             )
+        ),
+        @ApiResponse(
+            responseCode = "400", 
+            description = "[Bad Request](https://www.rfc-editor.org/rfc/rfc9110.html#name-400-bad-request)"
+            + "\r\n - Error Code 40055 - Activity status action is invalid",
+            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
         ),
         @ApiResponse(
             responseCode = "404", 
@@ -184,20 +193,28 @@ public abstract class AbstractActivityController {
         )
     })
     @PatchMapping(
-        value = "/{id}/start",
+        value = "/{id}/status",
         produces = { 
             "application/vnd.odmp.v1+json", 
             "application/vnd.odmp+json", 
             "application/json"
         }
     )
-    public ActivityResource startActivityEndpoint( 
+    public ActivityStatusResource startActivityEndpoint( 
         @Parameter(description = "Idenntifier of the activity")
-        @Valid @PathVariable(value = "id") Long id) 
+        @Valid @PathVariable(value = "id") Long id,
+
+        @Parameter(description="Add `action` parameter to the request to specify which action to perform to change the activity's status. `STRAT` is the only possible action executable on activities")
+        @RequestParam(required = true, name = "action") String action)
     {
+        if("START".equalsIgnoreCase(action) == false) {
+            throw new BadRequestException(
+                DevOpsApiStandardErrors.SC400_55_ACTIVITY_STATUS_ACTION_IS_INVALID, 
+                "Action [" + action + "] cannot be performend on activity to change its status");
+        }
         return startActivity(id);
     }
-    public abstract ActivityResource startActivity(Long id);
+    public abstract ActivityStatusResource startActivity(Long id);
     
 
     // ===============================================================================
@@ -213,7 +230,7 @@ public abstract class AbstractActivityController {
             description = "The status of the requested activity", 
             content = @Content(
                 mediaType = "application/json", 
-                schema = @Schema(implementation = String.class)
+                schema = @Schema(implementation = ActivityStatusResource.class)
             )
         ),
         @ApiResponse(
@@ -234,16 +251,18 @@ public abstract class AbstractActivityController {
     @GetMapping(
         value = "/{id}/status",
         produces = { 
-            "text/plain"
+            "application/vnd.odmp.v1+json", 
+            "application/vnd.odmp+json", 
+            "application/json"
         }
     )    
-    public String readActivityStatusEndpoint( 
+    public ActivityStatusResource readActivityStatusEndpoint( 
         @Parameter(description = "Idenntifier of the activity")
         @Valid @PathVariable(value = "id") Long id) 
     {
         return readActivityStatus(id);
     }
-    public abstract String readActivityStatus(Long id);
+    public abstract ActivityStatusResource readActivityStatus(Long id);
 
     // ===============================================================================
     // GET /activities

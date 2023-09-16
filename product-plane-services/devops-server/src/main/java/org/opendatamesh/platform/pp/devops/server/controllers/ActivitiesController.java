@@ -3,6 +3,8 @@ package org.opendatamesh.platform.pp.devops.server.controllers;
 import org.opendatamesh.platform.pp.devops.api.controllers.AbstractActivityController;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityResource;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatus;
+import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatusResource;
+import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskStatus;
 import org.opendatamesh.platform.pp.devops.server.database.entities.Activity;
 import org.opendatamesh.platform.pp.devops.server.database.mappers.ActivityMapper;
 import org.opendatamesh.platform.pp.devops.server.services.ActivityService;
@@ -30,15 +32,20 @@ public class ActivitiesController extends AbstractActivityController {
     }
 
     @Override
-    public ActivityResource startActivity(Long id) {
+    public ActivityStatusResource startActivity(Long id) {
         Activity activity = activityService.startActivity(id);
-        return activityMapper.toResource(activity);
+        ActivityStatusResource statusRes = new ActivityStatusResource();
+        statusRes.setStatus(activity.getStatus());
+        return statusRes;
     }
 
     @Override
-    public String readActivityStatus(Long id) {
+    public ActivityStatusResource readActivityStatus(Long id) {
        Activity activity = activityService.readActivity(id);
-       return activity.getStatus().toString();
+       activity.getStatus().toString();
+       ActivityStatusResource statusRes = new ActivityStatusResource();
+       statusRes.setStatus(activity.getStatus());
+       return statusRes;
     }
 
     @Override

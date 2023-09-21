@@ -1,20 +1,8 @@
 package org.opendatamesh.platform.pp.devops.server.services;
 
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-
-import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
-import org.opendatamesh.platform.core.commons.servers.exceptions.ConflictException;
-import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
-import org.opendatamesh.platform.core.commons.servers.exceptions.NotFoundException;
-import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
-import org.opendatamesh.platform.core.commons.servers.exceptions.UnprocessableEntityException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.opendatamesh.platform.core.commons.servers.exceptions.*;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.internals.LifecycleInfoDPDS;
@@ -28,15 +16,16 @@ import org.opendatamesh.platform.pp.devops.server.database.entities.Activity;
 import org.opendatamesh.platform.pp.devops.server.database.entities.Task;
 import org.opendatamesh.platform.pp.devops.server.database.mappers.ActivityMapper;
 import org.opendatamesh.platform.pp.devops.server.database.repositories.ActivityRepository;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ActivityService {
@@ -45,16 +34,13 @@ public class ActivityService {
     ActivityRepository activityRepository;
 
     @Autowired
-    ActivityMapper activityMapper;
-
-    @Autowired
     TaskService taskService;
 
     @Autowired
-    DevOpsConfigurations configurations;
+    DevOpsClients clients;
 
     @Autowired
-    DevOpsClients clients;
+    LifecycleService lifecycleService;
 
     private static final Logger logger = LoggerFactory.getLogger(ActivityService.class);
 
@@ -231,8 +217,10 @@ public class ActivityService {
             } catch (JsonProcessingException e) {
 				logger.warn("Impossible to serialize results aggregate", e);
 			}
-            
+
             activity.setStatus(ActivityStatus.PROCESSED);
+            lifecycleService.createLifecycle(activity);
+
         } else {
             for(Task task: tasks) {
                 if(task.getStatus().equals(ActivityTaskStatus.FAILED)) {

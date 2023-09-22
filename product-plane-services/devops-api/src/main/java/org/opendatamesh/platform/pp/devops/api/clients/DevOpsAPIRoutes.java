@@ -5,7 +5,8 @@ import org.opendatamesh.platform.core.commons.clients.ODMApiRoutes;
 public enum DevOpsAPIRoutes implements ODMApiRoutes {
 
     ACTIVITIES("/activities"),
-    TASKS("/tasks");
+    TASKS("/tasks"),
+    LIFECYCLES("/lifecycles");
 
     private final String path;
 

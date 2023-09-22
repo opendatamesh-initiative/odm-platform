@@ -9,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.Period;
-import java.time.temporal.TemporalAmount;
 import java.util.List;
 
 @Service
@@ -20,6 +18,8 @@ public class LifecycleService {
     LifecycleRepository lifecycleRepository;
 
     public void createLifecycle(Activity activity) {
+        Lifecycle previousLifecycle = null;
+        previousLifecycle = getDataProductVersionCurrentLifecycle(activity.getDataProductId(), activity.getDataProductVersion());
         Lifecycle lifecycle = new Lifecycle();
         lifecycle.setDataProductId(activity.getDataProductId());
         lifecycle.setDataProductVersion(activity.getDataProductVersion());
@@ -33,16 +33,8 @@ public class LifecycleService {
                     t
             );
         }
-        try {
-            Lifecycle previousLifecycle = null;
-            previousLifecycle = getDataProductVersionCurrentLifecycle(activity.getDataProductId(), activity.getDataProductVersion());
+        if(previousLifecycle != null) {
             updateLifecycle(previousLifecycle, lifecycle.getStartedAt());
-        } catch (Throwable t) {
-            throw new InternalServerException(
-                    ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while updating lifecycle",
-                    t
-            );
         }
     }
 
@@ -61,7 +53,10 @@ public class LifecycleService {
 
     public List<Lifecycle> getLifecycles() {
         try {
-            return lifecycleRepository.findAll();
+            //return lifecycleRepository.findAll();
+            List<Lifecycle> lifecycles = lifecycleRepository.findAll();
+            System.out.println(lifecycles.toString());
+            return lifecycles;
         } catch (Throwable t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
@@ -90,7 +85,7 @@ public class LifecycleService {
 
     public List<Lifecycle> getDataProductVersionLifecycles(String dataProductId, String versionNumber) {
         try {
-            return lifecycleRepository.findByDataProductIdAndVersionNumber(dataProductId, versionNumber);
+            return lifecycleRepository.findByDataProductIdAndDataProductVersion(dataProductId, versionNumber);
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
@@ -102,7 +97,7 @@ public class LifecycleService {
 
     public Lifecycle getDataProductVersionCurrentLifecycle(String dataProductId, String versionNumber) {
         try {
-            return lifecycleRepository.findByDataProductIdAndVersionNumberAndFinishedAtIsNull(dataProductId, versionNumber);
+            return lifecycleRepository.findByDataProductIdAndDataProductVersionAndFinishedAtIsNull(dataProductId, versionNumber);
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,

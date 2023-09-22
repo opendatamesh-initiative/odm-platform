@@ -5,13 +5,11 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Where;
 import org.opendatamesh.platform.core.dpds.model.core.EntityTypeDPDS;
+import org.opendatamesh.platform.pp.registry.server.config.ApplicationStartupConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
+import org.springframework.beans.factory.annotation.Value;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.*;
-import javax.sql.DataSource;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,12 +17,6 @@ import java.util.stream.Collectors;
 @Data
 @Embeddable
 public class InterfaceComponents {
-
-    @Transient
-    private static Environment environment;
-
-    @PersistenceContext
-    private transient EntityManager entityManager;
 
     @OneToMany(fetch = FetchType.EAGER)
     @JoinColumns( {
@@ -79,12 +71,15 @@ public class InterfaceComponents {
     private List<Port> controlPorts = new ArrayList<>();
 
     @PostLoad
-    private void portAssigner() throws SQLException {
-        this.inputPorts = ports.stream().filter(e -> e.getEntityType().equals("inputport")).collect(Collectors.toList());
-        this.outputPorts = ports.stream().filter(e -> e.getEntityType().equals("outputport")).collect(Collectors.toList());
-        this.discoveryPorts = ports.stream().filter(e -> e.getEntityType().equals("discoveryport")).collect(Collectors.toList());
-        this.observabilityPorts = ports.stream().filter(e -> e.getEntityType().equals("observabilityport")).collect(Collectors.toList());
-        this.controlPorts = ports.stream().filter(e -> e.getEntityType().equals("controlport")).collect(Collectors.toList());
+    private void portAssigner() {
+        // JDBC URL always contains jdbc:dbfamily:// where dbfamily could be mysql, postgres, h2, ...
+        if(ApplicationStartupConfiguration.datasourceUrl.contains("mysql")) {
+            this.inputPorts = ports.stream().filter(e -> e.getEntityType().equals("inputport")).collect(Collectors.toList());
+            this.outputPorts = ports.stream().filter(e -> e.getEntityType().equals("outputport")).collect(Collectors.toList());
+            this.discoveryPorts = ports.stream().filter(e -> e.getEntityType().equals("discoveryport")).collect(Collectors.toList());
+            this.observabilityPorts = ports.stream().filter(e -> e.getEntityType().equals("observabilityport")).collect(Collectors.toList());
+            this.controlPorts = ports.stream().filter(e -> e.getEntityType().equals("controlport")).collect(Collectors.toList());
+        }
     }
 
     public List<Port> getPortListByEntityType(EntityTypeDPDS entityType){
@@ -103,4 +98,5 @@ public class InterfaceComponents {
                 return null;
         }
     }
+
 }

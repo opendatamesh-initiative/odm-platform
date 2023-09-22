@@ -224,10 +224,9 @@ public class DataProductVersionIT extends ODMRegistryIT {
 
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    @EnabledIf(expression = "#{environment.acceptsProfiles('testpostgresql', 'dev')}", loadContext = true)
-    public void testDataProductVersionsReadOne() throws IOException {
+    public void testDataProductVersionsReadOne() {
 
-         DataProductResource createdDataProductRes = null;
+        DataProductResource createdDataProductRes = null;
         createdDataProductRes = resourceBuilder.buildTestDataProduct();
         createdDataProductRes = createDataProduct(createdDataProductRes);
 

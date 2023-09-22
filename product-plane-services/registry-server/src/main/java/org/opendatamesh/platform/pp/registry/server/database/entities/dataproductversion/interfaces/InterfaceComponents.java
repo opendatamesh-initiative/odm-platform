@@ -5,20 +5,25 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Where;
 import org.opendatamesh.platform.core.dpds.model.core.EntityTypeDPDS;
+import org.opendatamesh.platform.pp.registry.server.config.ApplicationStartupConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Embeddable;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
-import javax.persistence.OneToMany;
+import java.util.stream.Collectors;
 
 @Data
 @Embeddable
 public class InterfaceComponents {
+
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumns( {
+            @JoinColumn(name = "DATA_PRODUCT_ID"),
+            @JoinColumn(name = "DATA_PRODUCT_VERSION")
+    })
+    private List<Port> ports = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SUBSELECT)
@@ -65,7 +70,18 @@ public class InterfaceComponents {
     @Where(clause = "\"ENTITY_TYPE\" = 'controlport'")
     private List<Port> controlPorts = new ArrayList<>();
 
-   
+    @PostLoad
+    private void portAssigner() {
+        // JDBC URL always contains jdbc:dbfamily:// where dbfamily could be mysql, postgres, h2, ...
+        if(ApplicationStartupConfiguration.datasourceUrl.contains("mysql")) {
+            this.inputPorts = ports.stream().filter(e -> e.getEntityType().equals("inputport")).collect(Collectors.toList());
+            this.outputPorts = ports.stream().filter(e -> e.getEntityType().equals("outputport")).collect(Collectors.toList());
+            this.discoveryPorts = ports.stream().filter(e -> e.getEntityType().equals("discoveryport")).collect(Collectors.toList());
+            this.observabilityPorts = ports.stream().filter(e -> e.getEntityType().equals("observabilityport")).collect(Collectors.toList());
+            this.controlPorts = ports.stream().filter(e -> e.getEntityType().equals("controlport")).collect(Collectors.toList());
+        }
+    }
+
     public List<Port> getPortListByEntityType(EntityTypeDPDS entityType){
         switch (entityType){
             case OUTPUTPORT:
@@ -82,4 +98,5 @@ public class InterfaceComponents {
                 return null;
         }
     }
+
 }

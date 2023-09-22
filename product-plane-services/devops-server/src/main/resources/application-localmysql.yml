@@ -30,7 +30,7 @@ spring:
     database-platform: org.hibernate.dialect.MySQL8Dialect
   # DB
   datasource:
-    url: jdbc:mysql://localhost:3306/odmpdb?useSSL=false
+    url: jdbc:mysql://localhost:3306/ODMDEVOPS?useSSL=false
     driverClassName: com.mysql.cj.jdbc.Driver
     #username: db
     #password: admin

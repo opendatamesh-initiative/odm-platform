@@ -6,10 +6,7 @@ import java.util.Map;
 
 import org.opendatamesh.platform.core.commons.clients.ODMClient;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
-import org.opendatamesh.platform.pp.devops.api.resources.ActivityResource;
-import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatus;
-import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskResource;
-import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskStatus;
+import org.opendatamesh.platform.pp.devops.api.resources.*;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 
@@ -53,25 +50,25 @@ public class DevOpsClient extends ODMClient {
     public ActivityResource[] searchActivities(
             String dataProductId,
             String dataProductVersion,
-            String type,
+            String stage,
             ActivityStatus status) 
     {
-        return getActivities(dataProductId, dataProductVersion, type, status).getBody();
+        return getActivities(dataProductId, dataProductVersion, stage, status).getBody();
     }
 
     public ResponseEntity<ActivityResource[]> getActivities(
             String dataProductId,
             String dataProductVersion,
-            String type,
+            String stage,
             ActivityStatus status)
     {
-        return getActivities(dataProductId, dataProductVersion, type, status, ActivityResource[].class);
+        return getActivities(dataProductId, dataProductVersion, stage, status, ActivityResource[].class);
     }
 
     public <T> ResponseEntity<T> getActivities(
         String dataProductId,
         String dataProductVersion,
-        String type,
+        String stage,
         ActivityStatus status,
         Class<T> responseType)
     {
@@ -80,8 +77,8 @@ public class DevOpsClient extends ODMClient {
             queryParams.put("dataProductId", dataProductId);
         if (dataProductVersion != null)
             queryParams.put("dataProductVersion", dataProductVersion);
-        if (type != null)
-            queryParams.put("type", type);
+        if (stage != null)
+            queryParams.put("type", stage);
         if (status != null)
             queryParams.put("status", status);
 
@@ -120,28 +117,28 @@ public class DevOpsClient extends ODMClient {
                 activityId.toString());
     }
 
-    public ActivityResource startActivity(Long activityId) throws IOException {
+    public ActivityStatusResource startActivity(Long activityId) throws IOException {
         return patchActivityStart(activityId).getBody();
     }
 
-    public ResponseEntity<ActivityResource> patchActivityStart(Long activityId) throws IOException {
-        return patchActivityStart(activityId, ActivityResource.class);
+    public ResponseEntity<ActivityStatusResource> patchActivityStart(Long activityId) throws IOException {
+        return patchActivityStart(activityId, ActivityStatusResource.class);
     }
 
     public <T> ResponseEntity<T> patchActivityStart(Long activityId, Class<T> responseType) throws IOException {
         return patchForEntity(
-                apiUrl(DevOpsAPIRoutes.ACTIVITIES, "/{id}/start"),
+                apiUrl(DevOpsAPIRoutes.ACTIVITIES, "/{id}/status?action=START"),
                 HttpEntity.EMPTY,
                 responseType,
                 activityId);        
     }
 
-    public String readActivityStatus(Long activityId) {
+    public ActivityStatusResource readActivityStatus(Long activityId) {
         return getActivityStatus(activityId).getBody();
     }
 
-    public ResponseEntity<String> getActivityStatus(Long activityId) {
-        return getActivityStatus(activityId, String.class);
+    public ResponseEntity<ActivityStatusResource> getActivityStatus(Long activityId) {
+        return getActivityStatus(activityId, ActivityStatusResource.class);
     }
 
     public <T> ResponseEntity<T> getActivityStatus(Long activityId, Class<T> responseType) {
@@ -218,28 +215,28 @@ public class DevOpsClient extends ODMClient {
                 activityId.toString());
     }
 
-    public ActivityTaskResource stopTask(Long taskId) throws IOException {
+    public TaskStatusResource stopTask(Long taskId) throws IOException {
         return patchTaskStop(taskId).getBody();
     }
 
-    public ResponseEntity<ActivityTaskResource> patchTaskStop(Long taskId) throws IOException {
-        return patchTaskStop(taskId, ActivityTaskResource.class);
+    public ResponseEntity<TaskStatusResource> patchTaskStop(Long taskId) throws IOException {
+        return patchTaskStop(taskId, TaskStatusResource.class);
     }
 
     public <T> ResponseEntity<T> patchTaskStop(Long taskId, Class<T> responseType) throws IOException {
         return patchForEntity(
-                apiUrl(DevOpsAPIRoutes.TASKS, "/{id}/stop"),
+                apiUrl(DevOpsAPIRoutes.TASKS, "/{id}/status?action=STOP"),
                 HttpEntity.EMPTY,
                 responseType,
                 taskId);
     }
 
-    public String readTaskStatus(Long taskId) {
+    public TaskStatusResource readTaskStatus(Long taskId) {
         return getTaskStatus(taskId).getBody();
     }
 
-    public ResponseEntity<String> getTaskStatus(Long taskId) {
-        return getTaskStatus(taskId, String.class);
+    public ResponseEntity<TaskStatusResource> getTaskStatus(Long taskId) {
+        return getTaskStatus(taskId, TaskStatusResource.class);
     }
 
     public <T> ResponseEntity<T> getTaskStatus(Long taskId, Class<T> responseType) {
@@ -247,6 +244,43 @@ public class DevOpsClient extends ODMClient {
                 apiUrl(DevOpsAPIRoutes.TASKS, "/{id}/status"),
                 responseType,
                 taskId);
+    }
+
+    // ----------------------------------------
+    // Lifecycles
+    // ----------------------------------------
+
+    public <T> ResponseEntity<T> readLifecycles(Class<T> responseType) {
+        return rest.getForEntity(
+                apiUrl(DevOpsAPIRoutes.LIFECYCLES),
+                responseType
+        );
+    }
+
+    public <T> ResponseEntity<T> readDataProductVersionLifecycles(String dataProductId, Class<T> responseType) {
+        return rest.getForEntity(
+                apiUrl(DevOpsAPIRoutes.LIFECYCLES, "/{dataProductId}"),
+                responseType,
+                dataProductId
+        );
+    }
+
+    public <T> ResponseEntity<T> readDataProductVersionLifecycles(String dataProductId, String versionNumber, Class<T> responseType) {
+        return rest.getForEntity(
+                apiUrl(DevOpsAPIRoutes.LIFECYCLES, "/{dataProductId}/{versionNumber}"),
+                responseType,
+                dataProductId,
+                versionNumber
+        );
+    }
+
+    public <T> ResponseEntity<T> readDataProductVersionCurrentLifecycle(String dataProductId, String versionNumber, Class<T> responseType) {
+        return rest.getForEntity(
+                apiUrl(DevOpsAPIRoutes.LIFECYCLES, "/{dataProductId}/{versionNumber}/current"),
+                responseType,
+                dataProductId,
+                versionNumber
+        );
     }
 
 }

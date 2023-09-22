@@ -63,7 +63,7 @@ public class ODMDevOpsResourceBuilder {
         activityRes.setId(id);
         activityRes.setDataProductId(dataProductId);
         activityRes.setDataProductVersion(dataProductVersion);
-        activityRes.setType(type);
+        activityRes.setStage(type);
 
         return activityRes;
     }

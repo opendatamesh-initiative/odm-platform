@@ -5,8 +5,11 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
+import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskResource;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskStatus;
+import org.opendatamesh.platform.pp.devops.api.resources.DevOpsApiStandardErrors;
+import org.opendatamesh.platform.pp.devops.api.resources.TaskStatusResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -53,7 +56,7 @@ public abstract class AbstractTaskController {
      // NOTE Task cannot be started directly
 
     // ===============================================================================
-    // PATCH /tasks/{id}/stop  
+    // PATCH /tasks/{id}/status?action=stop 
     // ===============================================================================
    
     @Operation(
@@ -63,11 +66,17 @@ public abstract class AbstractTaskController {
     @ApiResponses(value = {
         @ApiResponse(
             responseCode = "200", 
-            description = "The task to stop", 
+            description = "The status of the task after the action execution", 
             content = @Content(
                 mediaType = "application/json", 
-                schema = @Schema(implementation = ActivityTaskResource.class)
+                schema = @Schema(implementation = TaskStatusResource.class)
             )
+        ),
+        @ApiResponse(
+            responseCode = "400", 
+            description = "[Bad Request](https://www.rfc-editor.org/rfc/rfc9110.html#name-400-bad-request)"
+            + "\r\n - Error Code 40065 - Task status action is invalid",
+            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
         ),
         @ApiResponse(
             responseCode = "404", 
@@ -98,20 +107,28 @@ public abstract class AbstractTaskController {
         )
     })
     @PatchMapping(
-        value = "/{id}/stop",
+        value = "/{id}/status",
         produces = { 
             "application/vnd.odmp.v1+json", 
             "application/vnd.odmp+json", 
             "application/json"
         }
     )
-    public ActivityTaskResource stopTaskEndpoint( 
+    public TaskStatusResource stopTaskEndpoint( 
         @Parameter(description = "Idenntifier of the task")
-        @Valid @PathVariable(value = "id") Long id) 
+        @Valid @PathVariable(value = "id") Long id,
+
+        @Parameter(description="Add `action` parameter to the request to specify which action to perform to change the task's status. `STOP` is the only possible action executable on tasks")
+        @RequestParam(required = true, name = "action") String action) 
     {
+        if("STOP".equalsIgnoreCase(action) == false) {
+            throw new BadRequestException(
+                DevOpsApiStandardErrors.SC400_65_TASK_STATUS_ACTION_IS_INVALID, 
+                "Action [" + action + "] cannot be performend on task to change its status");
+        }
         return stopTask(id);
     }
-    public abstract ActivityTaskResource stopTask(Long id);
+    public abstract TaskStatusResource stopTask(Long id);
     
     // ===============================================================================
     // GET /tasks/{id}/status  
@@ -126,7 +143,7 @@ public abstract class AbstractTaskController {
             description = "The status of the requested task", 
             content = @Content(
                 mediaType = "application/json", 
-                schema = @Schema(implementation = String.class)
+                schema = @Schema(implementation = TaskStatusResource.class)
             )
         ),
         @ApiResponse(
@@ -147,18 +164,20 @@ public abstract class AbstractTaskController {
     @GetMapping(
         value = "/{id}/status",
         produces = { 
-            "text/plain"
+            "application/vnd.odmp.v1+json", 
+            "application/vnd.odmp+json", 
+            "application/json"
         }
     )
     @ResponseStatus(HttpStatus.OK) 
     
-    public String readTaskStatusEndpoint( 
+    public TaskStatusResource readTaskStatusEndpoint( 
         @Parameter(description = "Idenntifier of the task")
         @Valid @PathVariable(value = "id") Long id) 
     {
         return readTaskStatus(id);
     }
-    public abstract String readTaskStatus(Long id);
+    public abstract TaskStatusResource readTaskStatus(Long id);
 
 
     // ===============================================================================

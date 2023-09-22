@@ -4,13 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.Test;
-import org.opendatamesh.platform.pp.devops.api.resources.ActivityResource;
-import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatus;
-import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskResource;
-import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskStatus;
+import org.opendatamesh.platform.pp.devops.api.resources.*;
+import org.opendatamesh.platform.pp.devops.server.database.entities.Lifecycle;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.annotation.DirtiesContext.MethodMode;
@@ -34,7 +34,7 @@ public class ActivityIT extends ODMDevOpsIT {
         assertThat(activity1.getId()).isNotNull();
         assertThat(activity1.getDataProductId()).isEqualTo(activity.getDataProductId());
         assertThat(activity1.getDataProductVersion()).isEqualTo(activity.getDataProductVersion());
-        assertThat(activity1.getType()).isEqualTo(activity.getType());
+        assertThat(activity1.getStage()).isEqualTo(activity.getStage());
         assertThat(activity1.getStatus()).isEqualTo(ActivityStatus.PLANNED);
         assertThat(activity1.getCreatedAt()).isNotNull();
         assertThat(activity1.getStartedAt()).isNull();
@@ -53,7 +53,7 @@ public class ActivityIT extends ODMDevOpsIT {
         assertThat(activity1.getId()).isNotNull();
         assertThat(activity1.getDataProductId()).isEqualTo(activity.getDataProductId());
         assertThat(activity1.getDataProductVersion()).isEqualTo(activity.getDataProductVersion());
-        assertThat(activity1.getType()).isEqualTo(activity.getType());
+        assertThat(activity1.getStage()).isEqualTo(activity.getStage());
         assertThat(activity1.getStatus()).isEqualTo(ActivityStatus.PROCESSING);
         assertThat(activity1.getCreatedAt()).isNotNull();
         assertThat(activity1.getStartedAt()).isNotNull();
@@ -69,7 +69,7 @@ public class ActivityIT extends ODMDevOpsIT {
         createMocksForCreateActivityCall();
 
         ActivityResource activity = buildTestActivity();
-        activity.setType("test");
+        activity.setStage("test");
 
         try {
             activity1 = devOpsClient.createActivity(activity, false);
@@ -91,7 +91,7 @@ public class ActivityIT extends ODMDevOpsIT {
         this.unbindMockServerFromExecutorClient();
         this.bindMockServerToExecutorClient();
         createMocksForCreateActivityCall();
-        activity.setType("prod");
+        activity.setStage("prod");
         try {
             activity2 = devOpsClient.createActivity(activity, false);
         } catch (Throwable t) {
@@ -129,19 +129,32 @@ public class ActivityIT extends ODMDevOpsIT {
             return;
         }
 
-        ActivityResource startedActivityRes = null;
+        ActivityStatusResource statusRes = null;
         try {
-            startedActivityRes = devOpsClient.startActivity(activityRes.getId());
+            statusRes = devOpsClient.startActivity(activityRes.getId());
         } catch (Throwable t) {
             fail("An unexpected exception occured while starting activity: " + t.getMessage());
             t.printStackTrace();
             return;
         }
 
+        assertThat(statusRes).isNotNull();
+        assertThat(statusRes.getStatus()).isEqualTo(ActivityStatus.PROCESSING);
+
+
+        ActivityResource startedActivityRes = null;
+        try {
+            startedActivityRes = devOpsClient.readActivity(activityRes.getId());
+        } catch (Throwable t) {
+            t.printStackTrace();
+            fail("Impossible to post activity: " + t.getMessage());
+            return;
+        }
+
         assertThat(startedActivityRes.getId()).isNotNull();
         assertThat(startedActivityRes.getDataProductId()).isEqualTo(activity.getDataProductId());
         assertThat(startedActivityRes.getDataProductVersion()).isEqualTo(activity.getDataProductVersion());
-        assertThat(startedActivityRes.getType()).isEqualTo(activity.getType());
+        assertThat(startedActivityRes.getStage()).isEqualTo(activity.getStage());
         assertThat(startedActivityRes.getStatus()).isEqualTo(ActivityStatus.PROCESSING);
         assertThat(startedActivityRes.getCreatedAt()).isNotNull();
         assertThat(startedActivityRes.getStartedAt()).isNotNull();
@@ -154,7 +167,7 @@ public class ActivityIT extends ODMDevOpsIT {
         createMocksForCreateActivityCall();
 
         ActivityResource activityRes = buildTestActivity();
-        activityRes.setType("stage-notemplate");
+        activityRes.setStage("stage-notemplate");
 
         ActivityResource createdActivityRes = null;
         try {
@@ -165,12 +178,24 @@ public class ActivityIT extends ODMDevOpsIT {
             return;
         }
 
-        ActivityResource startedActivityRes = null;
+        ActivityStatusResource statusRes = null;
         try {
-            startedActivityRes = devOpsClient.startActivity(createdActivityRes.getId());
+            statusRes = devOpsClient.startActivity(createdActivityRes.getId());
         } catch (Throwable t) {
             fail("An unexpected exception occured while starting activity: " + t.getMessage());
             t.printStackTrace();
+            return;
+        }
+
+        assertThat(statusRes).isNotNull();
+        assertThat(statusRes.getStatus()).isEqualTo(ActivityStatus.PROCESSING);
+
+        ActivityResource startedActivityRes = null;
+        try {
+            startedActivityRes = devOpsClient.readActivity(createdActivityRes.getId());
+        } catch (Throwable t) {
+            t.printStackTrace();
+            fail("Impossible to post activity: " + t.getMessage());
             return;
         }
 
@@ -178,7 +203,7 @@ public class ActivityIT extends ODMDevOpsIT {
         assertThat(startedActivityRes.getId()).isNotNull();
         assertThat(startedActivityRes.getDataProductId()).isEqualTo(activityRes.getDataProductId());
         assertThat(startedActivityRes.getDataProductVersion()).isEqualTo(activityRes.getDataProductVersion());
-        assertThat(startedActivityRes.getType()).isEqualTo("stage-notemplate");
+        assertThat(startedActivityRes.getStage()).isEqualTo("stage-notemplate");
         assertThat(startedActivityRes.getStatus()).isEqualTo(ActivityStatus.PROCESSING);
         assertThat(startedActivityRes.getCreatedAt()).isNotNull();
         assertThat(startedActivityRes.getStartedAt()).isNotNull();
@@ -191,7 +216,7 @@ public class ActivityIT extends ODMDevOpsIT {
         createMocksForCreateActivityCall();
 
         ActivityResource activityRes = buildTestActivity();
-        activityRes.setType("stage-noconf");
+        activityRes.setStage("stage-noconf");
 
         ActivityResource createdActivityRes = null;
         try {
@@ -202,20 +227,33 @@ public class ActivityIT extends ODMDevOpsIT {
             return;
         }
 
-        ActivityResource startedActivityRes = null;
+        ActivityStatusResource statusRes = null;
         try {
-            startedActivityRes = devOpsClient.startActivity(createdActivityRes.getId());
+            statusRes = devOpsClient.startActivity(createdActivityRes.getId());
         } catch (Throwable t) {
             fail("An unexpected exception occured while starting activity: " + t.getMessage());
             t.printStackTrace();
             return;
         }
 
+        assertThat(statusRes).isNotNull();
+        assertThat(statusRes.getStatus()).isEqualTo(ActivityStatus.PROCESSING);
+
+        ActivityResource startedActivityRes = null;
+        try {
+            startedActivityRes = devOpsClient.readActivity(createdActivityRes.getId());
+        } catch (Throwable t) {
+            t.printStackTrace();
+            fail("Impossible to post activity: " + t.getMessage());
+            return;
+        }
+
+
         assertThat(startedActivityRes.getId()).isNotNull();
         assertThat(startedActivityRes.getId()).isNotNull();
         assertThat(startedActivityRes.getDataProductId()).isEqualTo(activityRes.getDataProductId());
         assertThat(startedActivityRes.getDataProductVersion()).isEqualTo(activityRes.getDataProductVersion());
-        assertThat(startedActivityRes.getType()).isEqualTo("stage-noconf");
+        assertThat(startedActivityRes.getStage()).isEqualTo("stage-noconf");
         assertThat(startedActivityRes.getStatus()).isEqualTo(ActivityStatus.PROCESSING);
         assertThat(startedActivityRes.getCreatedAt()).isNotNull();
         assertThat(startedActivityRes.getStartedAt()).isNotNull();
@@ -225,10 +263,11 @@ public class ActivityIT extends ODMDevOpsIT {
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testStartActivityWithMissingExecutor() {
+
         createMocksForCreateActivityCall();
 
         ActivityResource activityRes = buildTestActivity();
-        activityRes.setType("stage-noservice");
+        activityRes.setStage("stage-noservice");
 
         ActivityResource createdActivityRes = null;
         try {
@@ -239,12 +278,24 @@ public class ActivityIT extends ODMDevOpsIT {
             return;
         }
 
-        ActivityResource startedActivityRes = null;
+        ActivityStatusResource statusRes = null;
         try {
-            startedActivityRes = devOpsClient.startActivity(createdActivityRes.getId());
+            statusRes = devOpsClient.startActivity(createdActivityRes.getId());
         } catch (Throwable t) {
             fail("An unexpected exception occured while starting activity: " + t.getMessage());
             t.printStackTrace();
+            return;
+        }
+
+        assertThat(statusRes).isNotNull();
+        assertThat(statusRes.getStatus()).isEqualTo(ActivityStatus.PROCESSED);
+
+        ActivityResource startedActivityRes = null;
+        try {
+            startedActivityRes = devOpsClient.readActivity(createdActivityRes.getId());
+        } catch (Throwable t) {
+            t.printStackTrace();
+            fail("Impossible to post activity: " + t.getMessage());
             return;
         }
 
@@ -252,11 +303,27 @@ public class ActivityIT extends ODMDevOpsIT {
         assertThat(startedActivityRes.getId()).isNotNull();
         assertThat(startedActivityRes.getDataProductId()).isEqualTo(activityRes.getDataProductId());
         assertThat(startedActivityRes.getDataProductVersion()).isEqualTo(activityRes.getDataProductVersion());
-        assertThat(startedActivityRes.getType()).isEqualTo("stage-noservice");
+        assertThat(startedActivityRes.getStage()).isEqualTo("stage-noservice");
         assertThat(startedActivityRes.getStatus()).isEqualTo(ActivityStatus.PROCESSED);
         assertThat(startedActivityRes.getCreatedAt()).isNotNull();
         assertThat(startedActivityRes.getStartedAt()).isNotNull();
         assertThat(startedActivityRes.getFinishedAt()).isNotNull();
+
+        ResponseEntity<LifecycleResource> lifecycleGetResponse = devOpsClient.readDataProductVersionCurrentLifecycle(
+                startedActivityRes.getDataProductId(),
+                startedActivityRes.getDataProductVersion(),
+                LifecycleResource.class
+        );
+
+        LifecycleResource lifecycleResource = lifecycleGetResponse.getBody();
+
+        assertThat(lifecycleResource.getId()).isNotNull();
+        assertThat(lifecycleResource.getDataProductId()).isEqualTo(activityRes.getDataProductId());
+        assertThat(lifecycleResource.getDataProductVersion()).isEqualTo(activityRes.getDataProductVersion());
+        assertThat(lifecycleResource.getStage()).isEqualTo("stage-noservice");
+        assertThat(lifecycleResource.getStartedAt()).isNotNull();
+        assertThat(lifecycleResource.getFinishedAt()).isNull();
+
     }
 
     @Test
@@ -265,7 +332,7 @@ public class ActivityIT extends ODMDevOpsIT {
         createMocksForCreateActivityCall();
 
         ActivityResource activityRes = buildTestActivity();
-        activityRes.setType("stage-empty");
+        activityRes.setStage("stage-empty");
 
         ActivityResource createdActivityRes = null;
         try {
@@ -276,12 +343,24 @@ public class ActivityIT extends ODMDevOpsIT {
             return;
         }
 
-        ActivityResource startedActivityRes = null;
+        ActivityStatusResource statusRes = null;
         try {
-            startedActivityRes = devOpsClient.startActivity(createdActivityRes.getId());
+            statusRes = devOpsClient.startActivity(createdActivityRes.getId());
         } catch (Throwable t) {
             fail("An unexpected exception occured while starting activity: " + t.getMessage());
             t.printStackTrace();
+            return;
+        }
+
+        assertThat(statusRes).isNotNull();
+        assertThat(statusRes.getStatus()).isEqualTo(ActivityStatus.PROCESSED);
+
+        ActivityResource startedActivityRes = null;
+        try {
+            startedActivityRes = devOpsClient.readActivity(createdActivityRes.getId());
+        } catch (Throwable t) {
+            t.printStackTrace();
+            fail("Impossible to post activity: " + t.getMessage());
             return;
         }
 
@@ -289,11 +368,27 @@ public class ActivityIT extends ODMDevOpsIT {
         assertThat(startedActivityRes.getId()).isNotNull();
         assertThat(startedActivityRes.getDataProductId()).isEqualTo(activityRes.getDataProductId());
         assertThat(startedActivityRes.getDataProductVersion()).isEqualTo(activityRes.getDataProductVersion());
-        assertThat(startedActivityRes.getType()).isEqualTo("stage-empty");
+        assertThat(startedActivityRes.getStage()).isEqualTo("stage-empty");
         assertThat(startedActivityRes.getStatus()).isEqualTo(ActivityStatus.PROCESSED);
         assertThat(startedActivityRes.getCreatedAt()).isNotNull();
         assertThat(startedActivityRes.getStartedAt()).isNotNull();
         assertThat(startedActivityRes.getFinishedAt()).isNotNull();
+
+        ResponseEntity<LifecycleResource> lifecycleGetResponse = devOpsClient.readDataProductVersionCurrentLifecycle(
+                startedActivityRes.getDataProductId(),
+                startedActivityRes.getDataProductVersion(),
+                LifecycleResource.class
+        );
+
+        LifecycleResource lifecycleResource = lifecycleGetResponse.getBody();
+
+        assertThat(lifecycleResource.getId()).isNotNull();
+        assertThat(lifecycleResource.getDataProductId()).isEqualTo(activityRes.getDataProductId());
+        assertThat(lifecycleResource.getDataProductVersion()).isEqualTo(activityRes.getDataProductVersion());
+        assertThat(lifecycleResource.getStage()).isEqualTo("stage-empty");
+        assertThat(lifecycleResource.getStartedAt()).isNotNull();
+        assertThat(lifecycleResource.getFinishedAt()).isNull();
+
     }
 
     @Test
@@ -303,7 +398,7 @@ public class ActivityIT extends ODMDevOpsIT {
         createMocksForCreateActivityCall();
 
         ActivityResource activityRes = buildTestActivity();
-        activityRes.setType("stage-wrong-executor");
+        activityRes.setStage("stage-wrong-executor");
 
         ActivityResource createdActivityRes = null;
         try {
@@ -314,23 +409,47 @@ public class ActivityIT extends ODMDevOpsIT {
             return;
         }
 
-        ActivityResource startedActivityRes = null;
+       ActivityStatusResource statusRes = null;
         try {
-            startedActivityRes = devOpsClient.startActivity(createdActivityRes.getId());
+            statusRes = devOpsClient.startActivity(createdActivityRes.getId());
         } catch (Throwable t) {
             fail("An unexpected exception occured while starting activity: " + t.getMessage());
             t.printStackTrace();
             return;
         }
 
+        assertThat(statusRes).isNotNull();
+        assertThat(statusRes.getStatus()).isEqualTo(ActivityStatus.FAILED);
+
+        ActivityResource startedActivityRes = null;
+        try {
+            startedActivityRes = devOpsClient.readActivity(createdActivityRes.getId());
+        } catch (Throwable t) {
+            t.printStackTrace();
+            fail("Impossible to post activity: " + t.getMessage());
+            return;
+        }
+
+
         assertThat(startedActivityRes.getId()).isNotNull();
         assertThat(startedActivityRes.getDataProductId()).isEqualTo(activityRes.getDataProductId());
         assertThat(startedActivityRes.getDataProductVersion()).isEqualTo(activityRes.getDataProductVersion());
-        assertThat(startedActivityRes.getType()).isEqualTo("stage-wrong-executor");
+        assertThat(startedActivityRes.getStage()).isEqualTo("stage-wrong-executor");
         assertThat(startedActivityRes.getStatus()).isEqualTo(ActivityStatus.FAILED);
         assertThat(startedActivityRes.getCreatedAt()).isNotNull();
         assertThat(startedActivityRes.getStartedAt()).isNotNull();
         assertThat(startedActivityRes.getFinishedAt()).isNotNull();
+
+        ResponseEntity<LifecycleResource> lifecycleGetResponse = devOpsClient.readDataProductVersionCurrentLifecycle(
+                startedActivityRes.getDataProductId(),
+                startedActivityRes.getDataProductVersion(),
+                LifecycleResource.class
+        );
+
+        LifecycleResource lifecycleResource = lifecycleGetResponse.getBody();
+
+        assertThat(lifecycleResource).isNull();
+
     }
 
     // Note: An activity can be started but not directly stopped.
@@ -348,9 +467,9 @@ public class ActivityIT extends ODMDevOpsIT {
         assertThat(taskResources.length).isEqualTo(1);
         ActivityTaskResource targetTaskRes = taskResources[0];
 
-        ActivityTaskResource stoppedTaskRes = null;
+        TaskStatusResource taskStatusRes = null;
         try {
-            stoppedTaskRes = devOpsClient.stopTask(targetTaskRes.getId());
+            taskStatusRes = devOpsClient.stopTask(targetTaskRes.getId());
         } catch (Throwable t) {
             fail("An unexpected exception occured while stopping task: " + t.getMessage());
             t.printStackTrace();
@@ -361,12 +480,28 @@ public class ActivityIT extends ODMDevOpsIT {
         assertThat(stoppedActivityRes.getId()).isNotNull();
         assertThat(stoppedActivityRes.getDataProductId()).isEqualTo(activityRes.getDataProductId());
         assertThat(stoppedActivityRes.getDataProductVersion()).isEqualTo(activityRes.getDataProductVersion());
-        assertThat(stoppedActivityRes.getType()).isEqualTo("prod");
+        assertThat(stoppedActivityRes.getStage()).isEqualTo("prod");
         assertThat(stoppedActivityRes.getStatus()).isEqualTo(ActivityStatus.PROCESSED);
         assertThat(stoppedActivityRes.getResults()).matches(Pattern.compile("\\{\"\\d*\":\"OK\"\\}"));
         assertThat(stoppedActivityRes.getCreatedAt()).isNotNull();
         assertThat(stoppedActivityRes.getStartedAt()).isNotNull();
         assertThat(stoppedActivityRes.getFinishedAt()).isNotNull();
+
+        ResponseEntity<LifecycleResource> lifecycleGetResponse = devOpsClient.readDataProductVersionCurrentLifecycle(
+                stoppedActivityRes.getDataProductId(),
+                stoppedActivityRes.getDataProductVersion(),
+                LifecycleResource.class
+        );
+
+        LifecycleResource lifecycleResource = lifecycleGetResponse.getBody();
+
+        assertThat(lifecycleResource.getId()).isNotNull();
+        assertThat(lifecycleResource.getDataProductId()).isEqualTo(activityRes.getDataProductId());
+        assertThat(lifecycleResource.getDataProductVersion()).isEqualTo(activityRes.getDataProductVersion());
+        assertThat(lifecycleResource.getStage()).isEqualTo("prod");
+        assertThat(lifecycleResource.getStartedAt()).isNotNull();
+        assertThat(lifecycleResource.getFinishedAt()).isNull();
+
     }
 
     // ======================================================================================
@@ -382,9 +517,9 @@ public class ActivityIT extends ODMDevOpsIT {
         ActivityResource activityRes = null;
         activityRes = createTestActivity(false);
 
-        String status = devOpsClient.readActivityStatus(activityRes.getId());
-        assertThat(status).isNotNull();
-        assertThat(status).isEqualTo(ActivityStatus.PLANNED.toString());
+        ActivityStatusResource statusRes = devOpsClient.readActivityStatus(activityRes.getId());
+        assertThat(statusRes).isNotNull();
+        assertThat(statusRes.getStatus()).isEqualTo(ActivityStatus.PLANNED);
     }
 
     @Test
@@ -396,9 +531,9 @@ public class ActivityIT extends ODMDevOpsIT {
         ActivityResource activityRes = null;
         activityRes = createTestActivity(true);
 
-        String status = devOpsClient.readActivityStatus(activityRes.getId());
-        assertThat(status).isNotNull();
-        assertThat(status).isEqualTo(ActivityStatus.PROCESSING.toString());
+        ActivityStatusResource statusRes = devOpsClient.readActivityStatus(activityRes.getId());
+        assertThat(statusRes).isNotNull();
+        assertThat(statusRes.getStatus()).isEqualTo(ActivityStatus.PROCESSING);
     }
 
     @Test
@@ -409,17 +544,18 @@ public class ActivityIT extends ODMDevOpsIT {
 
         ActivityResource activityRes = createTestActivity(false);
 
-        ActivityResource startedActivityRes = null;
+        ActivityStatusResource statusRes = null;
         try {
-            startedActivityRes = devOpsClient.startActivity(activityRes.getId());
+            statusRes = devOpsClient.startActivity(activityRes.getId());
         } catch (Throwable t) {
             fail("An unexpected exception occured while starting activity: " + t.getMessage());
             t.printStackTrace();
             return;
         }
-        String status = devOpsClient.readActivityStatus(startedActivityRes.getId());
-        assertThat(status).isNotNull();
-        assertThat(status).isEqualTo(ActivityStatus.PROCESSING.toString());
+
+        statusRes = devOpsClient.readActivityStatus(activityRes.getId());
+        assertThat(statusRes).isNotNull();
+        assertThat(statusRes.getStatus()).isEqualTo(ActivityStatus.PROCESSING);
     }
 
     @Test
@@ -435,17 +571,17 @@ public class ActivityIT extends ODMDevOpsIT {
         assertThat(taskResources.length).isEqualTo(1);
         ActivityTaskResource targetTaskRes = taskResources[0];
 
-        ActivityTaskResource stoppedTaskRes = null;
         try {
-            stoppedTaskRes = devOpsClient.stopTask(targetTaskRes.getId());
+            devOpsClient.stopTask(targetTaskRes.getId());
         } catch (Throwable t) {
             fail("An unexpected exception occured while stopping task: " + t.getMessage());
             t.printStackTrace();
             return;
         }
-        String status = devOpsClient.readActivityStatus(stoppedTaskRes.getId());
-        assertThat(status).isNotNull();
-        assertThat(status).isEqualTo(ActivityStatus.PROCESSED.toString());
+
+        ActivityStatusResource statusRes = devOpsClient.readActivityStatus(activityRes.getId());
+        assertThat(statusRes).isNotNull();
+        assertThat(statusRes.getStatus()).isEqualTo(ActivityStatus.PROCESSED);
     }
 
     // ======================================================================================
@@ -472,7 +608,7 @@ public class ActivityIT extends ODMDevOpsIT {
         assertThat(readActivityRes.getId()).isNotNull();
         assertThat(readActivityRes.getDataProductId()).isEqualTo(activityRes.getDataProductId());
         assertThat(readActivityRes.getDataProductVersion()).isEqualTo(activityRes.getDataProductVersion());
-        assertThat(readActivityRes.getType()).isEqualTo("prod");
+        assertThat(readActivityRes.getStage()).isEqualTo("prod");
         assertThat(readActivityRes.getStatus()).isEqualTo(ActivityStatus.PROCESSING);
         assertThat(readActivityRes.getCreatedAt()).isNotNull();
         assertThat(readActivityRes.getStartedAt()).isNotNull();
@@ -496,7 +632,7 @@ public class ActivityIT extends ODMDevOpsIT {
         assertThat(readActivityRes.getId()).isNotNull();
         assertThat(readActivityRes.getDataProductId()).isEqualTo(activityRes.getDataProductId());
         assertThat(readActivityRes.getDataProductVersion()).isEqualTo(activityRes.getDataProductVersion());
-        assertThat(readActivityRes.getType()).isEqualTo("prod");
+        assertThat(readActivityRes.getStage()).isEqualTo("prod");
         assertThat(readActivityRes.getStatus()).isEqualTo(ActivityStatus.PLANNED);
         assertThat(readActivityRes.getCreatedAt()).isNotNull();
         assertThat(readActivityRes.getStartedAt()).isNull();
@@ -520,7 +656,7 @@ public class ActivityIT extends ODMDevOpsIT {
         assertThat(readActivityRes.getId()).isNotNull();
         assertThat(readActivityRes.getDataProductId()).isEqualTo(activityRes.getDataProductId());
         assertThat(readActivityRes.getDataProductVersion()).isEqualTo(activityRes.getDataProductVersion());
-        assertThat(readActivityRes.getType()).isEqualTo("prod");
+        assertThat(readActivityRes.getStage()).isEqualTo("prod");
         assertThat(readActivityRes.getStatus()).isEqualTo(ActivityStatus.PROCESSING);
         assertThat(readActivityRes.getCreatedAt()).isNotNull();
         assertThat(readActivityRes.getStartedAt()).isNotNull();
@@ -540,26 +676,24 @@ public class ActivityIT extends ODMDevOpsIT {
         activityRes = buildTestActivity();
         createdActivityRes = createActivity(activityRes, false);
 
-        ActivityResource startedActivityRes = null;
+        ActivityStatusResource statusRes = null;
         try {
-            startedActivityRes = devOpsClient.startActivity(createdActivityRes.getId());
+            statusRes = devOpsClient.startActivity(createdActivityRes.getId());
         } catch (Throwable t) {
             fail("An unexpected exception occured while starting activity: " + t.getMessage());
             t.printStackTrace();
             return;
         }
 
-        ActivityResource readActivityRes = devOpsClient.readActivity(startedActivityRes.getId());
+        ActivityResource readActivityRes = devOpsClient.readActivity(createdActivityRes.getId());
         assertThat(readActivityRes.getId()).isNotNull();
         assertThat(readActivityRes.getDataProductId()).isEqualTo(activityRes.getDataProductId());
         assertThat(readActivityRes.getDataProductVersion()).isEqualTo(activityRes.getDataProductVersion());
-        assertThat(readActivityRes.getType()).isEqualTo("prod");
+        assertThat(readActivityRes.getStage()).isEqualTo("prod");
         assertThat(readActivityRes.getStatus()).isEqualTo(ActivityStatus.PROCESSING);
         assertThat(readActivityRes.getCreatedAt()).isNotNull();
         assertThat(readActivityRes.getStartedAt()).isNotNull();
         assertThat(readActivityRes.getFinishedAt()).isNull();
-
-        assertThat(readActivityRes).isEqualTo(startedActivityRes);
     }
 
     @Test
@@ -578,7 +712,7 @@ public class ActivityIT extends ODMDevOpsIT {
         assertThat(taskResources.length).isEqualTo(1);
         ActivityTaskResource targetTaskRes = taskResources[0];
 
-        ActivityTaskResource stoppedTaskRes = null;
+        TaskStatusResource stoppedTaskRes = null;
         try {
             stoppedTaskRes = devOpsClient.stopTask(targetTaskRes.getId());
         } catch (Throwable t) {
@@ -587,11 +721,11 @@ public class ActivityIT extends ODMDevOpsIT {
             return;
         }
 
-        ActivityResource readActivityRes = devOpsClient.readActivity(stoppedTaskRes.getId());
+        ActivityResource readActivityRes = devOpsClient.readActivity(createdActivityRes.getId());
         assertThat(readActivityRes.getId()).isNotNull();
         assertThat(readActivityRes.getDataProductId()).isEqualTo(activityRes.getDataProductId());
         assertThat(readActivityRes.getDataProductVersion()).isEqualTo(activityRes.getDataProductVersion());
-        assertThat(readActivityRes.getType()).isEqualTo("prod");
+        assertThat(readActivityRes.getStage()).isEqualTo("prod");
         assertThat(readActivityRes.getStatus()).isEqualTo(ActivityStatus.PROCESSED);
         assertThat(readActivityRes.getCreatedAt()).isNotNull();
         assertThat(readActivityRes.getStartedAt()).isNotNull();
@@ -625,7 +759,7 @@ public class ActivityIT extends ODMDevOpsIT {
         assertThat(searchedActivityRes.getId()).isNotNull();
         assertThat(searchedActivityRes.getDataProductId()).isEqualTo(activityRes.getDataProductId());
         assertThat(searchedActivityRes.getDataProductVersion()).isEqualTo(activityRes.getDataProductVersion());
-        assertThat(searchedActivityRes.getType()).isEqualTo("prod");
+        assertThat(searchedActivityRes.getStage()).isEqualTo("prod");
         assertThat(searchedActivityRes.getStatus()).isNotNull();
         assertThat(searchedActivityRes.getStatus()).isEqualTo(ActivityStatus.PROCESSING);
         assertThat(searchedActivityRes.getCreatedAt()).isNotNull();
@@ -655,7 +789,7 @@ public class ActivityIT extends ODMDevOpsIT {
         assertThat(searchedActivityRes.getId()).isNotNull();
         assertThat(searchedActivityRes.getDataProductId()).isEqualTo(activityRes.getDataProductId());
         assertThat(searchedActivityRes.getDataProductVersion()).isEqualTo(activityRes.getDataProductVersion());
-        assertThat(searchedActivityRes.getType()).isEqualTo("prod");
+        assertThat(searchedActivityRes.getStage()).isEqualTo("prod");
         assertThat(searchedActivityRes.getStatus()).isEqualTo(ActivityStatus.PROCESSING);
         assertThat(searchedActivityRes.getCreatedAt()).isNotNull();
         assertThat(searchedActivityRes.getStartedAt()).isNotNull();
@@ -675,7 +809,7 @@ public class ActivityIT extends ODMDevOpsIT {
         activityRes = buildTestActivity();
         createdActivityRes = createActivity(activityRes, true);
 
-        ActivityResource[] activitiesResources = devOpsClient.searchActivities(null, null, createdActivityRes.getType(), null);
+        ActivityResource[] activitiesResources = devOpsClient.searchActivities(null, null, createdActivityRes.getStage(), null);
         assertThat(activitiesResources).isNotNull();
         assertThat(activitiesResources.length).isEqualTo(1);
         ActivityResource searchedActivityRes = activitiesResources[0];
@@ -683,7 +817,7 @@ public class ActivityIT extends ODMDevOpsIT {
         assertThat(searchedActivityRes.getId()).isNotNull();
         assertThat(searchedActivityRes.getDataProductId()).isEqualTo(activityRes.getDataProductId());
         assertThat(searchedActivityRes.getDataProductVersion()).isEqualTo(activityRes.getDataProductVersion());
-        assertThat(searchedActivityRes.getType()).isEqualTo("prod");
+        assertThat(searchedActivityRes.getStage()).isEqualTo("prod");
         assertThat(searchedActivityRes.getStatus()).isEqualTo(ActivityStatus.PROCESSING);
         assertThat(searchedActivityRes.getCreatedAt()).isNotNull();
         assertThat(searchedActivityRes.getStartedAt()).isNotNull();
@@ -713,7 +847,7 @@ public class ActivityIT extends ODMDevOpsIT {
         assertThat(searchedActivityRes.getId()).isNotNull();
         assertThat(searchedActivityRes.getDataProductId()).isEqualTo(activityRes.getDataProductId());
         assertThat(searchedActivityRes.getDataProductVersion()).isEqualTo(activityRes.getDataProductVersion());
-        assertThat(searchedActivityRes.getType()).isEqualTo("prod");
+        assertThat(searchedActivityRes.getStage()).isEqualTo("prod");
         assertThat(searchedActivityRes.getStatus()).isEqualTo(ActivityStatus.PROCESSING);
         assertThat(searchedActivityRes.getCreatedAt()).isNotNull();
         assertThat(searchedActivityRes.getStartedAt()).isNotNull();
@@ -734,7 +868,7 @@ public class ActivityIT extends ODMDevOpsIT {
         createdActivityRes = createActivity(activityRes, true);
 
         ActivityResource[] activitiesResources = devOpsClient.searchActivities(createdActivityRes.getDataProductId(),
-                createdActivityRes.getDataProductVersion(), createdActivityRes.getType(), createdActivityRes.getStatus());
+                createdActivityRes.getDataProductVersion(), createdActivityRes.getStage(), createdActivityRes.getStatus());
         assertThat(activitiesResources).isNotNull();
         assertThat(activitiesResources.length).isEqualTo(1);
         ActivityResource searchedActivityRes = activitiesResources[0];
@@ -742,7 +876,7 @@ public class ActivityIT extends ODMDevOpsIT {
         assertThat(searchedActivityRes.getId()).isNotNull();
         assertThat(searchedActivityRes.getDataProductId()).isEqualTo(activityRes.getDataProductId());
         assertThat(searchedActivityRes.getDataProductVersion()).isEqualTo(activityRes.getDataProductVersion());
-        assertThat(searchedActivityRes.getType()).isEqualTo("prod");
+        assertThat(searchedActivityRes.getStage()).isEqualTo("prod");
         assertThat(searchedActivityRes.getStatus()).isEqualTo(ActivityStatus.PROCESSING);
         assertThat(searchedActivityRes.getCreatedAt()).isNotNull();
         assertThat(searchedActivityRes.getStartedAt()).isNotNull();
@@ -770,7 +904,7 @@ public class ActivityIT extends ODMDevOpsIT {
        assertThat(searchedActivityRes.getId()).isNotNull();
         assertThat(searchedActivityRes.getDataProductId()).isEqualTo(activityRes.getDataProductId());
         assertThat(searchedActivityRes.getDataProductVersion()).isEqualTo(activityRes.getDataProductVersion());
-        assertThat(searchedActivityRes.getType()).isEqualTo("prod");
+        assertThat(searchedActivityRes.getStage()).isEqualTo("prod");
         assertThat(searchedActivityRes.getStatus()).isEqualTo(ActivityStatus.PROCESSING);
         assertThat(searchedActivityRes.getCreatedAt()).isNotNull();
         assertThat(searchedActivityRes.getStartedAt()).isNotNull();

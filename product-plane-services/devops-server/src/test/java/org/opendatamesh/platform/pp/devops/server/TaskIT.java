@@ -5,8 +5,10 @@ import static org.junit.Assert.fail;
 
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityResource;
+import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatusResource;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskResource;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskStatus;
+import org.opendatamesh.platform.pp.devops.api.resources.TaskStatusResource;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.annotation.DirtiesContext.MethodMode;
@@ -35,16 +37,15 @@ public class TaskIT extends ODMDevOpsIT {
 
         ActivityResource activityRes = createTestActivity(false);
 
-        ActivityResource startedActivityRes = null;
         try {
-            startedActivityRes = devOpsClient.startActivity(activityRes.getId());
+            devOpsClient.startActivity(activityRes.getId());
         } catch (Throwable t) {
             fail("An unexpected exception occured while starting activity: " + t.getMessage());
             t.printStackTrace();
             return;
         }
 
-        ActivityTaskResource[] taskResources = devOpsClient.searchTasks(startedActivityRes.getId(), null, null);
+        ActivityTaskResource[] taskResources = devOpsClient.searchTasks(activityRes.getId(), null, null);
         assertThat(taskResources).isNotNull();
         assertThat(taskResources.length).isEqualTo(1);
         ActivityTaskResource taskRes = taskResources[0];
@@ -76,14 +77,26 @@ public class TaskIT extends ODMDevOpsIT {
         assertThat(taskResources.length).isEqualTo(1);
         ActivityTaskResource targetTaskRes = taskResources[0];
 
-        ActivityTaskResource stoppedTaskRes = null;
+        TaskStatusResource taskStatusRes = null;
         try {
-            stoppedTaskRes = devOpsClient.stopTask(targetTaskRes.getId());
+            taskStatusRes = devOpsClient.stopTask(targetTaskRes.getId());
         } catch (Throwable t) {
             fail("An unexpected exception occured while stopping task: " + t.getMessage());
             t.printStackTrace();
             return;
         }
+        assertThat(taskStatusRes).isNotNull();
+        assertThat(taskStatusRes.getStatus()).isEqualTo(ActivityTaskStatus.PROCESSED);
+
+        ActivityTaskResource stoppedTaskRes = null;
+        try {
+            stoppedTaskRes = devOpsClient.readTask(targetTaskRes.getId());
+        } catch (Throwable t) {
+            fail("An unexpected exception occured while stopping task: " + t.getMessage());
+            t.printStackTrace();
+            return;
+        }
+
         assertThat(stoppedTaskRes).isNotNull();
         assertThat(stoppedTaskRes.getId()).isNotNull();
         assertThat(stoppedTaskRes.getExecutorRef()).isEqualTo("azure-devops");
@@ -116,9 +129,9 @@ public class TaskIT extends ODMDevOpsIT {
         assertThat(tasks.length).isEqualTo(1);
         ActivityTaskResource taskRes = tasks[0];
 
-        String status = devOpsClient.readTaskStatus(taskRes.getId());
-        assertThat(status).isNotNull();
-        assertThat(status).isEqualTo(ActivityTaskStatus.PLANNED.toString());
+        TaskStatusResource statusRes = devOpsClient.readTaskStatus(taskRes.getId());
+        assertThat(statusRes).isNotNull();
+        assertThat(statusRes.getStatus()).isEqualTo(ActivityTaskStatus.PLANNED);
     }
 
     @Test
@@ -135,9 +148,9 @@ public class TaskIT extends ODMDevOpsIT {
         assertThat(tasks.length).isEqualTo(1);
         ActivityTaskResource taskRes = tasks[0];
 
-        String status = devOpsClient.readTaskStatus(taskRes.getId());
-        assertThat(status).isNotNull();
-        assertThat(status).isEqualTo(ActivityTaskStatus.PROCESSING.toString());
+        TaskStatusResource statusRes = devOpsClient.readTaskStatus(taskRes.getId());
+        assertThat(statusRes).isNotNull();
+        assertThat(statusRes.getStatus()).isEqualTo(ActivityTaskStatus.PROCESSING);
     }
 
     @Test
@@ -148,7 +161,7 @@ public class TaskIT extends ODMDevOpsIT {
 
         ActivityResource activityRes = createTestActivity(false);
 
-        ActivityResource startedActivityRes = null;
+        ActivityStatusResource startedActivityRes = null;
         try {
             startedActivityRes = devOpsClient.startActivity(activityRes.getId());
         } catch (Throwable t) {
@@ -157,14 +170,14 @@ public class TaskIT extends ODMDevOpsIT {
             return;
         }
 
-        ActivityTaskResource[] taskResources = devOpsClient.searchTasks(startedActivityRes.getId(), null, null);
+        ActivityTaskResource[] taskResources = devOpsClient.searchTasks(activityRes.getId(), null, null);
         assertThat(taskResources).isNotNull();
         assertThat(taskResources.length).isEqualTo(1);
         ActivityTaskResource taskRes = taskResources[0];
 
-        String status = devOpsClient.readTaskStatus(taskRes.getId());
-        assertThat(status).isNotNull();
-        assertThat(status).isEqualTo(ActivityTaskStatus.PROCESSING.toString());
+        TaskStatusResource statusRes = devOpsClient.readTaskStatus(taskRes.getId());
+        assertThat(statusRes).isNotNull();
+        assertThat(statusRes.getStatus()).isEqualTo(ActivityTaskStatus.PROCESSING);
     }
 
     @Test
@@ -180,18 +193,17 @@ public class TaskIT extends ODMDevOpsIT {
         assertThat(taskResources.length).isEqualTo(1);
         ActivityTaskResource targetTaskRes = taskResources[0];
 
-        ActivityTaskResource stoppedTaskRes = null;
         try {
-            stoppedTaskRes = devOpsClient.stopTask(targetTaskRes.getId());
+            devOpsClient.stopTask(targetTaskRes.getId());
         } catch (Throwable t) {
             fail("An unexpected exception occured while stopping task: " + t.getMessage());
             t.printStackTrace();
             return;
         }
 
-        String status = devOpsClient.readTaskStatus(stoppedTaskRes.getId());
-        assertThat(status).isNotNull();
-        assertThat(status).isEqualTo(ActivityTaskStatus.PROCESSED.toString());
+        TaskStatusResource statusRes = devOpsClient.readTaskStatus(activityRes.getId());
+        assertThat(statusRes).isNotNull();
+        assertThat(statusRes.getStatus()).isEqualTo(ActivityTaskStatus.PROCESSED);
     }
 
 
@@ -292,16 +304,15 @@ public class TaskIT extends ODMDevOpsIT {
 
         ActivityResource activityRes = createTestActivity(false);
 
-        ActivityResource startedActivityRes = null;
         try {
-            startedActivityRes = devOpsClient.startActivity(activityRes.getId());
+            devOpsClient.startActivity(activityRes.getId());
         } catch (Throwable t) {
             fail("An unexpected exception occured while starting activity: " + t.getMessage());
             t.printStackTrace();
             return;
         }
 
-        ActivityTaskResource[] taskResources = devOpsClient.searchTasks(startedActivityRes.getId(), null, null);
+        ActivityTaskResource[] taskResources = devOpsClient.searchTasks(activityRes.getId(), null, null);
         assertThat(taskResources).isNotNull();
         assertThat(taskResources.length).isEqualTo(1);
         ActivityTaskResource taskRes = taskResources[0];
@@ -333,16 +344,15 @@ public class TaskIT extends ODMDevOpsIT {
         assertThat(taskResources.length).isEqualTo(1);
         ActivityTaskResource targetTaskRes = taskResources[0];
 
-        ActivityTaskResource stoppedTaskRes = null;
         try {
-            stoppedTaskRes = devOpsClient.stopTask(targetTaskRes.getId());
+            devOpsClient.stopTask(targetTaskRes.getId());
         } catch (Throwable t) {
             fail("An unexpected exception occured while stopping task: " + t.getMessage());
             t.printStackTrace();
             return;
         }
 
-        ActivityTaskResource readTaskRes = devOpsClient.readTask(stoppedTaskRes.getId());
+        ActivityTaskResource readTaskRes = devOpsClient.readTask(targetTaskRes.getId());
         assertThat(readTaskRes).isNotNull();
         assertThat(readTaskRes.getId()).isNotNull();
         assertThat(readTaskRes.getExecutorRef()).isEqualTo("azure-devops");
@@ -354,8 +364,6 @@ public class TaskIT extends ODMDevOpsIT {
         assertThat(readTaskRes.getCreatedAt()).isNotNull();
         assertThat(readTaskRes.getStartedAt()).isNotNull();
         assertThat(readTaskRes.getFinishedAt()).isNotNull();
-
-        assertThat(readTaskRes).isEqualTo(stoppedTaskRes);
     }
 
     // ======================================================================================

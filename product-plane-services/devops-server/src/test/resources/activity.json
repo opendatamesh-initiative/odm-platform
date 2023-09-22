@@ -1,5 +1,5 @@
 {
     "dataProductId": "f350cab5-992b-32f7-9c90-79bca1bf10be",
     "dataProductVersion": "1.0.0",
-    "type": "prod"
+    "stage": "prod"
 }

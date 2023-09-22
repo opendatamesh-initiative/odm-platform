@@ -124,13 +124,13 @@ public abstract class ODMDevOpsIT extends ODMIntegrationTest{
     protected ActivityResource buildActivity(
         String dataProductId,
         String dataProductVersion,
-        String type) {
+        String stage) {
         
         ActivityResource activity = new ActivityResource();
 
         activity.setDataProductId(dataProductId);
         activity.setDataProductVersion(dataProductVersion);
-        activity.setType(type);
+        activity.setStage(stage);
 
         return activity;
     }

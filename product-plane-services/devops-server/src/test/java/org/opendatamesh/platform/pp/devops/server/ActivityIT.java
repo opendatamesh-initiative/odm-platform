@@ -4,15 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.Test;
-import org.opendatamesh.platform.pp.devops.api.resources.ActivityResource;
-import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatus;
-import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatusResource;
-import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskResource;
-import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskStatus;
-import org.opendatamesh.platform.pp.devops.api.resources.TaskStatusResource;
+import org.opendatamesh.platform.pp.devops.api.resources.*;
+import org.opendatamesh.platform.pp.devops.server.database.entities.Lifecycle;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.annotation.DirtiesContext.MethodMode;
@@ -265,6 +263,7 @@ public class ActivityIT extends ODMDevOpsIT {
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testStartActivityWithMissingExecutor() {
+
         createMocksForCreateActivityCall();
 
         ActivityResource activityRes = buildTestActivity();
@@ -300,7 +299,6 @@ public class ActivityIT extends ODMDevOpsIT {
             return;
         }
 
-
         assertThat(startedActivityRes.getId()).isNotNull();
         assertThat(startedActivityRes.getId()).isNotNull();
         assertThat(startedActivityRes.getDataProductId()).isEqualTo(activityRes.getDataProductId());
@@ -310,6 +308,22 @@ public class ActivityIT extends ODMDevOpsIT {
         assertThat(startedActivityRes.getCreatedAt()).isNotNull();
         assertThat(startedActivityRes.getStartedAt()).isNotNull();
         assertThat(startedActivityRes.getFinishedAt()).isNotNull();
+
+        ResponseEntity<LifecycleResource> lifecycleGetResponse = devOpsClient.readDataProductVersionCurrentLifecycle(
+                startedActivityRes.getDataProductId(),
+                startedActivityRes.getDataProductVersion(),
+                LifecycleResource.class
+        );
+
+        LifecycleResource lifecycleResource = lifecycleGetResponse.getBody();
+
+        assertThat(lifecycleResource.getId()).isNotNull();
+        assertThat(lifecycleResource.getDataProductId()).isEqualTo(activityRes.getDataProductId());
+        assertThat(lifecycleResource.getDataProductVersion()).isEqualTo(activityRes.getDataProductVersion());
+        assertThat(lifecycleResource.getStage()).isEqualTo("stage-noservice");
+        assertThat(lifecycleResource.getStartedAt()).isNotNull();
+        assertThat(lifecycleResource.getFinishedAt()).isNull();
+
     }
 
     @Test
@@ -350,7 +364,6 @@ public class ActivityIT extends ODMDevOpsIT {
             return;
         }
 
-
         assertThat(startedActivityRes.getId()).isNotNull();
         assertThat(startedActivityRes.getId()).isNotNull();
         assertThat(startedActivityRes.getDataProductId()).isEqualTo(activityRes.getDataProductId());
@@ -360,6 +373,22 @@ public class ActivityIT extends ODMDevOpsIT {
         assertThat(startedActivityRes.getCreatedAt()).isNotNull();
         assertThat(startedActivityRes.getStartedAt()).isNotNull();
         assertThat(startedActivityRes.getFinishedAt()).isNotNull();
+
+        ResponseEntity<LifecycleResource> lifecycleGetResponse = devOpsClient.readDataProductVersionCurrentLifecycle(
+                startedActivityRes.getDataProductId(),
+                startedActivityRes.getDataProductVersion(),
+                LifecycleResource.class
+        );
+
+        LifecycleResource lifecycleResource = lifecycleGetResponse.getBody();
+
+        assertThat(lifecycleResource.getId()).isNotNull();
+        assertThat(lifecycleResource.getDataProductId()).isEqualTo(activityRes.getDataProductId());
+        assertThat(lifecycleResource.getDataProductVersion()).isEqualTo(activityRes.getDataProductVersion());
+        assertThat(lifecycleResource.getStage()).isEqualTo("stage-empty");
+        assertThat(lifecycleResource.getStartedAt()).isNotNull();
+        assertThat(lifecycleResource.getFinishedAt()).isNull();
+
     }
 
     @Test
@@ -410,6 +439,17 @@ public class ActivityIT extends ODMDevOpsIT {
         assertThat(startedActivityRes.getCreatedAt()).isNotNull();
         assertThat(startedActivityRes.getStartedAt()).isNotNull();
         assertThat(startedActivityRes.getFinishedAt()).isNotNull();
+
+        ResponseEntity<LifecycleResource> lifecycleGetResponse = devOpsClient.readDataProductVersionCurrentLifecycle(
+                startedActivityRes.getDataProductId(),
+                startedActivityRes.getDataProductVersion(),
+                LifecycleResource.class
+        );
+
+        LifecycleResource lifecycleResource = lifecycleGetResponse.getBody();
+
+        assertThat(lifecycleResource).isNull();
+
     }
 
     // Note: An activity can be started but not directly stopped.
@@ -446,6 +486,22 @@ public class ActivityIT extends ODMDevOpsIT {
         assertThat(stoppedActivityRes.getCreatedAt()).isNotNull();
         assertThat(stoppedActivityRes.getStartedAt()).isNotNull();
         assertThat(stoppedActivityRes.getFinishedAt()).isNotNull();
+
+        ResponseEntity<LifecycleResource> lifecycleGetResponse = devOpsClient.readDataProductVersionCurrentLifecycle(
+                stoppedActivityRes.getDataProductId(),
+                stoppedActivityRes.getDataProductVersion(),
+                LifecycleResource.class
+        );
+
+        LifecycleResource lifecycleResource = lifecycleGetResponse.getBody();
+
+        assertThat(lifecycleResource.getId()).isNotNull();
+        assertThat(lifecycleResource.getDataProductId()).isEqualTo(activityRes.getDataProductId());
+        assertThat(lifecycleResource.getDataProductVersion()).isEqualTo(activityRes.getDataProductVersion());
+        assertThat(lifecycleResource.getStage()).isEqualTo("prod");
+        assertThat(lifecycleResource.getStartedAt()).isNotNull();
+        assertThat(lifecycleResource.getFinishedAt()).isNull();
+
     }
 
     // ======================================================================================

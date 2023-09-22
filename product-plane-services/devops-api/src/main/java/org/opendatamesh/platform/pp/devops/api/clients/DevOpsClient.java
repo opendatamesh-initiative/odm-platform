@@ -6,12 +6,7 @@ import java.util.Map;
 
 import org.opendatamesh.platform.core.commons.clients.ODMClient;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
-import org.opendatamesh.platform.pp.devops.api.resources.ActivityResource;
-import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatus;
-import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatusResource;
-import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskResource;
-import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskStatus;
-import org.opendatamesh.platform.pp.devops.api.resources.TaskStatusResource;
+import org.opendatamesh.platform.pp.devops.api.resources.*;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 
@@ -249,6 +244,43 @@ public class DevOpsClient extends ODMClient {
                 apiUrl(DevOpsAPIRoutes.TASKS, "/{id}/status"),
                 responseType,
                 taskId);
+    }
+
+    // ----------------------------------------
+    // Lifecycles
+    // ----------------------------------------
+
+    public <T> ResponseEntity<T> readLifecycles(Class<T> responseType) {
+        return rest.getForEntity(
+                apiUrl(DevOpsAPIRoutes.LIFECYCLES),
+                responseType
+        );
+    }
+
+    public <T> ResponseEntity<T> readDataProductVersionLifecycles(String dataProductId, Class<T> responseType) {
+        return rest.getForEntity(
+                apiUrl(DevOpsAPIRoutes.LIFECYCLES, "/{dataProductId}"),
+                responseType,
+                dataProductId
+        );
+    }
+
+    public <T> ResponseEntity<T> readDataProductVersionLifecycles(String dataProductId, String versionNumber, Class<T> responseType) {
+        return rest.getForEntity(
+                apiUrl(DevOpsAPIRoutes.LIFECYCLES, "/{dataProductId}/{versionNumber}"),
+                responseType,
+                dataProductId,
+                versionNumber
+        );
+    }
+
+    public <T> ResponseEntity<T> readDataProductVersionCurrentLifecycle(String dataProductId, String versionNumber, Class<T> responseType) {
+        return rest.getForEntity(
+                apiUrl(DevOpsAPIRoutes.LIFECYCLES, "/{dataProductId}/{versionNumber}/current"),
+                responseType,
+                dataProductId,
+                versionNumber
+        );
     }
 
 }

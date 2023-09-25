@@ -4,13 +4,11 @@ import lombok.Data;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.opendatamesh.platform.core.dpds.parser.IdentifierStrategy;
-import org.opendatamesh.platform.pp.registry.server.config.ApplicationStartupConfiguration;
 import org.opendatamesh.platform.pp.registry.server.database.entities.DataProduct;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.core.ExternalResource;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.info.Info;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.interfaces.InterfaceComponents;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.internals.InternalComponents;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -118,11 +116,9 @@ public class DataProductVersion implements Cloneable, Serializable {
     }
 
     @PostLoad
-    protected void onRead() throws NoSuchFieldException {
+    protected void onRead() {
         getInfo().setDataProductId(dataProductId);
         getInfo().setVersionNumber(versionNumber);
-
-        //interfaceComponents.setDatasourceUrl(ApplicationStartupConfiguration.datasourceUrl);
     }
 
     @PreUpdate

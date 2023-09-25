@@ -30,7 +30,7 @@ License.
     </parent>
 
     <groupId>org.opendatamesh</groupId>
-    <artifactId>odm-platform-core-dpds</artifactId>
+    <artifactId>odm-platform-core-dpds-parser</artifactId>
     <name>ODM Platform DPDS</name>
     <description>Open Data Mesh Platform's DPDS</description>
     <version>1.0.0</version>

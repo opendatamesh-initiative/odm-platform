@@ -2,7 +2,7 @@ FROM openjdk:17-alpine
 
 VOLUME /tmp
 
-ADD ./platform-core/dpds/target/odm-platform-core-dpds-*.jar ./
+ADD ./platform-core/dpds-parser/target/odm-platform-core-dpds-parser-*.jar ./
 ADD ./product-plane-services/registry-api/target/odm-platform-pp-registry-api-*.jar ./
 ADD ./product-plane-services/devops-api/target/odm-platform-pp-devops-api-*.jar ./
 ADD ./utility-plane-services/notification-api/target/odm-platform-up-notification-api-*.jar ./

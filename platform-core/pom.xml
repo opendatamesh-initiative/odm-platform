@@ -60,7 +60,7 @@ License.
     </developers>
 
     <modules>
-        <module>dpds</module>
+        <module>dpds-parser</module>
         <module>commons</module>
     </modules>
 

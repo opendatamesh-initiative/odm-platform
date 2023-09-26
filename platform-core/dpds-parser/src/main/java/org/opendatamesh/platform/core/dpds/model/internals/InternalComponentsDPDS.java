@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -25,12 +26,15 @@ import org.opendatamesh.platform.core.dpds.model.core.ComponentContainerDPDS;
 public class InternalComponentsDPDS extends ComponentContainerDPDS{
 
     @JsonProperty("applicationComponents")
+    @Schema(description = "List of the Application Component of the Internal Components")
     private List<ApplicationComponentDPDS> applicationComponents = new ArrayList<ApplicationComponentDPDS>();
 
     @JsonProperty("infrastructuralComponents")
+    @Schema(description = "List of the Infrastructural Component of the Internal Components")
     private List<InfrastructuralComponentDPDS> infrastructuralComponents = new ArrayList<InfrastructuralComponentDPDS>();
 
-    @JsonProperty("lifecycleInfo") 
+    @JsonProperty("lifecycleInfo")
+    @Schema(description = "Lifecycle Info object of the Internal Components")
     private LifecycleInfoDPDS lifecycleInfo;
 
     public boolean hasLifecycleInfo() {

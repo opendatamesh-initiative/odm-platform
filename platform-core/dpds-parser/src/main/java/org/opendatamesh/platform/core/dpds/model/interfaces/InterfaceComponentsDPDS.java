@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -26,21 +27,26 @@ public class InterfaceComponentsDPDS extends ComponentContainerDPDS{
 
     @JsonProperty("inputPorts")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    @Schema(description = "List of the input Ports of the Interface Components", required = true)
     private List<PortDPDS> inputPorts = new ArrayList<PortDPDS>();
 
     @JsonProperty("outputPorts")
+    @Schema(description = "List of the output Ports of the Interface Components", required = true)
     private List<PortDPDS> outputPorts = new ArrayList<PortDPDS>();
 
     @JsonProperty("discoveryPorts")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    @Schema(description = "List of the discovery Ports of the Interface Components", required = true)
     private List<PortDPDS> discoveryPorts = new ArrayList<PortDPDS>();
 
     @JsonProperty("observabilityPorts")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    @Schema(description = "List of the observability Ports of the Interface Components", required = true)
     private List<PortDPDS> observabilityPorts = new ArrayList<PortDPDS>();
 
     @JsonProperty("controlPorts")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    @Schema(description = "List of the control Ports of the Interface Components", required = true)
     private List<PortDPDS> controlPorts = new ArrayList<PortDPDS>();
 
     public boolean hasPorts(EntityTypeDPDS entityType) {

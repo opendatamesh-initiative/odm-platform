@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -24,27 +25,35 @@ import org.opendatamesh.platform.core.dpds.model.internals.InternalComponentsDPD
 public class DataProductVersionDPDS implements Cloneable {
 
     @JsonProperty("dataProductDescriptor")
+    @Schema(description = "Data Product Descriptor fully qualified name", required = true)
     private String dataProductDescriptor;
 
     @JsonProperty("info")
+    @Schema(description = "Info object of the Data Product Version", required = true)
     private InfoDPDS info;
 
     @JsonProperty("interfaceComponents")
+    @Schema(description = "Interface Component object of the Data Product Version", required = true)
     private InterfaceComponentsDPDS interfaceComponents;
 
     @JsonProperty("internalComponents")
+    @Schema(description = "Internal Component object of the Data Product Version", required = true)
     private InternalComponentsDPDS internalComponents;
 
     @JsonProperty("components")
+    @Schema(description = "Components object of the Data Product Version", required = true)
     private ComponentsDPDS components;
 
     @JsonProperty("tags")
+    @Schema(description = "List of tags of the Data Product Version", required = true)
     protected List<String> tags = new ArrayList<String>();
 
     @JsonProperty("externalDocs")
+    @Schema(description = "Document of the External Resource of the Data Product Version", required = true)
     private ExternalResourceDPDS externalDocs;
 
     @JsonIgnore
+    @Schema(description = "Raw content of the Data Product Version")
     private String rawContent;
 
     @JsonAnySetter

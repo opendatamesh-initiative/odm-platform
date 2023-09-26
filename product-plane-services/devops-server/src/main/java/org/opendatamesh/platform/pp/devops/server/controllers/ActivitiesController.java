@@ -70,4 +70,5 @@ public class ActivitiesController extends AbstractActivityController {
         Activity activity = activityService.readActivity(id);
         return activityMapper.toResource(activity);
     }
+
 }

@@ -37,4 +37,5 @@ public class LifecycleController extends AbstractLifecycleController {
     public LifecycleResource readDataProductVersionCurrentLifecycle(String dataProductId, String versionNumber) {
         return lifecycleMapper.toResource(lifecycleService.getDataProductVersionCurrentLifecycle(dataProductId, versionNumber));
     }
+
 }

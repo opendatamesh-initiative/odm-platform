@@ -8,13 +8,16 @@ import picocli.CommandLine;
 
 @SpringBootApplication
 public class OdmCliApplication {
+
     public static void main(String[] args) {
-        CommandLine cmd = new CommandLine(new OdmCliInit()); // Default command
+
+        CommandLine cmd = new CommandLine(new OdmCliInit());
         cmd.addSubcommand("hello", new HelloWorld());
         cmd.addSubcommand("validate-dpv", new ValidateDataProductVersionSyntax());
 
         int exitCode = cmd.execute(args);
         System.exit(exitCode);
+
     }
 
 }

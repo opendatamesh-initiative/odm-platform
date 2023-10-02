@@ -3,12 +3,12 @@ package org.opendatamesh.odm.cli.commands;
 
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
-import picocli.CommandLine.HelpCommand;
 
 @Command(
         name = "hello-world",
         description = "Says hello",
-        subcommands = { HelpCommand.class }
+        version = "odm-cli hello-world 1.0.0",
+        mixinStandardHelpOptions = true
 )
 public class HelloWorld implements Runnable {
 

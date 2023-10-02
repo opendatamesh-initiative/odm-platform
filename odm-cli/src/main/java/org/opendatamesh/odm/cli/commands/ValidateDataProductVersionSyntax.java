@@ -2,23 +2,19 @@ package org.opendatamesh.odm.cli.commands;
 
 import org.opendatamesh.odm.cli.utils.FileReaders;
 import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
-import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.parser.DPDSParser;
 import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
-import org.opendatamesh.platform.core.dpds.parser.ParseResult;
 import org.opendatamesh.platform.core.dpds.parser.location.UriLocation;
-import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
 
 @Command(
         name = "validate-dpv",
         description = "Validate the syntax of a Data Product Version",
-        subcommands = { CommandLine.HelpCommand.class }
+        version = "odm-cli validate-dpv 1.0.0",
+        mixinStandardHelpOptions = true
 )
 public class ValidateDataProductVersionSyntax implements Runnable {
 

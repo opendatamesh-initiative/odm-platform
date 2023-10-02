@@ -1,15 +1,13 @@
 package org.opendatamesh.odm.cli.commands;
 
-
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
-import picocli.CommandLine.HelpCommand;
-import picocli.CommandLine.Option;
 
 @Command(
         name = "odm-cli",
         description = "ODM CLI init method",
-        subcommands = { HelpCommand.class }
+        version = "odm-cli 1.0.0",
+        mixinStandardHelpOptions = true
 )
 public class OdmCliInit implements Runnable {
 

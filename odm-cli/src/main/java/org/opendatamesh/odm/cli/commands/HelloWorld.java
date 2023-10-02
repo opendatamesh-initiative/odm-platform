@@ -1,4 +1,4 @@
-package org.opendatamesh.odm.cli;
+package org.opendatamesh.odm.cli.commands;
 
 
 import picocli.CommandLine;
@@ -6,7 +6,7 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.HelpCommand;
 
 @Command(
-        name = "hello-two",
+        name = "hello-world",
         description = "Says hello",
         subcommands = { HelpCommand.class }
 )

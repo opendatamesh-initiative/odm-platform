@@ -34,6 +34,7 @@ mvn clean package spring-boot:repackage
 ```
 
 ### Run the CLI
+Make sure to be in `odm-platform/odm-cli` directory.
 
 #### Unix systems
 ```bash

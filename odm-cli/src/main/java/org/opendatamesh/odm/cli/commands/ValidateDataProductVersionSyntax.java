@@ -19,7 +19,7 @@ import java.io.IOException;
 public class ValidateDataProductVersionSyntax implements Runnable {
 
     @Option(
-            names = {"-f", "--file", "--path"},
+            names = {"-f", "--file"},
             description = "Path of a Data Product Version file",
             required = true
     )

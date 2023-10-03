@@ -30,24 +30,34 @@ Compile the module:
 
 ```bash
 cd odm-cli
-mvn clean package spring-boot:repackage -DskipTests
+mvn clean package spring-boot:repackage
 ```
 
 ### Run the CLI
-For Linux systems, define an alias before executing the CLI commands.
+
+#### Unix systems
 ```bash
-alias odm-cli='java -jar target/odm-cli-1.0.0.jar'
+./odm-cli <command> [-<options>]
 ```
-*_version could be greater than 1.0.0, check on POM_
+*_if it won't run, make sure to execute `chmod +x odm-cli`_
 
-*_For Windows system, just use `java -jar target/odm-cli-1.0.0.jar` instead of `odm-cli` in the next steps_
+For commands documentation, use the _helper_ of the CLI:
+```bash
+./odm-cli -h
+```
+or
+```bash
+./odm-cli --help
+```
+*_Each command have its helper, for example:_
+```bash
+./odm-cli validate-dpv --help
+```
 
-Execute CLI commands:
-
+#### Windows Systems
 ```bash
 odm-cli <command> [-<options>]
 ```
-
 For commands documentation, use the _helper_ of the CLI:
 ```bash
 odm-cli -h
@@ -56,9 +66,30 @@ or
 ```bash
 odm-cli --help
 ```
-
-
-*_Each command have it's helper, for example:_
+*_Each command have its helper, for example:_
 ```bash
 odm-cli validate-dpv --help
+```
+
+### Example
+Validate the `dpd-example.json` in the `odm-cli/src/main/resources` directory.
+Once in `odm-cli` directory and given the execution of the previous steps:
+
+_Windows_:
+```bash
+odm-cli validate-dpv -f src/main/resources/dpds/dpd-example.json
+```
+_Unix_:
+```bash
+./odm-cli validate-dpv -f src/main/resources/dpds/dpd-example.json
+```
+or
+
+_Windows_:
+```bash
+odm-cli validate-dpv --file src/main/resources/dpds/dpd-example.json
+```
+_Unix_:
+```bash
+./odm-cli validate-dpv --file src/main/resources/dpds/dpd-example.json
 ```

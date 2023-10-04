@@ -6,20 +6,18 @@
 
     <parent>
         <groupId>org.opendatamesh</groupId>
-        <artifactId>odm-platform</artifactId>
+        <artifactId>odm-platform-up-services</artifactId>
         <version>1.0.0</version>
         <relativePath>../</relativePath>
     </parent>
 
     <groupId>org.opendatamesh</groupId>
-    <artifactId>odm-cli</artifactId>
-    <description>Open Data Mesh Platform's CLI</description>
-    <name>ODM CLI MODULE</name>
+    <artifactId>odm-platform-up-blueprint-server</artifactId>
+    <name>ODM Platform Blueprint Service Server</name>
+    <description>Open Data Mesh Platform Blueprint Service server</description>
     <version>1.0.0</version>
     <url>https://github.com/opendatamesh-initiative/odm-platform</url>
-    <properties>
-        <java.version>11</java.version>
-    </properties>
+
 
     <licenses>
         <license>
@@ -34,6 +32,7 @@
         <url>scm:git:git@github.com:opendatamesh-initiative/odm-platform</url>
     </scm>
 
+
     <developers>
         <developer>
             <name>Quantyca</name>
@@ -44,63 +43,51 @@
     </developers>
 
     <dependencies>
-
-        <!-- Spring -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-        </dependency>
-
-        <!-- Picocli -->
-        <dependency>
-            <groupId>info.picocli</groupId>
-            <artifactId>picocli</artifactId>
-            <version>4.7.5</version>
-        </dependency>
-
-        <!-- Internals -->
-        <dependency>
-            <groupId>org.opendatamesh</groupId>
-            <artifactId>odm-platform-core-dpds-parser</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.opendatamesh</groupId>
-            <artifactId>odm-platform-core-commons</artifactId>
-            <version>1.0.0</version>
-            <scope>compile</scope>
-        </dependency>
-
+        <!-- TODO -->
     </dependencies>
 
     <build>
         <plugins>
-            <!-- Maven Plugins-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.5.1</version>
                 <configuration>
-                    <source>11</source>
-                    <target>11</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                     <annotationProcessorPaths>
                         <path>
-                            <groupId>info.picocli</groupId>
-                            <artifactId>picocli-codegen</artifactId>
-                            <version>4.7.5</version>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.24</version>
+                        </path>
+                        <!-- This is needed when using Lombok 1.18.16 and above -->
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok-mapstruct-binding</artifactId>
+                            <version>0.2.0</version>
+                        </path>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>1.4.2.Final</version>
                         </path>
                     </annotationProcessorPaths>
-                    <compilerArgs>
-                        <arg>-Aproject=${project.groupId}/${project.artifactId}</arg>
-                    </compilerArgs>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.3.3.RELEASE</version>
+                <configuration>
+                    <classifier>exec</classifier>
+                    <wait>1000</wait>
+                    <maxAttempts>180</maxAttempts>
+                    <mainClass>${platform.mainclass}</mainClass>
                 </configuration>
             </plugin>
         </plugins>
     </build>
-
 
 </project>

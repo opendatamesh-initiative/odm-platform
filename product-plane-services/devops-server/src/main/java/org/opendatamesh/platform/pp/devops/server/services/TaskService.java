@@ -241,7 +241,7 @@ public class TaskService {
         if (task == null) {
             throw new NotFoundException(
                     DevOpsApiStandardErrors.SC404_11_TASK_NOT_FOUND,
-                    "Data Product with [" + taskId + "] does not exist");
+                    "Task with [" + taskId + "] does not exist");
         }
 
         return task;

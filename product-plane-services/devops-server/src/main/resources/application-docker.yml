@@ -76,4 +76,4 @@ odm:
     executorServices:
       azure-devops:
         active: true
-        address: http://localhost:9003
+        address: http://{AZUREDEVOPS_HOSTNAME}:{AZUREDEVOPS_PORT}/api/v1/up/executor/azure-devops

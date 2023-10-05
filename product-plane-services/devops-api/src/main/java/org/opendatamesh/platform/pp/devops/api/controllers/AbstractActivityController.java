@@ -204,7 +204,7 @@ public abstract class AbstractActivityController {
         @Parameter(description = "Idenntifier of the activity")
         @Valid @PathVariable(value = "id") Long id,
 
-        @Parameter(description="Add `action` parameter to the request to specify which action to perform to change the activity's status. `STRAT` is the only possible action executable on activities")
+        @Parameter(description="Add `action` parameter to the request to specify which action to perform to change the activity's status. `START` is the only possible action executable on activities")
         @RequestParam(required = true, name = "action") String action)
     {
         if("START".equalsIgnoreCase(action) == false) {

@@ -152,7 +152,7 @@ public class TaskService {
                 taskRes = odmExecutor.createTask(taskRes);
             } else {
                 taskRes.setStatus(TaskStatus.FAILED);
-                taskRes.setErrors("Executor [" + task.getExecutorRef() + "] supported");
+                taskRes.setErrors("Executor [" + task.getExecutorRef() + "] supported"); // CHECK
                 taskRes.setFinishedAt(new Date());
             }
 

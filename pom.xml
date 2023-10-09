@@ -122,6 +122,8 @@ License.
         <module>product-plane-services</module>
         <module>utility-plane-services</module>
         <module>odm-cli</module>
+        <module>product-plane-services/blueprint-api</module>
+        <module>product-plane-services/blueprint-server</module>
         <!--
         <module>platform-kernel</module>
         -->

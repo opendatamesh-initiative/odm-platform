@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.up.blueprint.server;
+package org.opendatamesh;
 
 public class Main {
     public static void main(String[] args) {

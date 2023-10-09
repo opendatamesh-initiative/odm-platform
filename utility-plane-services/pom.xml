@@ -64,8 +64,6 @@ License.
         <module>policy-api</module>
         <module>policy-server</module>
         <module>executor-api</module>
-        <module>blueprint-api</module>
-        <module>blueprint-server</module>
     </modules>
 
 </project>

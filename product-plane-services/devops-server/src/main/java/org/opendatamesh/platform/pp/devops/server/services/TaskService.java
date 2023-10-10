@@ -144,7 +144,7 @@ public class TaskService {
             TaskResource taskRes = taskMapper.toResource(task);
             String callbackRef = configurations.getProductPlane().getDevopsService().getAddress();
             callbackRef += DevOpsAPIRoutes.TASKS;
-            callbackRef += "/" + task.getId() + "/stop";
+            callbackRef += "/" + task.getId() + "/status?action=STOP";
             taskRes.setCallbackRef(callbackRef);
 
             ExecutorClient odmExecutor = clients.getExecutorClient(task.getExecutorRef());

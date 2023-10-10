@@ -47,7 +47,7 @@ public abstract class AbstractActivityController {
     private static final String EXAMPLE_ONE = "{\n" + //
             "    \"dataProductId\": \"c18b07ba-bb01-3d55-a5bf-feb517a8d901\",\n" + //
             "    \"dataProductVersion\": \"1.0.0\",\n" + //
-            "    \"type\": \"prod\"\n" + //
+            "    \"stage\": \"prod\"\n" + //
             "}";
 
     // @see https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Annotations#arrayschema
@@ -122,8 +122,7 @@ public abstract class AbstractActivityController {
                     @ExampleObject(name = "one", description = "description of example one", value = EXAMPLE_ONE)}
             )
         )
-        @RequestBody ActivityResource activity, 
-
+        @RequestBody ActivityResource activity,
         @Parameter(
             description="Pass true to start the activity after creation")
         @RequestParam(required = false, name = "startAfterCreation") boolean startAfterCreation) 
@@ -201,7 +200,7 @@ public abstract class AbstractActivityController {
         }
     )
     public ActivityStatusResource startActivityEndpoint( 
-        @Parameter(description = "Idenntifier of the activity")
+        @Parameter(description = "Identifier of the activity")
         @Valid @PathVariable(value = "id") Long id,
 
         @Parameter(description="Add `action` parameter to the request to specify which action to perform to change the activity's status. `START` is the only possible action executable on activities")
@@ -257,7 +256,7 @@ public abstract class AbstractActivityController {
         }
     )    
     public ActivityStatusResource readActivityStatusEndpoint( 
-        @Parameter(description = "Idenntifier of the activity")
+        @Parameter(description = "Identifier of the activity")
         @Valid @PathVariable(value = "id") Long id) 
     {
         return readActivityStatus(id);
@@ -307,16 +306,16 @@ public abstract class AbstractActivityController {
         @Parameter(description="Add `dataProductVersion` parameter to the request to get only activities associated to a specific data product version")
         @RequestParam(required = false, name = "dataProductVersion") String dataProductVersion,
 
-        @Parameter(description="Add `type` parameter to the request to get only activities of the specific type")
-        @RequestParam(required = false, name = "type") String type,
+        @Parameter(description="Add `stage` parameter to the request to get only activities of the specific stage")
+        @RequestParam(required = false, name = "stage") String stage,
        
         @Parameter(description="Add `status` parameter to the request to get only activities in the specific state")
         @RequestParam(required = false, name = "status") ActivityStatus status
     ) {
-        return readActivities(dataProductId, dataProductVersion, type, status);
+        return readActivities(dataProductId, dataProductVersion, stage, status);
     }
 
-    public abstract List<ActivityResource>  readActivities(String dataProductId, String dataProductVersion, String type, ActivityStatus status);
+    public abstract List<ActivityResource> readActivities(String dataProductId, String dataProductVersion, String stage, ActivityStatus status);
 
 
     // ===============================================================================
@@ -363,7 +362,7 @@ public abstract class AbstractActivityController {
         } 
     )
     public ActivityResource readActivitiyEndpoint( 
-        @Parameter(description = "Idenntifier of the activity")
+        @Parameter(description = "Identifier of the activity")
         @Valid @PathVariable(value = "id") Long id) 
     {
         return readActivitiy(id);

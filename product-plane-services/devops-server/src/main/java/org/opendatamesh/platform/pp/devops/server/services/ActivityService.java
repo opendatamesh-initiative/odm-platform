@@ -354,11 +354,11 @@ public class ActivityService {
     public List<Activity> searchActivities(
             String dataProductId,
             String dataProductVersion,
-            String type,
+            String stage,
             ActivityStatus status) {
         List<Activity> activitySearchResults = null;
         try {
-            activitySearchResults = findActivities(dataProductId, dataProductVersion, type, status);
+            activitySearchResults = findActivities(dataProductId, dataProductVersion, stage, status);
         } catch (Throwable t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
@@ -371,12 +371,12 @@ public class ActivityService {
     private List<Activity> findActivities(
             String dataProductId,
             String dataProductVersion,
-            String type,
+            String stage,
             ActivityStatus status) {
 
         return activityRepository
                 .findAll(ActivityRepository.Specs.hasMatch(
-                        dataProductId, dataProductVersion, type, status));
+                        dataProductId, dataProductVersion, stage, status));
     }
 
     // -------------------------

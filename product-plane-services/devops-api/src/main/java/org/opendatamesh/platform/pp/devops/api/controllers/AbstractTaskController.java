@@ -115,7 +115,7 @@ public abstract class AbstractTaskController {
         }
     )
     public TaskStatusResource stopTaskEndpoint( 
-        @Parameter(description = "Idenntifier of the task")
+        @Parameter(description = "Identifier of the task")
         @Valid @PathVariable(value = "id") Long id,
 
         @Parameter(description="Add `action` parameter to the request to specify which action to perform to change the task's status. `STOP` is the only possible action executable on tasks")
@@ -172,7 +172,7 @@ public abstract class AbstractTaskController {
     @ResponseStatus(HttpStatus.OK) 
     
     public TaskStatusResource readTaskStatusEndpoint( 
-        @Parameter(description = "Idenntifier of the task")
+        @Parameter(description = "Identifier of the task")
         @Valid @PathVariable(value = "id") Long id) 
     {
         return readTaskStatus(id);
@@ -276,7 +276,7 @@ public abstract class AbstractTaskController {
         }
     )
     public ActivityTaskResource readActivitiyEndpoint( 
-        @Parameter(description = "Idenntifier of the task")
+        @Parameter(description = "Identifier of the task")
         @Valid @PathVariable(value = "id") Long id) 
     {
         return readTask(id);

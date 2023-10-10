@@ -51,13 +51,13 @@ public class ActivitiesController extends AbstractActivityController {
     public List<ActivityResource> readActivities(
         String dataProductId, 
         String dataProductVersion, 
-        String type, 
+        String stage,
         ActivityStatus status) 
     {
         List<Activity> activities = null;
 
-        if(dataProductId != null || dataProductVersion != null || type != null || status != null) {
-            activities = activityService.searchActivities(dataProductId, dataProductVersion, type, status);
+        if(dataProductId != null || dataProductVersion != null || stage != null || status != null) {
+            activities = activityService.searchActivities(dataProductId, dataProductVersion, stage, status);
         } else {
             activities = activityService.readAllActivities();
         }

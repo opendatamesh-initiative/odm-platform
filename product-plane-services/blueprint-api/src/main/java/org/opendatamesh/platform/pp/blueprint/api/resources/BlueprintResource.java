@@ -33,7 +33,7 @@ public class BlueprintResource {
     String description;
 
     @JsonProperty("repositoryProvider")
-    @Schema(description = "Blueprint name to display", allowableValues = {"AZURE_DEVOPS", "GITHUB"})
+    @Schema(description = "Repository Provider (e.g., Azure, GitHub, GitLab, ...)", allowableValues = {"AZURE_DEVOPS", "GITHUB"})
     RepositoryProviderEnum repositoryProvider;
 
     @JsonProperty("repositoryUrl")

@@ -51,6 +51,11 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>-->
 
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+        </dependency>
+
         <!-- Auto Documentation -->
         <dependency>
             <groupId>org.springdoc</groupId>

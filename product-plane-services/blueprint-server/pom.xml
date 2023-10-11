@@ -64,6 +64,12 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
+        <!-- Javax Persistence -->
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+        </dependency>
+
         <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -199,6 +205,12 @@
         <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-core-dpds-parser</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.opendatamesh</groupId>
+            <artifactId>odm-platform-pp-blueprint-api</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>

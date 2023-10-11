@@ -29,19 +29,39 @@ import java.util.List;
 )
 public abstract class BlueprintAbstractController {
 
-    // TODO: check ALL errors descriptions and codes
+    // TODO: check ALL errors descriptions and codes, add SEARCH endpoint, draft INIT
 
     private static final String EXAMPLE_ONE = "{\n" + //
-            "    \"dataProductId\": \"c18b07ba-bb01-3d55-a5bf-feb517a8d901\",\n" + //
-            "    \"dataProductVersion\": \"1.0.0\",\n" + //
-            "    \"stage\": \"prod\"\n" + //
-            "}"; // TODO: correct the example
+            "   \"name\": \"blueprint1\",\n" + //
+            "   \"version\": \"1.0.0\",\n" + //
+            "   \"displayName\": \"first blueprint\",\n" + //
+            "   \"description\": \"description of blueprint\",\n" + //
+            "   \"repositoryProvider\": \"AZURE_DEVOPS\",\n" + //
+            "   \"repositoryUrl\": \"http://repo.it/repo\",\n" + //
+            "   \"blueprintPath\": \"/blueprints/blueprint1\",\n" + //
+            "   \"targetPath\": \"/target/project1\",\n" + //
+            "   \"configurations\": {\n" + //
+            "       \"parameter1\": \"value_of_parameter1\",\n" + //
+            "       \"parameter2\": \"value_of_parameter2\",\n" + //
+            "       \"parameter3\": \"value_of_parameter3\"\n" + //
+            "   }\n" + //
+            "}";
 
     private static final String EXAMPLE_TWO = "{\n" + //
-            "    \"dataProductId\": \"c18b07ba-bb01-3d55-a5bf-feb517a8d901\",\n" + //
-            "    \"dataProductVersion\": \"1.0.0\",\n" + //
-            "    \"stage\": \"prod\"\n" + //
-            "}"; // TODO: correct the example - questo con ID della blueprint
+            "   \"id\":1,\n" + //
+            "   \"name\": \"blueprint1 - updated\",\n" + //
+            "   \"version\": \"1.0.1\",\n" + //
+            "   \"displayName\": \"first blueprint\",\n" + //
+            "   \"description\": \"description of blueprint\",\n" + //
+            "   \"repositoryProvider\": \"AZURE_DEVOPS\",\n" + //
+            "   \"repositoryUrl\": \"http://repo.it/repo\",\n" + //
+            "   \"blueprintPath\": \"/blueprints/blueprint1\",\n" + //
+            "   \"targetPath\": \"/target\",\n" + //
+            "   \"configurations\": {\n" + //
+            "       \"parameter1\": \"value_of_parameter1\",\n" + //
+            "       \"parameter2\": \"value_of_parameter2\",\n" + //
+            "   }\n" + //
+            "}";
 
     // @see https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Annotations#arrayschema
     
@@ -114,6 +134,12 @@ public abstract class BlueprintAbstractController {
                     }
             ),
             @ApiResponse(
+                    responseCode = "400",
+                    description = "[Bad Request](https://www.rfc-editor.org/rfc/rfc9110.html#name-400-bad-request)"
+                            + "\r\n - Error Code 40001 - Blueprint id is invalid",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
+            ),
+            @ApiResponse(
                     responseCode = "404",
                     description = "[Not Found](https://www.rfc-editor.org/rfc/rfc9110.html#name-404-not-found)"
                             + "\r\n - Error Code 40401 - Blueprint not found",
@@ -138,12 +164,12 @@ public abstract class BlueprintAbstractController {
     )
     public BlueprintResource readBlueprintEndpoint(
             @Parameter(description = "Identifier of the blueprint")
-            @Valid @PathVariable(value = "id") String id
+            @Valid @PathVariable(value = "id") Long id
     ) {
         return readBlueprint(id);
     }
 
-    public abstract BlueprintResource readBlueprint(String id);
+    public abstract BlueprintResource readBlueprint(Long id);
 
 
     // ===============================================================================
@@ -166,6 +192,12 @@ public abstract class BlueprintAbstractController {
                                     @ExampleObject(name = "one", value = EXAMPLE_ONE)
                             }
                     )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "[Bad Request](https://www.rfc-editor.org/rfc/rfc9110.html#name-400-bad-request)"
+                            + "\r\n - Error Code 40002 - Blueprint is empty",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
             ),
             @ApiResponse(
                     responseCode = "422",
@@ -234,6 +266,13 @@ public abstract class BlueprintAbstractController {
                     )
             ),
             @ApiResponse(
+                    responseCode = "400",
+                    description = "[Bad Request](https://www.rfc-editor.org/rfc/rfc9110.html#name-400-bad-request)"
+                            + "\r\n - Error Code 40001 - Blueprint id is invalid"
+                            + "\r\n - Error Code 40002 - Blueprint is empty",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
+            ),
+            @ApiResponse(
                     responseCode = "404",
                     description = "[Not Found](https://www.rfc-editor.org/rfc/rfc9110.html#name-404-not-found)"
                             + "\r\n - Error Code 40401 - Blueprint not found",
@@ -242,8 +281,7 @@ public abstract class BlueprintAbstractController {
             @ApiResponse(
                     responseCode = "422",
                     description = "[Unprocessable Content](https://www.rfc-editor.org/rfc/rfc9110.html#name-422-unprocessable-content)"
-                            + "\r\n - Error Code 42201 - Blueprint is invalid"
-                            + "\r\n - Error Code 42202 - Blueprint already exists",
+                            + "\r\n - Error Code 42201 - Blueprint is invalid",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
             ),
             @ApiResponse(
@@ -323,12 +361,12 @@ public abstract class BlueprintAbstractController {
     )
     public void deleteBlueprintEndpoint(
             @Parameter(description = "Identifier of the blueprint to delete")
-            @Valid @PathVariable(value = "id") String id
+            @Valid @PathVariable(value = "id") Long id
     ) {
         deleteBlueprint(id);
     }
 
-    public abstract void deleteBlueprint(String id);
+    public abstract void deleteBlueprint(Long id);
 
 
     // ===============================================================================

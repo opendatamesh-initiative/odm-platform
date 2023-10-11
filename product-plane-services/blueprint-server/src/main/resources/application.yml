@@ -1,0 +1,41 @@
+##########################
+# Active profile
+##########################
+spring:
+  profiles:
+    active: dev
+    #testmysql
+    #testpostgresql
+
+server:
+  port: 8003
+  servlet:
+    context-path: /api/v1/pp/blueprint/
+
+##########################
+# Logging configuration
+##########################
+logging:
+  level:
+    org:
+      apache:
+        http: INFO
+      opendatamesh:
+        dpexperience:
+          api.*: DEBUG
+    httpclient:
+      wire: INFO
+    it:
+      quantyca:
+        odm:
+          api:
+            planes:
+              dpexperience.*: DEBUG
+
+
+##########################
+# Doc configuration
+##########################
+springdoc:
+  swagger-ui:
+    operationsSorter: alpha

@@ -1,0 +1,15 @@
+{
+  "id": 1,
+  "name": "azure-blueprint-1",
+  "version": "1.0.1",
+  "displayName": "blueprint 1",
+  "description": "First AzureDevOps Blueprint",
+  "repositoryProvider": "AZURE_DEVOPS",
+  "repositoryUrl": "http://azure-repo.com/repo-1",
+  "blueprintPath": "/blueprints/blueprint-1/v1.0.1/",
+  "targetPath": "/target/project-1/v1.0.1/",
+  "configurations": {
+    "parameter1": "value_of_parameter1-updated",
+    "parameter2": "value_of_parameter2"
+  }
+}

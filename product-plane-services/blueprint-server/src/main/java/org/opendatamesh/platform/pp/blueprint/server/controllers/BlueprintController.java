@@ -34,8 +34,8 @@ public class BlueprintController extends BlueprintAbstractController {
     }
 
     @Override
-    public BlueprintResource updateBlueprint(BlueprintResource blueprint) {
-        return blueprintMapper.toResource(blueprintService.updateBlueprint(blueprintMapper.toEntity(blueprint)));
+    public BlueprintResource updateBlueprint(Long id, BlueprintResource blueprint) {
+        return blueprintMapper.toResource(blueprintService.updateBlueprint(id, blueprintMapper.toEntity(blueprint)));
     }
 
     @Override

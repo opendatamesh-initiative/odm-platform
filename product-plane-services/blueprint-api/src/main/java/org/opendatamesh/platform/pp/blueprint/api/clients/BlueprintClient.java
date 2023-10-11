@@ -62,11 +62,11 @@ public class BlueprintClient extends ODMClient {
         return response;
     }
 
-    public ResponseEntity createBlueprint(BlueprintResource policies) throws IOException {
+    public ResponseEntity createBlueprint(BlueprintResource blueprintResource) throws IOException {
 
         ResponseEntity postBlueprintResponse = rest.postForEntity(
                 apiUrl(BlueprintAPIRoutes.BLUEPRINTS),
-                policies,
+                blueprintResource,
                 Object.class
         );
 
@@ -79,13 +79,14 @@ public class BlueprintClient extends ODMClient {
         return response;
     }
 
-    public ResponseEntity updateBlueprint(BlueprintResource blueprintResource) throws JsonProcessingException {
+    public ResponseEntity updateBlueprint(Long blueprintId, BlueprintResource blueprintResource) throws JsonProcessingException {
 
         ResponseEntity putBlueprintResponse = rest.exchange(
                 apiUrlOfItem(BlueprintAPIRoutes.BLUEPRINTS),
                 HttpMethod.PUT,
                 new HttpEntity<>(blueprintResource),
-                Object.class
+                Object.class,
+                blueprintId
         );
 
         ResponseEntity response = mapResponseEntity(

@@ -28,8 +28,8 @@ public class BlueprintService {
     public Blueprint createBlueprint(Blueprint blueprint) {
 
         if (blueprint == null) {
-            throw new InternalServerException(
-                    BlueprintApiStandardErrors.SC400_02_BLUEPRINT_IS_EMPTY,
+            throw new BadRequestException(
+                    BlueprintApiStandardErrors.SC400_01_BLUEPRINT_IS_EMPTY,
                     "Blueprint object cannot be null");
         }
 
@@ -109,13 +109,6 @@ public class BlueprintService {
 
         Blueprint blueprint = null;
 
-        if(blueprintId == null) {
-            throw new BadRequestException(
-                    BlueprintApiStandardErrors.SC400_01_BLUEPRINT_ID_IS_EMPTY,
-                    "Blueprint ID is empty"
-            );
-        }
-
         try {
             blueprint = loadBlueprint(blueprintId);
         } catch (Throwable t) {
@@ -148,18 +141,12 @@ public class BlueprintService {
     // UPDATE
     // ======================================================================================
 
-    public Blueprint updateBlueprint(Blueprint blueprint) {
+    public Blueprint updateBlueprint(Long blueprintId, Blueprint blueprint) {
 
         if(blueprint == null) {
             throw new BadRequestException(
-                    BlueprintApiStandardErrors.SC400_02_BLUEPRINT_IS_EMPTY,
+                    BlueprintApiStandardErrors.SC400_01_BLUEPRINT_IS_EMPTY,
                     "Blueprint object cannot be null");
-        }
-
-        if(blueprint.getId() == null) {
-            throw new BadRequestException(
-                    BlueprintApiStandardErrors.SC400_01_BLUEPRINT_ID_IS_EMPTY,
-                    "Blueprint ID cannot be null");
         }
 
         if (blueprint.getRepositoryUrl() == null) {
@@ -176,12 +163,13 @@ public class BlueprintService {
             );
         }
 
-        Blueprint oldBlueprint = loadBlueprint(blueprint.getId());
-        if(oldBlueprint == null) {
+        if(!blueprintRepository.existsById(blueprintId)) {
             throw new NotFoundException(
                     BlueprintApiStandardErrors.SC404_01_BLUEPRINT_NOT_FOUND,
-                    "Blueprint with id [" + blueprint.getId() + "] doesn't exists");
+                    "Blueprint with id [" + blueprintId + "] doesn't exists");
         }
+
+        blueprint.setId(blueprintId);
 
         try {
             blueprint = saveBlueprint(blueprint);
@@ -204,16 +192,15 @@ public class BlueprintService {
 
     public void deleteBlueprint(Long blueprintId) {
 
-        Blueprint blueprint = loadBlueprint(blueprintId);
-        if(blueprint == null) {
+        if(!blueprintRepository.existsById(blueprintId)) {
             throw new NotFoundException(
                     BlueprintApiStandardErrors.SC404_01_BLUEPRINT_NOT_FOUND,
-                    "Blueprint with id [" + blueprint.getId() + "] doesn't exists");
+                    "Blueprint with id [" + blueprintId + "] doesn't exists");
         }
 
         try {
             blueprintRepository.deleteById(blueprintId);
-            logger.info("Blueprint with id [" + blueprint.getId() + "] succesfully deleted");
+            logger.info("Blueprint with id [" + blueprintId + "] succesfully deleted");
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,

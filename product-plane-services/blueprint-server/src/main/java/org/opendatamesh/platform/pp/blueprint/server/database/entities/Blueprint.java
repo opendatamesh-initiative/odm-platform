@@ -6,6 +6,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 @Data
@@ -48,12 +49,12 @@ public class Blueprint {
     @Column(name = "PARAMETER_VALUE")
     private Map<String, String> configurations;
 
-    @Column(name = "CREATED_AT")
     @CreationTimestamp
-    private Timestamp createdAt;
+    @Column(name = "CREATED_AT", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
-    @Column(name = "UPDATED_AT")
     @UpdateTimestamp
-    private Timestamp updatedAt;
+    @Column(name = "UPDATED_AT")
+    private LocalDateTime updatedAt;
 
 }

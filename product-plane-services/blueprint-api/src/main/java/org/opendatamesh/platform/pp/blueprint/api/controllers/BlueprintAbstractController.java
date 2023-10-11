@@ -29,7 +29,7 @@ import java.util.List;
 )
 public abstract class BlueprintAbstractController {
 
-    // TODO: check ALL errors descriptions and codes, add SEARCH endpoint, draft INIT
+    // TODO: add SEARCH endpoint, draft INIT
 
     private static final String EXAMPLE_ONE = "{\n" + //
             "   \"name\": \"blueprint1\",\n" + //
@@ -46,9 +46,8 @@ public abstract class BlueprintAbstractController {
             "       \"parameter3\": \"value_of_parameter3\"\n" + //
             "   }\n" + //
             "}";
-
     private static final String EXAMPLE_TWO = "{\n" + //
-            "   \"id\":1,\n" + //
+            "   \"id\": 1,\n" + //
             "   \"name\": \"blueprint1 - updated\",\n" + //
             "   \"version\": \"1.0.1\",\n" + //
             "   \"displayName\": \"first blueprint\",\n" + //
@@ -56,7 +55,7 @@ public abstract class BlueprintAbstractController {
             "   \"repositoryProvider\": \"AZURE_DEVOPS\",\n" + //
             "   \"repositoryUrl\": \"http://repo.it/repo\",\n" + //
             "   \"blueprintPath\": \"/blueprints/blueprint1\",\n" + //
-            "   \"targetPath\": \"/target\",\n" + //
+            "   \"targetPath\": \"/target/project1\",\n" + //
             "   \"configurations\": {\n" + //
             "       \"parameter1\": \"value_of_parameter1\",\n" + //
             "       \"parameter2\": \"value_of_parameter2\",\n" + //
@@ -134,12 +133,6 @@ public abstract class BlueprintAbstractController {
                     }
             ),
             @ApiResponse(
-                    responseCode = "400",
-                    description = "[Bad Request](https://www.rfc-editor.org/rfc/rfc9110.html#name-400-bad-request)"
-                            + "\r\n - Error Code 40001 - Blueprint id is invalid",
-                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
-            ),
-            @ApiResponse(
                     responseCode = "404",
                     description = "[Not Found](https://www.rfc-editor.org/rfc/rfc9110.html#name-404-not-found)"
                             + "\r\n - Error Code 40401 - Blueprint not found",
@@ -163,7 +156,7 @@ public abstract class BlueprintAbstractController {
             }
     )
     public BlueprintResource readBlueprintEndpoint(
-            @Parameter(description = "Identifier of the blueprint")
+            @Parameter(description = "Identifier of the blueprint", required = true)
             @Valid @PathVariable(value = "id") Long id
     ) {
         return readBlueprint(id);
@@ -196,7 +189,7 @@ public abstract class BlueprintAbstractController {
             @ApiResponse(
                     responseCode = "400",
                     description = "[Bad Request](https://www.rfc-editor.org/rfc/rfc9110.html#name-400-bad-request)"
-                            + "\r\n - Error Code 40002 - Blueprint is empty",
+                            + "\r\n - Error Code 40001 - Blueprint is empty",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
             ),
             @ApiResponse(
@@ -219,7 +212,8 @@ public abstract class BlueprintAbstractController {
             consumes = {
                     "application/vnd.odmp.v1+json",
                     "application/vnd.odmp+json",
-                    "application/json"},
+                    "application/json"
+            },
             produces = {
                     "application/vnd.odmp.v1+json",
                     "application/vnd.odmp+json",
@@ -229,14 +223,13 @@ public abstract class BlueprintAbstractController {
     public BlueprintResource createBlueprintEndpoint(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "A blueprint object",
-                    required = true,
                     content = @Content(
                             examples = {
                                     @ExampleObject(name = "one", description = "description of example one", value = EXAMPLE_ONE)
                             }
                     )
             )
-            @RequestBody BlueprintResource blueprint
+            @RequestBody(required = false) BlueprintResource blueprint
     ) {
         return createBlueprint(blueprint);
     }
@@ -245,7 +238,7 @@ public abstract class BlueprintAbstractController {
 
 
     // ===============================================================================
-    // PUT /blueprints
+    // PUT /blueprints/{id}
     // ===============================================================================
 
     @Operation(
@@ -255,8 +248,8 @@ public abstract class BlueprintAbstractController {
     @ResponseStatus(HttpStatus.OK)
     @ApiResponses(value = {
             @ApiResponse(
-                    responseCode = "201",
-                    description = "Blueprint updated",
+                    responseCode = "200",
+                    description = "Blueprint correctly updated",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = BlueprintResource.class),
@@ -268,8 +261,7 @@ public abstract class BlueprintAbstractController {
             @ApiResponse(
                     responseCode = "400",
                     description = "[Bad Request](https://www.rfc-editor.org/rfc/rfc9110.html#name-400-bad-request)"
-                            + "\r\n - Error Code 40001 - Blueprint id is invalid"
-                            + "\r\n - Error Code 40002 - Blueprint is empty",
+                            + "\r\n - Error Code 40001 - Blueprint is empty",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
             ),
             @ApiResponse(
@@ -294,6 +286,7 @@ public abstract class BlueprintAbstractController {
             )
     })
     @PutMapping(
+            value = "/{id}",
             consumes = {
                     "application/vnd.odmp.v1+json",
                     "application/vnd.odmp+json",
@@ -305,21 +298,22 @@ public abstract class BlueprintAbstractController {
             }
     )
     public BlueprintResource updateBlueprintEndpoint(
+            @Parameter(description = "Identifier of the blueprint to update", required = true)
+            @Valid @PathVariable(value = "id") Long id,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "A blueprint object",
-                    required = true,
                     content = @Content(
                             examples = {
                                     @ExampleObject(name = "two", description = "description of example two", value = EXAMPLE_TWO)
                             }
                     )
             )
-            @RequestBody BlueprintResource blueprint
+            @RequestBody(required=false) BlueprintResource blueprint
     ) {
-        return updateBlueprint(blueprint);
+        return updateBlueprint(id, blueprint);
     }
 
-    public abstract BlueprintResource updateBlueprint(BlueprintResource blueprint);
+    public abstract BlueprintResource updateBlueprint(Long id, BlueprintResource blueprint);
 
 
     // ===============================================================================

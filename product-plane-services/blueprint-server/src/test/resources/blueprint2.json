@@ -1,0 +1,15 @@
+{
+  "name": "azure-blueprint-2",
+  "version": "1.0.0",
+  "displayName": "blueprint 2",
+  "description": "Second AzureDevOps Blueprint",
+  "repositoryProvider": "AZURE_DEVOPS",
+  "repositoryUrl": "http://azure-repo.com/repo",
+  "blueprintPath": "/blueprints/blueprint-2",
+  "targetPath": "/target/project-2",
+  "configurations": {
+    "parameter1": "value_of_parameter1",
+    "parameter2": "value_of_parameter2",
+    "parameter3": "value_of_parameter3"
+  }
+}

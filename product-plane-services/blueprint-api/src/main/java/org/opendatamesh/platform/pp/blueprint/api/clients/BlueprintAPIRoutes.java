@@ -4,7 +4,7 @@ import org.opendatamesh.platform.core.commons.clients.ODMApiRoutes;
 
 public enum BlueprintAPIRoutes implements ODMApiRoutes {
 
-    BLUEPRINTS("/activities");
+    BLUEPRINTS("/blueprints");
 
     private final String path;
 

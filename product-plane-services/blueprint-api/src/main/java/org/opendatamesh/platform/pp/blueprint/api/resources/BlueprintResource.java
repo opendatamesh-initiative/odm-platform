@@ -1,11 +1,13 @@
 package org.opendatamesh.platform.pp.blueprint.api.resources;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import javax.persistence.ElementCollection;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Map;
 

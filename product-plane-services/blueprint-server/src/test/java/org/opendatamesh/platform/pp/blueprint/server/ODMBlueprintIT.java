@@ -132,13 +132,23 @@ public class ODMBlueprintIT {
     protected void verifyResponseError(
             ResponseEntity<ErrorRes> errorResponse,
             HttpStatus status,
-            BlueprintApiStandardErrors error) {
-        assertThat(errorResponse.getStatusCode())
-                .isEqualByComparingTo(status);
-        AssertionsForClassTypes.assertThat(errorResponse.getBody().getCode())
-                .isEqualTo(error.code());
-        AssertionsForClassTypes.assertThat(errorResponse.getBody().getDescription())
-                .isEqualTo(error.description());
+            BlueprintApiStandardErrors error
+    ) {
+        assertThat(errorResponse.getStatusCode()).isEqualByComparingTo(status);
+        AssertionsForClassTypes.assertThat(errorResponse.getBody().getCode()).isEqualTo(error.code());
+        AssertionsForClassTypes.assertThat(errorResponse.getBody().getDescription()).isEqualTo(error.description());
+    }
+
+    protected void verifyResponseError(
+            ResponseEntity<ErrorRes> errorResponse,
+            HttpStatus status,
+            BlueprintApiStandardErrors error,
+            String message
+    ) {
+        assertThat(errorResponse.getStatusCode()).isEqualByComparingTo(status);
+        AssertionsForClassTypes.assertThat(errorResponse.getBody().getCode()).isEqualTo(error.code());
+        AssertionsForClassTypes.assertThat(errorResponse.getBody().getDescription()).isEqualTo(error.description());
+        assertThat(errorResponse.getBody().getMessage()).isEqualTo(message);
     }
 
 }

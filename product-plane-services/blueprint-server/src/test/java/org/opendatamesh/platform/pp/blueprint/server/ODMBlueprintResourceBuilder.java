@@ -31,7 +31,7 @@ public class ODMBlueprintResourceBuilder {
         return mapper.readValue(fileContent, resourceType);
     }
 
-    private String readResourceFromFile(String filePath) throws IOException {
+    protected String readResourceFromFile(String filePath) throws IOException {
 
         String fileContent = null;
 

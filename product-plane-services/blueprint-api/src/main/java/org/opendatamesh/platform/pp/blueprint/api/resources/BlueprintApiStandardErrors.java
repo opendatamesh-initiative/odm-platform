@@ -13,8 +13,10 @@ public enum BlueprintApiStandardErrors implements ODMApiStandardErrors {
 
     // Unprocessable Entity Exceptions
     SC422_01_BLUEPRINT_IS_INVALID ("42201", "Blueprint is invalid"),
-    SC422_02_BLUEPRINT_ALREADY_EXISTS ("42202", "Blueprint already exists");
+    SC422_02_BLUEPRINT_ALREADY_EXISTS ("42202", "Blueprint already exists"),
 
+    // Internal Server Error
+    SC500_01_GIT_ERROR ("50001", "Error executing Git commands");
 
     private final String code;
     private final String description;

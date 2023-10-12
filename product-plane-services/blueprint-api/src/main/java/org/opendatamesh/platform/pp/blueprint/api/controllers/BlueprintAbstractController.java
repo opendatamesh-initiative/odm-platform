@@ -30,7 +30,7 @@ import java.util.List;
 )
 public abstract class BlueprintAbstractController {
 
-    // TODO: add SEARCH endpoint, draft INIT
+    // TODO: add SEARCH endpoint
 
     private static final String EXAMPLE_BLUEPRINT = "{\n" + //
             "   \"name\": \"blueprint1\",\n" + //
@@ -40,12 +40,7 @@ public abstract class BlueprintAbstractController {
             "   \"repositoryProvider\": \"AZURE_DEVOPS\",\n" + //
             "   \"repositoryUrl\": \"http://repo.it/repo\",\n" + //
             "   \"blueprintPath\": \"/blueprints/blueprint1\",\n" + //
-            "   \"targetPath\": \"/target/project1\",\n" + //
-            "   \"configurations\": {\n" + //
-            "       \"parameter1\": \"value_of_parameter1\",\n" + //
-            "       \"parameter2\": \"value_of_parameter2\",\n" + //
-            "       \"parameter3\": \"value_of_parameter3\"\n" + //
-            "   }\n" + //
+            "   \"targetPath\": \"/projects\"\n" + //
             "}";
     private static final String EXAMPLE_BLUEPRINT_UPDATE = "{\n" + //
             "   \"id\": 1,\n" + //
@@ -56,11 +51,7 @@ public abstract class BlueprintAbstractController {
             "   \"repositoryProvider\": \"AZURE_DEVOPS\",\n" + //
             "   \"repositoryUrl\": \"http://repo.it/repo\",\n" + //
             "   \"blueprintPath\": \"/blueprints/blueprint1\",\n" + //
-            "   \"targetPath\": \"/target/project1\",\n" + //
-            "   \"configurations\": {\n" + //
-            "       \"parameter1\": \"value_of_parameter1\",\n" + //
-            "       \"parameter2\": \"value_of_parameter2\",\n" + //
-            "   }\n" + //
+            "   \"targetPath\": \"/projects\"\n" + //
             "}";
 
     private static final String EXAMPLE_CONFIG = "{\n" + //

@@ -1,5 +1,6 @@
 package org.opendatamesh.platform.pp.blueprint.server.services;
 
+import org.eclipse.jgit.api.Git;
 import org.opendatamesh.platform.core.commons.servers.exceptions.*;
 import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintApiStandardErrors;
 import org.opendatamesh.platform.pp.blueprint.api.resources.ConfigResource;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.io.File;
 import java.util.List;
 import java.util.Optional;
 
@@ -254,6 +256,25 @@ public class BlueprintService {
                     BlueprintApiStandardErrors.SC400_02_CONFIG_IS_EMPTY,
                     "Config object cannot be null when performing INIT of a blueprint");
         }
+
+        Blueprint blueprint = loadBlueprint(blueprintId);
+
+        if(blueprint == null) {
+            throw new NotFoundException(
+                    BlueprintApiStandardErrors.SC404_01_BLUEPRINT_NOT_FOUND,
+                    "Blueprint with id [" + blueprintId + "] doesn't exists");
+        }
+
+        Git gitRepo = gitService.cloneRepo(blueprint.getRepositoryUrl()+blueprint.getBlueprintPath());
+        File workingDirectory = gitRepo.getRepository().getWorkTree();
+        //templating(workingDirectory, config) //TODO
+        gitRepo = gitService.changeOrigin(gitRepo, blueprint.getTargetPath()); // probabilmente nuovo URL
+        gitService.commitAndPushRepo(
+                gitRepo,
+                "Project initialization from blueprint ["
+                        + blueprint.getRepositoryUrl()
+                        + blueprint.getBlueprintPath() + "]"
+        );
 
     }
 

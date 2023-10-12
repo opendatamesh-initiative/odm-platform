@@ -32,7 +32,7 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 //@ActiveProfiles("dev")
 //@ActiveProfiles("testpostgresql")
-//@ActiveProfiles("testmysql")
+@ActiveProfiles("testmysql")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = { ODMBlueprintApp.class })
 public class ODMBlueprintIT {
 

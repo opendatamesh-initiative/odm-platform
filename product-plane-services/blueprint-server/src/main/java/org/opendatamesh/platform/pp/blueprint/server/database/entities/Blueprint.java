@@ -49,12 +49,27 @@ public class Blueprint {
     @Column(name = "PARAMETER_VALUE")
     private Map<String, String> configurations;
 
-    @CreationTimestamp
     @Column(name = "CREATED_AT", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @UpdateTimestamp
     @Column(name = "UPDATED_AT")
     private LocalDateTime updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = now();
+    }
+
+    private LocalDateTime now() {
+        LocalDateTime now = LocalDateTime.now();
+        now = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(),
+                now.getHour(), now.getMinute(), now.getSecond(), 0);
+        return now;
+    }
 
 }

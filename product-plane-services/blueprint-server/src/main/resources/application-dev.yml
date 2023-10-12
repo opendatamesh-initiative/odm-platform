@@ -48,3 +48,7 @@ spring:
     schemas: ODMBLUEPRINT
     locations: classpath:db/migration/h2
     clean-on-validation-error: true
+
+
+git:
+  provider: "GITHUB"

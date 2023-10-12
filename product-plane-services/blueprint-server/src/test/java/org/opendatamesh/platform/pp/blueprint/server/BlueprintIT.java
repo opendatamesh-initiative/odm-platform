@@ -60,10 +60,6 @@ public class BlueprintIT extends ODMBlueprintIT {
         assertThat(blueprintResource.getRepositoryUrl()).isEqualTo("http://azure-repo.com/repo");
         assertThat(blueprintResource.getBlueprintPath()).isEqualTo("/blueprints/blueprint-2");
         assertThat(blueprintResource.getTargetPath()).isEqualTo("/target/project-2");
-        assertThat(blueprintResource.getConfigurations()).size().isEqualTo(3);
-        assertThat(blueprintResource.getConfigurations().get("parameter1")).isEqualTo("value_of_parameter1");
-        assertThat(blueprintResource.getConfigurations().get("parameter2")).isEqualTo("value_of_parameter2");
-        assertThat(blueprintResource.getConfigurations().get("parameter3")).isEqualTo("value_of_parameter3");
         assertThat(blueprintResource.getCreatedAt()).isNotNull();
         assertThat(blueprintResource.getUpdatedAt()).isNull();
 
@@ -127,9 +123,6 @@ public class BlueprintIT extends ODMBlueprintIT {
         assertThat(blueprintResource.getRepositoryUrl()).isEqualTo("http://azure-repo.com/repo-1");
         assertThat(blueprintResource.getBlueprintPath()).isEqualTo("/blueprints/blueprint-1/v1.0.1");
         assertThat(blueprintResource.getTargetPath()).isEqualTo("/target/project-1/v1.0.1");
-        assertThat(blueprintResource.getConfigurations()).size().isEqualTo(2);
-        assertThat(blueprintResource.getConfigurations().get("parameter1")).isEqualTo("value_of_parameter1-updated");
-        assertThat(blueprintResource.getConfigurations().get("parameter2")).isEqualTo("value_of_parameter2");
         assertThat(blueprintResource.getCreatedAt()).isEqualTo(oldBlueprintResource.getCreatedAt());
         assertThat(blueprintResource.getUpdatedAt()).isNotNull();
         assertThat(blueprintResource.getUpdatedAt()).isAfter(oldBlueprintResource.getCreatedAt());
@@ -171,10 +164,6 @@ public class BlueprintIT extends ODMBlueprintIT {
         assertThat(blueprintResource.getRepositoryUrl()).isEqualTo("http://azure-repo.com/repo");
         assertThat(blueprintResource.getBlueprintPath()).isEqualTo("/blueprints/blueprint-1");
         assertThat(blueprintResource.getTargetPath()).isEqualTo("/target/project-1");
-        assertThat(blueprintResource.getConfigurations()).size().isEqualTo(3);
-        assertThat(blueprintResource.getConfigurations().get("parameter1")).isEqualTo("value_of_parameter1");
-        assertThat(blueprintResource.getConfigurations().get("parameter2")).isEqualTo("value_of_parameter2");
-        assertThat(blueprintResource.getConfigurations().get("parameter3")).isEqualTo("value_of_parameter3");
         assertThat(blueprintResource.getCreatedAt()).isNotNull();
         assertThat(blueprintResource.getUpdatedAt()).isNull();
     }

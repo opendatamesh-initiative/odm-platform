@@ -2,13 +2,16 @@ package org.opendatamesh.platform.pp.blueprint.server.services;
 
 import org.opendatamesh.platform.core.commons.servers.exceptions.*;
 import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintApiStandardErrors;
+import org.opendatamesh.platform.pp.blueprint.api.resources.ConfigResource;
 import org.opendatamesh.platform.pp.blueprint.server.database.entities.Blueprint;
 import org.opendatamesh.platform.pp.blueprint.server.database.repositories.BlueprintRepository;
+import org.opendatamesh.platform.pp.blueprint.server.services.git.GitService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,7 +21,17 @@ public class BlueprintService {
     @Autowired
     BlueprintRepository blueprintRepository;
 
+    @Autowired
+    GitServiceFactory gitServiceFactory;
+
+    private GitService gitService;
+
     private static final Logger logger = LoggerFactory.getLogger(BlueprintService.class);
+
+    @PostConstruct
+    private void loadGitService() {
+        this.gitService = gitServiceFactory.getGitService();
+    }
 
 
     // ======================================================================================
@@ -227,6 +240,21 @@ public class BlueprintService {
                     t
             );
         }
+    }
+
+
+    // ======================================================================================
+    // INIT
+    // ======================================================================================
+
+    public void initBlueprint(Long blueprintId, ConfigResource configResource) {
+
+        if(configResource == null) {
+            throw new BadRequestException(
+                    BlueprintApiStandardErrors.SC400_02_CONFIG_IS_EMPTY,
+                    "Config object cannot be null when performing INIT of a blueprint");
+        }
+
     }
 
 }

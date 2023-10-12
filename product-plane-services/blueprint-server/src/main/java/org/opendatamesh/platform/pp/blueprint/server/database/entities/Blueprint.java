@@ -1,11 +1,8 @@
 package org.opendatamesh.platform.pp.blueprint.server.database.entities;
 
 import lombok.Data;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -43,11 +40,11 @@ public class Blueprint {
     @Column(name = "TARGET_PATH")
     private String targetPath;
 
-    @ElementCollection
+    /*@ElementCollection
     @CollectionTable(name = "BLUEPRINT_CONFIGS", joinColumns = @JoinColumn(name = "BLUEPRINT_ID"))
     @MapKeyColumn(name = "PARAMETER")
     @Column(name = "PARAMETER_VALUE")
-    private Map<String, String> configurations;
+    private Map<String, String> configurations;*/
 
     @Column(name = "CREATED_AT", nullable = false, updatable = false)
     private LocalDateTime createdAt;

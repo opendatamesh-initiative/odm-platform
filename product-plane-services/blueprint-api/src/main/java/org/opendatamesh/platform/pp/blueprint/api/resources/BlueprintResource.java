@@ -51,10 +51,10 @@ public class BlueprintResource {
     @Schema(description = "Relative path inside the repository described by 'repositoryUrl' of the target directory for the objects created from the blueprint")
     private String targetPath;
 
-    @ElementCollection
+    /*@ElementCollection
     @JsonProperty("configurations")
     @Schema(description = "Set of <key-value> pairs representing parameters of the blueprint and their values")
-    private Map<String, String> configurations;
+    private Map<String, String> configurations;*/
 
     @JsonProperty("createdAt")
     @Schema(description = "Timestamp of the Blueprint creation")

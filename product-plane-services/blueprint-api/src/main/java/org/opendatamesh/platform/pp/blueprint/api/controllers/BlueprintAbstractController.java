@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintResource;
+import org.opendatamesh.platform.pp.blueprint.api.resources.ConfigResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +32,7 @@ public abstract class BlueprintAbstractController {
 
     // TODO: add SEARCH endpoint, draft INIT
 
-    private static final String EXAMPLE_ONE = "{\n" + //
+    private static final String EXAMPLE_BLUEPRINT = "{\n" + //
             "   \"name\": \"blueprint1\",\n" + //
             "   \"version\": \"1.0.0\",\n" + //
             "   \"displayName\": \"first blueprint\",\n" + //
@@ -46,7 +47,7 @@ public abstract class BlueprintAbstractController {
             "       \"parameter3\": \"value_of_parameter3\"\n" + //
             "   }\n" + //
             "}";
-    private static final String EXAMPLE_TWO = "{\n" + //
+    private static final String EXAMPLE_BLUEPRINT_UPDATE = "{\n" + //
             "   \"id\": 1,\n" + //
             "   \"name\": \"blueprint1 - updated\",\n" + //
             "   \"version\": \"1.0.1\",\n" + //
@@ -60,6 +61,12 @@ public abstract class BlueprintAbstractController {
             "       \"parameter1\": \"value_of_parameter1\",\n" + //
             "       \"parameter2\": \"value_of_parameter2\",\n" + //
             "   }\n" + //
+            "}";
+
+    private static final String EXAMPLE_CONFIG = "{\n" + //
+            "   \"parameter1\": \"value of parameter 2\",\n" + //
+            "   \"parameter2\": \"value of parameter 2\",\n" + //
+            "   \"parameter3\": \"value of parameter 3\"\n" + //
             "}";
 
     // @see https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Annotations#arrayschema
@@ -182,7 +189,7 @@ public abstract class BlueprintAbstractController {
                             mediaType = "application/json",
                             schema = @Schema(implementation = BlueprintResource.class),
                             examples = {
-                                    @ExampleObject(name = "one", value = EXAMPLE_ONE)
+                                    @ExampleObject(name = "one", value = EXAMPLE_BLUEPRINT)
                             }
                     )
             ),
@@ -225,7 +232,11 @@ public abstract class BlueprintAbstractController {
                     description = "A blueprint object",
                     content = @Content(
                             examples = {
-                                    @ExampleObject(name = "one", description = "description of example one", value = EXAMPLE_ONE)
+                                    @ExampleObject(
+                                            name = "blueprint",
+                                            description = "description of blueprint example",
+                                            value = EXAMPLE_BLUEPRINT
+                                    )
                             }
                     )
             )
@@ -254,7 +265,7 @@ public abstract class BlueprintAbstractController {
                             mediaType = "application/json",
                             schema = @Schema(implementation = BlueprintResource.class),
                             examples = {
-                                    @ExampleObject(name = "one", value = EXAMPLE_TWO)
+                                    @ExampleObject(name = "blueprintUpdate", value = EXAMPLE_BLUEPRINT_UPDATE)
                             }
                     )
             ),
@@ -304,7 +315,11 @@ public abstract class BlueprintAbstractController {
                     description = "A blueprint object",
                     content = @Content(
                             examples = {
-                                    @ExampleObject(name = "two", description = "description of example two", value = EXAMPLE_TWO)
+                                    @ExampleObject(
+                                            name = "blueprintUpdate",
+                                            description = "description of blueprint update example",
+                                            value = EXAMPLE_BLUEPRINT_UPDATE
+                                    )
                             }
                     )
             )
@@ -364,9 +379,67 @@ public abstract class BlueprintAbstractController {
 
 
     // ===============================================================================
-    // INIT /blueprints/{id}/init
+    // POST - INIT /blueprints/{id}/init
     // ===============================================================================
 
-    // TODO
+    @Operation(
+            summary = "Init a specific blueprint",
+            description = "Create a project templating the blueprint identified by 'id' with the given parameters (i.e., 'config' object)"
+    )
+    @ResponseStatus(HttpStatus.OK)
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "The project from the requested blueprint was created successfully"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "[Bad Request](https://www.rfc-editor.org/rfc/rfc9110.html#name-400-bad-request)"
+                            + "\r\n - Error Code 40002 - Config object is empty",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "[Not Found](https://www.rfc-editor.org/rfc/rfc9110.html#name-404-not-found)"
+                            + "\r\n - Error Code 40401 - Blueprint not found",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "[Internal Server Error](https://www.rfc-editor.org/rfc/rfc9110.html#name-500-internal-server-error)"
+                            + "\r\n - Error Code 50000 - Error in the backend database"
+                            + "\r\n - Error Code 50001 - Error in in the backend service"
+                            + "\r\n - Error Code 50002 - Error in the backend descriptor processor",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
+            )
+    })
+    @PostMapping(
+            value = "/{id}/init",
+            consumes = {
+                    "application/vnd.odmp.v1+json",
+                    "application/vnd.odmp+json",
+                    "application/json"}
+    )
+    public void initBlueprintEndpoint(
+            @Parameter(description = "Identifier of the blueprint to init")
+            @Valid @PathVariable(value = "id") Long id,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "A config object",
+                    content = @Content(
+                            examples = {
+                                    @ExampleObject(
+                                            name = "configExample",
+                                            description = "description of config example",
+                                            value = EXAMPLE_CONFIG
+                                    )
+                            }
+                    )
+            )
+            @RequestBody(required=false) ConfigResource config
+    ) {
+        initBlueprint(id, config);
+    }
+
+    public abstract void initBlueprint(Long blueprintId, ConfigResource configResource);
 
 }

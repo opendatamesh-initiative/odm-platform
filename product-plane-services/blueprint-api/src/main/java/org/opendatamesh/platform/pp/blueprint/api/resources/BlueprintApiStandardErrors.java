@@ -6,6 +6,7 @@ public enum BlueprintApiStandardErrors implements ODMApiStandardErrors {
 
     // Bad Request Exceptions
     SC400_01_BLUEPRINT_IS_EMPTY ("40001", "Blueprint is empty"),
+    SC400_02_CONFIG_IS_EMPTY ("40001", "Config object is empty"),
 
     // Not Found Exceptions
     SC404_01_BLUEPRINT_NOT_FOUND ("40401", "Blueprint not found"),

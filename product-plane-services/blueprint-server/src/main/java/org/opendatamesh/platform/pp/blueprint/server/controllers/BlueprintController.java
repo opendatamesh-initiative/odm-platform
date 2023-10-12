@@ -2,6 +2,7 @@ package org.opendatamesh.platform.pp.blueprint.server.controllers;
 
 import org.opendatamesh.platform.pp.blueprint.api.controllers.BlueprintAbstractController;
 import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintResource;
+import org.opendatamesh.platform.pp.blueprint.api.resources.ConfigResource;
 import org.opendatamesh.platform.pp.blueprint.server.database.mappers.BlueprintMapper;
 import org.opendatamesh.platform.pp.blueprint.server.services.BlueprintService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,4 +43,10 @@ public class BlueprintController extends BlueprintAbstractController {
     public void deleteBlueprint(Long id) {
         blueprintService.deleteBlueprint(id);
     }
+
+    @Override
+    public void initBlueprint(Long blueprintId, ConfigResource configResource) {
+        blueprintService.initBlueprint(blueprintId, configResource);
+    }
+
 }

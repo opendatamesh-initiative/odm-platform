@@ -1,0 +1,50 @@
+##########################
+# Server configuration
+##########################
+app:
+  workdir:
+
+server:
+  error:
+    include-message: always
+
+
+############################################
+# Spring, JPA, DB and Flyway configurations
+############################################
+spring:
+  # Profile
+  profile: localmysql
+  # JPA
+  jpa:
+    hibernate:
+      ddl-auto: none #validate #errors on scripts
+      #show-sql: true
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+  # DB
+  datasource:
+    url: jdbc:mysql://localhost:3306/ODMBLUEPRINT?useSSL=false
+    driverClassName: com.mysql.cj.jdbc.Driver
+    username: root
+    password: root
+  h2:
+    console:
+      enabled: false
+  # FlyWay configuration
+  # More: https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html#appendix.application-properties.data-migration
+  flyway:
+    #enabled: false # To disable
+    url: jdbc:mysql://localhost:3306/ODMBLUEPRINT
+    user: "root"
+    password: "root"
+    locations: classpath:db/migration/mysql
+    #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
+    #schemas: flyway # not working
+    clean-on-validation-error: true

@@ -65,7 +65,7 @@ public class BlueprintIT extends ODMBlueprintIT {
         assertThat(blueprintResource.getConfigurations().get("parameter2")).isEqualTo("value_of_parameter2");
         assertThat(blueprintResource.getConfigurations().get("parameter3")).isEqualTo("value_of_parameter3");
         assertThat(blueprintResource.getCreatedAt()).isNotNull();
-        assertThat(blueprintResource.getUpdatedAt()).isNotNull();
+        assertThat(blueprintResource.getUpdatedAt()).isNull();
 
     }
 

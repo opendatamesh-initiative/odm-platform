@@ -1,5 +1,6 @@
 package org.opendatamesh.platform.pp.blueprint.server.services;
 
+import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.Git;
 import org.opendatamesh.platform.core.commons.servers.exceptions.*;
 import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintApiStandardErrors;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -267,19 +269,48 @@ public class BlueprintService {
                     "Blueprint with id [" + blueprintId + "] doesn't exists");
         }
 
+        // Clone the BLUEPRINT repository
+        logger.info("Cloning repository [" + blueprint.getRepositoryBaseUrl() + blueprint.getBlueprintRepo() + "] ...");
         Git gitRepo = gitService.cloneRepo(blueprint.getRepositoryBaseUrl()+blueprint.getBlueprintRepo());
+        logger.info(
+                "Repository ["
+                + blueprint.getRepositoryBaseUrl() + blueprint.getBlueprintRepo()
+                + "] correctly cloned"
+        );
+
+        String repoLocalPath = gitRepo.getRepository().getWorkTree().getAbsolutePath();
+
+        // Get the working directory of the repository and call the templatingService to init the BLUEPRINT
+        logger.info("Templating the repository ...");
         File workingDirectory = gitRepo.getRepository().getWorkTree();
         templatingService.templating(workingDirectory, configResource);
+        logger.info("Repository correctly templated");
+
+        logger.info("Creating the target repository and pushing the project initialized from blueprint ...");
+        // Create the targetRepo
+        // TODO
+
+        // Change origin of the BLUEPRINT REPO correctly templated to the targetRepo
         gitRepo = gitService.changeOrigin(
                 gitRepo,
                 blueprint.getRepositoryBaseUrl() + blueprint.getTargetRepo()
         );
+
+        // Commit and Push the project created from the BLUEPRINT
         gitService.commitAndPushRepo(
                 gitRepo,
                 "Project initialization from blueprint ["
                         + blueprint.getRepositoryBaseUrl()
                         + blueprint.getBlueprintRepo() + "]"
         );
+        logger.info("Project correctly pushed");
+
+        // Remove from /tmp
+        try {
+            FileUtils.deleteDirectory(new File(repoLocalPath));
+        } catch (IOException e) {
+            throw new RuntimeException(e); // CHANGE IT
+        }
 
     }
 

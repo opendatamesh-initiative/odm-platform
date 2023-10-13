@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintApiStandardErrors;
 import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintResource;
+import org.opendatamesh.platform.pp.blueprint.api.resources.ConfigResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
@@ -194,5 +195,37 @@ public class BlueprintErrorsIT extends ODMBlueprintIT {
         );
 
     }
+
+
+    // ======================================================================================
+    // INIT Blueprint
+    // ======================================================================================
+
+    @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+    public void testInitBlueprint400Errors() throws IOException {
+
+        ResponseEntity<ErrorRes> errorResponse = blueprintClient.initBlueprint(1L, null);
+        verifyResponseError(
+                errorResponse,
+                HttpStatus.BAD_REQUEST,
+                BlueprintApiStandardErrors.SC400_02_CONFIG_IS_EMPTY
+        );
+
+    }
+
+    @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+    public void testInitBlueprint404Errors() throws JsonProcessingException {
+
+        ResponseEntity<ErrorRes> errorResponse = blueprintClient.initBlueprint(1L, new ConfigResource());
+        verifyResponseError(
+                errorResponse,
+                HttpStatus.NOT_FOUND,
+                BlueprintApiStandardErrors.SC404_01_BLUEPRINT_NOT_FOUND
+        );
+
+    }
+
 
 }

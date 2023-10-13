@@ -6,6 +6,7 @@ import org.opendatamesh.platform.core.commons.clients.ODMClient;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintResource;
+import org.opendatamesh.platform.pp.blueprint.api.resources.ConfigResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -99,6 +100,7 @@ public class BlueprintClient extends ODMClient {
     }
 
     public ResponseEntity deleteBlueprint(Long id) throws JsonProcessingException {
+
         ResponseEntity deleteResponse = rest.exchange(
                 apiUrlOfItem(BlueprintAPIRoutes.BLUEPRINTS),
                 HttpMethod.DELETE,
@@ -109,6 +111,23 @@ public class BlueprintClient extends ODMClient {
 
         ResponseEntity response = mapResponseEntity(
                 deleteResponse,
+                HttpStatus.OK,
+                Void.class
+        );
+
+        return response;
+    }
+
+    public ResponseEntity initBlueprint(Long id, ConfigResource configResource) throws JsonProcessingException {
+
+        ResponseEntity initResponse = rest.postForEntity(
+                apiUrl(BlueprintAPIRoutes.BLUEPRINTS, "/"+ id + "/init"),
+                configResource,
+                Object.class
+        );
+
+        ResponseEntity response = mapResponseEntity(
+                initResponse,
                 HttpStatus.OK,
                 Void.class
         );

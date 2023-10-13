@@ -24,6 +24,9 @@ public class BlueprintService {
     BlueprintRepository blueprintRepository;
 
     @Autowired
+    TemplatingService templatingService;
+
+    @Autowired
     GitServiceFactory gitServiceFactory;
 
     private GitService gitService;
@@ -266,7 +269,7 @@ public class BlueprintService {
 
         Git gitRepo = gitService.cloneRepo(blueprint.getRepositoryBaseUrl()+blueprint.getBlueprintRepo());
         File workingDirectory = gitRepo.getRepository().getWorkTree();
-        //templating(workingDirectory, config) //TODO
+        templatingService.templating(workingDirectory, configResource);
         gitRepo = gitService.changeOrigin(
                 gitRepo,
                 blueprint.getRepositoryBaseUrl() + blueprint.getTargetRepo()

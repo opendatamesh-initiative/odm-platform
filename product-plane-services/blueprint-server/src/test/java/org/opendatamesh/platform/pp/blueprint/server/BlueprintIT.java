@@ -162,8 +162,8 @@ public class BlueprintIT extends ODMBlueprintIT {
         assertThat(blueprintResource.getDescription()).isEqualTo("First AzureDevOps Blueprint");
         assertThat(blueprintResource.getRepositoryProvider()).isEqualTo(RepositoryProviderEnum.AZURE_DEVOPS);
         assertThat(blueprintResource.getRepositoryBaseUrl()).isEqualTo("https://github.com/opendatamesh-initiative");
-        assertThat(blueprintResource.getBlueprintRepo()).isEqualTo("blueprint-1");
-        assertThat(blueprintResource.getTargetRepo()).isEqualTo("project-1");
+        assertThat(blueprintResource.getBlueprintRepo()).isEqualTo("/blueprint-1");
+        assertThat(blueprintResource.getTargetRepo()).isEqualTo("/project-1");
         assertThat(blueprintResource.getCreatedAt()).isNotNull();
         assertThat(blueprintResource.getUpdatedAt()).isNull();
     }

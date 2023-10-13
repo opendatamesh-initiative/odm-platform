@@ -39,17 +39,17 @@ public class BlueprintResource {
     @Schema(description = "Repository Provider (e.g., Azure, GitHub, GitLab, ...)")
     private RepositoryProviderEnum repositoryProvider;
 
-    @JsonProperty("repositoryUrl")
+    @JsonProperty("repositoryBaseUrl")
     @Schema(description = "Base URL of the repository of the blueprint")
-    private String repositoryUrl;
+    private String repositoryBaseUrl;
 
-    @JsonProperty("blueprintPath")
-    @Schema(description = "Relative path of the blueprint inside the repository described by 'repositoryUrl'")
-    private String blueprintPath;
+    @JsonProperty("blueprintRepo")
+    @Schema(description = "Relative path of the blueprint inside the repository described by 'repositoryBaseUrl'")
+    private String blueprintRepo;
 
-    @JsonProperty("targetPath")
-    @Schema(description = "Relative path inside the repository described by 'repositoryUrl' of the target directory for the objects created from the blueprint")
-    private String targetPath;
+    @JsonProperty("targetRepo")
+    @Schema(description = "Relative path inside the repository described by 'repositoryBaseUrl' of the target directory for the project created from the blueprint")
+    private String targetRepo;
 
     /*@ElementCollection
     @JsonProperty("configurations")

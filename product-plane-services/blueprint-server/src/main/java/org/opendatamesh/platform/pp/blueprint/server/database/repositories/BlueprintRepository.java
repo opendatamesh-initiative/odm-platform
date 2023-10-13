@@ -13,17 +13,17 @@ public interface BlueprintRepository extends JpaRepository<Blueprint, Long>, Jpa
 
     class Specs {
         static public Specification<Blueprint> hasMatch(
-                String repositoryUrl,
-                String blueprintPath
+                String repositoryBaseUrl,
+                String blueprintRepo
         ) {
 
             return (root, query, criteriaBuilder) -> {
                 List<Predicate> predicates = new ArrayList<>();
-                if (repositoryUrl != null) {
-                    predicates.add(criteriaBuilder.equal(root.get("repositoryUrl"), repositoryUrl));
+                if (repositoryBaseUrl != null) {
+                    predicates.add(criteriaBuilder.equal(root.get("repositoryBaseUrl"), repositoryBaseUrl));
                 }
-                if (blueprintPath != null) {
-                    predicates.add(criteriaBuilder.equal(root.get("blueprintPath"), blueprintPath));
+                if (blueprintRepo != null) {
+                    predicates.add(criteriaBuilder.equal(root.get("blueprintRepo"), blueprintRepo));
                 }
                 return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
             };

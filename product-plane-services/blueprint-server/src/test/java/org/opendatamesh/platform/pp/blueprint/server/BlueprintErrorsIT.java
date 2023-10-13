@@ -36,13 +36,13 @@ public class BlueprintErrorsIT extends ODMBlueprintIT {
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     public void testCreateBlueprint422Errors() throws IOException {
 
-        // INVALID BLUEPRINT: missing repositoryUrl
+        // INVALID BLUEPRINT: missing repositoryBaseUrl
         BlueprintResource blueprintResource = resourceBuilder.readResourceFromFile(
                 ODMBlueprintResources.RESOURCE_BLUEPRINT_1,
                 BlueprintResource.class
         );
 
-        blueprintResource.setRepositoryUrl(null);
+        blueprintResource.setRepositoryBaseUrl(null);
 
         ResponseEntity<ErrorRes> errorResponse = blueprintClient.createBlueprint(blueprintResource);
         verifyResponseError(
@@ -52,13 +52,13 @@ public class BlueprintErrorsIT extends ODMBlueprintIT {
                 "Blueprint repository URL cannot be null"
         );
 
-        // INVALID BLUEPRINT: missing blueprintPath
+        // INVALID BLUEPRINT: missing blueprintRepo
         blueprintResource = resourceBuilder.readResourceFromFile(
                 ODMBlueprintResources.RESOURCE_BLUEPRINT_1,
                 BlueprintResource.class
         );
 
-        blueprintResource.setBlueprintPath(null);
+        blueprintResource.setBlueprintRepo(null);
 
         errorResponse = blueprintClient.createBlueprint(blueprintResource);
         verifyResponseError(
@@ -143,13 +143,13 @@ public class BlueprintErrorsIT extends ODMBlueprintIT {
         BlueprintResource oldBlueprintResource = createBlueprint(ODMBlueprintResources.RESOURCE_BLUEPRINT_1);
         Long blueprintId = oldBlueprintResource.getId();
 
-        // INVALID BLUEPRINT: missing repositoryUrl
+        // INVALID BLUEPRINT: missing repositoryBaseUrl
         BlueprintResource blueprintResource = resourceBuilder.readResourceFromFile(
                 ODMBlueprintResources.RESOURCE_BLUEPRINT_1_UPDATED,
                 BlueprintResource.class
         );
 
-        blueprintResource.setRepositoryUrl(null);
+        blueprintResource.setRepositoryBaseUrl(null);
 
         ResponseEntity<ErrorRes> errorResponse = blueprintClient.updateBlueprint(blueprintId, blueprintResource);
         verifyResponseError(
@@ -159,13 +159,13 @@ public class BlueprintErrorsIT extends ODMBlueprintIT {
                 "Blueprint repository URL cannot be null"
         );
 
-        // INVALID BLUEPRINT: missing blueprintPath
+        // INVALID BLUEPRINT: missing blueprintRepo
         blueprintResource = resourceBuilder.readResourceFromFile(
                 ODMBlueprintResources.RESOURCE_BLUEPRINT_1,
                 BlueprintResource.class
         );
 
-        blueprintResource.setBlueprintPath(null);
+        blueprintResource.setBlueprintRepo(null);
 
         errorResponse = blueprintClient.updateBlueprint(blueprintId, blueprintResource);
         verifyResponseError(

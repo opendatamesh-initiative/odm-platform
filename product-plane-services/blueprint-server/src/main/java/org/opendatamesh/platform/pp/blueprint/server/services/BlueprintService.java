@@ -48,14 +48,14 @@ public class BlueprintService {
                     "Blueprint object cannot be null");
         }
 
-        if (blueprint.getRepositoryUrl() == null) {
+        if (blueprint.getRepositoryBaseUrl() == null) {
             throw new UnprocessableEntityException(
                     BlueprintApiStandardErrors.SC422_01_BLUEPRINT_IS_INVALID,
                     "Blueprint repository URL cannot be null"
             );
         }
 
-        if (blueprint.getBlueprintPath() == null) {
+        if (blueprint.getBlueprintRepo() == null) {
             throw new UnprocessableEntityException(
                     BlueprintApiStandardErrors.SC422_01_BLUEPRINT_IS_INVALID,
                     "Blueprint path inside repository cannot be null"
@@ -63,30 +63,29 @@ public class BlueprintService {
         }
 
         List<Blueprint> blueprints = searchBlueprints(
-                blueprint.getRepositoryUrl(),
-                blueprint.getBlueprintPath()
+                blueprint.getRepositoryBaseUrl(),
+                blueprint.getBlueprintRepo()
         );
 
         if (blueprints != null && blueprints.isEmpty() == false) {
             throw new UnprocessableEntityException(
                     BlueprintApiStandardErrors.SC422_02_BLUEPRINT_ALREADY_EXISTS,
-                    "Blueprint [" + blueprint.getName() + "] in repo [" + blueprint.getRepositoryUrl() + "] in path ["
-                            + blueprint.getBlueprintPath() + "] already exist"
+                    "Blueprint [" + blueprint.getName() + "] in repo ["
+                            + blueprint.getRepositoryBaseUrl()
+                            + blueprint.getBlueprintRepo() + "] already exist"
             );
         }
 
         try {
             blueprint = saveBlueprint(blueprint);
             logger.info("Blueprint [" + blueprint.getName() + "] "
-                    + "of version [" + blueprint.getVersion() + "] succesfully created"
-                    + "on repository [" + blueprint.getRepositoryUrl() + "] "
-                    + "in path [" + blueprint.getBlueprintPath() + "]");
+                    + "of version [" + blueprint.getVersion() + "] succesfully created "
+                    + "in repository [" + blueprint.getRepositoryBaseUrl() +  blueprint.getBlueprintRepo() + "]");
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while saving activity [" + blueprint.getName() + "] "
-                            + "on repository [" + blueprint.getRepositoryUrl() + "] "
-                            + "in path [" + blueprint.getBlueprintPath() + "]",
+                    "An error occured in the backend database while saving blueprint [" + blueprint.getName() + "] "
+                            + "in repository [" + blueprint.getRepositoryBaseUrl() + blueprint.getBlueprintRepo() + "]",
                     t
             );
         }
@@ -164,14 +163,14 @@ public class BlueprintService {
                     "Blueprint object cannot be null");
         }
 
-        if (blueprint.getRepositoryUrl() == null) {
+        if (blueprint.getRepositoryBaseUrl() == null) {
             throw new UnprocessableEntityException(
                     BlueprintApiStandardErrors.SC422_01_BLUEPRINT_IS_INVALID,
                     "Blueprint repository URL cannot be null"
             );
         }
 
-        if (blueprint.getBlueprintPath() == null) {
+        if (blueprint.getBlueprintRepo() == null) {
             throw new UnprocessableEntityException(
                     BlueprintApiStandardErrors.SC422_01_BLUEPRINT_IS_INVALID,
                     "Blueprint path inside repository cannot be null"
@@ -230,10 +229,10 @@ public class BlueprintService {
     // SEARCH
     // ======================================================================================
 
-    private List<Blueprint> searchBlueprints(String repositoryUrl, String blueprintPath) {
+    private List<Blueprint> searchBlueprints(String repositoryBaseUrl, String blueprintRepo) {
         try {
             return blueprintRepository.findAll(
-                    BlueprintRepository.Specs.hasMatch(repositoryUrl, blueprintPath)
+                    BlueprintRepository.Specs.hasMatch(repositoryBaseUrl, blueprintRepo)
             );
         } catch (Throwable t) {
             throw new InternalServerException(
@@ -265,15 +264,18 @@ public class BlueprintService {
                     "Blueprint with id [" + blueprintId + "] doesn't exists");
         }
 
-        Git gitRepo = gitService.cloneRepo(blueprint.getRepositoryUrl()+blueprint.getBlueprintPath());
+        Git gitRepo = gitService.cloneRepo(blueprint.getRepositoryBaseUrl()+blueprint.getBlueprintRepo());
         File workingDirectory = gitRepo.getRepository().getWorkTree();
         //templating(workingDirectory, config) //TODO
-        gitRepo = gitService.changeOrigin(gitRepo, blueprint.getTargetPath()); // probabilmente nuovo URL
+        gitRepo = gitService.changeOrigin(
+                gitRepo,
+                blueprint.getRepositoryBaseUrl() + blueprint.getTargetRepo()
+        );
         gitService.commitAndPushRepo(
                 gitRepo,
                 "Project initialization from blueprint ["
-                        + blueprint.getRepositoryUrl()
-                        + blueprint.getBlueprintPath() + "]"
+                        + blueprint.getRepositoryBaseUrl()
+                        + blueprint.getBlueprintRepo() + "]"
         );
 
     }

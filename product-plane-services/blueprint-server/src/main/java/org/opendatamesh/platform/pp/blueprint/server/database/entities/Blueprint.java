@@ -31,14 +31,14 @@ public class Blueprint {
     @Column(name = "REPOSITORY_PROVIDER")
     private String repositoryProvider;
 
-    @Column(name = "REPOSITORY_URL")
-    private String repositoryUrl;
+    @Column(name = "REPOSITORY_BASE_URL")
+    private String repositoryBaseUrl;
 
-    @Column(name = "BLUEPRINT_PATH")
-    private String blueprintPath;
+    @Column(name = "BLUEPRINT_REPO")
+    private String blueprintRepo;
 
-    @Column(name = "TARGET_PATH")
-    private String targetPath;
+    @Column(name = "TARGET_REPO")
+    private String targetRepo;
 
     /*@ElementCollection
     @CollectionTable(name = "BLUEPRINT_CONFIGS", joinColumns = @JoinColumn(name = "BLUEPRINT_ID"))

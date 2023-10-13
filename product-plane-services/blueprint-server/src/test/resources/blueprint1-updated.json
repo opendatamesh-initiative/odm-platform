@@ -5,7 +5,7 @@
   "displayName": "blueprint 1",
   "description": "First AzureDevOps Blueprint",
   "repositoryProvider": "AZURE_DEVOPS",
-  "repositoryUrl": "http://azure-repo.com/repo-1",
-  "blueprintPath": "/blueprints/blueprint-1/v1.0.1",
-  "targetPath": "/target/project-1/v1.0.1"
+  "repositoryBaseUrl": "https://github.com/opendatamesh-initiative",
+  "blueprintRepo": "blueprint-1.0.1",
+  "targetRepo": "project-1.0.1"
 }

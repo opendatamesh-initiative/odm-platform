@@ -38,9 +38,9 @@ public abstract class BlueprintAbstractController {
             "   \"displayName\": \"first blueprint\",\n" + //
             "   \"description\": \"description of blueprint\",\n" + //
             "   \"repositoryProvider\": \"AZURE_DEVOPS\",\n" + //
-            "   \"repositoryUrl\": \"http://repo.it/repo\",\n" + //
-            "   \"blueprintPath\": \"/blueprints/blueprint1\",\n" + //
-            "   \"targetPath\": \"/projects\"\n" + //
+            "   \"repositoryBaseUrl\": \"https://github.com/opendatamesh-initiative\",\n" + //
+            "   \"blueprintRepo\": \"/blueprint1\",\n" + //
+            "   \"targetRepo\": \"/\"\n" + //
             "}";
     private static final String EXAMPLE_BLUEPRINT_UPDATE = "{\n" + //
             "   \"id\": 1,\n" + //
@@ -49,9 +49,9 @@ public abstract class BlueprintAbstractController {
             "   \"displayName\": \"first blueprint\",\n" + //
             "   \"description\": \"description of blueprint\",\n" + //
             "   \"repositoryProvider\": \"AZURE_DEVOPS\",\n" + //
-            "   \"repositoryUrl\": \"http://repo.it/repo\",\n" + //
-            "   \"blueprintPath\": \"/blueprints/blueprint1\",\n" + //
-            "   \"targetPath\": \"/projects\"\n" + //
+            "   \"repositoryBaseUrl\": \"https://github.com/opendatamesh-initiative\",\n" + //
+            "   \"blueprintRepo\": \"/blueprints1\",\n" + //
+            "   \"targetRepo\": \"/project1.0.1\"\n" + //
             "}";
 
     private static final String EXAMPLE_CONFIG = "{\n" + //

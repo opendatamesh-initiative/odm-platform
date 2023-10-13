@@ -57,9 +57,9 @@ public class BlueprintIT extends ODMBlueprintIT {
         assertThat(blueprintResource.getDisplayName()).isEqualTo("blueprint 2");
         assertThat(blueprintResource.getDescription()).isEqualTo("Second AzureDevOps Blueprint");
         assertThat(blueprintResource.getRepositoryProvider()).isEqualTo(RepositoryProviderEnum.AZURE_DEVOPS);
-        assertThat(blueprintResource.getRepositoryUrl()).isEqualTo("http://azure-repo.com/repo");
-        assertThat(blueprintResource.getBlueprintPath()).isEqualTo("/blueprints/blueprint-2");
-        assertThat(blueprintResource.getTargetPath()).isEqualTo("/target/project-2");
+        assertThat(blueprintResource.getRepositoryBaseUrl()).isEqualTo("https://github.com/opendatamesh-initiative");
+        assertThat(blueprintResource.getBlueprintRepo()).isEqualTo("/blueprint-2");
+        assertThat(blueprintResource.getTargetRepo()).isEqualTo("/project-2");
         assertThat(blueprintResource.getCreatedAt()).isNotNull();
         assertThat(blueprintResource.getUpdatedAt()).isNull();
 
@@ -120,9 +120,9 @@ public class BlueprintIT extends ODMBlueprintIT {
         assertThat(blueprintResource.getDisplayName()).isEqualTo("blueprint 1");
         assertThat(blueprintResource.getDescription()).isEqualTo("First AzureDevOps Blueprint");
         assertThat(blueprintResource.getRepositoryProvider()).isEqualTo(RepositoryProviderEnum.AZURE_DEVOPS);
-        assertThat(blueprintResource.getRepositoryUrl()).isEqualTo("http://azure-repo.com/repo-1");
-        assertThat(blueprintResource.getBlueprintPath()).isEqualTo("/blueprints/blueprint-1/v1.0.1");
-        assertThat(blueprintResource.getTargetPath()).isEqualTo("/target/project-1/v1.0.1");
+        assertThat(blueprintResource.getRepositoryBaseUrl()).isEqualTo("https://github.com/opendatamesh-initiative");
+        assertThat(blueprintResource.getBlueprintRepo()).isEqualTo("/blueprint-1.0.1");
+        assertThat(blueprintResource.getTargetRepo()).isEqualTo("/project-1.0.1");
         assertThat(blueprintResource.getCreatedAt()).isEqualTo(oldBlueprintResource.getCreatedAt());
         assertThat(blueprintResource.getUpdatedAt()).isNotNull();
         assertThat(blueprintResource.getUpdatedAt()).isAfter(oldBlueprintResource.getCreatedAt());
@@ -161,9 +161,9 @@ public class BlueprintIT extends ODMBlueprintIT {
         assertThat(blueprintResource.getDisplayName()).isEqualTo("blueprint 1");
         assertThat(blueprintResource.getDescription()).isEqualTo("First AzureDevOps Blueprint");
         assertThat(blueprintResource.getRepositoryProvider()).isEqualTo(RepositoryProviderEnum.AZURE_DEVOPS);
-        assertThat(blueprintResource.getRepositoryUrl()).isEqualTo("http://azure-repo.com/repo");
-        assertThat(blueprintResource.getBlueprintPath()).isEqualTo("/blueprints/blueprint-1");
-        assertThat(blueprintResource.getTargetPath()).isEqualTo("/target/project-1");
+        assertThat(blueprintResource.getRepositoryBaseUrl()).isEqualTo("https://github.com/opendatamesh-initiative");
+        assertThat(blueprintResource.getBlueprintRepo()).isEqualTo("blueprint-1");
+        assertThat(blueprintResource.getTargetRepo()).isEqualTo("project-1");
         assertThat(blueprintResource.getCreatedAt()).isNotNull();
         assertThat(blueprintResource.getUpdatedAt()).isNull();
     }

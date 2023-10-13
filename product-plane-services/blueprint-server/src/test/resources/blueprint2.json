@@ -4,7 +4,7 @@
   "displayName": "blueprint 2",
   "description": "Second AzureDevOps Blueprint",
   "repositoryProvider": "AZURE_DEVOPS",
-  "repositoryUrl": "http://azure-repo.com/repo",
-  "blueprintPath": "/blueprints/blueprint-2",
-  "targetPath": "/target/project-2"
+  "repositoryBaseUrl": "https://github.com/opendatamesh-initiative",
+  "blueprintRepo": "blueprint-2",
+  "targetRepo": "project-2"
 }

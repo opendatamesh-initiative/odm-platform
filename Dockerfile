@@ -8,7 +8,7 @@ ADD utility-plane-services/notification-api/target/odm-platform-up-notification-
 COPY product-plane-services/registry-server/target/odm-platform-pp-registry-server-*.jar ./application.jar
 
 ARG SPRING_PROFILES_ACTIVE=docker
-ARG SPRING_PORT=8002
+ARG SPRING_PORT=8001
 ARG SPRING_PROPS
 ARG JAVA_OPTS
 ARG DATABASE_URL=jdbc:postgresql://localhost:5432/odmpdb

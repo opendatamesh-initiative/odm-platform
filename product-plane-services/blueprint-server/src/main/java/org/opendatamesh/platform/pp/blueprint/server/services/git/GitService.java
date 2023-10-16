@@ -54,7 +54,7 @@ public interface GitService {
     default void commitAndPushRepo(Git gitRepo, String message) {
         try {
             gitRepo.commit().setMessage(message);
-            gitRepo.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider("mattia155", "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")).call();
+            gitRepo.push().call();
         } catch (Throwable t) {
             throw new InternalServerException(
                     BlueprintApiStandardErrors.SC500_01_GIT_ERROR,

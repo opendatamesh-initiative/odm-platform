@@ -15,6 +15,7 @@ public class VelocityConfig {
         Properties velocityProperties = new Properties();
         velocityProperties.setProperty("file.resource.loader.path", "/tmp");
         velocityEngine.init(velocityProperties);
+        velocityEngine.init();
         return velocityEngine;
     }
 

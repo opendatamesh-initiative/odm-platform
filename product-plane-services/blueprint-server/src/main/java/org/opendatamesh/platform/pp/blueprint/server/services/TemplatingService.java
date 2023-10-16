@@ -34,31 +34,42 @@ public class TemplatingService {
 
     private void processDirectory(File workingDirectory, VelocityContext velocityContext) {
 
-        String originalName = workingDirectory.getName();
-        String templatedName = templateDirectory(originalName, velocityContext);
-        File newDirectory = new File(workingDirectory.getParentFile(), templatedName);
-        if(!workingDirectory.equals(newDirectory)) {
-            workingDirectory.renameTo(newDirectory);
-        }
-
-        for (File file : workingDirectory.listFiles()) {
-            if(file.isDirectory()) {
-                // Recursive call
-                processDirectory(file, velocityContext);
-            } else if (file.isFile()) {
-                // Template file
-                templateFile(file, velocityContext);
+        if(
+                workingDirectory.listFiles() != null
+                && !workingDirectory.getName().equals(".git")
+        ) {
+            for (File file : workingDirectory.listFiles()) {
+                if(file.isDirectory()) {
+                    // Template dir name
+                    templateName(file, velocityContext);
+                    // Recursive call
+                    processDirectory(file, velocityContext);
+                } else if (file.isFile()) {
+                    // Template file name
+                    templateName(file, velocityContext);
+                    // Template file
+                    templateContent(file, velocityContext);
+                }
             }
         }
+
     }
 
-    private String templateDirectory(String dirName, VelocityContext velocityContext) {
+    private void templateName(File file, VelocityContext velocityContext) {
+
+        String originalName = file.getName();
+
         StringWriter stringWriter = new StringWriter();
-        velocityEngine.evaluate(velocityContext, stringWriter, "templating", dirName);
-        return stringWriter.toString();
+        velocityEngine.evaluate(velocityContext, stringWriter, "templating", originalName);
+        String templatedName = stringWriter.toString();
+
+        File newFile = new File(file.getParentFile(), templatedName);
+        if(!file.equals(newFile)) {
+            file.renameTo(newFile);
+        }
     }
 
-    private void templateFile(File file, VelocityContext velocityContext) {
+    private void templateContent(File file, VelocityContext velocityContext) {
 
         String inputFileName = file.getAbsolutePath();
         String outputFileName = inputFileName + ".tmp";

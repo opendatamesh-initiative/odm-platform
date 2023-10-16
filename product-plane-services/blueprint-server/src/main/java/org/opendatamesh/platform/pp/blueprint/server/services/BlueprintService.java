@@ -83,14 +83,17 @@ public class BlueprintService {
 
         try {
             blueprint = saveBlueprint(blueprint);
-            logger.info("Blueprint [" + blueprint.getName() + "] "
-                    + "of version [" + blueprint.getVersion() + "] succesfully created "
-                    + "in repository [" + blueprint.getRepositoryBaseUrl() +  blueprint.getBlueprintRepo() + "]");
+            logger.info(
+                    "Blueprint [" + blueprint.getName() + "] "
+                    + "of version [" + blueprint.getVersion() + "] "
+                    + "of repository [" + blueprint.getRepositoryBaseUrl() +  blueprint.getBlueprintRepo() + "] "
+                    + "succesfully registered"
+            );
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while saving blueprint [" + blueprint.getName() + "] "
-                            + "in repository [" + blueprint.getRepositoryBaseUrl() + blueprint.getBlueprintRepo() + "]",
+                            + "of repository [" + blueprint.getRepositoryBaseUrl() + blueprint.getBlueprintRepo() + "]",
                     t
             );
         }
@@ -269,49 +272,49 @@ public class BlueprintService {
                     "Blueprint with id [" + blueprintId + "] doesn't exists");
         }
 
-        // Clone the BLUEPRINT repository
-        logger.info("Cloning repository [" + blueprint.getRepositoryBaseUrl() + blueprint.getBlueprintRepo() + "] ...");
-        Git gitRepo = gitService.cloneRepo(blueprint.getRepositoryBaseUrl()+blueprint.getBlueprintRepo());
-        logger.info(
-                "Repository ["
-                + blueprint.getRepositoryBaseUrl() + blueprint.getBlueprintRepo()
-                + "] correctly cloned"
-        );
-
-        String repoLocalPath = gitRepo.getRepository().getWorkTree().getAbsolutePath();
-
-        // Get the working directory of the repository and call the templatingService to init the BLUEPRINT
-        logger.info("Templating the repository ...");
-        File workingDirectory = gitRepo.getRepository().getWorkTree();
-        templatingService.templating(workingDirectory, configResource);
-        logger.info("Repository correctly templated");
-
-        logger.info("Creating the target repository and pushing the project initialized from blueprint ...");
-        // Create the targetRepo
-        // TODO
-
-        // Change origin of the BLUEPRINT REPO correctly templated to the targetRepo
-        gitRepo = gitService.changeOrigin(
-                gitRepo,
-                blueprint.getRepositoryBaseUrl() + blueprint.getTargetRepo()
-        );
-
-        // Commit and Push the project created from the BLUEPRINT
-        gitService.commitAndPushRepo(
-                gitRepo,
-                "Project initialization from blueprint ["
-                        + blueprint.getRepositoryBaseUrl()
-                        + blueprint.getBlueprintRepo() + "]"
-        );
-        logger.info("Project correctly pushed");
-
-        // Remove from /tmp
         try {
-            FileUtils.deleteDirectory(new File(repoLocalPath));
-        } catch (IOException e) {
-            throw new RuntimeException(e); // CHANGE IT
-        }
 
+            // Clone the BLUEPRINT repository
+            logger.info("Cloning repository [" + blueprint.getRepositoryBaseUrl() + blueprint.getBlueprintRepo() + "] ...");
+            Git gitRepo = gitService.cloneRepo(blueprint.getRepositoryBaseUrl()+blueprint.getBlueprintRepo());
+            logger.info(
+                    "Repository ["
+                            + blueprint.getRepositoryBaseUrl() + blueprint.getBlueprintRepo()
+                            + "] correctly cloned"
+            );
+
+            // Get the working directory of the repository and call the templatingService to init the BLUEPRINT
+            logger.info("Templating the repository ...");
+            File workingDirectory = gitRepo.getRepository().getWorkTree();
+            templatingService.templating(workingDirectory, configResource);
+            logger.info("Repository correctly templated");
+
+            logger.info("Creating the target repository and pushing the project initialized from blueprint ...");
+            // Create the targetRepo
+            // TODO
+
+            // Change origin of the BLUEPRINT REPO correctly templated to the targetRepo
+            gitRepo = gitService.changeOrigin(
+                    gitRepo,
+                    blueprint.getRepositoryBaseUrl() + blueprint.getTargetRepo()
+            );
+
+            // Commit and Push the project created from the BLUEPRINT
+            gitService.commitAndPushRepo(
+                    gitRepo,
+                    "Project initialization from blueprint ["
+                            + blueprint.getRepositoryBaseUrl()
+                            + blueprint.getBlueprintRepo() + "]"
+            );
+            logger.info("Project correctly pushed");
+
+            // Delete local repository
+            //gitService.deleteLocalRepository();
+
+        } catch (Throwable t) {
+            gitService.deleteLocalRepository();
+            throw t;
+        }
     }
 
 }

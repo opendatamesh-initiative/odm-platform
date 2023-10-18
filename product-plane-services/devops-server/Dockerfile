@@ -10,6 +10,7 @@ ADD ./utility-plane-services/executor-api/target/odm-platform-up-executor-api-*.
 COPY ./product-plane-services/devops-server/target/odm-platform-pp-devops-server-*.jar ./application.jar
 
 ARG SPRING_PROFILES_ACTIVE=docker
+ARG SPRING_HOSTNAME=localhost
 ARG SPRING_PORT=8002
 ARG SPRING_PROPS
 ARG JAVA_OPTS
@@ -32,6 +33,7 @@ ARG POLICYSERVICE_HOSTNAME=localhost
 ARG POLICYSERVICE_PORT=9001
 
 ENV SPRING_PROFILES_ACTIVE ${SPRING_PROFILES_ACTIVE}
+ENV SPRING_HOSTNAME ${SPRING_HOSTNAME}
 ENV SPRING_PORT ${SPRING_PORT}
 ENV SPRING_PROPS ${SPRING_PROPS}
 ENV JAVA_OPTS ${JAVA_OPTS}

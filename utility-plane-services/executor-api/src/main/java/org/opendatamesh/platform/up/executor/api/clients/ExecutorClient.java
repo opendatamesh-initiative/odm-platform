@@ -44,10 +44,24 @@ public class ExecutorClient extends ODMClient {
     public <T> ResponseEntity<T> postTask(
             Object payload, Class<T> responseType) throws IOException {
 
-        return rest.postForEntity(
+        ResponseEntity response =  rest.postForEntity(
                 apiUrl(ExecutorAPIRoutes.TASKS),
                 getHttpEntity(payload),
-                responseType);
+                Object.class
+        );
+
+        if(response.getStatusCode().is2xxSuccessful()) {
+            response = ResponseEntity
+                    .status(response.getStatusCode())
+                    .headers(response.getHeaders())
+                    .body(mapper.readValue(
+                            mapper.writeValueAsString(response.getBody()),
+                            responseType
+                    ));
+            return response;
+        } else {
+            throw new RuntimeException(response.getBody().toString());
+        }
     }
 
     // ----------------------------------------

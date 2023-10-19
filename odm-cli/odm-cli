@@ -1,0 +1,21 @@
+#!/bin/bash
+
+os_name="$(uname -s)"
+case "$os_name" in
+    CYGWIN*|MINGW*|MSYS*)
+        # Running on Windows
+        jar_file=$(find target -maxdepth 1 -name 'odm-cli-*.jar' -type f -print -quit)
+        ;;
+    *)
+        # Running on Unix-based system
+        jar_file=$(find target -maxdepth 1 -name 'odm-cli-*.jar' -type f -exec basename {} \; | sort -V | tail -n 1)
+        ;;
+esac
+
+if [ -z "$jar_file" ]; then
+    echo "Error: No matching JAR file found in the 'target' directory."
+    echo "Make sure to execute 'mvn clean package spring-boot:repackage'."
+    exit 1
+fi
+
+java -jar "target/$jar_file" "$@"

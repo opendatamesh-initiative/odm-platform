@@ -144,7 +144,7 @@ public class TaskService {
             TaskResource taskRes = taskMapper.toResource(task);
             String callbackRef = configurations.getProductPlane().getDevopsService().getAddress();
             callbackRef += DevOpsAPIRoutes.TASKS;
-            callbackRef += "/" + task.getId() + "/stop";
+            callbackRef += "/" + task.getId() + "/status?action=STOP";
             taskRes.setCallbackRef(callbackRef);
 
             ExecutorClient odmExecutor = clients.getExecutorClient(task.getExecutorRef());
@@ -241,7 +241,7 @@ public class TaskService {
         if (task == null) {
             throw new NotFoundException(
                     DevOpsApiStandardErrors.SC404_11_TASK_NOT_FOUND,
-                    "Data Product with [" + taskId + "] does not exist");
+                    "Task with [" + taskId + "] does not exist");
         }
 
         return task;

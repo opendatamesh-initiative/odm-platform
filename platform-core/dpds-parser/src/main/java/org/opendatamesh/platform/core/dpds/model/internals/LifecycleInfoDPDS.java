@@ -9,11 +9,14 @@ import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class LifecycleInfoDPDS {
+
+    @Schema(description = "List of Lifecycle Task Info objects of the Lifecycle Info", required = true)
     private List<LifecycleTaskInfoDPDS> tasksInfo;
 
     public LifecycleInfoDPDS() {

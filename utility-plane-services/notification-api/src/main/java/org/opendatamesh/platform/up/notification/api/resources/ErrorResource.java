@@ -1,8 +1,13 @@
 package org.opendatamesh.platform.up.notification.api.resources;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 public class ErrorResource {
 
+    @Schema(description = "Error type")
     private String errorType;
+
+    @Schema(description = "Error message")
     private String message;
 
     public ErrorResource() {

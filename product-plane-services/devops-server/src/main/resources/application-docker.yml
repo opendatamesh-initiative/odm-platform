@@ -57,13 +57,13 @@ odm:
   productPlane:
     registryService:
       active: true
-      address: http://localhost:8001
+      address: http://${REGISTRY_HOSTNAME}:${REGISTRY_PORT} #http://localhost:8001
     devopsService:
       active: true
-      address: http://localhost:${SPRING_PORT}
+      address: http://${SPRING_HOSTNAME}:${SPRING_PORT}
     blueprintService:
       active: false
-      address: http://localhost:8003
+      address: http://${BLUEPRINT_HOSTNAME}:${BLUEPRINT_PORT}
   utilityPlane:
     policyServices:
       open-policy-agent:
@@ -76,4 +76,4 @@ odm:
     executorServices:
       azure-devops:
         active: true
-        address: http://localhost:9003
+        address: http://${AZUREDEVOPS_HOSTNAME}:${AZUREDEVOPS_PORT}/api/v1/up/executor/azure-devops

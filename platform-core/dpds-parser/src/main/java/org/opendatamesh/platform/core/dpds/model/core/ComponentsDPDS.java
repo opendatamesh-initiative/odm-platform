@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -27,30 +28,39 @@ import org.opendatamesh.platform.core.dpds.model.internals.InfrastructuralCompon
 public class ComponentsDPDS extends ComponentContainerDPDS {
 
     @JsonProperty("inputPorts")
+    @Schema(description = "Key-value list of input ports of the Component")
     private Map<String, PortDPDS> inputPorts = new HashMap<>();
 
     @JsonProperty("outputPorts")
+    @Schema(description = "Key-value list of output ports of the Component")
     private Map<String, PortDPDS> outputPorts = new HashMap<>();
 
     @JsonProperty("discoveryPorts")
+    @Schema(description = "Key-value list of discovery ports of the Component")
     private Map<String, PortDPDS> discoveryPorts = new HashMap<>();
 
     @JsonProperty("observabilityPorts")
+    @Schema(description = "Key-value list of observability ports of the Component")
     private Map<String, PortDPDS> observabilityPorts = new HashMap<>();
 
     @JsonProperty("controlPorts")
+    @Schema(description = "Key-value list of control ports of the Component")
     private Map<String, PortDPDS> controlPorts = new HashMap<>();
 
     @JsonProperty("applicationComponents")
+    @Schema(description = "Key-value list of Application Components of the Component")
     private Map<String, ApplicationComponentDPDS> applicationComponents = new HashMap<>();
 
     @JsonProperty("infrastructuralComponents")
+    @Schema(description = "Key-value list of Application Components of the Component")
     private Map<String, InfrastructuralComponentDPDS> infrastructuralComponents = new HashMap<>();
 
     @JsonProperty("apis")
+    @Schema(description = "Key-value list of APIs Standard Definitions of the Component")
     private Map<String, StandardDefinitionDPDS> apis = new HashMap<>();
 
     @JsonProperty("templates")
+    @Schema(description = "Key-value list of template Standard Definitions of the Component")
     private Map<String, StandardDefinitionDPDS> templates = new HashMap<>();
 
     @SuppressWarnings("unchecked")

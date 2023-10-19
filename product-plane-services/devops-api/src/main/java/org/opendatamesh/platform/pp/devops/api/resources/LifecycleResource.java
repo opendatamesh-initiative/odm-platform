@@ -2,6 +2,7 @@ package org.opendatamesh.platform.pp.devops.api.resources;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.util.Date;
@@ -11,21 +12,27 @@ import java.util.Date;
 public class LifecycleResource {
 
     @JsonProperty("id")
+    @Schema(description = "Auto generated Lifecyle ID")
     Long id;
 
     @JsonProperty("dataProductId")
+    @Schema(description = "ID of the Data Product subject of the Lifecycle object")
     private String dataProductId;
 
     @JsonProperty("dataProductVersion")
+    @Schema(description = "Version of the Data Product subject of the Lifecycle object")
     private String dataProductVersion;
 
     @JsonProperty("stage")
+    @Schema(description = "Lifecycle stage")
     String stage;
 
     @JsonProperty("startedAt")
+    @Schema(description = "Date from which the stage is valid for the Data Product")
     private Date startedAt;
 
     @JsonProperty("finishedAt")
+    @Schema(description = "Date at which the stage is no longer valid for the Data Product")
     private Date finishedAt;
 
     @Override

@@ -3,6 +3,7 @@ package org.opendatamesh.platform.pp.devops.api.resources;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.util.Date;
@@ -11,33 +12,43 @@ import java.util.Date;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ActivityResource {
     @JsonProperty("id")
+    @Schema(description = "Auto generated Activity ID")
     Long id;
 
     @JsonProperty("dataProductId")
+    @Schema(description = "ID of the Data Product subject of the Activity", required = true)
     private String dataProductId;
 
     @JsonProperty("dataProductVersion")
+    @Schema(description = "Version of the Data Product subject of the Activity", required = true)
     private String dataProductVersion;
 
     @JsonProperty("stage")
+    @Schema(description = "Goal stage of the Activity", required = true)
     String stage;
 
     @JsonProperty("status")
+    @Schema(description = "Auto updated Activity status")
     ActivityStatus status;
 
     @JsonProperty("results")
+    @Schema(description = "Auto updated Activity execution results")
     String results;
 
     @JsonProperty("errors")
+    @Schema(description = "Auto updated Activity execution errors")
     String errors;
 
     @JsonProperty("createdAt")
+    @Schema(description = "Activity creation timestamp")
     private Date createdAt;
 
     @JsonProperty("startedAt")
+    @Schema(description = "Timestamp of the Activity execution start")
     private Date startedAt;
 
     @JsonProperty("finishedAt")
+    @Schema(description = "Timestamp of the Activity execution end")
     private Date finishedAt;
 
     @Override

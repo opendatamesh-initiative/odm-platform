@@ -7,21 +7,21 @@ import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
 import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintApiStandardErrors;
 import org.opendatamesh.platform.pp.blueprint.api.resources.RepositoryProviderEnum;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.File;
-import java.io.IOException;
 
-public interface GitService {
+public abstract class GitService {
 
     //TODO : timeouts on operations?
 
-    String targetPath = "tmp";
+    @Value("${git.templates.path}")
+    private String targetPath;
 
-    RepositoryProviderEnum getType();
 
-    void createRepo();
+    public abstract void createRepo(String repositoryName);
 
-    default Git cloneRepo(String sourceUrl) {
+    public Git cloneRepo(String sourceUrl) {
         try {
             return Git.cloneRepository()
                     .setURI(sourceUrl)
@@ -36,7 +36,7 @@ public interface GitService {
         }
     }
 
-    default Git changeOrigin(Git gitRepository, String newOrigin) {
+    public Git changeOrigin(Git gitRepository, String newOrigin) {
         try {
             StoredConfig config = gitRepository.getRepository().getConfig();
             config.setString("remote", "origin", "url", newOrigin);
@@ -51,9 +51,10 @@ public interface GitService {
         }
     }
 
-    default void commitAndPushRepo(Git gitRepo, String message) {
+    public void commitAndPushRepo(Git gitRepo, String message) {
         try {
             gitRepo.commit().setMessage(message);
+            //gitRepo.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider("user", "token")).call();
             gitRepo.push().call();
         } catch (Throwable t) {
             throw new InternalServerException(
@@ -64,7 +65,7 @@ public interface GitService {
         }
     }
 
-    default void deleteLocalRepository() {
+    public void deleteLocalRepository() {
         try {
             FileUtils.deleteDirectory(new File(targetPath));
         } catch (Throwable t) {

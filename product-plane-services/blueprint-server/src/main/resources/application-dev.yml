@@ -52,3 +52,5 @@ spring:
 
 git:
   provider: "GITHUB"
+  templates:
+    path: "templates"

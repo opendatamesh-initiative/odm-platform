@@ -1,17 +1,18 @@
 package org.opendatamesh.platform.pp.blueprint.server.services.git;
 
-import org.opendatamesh.platform.pp.blueprint.api.resources.RepositoryProviderEnum;
-import org.springframework.stereotype.Component;
+import org.opendatamesh.platform.pp.blueprint.server.clients.github.GitHubClient;
 
-@Component
-public class GitHubService implements GitService {
-    @Override
-    public RepositoryProviderEnum getType() {
-        return RepositoryProviderEnum.GITHUB;
+public class GitHubService extends GitService {
+
+    private GitHubClient gitHubClient;
+
+    public GitHubService() {
+        this.gitHubClient = new GitHubClient();
     }
 
     @Override
-    public void createRepo() {
-
+    public void createRepo(String repositoryName) {
+        gitHubClient.createRemoteRepository(repositoryName);
     }
+
 }

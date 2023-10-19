@@ -34,21 +34,27 @@ public class TemplatingService {
 
     private void processDirectory(File workingDirectory, VelocityContext velocityContext) {
 
+        File[] files = workingDirectory.listFiles();
+
         if(
-                workingDirectory.listFiles() != null
-                && !workingDirectory.getName().equals(".git")
+                files != null
+                && !workingDirectory.getName().contains(".git")
         ) {
-            for (File file : workingDirectory.listFiles()) {
-                if(file.isDirectory()) {
-                    // Template dir name
-                    templateName(file, velocityContext);
-                    // Recursive call
-                    processDirectory(file, velocityContext);
-                } else if (file.isFile()) {
-                    // Template file name
-                    templateName(file, velocityContext);
+            for (File file : files) {
+                System.out.println("---------------------------------------------------------------------------------");
+                System.out.println("FILE: ");
+                System.out.println(file);
+                System.out.println("---------------------------------------------------------------------------------");
+                if (file.isFile()) {
                     // Template file
                     templateContent(file, velocityContext);
+                    // Template file name
+                    templateName(file, velocityContext);
+                } else if(file.isDirectory()) {
+                    // Recursive call
+                    processDirectory(file, velocityContext);
+                    // Template dir name
+                    templateName(file, velocityContext);
                 }
             }
         }
@@ -63,10 +69,8 @@ public class TemplatingService {
         velocityEngine.evaluate(velocityContext, stringWriter, "templating", originalName);
         String templatedName = stringWriter.toString();
 
-        File newFile = new File(file.getParentFile(), templatedName);
-        if(!file.equals(newFile)) {
-            file.renameTo(newFile);
-        }
+        file.renameTo(new File(file.getParentFile(), templatedName));
+
     }
 
     private void templateContent(File file, VelocityContext velocityContext) {

@@ -1,32 +1,25 @@
-package org.opendatamesh.platform.pp.blueprint.server.services;
+package org.opendatamesh.platform.pp.blueprint.server.configs;
 
-import lombok.Data;
 import org.opendatamesh.platform.pp.blueprint.server.services.git.AzureService;
 import org.opendatamesh.platform.pp.blueprint.server.services.git.GitHubService;
 import org.opendatamesh.platform.pp.blueprint.server.services.git.GitService;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.PostConstruct;
-
-@Service
-@Data
-public class GitServiceFactory {
+@Configuration
+public class GitServiceFactoryConfig {
 
     @Value("${git.provider}")
     private String serviceType;
 
-    private GitService gitService;
-
-    @PostConstruct
-    public void initGitService() {
+    @Bean
+    public GitService gitService() {
         switch (serviceType) {
             case "AZURE_DEVOPS":
-                this.gitService = new AzureService();
-                break;
+                return new AzureService();
             case "GITHUB":
-                this.gitService = new GitHubService();
-                break;
+                return new GitHubService();
             default:
                 throw new RuntimeException(
                         "Impossibile to initialize GitService - unknown Git Provider [" + serviceType + "]"

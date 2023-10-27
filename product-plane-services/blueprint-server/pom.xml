@@ -65,6 +65,12 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
+        <!-- Oauth -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-oauth2-client</artifactId>
+        </dependency>
+
         <!-- Javax Persistence -->
         <dependency>
             <groupId>jakarta.persistence</groupId>

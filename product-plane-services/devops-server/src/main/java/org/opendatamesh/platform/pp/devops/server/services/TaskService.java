@@ -8,10 +8,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
-import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
-import org.opendatamesh.platform.core.commons.servers.exceptions.NotFoundException;
-import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
+import org.opendatamesh.platform.core.commons.servers.exceptions.*;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.model.core.StandardDefinitionDPDS;
 import org.opendatamesh.platform.core.dpds.model.internals.LifecycleTaskInfoDPDS;
@@ -19,6 +16,8 @@ import org.opendatamesh.platform.core.dpds.parser.IdentifierStrategy;
 import org.opendatamesh.platform.pp.devops.api.clients.DevOpsAPIRoutes;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskStatus;
 import org.opendatamesh.platform.pp.devops.api.resources.DevOpsApiStandardErrors;
+import org.opendatamesh.platform.pp.devops.api.resources.TaskResultResource;
+import org.opendatamesh.platform.pp.devops.api.resources.TaskResultStatus;
 import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsClients;
 import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsConfigurations;
 import org.opendatamesh.platform.pp.devops.server.database.entities.Task;
@@ -166,16 +165,32 @@ public class TaskService {
         return task;
     }
 
-    public Task stopTask(Long taskId) {
+    public Task stopTask(Long taskId, TaskResultResource taskResultResource) {
         Task task = readTask(taskId);
-        return stopTask(task);
+        return stopTask(task, taskResultResource);
     }
 
-    public Task stopTask(Task task) {
+    public Task stopTask(Task task, TaskResultResource taskResultResource) {
 		try {
-            task.setStatus(ActivityTaskStatus.PROCESSED);
+            if(!(taskResultResource == null)) {
+                if(taskResultResource.getStatus() == null)
+                    throw new UnprocessableEntityException(
+                            DevOpsApiStandardErrors.SC422_03_TASK_RESULT_IS_INVALID,
+                            "Task status cannot be null"
+                    );
+                if(taskResultResource.getStatus().equals(TaskResultStatus.PROCESSED)) {
+                    task.setStatus(ActivityTaskStatus.PROCESSED);
+                    task.setResults(taskResultResource.getResults());
+                }
+                else {
+                    task.setStatus(ActivityTaskStatus.FAILED);
+                    task.setErrors(taskResultResource.getErrors());
+                }
+            } else {
+                task.setStatus(ActivityTaskStatus.PROCESSED);
+                task.setResults("OK");
+            }
             task.setFinishedAt(now());
-            task.setResults("OK");
             saveTask(task);
         } catch(Throwable t) {
              throw new InternalServerException(

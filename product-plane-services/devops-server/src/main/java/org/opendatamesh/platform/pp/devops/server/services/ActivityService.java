@@ -10,6 +10,7 @@ import org.opendatamesh.platform.core.dpds.model.internals.LifecycleTaskInfoDPDS
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatus;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskStatus;
 import org.opendatamesh.platform.pp.devops.api.resources.DevOpsApiStandardErrors;
+import org.opendatamesh.platform.pp.devops.api.resources.TaskResultResource;
 import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsClients;
 import org.opendatamesh.platform.pp.devops.server.database.entities.Activity;
 import org.opendatamesh.platform.pp.devops.server.database.entities.Task;
@@ -257,8 +258,8 @@ public class ActivityService {
         return startedTask;
     }
 
-    public Task stopTaskAndUpdateParentActivity(Long taskId) {
-        Task task = taskService.stopTask(taskId);
+    public Task stopTaskAndUpdateParentActivity(Long taskId, TaskResultResource taskResultResource) {
+        Task task = taskService.stopTask(taskId, taskResultResource);
         startNextPlannedTaskAndUpdateParentActivity(task.getActivityId());
         return task;
     }

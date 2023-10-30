@@ -12,18 +12,12 @@ import java.util.List;
 public interface BlueprintRepository extends JpaRepository<Blueprint, Long>, JpaSpecificationExecutor<Blueprint> {
 
     class Specs {
-        static public Specification<Blueprint> hasMatch(
-                String repositoryBaseUrl,
-                String blueprintRepo
-        ) {
+        static public Specification<Blueprint> hasMatch(String repositoryUrl) {
 
             return (root, query, criteriaBuilder) -> {
                 List<Predicate> predicates = new ArrayList<>();
-                if (repositoryBaseUrl != null) {
-                    predicates.add(criteriaBuilder.equal(root.get("repositoryBaseUrl"), repositoryBaseUrl));
-                }
-                if (blueprintRepo != null) {
-                    predicates.add(criteriaBuilder.equal(root.get("blueprintRepo"), blueprintRepo));
+                if (repositoryUrl != null) {
+                    predicates.add(criteriaBuilder.equal(root.get("repositoryUrl"), repositoryUrl));
                 }
                 return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
             };

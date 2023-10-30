@@ -11,6 +11,10 @@ import java.util.Map;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ConfigResource {
 
+    @JsonProperty("targetRepo")
+    @Schema(description = "Name of the target repository")
+    String targetRepo;
+
     @JsonProperty("config")
     @Schema(description = "List of key-value pairs representing the parameters needed for templating a blueprint")
     Map<String, String> config;

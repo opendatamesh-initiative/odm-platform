@@ -1,6 +1,5 @@
 package org.opendatamesh.platform.pp.blueprint.server.services;
 
-import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.opendatamesh.platform.pp.blueprint.api.resources.ConfigResource;
@@ -8,9 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class TemplatingService {
@@ -41,56 +39,63 @@ public class TemplatingService {
                 && !workingDirectory.getName().contains(".git")
         ) {
             for (File file : files) {
-                System.out.println("---------------------------------------------------------------------------------");
-                System.out.println("FILE: ");
-                System.out.println(file);
-                System.out.println("---------------------------------------------------------------------------------");
                 if (file.isFile()) {
+                    // Template file name
+                    file = templateName(file, velocityContext);
                     // Template file
                     templateContent(file, velocityContext);
-                    // Template file name
-                    templateName(file, velocityContext);
                 } else if(file.isDirectory()) {
+                    // Template dir name
+                    file = templateName(file, velocityContext);
                     // Recursive call
                     processDirectory(file, velocityContext);
-                    // Template dir name
-                    templateName(file, velocityContext);
                 }
             }
         }
 
     }
 
-    private void templateName(File file, VelocityContext velocityContext) {
+    private File templateName(File file, VelocityContext velocityContext) {
 
         String originalName = file.getName();
 
-        StringWriter stringWriter = new StringWriter();
-        velocityEngine.evaluate(velocityContext, stringWriter, "templating", originalName);
-        String templatedName = stringWriter.toString();
+        String templatedName = applyVelocityToString(originalName, velocityContext);
 
-        file.renameTo(new File(file.getParentFile(), templatedName));
+        File renamedFile = new File(file.getParentFile(), templatedName);
+        file.renameTo(renamedFile);
+
+        return renamedFile;
 
     }
 
     private void templateContent(File file, VelocityContext velocityContext) {
 
         String inputFileName = file.getAbsolutePath();
-        String outputFileName = inputFileName + ".tmp";
-
-        Template template = velocityEngine.getTemplate(inputFileName);
 
         try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName));
-            template.merge(velocityContext, writer);
-            Files.move(
-                    new File(outputFileName).toPath(),
-                    new File(inputFileName).toPath(),
-                    StandardCopyOption.REPLACE_EXISTING
-            );
+
+            // Read old content
+            BufferedReader reader = new BufferedReader(new FileReader(inputFileName));
+            String oldContent = reader.lines().collect(Collectors.joining(System.lineSeparator()));
+            reader.close();
+
+            // Create new content and replace old one
+            StringBuilder newContent = new StringBuilder();
+            newContent.append(applyVelocityToString(oldContent, velocityContext));
+            PrintWriter writer = new PrintWriter(inputFileName);
+            writer.println(newContent);
+            writer.close();
+
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(e); // CHANGE IT
         }
+
+    }
+
+    private String applyVelocityToString(String inputString, VelocityContext velocityContext) {
+        StringWriter stringWriter = new StringWriter();
+        velocityEngine.evaluate(velocityContext, stringWriter, "templating", inputString);
+        return stringWriter.toString();
     }
 
 }

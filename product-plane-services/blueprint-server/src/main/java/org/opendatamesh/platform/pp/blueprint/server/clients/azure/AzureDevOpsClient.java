@@ -3,31 +3,37 @@ package org.opendatamesh.platform.pp.blueprint.server.clients.azure;
 import org.opendatamesh.platform.core.commons.clients.ODMClient;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.blueprint.server.components.OAuthTokenManager;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.opendatamesh.platform.pp.blueprint.server.resources.azure.AzureDevOpsRepoResource;
+import org.opendatamesh.platform.pp.blueprint.server.resources.azure.TeamProjectReferenceResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.web.client.RestTemplate;
 
 public class AzureDevOpsClient extends ODMClient {
 
-    @Autowired
     private OAuthTokenManager oAuthTokenManager;
 
-    public AzureDevOpsClient() {
+    public AzureDevOpsClient(OAuthTokenManager oAuthTokenManager) {
         super(
                 "https://dev.azure.com",
                 ObjectMapperFactory.JSON_MAPPER
         );
+        this.oAuthTokenManager = oAuthTokenManager;
     }
 
-    public void createRemoteRepository(String organization, String repositoryName) {
-        // TO DO
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(oAuthTokenManager.getToken());
+    public void createRemoteRepository(String organization, String projectName, String repositoryName) {
 
-        HttpEntity requestEntity = new HttpEntity<>(null, headers);
+        HttpHeaders requestHeaders = new HttpHeaders();
+        requestHeaders.setContentType(MediaType.APPLICATION_JSON);
+        requestHeaders.setBearerAuth(oAuthTokenManager.getToken());
+
+        TeamProjectReferenceResource teamProjectReferenceResource = new TeamProjectReferenceResource();
+        teamProjectReferenceResource.setProjectName(projectName);
+        AzureDevOpsRepoResource requestBody = new AzureDevOpsRepoResource();
+        requestBody.setName(repositoryName);
+        requestBody.setTeamProjectReferenceResource(teamProjectReferenceResource);
+
+        HttpEntity requestEntity = new HttpEntity<>(requestBody, requestHeaders);
 
         rest.postForEntity(
                 apiUrl(AzureDevOpsAPIRoutes.AZURE_DEVOPS_API_REPOS),

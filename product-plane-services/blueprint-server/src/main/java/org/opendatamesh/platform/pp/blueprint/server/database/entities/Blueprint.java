@@ -4,7 +4,6 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Map;
 
 @Data
 @Entity(name = "Blueprint")
@@ -31,26 +30,23 @@ public class Blueprint {
     @Column(name = "REPOSITORY_PROVIDER")
     private String repositoryProvider;
 
-    @Column(name = "REPOSITORY_BASE_URL")
-    private String repositoryBaseUrl;
+    @Column(name = "REPOSITORY_URL")
+    private String repositoryUrl;
 
-    @Column(name = "BLUEPRINT_REPO")
-    private String blueprintRepo;
+    @Column(name = "ORGANIZATION")
+    private String organization;
 
-    @Column(name = "TARGET_REPO")
-    private String targetRepo;
-
-    /*@ElementCollection
-    @CollectionTable(name = "BLUEPRINT_CONFIGS", joinColumns = @JoinColumn(name = "BLUEPRINT_ID"))
-    @MapKeyColumn(name = "PARAMETER")
-    @Column(name = "PARAMETER_VALUE")
-    private Map<String, String> configurations;*/
+    @Column(name = "PROJECT_NAME")
+    private String projectName;
 
     @Column(name = "CREATED_AT", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "UPDATED_AT")
     private LocalDateTime updatedAt;
+
+    @Transient
+    private String repoBaseUrl;
 
     @PrePersist
     protected void onCreate() {
@@ -61,6 +57,13 @@ public class Blueprint {
     protected void onUpdate() {
         updatedAt = now();
     }
+
+    @PostLoad
+    protected void onLoad() {
+        int lastSlashIndex = repositoryUrl.lastIndexOf("/");
+        repoBaseUrl = repositoryUrl.substring(0, lastSlashIndex + 1);
+    }
+
 
     private LocalDateTime now() {
         LocalDateTime now = LocalDateTime.now();

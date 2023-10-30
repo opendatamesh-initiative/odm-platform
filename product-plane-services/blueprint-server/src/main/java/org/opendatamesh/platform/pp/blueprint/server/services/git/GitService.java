@@ -2,11 +2,12 @@ package org.opendatamesh.platform.pp.blueprint.server.services.git;
 
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.TransportConfigCallback;
 import org.eclipse.jgit.lib.StoredConfig;
-import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+import org.eclipse.jgit.transport.SshSessionFactory;
+import org.eclipse.jgit.transport.SshTransport;
 import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
 import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintApiStandardErrors;
-import org.opendatamesh.platform.pp.blueprint.api.resources.RepositoryProviderEnum;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.io.File;
@@ -18,14 +19,14 @@ public abstract class GitService {
     @Value("${git.templates.path}")
     private String targetPath;
 
-
-    public abstract void createRepo(String repositoryName);
+    public abstract void createRepo(String organization, String projectName, String repositoryName);
 
     public Git cloneRepo(String sourceUrl) {
         try {
             return Git.cloneRepository()
                     .setURI(sourceUrl)
                     .setDirectory(new File(targetPath))
+                    .setTransportConfigCallback(getSshTransportConfigCallback())
                     .call();
         } catch (Throwable t) {
             throw new InternalServerException(
@@ -53,9 +54,23 @@ public abstract class GitService {
 
     public void commitAndPushRepo(Git gitRepo, String message) {
         try {
-            gitRepo.commit().setMessage(message);
-            //gitRepo.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider("user", "token")).call();
-            gitRepo.push().call();
+            // Remove renamed files/directories
+            gitRepo.add()
+                    .setUpdate(true)
+                    .addFilepattern(".")
+                    .call();
+            // Add new templated files;
+            gitRepo.add()
+                    .addFilepattern(".")
+                    .call();
+            // Commit changes
+            gitRepo.commit()
+                    .setMessage(message)
+                    .call();
+            // Push changes
+            gitRepo.push()
+                    .setTransportConfigCallback(getSshTransportConfigCallback())
+                    .call();
         } catch (Throwable t) {
             throw new InternalServerException(
                     BlueprintApiStandardErrors.SC500_01_GIT_ERROR,
@@ -71,10 +86,19 @@ public abstract class GitService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     BlueprintApiStandardErrors.SC500_01_GIT_ERROR,
-                    "Error committing and pushing the project",
+                    "Error deleting local repository",
                     t
-            ); // CHANGE IT
+            );
         }
+    }
+
+    private TransportConfigCallback getSshTransportConfigCallback() {
+        return transport -> {
+            if (transport instanceof SshTransport) {
+                SshTransport sshTransport = (SshTransport) transport;
+                sshTransport.setSshSessionFactory(SshSessionFactory.getInstance());
+            }
+        };
     }
 
 }

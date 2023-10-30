@@ -1,6 +1,6 @@
-##########################
+############################################
 # Server configuration
-##########################
+############################################
 app:
   workdir:
 
@@ -51,3 +51,23 @@ spring:
     schemas: flyway
     locations: classpath:db/migration/postgresql
     clean-on-validation-error: true
+
+
+############################################
+# Git configurations
+############################################
+git:
+  provider: "GITHUB"
+  templates:
+    path: "templates"
+  oauth2:
+    client:
+      provider:
+        token-uri: "null"
+        authorization-uri: "null"
+        user-info-uri: "null"
+      registration:
+        client-id: "null"
+        client-secret: "null"
+        scope: "null"
+        authorization-grant-type: client_credentials

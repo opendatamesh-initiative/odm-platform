@@ -31,6 +31,7 @@ import java.util.List;
 public abstract class BlueprintAbstractController {
 
     // TODO: add SEARCH endpoint
+    // TODO: edit examples, add one for Azure, change urls to SSH
 
     private static final String EXAMPLE_BLUEPRINT = "{\n" + //
             "   \"name\": \"blueprint1\",\n" + //
@@ -38,9 +39,8 @@ public abstract class BlueprintAbstractController {
             "   \"displayName\": \"first blueprint\",\n" + //
             "   \"description\": \"description of blueprint\",\n" + //
             "   \"repositoryProvider\": \"AZURE_DEVOPS\",\n" + //
-            "   \"repositoryBaseUrl\": \"https://github.com/opendatamesh-initiative\",\n" + //
-            "   \"blueprintRepo\": \"/blueprint1\",\n" + //
-            "   \"targetRepo\": \"/\"\n" + //
+            "   \"repositoryUrl\": \"https://github.com/opendatamesh-initiative/blueprint1\",\n" + //
+            "   \"organization\": \"opendatamesh-initiative\",\n" + //
             "}";
     private static final String EXAMPLE_BLUEPRINT_UPDATE = "{\n" + //
             "   \"id\": 1,\n" + //

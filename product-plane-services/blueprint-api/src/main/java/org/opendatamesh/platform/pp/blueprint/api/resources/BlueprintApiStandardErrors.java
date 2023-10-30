@@ -6,7 +6,8 @@ public enum BlueprintApiStandardErrors implements ODMApiStandardErrors {
 
     // Bad Request Exceptions
     SC400_01_BLUEPRINT_IS_EMPTY ("40001", "Blueprint is empty"),
-    SC400_02_CONFIG_IS_EMPTY ("40001", "Config object is empty"),
+    SC400_02_CONFIG_IS_EMPTY ("40002", "Config object is empty"),
+    SC400_03_CONFIG_IS_INVALID ("40003", "Config object is invalid"),
 
     // Not Found Exceptions
     SC404_01_BLUEPRINT_NOT_FOUND ("40401", "Blueprint not found"),
@@ -16,7 +17,8 @@ public enum BlueprintApiStandardErrors implements ODMApiStandardErrors {
     SC422_02_BLUEPRINT_ALREADY_EXISTS ("42202", "Blueprint already exists"),
 
     // Internal Server Error
-    SC500_01_GIT_ERROR ("50001", "Error executing Git commands");
+    SC500_01_GIT_ERROR ("50001", "Error executing Git commands"),
+    SC500_02_OAUTH_ERROR ("50002", "Error configuring OAuth");
 
     private final String code;
     private final String description;

@@ -1,5 +1,7 @@
 package org.opendatamesh.platform.pp.blueprint.server.configs;
 
+import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
+import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintApiStandardErrors;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,27 +17,53 @@ public class OAuthClientConfiguration {
     @Value("${git.provider}")
     private String serviceType;
 
-    @Value("${spring.security.oauth2.client.provider.token-uri}")
+    @Value("${git.oauth2.client.provider.token-uri}")
     private String tokenUri;
-    @Value("${spring.security.oauth2.client.registration.client-id}")
+
+    @Value("${git.oauth2.client.provider.authorization-uri}")
+    private String authorizationUri;
+
+    @Value("${git.oauth2.client.provider.user-info-uri}")
+    private String userInfoUri;
+    @Value("${git.oauth2.client.registration.client-id}")
     private String clientId;
-    @Value("${spring.security.oauth2.client.registration.client-secret}")
+    @Value("${git.oauth2.client.registration.client-secret}")
     private String clientSecret;
-    @Value("${spring.security.oauth2.client.registration.scope}")
+    @Value("${git.oauth2.client.registration.scope}")
     private String scope;
-    @Value("${spring.security.oauth2.client.registration.authorization-grant-type}")
+    @Value("${git.oauth2.client.registration.authorization-grant-type}")
     private String authorizationGrantType;
 
     @Bean
     ClientRegistration oauthClientRegistration() {
-        return ClientRegistration
-                .withRegistrationId(serviceType.toLowerCase())
-                .tokenUri(tokenUri)
-                .clientId(clientId)
-                .clientSecret(clientSecret)
-                .scope(scope)
-                .authorizationGrantType(new AuthorizationGrantType(authorizationGrantType))
-                .build();
+        if (serviceType.equals("AZURE_DEVOPS")) {
+            return ClientRegistration
+                    .withRegistrationId(serviceType.toLowerCase())
+                    .tokenUri(tokenUri)
+                    .clientId(clientId)
+                    .clientSecret(clientSecret)
+                    .scope(scope)
+                    .authorizationGrantType(new AuthorizationGrantType(authorizationGrantType))
+                    .build();
+        } else if (serviceType.equals("GITHUB")) {
+            return ClientRegistration
+                    .withRegistrationId(serviceType.toLowerCase())
+                    .tokenUri(tokenUri)
+                    .authorizationUri(authorizationUri)
+                    .userInfoUri(userInfoUri)
+                    .clientId(clientId)
+                    .clientSecret(clientSecret)
+                    .scope(scope)
+                    .authorizationGrantType(new AuthorizationGrantType(authorizationGrantType))
+                    .redirectUri("/oauth2/github/callback")  // Placeholder URL
+                    .build();
+        } else {
+            throw new InternalServerException(
+                    BlueprintApiStandardErrors.SC500_02_OAUTH_ERROR,
+                    "Git Provider missing or unsupported, can't configure OAuth for provider [ " + serviceType + " ]"
+            );
+        }
+
     }
 
     @Bean

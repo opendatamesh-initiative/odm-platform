@@ -1,15 +1,11 @@
 package org.opendatamesh.platform.pp.blueprint.api.resources;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import javax.persistence.ElementCollection;
 
-import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.Map;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -39,22 +35,17 @@ public class BlueprintResource {
     @Schema(description = "Repository Provider (e.g., Azure, GitHub, GitLab, ...)")
     private RepositoryProviderEnum repositoryProvider;
 
-    @JsonProperty("repositoryBaseUrl")
-    @Schema(description = "Base URL of the repository of the blueprint")
-    private String repositoryBaseUrl;
+    @JsonProperty("repositoryUrl")
+    @Schema(description = "SSH URL of the repository of the blueprint")
+    private String repositoryUrl;
 
-    @JsonProperty("blueprintRepo")
-    @Schema(description = "Relative path of the blueprint inside the repository described by 'repositoryBaseUrl'")
-    private String blueprintRepo;
+    @JsonProperty("organization")
+    @Schema(description = "User/Organization of the blueprint repo in the Git provider")
+    private String organization;
 
-    @JsonProperty("targetRepo")
-    @Schema(description = "Relative path inside the repository described by 'repositoryBaseUrl' of the target directory for the project created from the blueprint")
-    private String targetRepo;
-
-    /*@ElementCollection
-    @JsonProperty("configurations")
-    @Schema(description = "Set of <key-value> pairs representing parameters of the blueprint and their values")
-    private Map<String, String> configurations;*/
+    @JsonProperty("projectName")
+    @Schema(description = "Name of the project in the Git provider [Optional, needed for AzureDevOps]")
+    private String projectName;
 
     @JsonProperty("createdAt")
     @Schema(description = "Timestamp of the Blueprint creation")

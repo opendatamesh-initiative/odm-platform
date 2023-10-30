@@ -1,10 +1,9 @@
 {
-  "name": "azure-blueprint-1",
+  "name": "github-blueprint-1",
   "version": "1.0.0",
   "displayName": "blueprint 1",
-  "description": "First AzureDevOps Blueprint",
-  "repositoryProvider": "AZURE_DEVOPS",
-  "repositoryBaseUrl": "https://github.com/opendatamesh-initiative",
-  "blueprintRepo": "/blueprint-1",
-  "targetRepo": "/project-1"
+  "description": "First GitHub Blueprint",
+  "repositoryProvider": "GITHUB",
+  "repositoryUrl": "git@github.com:opendatamesh-initiative/blueprint1.git",
+  "organization": "opendatamesh-initiative"
 }

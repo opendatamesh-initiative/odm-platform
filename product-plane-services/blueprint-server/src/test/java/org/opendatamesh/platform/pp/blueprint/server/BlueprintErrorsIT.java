@@ -37,13 +37,13 @@ public class BlueprintErrorsIT extends ODMBlueprintIT {
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     public void testCreateBlueprint422Errors() throws IOException {
 
-        // INVALID BLUEPRINT: missing repositoryBaseUrl
+        // INVALID BLUEPRINT: missing repositoryUrl
         BlueprintResource blueprintResource = resourceBuilder.readResourceFromFile(
                 ODMBlueprintResources.RESOURCE_BLUEPRINT_1,
                 BlueprintResource.class
         );
 
-        blueprintResource.setRepositoryBaseUrl(null);
+        blueprintResource.setRepositoryUrl(null);
 
         ResponseEntity<ErrorRes> errorResponse = blueprintClient.createBlueprint(blueprintResource);
         verifyResponseError(
@@ -51,22 +51,6 @@ public class BlueprintErrorsIT extends ODMBlueprintIT {
                 HttpStatus.UNPROCESSABLE_ENTITY,
                 BlueprintApiStandardErrors.SC422_01_BLUEPRINT_IS_INVALID,
                 "Blueprint repository URL cannot be null"
-        );
-
-        // INVALID BLUEPRINT: missing blueprintRepo
-        blueprintResource = resourceBuilder.readResourceFromFile(
-                ODMBlueprintResources.RESOURCE_BLUEPRINT_1,
-                BlueprintResource.class
-        );
-
-        blueprintResource.setBlueprintRepo(null);
-
-        errorResponse = blueprintClient.createBlueprint(blueprintResource);
-        verifyResponseError(
-                errorResponse,
-                HttpStatus.UNPROCESSABLE_ENTITY,
-                BlueprintApiStandardErrors.SC422_01_BLUEPRINT_IS_INVALID,
-                "Blueprint path inside repository cannot be null"
         );
 
         // INVALID BLUEPRINT: blueprint already exists
@@ -144,13 +128,13 @@ public class BlueprintErrorsIT extends ODMBlueprintIT {
         BlueprintResource oldBlueprintResource = createBlueprint(ODMBlueprintResources.RESOURCE_BLUEPRINT_1);
         Long blueprintId = oldBlueprintResource.getId();
 
-        // INVALID BLUEPRINT: missing repositoryBaseUrl
+        // INVALID BLUEPRINT: missing repositoryUrl
         BlueprintResource blueprintResource = resourceBuilder.readResourceFromFile(
                 ODMBlueprintResources.RESOURCE_BLUEPRINT_1_UPDATED,
                 BlueprintResource.class
         );
 
-        blueprintResource.setRepositoryBaseUrl(null);
+        blueprintResource.setRepositoryUrl(null);
 
         ResponseEntity<ErrorRes> errorResponse = blueprintClient.updateBlueprint(blueprintId, blueprintResource);
         verifyResponseError(
@@ -158,22 +142,6 @@ public class BlueprintErrorsIT extends ODMBlueprintIT {
                 HttpStatus.UNPROCESSABLE_ENTITY,
                 BlueprintApiStandardErrors.SC422_01_BLUEPRINT_IS_INVALID,
                 "Blueprint repository URL cannot be null"
-        );
-
-        // INVALID BLUEPRINT: missing blueprintRepo
-        blueprintResource = resourceBuilder.readResourceFromFile(
-                ODMBlueprintResources.RESOURCE_BLUEPRINT_1,
-                BlueprintResource.class
-        );
-
-        blueprintResource.setBlueprintRepo(null);
-
-        errorResponse = blueprintClient.updateBlueprint(blueprintId, blueprintResource);
-        verifyResponseError(
-                errorResponse,
-                HttpStatus.UNPROCESSABLE_ENTITY,
-                BlueprintApiStandardErrors.SC422_01_BLUEPRINT_IS_INVALID,
-                "Blueprint path inside repository cannot be null"
         );
 
     }
@@ -210,6 +178,24 @@ public class BlueprintErrorsIT extends ODMBlueprintIT {
                 errorResponse,
                 HttpStatus.BAD_REQUEST,
                 BlueprintApiStandardErrors.SC400_02_CONFIG_IS_EMPTY
+        );
+
+        ConfigResource configResource = new ConfigResource();
+        errorResponse = blueprintClient.initBlueprint(1L, configResource);
+        verifyResponseError(
+                errorResponse,
+                HttpStatus.BAD_REQUEST,
+                BlueprintApiStandardErrors.SC400_03_CONFIG_IS_INVALID,
+                "Target Repository of Config object cannot be null when performing INIT of a blueprint"
+        );
+
+        configResource.setTargetRepo("target");
+        errorResponse = blueprintClient.initBlueprint(1L, configResource);
+        verifyResponseError(
+                errorResponse,
+                HttpStatus.BAD_REQUEST,
+                BlueprintApiStandardErrors.SC400_03_CONFIG_IS_INVALID,
+                "Config sections of Config object cannot be null when performing INIT of a blueprint"
         );
 
     }

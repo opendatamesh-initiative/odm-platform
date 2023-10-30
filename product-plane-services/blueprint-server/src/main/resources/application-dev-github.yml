@@ -61,11 +61,11 @@ git:
   oauth2:
     client:
       provider:
-        token-uri: "null"
-        authorization-uri: "null"
-        user-info-uri: "null"
+        authorization-uri: https://github.com/login/oauth/authorize
+        token-uri: https://github.com/login/oauth/access_token
+        user-info-uri: https://github.com/api/v3/user
       registration:
-        client-id: "null"
-        client-secret: "null"
-        scope: "null"
+        client-id: S{OUATH_CLIENT_ID}
+        client-secret: ${OAUTH_CLIENT_SECRET}
+        scope: repo
         authorization-grant-type: client_credentials

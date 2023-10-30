@@ -52,14 +52,14 @@ public class BlueprintIT extends ODMBlueprintIT {
         BlueprintResource blueprintResource = blueprints.get(1);
 
         assertThat(blueprintResource.getId()).isNotNull();
-        assertThat(blueprintResource.getName()).isEqualTo("azure-blueprint-2");
+        assertThat(blueprintResource.getName()).isEqualTo("azure-blueprint");
         assertThat(blueprintResource.getVersion()).isEqualTo("1.0.0");
-        assertThat(blueprintResource.getDisplayName()).isEqualTo("blueprint 2");
-        assertThat(blueprintResource.getDescription()).isEqualTo("Second AzureDevOps Blueprint");
+        assertThat(blueprintResource.getDisplayName()).isEqualTo("blueprint");
+        assertThat(blueprintResource.getDescription()).isEqualTo("First AzureDevOps Blueprint");
         assertThat(blueprintResource.getRepositoryProvider()).isEqualTo(RepositoryProviderEnum.AZURE_DEVOPS);
-        assertThat(blueprintResource.getRepositoryBaseUrl()).isEqualTo("https://github.com/opendatamesh-initiative");
-        assertThat(blueprintResource.getBlueprintRepo()).isEqualTo("/blueprint-2");
-        assertThat(blueprintResource.getTargetRepo()).isEqualTo("/project-2");
+        assertThat(blueprintResource.getRepositoryUrl()).isEqualTo("git@ssh.dev.azure.com:v3/organization/demoproject/blueprint");
+        assertThat(blueprintResource.getOrganization()).isEqualTo("organization");
+        assertThat(blueprintResource.getProjectName()).isEqualTo("demoproject");
         assertThat(blueprintResource.getCreatedAt()).isNotNull();
         assertThat(blueprintResource.getUpdatedAt()).isNull();
 
@@ -115,14 +115,13 @@ public class BlueprintIT extends ODMBlueprintIT {
         System.out.println(blueprintResource);
 
         assertThat(blueprintResource.getId()).isNotNull();
-        assertThat(blueprintResource.getName()).isEqualTo("azure-blueprint-1");
+        assertThat(blueprintResource.getName()).isEqualTo("github-blueprint-1");
         assertThat(blueprintResource.getVersion()).isEqualTo("1.0.1");
         assertThat(blueprintResource.getDisplayName()).isEqualTo("blueprint 1");
-        assertThat(blueprintResource.getDescription()).isEqualTo("First AzureDevOps Blueprint");
-        assertThat(blueprintResource.getRepositoryProvider()).isEqualTo(RepositoryProviderEnum.AZURE_DEVOPS);
-        assertThat(blueprintResource.getRepositoryBaseUrl()).isEqualTo("https://github.com/opendatamesh-initiative");
-        assertThat(blueprintResource.getBlueprintRepo()).isEqualTo("/blueprint-1.0.1");
-        assertThat(blueprintResource.getTargetRepo()).isEqualTo("/project-1.0.1");
+        assertThat(blueprintResource.getDescription()).isEqualTo("First GitHub Blueprint");
+        assertThat(blueprintResource.getRepositoryProvider()).isEqualTo(RepositoryProviderEnum.GITHUB);
+        assertThat(blueprintResource.getRepositoryUrl()).isEqualTo("git@github.com:opendatamesh-initiative/blueprint1.1.git");
+        assertThat(blueprintResource.getOrganization()).isEqualTo("opendatamesh-initiative");
         assertThat(blueprintResource.getCreatedAt()).isEqualTo(oldBlueprintResource.getCreatedAt());
         assertThat(blueprintResource.getUpdatedAt()).isNotNull();
         assertThat(blueprintResource.getUpdatedAt()).isAfter(oldBlueprintResource.getCreatedAt());
@@ -156,14 +155,13 @@ public class BlueprintIT extends ODMBlueprintIT {
 
     private void verifyResourceBlueprintOne(BlueprintResource blueprintResource) {
         assertThat(blueprintResource.getId()).isNotNull();
-        assertThat(blueprintResource.getName()).isEqualTo("azure-blueprint-1");
+        assertThat(blueprintResource.getName()).isEqualTo("github-blueprint-1");
         assertThat(blueprintResource.getVersion()).isEqualTo("1.0.0");
         assertThat(blueprintResource.getDisplayName()).isEqualTo("blueprint 1");
-        assertThat(blueprintResource.getDescription()).isEqualTo("First AzureDevOps Blueprint");
-        assertThat(blueprintResource.getRepositoryProvider()).isEqualTo(RepositoryProviderEnum.AZURE_DEVOPS);
-        assertThat(blueprintResource.getRepositoryBaseUrl()).isEqualTo("https://github.com/opendatamesh-initiative");
-        assertThat(blueprintResource.getBlueprintRepo()).isEqualTo("/blueprint-1");
-        assertThat(blueprintResource.getTargetRepo()).isEqualTo("/project-1");
+        assertThat(blueprintResource.getDescription()).isEqualTo("First GitHub Blueprint");
+        assertThat(blueprintResource.getRepositoryProvider()).isEqualTo(RepositoryProviderEnum.GITHUB);
+        assertThat(blueprintResource.getRepositoryUrl()).isEqualTo("git@github.com:opendatamesh-initiative/blueprint1.git");
+        assertThat(blueprintResource.getOrganization()).isEqualTo("opendatamesh-initiative");
         assertThat(blueprintResource.getCreatedAt()).isNotNull();
         assertThat(blueprintResource.getUpdatedAt()).isNull();
     }

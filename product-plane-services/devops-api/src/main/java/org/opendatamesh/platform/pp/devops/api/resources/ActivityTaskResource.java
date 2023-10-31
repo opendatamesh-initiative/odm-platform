@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.SchemaProperty;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.Map;
 
 @Data
 @Schema(name = "Task")
@@ -47,7 +48,7 @@ public class ActivityTaskResource  {
 
     @JsonProperty("results")
     @JsonPropertyDescription("The output returned by the executor after task succesfully execution")
-    String results;
+    Map<String, Object> results;
 
     @JsonProperty("errors")
     @JsonPropertyDescription("The output returned by the executor after task unsucesfully execution")

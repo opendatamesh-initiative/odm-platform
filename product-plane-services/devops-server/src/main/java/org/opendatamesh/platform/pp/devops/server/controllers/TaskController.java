@@ -5,6 +5,7 @@ import java.util.List;
 import org.opendatamesh.platform.pp.devops.api.controllers.AbstractTaskController;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskResource;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskStatus;
+import org.opendatamesh.platform.pp.devops.api.resources.TaskResultResource;
 import org.opendatamesh.platform.pp.devops.api.resources.TaskStatusResource;
 import org.opendatamesh.platform.pp.devops.server.database.entities.Task;
 import org.opendatamesh.platform.pp.devops.server.database.mappers.ActivityTaskMapper;
@@ -58,8 +59,8 @@ public class TaskController extends AbstractTaskController {
 	}
 
     @Override
-	public TaskStatusResource stopTask(Long id) {
-		Task task = activityService.stopTaskAndUpdateParentActivity(id);
+	public TaskStatusResource stopTask(Long id, TaskResultResource taskResultResource) {
+		Task task = activityService.stopTaskAndUpdateParentActivity(id, taskResultResource);
         TaskStatusResource statusRes = new TaskStatusResource();
 		statusRes.setStatus(task.getStatus());
 		return statusRes;

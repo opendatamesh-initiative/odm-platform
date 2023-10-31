@@ -143,7 +143,6 @@ License.
             <artifactId>tomcat-embed-core</artifactId>
         </dependency>
 
-
     </dependencies>
 
     <build>

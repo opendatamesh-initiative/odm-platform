@@ -21,7 +21,8 @@ public enum DevOpsApiStandardErrors implements ODMApiStandardErrors {
 
     // Unprocessable Entity Exceptions
     SC422_01_ACTIVITY_IS_INVALID ("42201", "Activity is invalid"),
-    SC422_02_ACTIVITY_ALREADY_EXISTS ("42202", "Activity already exists");
+    SC422_02_ACTIVITY_ALREADY_EXISTS ("42202", "Activity already exists"),
+    SC422_03_TASK_RESULT_IS_INVALID("42203", "Task Result resource is invalid");
 
     
     private final String code;   

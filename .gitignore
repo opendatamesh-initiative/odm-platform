@@ -57,3 +57,5 @@ Thumbs.db
 # IML files
 *.iml
 
+# ENV files
+.env

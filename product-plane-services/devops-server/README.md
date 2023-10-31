@@ -31,7 +31,6 @@ Run the application:
 ```bash
 java -jar product-plane-services/devops-server/target/odm-platform-pp-devops-server-1.0.0.jar
 ```
-
 *_version could be greater than 1.0.0, check on parent POM_
 
 ### Stop application
@@ -52,10 +51,8 @@ git clone git@github.com:opendatamesh-initiative/odm-platform.git
 cd odm-platform
 ```
 
-Here you can find the Dockerfile which creates an image containing the application by directly copying it from the build executed locally (i.e. from `target` folder).
-
 ### Compile project
-You need to first execute the build locally by running the following command:
+Execute the build locally by running the following command:
 
 ```bash
 mvn clean install -DskipTests

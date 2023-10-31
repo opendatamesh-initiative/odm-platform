@@ -4,26 +4,25 @@ import org.opendatamesh.platform.core.commons.clients.ODMClient;
 import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintApiStandardErrors;
-import org.opendatamesh.platform.pp.blueprint.server.components.OAuthTokenManager;
 import org.opendatamesh.platform.pp.blueprint.server.resources.github.GitRepoResource;
 import org.springframework.http.*;
 
 public class GitHubClient extends ODMClient {
 
-    private OAuthTokenManager oAuthTokenManager;
+    private String personalAccessToken;
 
-    public GitHubClient(OAuthTokenManager oAuthTokenManager) {
+    public GitHubClient(String personalAccessToken) {
         super(
                 "https://api.github.com",
                 ObjectMapperFactory.JSON_MAPPER
         );
-        this.oAuthTokenManager = oAuthTokenManager;
+        this.personalAccessToken = personalAccessToken;
     }
 
     public void createRemoteRepository(String organization, String repositoryName) {
 
         HttpHeaders requestHeaders = new HttpHeaders();
-        requestHeaders.setBearerAuth(oAuthTokenManager.getToken());
+        requestHeaders.setBearerAuth(personalAccessToken);
         requestHeaders.setContentType(MediaType.APPLICATION_JSON);
 
         GitRepoResource requestBody = new GitRepoResource();

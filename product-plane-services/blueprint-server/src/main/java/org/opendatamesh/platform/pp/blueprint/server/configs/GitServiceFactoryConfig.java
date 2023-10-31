@@ -16,7 +16,10 @@ public class GitServiceFactoryConfig {
     @Value("${git.provider}")
     private String serviceType;
 
-    @Autowired
+    @Value("${git.auth.pat}")
+    private String personalAccessToken;
+
+    @Autowired(required = false)
     OAuthTokenManager oAuthTokenManager;
 
     @Bean
@@ -25,7 +28,7 @@ public class GitServiceFactoryConfig {
             case "AZURE_DEVOPS":
                 return new AzureService(oAuthTokenManager);
             case "GITHUB":
-                return new GitHubService(oAuthTokenManager);
+                return new GitHubService(personalAccessToken);
             default:
                 throw new RuntimeException(
                         "Impossibile to initialize GitService - unknown Git Provider [" + serviceType + "]"

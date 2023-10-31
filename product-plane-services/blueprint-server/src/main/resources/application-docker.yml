@@ -62,14 +62,14 @@ git:
   provider: ${GIT_PROVIDER}
   templates:
     path: "templates"
-  oauth2:
-    client:
-      provider:
-        authorization-uri: ${OAUTH_AUTHORIZATION_URI}
-        token-uri: ${OAUTH_TOKEN_URI}
-        user-info-uri: ${OAUTH_USER_INFO_URI}
-      registration:
-        client-id: S{OUATH_CLIENT_ID}
-        client-secret: ${OAUTH_CLIENT_SECRET}
-        scope: ${OAUTH_SCOPE}
-        authorization-grant-type: client_credentials
+  auth:
+    oauth2:
+      client:
+        provider:
+          token-uri: ${OAUTH_TOKEN_URI}
+        registration:
+          client-id: S{OUATH_CLIENT_ID}
+          client-secret: ${OAUTH_CLIENT_SECRET}
+          scope: ${OAUTH_SCOPE}
+          authorization-grant-type: client_credentials
+    pat: ${PERSONAL_ACCESS_TOKEN}

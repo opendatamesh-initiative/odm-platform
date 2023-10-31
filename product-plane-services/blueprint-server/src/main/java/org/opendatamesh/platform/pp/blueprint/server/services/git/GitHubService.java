@@ -7,8 +7,8 @@ public class GitHubService extends GitService {
 
     private GitHubClient gitHubClient;
 
-    public GitHubService(OAuthTokenManager oAuthTokenManager) {
-        this.gitHubClient = new GitHubClient(oAuthTokenManager);
+    public GitHubService(String personalAccessToken) {
+        this.gitHubClient = new GitHubClient(personalAccessToken);
     }
 
     @Override

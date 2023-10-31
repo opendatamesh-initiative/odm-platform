@@ -1,6 +1,86 @@
 # Open Data Mesh Platform: Blueprint Server
 
-Blueprint server of the Open Data Mesh Platform. It allow to initialize projects from remote blueprint.
+Blueprint server of the Open Data Mesh Platform. 
+
+It allows to initialize projects starting from a remote blueprint. Actually, it supports the following Git provider:
+* GitHub
+* Azure DevOps
+
+# Configurations
+
+## Git Providers Configurations
+
+### Azure DevOps
+
+#### Register Open Data Mesh as a Service Principal
+Service principals are security objects within Azure AD defining what an application can do in a given Azure tenant.
+
+1. Login into your Azure Portal, go under **Azure Active Directory** and then **App registrations**
+2. Create a **New registration** with a name you desire (e.g. `odm-app`)
+3. Enter your `odm-app` registration and go under **Certificates & secrets**
+4. Create a new **Client secret** by choosing the name and the expiration period you want
+5. Copy the client secret value in a secure place, such as a password manager (you will need it for the ODM configuration)
+6. Go under **API permission**, add new permission by selecting _Azure DevOps_ from the menu, and grant `user_impersonation` permission
+
+#### Add the Service Principal to the Azure DevOps organization
+Once the service principal is configured in Azure AD, you need to do the same in Azure DevOps.
+
+1. Login into your Azure DevOps organization (`https://dev.azure.com/<your_organization_name>`) and go under **Organization settings**
+2. Go under **Users** and add a new user by searching for the name of the service principal you created before
+3. Grant `Basic` access level to the user
+
+The service principal can now act as a real user on Azure DevOps in a machine-to-machine interaction.
+
+#### Configure SSH
+In order to allow the application to *clone* and *push* on repositories on Azure DevOps an SSH key must be generated on the host machine and added to the Azure DevOps Repositories.
+
+
+## Useful resources
+[Azure DevOps Services | Authenticate with service principals or managed identities](https://learn.microsoft.com/en-us/azure/devops/integrate/get-started/authentication/service-principal-managed-identity?view=azure-devops)
+
+
+### GitHub
+
+#### Create a Personal Access Token (i.e., PAT)
+Create a Personal Access Token and configure it:
+1. Login to GitHub and go under *Settings > Developer Settings > Personal access token*
+2. Create a PAT, set the expiration date and select the *scopes* of the token; the **repo** scope must be selected 
+3. Copy the resulting token and store it
+
+#### Configure SSH
+In order to allow the application to *clone* and *push* on repositories on GitHub an SSH key must be generated on the host machine and added to the GitHub settings. 
+It could be done for a user profile, an organization or for single and specific repositories. It's possible to add more than one SSH key.
+
+## App configuration
+
+To run the application and to set up the OAuth 2.0 mechanism, you need to configure the following environment variables.
+
+### Azure DevOps
+Application profile: profile *dev-azuredevops*
+
+#### Client ID
+Set an environment variable called `OAUTH_CLIENT_ID`. This is the Application (client) ID of the service principal.
+
+1. Login into your Azure Portal, go under **Azure Active Directory** and then **App registrations**
+2. Search for the `odm-app` app registration
+3. Go to the **Overview** page and retrieve the **Application (client) ID**
+
+#### Client Secret
+Set an environment variable called `OAUTH_CLIENT_SECRET`. This is the value of the secret you created during the Service Principal registration.
+
+#### Tenant ID
+Set an environment variable called `AZURE_TENANT_ID`. This is the Tenant ID of your Azure organization.
+
+1. Login into your Azure Portal and go under **Azure Active Directory**
+2. Retrieve the **Tenant ID**
+
+####
+
+### GitHub
+Application profile: profile *dev-github*
+
+#### PAT
+Set an environment variable called `PERSONAL_ACCESS_TOKEN` containing the PAT created previously.
 
 # Run it
 
@@ -101,7 +181,8 @@ docker build -t odmp-blueprint-mysql-app . -f ./product-plane-services/blueprint
    --build-arg DATABASE_URL=jdbc:mysql://localhost:3306/ODMBLUEPRINT \
    --build-arg DATABASE_USERNAME=root \
    --build-arg DATABASE_PASSWORD=root \
-   --build-arg FLYWAY_SCRIPTS_DIR=mysql
+   --build-arg FLYWAY_SCRIPTS_DIR=mysql \
+   --build-arg <git-args>
 ```
 
 **Postgres**
@@ -110,8 +191,25 @@ docker build -t odmp-blueprint-postgres-app . -f ./product-plane-services/bluepr
    --build-arg DATABASE_URL=jdbc:postgresql://localhost:5432/odmpdb \
    --build-arg DATABASE_USERNAME=postgres \
    --build-arg DATABASE_PASSWORD=postgres \
-   --build-arg FLYWAY_SCRIPTS_DIR=postgresql
+   --build-arg FLYWAY_SCRIPTS_DIR=postgresql \
+   --build-arg <git-args>
 ```
+
+*_`--build-arg <git-args>` changes depending on the Git provider:_
+```bash
+[Azure DevOps]
+  --build-arg GIT_PROVIDER=AZURE_DEVOPS \
+  --build-arg OAUTH_CLIENT_ID=<personal-access-token> \
+  --build-arg OAUTH_CLIENT_SECRET=<personal-access-token> \
+  --build-arg OAUTH_TOKEN_URI=<oauth-token-uri> \
+  --build-arg OAUTH_SCOPE=<personal-access-token>
+```
+```bash
+[GitHub]
+  --build-arg GIT_PROVIDER=GITHUB \
+  --build-arg PERSONAL_ACCESS_TOKEN=<personal-access-token>
+```
+*_this is different from the local app configuration, OAuth2 parameter `scope` must include repository privileges and OAuth2  parameter `token-uri` must be explciited as full URI_
 
 ### Run application
 Run the Docker image.
@@ -120,14 +218,28 @@ Run the Docker image.
 
 **MySql**
 ```bash
-docker run --name odmp-blueprint-mysql-app -p 8003:8003 --net host odmp-blueprint-mysql-app
+docker run \
+  --name odmp-blueprint-mysql-app \
+  -p 8003:8003 \
+  --net host \
+  -v $HOME/.ssh:/root/.ssh \
+  -v $SSH_AUTH_SOCK:/ssh-agent \
+  -e SSH_AUTH_SOCK=/ssh-agent \
+  odmp-blueprint-mysql-app
 ```
 
 **Postgres**
 ```bash
-docker run --name odmp-blueprint-postgres-app -p 8003:8003 --net host odmp-blueprint-postgres-app
+docker run --name odmp-blueprint-postgres-app \
+  -p 8003:8003 \
+  --net host \
+  -v $HOME/.ssh:/root/.ssh \
+  -v $SSH_AUTH_SOCK:/ssh-agent \
+  -e SSH_AUTH_SOCK=/ssh-agent \
+  odmp-blueprint-postgres-app
 ```
 
+*_SSH volume and agents must be added to the Docker execution in order to use them; It's also possible to do it in different ways, but it must be done to correctly execute the process._
 ### Stop application
 
 *Before executing the following commands:
@@ -167,6 +279,11 @@ Build the docker-compose images of the application and a default PostgreSQL DB (
 
 Before building it, create a `.env` file in the blueprint-server directory of the project similar to the following one:
 ```.dotenv
+DATABASE_NAME=odmpdb
+DATABASE_PASSWORD=root
+DATABASE_USERNAME=root
+DATABASE_PORT=5432
+SPRING_PORT=8003
 GIT_PROVIDER=<git-provider>
 OAUTH_TOKEN_URI=<oauth2-token-uri>
 OUATH_CLIENT_ID=<oauth2-client-id>
@@ -175,6 +292,8 @@ OAUTH_SCOPE=<oauth2-scope>
 PERSONAL_ACCESS_TOKEN=<personal-access-token>
 ```
 *_Remember that `GIT_PROVIDER` should be one of `[AZURE_DEVOPS, GITHUB]`; For the former set the `PERSONAL_ACCESS_TOKEN` as `null` and populate the `OAUTH` fields; for the latter the opposite_ 
+
+*_Database name, port, password and parameters, as well as spring port, could be changed_
 
 Then, build the docker-compose file:
 ```bash

@@ -43,6 +43,11 @@ services:
         OAUTH_CLIENT_SECRET: "${OAUTH_CLIENT_SECRET}"
         OAUTH_SCOPE: "${OAUTH_SCOPE}"
         PERSONAL_ACCESS_TOKEN: "${PERSONAL_ACCESS_TOKEN}"
+    volumes:
+      - $HOME/.ssh:/root/.ssh
+      - $SSH_AUTH_SOCK:/ssh-agent
+    environment:
+      - SSH_AUTH_SOCK=/ssh-agent
     ports:
       - "${SPRING_PORT}:${SPRING_PORT}"
 

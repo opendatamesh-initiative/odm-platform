@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.Map;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -42,7 +43,7 @@ public class TaskResource  {
 
     @JsonProperty("results")
     @Schema(description = "Task results in case of successful execution")
-    String results;
+    Map<String, Object> results;
 
     @JsonProperty("errors")
     @Schema(description = "Task results in case of failures")

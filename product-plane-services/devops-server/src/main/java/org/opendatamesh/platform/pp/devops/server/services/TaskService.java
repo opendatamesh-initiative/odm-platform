@@ -1,12 +1,7 @@
 package org.opendatamesh.platform.pp.devops.server.services;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import org.opendatamesh.platform.core.commons.servers.exceptions.*;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
@@ -122,7 +117,9 @@ public class TaskService {
                     saveTask(task);
                 }
             } else {
-                task.setResults("Nothing to do. Task succeded by default");
+                Map<String, Object> results = new HashMap<>();
+                results.put("message", "Nothing to do. Task succeded by default");
+                task.setResults(results);
                 task.setStatus(ActivityTaskStatus.PROCESSED);
                 task.setFinishedAt(now());
             }
@@ -188,7 +185,9 @@ public class TaskService {
                 }
             } else {
                 task.setStatus(ActivityTaskStatus.PROCESSED);
-                task.setResults("OK");
+                Map<String, Object> results = new HashMap<>();
+                results.put("message", "OK");
+                task.setResults(results);
             }
             task.setFinishedAt(now());
             saveTask(task);

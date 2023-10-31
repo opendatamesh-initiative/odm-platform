@@ -13,9 +13,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.opendatamesh.platform.core.dpds.utils.HashMapConverter;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.core.ExternalResource;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.core.TemplateStandardDefinition;
-import org.opendatamesh.platform.pp.registry.server.utils.HashMapConverter;
+
 
 import lombok.Data;
 

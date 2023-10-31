@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+import java.util.Map;
+
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TaskResultResource {
@@ -14,10 +16,10 @@ public class TaskResultResource {
     TaskResultStatus status;
 
     @JsonProperty("results")
-    @Schema(description = "Optional textual results of the Task execution returned from the executor")
-    String results;
+    @Schema(description = "Optional JSON results of the Task execution returned from the executor")
+    Map<String, Object> results;
 
-    @JsonProperty("status")
+    @JsonProperty("errors")
     @Schema(description = "Optional textual set of errors of the Task execution returned from the executor")
     String errors;
 

@@ -36,7 +36,10 @@ public abstract class AbstractTaskController {
 
     private static final String EXAMPLE_PROCESSED = "{\n" + //
             "    \"status\": \"PROCESSED\",\n" + //
-            "    \"results\": \"Task executed successfully\"\n" + //
+            "    \"results\": {\n" +
+            "        \"message\": \"Task executed successfully\"\n" + //
+            "        \"param\": \"param_value\"\n" + //
+            "    }\n" + //
             "}";
 
     private static final String EXAMPLE_FAILED = "{\n" + //
@@ -110,6 +113,12 @@ public abstract class AbstractTaskController {
     })
     @PatchMapping(
         value = "/{id}/status",
+        consumes = {
+                "application/vnd.odmp.v1+json",
+                "application/vnd.odmp+json",
+                "application/json",
+                "application/json;charset=UTF-8"
+        },
         produces = { 
             "application/vnd.odmp.v1+json", 
             "application/vnd.odmp+json", 
@@ -118,7 +127,7 @@ public abstract class AbstractTaskController {
     )
     public TaskStatusResource stopTaskEndpoint(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "An activity object",
+                    description = "A TaskResult object",
                     required = true,
                     content = @Content(
                             examples = {

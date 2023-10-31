@@ -59,4 +59,4 @@ git:
   templates:
     path: "templates"
   auth:
-    pat: ${GITHUB_PERSONAL_ACCESS_TOKEN}
+    pat: ${PERSONAL_ACCESS_TOKEN}

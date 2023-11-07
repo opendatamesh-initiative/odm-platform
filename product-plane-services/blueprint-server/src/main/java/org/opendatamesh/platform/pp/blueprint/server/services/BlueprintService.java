@@ -276,14 +276,14 @@ public class BlueprintService {
         try {
 
             // Clone the BLUEPRINT repository
-            logger.info("Cloning repository ["
-                    + blueprint.getRepositoryUrl() + "/" + blueprint.getBlueprintDirectory() + "] ...");
-            Git gitRepo = gitService.cloneRepo(
-                    blueprint.getRepositoryUrl() + "/" + blueprint.getBlueprintDirectory()
-            );
-            logger.info("Repository ["
-                    + blueprint.getRepositoryUrl() + "/" + blueprint.getBlueprintDirectory()
-                    + "] correctly cloned");
+            logger.info("Cloning repository [" + blueprint.getRepositoryUrl() + "] ...");
+            Git gitRepo = gitService.cloneRepo(blueprint.getRepositoryUrl());
+            logger.info("Repository [" + blueprint.getRepositoryUrl() + "] correctly cloned");
+
+            // Clean the repository to consider only the template
+            logger.info("Cleaning the repository to consider only the template ...");
+            gitService.cleanLocalRepository(gitRepo, blueprint.getBlueprintDirectory());
+            logger.info("Repository cleaned and ready to be instanced");
 
             // Get the working directory of the repository and call the templatingService to instance the BLUEPRINT
             logger.info("Templating the repository ...");
@@ -303,7 +303,7 @@ public class BlueprintService {
                 logger.info("Repository creation skipped (createRepo=false)");
             }
 
-            logger.info("Changing templated repository origin no the target repository ...");
+            logger.info("Changing templated repository origin to the target repository ...");
             // Change origin of the BLUEPRINT REPO correctly templated to the targetRepo
             gitRepo = gitService.changeOrigin(
                     gitRepo,

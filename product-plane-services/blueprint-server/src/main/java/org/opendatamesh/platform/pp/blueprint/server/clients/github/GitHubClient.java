@@ -26,7 +26,7 @@ public class GitHubClient extends ODMClient {
         requestHeaders.setContentType(MediaType.APPLICATION_JSON);
 
         GitRepoResource requestBody = new GitRepoResource();
-        requestBody.setName(repositoryName.replace("/", "")); // REMOVE REPLACE
+        requestBody.setName(repositoryName);
 
         HttpEntity<GitRepoResource> requestEntity = new HttpEntity<>(requestBody, requestHeaders);
 

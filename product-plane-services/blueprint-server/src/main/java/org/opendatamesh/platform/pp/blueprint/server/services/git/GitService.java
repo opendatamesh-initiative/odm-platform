@@ -11,6 +11,9 @@ import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintApiStandard
 import org.springframework.beans.factory.annotation.Value;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class GitService {
 
@@ -77,6 +80,47 @@ public abstract class GitService {
                     "Error committing and pushing the project",
                     t
             );
+        }
+    }
+
+    public void cleanLocalRepository(Git gitRepo, String blueprintDirectory) {
+        try {
+            // Get working tree
+            File dirToClean = gitRepo.getRepository().getWorkTree();
+            // Define which sub-dir maintain (.git and the blueprint directory)
+            List<String> subDirsToPreserve = new ArrayList<>();
+            subDirsToPreserve.add(".git");
+            subDirsToPreserve.add(blueprintDirectory);
+            // Remove undesired additional content
+            for (File file : dirToClean.listFiles()) {
+                if(!subDirsToPreserve.contains(file.getName())) {
+                    if(file.isDirectory()) {
+                        FileUtils.deleteDirectory(file);
+                    } else {
+                        file.delete();
+                    }
+                }
+            }
+            // Move the blueprint directory content to the root content of the repo
+            File blueprintDirectoryFile = new File(dirToClean, blueprintDirectory);
+            moveContentFromDirToDir(blueprintDirectoryFile, dirToClean);
+            // Remove the noew empty blueprint directory
+            FileUtils.deleteDirectory(blueprintDirectoryFile);
+        } catch (Throwable t) {
+            throw new InternalServerException(
+                    BlueprintApiStandardErrors.SC500_01_GIT_ERROR,
+                    "Error preparing local repository for templating",
+                    t
+            );
+        }
+    }
+
+    public void moveContentFromDirToDir(File sourceDir, File targetDir) throws IOException {
+        for (File file : sourceDir.listFiles()) {
+            if (file.isDirectory())
+                FileUtils.moveDirectoryToDirectory(file, targetDir, false);
+            else
+                file.renameTo(new File(targetDir, file.getName()));
         }
     }
 

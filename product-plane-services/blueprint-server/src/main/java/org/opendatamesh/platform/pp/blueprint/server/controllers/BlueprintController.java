@@ -45,8 +45,8 @@ public class BlueprintController extends BlueprintAbstractController {
     }
 
     @Override
-    public void initBlueprint(Long blueprintId, ConfigResource configResource) {
-        blueprintService.initBlueprint(blueprintId, configResource);
+    public void instanceBlueprint(Long blueprintId, ConfigResource configResource) {
+        blueprintService.instanceBlueprint(blueprintId, configResource);
     }
 
 }

@@ -370,11 +370,11 @@ public abstract class BlueprintAbstractController {
 
 
     // ===============================================================================
-    // POST - INIT /blueprints/{id}/init
+    // POST - INSTANCES /blueprints/{id}/instances
     // ===============================================================================
 
     @Operation(
-            summary = "Init a specific blueprint",
+            summary = "Instance a specific blueprint",
             description = "Create a project templating the blueprint identified by 'id' with the given parameters (i.e., 'config' object)"
     )
     @ResponseStatus(HttpStatus.OK)
@@ -405,14 +405,14 @@ public abstract class BlueprintAbstractController {
             )
     })
     @PostMapping(
-            value = "/{id}/init",
+            value = "/{id}/instances",
             consumes = {
                     "application/vnd.odmp.v1+json",
                     "application/vnd.odmp+json",
                     "application/json"}
     )
-    public void initBlueprintEndpoint(
-            @Parameter(description = "Identifier of the blueprint to init")
+    public void instanceBlueprintEndpoint(
+            @Parameter(description = "Identifier of the blueprint to instance")
             @Valid @PathVariable(value = "id") Long id,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "A config object",
@@ -428,9 +428,9 @@ public abstract class BlueprintAbstractController {
             )
             @RequestBody(required=false) ConfigResource config
     ) {
-        initBlueprint(id, config);
+        instanceBlueprint(id, config);
     }
 
-    public abstract void initBlueprint(Long blueprintId, ConfigResource configResource);
+    public abstract void instanceBlueprint(Long blueprintId, ConfigResource configResource);
 
 }

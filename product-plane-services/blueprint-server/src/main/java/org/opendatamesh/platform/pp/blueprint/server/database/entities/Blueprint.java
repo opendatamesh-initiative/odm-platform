@@ -33,6 +33,9 @@ public class Blueprint {
     @Column(name = "REPOSITORY_URL")
     private String repositoryUrl;
 
+    @Column(name = "BLUEPRINT_DIR")
+    private String blueprintDirectory;
+
     @Column(name = "ORGANIZATION")
     private String organization;
 

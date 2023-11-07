@@ -53,6 +53,24 @@ public class BlueprintErrorsIT extends ODMBlueprintIT {
                 "Blueprint repository URL cannot be null"
         );
 
+
+        // INVALID BLUEPRINT: missing blueprint directory
+        blueprintResource = resourceBuilder.readResourceFromFile(
+                ODMBlueprintResources.RESOURCE_BLUEPRINT_1,
+                BlueprintResource.class
+        );
+
+        blueprintResource.setBlueprintDirectory(null);
+
+        errorResponse = blueprintClient.createBlueprint(blueprintResource);
+        verifyResponseError(
+                errorResponse,
+                HttpStatus.UNPROCESSABLE_ENTITY,
+                BlueprintApiStandardErrors.SC422_01_BLUEPRINT_IS_INVALID,
+                "Blueprint directory cannot be null"
+        );
+
+
         // INVALID BLUEPRINT: blueprint already exists
         createBlueprint(ODMBlueprintResources.RESOURCE_BLUEPRINT_1);
         blueprintResource = resourceBuilder.readResourceFromFile(
@@ -144,6 +162,23 @@ public class BlueprintErrorsIT extends ODMBlueprintIT {
                 "Blueprint repository URL cannot be null"
         );
 
+
+        // INVALID BLUEPRINT: missing blueprint directory
+        blueprintResource = resourceBuilder.readResourceFromFile(
+                ODMBlueprintResources.RESOURCE_BLUEPRINT_1_UPDATED,
+                BlueprintResource.class
+        );
+
+        blueprintResource.setBlueprintDirectory(null);
+
+        errorResponse = blueprintClient.updateBlueprint(blueprintId, blueprintResource);
+        verifyResponseError(
+                errorResponse,
+                HttpStatus.UNPROCESSABLE_ENTITY,
+                BlueprintApiStandardErrors.SC422_01_BLUEPRINT_IS_INVALID,
+                "Blueprint directory cannot be null"
+        );
+
     }
 
 
@@ -166,14 +201,14 @@ public class BlueprintErrorsIT extends ODMBlueprintIT {
 
 
     // ======================================================================================
-    // INIT Blueprint
+    // INSTANCE Blueprint
     // ======================================================================================
 
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-    public void testInitBlueprint400Errors() throws IOException {
+    public void testInstanceBlueprint400Errors() throws IOException {
 
-        ResponseEntity<ErrorRes> errorResponse = blueprintClient.initBlueprint(1L, null);
+        ResponseEntity<ErrorRes> errorResponse = blueprintClient.instanceBlueprint(1L, null);
         verifyResponseError(
                 errorResponse,
                 HttpStatus.BAD_REQUEST,
@@ -181,30 +216,30 @@ public class BlueprintErrorsIT extends ODMBlueprintIT {
         );
 
         ConfigResource configResource = new ConfigResource();
-        errorResponse = blueprintClient.initBlueprint(1L, configResource);
+        errorResponse = blueprintClient.instanceBlueprint(1L, configResource);
         verifyResponseError(
                 errorResponse,
                 HttpStatus.BAD_REQUEST,
                 BlueprintApiStandardErrors.SC400_03_CONFIG_IS_INVALID,
-                "Target Repository of Config object cannot be null when performing INIT of a blueprint"
+                "Target Repository of Config object cannot be null when performing INSTANCE of a blueprint"
         );
 
         configResource.setTargetRepo("target");
-        errorResponse = blueprintClient.initBlueprint(1L, configResource);
+        errorResponse = blueprintClient.instanceBlueprint(1L, configResource);
         verifyResponseError(
                 errorResponse,
                 HttpStatus.BAD_REQUEST,
                 BlueprintApiStandardErrors.SC400_03_CONFIG_IS_INVALID,
-                "Config sections of Config object cannot be null when performing INIT of a blueprint"
+                "Config sections of Config object cannot be null when performing INSTANCE of a blueprint"
         );
 
     }
 
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-    public void testInitBlueprint404Errors() throws JsonProcessingException {
+    public void testInstanceBlueprint404Errors() throws JsonProcessingException {
 
-        ResponseEntity<ErrorRes> errorResponse = blueprintClient.initBlueprint(1L, new ConfigResource());
+        ResponseEntity<ErrorRes> errorResponse = blueprintClient.instanceBlueprint(1L, new ConfigResource());
         verifyResponseError(
                 errorResponse,
                 HttpStatus.NOT_FOUND,

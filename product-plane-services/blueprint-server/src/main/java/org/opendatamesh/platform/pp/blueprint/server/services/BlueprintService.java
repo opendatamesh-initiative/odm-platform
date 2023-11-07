@@ -50,7 +50,17 @@ public class BlueprintService {
             );
         }
 
-        List<Blueprint> blueprints = searchBlueprints(blueprint.getRepositoryUrl());
+        if (blueprint.getBlueprintDirectory() == null) {
+            throw new UnprocessableEntityException(
+                    BlueprintApiStandardErrors.SC422_01_BLUEPRINT_IS_INVALID,
+                    "Blueprint directory cannot be null"
+            );
+        }
+
+        List<Blueprint> blueprints = searchBlueprints(
+                blueprint.getRepositoryUrl(),
+                blueprint.getBlueprintDirectory()
+        );
 
         if (blueprints != null && blueprints.isEmpty() == false) {
             throw new UnprocessableEntityException(
@@ -65,7 +75,7 @@ public class BlueprintService {
             logger.info(
                     "Blueprint [" + blueprint.getName() + "] "
                     + "of version [" + blueprint.getVersion() + "] "
-                    + "of repository [" + blueprint.getRepositoryUrl() + "] "
+                    + "of repository [" + blueprint.getRepositoryUrl() + "/" + blueprint.getBlueprintDirectory() + "] "
                     + "succesfully registered"
             );
         } catch (Throwable t) {
@@ -157,6 +167,13 @@ public class BlueprintService {
             );
         }
 
+        if (blueprint.getBlueprintDirectory() == null) {
+            throw new UnprocessableEntityException(
+                    BlueprintApiStandardErrors.SC422_01_BLUEPRINT_IS_INVALID,
+                    "Blueprint directory cannot be null"
+            );
+        }
+
         if(!blueprintRepository.existsById(blueprintId)) {
             throw new NotFoundException(
                     BlueprintApiStandardErrors.SC404_01_BLUEPRINT_NOT_FOUND,
@@ -209,10 +226,10 @@ public class BlueprintService {
     // SEARCH
     // ======================================================================================
 
-    private List<Blueprint> searchBlueprints(String repositoryUrl) {
+    private List<Blueprint> searchBlueprints(String repositoryUrl, String blueprintDirectory) {
         try {
             return blueprintRepository.findAll(
-                    BlueprintRepository.Specs.hasMatch(repositoryUrl)
+                    BlueprintRepository.Specs.hasMatch(repositoryUrl, blueprintDirectory)
             );
         } catch (Throwable t) {
             throw new InternalServerException(
@@ -225,27 +242,27 @@ public class BlueprintService {
 
 
     // ======================================================================================
-    // INIT
+    // INSTANCE
     // ======================================================================================
 
-    public void initBlueprint(Long blueprintId, ConfigResource configResource) {
+    public void instanceBlueprint(Long blueprintId, ConfigResource configResource) {
 
         if(configResource == null) {
             throw new BadRequestException(
                     BlueprintApiStandardErrors.SC400_02_CONFIG_IS_EMPTY,
-                    "Config object cannot be null when performing INIT of a blueprint");
+                    "Config object cannot be null when performing INSTANCE of a blueprint");
         }
 
         if(configResource.getTargetRepo() == null) {
             throw new BadRequestException(
                     BlueprintApiStandardErrors.SC400_03_CONFIG_IS_INVALID,
-                    "Target Repository of Config object cannot be null when performing INIT of a blueprint");
+                    "Target Repository of Config object cannot be null when performing INSTANCE of a blueprint");
         }
 
         if(configResource.getConfig() == null) {
             throw new BadRequestException(
                     BlueprintApiStandardErrors.SC400_03_CONFIG_IS_INVALID,
-                    "Config sections of Config object cannot be null when performing INIT of a blueprint");
+                    "Config sections of Config object cannot be null when performing INSTANCE of a blueprint");
         }
 
         Blueprint blueprint = loadBlueprint(blueprintId);
@@ -259,36 +276,47 @@ public class BlueprintService {
         try {
 
             // Clone the BLUEPRINT repository
-            logger.info("Cloning repository [" + blueprint.getRepositoryUrl() + "] ...");
-            Git gitRepo = gitService.cloneRepo(blueprint.getRepositoryUrl());
-            logger.info("Repository [" + blueprint.getRepositoryUrl() + "] correctly cloned");
+            logger.info("Cloning repository ["
+                    + blueprint.getRepositoryUrl() + "/" + blueprint.getBlueprintDirectory() + "] ...");
+            Git gitRepo = gitService.cloneRepo(
+                    blueprint.getRepositoryUrl() + "/" + blueprint.getBlueprintDirectory()
+            );
+            logger.info("Repository ["
+                    + blueprint.getRepositoryUrl() + "/" + blueprint.getBlueprintDirectory()
+                    + "] correctly cloned");
 
-            // Get the working directory of the repository and call the templatingService to init the BLUEPRINT
+            // Get the working directory of the repository and call the templatingService to instance the BLUEPRINT
             logger.info("Templating the repository ...");
             File workingDirectory = gitRepo.getRepository().getWorkTree();
             templatingService.templating(workingDirectory, configResource);
             logger.info("Repository correctly templated");
 
-            logger.info("Creating the target repository and pushing the project initialized from blueprint ...");
-            // Create the targetRepo
-            gitService.createRepo(
-                    blueprint.getOrganization(),
-                    blueprint.getProjectName(),
-                    configResource.getTargetRepo()
-            );
+            if (configResource.getCreateRepo()) {
+                logger.info("Creating the target repository and pushing the project initialized from blueprint ...");
+                // Create the targetRepo
+                gitService.createRepo(
+                        blueprint.getOrganization(),
+                        blueprint.getProjectName(),
+                        configResource.getTargetRepo()
+                );
+            } else {
+                logger.info("Repository creation skipped (createRepo=false)");
+            }
 
+            logger.info("Changing templated repository origin no the target repository ...");
             // Change origin of the BLUEPRINT REPO correctly templated to the targetRepo
             gitRepo = gitService.changeOrigin(
                     gitRepo,
                     blueprint.getRepoBaseUrl() + configResource.getTargetRepo() + ".git"
             );
 
+            logger.info("Committing and pushing the repository ...");
             // Commit and Push the project created from the BLUEPRINT
             gitService.commitAndPushRepo(
                     gitRepo,
                     "Project initialization from blueprint [" + blueprint.getRepositoryUrl() + "]"
             );
-            logger.info("Project correctly pushed");
+            logger.info("Repository correctly pushed");
 
             // Delete local repository
             gitService.deleteLocalRepository();

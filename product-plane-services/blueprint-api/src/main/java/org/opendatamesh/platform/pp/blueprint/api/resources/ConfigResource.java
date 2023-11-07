@@ -15,6 +15,10 @@ public class ConfigResource {
     @Schema(description = "Name of the target repository")
     String targetRepo;
 
+    @JsonProperty("createRepo")
+    @Schema(description = "Boolean [true/false] to specify whether to create the repository, default 'true'")
+    Boolean createRepo = true;
+
     @JsonProperty("config")
     @Schema(description = "List of key-value pairs representing the parameters needed for templating a blueprint")
     Map<String, String> config;

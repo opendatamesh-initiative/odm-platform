@@ -58,6 +58,7 @@ public class BlueprintIT extends ODMBlueprintIT {
         assertThat(blueprintResource.getDescription()).isEqualTo("First AzureDevOps Blueprint");
         assertThat(blueprintResource.getRepositoryProvider()).isEqualTo(RepositoryProviderEnum.AZURE_DEVOPS);
         assertThat(blueprintResource.getRepositoryUrl()).isEqualTo("git@ssh.dev.azure.com:v3/organization/demoproject/blueprint");
+        assertThat(blueprintResource.getBlueprintDirectory()).isEqualTo("blueprint");
         assertThat(blueprintResource.getOrganization()).isEqualTo("organization");
         assertThat(blueprintResource.getProjectName()).isEqualTo("demoproject");
         assertThat(blueprintResource.getCreatedAt()).isNotNull();
@@ -121,6 +122,7 @@ public class BlueprintIT extends ODMBlueprintIT {
         assertThat(blueprintResource.getDescription()).isEqualTo("First GitHub Blueprint");
         assertThat(blueprintResource.getRepositoryProvider()).isEqualTo(RepositoryProviderEnum.GITHUB);
         assertThat(blueprintResource.getRepositoryUrl()).isEqualTo("git@github.com:opendatamesh-initiative/blueprint1.1.git");
+        assertThat(blueprintResource.getBlueprintDirectory()).isEqualTo("blueprint");
         assertThat(blueprintResource.getOrganization()).isEqualTo("opendatamesh-initiative");
         assertThat(blueprintResource.getCreatedAt()).isEqualTo(oldBlueprintResource.getCreatedAt());
         assertThat(blueprintResource.getUpdatedAt()).isNotNull();
@@ -161,8 +163,10 @@ public class BlueprintIT extends ODMBlueprintIT {
         assertThat(blueprintResource.getDescription()).isEqualTo("First GitHub Blueprint");
         assertThat(blueprintResource.getRepositoryProvider()).isEqualTo(RepositoryProviderEnum.GITHUB);
         assertThat(blueprintResource.getRepositoryUrl()).isEqualTo("git@github.com:opendatamesh-initiative/blueprint1.git");
+        assertThat(blueprintResource.getBlueprintDirectory()).isEqualTo("blueprint");
         assertThat(blueprintResource.getOrganization()).isEqualTo("opendatamesh-initiative");
         assertThat(blueprintResource.getCreatedAt()).isNotNull();
         assertThat(blueprintResource.getUpdatedAt()).isNull();
     }
+
 }

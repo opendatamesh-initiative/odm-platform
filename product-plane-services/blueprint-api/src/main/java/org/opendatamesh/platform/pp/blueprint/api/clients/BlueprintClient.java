@@ -118,16 +118,16 @@ public class BlueprintClient extends ODMClient {
         return response;
     }
 
-    public ResponseEntity initBlueprint(Long id, ConfigResource configResource) throws JsonProcessingException {
+    public ResponseEntity instanceBlueprint(Long id, ConfigResource configResource) throws JsonProcessingException {
 
-        ResponseEntity initResponse = rest.postForEntity(
-                apiUrl(BlueprintAPIRoutes.BLUEPRINTS, "/"+ id + "/init"),
+        ResponseEntity instanceResponse = rest.postForEntity(
+                apiUrl(BlueprintAPIRoutes.BLUEPRINTS, "/"+ id + "/instances"),
                 configResource,
                 Object.class
         );
 
         ResponseEntity response = mapResponseEntity(
-                initResponse,
+                instanceResponse,
                 HttpStatus.OK,
                 Void.class
         );

@@ -199,7 +199,7 @@ public abstract class AbstractTaskController {
         }
     )
     @ResponseStatus(HttpStatus.OK) 
-    
+
     public TaskStatusResource readTaskStatusEndpoint(
             @Parameter(description = "Identifier of the task")
             @Valid @PathVariable(value = "id") Long id)

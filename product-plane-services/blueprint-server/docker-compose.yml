@@ -1,0 +1,55 @@
+version: '3.3'
+
+services:
+
+  # Postgresql 11 DB
+  PostgreSQL:
+    env_file: .env
+    environment:
+      - POSTGRES_DB=${DATABASE_NAME}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRES_USER=${DATABASE_USERNAME}
+      - PGPORT=${DATABASE_PORT}
+    image: postgres:11-alpine
+    ports:
+      - "${DATABASE_PORT}:${DATABASE_PORT}"
+    volumes:
+      - postgres:/var/lib/postgresql/${DATABASE_NAME}/data:rw
+    healthcheck:
+      test: [ "CMD", "pg_isready -U postgres" ]
+      interval: 3s
+      timeout: 5s
+      retries: 5
+
+  # Spring Boot app
+  odm-platform-blueprint:
+    depends_on:
+      - PostgreSQL
+    env_file: .env
+    build:
+      context: ../..
+      dockerfile: ./product-plane-services/blueprint-server/Dockerfile
+      args:
+        SPRING_PROFILES_ACTIVE: "docker"
+        SPRING_PORT: "${SPRING_PORT}"
+        JAVA_OPTS: ""
+        DATABASE_URL: "jdbc:postgresql://PostgreSQL:${DATABASE_PORT}/${DATABASE_NAME}"
+        DATABASE_USERNAME: "${DATABASE_USERNAME}"
+        DATABASE_PASSWORD: "${DATABASE_PASSWORD}"
+        FLYWAY_SCRIPTS_DIR: "postgresql"
+        GIT_PROVIDER: "${GIT_PROVIDER}"
+        OAUTH_TOKEN_URI: "${OAUTH_TOKEN_URI}"
+        OUATH_CLIENT_ID: "${OUATH_CLIENT_ID}"
+        OAUTH_CLIENT_SECRET: "${OAUTH_CLIENT_SECRET}"
+        OAUTH_SCOPE: "${OAUTH_SCOPE}"
+        PERSONAL_ACCESS_TOKEN: "${PERSONAL_ACCESS_TOKEN}"
+    volumes:
+      - $HOME/.ssh:/root/.ssh
+      - $SSH_AUTH_SOCK:/ssh-agent
+    environment:
+      - SSH_AUTH_SOCK=/ssh-agent
+    ports:
+      - "${SPRING_PORT}:${SPRING_PORT}"
+
+volumes:
+  postgres:

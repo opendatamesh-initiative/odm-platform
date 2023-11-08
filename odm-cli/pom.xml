@@ -13,7 +13,7 @@
 
     <groupId>org.opendatamesh</groupId>
     <artifactId>odm-cli</artifactId>
-    <description>Open Data Mesh Platform's Commons</description>
+    <description>Open Data Mesh Platform's CLI</description>
     <name>ODM CLI MODULE</name>
     <version>1.0.0</version>
     <url>https://github.com/opendatamesh-initiative/odm-platform</url>

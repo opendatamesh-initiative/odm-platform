@@ -60,10 +60,12 @@ License.
     </developers>
 
     <modules>
-        <module>registry-api</module>
-        <module>registry-server</module>
+        <module>blueprint-api</module>
+        <module>blueprint-server</module>
         <module>devops-api</module>
         <module>devops-server</module>
+        <module>registry-api</module>
+        <module>registry-server</module>
     </modules>
 
 </project>

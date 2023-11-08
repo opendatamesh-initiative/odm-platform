@@ -195,7 +195,6 @@ public abstract class AbstractDataProductController
     @Operation(
         summary = "Delete the specified data product",
         description = "Delete the data product identified by the input `id` and all its associated versions"
-        
     )
     public DataProductResource deleteDataProductEndpoint(
         @Parameter(description = "Identifier of the data product")
@@ -213,8 +212,6 @@ public abstract class AbstractDataProductController
     // TODO all properties, except fqn and id, should be editable. Modify to 
     // pass the new version into request payload. Remove url parameters. Do all
     // the required test on input and throw exception in needed 
-
-    
 
     @PutMapping(
         consumes = { "application/vnd.odmp.v1+json", "application/vnd.odmp+json", "application/json"}

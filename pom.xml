@@ -122,9 +122,6 @@ License.
         <module>product-plane-services</module>
         <module>utility-plane-services</module>
         <module>odm-cli</module>
-        <!--
-        <module>platform-kernel</module>
-        -->
     </modules>
 
     <!-- Needed to publish mvn artifact to GitHub Packages -->

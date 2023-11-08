@@ -4,21 +4,13 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
-import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskResource;
-import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskStatus;
-import org.opendatamesh.platform.pp.devops.api.resources.DevOpsApiStandardErrors;
-import org.opendatamesh.platform.pp.devops.api.resources.TaskStatusResource;
+import org.opendatamesh.platform.pp.devops.api.resources.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -41,6 +33,19 @@ import io.swagger.v3.oas.annotations.tags.Tag;
     description = "Endpoints associated to tasks collection"
 )
 public abstract class AbstractTaskController {
+
+    private static final String EXAMPLE_PROCESSED = "{\n" + //
+            "    \"status\": \"PROCESSED\",\n" + //
+            "    \"results\": {\n" +
+            "        \"message\": \"Task executed successfully\"\n" + //
+            "        \"param\": \"param_value\"\n" + //
+            "    }\n" + //
+            "}";
+
+    private static final String EXAMPLE_FAILED = "{\n" + //
+            "    \"status\": \"FAILED\",\n" + //
+            "    \"errors\": \"Error messages from the executor\"\n" + //
+            "}";
 
    
     // ===============================================================================
@@ -108,27 +113,51 @@ public abstract class AbstractTaskController {
     })
     @PatchMapping(
         value = "/{id}/status",
+        consumes = {
+                "application/vnd.odmp.v1+json",
+                "application/vnd.odmp+json",
+                "application/json",
+                "application/json;charset=UTF-8"
+        },
         produces = { 
             "application/vnd.odmp.v1+json", 
             "application/vnd.odmp+json", 
             "application/json"
         }
     )
-    public TaskStatusResource stopTaskEndpoint( 
-        @Parameter(description = "Identifier of the task")
-        @Valid @PathVariable(value = "id") Long id,
-
-        @Parameter(description="Add `action` parameter to the request to specify which action to perform to change the task's status. `STOP` is the only possible action executable on tasks")
-        @RequestParam(required = true, name = "action") String action) 
+    public TaskStatusResource stopTaskEndpoint(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "A TaskResult object",
+                    required = true,
+                    content = @Content(
+                            examples = {
+                                    @ExampleObject(
+                                            name = "successful-example",
+                                            description = "Example for a succeeded task",
+                                            value = EXAMPLE_PROCESSED
+                                    ),
+                                    @ExampleObject(
+                                            name = "error-example",
+                                            description = "Example for a failed Task",
+                                            value = EXAMPLE_FAILED
+                                    )
+                            }
+                    )
+            )
+            @RequestBody(required = false) TaskResultResource taskResult,
+            @Parameter(description = "Identifier of the task")
+            @Valid @PathVariable(value = "id") Long id,
+            @Parameter(description="Add `action` parameter to the request to specify which action to perform to change the task's status. `STOP` is the only possible action executable on tasks")
+            @RequestParam(required = true, name = "action") String action)
     {
         if("STOP".equalsIgnoreCase(action) == false) {
             throw new BadRequestException(
                 DevOpsApiStandardErrors.SC400_65_TASK_STATUS_ACTION_IS_INVALID, 
                 "Action [" + action + "] cannot be performend on task to change its status");
         }
-        return stopTask(id);
+        return stopTask(id, taskResult);
     }
-    public abstract TaskStatusResource stopTask(Long id);
+    public abstract TaskStatusResource stopTask(Long id, TaskResultResource taskResultResource);
     
     // ===============================================================================
     // GET /tasks/{id}/status  
@@ -170,10 +199,10 @@ public abstract class AbstractTaskController {
         }
     )
     @ResponseStatus(HttpStatus.OK) 
-    
-    public TaskStatusResource readTaskStatusEndpoint( 
-        @Parameter(description = "Identifier of the task")
-        @Valid @PathVariable(value = "id") Long id) 
+
+    public TaskStatusResource readTaskStatusEndpoint(
+            @Parameter(description = "Identifier of the task")
+            @Valid @PathVariable(value = "id") Long id)
     {
         return readTaskStatus(id);
     }

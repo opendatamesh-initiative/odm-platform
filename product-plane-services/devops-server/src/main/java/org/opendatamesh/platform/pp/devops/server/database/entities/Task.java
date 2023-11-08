@@ -4,17 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.PrePersist;
-import javax.persistence.Table;
+import javax.persistence.*;
 
+import org.opendatamesh.platform.core.dpds.utils.HashMapConverter;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskStatus;
 
 @Data
@@ -44,8 +38,9 @@ public class Task  {
     @Column(name = "STATUS")
     ActivityTaskStatus status;
 
-    @Column(name = "RESULTS")
-    String results;
+    @Column(name = "RESULTS", length=5000)
+    @Convert(converter = HashMapConverter.class)
+    private Map<String, Object> results;
 
     @Column(name = "ERRORS")
     String errors;

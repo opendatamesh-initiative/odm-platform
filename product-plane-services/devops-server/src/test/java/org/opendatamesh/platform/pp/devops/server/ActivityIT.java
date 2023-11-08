@@ -482,7 +482,7 @@ public class ActivityIT extends ODMDevOpsIT {
         assertThat(stoppedActivityRes.getDataProductVersion()).isEqualTo(activityRes.getDataProductVersion());
         assertThat(stoppedActivityRes.getStage()).isEqualTo("prod");
         assertThat(stoppedActivityRes.getStatus()).isEqualTo(ActivityStatus.PROCESSED);
-        assertThat(stoppedActivityRes.getResults()).matches(Pattern.compile("\\{\"\\d*\":\"OK\"\\}"));
+        assertThat(stoppedActivityRes.getResults().toString()).contains("OK");
         assertThat(stoppedActivityRes.getCreatedAt()).isNotNull();
         assertThat(stoppedActivityRes.getStartedAt()).isNotNull();
         assertThat(stoppedActivityRes.getFinishedAt()).isNotNull();

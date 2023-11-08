@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.Map;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -13,7 +14,7 @@ public class LifecycleResource {
 
     @JsonProperty("id")
     @Schema(description = "Auto generated Lifecyle ID")
-    Long id;
+    private Long id;
 
     @JsonProperty("dataProductId")
     @Schema(description = "ID of the Data Product subject of the Lifecycle object")
@@ -25,7 +26,11 @@ public class LifecycleResource {
 
     @JsonProperty("stage")
     @Schema(description = "Lifecycle stage")
-    String stage;
+    private String stage;
+
+    @JsonProperty("results")
+    @Schema(description = "Results of the execution of the tasks for the current stage")
+    private Map<String, Object> results;
 
     @JsonProperty("startedAt")
     @Schema(description = "Date from which the stage is valid for the Data Product")

@@ -24,6 +24,7 @@ public class LifecycleService {
         lifecycle.setDataProductId(activity.getDataProductId());
         lifecycle.setDataProductVersion(activity.getDataProductVersion());
         lifecycle.setStage(activity.getStage());
+        lifecycle.setResults(activity.getResults());
         try {
             lifecycle = lifecycleRepository.saveAndFlush(lifecycle);
         } catch (Throwable t) {

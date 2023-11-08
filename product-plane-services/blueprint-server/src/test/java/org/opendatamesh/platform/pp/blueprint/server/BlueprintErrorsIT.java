@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class BlueprintErrorsIT extends ODMBlueprintIT {
 
@@ -239,7 +241,12 @@ public class BlueprintErrorsIT extends ODMBlueprintIT {
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     public void testInstanceBlueprint404Errors() throws JsonProcessingException {
 
-        ResponseEntity<ErrorRes> errorResponse = blueprintClient.instanceBlueprint(1L, new ConfigResource());
+        ConfigResource configResource = new ConfigResource();
+        configResource.setTargetRepo("target");
+        Map<String, String> configParameters = new HashMap<>();
+        configParameters.put("key1", "value1");
+        configResource.setConfig(configParameters);
+        ResponseEntity<ErrorRes> errorResponse = blueprintClient.instanceBlueprint(1L, configResource);
         verifyResponseError(
                 errorResponse,
                 HttpStatus.NOT_FOUND,

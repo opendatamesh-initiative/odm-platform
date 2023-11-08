@@ -307,7 +307,7 @@ public class BlueprintService {
             // Change origin of the BLUEPRINT REPO correctly templated to the targetRepo
             gitRepo = gitService.changeOrigin(
                     gitRepo,
-                    blueprint.getRepoBaseUrl() + configResource.getTargetRepo() // + ".git"
+                    blueprint.getRepoBaseUrl() + configResource.getTargetRepo()
             );
 
             logger.info("Committing and pushing the repository ...");

@@ -7,5 +7,5 @@
   "repositoryUrl": "git@ssh.dev.azure.com:v3/organization/demoproject/blueprint",
   "blueprintDirectory": "blueprint",
   "organization": "organization",
-  "projectName": "demoproject"
+  "projectId": "123"
 }

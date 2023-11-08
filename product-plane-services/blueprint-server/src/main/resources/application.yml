@@ -3,9 +3,11 @@
 ##########################
 spring:
   profiles:
-    active: dev-github
-    #testmysql
-    #testpostgresql
+    active: dev
+    # dev-github
+    # dev-azuredevops
+    # testmysql
+    # testpostgresql
 
 server:
   port: 8003

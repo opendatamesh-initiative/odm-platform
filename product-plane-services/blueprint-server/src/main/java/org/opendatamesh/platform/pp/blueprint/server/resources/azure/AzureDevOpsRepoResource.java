@@ -9,7 +9,7 @@ import javax.persistence.Embedded;
 @Data
 public class AzureDevOpsRepoResource {
 
-    @JsonProperty("id")
+    @JsonProperty("name")
     String name;
 
     @JsonProperty("project")

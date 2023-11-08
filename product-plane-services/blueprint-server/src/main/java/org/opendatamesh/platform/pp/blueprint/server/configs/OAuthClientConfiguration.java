@@ -21,12 +21,10 @@ public class OAuthClientConfiguration {
 
     @Value("${git.auth.oauth2.client.provider.token-uri}")
     private String tokenUri;
-
-    @Value("${git.auth.oauth2.client.provider.authorization-uri}")
+    /*@Value("${git.auth.oauth2.client.provider.authorization-uri}")
     private String authorizationUri;
-
     @Value("${git.auth.oauth2.client.provider.user-info-uri}")
-    private String userInfoUri;
+    private String userInfoUri;*/
     @Value("${git.auth.oauth2.client.registration.client-id}")
     private String clientId;
     @Value("${git.auth.oauth2.client.registration.client-secret}")

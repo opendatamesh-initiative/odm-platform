@@ -9,7 +9,7 @@ import javax.persistence.Embeddable;
 @Data
 public class TeamProjectReferenceResource {
 
-    @JsonProperty("name")
-    private String projectName;
+    @JsonProperty("id")
+    private String projectId;
 
 }

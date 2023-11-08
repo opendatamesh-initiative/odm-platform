@@ -60,7 +60,7 @@ public class BlueprintIT extends ODMBlueprintIT {
         assertThat(blueprintResource.getRepositoryUrl()).isEqualTo("git@ssh.dev.azure.com:v3/organization/demoproject/blueprint");
         assertThat(blueprintResource.getBlueprintDirectory()).isEqualTo("blueprint");
         assertThat(blueprintResource.getOrganization()).isEqualTo("organization");
-        assertThat(blueprintResource.getProjectName()).isEqualTo("demoproject");
+        assertThat(blueprintResource.getProjectId()).isEqualTo("123");
         assertThat(blueprintResource.getCreatedAt()).isNotNull();
         assertThat(blueprintResource.getUpdatedAt()).isNull();
 

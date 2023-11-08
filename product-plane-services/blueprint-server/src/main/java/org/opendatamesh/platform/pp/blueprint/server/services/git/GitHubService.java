@@ -1,7 +1,6 @@
 package org.opendatamesh.platform.pp.blueprint.server.services.git;
 
 import org.opendatamesh.platform.pp.blueprint.server.clients.github.GitHubClient;
-import org.opendatamesh.platform.pp.blueprint.server.components.OAuthTokenManager;
 
 public class GitHubService extends GitService {
 

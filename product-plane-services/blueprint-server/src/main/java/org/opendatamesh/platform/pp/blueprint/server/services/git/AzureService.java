@@ -12,8 +12,8 @@ public class AzureService extends GitService {
     }
 
     @Override
-    public void createRepo(String organization, String projectName, String repositoryName) {
-        azureDevOpsClient.createRemoteRepository(organization, projectName, repositoryName);
+    public void createRepo(String organization, String projectId, String repositoryName) {
+        azureDevOpsClient.createRemoteRepository(organization, projectId, repositoryName);
     }
 
 }

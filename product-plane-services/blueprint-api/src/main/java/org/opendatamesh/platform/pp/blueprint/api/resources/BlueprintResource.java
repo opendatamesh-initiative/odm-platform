@@ -47,9 +47,9 @@ public class BlueprintResource {
     @Schema(description = "User/Organization of the blueprint repo in the Git provider")
     private String organization;
 
-    @JsonProperty("projectName")
-    @Schema(description = "Name of the project in the Git provider [Optional, needed for AzureDevOps]")
-    private String projectName;
+    @JsonProperty("projectId")
+    @Schema(description = "ID of the project in the Git provider [Optional, needed for AzureDevOps]")
+    private String projectId;
 
     @JsonProperty("createdAt")
     @Schema(description = "Timestamp of the Blueprint creation")

@@ -292,11 +292,11 @@ public class BlueprintService {
             logger.info("Repository correctly templated");
 
             if (configResource.getCreateRepo()) {
-                logger.info("Creating the target repository and pushing the project initialized from blueprint ...");
+                logger.info("Creating the target repository ...");
                 // Create the targetRepo
                 gitService.createRepo(
                         blueprint.getOrganization(),
-                        blueprint.getProjectName(),
+                        blueprint.getProjectId(),
                         configResource.getTargetRepo()
                 );
             } else {
@@ -307,7 +307,7 @@ public class BlueprintService {
             // Change origin of the BLUEPRINT REPO correctly templated to the targetRepo
             gitRepo = gitService.changeOrigin(
                     gitRepo,
-                    blueprint.getRepoBaseUrl() + configResource.getTargetRepo() + ".git"
+                    blueprint.getRepoBaseUrl() + configResource.getTargetRepo() // + ".git"
             );
 
             logger.info("Committing and pushing the repository ...");

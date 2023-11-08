@@ -64,7 +64,7 @@ git:
         provider:
           token-uri: https://login.microsoftonline.com/${AZURE_TENANT_ID}/oauth2/v2.0/token
         registration:
-          client-id: ${OUATH_CLIENT_ID}
+          client-id: ${OAUTH_CLIENT_ID}
           client-secret: ${OAUTH_CLIENT_SECRET}
           scope: 499b84ac-1321-427f-aa17-267ca6975798/.default
           authorization-grant-type: client_credentials

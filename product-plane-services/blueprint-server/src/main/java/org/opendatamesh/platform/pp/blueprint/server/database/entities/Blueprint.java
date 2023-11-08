@@ -39,8 +39,8 @@ public class Blueprint {
     @Column(name = "ORGANIZATION")
     private String organization;
 
-    @Column(name = "PROJECT_NAME")
-    private String projectName;
+    @Column(name = "PROJECT_ID")
+    private String projectId;
 
     @Column(name = "CREATED_AT", nullable = false, updatable = false)
     private LocalDateTime createdAt;

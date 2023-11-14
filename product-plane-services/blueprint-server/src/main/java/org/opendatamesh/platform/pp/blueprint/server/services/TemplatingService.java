@@ -62,38 +62,20 @@ public class TemplatingService {
 
         String templatedName = applyVelocityToString(originalName, velocityContext);
 
-        CustomFileUtils.renameFile(
-                file,
-                file.getParentFile().getAbsolutePath() + "/" + templatedName
-        );
-
-        /*File renamedFile = new File(file.getParentFile(), templatedName);
-        file.renameTo(renamedFile);
+        File renamedFile = CustomFileUtils.renameFile(file, templatedName);
 
         return renamedFile;
-        */
-        return file;
 
     }
 
     private void templateContent(File file, VelocityContext velocityContext) {
 
-        String inputFileName = file.getAbsolutePath();
-
         // Read old content
         String oldContent = CustomFileUtils.readFileAsString(file);
-        /*BufferedReader reader = new BufferedReader(new FileReader(inputFileName));
-        String oldContent = reader.lines().collect(Collectors.joining(System.lineSeparator()));
-        reader.close();*/
 
         // Create new content and replace old one
         String newContent = applyVelocityToString(oldContent, velocityContext);
         CustomFileUtils.writeFileAsString(file, newContent);
-        /*StringBuilder newContent = new StringBuilder();
-        newContent.append(applyVelocityToString(oldContent, velocityContext));
-        PrintWriter writer = new PrintWriter(inputFileName);
-        writer.println(newContent);
-        writer.close();*/
 
     }
 

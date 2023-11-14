@@ -85,7 +85,7 @@ public abstract class GitService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     BlueprintApiStandardErrors.SC500_01_GIT_ERROR,
-                    "Error cloning repository",
+                    "Error cloning repository - " + t.getMessage(),
                     t
             );
         }
@@ -129,7 +129,7 @@ public abstract class GitService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     BlueprintApiStandardErrors.SC500_01_GIT_ERROR,
-                    "Error preparing local repository for templating",
+                    "Error preparing local repository for templating - " + t.getMessage(),
                     t
             );
         }
@@ -164,7 +164,7 @@ public abstract class GitService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     BlueprintApiStandardErrors.SC500_01_GIT_ERROR,
-                    "Error committing and pushing the project",
+                    "Error committing and pushing the project - " + t.getMessage(),
                     t
             );
         }

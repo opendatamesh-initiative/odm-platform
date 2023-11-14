@@ -18,7 +18,7 @@ public final class CustomFileUtils {
         } catch (IOException e) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
-                    "Error removing directory [" + directory.getAbsolutePath() + "]",
+                    "Error removing directory [" + directory.getAbsolutePath() + "] - " + e.getMessage(),
                     e.getCause()
             );
         }
@@ -38,16 +38,15 @@ public final class CustomFileUtils {
     }
 
     public static String readFileAsString(File fileToRead) {
-        BufferedReader reader = null;
         try {
-            reader = new BufferedReader(new FileReader(fileToRead));
+            BufferedReader reader = new BufferedReader(new FileReader(fileToRead));
             String fileContent = reader.lines().collect(Collectors.joining(System.lineSeparator()));
             reader.close();
             return fileContent;
         } catch (IOException e) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
-                    "Error reading file [" +  fileToRead.getAbsolutePath() + "] content",
+                    "Error reading file [" +  fileToRead.getAbsolutePath() + "] content - " + e.getMessage(),
                     e.getCause()
             );
         }
@@ -64,7 +63,7 @@ public final class CustomFileUtils {
         } catch (Exception e) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
-                    "Error writing content to file [" + fileToWrite.getAbsolutePath() + "]",
+                    "Error writing content to file [" + fileToWrite.getAbsolutePath() + "]  - " + e.getMessage(),
                     e.getCause()
             );
         }
@@ -77,19 +76,20 @@ public final class CustomFileUtils {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "Error copying directory [" + sourceDirectory.getAbsolutePath() + "] "
-                            + "to [" + destinationDirectory.getAbsolutePath() + "]",
+                            + "to [" + destinationDirectory.getAbsolutePath() + "]  - " + e.getMessage(),
                     e.getCause()
             );
         }
     }
 
-    public static void renameFile(File fileToRename, String pathName) {
-        fileToRename.renameTo(new File(pathName));
+    public static File renameFile(File fileToRename, String fileName) {
+        File renamedFile = new File(fileToRename.getParentFile(), fileName);
+        fileToRename.renameTo(renamedFile);
+        return renamedFile;
     }
 
     public static Boolean existsAsFileInDirectory(File directoryToCheck, String fileNameToCheckInDirectory) {
-        String directoryToCheckAbsoulutePath = directoryToCheck.getAbsolutePath();
-        Path fileInDirPath = Paths.get(directoryToCheckAbsoulutePath, fileNameToCheckInDirectory);
+        Path fileInDirPath = getFileInDirPath(directoryToCheck, fileNameToCheckInDirectory);
         if (exists(fileInDirPath) && Files.isRegularFile(fileInDirPath))
             return true;
         else
@@ -97,12 +97,16 @@ public final class CustomFileUtils {
     }
 
     public static Boolean existsAsDirectoryInDirectory(File directoryToCheck, String directoryNameToCheckInDirectory) {
-        String directoryToCheckAbsoulutePath = directoryToCheck.getAbsolutePath();
-        Path dirInDirPath = Paths.get(directoryToCheckAbsoulutePath, directoryNameToCheckInDirectory);
+        Path dirInDirPath = getFileInDirPath(directoryToCheck, directoryNameToCheckInDirectory);
         if (exists(dirInDirPath) && Files.isDirectory(dirInDirPath))
             return true;
         else
             return false;
+    }
+
+    private static Path getFileInDirPath(File directory, String fileInDirectoryName) {
+        String directoryAbsolutePath = directory.getAbsolutePath();
+        return Paths.get(directoryAbsolutePath, fileInDirectoryName);
     }
 
     private static Boolean exists(Path filePathToCheck) {

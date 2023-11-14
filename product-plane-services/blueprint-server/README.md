@@ -34,6 +34,34 @@ where:
      ]
      ```
 
+Both directory/file names and file contents could be templated, each parameter of the blueprint must have the following naming convention: `${parameterName}`.
+
+For example, given the parameters `dirName=renamedDirectory`, `fileName=renamedFile` and `fileContent=test`, and the following blueprint:
+```txt
+| repository/
+|-- blueprint/
+|---- ${dirName}/
+|------ ${fileName}.json 
+```
+where `${fileName}.json` content is:
+```txt
+{
+    "content": "${fileContent}"
+}
+```
+the target repository will be:
+```txt
+| targetRepository/
+|-- renamedDirectory/
+|---- renamedFile.json
+```
+where `renamedFile.json` content will be:
+```txt
+{
+    "content": "test"
+}
+```
+
 # Configurations
 
 ## Git Providers Configurations

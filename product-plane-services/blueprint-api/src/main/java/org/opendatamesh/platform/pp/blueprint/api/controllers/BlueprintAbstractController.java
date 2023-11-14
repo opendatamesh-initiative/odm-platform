@@ -42,7 +42,7 @@ public abstract class BlueprintAbstractController {
             "   \"repositoryProvider\": \"GITHUB\",\n" + //
             "   \"repositoryUrl\": \"git@github.com:opendatamesh-initiative/blueprint.git\",\n" + //
             "   \"blueprintDirectory\": \"blueprint-dir\",\n" + //
-            "   \"organization\": \"opendatamesh-initiative\",\n" + //
+            "   \"organization\": \"opendatamesh-initiative\"\n" + //
             "}";
 
     private static final String EXAMPLE_BLUEPRINT_AZUREDEVOPS = "{\n" + //

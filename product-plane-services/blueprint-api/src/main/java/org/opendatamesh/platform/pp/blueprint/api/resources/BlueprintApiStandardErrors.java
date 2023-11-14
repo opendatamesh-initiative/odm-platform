@@ -1,5 +1,6 @@
 package org.opendatamesh.platform.pp.blueprint.api.resources;
 
+import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiStandardErrors;
 
 public enum BlueprintApiStandardErrors implements ODMApiStandardErrors {
@@ -9,8 +10,17 @@ public enum BlueprintApiStandardErrors implements ODMApiStandardErrors {
     SC400_02_CONFIG_IS_EMPTY ("40002", "Config object is empty"),
     SC400_03_CONFIG_IS_INVALID ("40003", "Config object is invalid"),
 
+    // Unathorized Exceptions
+    SC401_01_GIT_ERROR("40101", "User unauthorized"),
+
+    // Forbidden Exceptions
+    SC403_01_GIT_ERROR("40301", "Forbidden"),
+
     // Not Found Exceptions
     SC404_01_BLUEPRINT_NOT_FOUND ("40401", "Blueprint not found"),
+
+    // Conflict
+    SC409_01_GIT_CONFLICT("40901", "Conflicts in Git operations"),
 
     // Unprocessable Entity Exceptions
     SC422_01_BLUEPRINT_IS_INVALID ("42201", "Blueprint is invalid"),

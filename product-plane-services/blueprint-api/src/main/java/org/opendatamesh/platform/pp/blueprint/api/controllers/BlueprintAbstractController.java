@@ -32,7 +32,7 @@ import java.util.List;
 public abstract class BlueprintAbstractController {
 
     // TODO: add SEARCH endpoint
-    // TODO: edit examples, add one for Azure, change urls to SSH
+    // TODO: edit examples --> add GET EXAMPLES (with also parameters)
 
     private static final String EXAMPLE_BLUEPRINT_GITHUB = "{\n" + //
             "   \"name\": \"blueprint1\",\n" + //

@@ -18,6 +18,7 @@ Accepted blueprints must have this structure:
 where:
 * `blueprintDirectory` is a top-level directory containing the real blueprint/template
   * it will be the only content of the target repository when instanciating a blueprint
+  * it could have a different name
 * Other content will be ignored and won't be templated
 * `params.json` is a JSON file describing the parameters of the template with the following structure:
   *  ```json

@@ -63,10 +63,17 @@ public class BlueprintClient extends ODMClient {
         return response;
     }
 
-    public ResponseEntity createBlueprint(BlueprintResource blueprintResource) throws IOException {
+    public ResponseEntity createBlueprintNoCheck(BlueprintResource blueprintResource) throws IOException {
+        return createBlueprint(blueprintResource, false);
+    }
+
+    public ResponseEntity createBlueprint(
+            BlueprintResource blueprintResource,
+            Boolean checkBlueprint
+    ) throws IOException {
 
         ResponseEntity postBlueprintResponse = rest.postForEntity(
-                apiUrl(BlueprintAPIRoutes.BLUEPRINTS),
+                apiUrl(BlueprintAPIRoutes.BLUEPRINTS, "?checkBlueprint="+checkBlueprint),
                 blueprintResource,
                 Object.class
         );

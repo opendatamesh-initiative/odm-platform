@@ -103,7 +103,7 @@ public class ODMBlueprintIT {
         ResponseEntity<BlueprintResource> postBlueprintResponse = null;
 
         try {
-            postBlueprintResponse = blueprintClient.createBlueprint(blueprintResource);
+            postBlueprintResponse = blueprintClient.createBlueprintNoCheck(blueprintResource);
         } catch (Throwable t) {
             t.printStackTrace();
             fail("Impossible to create blueprint: " + t.getMessage());

@@ -307,7 +307,7 @@ public class BlueprintService {
 
             // Clean the repository to consider only the template
             logger.info("Initializing new Git target repository ...");
-            gitService.initTargetRepository(
+            gitRepo = gitService.initTargetRepository(
                     gitRepo,
                     blueprint.getBlueprintDirectory(),
                     configResource.getCreateRepo(),

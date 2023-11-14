@@ -34,31 +34,48 @@ public abstract class BlueprintAbstractController {
     // TODO: add SEARCH endpoint
     // TODO: edit examples, add one for Azure, change urls to SSH
 
-    private static final String EXAMPLE_BLUEPRINT = "{\n" + //
+    private static final String EXAMPLE_BLUEPRINT_GITHUB = "{\n" + //
+            "   \"name\": \"blueprint1\",\n" + //
+            "   \"version\": \"1.0.0\",\n" + //
+            "   \"displayName\": \"first blueprint\",\n" + //
+            "   \"description\": \"description of blueprint\",\n" + //
+            "   \"repositoryProvider\": \"GITHUB\",\n" + //
+            "   \"repositoryUrl\": \"git@github.com:opendatamesh-initiative/blueprint.git\",\n" + //
+            "   \"blueprintDirectory\": \"blueprint-dir\",\n" + //
+            "   \"organization\": \"opendatamesh-initiative\",\n" + //
+            "}";
+
+    private static final String EXAMPLE_BLUEPRINT_AZUREDEVOPS = "{\n" + //
             "   \"name\": \"blueprint1\",\n" + //
             "   \"version\": \"1.0.0\",\n" + //
             "   \"displayName\": \"first blueprint\",\n" + //
             "   \"description\": \"description of blueprint\",\n" + //
             "   \"repositoryProvider\": \"AZURE_DEVOPS\",\n" + //
-            "   \"repositoryUrl\": \"https://github.com/opendatamesh-initiative/blueprint1\",\n" + //
+            "   \"repositoryUrl\": \"git@ssh.dev.azure.com:v3/opendatamesh-initiative/project1/blueprint1\",\n" + //
+            "   \"blueprintDirectory\": \"blueprint-dir\",\n" + //
             "   \"organization\": \"opendatamesh-initiative\",\n" + //
+            "   \"projectId\": \"123-a61\"\n" + //
             "}";
-    private static final String EXAMPLE_BLUEPRINT_UPDATE = "{\n" + //
+    private static final String EXAMPLE_BLUEPRINT_UPDATE_GITHUB = "{\n" + //
             "   \"id\": 1,\n" + //
             "   \"name\": \"blueprint1 - updated\",\n" + //
             "   \"version\": \"1.0.1\",\n" + //
             "   \"displayName\": \"first blueprint\",\n" + //
             "   \"description\": \"description of blueprint\",\n" + //
-            "   \"repositoryProvider\": \"AZURE_DEVOPS\",\n" + //
-            "   \"repositoryBaseUrl\": \"https://github.com/opendatamesh-initiative\",\n" + //
-            "   \"blueprintRepo\": \"/blueprints1\",\n" + //
-            "   \"targetRepo\": \"/project1.0.1\"\n" + //
+            "   \"repositoryProvider\": \"GITHUB\",\n" + //
+            "   \"repositoryUrl\": \"git@github.com:opendatamesh-initiative/blueprint.git\",\n" + //
+            "   \"blueprintDirectory\": \"blueprint1.0.1-dir\",\n" + //
+            "   \"organization\": \"opendatamesh-initiative\"\n" + //
             "}";
 
     private static final String EXAMPLE_CONFIG = "{\n" + //
-            "   \"parameter1\": \"value of parameter 2\",\n" + //
-            "   \"parameter2\": \"value of parameter 2\",\n" + //
-            "   \"parameter3\": \"value of parameter 3\"\n" + //
+            "   \"targetRepo\": \"projectFromBlueprint\",\n" + //
+            "   \"createRepo\": true,\n" + //
+            "   \"config\": {\n" + //
+            "       \"parameter1\": \"value of parameter 2\",\n" + //
+            "       \"parameter2\": \"value of parameter 2\",\n" + //
+            "       \"parameter3\": \"value of parameter 3\"\n" + //
+            "   }\n" + //
             "}";
 
     // @see https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Annotations#arrayschema
@@ -181,7 +198,8 @@ public abstract class BlueprintAbstractController {
                             mediaType = "application/json",
                             schema = @Schema(implementation = BlueprintResource.class),
                             examples = {
-                                    @ExampleObject(name = "one", value = EXAMPLE_BLUEPRINT)
+                                    @ExampleObject(name = "github", value = EXAMPLE_BLUEPRINT_GITHUB),
+                                    @ExampleObject(name = "azuredevops", value = EXAMPLE_BLUEPRINT_AZUREDEVOPS)
                             }
                     )
             ),
@@ -227,9 +245,14 @@ public abstract class BlueprintAbstractController {
                     content = @Content(
                             examples = {
                                     @ExampleObject(
-                                            name = "blueprint",
-                                            description = "description of blueprint example",
-                                            value = EXAMPLE_BLUEPRINT
+                                            name = "github-blueprint",
+                                            description = "Example of a blueprint for GitHub",
+                                            value = EXAMPLE_BLUEPRINT_GITHUB
+                                    ),
+                                    @ExampleObject(
+                                            name = "azuredevops-blueprint",
+                                            description = "Example of a blueprint for Azure DevOps",
+                                            value = EXAMPLE_BLUEPRINT_AZUREDEVOPS
                                     )
                             }
                     )
@@ -262,7 +285,7 @@ public abstract class BlueprintAbstractController {
                             mediaType = "application/json",
                             schema = @Schema(implementation = BlueprintResource.class),
                             examples = {
-                                    @ExampleObject(name = "blueprintUpdate", value = EXAMPLE_BLUEPRINT_UPDATE)
+                                    @ExampleObject(name = "blueprintUpdate", value = EXAMPLE_BLUEPRINT_UPDATE_GITHUB)
                             }
                     )
             ),
@@ -314,8 +337,8 @@ public abstract class BlueprintAbstractController {
                             examples = {
                                     @ExampleObject(
                                             name = "blueprintUpdate",
-                                            description = "description of blueprint update example",
-                                            value = EXAMPLE_BLUEPRINT_UPDATE
+                                            description = "Example of object to update an existing blueprint",
+                                            value = EXAMPLE_BLUEPRINT_UPDATE_GITHUB
                                     )
                             }
                     )

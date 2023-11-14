@@ -17,9 +17,8 @@ public class VelocityConfig {
     public VelocityEngine velocityEngine() {
         VelocityEngine velocityEngine = new VelocityEngine();
         Properties velocityProperties = new Properties();
-        velocityProperties.setProperty("resource.loader.file.path", velocityTemplatePath);
+        velocityProperties.setProperty("resource.loader.file.path", velocityTemplatePath + "/projects");
         velocityEngine.init(velocityProperties);
-        //velocityEngine.init();
         return velocityEngine;
     }
 

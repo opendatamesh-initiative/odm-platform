@@ -39,6 +39,11 @@ public class GitHubClient extends ODMClient {
 
         if(!response.getStatusCode().is2xxSuccessful()) {
             switch (response.getStatusCode()) {
+                case UNAUTHORIZED:
+                    throw new InternalServerException(
+                            BlueprintApiStandardErrors.SC401_01_GIT_ERROR,
+                            "User unauthorized - " + response.getBody()
+                    );
                 case FORBIDDEN:
                     throw new InternalServerException(
                             BlueprintApiStandardErrors.SC403_01_GIT_ERROR,

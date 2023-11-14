@@ -7,9 +7,9 @@ import org.opendatamesh.platform.pp.blueprint.server.utils.CustomFileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
+import java.io.File;
+import java.io.StringWriter;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class TemplatingService {
@@ -62,10 +62,17 @@ public class TemplatingService {
 
         String templatedName = applyVelocityToString(originalName, velocityContext);
 
-        File renamedFile = new File(file.getParentFile(), templatedName);
+        CustomFileUtils.renameFile(
+                file,
+                file.getParentFile().getAbsolutePath() + "/" + templatedName
+        );
+
+        /*File renamedFile = new File(file.getParentFile(), templatedName);
         file.renameTo(renamedFile);
 
         return renamedFile;
+        */
+        return file;
 
     }
 

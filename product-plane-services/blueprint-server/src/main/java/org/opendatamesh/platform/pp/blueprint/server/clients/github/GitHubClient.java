@@ -37,6 +37,7 @@ public class GitHubClient extends ODMClient {
                 String.class
         );
 
+        // IMPROVE IT
         if(!response.getStatusCode().is2xxSuccessful()) {
             throw new InternalServerException(
                     BlueprintApiStandardErrors.SC500_01_GIT_ERROR,

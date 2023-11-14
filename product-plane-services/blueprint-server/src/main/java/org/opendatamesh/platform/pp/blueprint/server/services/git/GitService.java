@@ -1,11 +1,8 @@
 package org.opendatamesh.platform.pp.blueprint.server.services.git;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.xpath.operations.Bool;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.TransportConfigCallback;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.lib.StoredConfig;
 import org.eclipse.jgit.transport.PushResult;
 import org.eclipse.jgit.transport.SshSessionFactory;
 import org.eclipse.jgit.transport.SshTransport;
@@ -16,12 +13,8 @@ import org.opendatamesh.platform.pp.blueprint.server.resources.internals.GitChec
 import org.opendatamesh.platform.pp.blueprint.server.utils.CustomFileUtils;
 import org.springframework.beans.factory.annotation.Value;
 
-import java.io.*;
+import java.io.File;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.stream.Collectors;
 
 public abstract class GitService {
 
@@ -31,6 +24,8 @@ public abstract class GitService {
     private String targetPath;
 
     private String tmpTargetRepo = "tmpTargetRepo";
+
+    private String paramsFileJson = "params.json";
 
 
     // ======================================================================================
@@ -44,25 +39,23 @@ public abstract class GitService {
     // CHECK Repository content
     // ======================================================================================
 
-    public GitCheckResource checkGitRepository(String repositoryUrl, String blueprintDirectory) throws IOException {
+    public GitCheckResource checkGitRepository(String repositoryUrl, String blueprintDirectory) {
 
         Git repoToCheck = cloneRepo(repositoryUrl);
-        String repoToCheckPath = repoToCheck.getRepository().getWorkTree().getAbsolutePath();
+        File repoToCheckFile = repoToCheck.getRepository().getWorkTree();
 
         GitCheckResource gitCheckResource = new GitCheckResource();
 
-        Path blueprintDirectoryPath = Paths.get(repoToCheckPath, blueprintDirectory);
         gitCheckResource.setBlueprintDirectoryCheck(
-                Files.exists(blueprintDirectoryPath) && Files.isDirectory(blueprintDirectoryPath)
+                CustomFileUtils.existsAsDirectoryInDirectory(repoToCheckFile, blueprintDirectory)
         );
-        Path paramsDescriptionPath = Paths.get(repoToCheckPath, "params.json");
         gitCheckResource.setParamsDescriptionCheck(
-                Files.exists(paramsDescriptionPath) && Files.isRegularFile(paramsDescriptionPath)
+                CustomFileUtils.existsAsFileInDirectory(repoToCheckFile, paramsFileJson)
         );
 
         if(gitCheckResource.getParamsDescriptionCheck()) {
             // Remove exception from signature and refactor this method in a File utils class (used also in TemplatingService)
-            String paramsFileContent = CustomFileUtils.readFileAsString(paramsDescriptionPath.toFile());
+            String paramsFileContent = CustomFileUtils.readFileAsString(new File(repoToCheckFile, paramsFileJson));
             gitCheckResource.setParamsJsonFileContent(paramsFileContent);
         }
 
@@ -122,16 +115,15 @@ public abstract class GitService {
                         ".git"
                 );
             }
-            // Get working tree
-            File newRepo = newGitRepo.getRepository().getWorkTree();
             // Copy the blueprint directory content of the old repo to the new repo
+            File newRepoFile = newGitRepo.getRepository().getWorkTree();
             File blueprintDirectoryFile = new File(oldRepo, blueprintDir);
-            FileUtils.copyDirectory(blueprintDirectoryFile, newRepo);
+            CustomFileUtils.copyDirectory(blueprintDirectoryFile, newRepoFile);
             // Remove the old repository
             oldGitRepo.close(); // Close git connection
             deleteLocalRepository();
             // Move new repo to "targetPath" as it was the old repo
-            newRepo.renameTo(new File(targetPath));
+            CustomFileUtils.renameFile(newRepoFile, targetPath);
             // Return new Repo
             return newGitRepo;
         } catch (Throwable t) {

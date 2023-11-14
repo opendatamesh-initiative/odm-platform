@@ -26,7 +26,7 @@ public class BlueprintErrorsIT extends ODMBlueprintIT {
 
         BlueprintResource blueprintResource = null;
 
-        ResponseEntity<ErrorRes> errorResponse = blueprintClient.createBlueprint(blueprintResource);
+        ResponseEntity<ErrorRes> errorResponse = blueprintClient.createBlueprintNoCheck(blueprintResource);
         verifyResponseError(
                 errorResponse,
                 HttpStatus.BAD_REQUEST,
@@ -47,7 +47,7 @@ public class BlueprintErrorsIT extends ODMBlueprintIT {
 
         blueprintResource.setRepositoryUrl(null);
 
-        ResponseEntity<ErrorRes> errorResponse = blueprintClient.createBlueprint(blueprintResource);
+        ResponseEntity<ErrorRes> errorResponse = blueprintClient.createBlueprintNoCheck(blueprintResource);
         verifyResponseError(
                 errorResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
@@ -64,7 +64,7 @@ public class BlueprintErrorsIT extends ODMBlueprintIT {
 
         blueprintResource.setBlueprintDirectory(null);
 
-        errorResponse = blueprintClient.createBlueprint(blueprintResource);
+        errorResponse = blueprintClient.createBlueprintNoCheck(blueprintResource);
         verifyResponseError(
                 errorResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
@@ -79,7 +79,7 @@ public class BlueprintErrorsIT extends ODMBlueprintIT {
                 ODMBlueprintResources.RESOURCE_BLUEPRINT_1,
                 BlueprintResource.class
         );
-        errorResponse = blueprintClient.createBlueprint(blueprintResource);
+        errorResponse = blueprintClient.createBlueprintNoCheck(blueprintResource);
         verifyResponseError(
                 errorResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,

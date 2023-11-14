@@ -1,5 +1,6 @@
 package org.opendatamesh.platform.pp.blueprint.server.controllers;
 
+import org.apache.xpath.operations.Bool;
 import org.opendatamesh.platform.pp.blueprint.api.controllers.BlueprintAbstractController;
 import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintResource;
 import org.opendatamesh.platform.pp.blueprint.api.resources.ConfigResource;
@@ -31,8 +32,12 @@ public class BlueprintController extends BlueprintAbstractController {
     }
 
     @Override
-    public BlueprintResource createBlueprint(BlueprintResource blueprint) throws IOException {
-        return blueprintMapper.toResource(blueprintService.createBlueprint(blueprintMapper.toEntity(blueprint)));
+    public BlueprintResource createBlueprint(BlueprintResource blueprint, Boolean checkBlueprint) throws IOException {
+        if(checkBlueprint == null)
+            checkBlueprint = true;
+        return blueprintMapper.toResource(
+                blueprintService.createBlueprint(blueprintMapper.toEntity(blueprint), checkBlueprint)
+        );
     }
 
     @Override

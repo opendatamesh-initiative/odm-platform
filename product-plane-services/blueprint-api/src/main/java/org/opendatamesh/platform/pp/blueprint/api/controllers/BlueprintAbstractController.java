@@ -220,6 +220,8 @@ public abstract class BlueprintAbstractController {
             }
     )
     public BlueprintResource createBlueprintEndpoint(
+            @RequestParam(required = false)
+            Boolean checkBlueprint,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "A blueprint object",
                     content = @Content(
@@ -234,10 +236,13 @@ public abstract class BlueprintAbstractController {
             )
             @RequestBody(required = false) BlueprintResource blueprint
     ) throws IOException {
-        return createBlueprint(blueprint);
+        return createBlueprint(blueprint, checkBlueprint);
     }
 
-    public abstract BlueprintResource createBlueprint(BlueprintResource blueprint) throws IOException;
+    public abstract BlueprintResource createBlueprint(
+            BlueprintResource blueprint,
+            Boolean checkBlueprint
+    ) throws IOException;
 
 
     // ===============================================================================

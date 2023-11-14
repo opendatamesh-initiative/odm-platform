@@ -37,7 +37,7 @@ public class BlueprintService {
     // CREATE
     // ======================================================================================
 
-    public Blueprint createBlueprint(Blueprint blueprint) throws IOException {
+    public Blueprint createBlueprint(Blueprint blueprint, Boolean checkBlueprint) throws IOException {
 
         if (blueprint == null) {
             throw new BadRequestException(
@@ -72,26 +72,28 @@ public class BlueprintService {
             );
         }
 
-        GitCheckResource gitCheckResource = gitService.checkGitRepository(
-                blueprint.getRepositoryUrl(),
-                blueprint.getBlueprintDirectory()
-        );
-
-        if (!gitCheckResource.getBlueprintDirectoryCheck()) {
-            throw new UnprocessableEntityException(
-                    BlueprintApiStandardErrors.SC422_01_BLUEPRINT_IS_INVALID,
-                    "Missing blueprintDirectory [" + blueprint.getBlueprintDirectory() + "] in the given repository"
+        if (checkBlueprint) {
+            GitCheckResource gitCheckResource = gitService.checkGitRepository(
+                    blueprint.getRepositoryUrl(),
+                    blueprint.getBlueprintDirectory()
             );
-        }
 
-        if (!gitCheckResource.getParamsDescriptionCheck()) {
-            throw new UnprocessableEntityException(
-                    BlueprintApiStandardErrors.SC422_01_BLUEPRINT_IS_INVALID,
-                    "Missing file [params.json] in the given repository"
-            );
-        }
+            if (!gitCheckResource.getBlueprintDirectoryCheck()) {
+                throw new UnprocessableEntityException(
+                        BlueprintApiStandardErrors.SC422_01_BLUEPRINT_IS_INVALID,
+                        "Missing blueprintDirectory [" + blueprint.getBlueprintDirectory() + "] in the given repository"
+                );
+            }
 
-        blueprint.setBlueprintParams(gitCheckResource.getParamsJsonFileContent());
+            if (!gitCheckResource.getParamsDescriptionCheck()) {
+                throw new UnprocessableEntityException(
+                        BlueprintApiStandardErrors.SC422_01_BLUEPRINT_IS_INVALID,
+                        "Missing file [params.json] in the given repository"
+                );
+            }
+
+            blueprint.setBlueprintParams(gitCheckResource.getParamsJsonFileContent());
+        }
 
         try {
             blueprint = saveBlueprint(blueprint);

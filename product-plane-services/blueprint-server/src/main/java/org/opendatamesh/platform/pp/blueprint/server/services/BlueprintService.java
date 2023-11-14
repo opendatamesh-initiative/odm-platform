@@ -6,6 +6,7 @@ import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintApiStandard
 import org.opendatamesh.platform.pp.blueprint.api.resources.ConfigResource;
 import org.opendatamesh.platform.pp.blueprint.server.database.entities.Blueprint;
 import org.opendatamesh.platform.pp.blueprint.server.database.repositories.BlueprintRepository;
+import org.opendatamesh.platform.pp.blueprint.server.resources.internals.GitCheckResource;
 import org.opendatamesh.platform.pp.blueprint.server.services.git.GitService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,7 +37,7 @@ public class BlueprintService {
     // CREATE
     // ======================================================================================
 
-    public Blueprint createBlueprint(Blueprint blueprint) {
+    public Blueprint createBlueprint(Blueprint blueprint) throws IOException {
 
         if (blueprint == null) {
             throw new BadRequestException(
@@ -69,6 +71,27 @@ public class BlueprintService {
                             + blueprint.getRepositoryUrl() + "] already exist"
             );
         }
+
+        GitCheckResource gitCheckResource = gitService.checkGitRepository(
+                blueprint.getRepositoryUrl(),
+                blueprint.getBlueprintDirectory()
+        );
+
+        if (!gitCheckResource.getBlueprintDirectoryCheck()) {
+            throw new UnprocessableEntityException(
+                    BlueprintApiStandardErrors.SC422_01_BLUEPRINT_IS_INVALID,
+                    "Missing blueprintDirectory [" + blueprint.getBlueprintDirectory() + "] in the given repository"
+            );
+        }
+
+        if (!gitCheckResource.getParamsDescriptionCheck()) {
+            throw new UnprocessableEntityException(
+                    BlueprintApiStandardErrors.SC422_01_BLUEPRINT_IS_INVALID,
+                    "Missing file [params.json] in the given repository"
+            );
+        }
+
+        blueprint.setBlueprintParams(gitCheckResource.getParamsJsonFileContent());
 
         try {
             blueprint = saveBlueprint(blueprint);
@@ -281,9 +304,14 @@ public class BlueprintService {
             logger.info("Repository [" + blueprint.getRepositoryUrl() + "] correctly cloned");
 
             // Clean the repository to consider only the template
-            logger.info("Cleaning the repository to consider only the template ...");
-            gitService.cleanLocalRepository(gitRepo, blueprint.getBlueprintDirectory());
-            logger.info("Repository cleaned and ready to be instanced");
+            logger.info("Initializing new Git target repository ...");
+            gitService.initTargetRepository(
+                    gitRepo,
+                    blueprint.getBlueprintDirectory(),
+                    configResource.getCreateRepo(),
+                    blueprint.getRepoBaseUrl() + configResource.getTargetRepo()
+            );
+            logger.info("Target repository initialized");
 
             // Get the working directory of the repository and call the templatingService to instance the BLUEPRINT
             logger.info("Templating the repository ...");
@@ -292,7 +320,7 @@ public class BlueprintService {
             logger.info("Repository correctly templated");
 
             if (configResource.getCreateRepo()) {
-                logger.info("Creating the target repository ...");
+                logger.info("Creating the target repository  on the remote provider ...");
                 // Create the targetRepo
                 gitService.createRepo(
                         blueprint.getOrganization(),
@@ -302,13 +330,6 @@ public class BlueprintService {
             } else {
                 logger.info("Repository creation skipped (createRepo=false)");
             }
-
-            logger.info("Changing templated repository origin to the target repository ...");
-            // Change origin of the BLUEPRINT REPO correctly templated to the targetRepo
-            gitRepo = gitService.changeOrigin(
-                    gitRepo,
-                    blueprint.getRepoBaseUrl() + configResource.getTargetRepo()
-            );
 
             logger.info("Committing and pushing the repository ...");
             // Commit and Push the project created from the BLUEPRINT
@@ -322,6 +343,7 @@ public class BlueprintService {
             gitService.deleteLocalRepository();
 
         } catch (Throwable t) {
+            // Delete local repository
             gitService.deleteLocalRepository();
             throw t;
         }

@@ -17,6 +17,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -232,11 +233,11 @@ public abstract class BlueprintAbstractController {
                     )
             )
             @RequestBody(required = false) BlueprintResource blueprint
-    ) {
+    ) throws IOException {
         return createBlueprint(blueprint);
     }
 
-    public abstract BlueprintResource createBlueprint(BlueprintResource blueprint);
+    public abstract BlueprintResource createBlueprint(BlueprintResource blueprint) throws IOException;
 
 
     // ===============================================================================

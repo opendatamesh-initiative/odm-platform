@@ -36,6 +36,9 @@ public class Blueprint {
     @Column(name = "BLUEPRINT_DIR")
     private String blueprintDirectory;
 
+    @Column(name = "BLUEPRINT_PARAMS")
+    private String blueprintParams;
+
     @Column(name = "ORGANIZATION")
     private String organization;
 

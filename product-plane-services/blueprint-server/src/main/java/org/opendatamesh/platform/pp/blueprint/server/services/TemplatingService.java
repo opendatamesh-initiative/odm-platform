@@ -3,6 +3,7 @@ package org.opendatamesh.platform.pp.blueprint.server.services;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.opendatamesh.platform.pp.blueprint.api.resources.ConfigResource;
+import org.opendatamesh.platform.pp.blueprint.server.utils.CustomFileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -72,23 +73,20 @@ public class TemplatingService {
 
         String inputFileName = file.getAbsolutePath();
 
-        try {
+        // Read old content
+        String oldContent = CustomFileUtils.readFileAsString(file);
+        /*BufferedReader reader = new BufferedReader(new FileReader(inputFileName));
+        String oldContent = reader.lines().collect(Collectors.joining(System.lineSeparator()));
+        reader.close();*/
 
-            // Read old content
-            BufferedReader reader = new BufferedReader(new FileReader(inputFileName));
-            String oldContent = reader.lines().collect(Collectors.joining(System.lineSeparator()));
-            reader.close();
-
-            // Create new content and replace old one
-            StringBuilder newContent = new StringBuilder();
-            newContent.append(applyVelocityToString(oldContent, velocityContext));
-            PrintWriter writer = new PrintWriter(inputFileName);
-            writer.println(newContent);
-            writer.close();
-
-        } catch (IOException e) {
-            throw new RuntimeException(e); // CHANGE IT
-        }
+        // Create new content and replace old one
+        String newContent = applyVelocityToString(oldContent, velocityContext);
+        CustomFileUtils.writeFileAsString(file, newContent);
+        /*StringBuilder newContent = new StringBuilder();
+        newContent.append(applyVelocityToString(oldContent, velocityContext));
+        PrintWriter writer = new PrintWriter(inputFileName);
+        writer.println(newContent);
+        writer.close();*/
 
     }
 

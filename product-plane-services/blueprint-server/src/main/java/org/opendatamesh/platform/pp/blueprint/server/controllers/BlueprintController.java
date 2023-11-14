@@ -8,6 +8,7 @@ import org.opendatamesh.platform.pp.blueprint.server.services.BlueprintService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -30,7 +31,7 @@ public class BlueprintController extends BlueprintAbstractController {
     }
 
     @Override
-    public BlueprintResource createBlueprint(BlueprintResource blueprint) {
+    public BlueprintResource createBlueprint(BlueprintResource blueprint) throws IOException {
         return blueprintMapper.toResource(blueprintService.createBlueprint(blueprintMapper.toEntity(blueprint)));
     }
 

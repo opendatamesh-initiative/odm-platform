@@ -1,19 +1,27 @@
 package org.opendatamesh.platform.pp.blueprint.server.services.git;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.xpath.operations.Bool;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.TransportConfigCallback;
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.StoredConfig;
+import org.eclipse.jgit.transport.PushResult;
 import org.eclipse.jgit.transport.SshSessionFactory;
 import org.eclipse.jgit.transport.SshTransport;
+import org.eclipse.jgit.transport.URIish;
 import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
 import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintApiStandardErrors;
+import org.opendatamesh.platform.pp.blueprint.server.resources.internals.GitCheckResource;
+import org.opendatamesh.platform.pp.blueprint.server.utils.CustomFileUtils;
 import org.springframework.beans.factory.annotation.Value;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.*;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.stream.Collectors;
 
 public abstract class GitService {
 
@@ -22,13 +30,63 @@ public abstract class GitService {
     @Value("${git.templates.path}")
     private String targetPath;
 
+    private String tmpTargetRepo = "tmpTargetRepo";
+
+
+    // ======================================================================================
+    // CREATE Repository
+    // ======================================================================================
+
     public abstract void createRepo(String organization, String projectName, String repositoryName);
 
+
+    // ======================================================================================
+    // CHECK Repository content
+    // ======================================================================================
+
+    public GitCheckResource checkGitRepository(String repositoryUrl, String blueprintDirectory) throws IOException {
+
+        Git repoToCheck = cloneRepo(repositoryUrl);
+        String repoToCheckPath = repoToCheck.getRepository().getWorkTree().getAbsolutePath();
+
+        GitCheckResource gitCheckResource = new GitCheckResource();
+
+        Path blueprintDirectoryPath = Paths.get(repoToCheckPath, blueprintDirectory);
+        gitCheckResource.setBlueprintDirectoryCheck(
+                Files.exists(blueprintDirectoryPath) && Files.isDirectory(blueprintDirectoryPath)
+        );
+        Path paramsDescriptionPath = Paths.get(repoToCheckPath, "params.json");
+        gitCheckResource.setParamsDescriptionCheck(
+                Files.exists(paramsDescriptionPath) && Files.isRegularFile(paramsDescriptionPath)
+        );
+
+        if(gitCheckResource.getParamsDescriptionCheck()) {
+            // Remove exception from signature and refactor this method in a File utils class (used also in TemplatingService)
+            String paramsFileContent = CustomFileUtils.readFileAsString(paramsDescriptionPath.toFile());
+            gitCheckResource.setParamsJsonFileContent(paramsFileContent);
+        }
+
+        // Clean state
+        repoToCheck.close();
+        deleteLocalRepository();
+
+        return gitCheckResource;
+
+    }
+
+    // ======================================================================================
+    // CLONE Repository
+    // ======================================================================================
+
     public Git cloneRepo(String sourceUrl) {
+        return cloneRepo(sourceUrl, targetPath);
+    }
+
+    private Git cloneRepo(String sourceUrl, String destinationPath) {
         try {
             return Git.cloneRepository()
                     .setURI(sourceUrl)
-                    .setDirectory(new File(targetPath))
+                    .setDirectory(new File(destinationPath))
                     .setTransportConfigCallback(getSshTransportConfigCallback())
                     .call();
         } catch (Throwable t) {
@@ -40,20 +98,55 @@ public abstract class GitService {
         }
     }
 
-    public Git changeOrigin(Git gitRepository, String newOrigin) {
+
+    // ======================================================================================
+    // INIT new Git repository
+    // ======================================================================================
+
+    public Git initTargetRepository(Git oldGitRepo, String blueprintDir, Boolean createRepoFlag, String targetOrigin) {
         try {
-            StoredConfig config = gitRepository.getRepository().getConfig();
-            config.setString("remote", "origin", "url", newOrigin);
-            config.save();
-            return gitRepository;
+            Git newGitRepo;
+            File oldRepo = oldGitRepo.getRepository().getWorkTree();
+            if (createRepoFlag) {
+                newGitRepo = Git.init()
+                        .setDirectory(new File(tmpTargetRepo))
+                        .call();
+                // Set origin to new Repo
+                newGitRepo = setOrigin(newGitRepo, targetOrigin);
+            } else {
+                // Clone old repo
+                newGitRepo = cloneRepo(targetOrigin, tmpTargetRepo);
+                // Remove all repo content
+                CustomFileUtils.cleanDirectoryExceptOneDir(
+                        newGitRepo.getRepository().getWorkTree(),
+                        ".git"
+                );
+            }
+            // Get working tree
+            File newRepo = newGitRepo.getRepository().getWorkTree();
+            // Copy the blueprint directory content of the old repo to the new repo
+            File blueprintDirectoryFile = new File(oldRepo, blueprintDir);
+            FileUtils.copyDirectory(blueprintDirectoryFile, newRepo);
+            // Remove the old repository
+            oldGitRepo.close(); // Close git connection
+            deleteLocalRepository();
+            // Move new repo to "targetPath" as it was the old repo
+            newRepo.renameTo(new File(targetPath));
+            // Return new Repo
+            return newGitRepo;
         } catch (Throwable t) {
             throw new InternalServerException(
                     BlueprintApiStandardErrors.SC500_01_GIT_ERROR,
-                    "Error changing origin to the Git repository",
+                    "Error preparing local repository for templating",
                     t
             );
         }
     }
+
+
+    // ======================================================================================
+    // COMMIT & PUSH Repository
+    // ======================================================================================
 
     public void commitAndPushRepo(Git gitRepo, String message) {
         try {
@@ -71,9 +164,11 @@ public abstract class GitService {
                     .setMessage(message)
                     .call();
             // Push changes
-            gitRepo.push()
+            Iterable<PushResult> pushResults = gitRepo.push()
                     .setTransportConfigCallback(getSshTransportConfigCallback())
                     .call();
+            System.out.println(pushResults); // REMOVE IT
+            gitRepo.close();
         } catch (Throwable t) {
             throw new InternalServerException(
                     BlueprintApiStandardErrors.SC500_01_GIT_ERROR,
@@ -83,58 +178,42 @@ public abstract class GitService {
         }
     }
 
-    public void cleanLocalRepository(Git gitRepo, String blueprintDirectory) {
-        try {
-            // Get working tree
-            File dirToClean = gitRepo.getRepository().getWorkTree();
-            // Define which sub-dir maintain (.git and the blueprint directory)
-            List<String> subDirsToPreserve = new ArrayList<>();
-            subDirsToPreserve.add(".git");
-            subDirsToPreserve.add(blueprintDirectory);
-            // Remove undesired additional content
-            for (File file : dirToClean.listFiles()) {
-                if(!subDirsToPreserve.contains(file.getName())) {
-                    if(file.isDirectory()) {
-                        FileUtils.deleteDirectory(file);
-                    } else {
-                        file.delete();
-                    }
-                }
-            }
-            // Move the blueprint directory content to the root content of the repo
-            File blueprintDirectoryFile = new File(dirToClean, blueprintDirectory);
-            moveContentFromDirToDir(blueprintDirectoryFile, dirToClean);
-            // Remove the noew empty blueprint directory
-            FileUtils.deleteDirectory(blueprintDirectoryFile);
-        } catch (Throwable t) {
-            throw new InternalServerException(
-                    BlueprintApiStandardErrors.SC500_01_GIT_ERROR,
-                    "Error preparing local repository for templating",
-                    t
-            );
-        }
-    }
 
-    public void moveContentFromDirToDir(File sourceDir, File targetDir) throws IOException {
-        for (File file : sourceDir.listFiles()) {
-            if (file.isDirectory())
-                FileUtils.moveDirectoryToDirectory(file, targetDir, false);
-            else
-                file.renameTo(new File(targetDir, file.getName()));
-        }
-    }
+    // ======================================================================================
+    // DELETE local Repository
+    // ======================================================================================
 
     public void deleteLocalRepository() {
+        CustomFileUtils.removeDirectory(new File(targetPath));
+    }
+
+
+    // ======================================================================================
+    // UTILS
+    // ======================================================================================
+
+    private Git setOrigin(Git gitRepository, String origin) throws URISyntaxException, GitAPIException {
+        gitRepository.remoteAdd()
+                .setName("origin")
+                .setUri(new URIish(origin))
+                .call();
+        return gitRepository;
+    }
+
+    /*private Git changeOrigin(Git gitRepository, String newOrigin) {
         try {
-            FileUtils.deleteDirectory(new File(targetPath));
+            StoredConfig config = gitRepository.getRepository().getConfig();
+            config.setString("remote", "origin", "url", newOrigin);
+            config.save();
+            return gitRepository;
         } catch (Throwable t) {
             throw new InternalServerException(
                     BlueprintApiStandardErrors.SC500_01_GIT_ERROR,
-                    "Error deleting local repository",
+                    "Error changing origin to the Git repository",
                     t
             );
         }
-    }
+    }*/
 
     private TransportConfigCallback getSshTransportConfigCallback() {
         return transport -> {

@@ -159,7 +159,7 @@ public abstract class GitService {
             Iterable<PushResult> pushResults = gitRepo.push()
                     .setTransportConfigCallback(getSshTransportConfigCallback())
                     .call();
-            System.out.println(pushResults); // REMOVE IT
+            // Explicitly close Git connection (needed for Windows)
             gitRepo.close();
         } catch (Throwable t) {
             throw new InternalServerException(

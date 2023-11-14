@@ -21,9 +21,11 @@ public abstract class GitService {
     //TODO : timeouts on operations?
 
     @Value("${git.templates.path}")
-    private String targetPath;
+    private String templatesPath;
 
-    private String tmpTargetRepo = "tmpTargetRepo";
+    private String targetPathSuffix = "/projects";
+
+    private String sourcePathSuffix = "/blueprints";
 
     private String paramsFileJson = "params.json";
 
@@ -54,7 +56,6 @@ public abstract class GitService {
         );
 
         if(gitCheckResource.getParamsDescriptionCheck()) {
-            // Remove exception from signature and refactor this method in a File utils class (used also in TemplatingService)
             String paramsFileContent = CustomFileUtils.readFileAsString(new File(repoToCheckFile, paramsFileJson));
             gitCheckResource.setParamsJsonFileContent(paramsFileContent);
         }
@@ -72,7 +73,7 @@ public abstract class GitService {
     // ======================================================================================
 
     public Git cloneRepo(String sourceUrl) {
-        return cloneRepo(sourceUrl, targetPath);
+        return cloneRepo(sourceUrl, templatesPath + sourcePathSuffix);
     }
 
     private Git cloneRepo(String sourceUrl, String destinationPath) {
@@ -102,13 +103,13 @@ public abstract class GitService {
             File oldRepo = oldGitRepo.getRepository().getWorkTree();
             if (createRepoFlag) {
                 newGitRepo = Git.init()
-                        .setDirectory(new File(tmpTargetRepo))
+                        .setDirectory(new File(templatesPath + targetPathSuffix))
                         .call();
                 // Set origin to new Repo
                 newGitRepo = setOrigin(newGitRepo, targetOrigin);
             } else {
                 // Clone old repo
-                newGitRepo = cloneRepo(targetOrigin, tmpTargetRepo);
+                newGitRepo = cloneRepo(targetOrigin, templatesPath + targetPathSuffix);
                 // Remove all repo content
                 CustomFileUtils.cleanDirectoryExceptOneDir(
                         newGitRepo.getRepository().getWorkTree(),
@@ -119,11 +120,8 @@ public abstract class GitService {
             File newRepoFile = newGitRepo.getRepository().getWorkTree();
             File blueprintDirectoryFile = new File(oldRepo, blueprintDir);
             CustomFileUtils.copyDirectory(blueprintDirectoryFile, newRepoFile);
-            // Remove the old repository
-            oldGitRepo.close(); // Close git connection
-            deleteLocalRepository();
-            // Move new repo to "targetPath" as it was the old repo
-            CustomFileUtils.renameFile(newRepoFile, targetPath);
+            // Close Git connection to old repository
+            oldGitRepo.close();
             // Return new Repo
             return newGitRepo;
         } catch (Throwable t) {
@@ -140,7 +138,7 @@ public abstract class GitService {
     // COMMIT & PUSH Repository
     // ======================================================================================
 
-    public void commitAndPushRepo(Git gitRepo, String message) {
+    public Iterable<PushResult> commitAndPushRepo(Git gitRepo, String message) {
         try {
             // Remove renamed files/directories
             gitRepo.add()
@@ -159,6 +157,7 @@ public abstract class GitService {
             Iterable<PushResult> pushResults = gitRepo.push()
                     .setTransportConfigCallback(getSshTransportConfigCallback())
                     .call();
+            return pushResults; // Needed for Windows to wait the end of the push command
         } catch (Throwable t) {
             throw new InternalServerException(
                     BlueprintApiStandardErrors.SC500_01_GIT_ERROR,
@@ -177,7 +176,7 @@ public abstract class GitService {
     // ======================================================================================
 
     public void deleteLocalRepository() {
-        CustomFileUtils.removeDirectory(new File(targetPath));
+        CustomFileUtils.removeDirectory(new File(templatesPath));
     }
 
 

@@ -3,12 +3,13 @@ package org.opendatamesh.platform.pp.blueprint.server.services;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.opendatamesh.platform.pp.blueprint.api.resources.ConfigResource;
+import org.opendatamesh.platform.pp.blueprint.server.utils.CustomFileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
+import java.io.File;
+import java.io.StringWriter;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class TemplatingService {
@@ -61,8 +62,7 @@ public class TemplatingService {
 
         String templatedName = applyVelocityToString(originalName, velocityContext);
 
-        File renamedFile = new File(file.getParentFile(), templatedName);
-        file.renameTo(renamedFile);
+        File renamedFile = CustomFileUtils.renameFile(file, templatedName);
 
         return renamedFile;
 
@@ -70,25 +70,12 @@ public class TemplatingService {
 
     private void templateContent(File file, VelocityContext velocityContext) {
 
-        String inputFileName = file.getAbsolutePath();
+        // Read old content
+        String oldContent = CustomFileUtils.readFileAsString(file);
 
-        try {
-
-            // Read old content
-            BufferedReader reader = new BufferedReader(new FileReader(inputFileName));
-            String oldContent = reader.lines().collect(Collectors.joining(System.lineSeparator()));
-            reader.close();
-
-            // Create new content and replace old one
-            StringBuilder newContent = new StringBuilder();
-            newContent.append(applyVelocityToString(oldContent, velocityContext));
-            PrintWriter writer = new PrintWriter(inputFileName);
-            writer.println(newContent);
-            writer.close();
-
-        } catch (IOException e) {
-            throw new RuntimeException(e); // CHANGE IT
-        }
+        // Create new content and replace old one
+        String newContent = applyVelocityToString(oldContent, velocityContext);
+        CustomFileUtils.writeFileAsString(file, newContent);
 
     }
 

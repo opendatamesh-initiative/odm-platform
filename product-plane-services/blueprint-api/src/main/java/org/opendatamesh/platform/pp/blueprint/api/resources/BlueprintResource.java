@@ -43,6 +43,10 @@ public class BlueprintResource {
     @Schema(description = "The top-level directory of the repository where the blueprint is located")
     private String blueprintDirectory;
 
+    @JsonProperty("blueprintParams")
+    @Schema(description = "The JSON description of the parameters of the blueprint saved as a String")
+    private String blueprintParams;
+
     @JsonProperty("organization")
     @Schema(description = "User/Organization of the blueprint repo in the Git provider")
     private String organization;

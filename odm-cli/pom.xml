@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.opendatamesh</groupId>
         <artifactId>odm-platform</artifactId>
-        <version>1.0.1</version>
+        <version>1.0.0</version>
         <relativePath>../</relativePath>
     </parent>
 
@@ -15,7 +15,7 @@
     <artifactId>odm-cli</artifactId>
     <description>Open Data Mesh Platform's CLI</description>
     <name>ODM CLI MODULE</name>
-    <version>1.0.1</version>
+    <version>1.0.0</version>
     <url>https://github.com/opendatamesh-initiative/odm-platform</url>
     <properties>
         <java.version>11</java.version>
@@ -66,12 +66,12 @@
         <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-core-dpds-parser</artifactId>
-            <version>1.0.1</version>
+            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-core-commons</artifactId>
-            <version>1.0.1</version>
+            <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>
 

@@ -46,12 +46,29 @@ public class AzureDevOpsClient extends ODMClient {
                 projectId
         );
 
-        // IMPROVE IT
         if(!response.getStatusCode().is2xxSuccessful()) {
-            throw new InternalServerException(
-                    BlueprintApiStandardErrors.SC500_01_GIT_ERROR,
-                    "Error creating remote repository: " + response.getBody()
-            );
+            switch (response.getStatusCode()) {
+                case UNAUTHORIZED:
+                    throw new InternalServerException(
+                            BlueprintApiStandardErrors.SC401_01_GIT_ERROR,
+                            "User unauthorized - " + response.getBody()
+                    );
+                case FORBIDDEN:
+                    throw new InternalServerException(
+                            BlueprintApiStandardErrors.SC403_01_GIT_ERROR,
+                            "User authentication failed - " + response.getBody()
+                    );
+                case CONFLICT:
+                    throw new InternalServerException(
+                            BlueprintApiStandardErrors.SC409_01_GIT_CONFLICT,
+                            "Resource already exists - " + response.getBody()
+                    );
+                default:
+                    throw new InternalServerException(
+                            BlueprintApiStandardErrors.SC500_01_GIT_ERROR,
+                            "Error creating remote repository: " + response.getBody()
+                    );
+            }
         }
 
     }

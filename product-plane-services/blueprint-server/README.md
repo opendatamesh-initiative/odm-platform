@@ -6,6 +6,34 @@ It allows to initialize projects starting from a remote blueprint. Actually, it 
 * GitHub
 * Azure DevOps
 
+# Blueprint
+Accepted blueprints must have this structure:
+```txt
+| repository/
+|-- blueprintDirectory/
+|---- blueprint content ...
+|-- other content ...
+|-- params.json
+```
+where:
+* `blueprintDirectory` is a top-level directory containing the real blueprint/template
+  * it will be the only content of the target repository when instanciating a blueprint
+* Other content will be ignored and won't be templated
+* `params.json` is a JSON file describing the parameters of the template with the following structure:
+  *  ```json
+     [
+       {
+         "name": "parameterName",
+         "description": "Parameter description",
+         "defaultValue": "Parameter default value"
+       }, 
+       {
+         ...
+       },
+       ...
+     ]
+     ```
+
 # Configurations
 
 ## Git Providers Configurations
@@ -73,8 +101,6 @@ Set an environment variable called `AZURE_TENANT_ID`. This is the Tenant ID of y
 
 1. Login into your Azure Portal and go under **Azure Active Directory**
 2. Retrieve the **Tenant ID**
-
-####
 
 ### GitHub
 Application profile: profile *dev-github*

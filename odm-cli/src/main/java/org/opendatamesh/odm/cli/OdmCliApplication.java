@@ -17,6 +17,7 @@ public class OdmCliApplication {
 
 
         //registry
+        odmCliCommand.addSubcommand("registry", new RegistryCommands());
 
         //local
         odmCliCommand.addSubcommand("local", new LocalCommands());
@@ -24,7 +25,6 @@ public class OdmCliApplication {
         odmCliCommand.setExecutionStrategy(new CommandLine.RunAll());
         int exitCode = odmCliCommand.execute(args);
         System.exit(exitCode);
-
     }
 
 }

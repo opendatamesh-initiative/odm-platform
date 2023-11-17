@@ -99,7 +99,7 @@ public abstract class GitService {
 
     public Git initTargetRepository(Git oldGitRepo, String blueprintDir, Boolean createRepoFlag, String targetOrigin) {
         try {
-            Git newGitRepo;
+            Git newGitRepo = null;
             File oldRepo = oldGitRepo.getRepository().getWorkTree();
             if (createRepoFlag) {
                 newGitRepo = Git.init()
@@ -109,7 +109,17 @@ public abstract class GitService {
                 newGitRepo = setOrigin(newGitRepo, targetOrigin);
             } else {
                 // Clone old repo
-                newGitRepo = cloneRepo(targetOrigin, templatesPath + targetPathSuffix);
+                try {
+                    newGitRepo = cloneRepo(targetOrigin, templatesPath + targetPathSuffix);
+                } catch(Throwable t) {
+                    throw new InternalServerException(
+                            BlueprintApiStandardErrors.SC500_01_GIT_ERROR,
+                            "createRepo=false, but an error occured cloning existing repository ["
+                                    + targetOrigin + "]. Error: " + t.getMessage()
+                                    + ". Check if the repository exists.",
+                            t
+                    );
+                }
                 // Remove all repo content
                 CustomFileUtils.cleanDirectoryExceptOneDir(
                         newGitRepo.getRepository().getWorkTree(),

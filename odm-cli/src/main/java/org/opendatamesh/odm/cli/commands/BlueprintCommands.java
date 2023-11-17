@@ -2,11 +2,13 @@ package org.opendatamesh.odm.cli.commands;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.odm.cli.utils.FileReaders;
 import org.opendatamesh.platform.pp.blueprint.api.clients.BlueprintClient;
 import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintResource;
 import org.opendatamesh.platform.pp.blueprint.api.resources.ConfigResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.ResourceAccessException;
 import picocli.CommandLine;
@@ -14,6 +16,9 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 
@@ -41,8 +46,6 @@ public class BlueprintCommands implements Runnable {
     public static void main(String[] args) {CommandLine.run(new BlueprintCommands(), args);
     }
 
-    //@Option(names = "--to", split = ",")
-    //subsubcommand
     @Command(name = "list",
             description = "lists all the blueprints",
             version = "odm-cli blueprint list 1.0.0",
@@ -65,7 +68,7 @@ public class BlueprintCommands implements Runnable {
             ResponseEntity<BlueprintResource[]> blueprintResponseEntity = blueprintClient.readBlueprints();
             BlueprintResource[] blueprintList = blueprintResponseEntity.getBody();
             for(BlueprintResource blueprintResource: blueprintList){
-                System.out.println(blueprintResource.getName());
+                System.out.println(blueprintResource);
             }
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
@@ -78,7 +81,7 @@ public class BlueprintCommands implements Runnable {
             description = "init a blueprint",
             version = "odm-cli blueprint list 1.0.0",
             mixinStandardHelpOptions = true)
-    public void initBlueprint(@Option(names = "--id", required = true) Long id, @Option(names = "--instance-file", required = true) String blueprintFilepath) {
+    public void initBlueprint(@Option(names = "--id", required = true) Long id) {
         Properties properties = null;
         try {
             properties = FileReaders.getPropertiesFromFilePath(propertiesFileOption);
@@ -90,25 +93,63 @@ public class BlueprintCommands implements Runnable {
         if (serverUrl == null)
             return;
 
-        String configString = null;
-        try {
-            configString = FileReaders.readFileFromPath(blueprintFilepath);
-        } catch (IOException e) {
-            System.out.println("Blueprint file not found");
-            return;
-        }
-
         blueprintClient = new BlueprintClient(serverUrl);
-
         ObjectMapper objectMapper = new ObjectMapper();
+        ResponseEntity<BlueprintResource> blueprintResourceResponseEntity;
 
         try {
-            ConfigResource configResource = objectMapper.readValue(configString, ConfigResource.class);
-            ResponseEntity<Void> blueprintResponseEntity = blueprintClient.instanceBlueprint(id, configResource);
+            blueprintResourceResponseEntity = blueprintClient.readOneBlueprint(id);
+            if (blueprintResourceResponseEntity.getStatusCode().equals(HttpStatus.OK)){
+                BlueprintResource blueprintResource = blueprintResourceResponseEntity.getBody();
+                List<Map<String,String>> blueprintParams = objectMapper.readValue(blueprintResource.getBlueprintParams(), new TypeReference<List<Map<String, String>>>(){});
+
+                ConfigResource configResource = new ConfigResource();
+                System.out.print("Insert target repo: ");
+                String input = System.console().readLine();
+                configResource.setTargetRepo(input);
+                System.out.print("Create report[T/F]: ");
+                input = System.console().readLine();
+                switch (input){
+                    case "T":
+                        configResource.setCreateRepo(true);
+                        break;
+                    case "F":
+                        configResource.setCreateRepo(false);
+                        break;
+                    default:
+                        System.out.println("Invalid input");
+                        return;
+                }
+
+                Map<String, String> configMap = new HashMap<>();
+
+                for(Map<String,String> param : blueprintParams){
+                    System.out.print("You must insert param \"" + param.get("name") + "\". Description: " + param.get("description") +
+                            ". Default value: " + param.get("defaultValue")  +  ". Value (blank for default): " );
+                    String paramInput = System.console().readLine();
+                    if(paramInput == null || paramInput == "") {
+                        System.out.println("Getting default value for param \"" + param.get("name") + "\"");
+                        paramInput = param.get("defaultValue");
+                    }
+
+                    configMap.put(param.get("name"), paramInput);
+
+                }
+                configResource.setConfig(configMap);
+                ResponseEntity<Void> blueprintResponseEntity = blueprintClient.instanceBlueprint(id, configResource);
+
+                if(blueprintResponseEntity.getStatusCode().equals(HttpStatus.OK))
+                    System.out.println("Blueprint instanced correctly");
+                else
+                    System.out.println("Something went wrong when communicating with Blueprint Server");
+            }
+            else
+                System.out.println("Something went wrong when communicating with Blueprint Server");
         } catch (JsonProcessingException e) {
-            System.out.println("File " + blueprintFilepath + " isn't in the right format");
-        } catch (ResourceAccessException e){
+            throw new RuntimeException(e);
+        }catch (ResourceAccessException e){
             System.out.println("Impossible to connect with blueprint server. Verify the URL and retry");
+            return;
         }
     }
 

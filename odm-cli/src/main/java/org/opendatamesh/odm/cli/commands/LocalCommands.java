@@ -1,16 +1,12 @@
 package org.opendatamesh.odm.cli.commands;
 
-
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.opendatamesh.odm.cli.utils.FileReaders;
 import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
 import org.opendatamesh.platform.core.dpds.parser.DPDSParser;
 import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
 import org.opendatamesh.platform.core.dpds.parser.location.UriLocation;
 import org.opendatamesh.platform.pp.blueprint.api.clients.BlueprintClient;
-import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintResource;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.ResourceAccessException;
+
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -31,7 +27,6 @@ public class LocalCommands implements Runnable {
         CommandLine.run(new LocalCommands(), args);
     }
 
-    //subsubcommand
     @Command(
             name = "validate-dpv",
             description = "Validate the syntax of a Data Product Version given the path of a Data Product Version file",

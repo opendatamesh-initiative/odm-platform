@@ -30,7 +30,7 @@ public class LocalCommands implements Runnable {
     @Command(
             name = "validate-dpv",
             description = "Validate the syntax of a Data Product Version given the path of a Data Product Version file",
-            version = "odm-cli validate-dpv 1.0.0",
+            version = "odm-cli local validate-dpv 1.0.0",
             mixinStandardHelpOptions = true
     )
     void validateDpv(@CommandLine.Option(

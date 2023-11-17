@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.odm.cli.utils.FileReaders;
+import org.opendatamesh.odm.cli.utils.PropertiesManager;
 import org.opendatamesh.platform.pp.blueprint.api.clients.BlueprintClient;
 import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintResource;
 import org.opendatamesh.platform.pp.blueprint.api.resources.ConfigResource;
@@ -58,9 +59,11 @@ public class BlueprintCommands implements Runnable {
             System.out.println("No properties file has been found");
         }
 
-        String serverUrl = getServerUrl(properties);
-        if (serverUrl == null)
+        String serverUrl = PropertiesManager.getPropertyValue(properties, "blueprint-server", serverUrlOption);
+        if (serverUrl == null) {
+            System.out.println("The blueprint server URL wasn't specified. Use the -s option or create a file with the \"blueprint-server\" property");
             return;
+        }
 
         blueprintClient = new BlueprintClient(serverUrl);
 
@@ -89,9 +92,11 @@ public class BlueprintCommands implements Runnable {
             System.out.println("No properties file has been found");
         }
 
-        String serverUrl = getServerUrl(properties);
-        if (serverUrl == null)
+        String serverUrl = PropertiesManager.getPropertyValue(properties, "blueprint-server", serverUrlOption);
+        if (serverUrl == null) {
+            System.out.println("The blueprint server URL wasn't specified. Use the -s option or create a file with the \"blueprint-server\" property");
             return;
+        }
 
         blueprintClient = new BlueprintClient(serverUrl);
         ObjectMapper objectMapper = new ObjectMapper();
@@ -153,24 +158,6 @@ public class BlueprintCommands implements Runnable {
         }
     }
 
-
-
-
-
-    /* Checks if the user inserted the specific server URL option. If it is not null than it is returned such value,
-    otherwise the properties are checked. If even the property file hasn't the server URL, then the method returns null
-     */
-    public String getServerUrl(Properties properties){
-        if(serverUrlOption == null){
-            if(properties == null || properties.getProperty("blueprint-server") == null) {
-                System.out.println("The blueprint server URL wasn't specified. Use the -s option or create a file with the \"blueprint-server\" property");
-                return null;
-            }
-            return properties.getProperty("blueprint-server");
-        }
-        else
-            return serverUrlOption;
-    }
 
 
 

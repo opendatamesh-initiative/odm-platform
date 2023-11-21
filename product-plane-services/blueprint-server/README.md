@@ -254,11 +254,14 @@ docker build -t odmp-blueprint-postgres-app . -f ./product-plane-services/bluepr
 ```bash
 [Azure DevOps]
   --build-arg GIT_PROVIDER=AZURE_DEVOPS \
-  --build-arg OAUTH_CLIENT_ID=<personal-access-token> \
-  --build-arg OAUTH_CLIENT_SECRET=<personal-access-token> \
+  --build-arg OAUTH_CLIENT_ID=<azure-service-principal-client-id> \
+  --build-arg OAUTH_CLIENT_SECRET=<azure-service-principal-client-token> \
   --build-arg OAUTH_TOKEN_URI=<oauth-token-uri> \
-  --build-arg OAUTH_SCOPE=<personal-access-token>
+  --build-arg OAUTH_SCOPE=<oauth-scope>
 ```
+where:
+* `OAUTH_TOKEN_URI` is: `https://login.microsoftonline.com/<AZURE_TENANT_ID>/oauth2/v2.0/token` 
+* `OAUTH_SCOPE` could be, for example, `499b84ac-1321-427f-aa17-267ca6975798/.default`
 ```bash
 [GitHub]
   --build-arg GIT_PROVIDER=GITHUB \

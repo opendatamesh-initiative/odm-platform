@@ -4,7 +4,7 @@ import java.util.Properties;
 
 public final class PropertiesManager {
 
-    /** Checks if the user inserted the specific property value. If it is not null than it is returned such value,
+    /** Checks if the user has inserted the specific property value. If it is not null than it is returned such value,
     otherwise the properties are checked (that should be read from the properties file). If even the property file hasn't a value for property,
      then the method returns null
      */

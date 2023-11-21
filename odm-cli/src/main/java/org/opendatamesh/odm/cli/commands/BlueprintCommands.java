@@ -130,10 +130,9 @@ public class BlueprintCommands implements Runnable {
 
                 for(Map<String,String> param : blueprintParams){
                     System.out.print("You must insert param \"" + param.get("name") + "\". Description: " + param.get("description") +
-                            ". Default value: " + param.get("defaultValue")  +  ". Value (blank for default): " );
+                            ". Default value: " + param.get("defaultValue")  +  ". \nValue (blank for default): " );
                     String paramInput = System.console().readLine();
-                    if(paramInput == null || paramInput == "") {
-                        System.out.println("Getting default value for param \"" + param.get("name") + "\"");
+                    if(paramInput == null || paramInput.isBlank()) {
                         paramInput = param.get("defaultValue");
                     }
 

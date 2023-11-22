@@ -9,6 +9,7 @@ import org.opendatamesh.odm.cli.utils.InputManager;
 import org.opendatamesh.platform.pp.blueprint.api.clients.BlueprintClient;
 import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintResource;
 import org.opendatamesh.platform.pp.blueprint.api.resources.ConfigResource;
+import org.opendatamesh.platform.pp.registry.api.clients.RegistryClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.ResourceAccessException;
@@ -52,20 +53,7 @@ public class BlueprintCommands implements Runnable {
             version = "odm-cli blueprint list 1.0.0",
             mixinStandardHelpOptions = true)
     public void listBlueprints() {
-        Properties properties = null;
-        try {
-            properties = FileReaders.getPropertiesFromFilePath(propertiesFileOption);
-        } catch (IOException e) {
-            System.out.println("No properties file has been found");
-        }
-
-        String serverUrl = InputManager.getPropertyValue(properties, "blueprint-server", serverUrlOption);
-        if (serverUrl == null) {
-            System.out.println("The blueprint server URL wasn't specified. Use the -s option or create a file with the \"blueprint-server\" property");
-            return;
-        }
-
-        blueprintClient = new BlueprintClient(serverUrl);
+        blueprintClient = setUpBlueprintClient();
 
         try {
             ResponseEntity<BlueprintResource[]> blueprintResponseEntity = blueprintClient.readBlueprints();
@@ -85,20 +73,7 @@ public class BlueprintCommands implements Runnable {
             version = "odm-cli blueprint list 1.0.0",
             mixinStandardHelpOptions = true)
     public void initBlueprint(@Option(names = "--id", required = true) Long id) {
-        Properties properties = null;
-        try {
-            properties = FileReaders.getPropertiesFromFilePath(propertiesFileOption);
-        } catch (IOException e) {
-            System.out.println("No properties file has been found");
-        }
-
-        String serverUrl = InputManager.getPropertyValue(properties, "blueprint-server", serverUrlOption);
-        if (serverUrl == null) {
-            System.out.println("The blueprint server URL wasn't specified. Use the -s option or create a file with the \"blueprint-server\" property");
-            return;
-        }
-
-        blueprintClient = new BlueprintClient(serverUrl);
+        blueprintClient = setUpBlueprintClient();
         ObjectMapper objectMapper = new ObjectMapper();
         ResponseEntity<BlueprintResource> blueprintResourceResponseEntity;
 
@@ -152,6 +127,22 @@ public class BlueprintCommands implements Runnable {
         }
     }
 
+    protected BlueprintClient setUpBlueprintClient(){
+        Properties properties = null;
+        try {
+            properties = FileReaders.getPropertiesFromFilePath(propertiesFileOption);
+        } catch (IOException e) {
+            System.out.println("No properties file has been found");
+        }
+
+        String serverUrl = InputManager.getPropertyValue(properties, "blueprint-server", serverUrlOption);
+        if (serverUrl == null) {
+            System.out.println("The blueprint server URL wasn't specified. Use the -s option or create a file with the \"blueprint-server\" property");
+            throw new RuntimeException("The registry server URL wasn't specified");
+        }
+
+        return new BlueprintClient(serverUrl);
+    }
 
 
 

@@ -5,7 +5,6 @@ import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
 import org.opendatamesh.platform.core.dpds.parser.DPDSParser;
 import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
 import org.opendatamesh.platform.core.dpds.parser.location.UriLocation;
-import org.opendatamesh.platform.pp.blueprint.api.clients.BlueprintClient;
 
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -20,8 +19,6 @@ import java.io.IOException;
         mixinStandardHelpOptions = true
 )
 public class LocalCommands implements Runnable {
-
-    BlueprintClient blueprintClient;
 
     public static void main(String[] args) {
         CommandLine.run(new LocalCommands(), args);

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.odm.cli.utils.FileReaders;
-import org.opendatamesh.odm.cli.utils.PropertiesManager;
+import org.opendatamesh.odm.cli.utils.InputManager;
 import org.opendatamesh.platform.pp.blueprint.api.clients.BlueprintClient;
 import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintResource;
 import org.opendatamesh.platform.pp.blueprint.api.resources.ConfigResource;
@@ -59,7 +59,7 @@ public class BlueprintCommands implements Runnable {
             System.out.println("No properties file has been found");
         }
 
-        String serverUrl = PropertiesManager.getPropertyValue(properties, "blueprint-server", serverUrlOption);
+        String serverUrl = InputManager.getPropertyValue(properties, "blueprint-server", serverUrlOption);
         if (serverUrl == null) {
             System.out.println("The blueprint server URL wasn't specified. Use the -s option or create a file with the \"blueprint-server\" property");
             return;
@@ -92,7 +92,7 @@ public class BlueprintCommands implements Runnable {
             System.out.println("No properties file has been found");
         }
 
-        String serverUrl = PropertiesManager.getPropertyValue(properties, "blueprint-server", serverUrlOption);
+        String serverUrl = InputManager.getPropertyValue(properties, "blueprint-server", serverUrlOption);
         if (serverUrl == null) {
             System.out.println("The blueprint server URL wasn't specified. Use the -s option or create a file with the \"blueprint-server\" property");
             return;
@@ -109,12 +109,11 @@ public class BlueprintCommands implements Runnable {
                 List<Map<String,String>> blueprintParams = objectMapper.readValue(blueprintResource.getBlueprintParams(), new TypeReference<List<Map<String, String>>>(){});
 
                 ConfigResource configResource = new ConfigResource();
-                System.out.print("Insert target repo: ");
-                String input = System.console().readLine();
-                configResource.setTargetRepo(input);
-                System.out.print("Create report[T/F]: ");
-                input = System.console().readLine();
-                switch (input){
+                String targetRepo = InputManager.getValueFromUser("Insert target repo: ");
+                configResource.setTargetRepo(targetRepo);
+
+                String createRepo = InputManager.getValueFromUser("Create report[T/F]: ");
+                switch (createRepo){
                     case "T":
                         configResource.setCreateRepo(true);
                         break;
@@ -129,15 +128,11 @@ public class BlueprintCommands implements Runnable {
                 Map<String, String> configMap = new HashMap<>();
 
                 for(Map<String,String> param : blueprintParams){
-                    System.out.print("You must insert param \"" + param.get("name") + "\". Description: " + param.get("description") +
-                            ". Default value: " + param.get("defaultValue")  +  ". \nValue (blank for default): " );
-                    String paramInput = System.console().readLine();
-                    if(paramInput == null || paramInput.isBlank()) {
-                        paramInput = param.get("defaultValue");
-                    }
+                    String message = "You must insert param \"" + param.get("name") + "\". Description: " + param.get("description") +
+                            ". Default value: " + param.get("defaultValue")  +  ". \nValue (blank for default): ";
 
+                    String paramInput = InputManager.getValueFromUser(message, param.get("defaultValue"));
                     configMap.put(param.get("name"), paramInput);
-
                 }
                 configResource.setConfig(configMap);
                 ResponseEntity<Void> blueprintResponseEntity = blueprintClient.instanceBlueprint(id, configResource);

@@ -34,24 +34,28 @@ public class BlueprintCommands implements Runnable {
 
     BlueprintClient blueprintClient;
 
-    @Option(names = {"-s", "--server"},
-            description = "URL of the Blueprint server. It must include the port. It overrides the value inside the properties file, if it is present",
-            required = false)
+    @Option(
+            names = { "-s", "--server" },
+            description = "URL of the Blueprint server. It must include the port. It overrides the value inside the properties file, if it is present"
+    )
     String serverUrlOption;
 
-    @Option(names = {"-f", "--properties-file"},
+    @Option(
+            names = { "-f", "--properties-file" },
             description = "Path to the properties file",
-            defaultValue = "./properties.yml",
-            required = false)
+            defaultValue = "./properties.yml"
+    )
     String propertiesFileOption;
 
     public static void main(String[] args) {CommandLine.run(new BlueprintCommands(), args);
     }
 
-    @Command(name = "list",
+    @Command(
+            name = "list",
             description = "lists all the blueprints",
             version = "odm-cli blueprint list 1.0.0",
-            mixinStandardHelpOptions = true)
+            mixinStandardHelpOptions = true
+    )
     public void listBlueprints() {
         blueprintClient = setUpBlueprintClient();
 
@@ -68,10 +72,12 @@ public class BlueprintCommands implements Runnable {
         }
     }
 
-    @Command(name = "initBlueprint",
+    @Command(
+            name = "initBlueprint",
             description = "init a blueprint",
             version = "odm-cli blueprint list 1.0.0",
-            mixinStandardHelpOptions = true)
+            mixinStandardHelpOptions = true
+    )
     public void initBlueprint(@Option(names = "--id", required = true) Long id) {
         blueprintClient = setUpBlueprintClient();
         ObjectMapper objectMapper = new ObjectMapper();
@@ -145,10 +151,9 @@ public class BlueprintCommands implements Runnable {
     }
 
 
-
     @Override
     public void run() {
-        System.out.println("Allows to communicate with blueprint module");
+
     }
 
 }

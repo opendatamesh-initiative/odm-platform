@@ -1,6 +1,5 @@
 package org.opendatamesh.odm.cli.commands;
 
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,7 +8,6 @@ import org.opendatamesh.odm.cli.utils.InputManager;
 import org.opendatamesh.platform.pp.blueprint.api.clients.BlueprintClient;
 import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintResource;
 import org.opendatamesh.platform.pp.blueprint.api.resources.ConfigResource;
-import org.opendatamesh.platform.pp.registry.api.clients.RegistryClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.ResourceAccessException;

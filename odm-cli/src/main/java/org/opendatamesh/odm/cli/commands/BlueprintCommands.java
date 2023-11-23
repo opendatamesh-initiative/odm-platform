@@ -91,7 +91,7 @@ public class BlueprintCommands implements Runnable {
                 String targetRepo = InputManager.getValueFromUser("Insert target repo: ");
                 configResource.setTargetRepo(targetRepo);
 
-                String createRepo = InputManager.getValueFromUser("Create report[T/F]: ");
+                String createRepo = InputManager.getValueFromUser("Create repo [T/F]: ");
                 switch (createRepo){
                     case "T":
                         configResource.setCreateRepo(true);

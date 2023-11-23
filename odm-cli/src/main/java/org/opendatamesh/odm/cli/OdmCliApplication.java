@@ -9,18 +9,17 @@ public class OdmCliApplication {
 
     public static void main(String[] args) {
 
+        // Init
         CommandLine odmCliCommand = new CommandLine(new OdmCliInit());
-        odmCliCommand.addSubcommand("hello", new HelloWorld());
 
-        // blueprint
-        CommandLine blueprintCommand = odmCliCommand.addSubcommand("blueprint", new BlueprintCommands());
+        // Local commands
+        odmCliCommand.addSubcommand("local", new LocalCommands());
 
-
-        //registry
+        // Registry commands
         odmCliCommand.addSubcommand("registry", new RegistryCommands());
 
-        //local
-        odmCliCommand.addSubcommand("local", new LocalCommands());
+        // Blueprint commands
+        odmCliCommand.addSubcommand("blueprint", new BlueprintCommands());
 
         odmCliCommand.setExecutionStrategy(new CommandLine.RunAll());
         int exitCode = odmCliCommand.execute(args);

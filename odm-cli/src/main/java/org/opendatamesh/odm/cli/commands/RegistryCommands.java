@@ -26,17 +26,19 @@ import java.util.Properties;
 )
 public class RegistryCommands implements Runnable {
 
-     RegistryClient registryClient;
+    RegistryClient registryClient;
 
-    @Option(names = {"-s", "--server"},
-            description = "URL of the Registry server. It must include the port. It overrides the value inside the properties file, if it is present",
-            required = false)
+    @Option(
+            names = { "-s", "--server" },
+            description = "URL of the Registry server. It must include the port. It overrides the value inside the properties file, if it is present"
+    )
     String serverUrlOption;
 
-    @Option(names = {"-f", "--properties-file"},
+    @Option(
+            names = { "-f", "--properties-file" },
             description = "Path to the properties file",
-            defaultValue = "./properties.yml",
-            required = false)
+            defaultValue = "./properties.yml"
+    )
     String propertiesFileOption;
 
     public static void main(String[] args) {
@@ -102,7 +104,7 @@ public class RegistryCommands implements Runnable {
             version = "odm-cli registry getDPV 1.0.0",
             mixinStandardHelpOptions = true
     )
-    void getDpv(@Option(names = "--id", required = true) String id, @Option(names = "-v", required = true) String version) {
+    void getDpv(@Option(names = "--id", required = true) String id, @Option(names = "--dpv", required = true) String version) {
         try {
             registryClient = setUpRegistryClient();
 
@@ -248,10 +250,9 @@ public class RegistryCommands implements Runnable {
         return new RegistryClient(serverUrl);
     }
 
-
-
     @Override
-    public void run() {    }
+    public void run() {
+
+    }
 
 }
-

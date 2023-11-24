@@ -9,7 +9,9 @@ import lombok.Data;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ActivityStatusResource {
+
     @JsonProperty("status")
     @Schema(description = "Status of the Activity")
     ActivityStatus status;
+
 }

@@ -2,14 +2,11 @@ package org.opendatamesh.platform.pp.devops.server.database.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
-
-import java.time.LocalDateTime;
-import java.util.Map;
-
-import javax.persistence.*;
-
 import org.opendatamesh.platform.core.dpds.utils.HashMapConverter;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskStatus;
+
+import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Data
 @Entity(name = "Task")
@@ -23,27 +20,27 @@ public class Task  {
     Long id;
 
     @Column(name = "ACTIVITY_ID")
-    Long activityId;  
+    private Long activityId;
 
     @Column(name = "EXECUTOR_REF")
-    String executorRef;  
+    private String executorRef;
     
     @Column(name = "TEMPLATE")
-    String template;  
+    private String template;
 
     @Column(name = "CONFIGURATIONS")
-    String configurations;  
+    private String configurations;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "STATUS")
-    ActivityTaskStatus status;
+    private ActivityTaskStatus status;
 
     @Column(name = "RESULTS", length=5000)
     @Convert(converter = HashMapConverter.class)
-    private Map<String, Object> results;
+    private String results;
 
     @Column(name = "ERRORS")
-    String errors;
+    private String errors;
 
     @Column(name = "CREATED_AT")
     private LocalDateTime createdAt;

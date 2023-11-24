@@ -17,7 +17,7 @@ public class TaskResultResource {
 
     @JsonProperty("results")
     @Schema(description = "Optional JSON results of the Task execution returned from the executor")
-    Map<String, Object> results;
+    String results;
 
     @JsonProperty("errors")
     @Schema(description = "Optional textual set of errors of the Task execution returned from the executor")

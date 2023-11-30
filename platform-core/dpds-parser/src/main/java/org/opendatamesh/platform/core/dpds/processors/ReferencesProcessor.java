@@ -94,7 +94,7 @@ public class ReferencesProcessor implements PropertiesProcessor {
 
             StandardDefinitionDPDS templateResource = acivityResource.getTemplate();
 
-            templateResource = resolveComponent(templateResource);
+            templateResource = resolveComponent(templateResource, null);
             acivityResource.setTemplate(templateResource);
         }
     }
@@ -106,12 +106,12 @@ public class ReferencesProcessor implements PropertiesProcessor {
             E component = null;
 
             component = components.get(i);
-            component = resolveComponent(component);
+            component = resolveComponent(component, null);
             components.set(i, component);
         }
     }
 
-    private <E extends ComponentDPDS> E resolveComponent(E component)
+    private <E extends ComponentDPDS> E resolveComponent(E component, URI componentAbsoulutePathUri)
             throws UnresolvableReferenceException, DeserializationException {
 
         String componentRef = null;
@@ -122,7 +122,6 @@ public class ReferencesProcessor implements PropertiesProcessor {
             component = resolveComponentFromInternalRef(component);
         }
 
-        URI componentAbsoulutePathUri = null;
         try {
             if (componentRef != null) {
                 componentAbsoulutePathUri = UriUtils.getResourceAbsolutePathUri(component.getBaseUri(), new URI(componentRef));
@@ -137,7 +136,7 @@ public class ReferencesProcessor implements PropertiesProcessor {
             PortDPDS port = (PortDPDS) component;
             if (port.hasApi()) {
                 port.getPromises().getApi().setBaseUri(componentAbsoulutePathUri);
-                StandardDefinitionDPDS api = resolveComponent(port.getPromises().getApi());
+                StandardDefinitionDPDS api = resolveComponent(port.getPromises().getApi(), componentAbsoulutePathUri);
                 port.getPromises().setApi(api);
             }
         }
@@ -209,7 +208,7 @@ public class ReferencesProcessor implements PropertiesProcessor {
     }
 
     private void resolveDefinition(StandardDefinitionDPDS stdDefResource, URI stdDefAbsoulutePathUri)
-            throws UnresolvableReferenceException, DeserializationException {
+            throws UnresolvableReferenceException {
 
         Objects.requireNonNull(stdDefResource,
                 "Input parameter [standardDefinitionResource] cannot be null");

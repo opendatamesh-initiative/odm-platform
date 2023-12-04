@@ -3,7 +3,7 @@
 ##########################
 spring:
   profiles:
-    active: dev
+    active: dev-azuredevops
     # dev-github
     # dev-azuredevops
     # testmysql

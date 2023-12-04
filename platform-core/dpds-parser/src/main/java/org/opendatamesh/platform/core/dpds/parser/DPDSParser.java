@@ -40,8 +40,9 @@ public class DPDSParser {
         per API definitions; tornando indietro si perde infatti il subpath, torna nella root e non risolverà mai le
         reference per API definition, trovandosi essa nello stesso subpath in cui si trova la porta
          */
-        if (options.isResoveApiDefinitions())
+        if (options.isResoveApiDefinitions()) {
             processApiDefinitions(context);
+        }
 
         if (options.isResoveReadOnlyProperties())
             processReadOnlyProperties(context);

@@ -88,8 +88,15 @@ Once the service principal is configured in Azure AD, you need to do the same in
 
 The service principal can now act as a real user on Azure DevOps in a machine-to-machine interaction.
 
-#### Configure SSH
-In order to allow the application to *clone* and *push* on repositories on Azure DevOps an SSH key must be generated on the host machine and added to the Azure DevOps Repositories.
+#### Configure SSH or HTTPS
+In order to allow the application to *clone* and *push* on repositories on Azure DevOps an SSH key must be generated on the host machine and added to the Azure DevOps Repositories. 
+
+Alternatively, HTTPS protocol could be used through an Access Token. 
+In the latter scenario, the token will be fetched by the application without any additional effort from the user.
+
+The application will choose between SSH or HTTPS depending on the URL of the repository:
+* if the repository URL starts with `git@` SSH will be used
+* if the repository URL starts with `https://` HTTPS will be used
 
 
 ## Useful resources
@@ -107,6 +114,8 @@ Create a Personal Access Token and configure it:
 #### Configure SSH
 In order to allow the application to *clone* and *push* on repositories on GitHub an SSH key must be generated on the host machine and added to the GitHub settings. 
 It could be done for a user profile, an organization or for single and specific repositories. It's possible to add more than one SSH key.
+
+HTTPS protocol for GitHub is actually NOT supported.
 
 ## App configuration
 

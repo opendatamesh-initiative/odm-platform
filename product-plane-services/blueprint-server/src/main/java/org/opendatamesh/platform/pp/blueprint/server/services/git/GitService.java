@@ -21,7 +21,7 @@ public abstract class GitService {
     //TODO : timeouts on operations?
 
     @Autowired
-    OAuthTokenManager oAuthTokenManager;
+    OAuthTokenManager oAuthTokenManager; // Works ONLY with AzureDevOps
 
     @Value("${git.templates.path}")
     private String templatesPath;

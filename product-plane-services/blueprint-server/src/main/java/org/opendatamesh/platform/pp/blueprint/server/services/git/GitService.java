@@ -3,25 +3,32 @@ package org.opendatamesh.platform.pp.blueprint.server.services.git;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.TransportConfigCallback;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.transport.PushResult;
-import org.eclipse.jgit.transport.SshSessionFactory;
-import org.eclipse.jgit.transport.SshTransport;
-import org.eclipse.jgit.transport.URIish;
+import org.eclipse.jgit.transport.*;
 import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
 import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintApiStandardErrors;
+import org.opendatamesh.platform.pp.blueprint.server.components.OAuthTokenManager;
 import org.opendatamesh.platform.pp.blueprint.server.resources.internals.GitCheckResource;
 import org.opendatamesh.platform.pp.blueprint.server.utils.CustomFileUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.net.URISyntaxException;
+import java.util.List;
 
 public abstract class GitService {
 
     //TODO : timeouts on operations?
 
+    //@Autowired // Works ONLY with AzureDevOps - set it to autowire when GitHub will support OAuth2
+    private OAuthTokenManager oAuthTokenManager;
+
     @Value("${git.templates.path}")
     private String templatesPath;
+
+    @Value("${git.provider}")
+    private String gitProvider; // Remove it when GitHub will support OAuth2
 
     private String targetPathSuffix = "/projects";
 
@@ -29,6 +36,15 @@ public abstract class GitService {
 
     private String paramsFileJson = "params.json";
 
+    @Autowired(required = false)
+    private void setOAuthTokenManager(OAuthTokenManager oAuthTokenManager) {
+        // Remove this method when GitHub will support OAuth2
+        if(gitProvider.equals("AZURE_DEVOPS")) {
+            this.oAuthTokenManager = oAuthTokenManager;
+        } else {
+            this.oAuthTokenManager = null;
+        }
+    }
 
     // ======================================================================================
     // CREATE Repository
@@ -78,11 +94,21 @@ public abstract class GitService {
 
     private Git cloneRepo(String sourceUrl, String destinationPath) {
         try {
-            return Git.cloneRepository()
-                    .setURI(sourceUrl)
-                    .setDirectory(new File(destinationPath))
-                    .setTransportConfigCallback(getSshTransportConfigCallback())
-                    .call();
+            if(isHttpsRemote(sourceUrl)) {
+                return Git.cloneRepository()
+                        .setURI(sourceUrl)
+                        .setDirectory(new File(destinationPath))
+                        .setCredentialsProvider(
+                                new UsernamePasswordCredentialsProvider("", oAuthTokenManager.getToken())
+                        )
+                        .call();
+            } else {
+                return Git.cloneRepository()
+                        .setURI(sourceUrl)
+                        .setDirectory(new File(destinationPath))
+                        .setTransportConfigCallback(getSshTransportConfigCallback())
+                        .call();
+            }
         } catch (Throwable t) {
             throw new InternalServerException(
                     BlueprintApiStandardErrors.SC500_01_GIT_ERROR,
@@ -164,9 +190,18 @@ public abstract class GitService {
                     .setMessage(message)
                     .call();
             // Push changes
-            Iterable<PushResult> pushResults = gitRepo.push()
-                    .setTransportConfigCallback(getSshTransportConfigCallback())
-                    .call();
+            Iterable<PushResult> pushResults;
+            if(isHttpsRemote(gitRepo)) {
+                pushResults = gitRepo.push()
+                        .setCredentialsProvider(
+                                new UsernamePasswordCredentialsProvider("", oAuthTokenManager.getToken())
+                        )
+                        .call();
+            } else {
+                pushResults = gitRepo.push()
+                        .setTransportConfigCallback(getSshTransportConfigCallback())
+                        .call();
+            }
             return pushResults; // Needed for Windows to wait the end of the push command
         } catch (Throwable t) {
             throw new InternalServerException(
@@ -216,6 +251,17 @@ public abstract class GitService {
             );
         }
     }*/
+
+    private Boolean isHttpsRemote(Git gitRepository) throws GitAPIException {
+        List<RemoteConfig> remoteGitRepositoryConfigsList = gitRepository.remoteList().call();
+        RemoteConfig remoteGitRepositoryConfigs = remoteGitRepositoryConfigsList.get(0);
+        String remoteRepoUrl = remoteGitRepositoryConfigs.getURIs().get(0).toString();
+        return isHttpsRemote(remoteRepoUrl);
+    }
+
+    private Boolean isHttpsRemote(String remoteRepoUrl) {
+        return remoteRepoUrl.contains("https://");
+    }
 
     private TransportConfigCallback getSshTransportConfigCallback() {
         return transport -> {

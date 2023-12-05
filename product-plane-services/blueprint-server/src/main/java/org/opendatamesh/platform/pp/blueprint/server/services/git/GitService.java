@@ -12,6 +12,7 @@ import org.opendatamesh.platform.pp.blueprint.server.utils.CustomFileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -20,11 +21,14 @@ public abstract class GitService {
 
     //TODO : timeouts on operations?
 
-    @Autowired
-    OAuthTokenManager oAuthTokenManager; // Works ONLY with AzureDevOps
+    //@Autowired // Works ONLY with AzureDevOps - set it to autowire when GitHub will support OAuth2
+    private OAuthTokenManager oAuthTokenManager;
 
     @Value("${git.templates.path}")
     private String templatesPath;
+
+    @Value("${git.provider}")
+    private String gitProvider; // Remove it when GitHub will support OAuth2
 
     private String targetPathSuffix = "/projects";
 
@@ -32,6 +36,15 @@ public abstract class GitService {
 
     private String paramsFileJson = "params.json";
 
+    @Autowired(required = false)
+    private void setOAuthTokenManager(OAuthTokenManager oAuthTokenManager) {
+        // Remove this method when GitHub will support OAuth2
+        if(gitProvider.equals("AZURE_DEVOPS")) {
+            this.oAuthTokenManager = oAuthTokenManager;
+        } else {
+            this.oAuthTokenManager = null;
+        }
+    }
 
     // ======================================================================================
     // CREATE Repository

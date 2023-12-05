@@ -1,5 +1,9 @@
 package org.opendatamesh.platform.core.dpds.processors;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.opendatamesh.platform.core.dpds.exceptions.DeserializationException;
 
 import org.opendatamesh.platform.core.dpds.exceptions.UnresolvableReferenceException;
@@ -36,7 +40,7 @@ public class ReferencesProcessor implements PropertiesProcessor {
     }
 
     @Override
-    public void process() throws UnresolvableReferenceException, DeserializationException {
+    public void process() throws UnresolvableReferenceException, DeserializationException, JsonProcessingException {
 
         DataProductVersionDPDS descriptorResource = context.getResult().getDescriptorDocument();
 
@@ -49,7 +53,7 @@ public class ReferencesProcessor implements PropertiesProcessor {
     }
 
     private void resolveInterfaceComponents(InterfaceComponentsDPDS interfaceComponents)
-            throws UnresolvableReferenceException, DeserializationException {
+            throws UnresolvableReferenceException, DeserializationException, JsonProcessingException {
 
         Objects.requireNonNull(interfaceComponents, "Input parameter [interfaceComponents] cannot be null");
 
@@ -63,7 +67,7 @@ public class ReferencesProcessor implements PropertiesProcessor {
     }
 
     private void resolveInternalComponents(InternalComponentsDPDS internalComponents)
-            throws UnresolvableReferenceException, DeserializationException {
+            throws UnresolvableReferenceException, DeserializationException, JsonProcessingException {
 
         Objects.requireNonNull(internalComponents, "Input parameter [internalComponents] cannot be null");
 
@@ -82,7 +86,7 @@ public class ReferencesProcessor implements PropertiesProcessor {
     }
 
     private void resolveLifecycleInfoComponents(LifecycleInfoDPDS lifecycleResource)
-            throws UnresolvableReferenceException, DeserializationException {
+            throws UnresolvableReferenceException, DeserializationException, JsonProcessingException {
 
         Objects.requireNonNull(lifecycleResource, "Input parameter [lifecycleResource] cannot be null");
 
@@ -100,7 +104,7 @@ public class ReferencesProcessor implements PropertiesProcessor {
     }
 
     private <E extends ComponentDPDS> void resolveComponents(List<E> components)
-            throws UnresolvableReferenceException, DeserializationException {
+            throws UnresolvableReferenceException, DeserializationException, JsonProcessingException {
 
         for (int i = 0; i < components.size(); i++) {
             E component = null;
@@ -112,7 +116,7 @@ public class ReferencesProcessor implements PropertiesProcessor {
     }
 
     private <E extends ComponentDPDS> E resolveComponent(E component, URI componentAbsoulutePathUri)
-            throws UnresolvableReferenceException, DeserializationException {
+            throws UnresolvableReferenceException, DeserializationException, JsonProcessingException {
 
         String componentRef = null;
         if (component.isExternalReference()) {
@@ -141,9 +145,8 @@ public class ReferencesProcessor implements PropertiesProcessor {
             }
         }
 
-        if (component instanceof StandardDefinitionDPDS) {
+        if (component instanceof StandardDefinitionDPDS)
             resolveDefinition((StandardDefinitionDPDS) component, componentAbsoulutePathUri);
-        }
 
         return component;
     }
@@ -208,7 +211,7 @@ public class ReferencesProcessor implements PropertiesProcessor {
     }
 
     private void resolveDefinition(StandardDefinitionDPDS stdDefResource, URI stdDefAbsoulutePathUri)
-            throws UnresolvableReferenceException {
+            throws UnresolvableReferenceException, DeserializationException, JsonProcessingException {
 
         Objects.requireNonNull(stdDefResource,
                 "Input parameter [standardDefinitionResource] cannot be null");
@@ -237,11 +240,49 @@ public class ReferencesProcessor implements PropertiesProcessor {
                     t);
         }
 
+        defContent = updateApiDefinitionSchemaReference(defContent, stdDefAbsoulutePathUri.toString());
         defResource.setRawContent(defContent);
     }
 
-    public static void process(ParseContext context) throws UnresolvableReferenceException, DeserializationException {
+    public static void process(ParseContext context) throws UnresolvableReferenceException, DeserializationException, JsonProcessingException {
         ReferencesProcessor resolver = new ReferencesProcessor(context);
         resolver.process();
+    }
+
+    private String updateApiDefinitionSchemaReference(String definitionContent, String currentPath) throws DeserializationException, JsonProcessingException {
+        ObjectNode rootNode = null;
+        try {
+            rootNode = (ObjectNode) context.getMapper().readTree(definitionContent);
+        } catch (Throwable t) {
+            throw new DeserializationException("Impossible to parse definition raw content", t);
+        }
+        ObjectNode schemaNode;
+        JsonNode tablesNode;
+        try {
+            schemaNode = (ObjectNode) rootNode.get("schema");
+            tablesNode = schemaNode.get("tables");
+        } catch (Throwable t) {
+            throw new DeserializationException("Impossible to extract tables' schema from definition raw content", t);
+        }
+        if(tablesNode.isArray()) {
+            ArrayNode tablesArrayNode = (ArrayNode) tablesNode;
+            for (JsonNode tableNode : tablesArrayNode) {
+                ObjectNode definitionNode;
+                try {
+                    definitionNode = (ObjectNode) tableNode.path("definition");
+                } catch (Throwable t) {
+                    throw new DeserializationException("Impossible to extract table schema definition from definition raw content", t);
+                }
+                JsonNode refNode = definitionNode.path("$ref");
+                if (refNode.isTextual() && refNode.asText().contains(".json")) {
+                    String oldRef = refNode.asText();
+                    String basePath = String.valueOf(context.getLocation().getRootDocumentBaseUri());
+                    String diffBaseCurrent = currentPath.replace(basePath.toString(), "");
+                    String newRef = diffBaseCurrent + oldRef;
+                    definitionNode.put("$ref", newRef);
+                }
+            }
+        }
+        return context.getMapper().writeValueAsString(rootNode);
     }
 }

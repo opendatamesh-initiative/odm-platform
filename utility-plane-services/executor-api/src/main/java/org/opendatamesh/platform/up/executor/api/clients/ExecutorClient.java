@@ -1,19 +1,12 @@
 package org.opendatamesh.platform.up.executor.api.clients;
 
+import lombok.Data;
 import org.opendatamesh.platform.core.commons.clients.ODMClient;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.up.executor.api.resources.TaskResource;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
-
-import lombok.Data;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Objects;
 
 @Data
 public class ExecutorClient extends ODMClient {
@@ -44,10 +37,24 @@ public class ExecutorClient extends ODMClient {
     public <T> ResponseEntity<T> postTask(
             Object payload, Class<T> responseType) throws IOException {
 
-        return rest.postForEntity(
+        ResponseEntity response =  rest.postForEntity(
                 apiUrl(ExecutorAPIRoutes.TASKS),
                 getHttpEntity(payload),
-                responseType);
+                Object.class
+        );
+
+        if(response.getStatusCode().is2xxSuccessful()) {
+            response = ResponseEntity
+                    .status(response.getStatusCode())
+                    .headers(response.getHeaders())
+                    .body(mapper.readValue(
+                            mapper.writeValueAsString(response.getBody()),
+                            responseType
+                    ));
+            return response;
+        } else {
+            throw new RuntimeException(response.getBody().toString());
+        }
     }
 
     // ----------------------------------------

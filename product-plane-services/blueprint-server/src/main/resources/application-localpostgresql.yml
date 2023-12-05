@@ -1,0 +1,73 @@
+############################################
+# Server configuration
+############################################
+app:
+  workdir:
+
+server:
+  error:
+    include-message: always
+
+
+############################################
+# Spring, JPA, DB and Flyway configurations
+############################################
+spring:
+  # Profile
+  profile: localpostgresql
+  # JPA
+  jpa:
+    #show-sql: true
+    hibernate:
+      ddl-auto: validate #none
+      naming:
+        #implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQL95Dialect # Or PostgreSQLDialect
+        globally_quoted_identifiers: true
+        default_schema: ODMBLUEPRINT
+  # DB
+  datasource:
+    url: jdbc:postgresql://localhost:5432/odmpdb
+    username: postgres
+    password: postgres
+  h2:
+    console:
+      enabled: false
+  # FlyWay configuration
+  # More: https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html#appendix.application-properties.data-migration
+  flyway:
+    #enabled: false # To disable
+    url: jdbc:postgresql://localhost:5432/odmpdb
+    user: postgres
+    password: postgres
+    #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
+    schemas: flyway
+    locations: classpath:db/migration/postgresql
+    clean-on-validation-error: true
+
+
+############################################
+# Git configurations
+############################################
+git:
+  provider: ${GIT_PROVIDER}
+  templates:
+    path: "templates"
+  auth:
+    oauth2:
+      client:
+        provider:
+          token-uri: ${OAUTH_TOKEN_URI}
+        registration:
+          client-id: S{OUATH_CLIENT_ID}
+          client-secret: ${OAUTH_CLIENT_SECRET}
+          scope: ${OAUTH_SCOPE}
+          authorization-grant-type: client_credentials
+    pat: ${PERSONAL_ACCESS_TOKEN}

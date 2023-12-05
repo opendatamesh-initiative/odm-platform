@@ -52,7 +52,7 @@ or
 ```
 *_Each command have its helper, for example:_
 ```bash
-./odm-cli validate-dpv --help
+./odm-cli local validate-dpv --help
 ```
 
 #### Windows Systems
@@ -69,7 +69,7 @@ odm-cli --help
 ```
 *_Each command have its helper, for example:_
 ```bash
-odm-cli validate-dpv --help
+odm-cli local validate-dpv --help
 ```
 
 ### Example
@@ -78,19 +78,19 @@ Once in `odm-cli` directory and given the execution of the previous steps:
 
 _Windows_:
 ```bash
-odm-cli validate-dpv -f src/main/resources/dpds/dpd-example.json
+odm-cli local validate-dpv -f src/main/resources/dpds/dpd-example.json
 ```
 _Unix_:
 ```bash
-./odm-cli validate-dpv -f src/main/resources/dpds/dpd-example.json
+./odm-cli local validate-dpv -f src/main/resources/dpds/dpd-example.json
 ```
 or
 
 _Windows_:
 ```bash
-odm-cli validate-dpv --file src/main/resources/dpds/dpd-example.json
+odm-cli local validate-dpv --file src/main/resources/dpds/dpd-example.json
 ```
 _Unix_:
 ```bash
-./odm-cli validate-dpv --file src/main/resources/dpds/dpd-example.json
+./odm-cli local validate-dpv --file src/main/resources/dpds/dpd-example.json
 ```

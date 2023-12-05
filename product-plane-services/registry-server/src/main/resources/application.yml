@@ -54,9 +54,3 @@ odm:
       blindata:
         active: false
         address: http://localhost:9002
-
-
-
-
-
-

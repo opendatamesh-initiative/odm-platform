@@ -1,8 +1,8 @@
 {
   "dataProductDescriptor": "1.0.0",
-  "x-prop":"x-prop-value", 
+  "x-prop":"x-prop-value",
   "info": {
-    "x-prop":"x-prop-value", 
+    "x-prop":"x-prop-value",
     "name": "dpdCore",
     "version": "1.0.0",
     "displayName": "Test Product",

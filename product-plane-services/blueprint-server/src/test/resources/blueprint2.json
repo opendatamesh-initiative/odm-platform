@@ -1,0 +1,11 @@
+{
+  "name": "azure-blueprint",
+  "version": "1.0.0",
+  "displayName": "blueprint",
+  "description": "First AzureDevOps Blueprint",
+  "repositoryProvider": "AZURE_DEVOPS",
+  "repositoryUrl": "git@ssh.dev.azure.com:v3/organization/demoproject/blueprint",
+  "blueprintDirectory": "blueprint",
+  "organization": "organization",
+  "projectId": "123"
+}

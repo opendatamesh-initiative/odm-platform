@@ -13,6 +13,9 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.annotation.DirtiesContext.MethodMode;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 public class TaskIT extends ODMDevOpsIT {
 
@@ -104,7 +107,9 @@ public class TaskIT extends ODMDevOpsIT {
         assertThat(stoppedTaskRes.getConfigurations()).isEqualTo("{\"stagesToSkip\":[]}");
         assertThat(stoppedTaskRes.getStatus()).isEqualTo(ActivityTaskStatus.PROCESSED);
         assertThat(stoppedTaskRes.getResults()).isNotNull();
-        assertThat(stoppedTaskRes.getResults()).isEqualTo("OK");
+        Map<String, Object> results = new HashMap<>();
+        results.put("message", "OK");
+        assertThat(stoppedTaskRes.getResults()).isEqualTo(results);
         assertThat(stoppedTaskRes.getErrors()).isNull();
         assertThat(stoppedTaskRes.getCreatedAt()).isNotNull();
         assertThat(stoppedTaskRes.getStartedAt()).isNotNull();
@@ -359,7 +364,9 @@ public class TaskIT extends ODMDevOpsIT {
         assertThat(readTaskRes.getTemplate()).isEqualTo("{\"organization\":\"andreagioia\",\"project\":\"opendatamesh\",\"pipelineId\":\"3\",\"branch\":\"main\"}");
         assertThat(readTaskRes.getConfigurations()).isEqualTo("{\"stagesToSkip\":[]}");
         assertThat(readTaskRes.getStatus()).isEqualTo(ActivityTaskStatus.PROCESSED);
-        assertThat(readTaskRes.getResults()).isEqualTo("OK");
+        Map<String, Object> results = new HashMap<>();
+        results.put("message", "OK");
+        assertThat(readTaskRes.getResults()).isEqualTo(results);
         assertThat(readTaskRes.getErrors()).isNull();
         assertThat(readTaskRes.getCreatedAt()).isNotNull();
         assertThat(readTaskRes.getStartedAt()).isNotNull();

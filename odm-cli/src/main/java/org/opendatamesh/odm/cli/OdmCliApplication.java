@@ -1,8 +1,6 @@
 package org.opendatamesh.odm.cli;
 
-import org.opendatamesh.odm.cli.commands.HelloWorld;
-import org.opendatamesh.odm.cli.commands.OdmCliInit;
-import org.opendatamesh.odm.cli.commands.ValidateDataProductVersionSyntax;
+import org.opendatamesh.odm.cli.commands.*;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import picocli.CommandLine;
 
@@ -11,13 +9,21 @@ public class OdmCliApplication {
 
     public static void main(String[] args) {
 
-        CommandLine cmd = new CommandLine(new OdmCliInit());
-        cmd.addSubcommand("hello", new HelloWorld());
-        cmd.addSubcommand("validate-dpv", new ValidateDataProductVersionSyntax());
+        // Init
+        CommandLine odmCliCommand = new CommandLine(new OdmCliInit());
 
-        int exitCode = cmd.execute(args);
+        // Local commands
+        odmCliCommand.addSubcommand("local", new LocalCommands());
+
+        // Registry commands
+        odmCliCommand.addSubcommand("registry", new RegistryCommands());
+
+        // Blueprint commands
+        odmCliCommand.addSubcommand("blueprint", new BlueprintCommands());
+
+        odmCliCommand.setExecutionStrategy(new CommandLine.RunAll());
+        int exitCode = odmCliCommand.execute(args);
         System.exit(exitCode);
-
     }
 
 }

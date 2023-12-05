@@ -1,6 +1,7 @@
 package org.opendatamesh.platform.pp.devops.server.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.opendatamesh.platform.core.commons.servers.exceptions.*;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
@@ -10,6 +11,7 @@ import org.opendatamesh.platform.core.dpds.model.internals.LifecycleTaskInfoDPDS
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatus;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskStatus;
 import org.opendatamesh.platform.pp.devops.api.resources.DevOpsApiStandardErrors;
+import org.opendatamesh.platform.pp.devops.api.resources.TaskResultResource;
 import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsClients;
 import org.opendatamesh.platform.pp.devops.server.database.entities.Activity;
 import org.opendatamesh.platform.pp.devops.server.database.entities.Task;
@@ -23,6 +25,7 @@ import org.springframework.util.StringUtils;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -206,12 +209,13 @@ public class ActivityService {
         if (success) {
             for(Task task: tasks) {
                 if(task.getStatus().equals(ActivityTaskStatus.PROCESSED)) {
-                    activityOutputNode.put(task.getId().toString(), task.getResults());
+                    activityOutputNode.put(task.getId().toString(), task.getResults().toString());
                 }
             }
             try {
 				String output = ObjectMapperFactory.JSON_MAPPER.writeValueAsString(activityOutputNode);
-                activity.setResults(output);
+                Map<String, Object> results = ObjectMapperFactory.JSON_MAPPER.readValue(output, Map.class);
+                activity.setResults(results);
             } catch (JsonProcessingException e) {
 				logger.warn("Impossible to serialize results aggregate", e);
 			}
@@ -257,8 +261,8 @@ public class ActivityService {
         return startedTask;
     }
 
-    public Task stopTaskAndUpdateParentActivity(Long taskId) {
-        Task task = taskService.stopTask(taskId);
+    public Task stopTaskAndUpdateParentActivity(Long taskId, TaskResultResource taskResultResource) {
+        Task task = taskService.stopTask(taskId, taskResultResource);
         startNextPlannedTaskAndUpdateParentActivity(task.getActivityId());
         return task;
     }
@@ -354,11 +358,11 @@ public class ActivityService {
     public List<Activity> searchActivities(
             String dataProductId,
             String dataProductVersion,
-            String type,
+            String stage,
             ActivityStatus status) {
         List<Activity> activitySearchResults = null;
         try {
-            activitySearchResults = findActivities(dataProductId, dataProductVersion, type, status);
+            activitySearchResults = findActivities(dataProductId, dataProductVersion, stage, status);
         } catch (Throwable t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
@@ -371,12 +375,12 @@ public class ActivityService {
     private List<Activity> findActivities(
             String dataProductId,
             String dataProductVersion,
-            String type,
+            String stage,
             ActivityStatus status) {
 
         return activityRepository
                 .findAll(ActivityRepository.Specs.hasMatch(
-                        dataProductId, dataProductVersion, type, status));
+                        dataProductId, dataProductVersion, stage, status));
     }
 
     // -------------------------

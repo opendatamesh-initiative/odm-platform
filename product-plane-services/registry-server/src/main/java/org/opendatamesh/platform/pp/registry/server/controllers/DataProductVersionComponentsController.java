@@ -13,28 +13,40 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.NotFoundException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.core.EntityTypeDPDS;
 import org.opendatamesh.platform.core.dpds.model.interfaces.InterfaceComponentsDPDS;
+import org.opendatamesh.platform.core.dpds.model.internals.ApplicationComponentDPDS;
+import org.opendatamesh.platform.core.dpds.model.internals.InfrastructuralComponentDPDS;
 import org.opendatamesh.platform.core.dpds.parser.DPDSSerializer;
 import org.opendatamesh.platform.pp.registry.api.controllers.AbstractDataProductVersionComponentsController;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.DataProductVersion;
+import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.internals.ApplicationComponent;
+import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.internals.InfrastructuralComponent;
 import org.opendatamesh.platform.pp.registry.server.database.mappers.DataProductVersionMapper;
+import org.opendatamesh.platform.pp.registry.server.services.DataProductService;
 import org.opendatamesh.platform.pp.registry.server.services.DataProductVersionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class DataProductVersionComponentsController extends AbstractDataProductVersionComponentsController {
 
     @Autowired
     private DataProductVersionService dataProductVersionService;
+
+    @Autowired
+    private DataProductService dataProductService;
 
     @Autowired
     private DataProductVersionMapper dataProductVersionMapper;
@@ -104,6 +116,75 @@ public class DataProductVersionComponentsController extends AbstractDataProductV
                 "Format [" + format + "] is not supported");
         }
 
+        return result;
+    }
+
+    @Override
+    public String getDataProductVersionApplications(String id, String version, String format)
+    {
+        if(!StringUtils.hasText(id)) {
+            throw new BadRequestException(
+                    RegistryApiStandardErrors.SC400_07_PRODUCT_ID_IS_EMPTY,
+                    "Id cannot be cannot be empty");
+        }
+        if(!StringUtils.hasText(version)) {
+            throw new BadRequestException(
+                    RegistryApiStandardErrors.SC400_07_PRODUCT_ID_IS_EMPTY,
+                    "Version cannot be cannot be empty");
+        }
+
+        if(!dataProductService.dataProductExists(id)) {
+            throw new NotFoundException(
+                    RegistryApiStandardErrors.SC404_01_PRODUCT_NOT_FOUND,
+                    "Data product not found");
+        }
+
+        String result;
+        List<ApplicationComponent> applicationComponents = dataProductVersionService.searchDataProductVersionApplicationComponents(id, version);
+        List<ApplicationComponentDPDS> applicationComponentsDPDS = dataProductVersionMapper.applicationComponentsToApplicationComponentResources(applicationComponents);
+
+        if(format == null) format = "canonical";
+        try {
+            result = DPDSSerializer.DEFAULT_JSON_SERIALIZER.serialize(applicationComponentsDPDS, format);
+        } catch (JsonProcessingException e) {
+            throw new InternalServerException(
+                    ODMApiCommonErrors.SC502_70_NOTIFICATION_SERVICE_ERROR,
+                    "Impossible to serialize component version raw content", e);
+        }
+        return result;
+    }
+
+    @Override
+    public String getDataProductVersionInfrastructures(String id, String version, String format){
+        if(!StringUtils.hasText(id)) {
+            throw new BadRequestException(
+                    RegistryApiStandardErrors.SC400_07_PRODUCT_ID_IS_EMPTY,
+                    "Id cannot be cannot be empty");
+        }
+        if(!StringUtils.hasText(version)) {
+            throw new BadRequestException(
+                    RegistryApiStandardErrors.SC400_07_PRODUCT_ID_IS_EMPTY,
+                    "Version cannot be cannot be empty");
+        }
+
+        if(!dataProductService.dataProductExists(id)) {
+            throw new NotFoundException(
+                    RegistryApiStandardErrors.SC404_01_PRODUCT_NOT_FOUND,
+                    "Data product not found");
+        }
+
+        String result;
+        List<InfrastructuralComponent> infrastructuralComponents = dataProductVersionService.searchDataProductVersionInfrastructuralComponents(id, version);
+        List<InfrastructuralComponentDPDS> infrastructuralComponentsDPDS = dataProductVersionMapper.infrastructuralComponentsToInfrastructuralComponentResources(infrastructuralComponents);
+
+        if(format == null) format = "canonical";
+        try {
+            result = DPDSSerializer.DEFAULT_JSON_SERIALIZER.serialize(infrastructuralComponentsDPDS, format);
+        } catch (JsonProcessingException e) {
+            throw new InternalServerException(
+                    ODMApiCommonErrors.SC502_70_NOTIFICATION_SERVICE_ERROR,
+                    "Impossible to serialize component version raw content", e);
+        }
         return result;
     }
 }

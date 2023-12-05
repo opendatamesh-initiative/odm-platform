@@ -1,0 +1,10 @@
+{
+  "name": "github-blueprint-1",
+  "version": "1.0.0",
+  "displayName": "blueprint 1",
+  "description": "First GitHub Blueprint",
+  "repositoryProvider": "GITHUB",
+  "repositoryUrl": "git@github.com:opendatamesh-initiative/blueprint1.git",
+  "blueprintDirectory": "blueprint",
+  "organization": "opendatamesh-initiative"
+}

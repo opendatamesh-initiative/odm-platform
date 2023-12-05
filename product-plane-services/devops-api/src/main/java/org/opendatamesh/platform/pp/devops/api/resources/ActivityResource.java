@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.Map;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -33,7 +34,7 @@ public class ActivityResource {
 
     @JsonProperty("results")
     @Schema(description = "Auto updated Activity execution results")
-    String results;
+    Map<String, Object> results;
 
     @JsonProperty("errors")
     @Schema(description = "Auto updated Activity execution errors")

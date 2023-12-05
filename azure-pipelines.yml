@@ -1,0 +1,46 @@
+trigger: none
+
+stages:
+  - stage: build
+    jobs:
+      - job: run_build
+        pool:
+          vmImage: 'ubuntu-latest' # other options: 'macOS-latest', 'windows-latest'
+        steps:
+          # Build
+          - task: Maven@3
+            inputs:
+              mavenPomFile: 'pom.xml'
+              #mavenOptions: '-Xmx3072m'
+              #javaHomeOption: 'JDKVersion'
+              jdkVersionOption: '17'
+              #jdkArchitectureOption: 'x64'
+              #publishJUnitResults: true
+              #testResultsFiles: '**/TEST-*.xml'
+              goals: 'install -DskipTests'
+
+          # Deploy
+          ## Copy files or build artifacts to a remote machine over SSH
+          - task: CopyFilesOverSSH@0
+            inputs:
+              sshEndpoint: "odm-platform"
+              sourceFolder: './product-plane-services/registry-server/target' # Optional
+              contents: 'odm-platform-pp-registry-server-1.0.0.jar'
+              targetFolder: "/home/odm" # Optional
+              overwrite: true # Optional
+
+          - task: CopyFilesOverSSH@0
+            inputs:
+              sshEndpoint: "odm-platform"
+              sourceFolder: './product-plane-services/devops-server/target' # Optional
+              contents: 'odm-platform-pp-devops-server-1.0.0.jar'
+              targetFolder: "/home/odm" # Optional
+              overwrite: true # Optional
+
+
+          ## Run shell commands or a script on a remote machine using SSH
+          - task: SSH@0
+            inputs:
+              sshEndpoint: "odm-platform"
+              runOptions: 'script' # Options: commands, script, inline
+              scriptPath: "deployScript.sh" # Required when runOptions == Script

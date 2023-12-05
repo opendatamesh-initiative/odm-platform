@@ -55,7 +55,7 @@ License.
         <developer>
             <name>Quantyca</name>
             <email>odm.info@quantyca.it</email>
-            <organization>Quantyca S.R.L</organization>
+            <organization>Quantyca S.p.A</organization>
             <organizationUrl>https://www.quantyca.it/</organizationUrl>
         </developer>
     </developers>
@@ -122,9 +122,6 @@ License.
         <module>product-plane-services</module>
         <module>utility-plane-services</module>
         <module>odm-cli</module>
-        <!--
-        <module>platform-kernel</module>
-        -->
     </modules>
 
     <!-- Needed to publish mvn artifact to GitHub Packages -->

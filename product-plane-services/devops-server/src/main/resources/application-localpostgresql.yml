@@ -53,7 +53,7 @@ spring:
     #password: pwd
     #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
     schemas: flyway
-    locations: classpath:db/migration/postgres
+    locations: classpath:db/migration/postgresql
     clean-on-validation-error: true
 
 

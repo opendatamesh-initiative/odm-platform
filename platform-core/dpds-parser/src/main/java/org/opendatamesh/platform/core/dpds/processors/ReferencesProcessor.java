@@ -98,7 +98,7 @@ public class ReferencesProcessor implements PropertiesProcessor {
 
             StandardDefinitionDPDS templateResource = acivityResource.getTemplate();
 
-            templateResource = resolveComponent(templateResource, null);
+            templateResource = resolveComponent(templateResource/*, null*/);
             acivityResource.setTemplate(templateResource);
         }
     }
@@ -110,12 +110,12 @@ public class ReferencesProcessor implements PropertiesProcessor {
             E component = null;
 
             component = components.get(i);
-            component = resolveComponent(component, null);
+            component = resolveComponent(component/*, null*/);
             components.set(i, component);
         }
     }
 
-    private <E extends ComponentDPDS> E resolveComponent(E component, URI componentAbsoulutePathUri)
+    private <E extends ComponentDPDS> E resolveComponent(E component/*, URI componentAbsoulutePathUri*/)
             throws UnresolvableReferenceException, DeserializationException, JsonProcessingException {
 
         String componentRef = null;
@@ -125,6 +125,8 @@ public class ReferencesProcessor implements PropertiesProcessor {
         } else if (component.isInternalReference()) {
             component = resolveComponentFromInternalRef(component);
         }
+
+        URI componentAbsoulutePathUri = null;
 
         try {
             if (componentRef != null) {
@@ -140,7 +142,7 @@ public class ReferencesProcessor implements PropertiesProcessor {
             PortDPDS port = (PortDPDS) component;
             if (port.hasApi()) {
                 port.getPromises().getApi().setBaseUri(componentAbsoulutePathUri);
-                StandardDefinitionDPDS api = resolveComponent(port.getPromises().getApi(), componentAbsoulutePathUri);
+                StandardDefinitionDPDS api = resolveComponent(port.getPromises().getApi()/*, componentAbsoulutePathUri*/);
                 port.getPromises().setApi(api);
             }
         }
@@ -256,33 +258,31 @@ public class ReferencesProcessor implements PropertiesProcessor {
         } catch (Throwable t) {
             throw new DeserializationException("Impossible to parse definition raw content", t);
         }
-        ObjectNode schemaNode;
-        JsonNode tablesNode;
-        try {
-            schemaNode = (ObjectNode) rootNode.get("schema");
-            tablesNode = schemaNode.get("tables");
-        } catch (Throwable t) {
-            throw new DeserializationException("Impossible to extract tables' schema from definition raw content", t);
-        }
-        if(tablesNode.isArray()) {
-            ArrayNode tablesArrayNode = (ArrayNode) tablesNode;
-            for (JsonNode tableNode : tablesArrayNode) {
-                ObjectNode definitionNode;
-                try {
-                    definitionNode = (ObjectNode) tableNode.path("definition");
-                } catch (Throwable t) {
-                    throw new DeserializationException("Impossible to extract table schema definition from definition raw content", t);
-                }
-                JsonNode refNode = definitionNode.path("$ref");
-                if (refNode.isTextual() && refNode.asText().contains(".json")) {
-                    String oldRef = refNode.asText();
-                    String basePath = String.valueOf(context.getLocation().getRootDocumentBaseUri());
-                    String diffBaseCurrent = currentPath.replace(basePath.toString(), "");
-                    String newRef = diffBaseCurrent + oldRef;
-                    definitionNode.put("$ref", newRef);
+        JsonNode schemaNode = rootNode.path("schema");
+        if(schemaNode.isObject()) {
+            ObjectNode schemaObjectNode = (ObjectNode) schemaNode;
+            JsonNode tablesNode = schemaObjectNode.path("tables");
+            if(tablesNode.isArray()) {
+                ArrayNode tablesArrayNode = (ArrayNode) tablesNode;
+                for (JsonNode tableNode : tablesArrayNode) {
+                    ObjectNode definitionNode;
+                    try {
+                        definitionNode = (ObjectNode) tableNode.path("definition");
+                    } catch (Throwable t) {
+                        throw new DeserializationException("Impossible to extract table schema definition from definition raw content", t);
+                    }
+                    JsonNode refNode = definitionNode.path("$ref");
+                    if (refNode.isTextual() && refNode.asText().contains(".json")) {
+                        String oldRef = refNode.asText();
+                        String basePath = String.valueOf(context.getLocation().getRootDocumentBaseUri());
+                        String diffBaseCurrent = currentPath.replace(basePath.toString(), "");
+                        String newRef = diffBaseCurrent + oldRef;
+                        definitionNode.put("$ref", newRef);
+                        definitionContent = context.getMapper().writeValueAsString(rootNode);
+                    }
                 }
             }
         }
-        return context.getMapper().writeValueAsString(rootNode);
+        return definitionContent;
     }
 }

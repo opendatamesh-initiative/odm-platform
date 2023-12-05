@@ -74,7 +74,7 @@ public class ReadOnlyPropertiesProcessor implements PropertiesProcessor {
         try {
             rootNode = (ObjectNode) context.getMapper().readTree(rawContent);
         } catch (Throwable t) {
-            throw new DeserializationException("Impossible to parse descriptor raw cantent", t);
+            throw new DeserializationException("Impossible to parse descriptor raw content", t);
         }
         ObjectNode infoNode = (ObjectNode) rootNode.get("info");
 

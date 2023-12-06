@@ -98,7 +98,7 @@ public class ReferencesProcessor implements PropertiesProcessor {
 
             StandardDefinitionDPDS templateResource = acivityResource.getTemplate();
 
-            templateResource = resolveComponent(templateResource/*, null*/);
+            templateResource = resolveComponent(templateResource, null);
             acivityResource.setTemplate(templateResource);
         }
     }
@@ -110,12 +110,12 @@ public class ReferencesProcessor implements PropertiesProcessor {
             E component = null;
 
             component = components.get(i);
-            component = resolveComponent(component/*, null*/);
+            component = resolveComponent(component, null);
             components.set(i, component);
         }
     }
 
-    private <E extends ComponentDPDS> E resolveComponent(E component/*, URI componentAbsoulutePathUri*/)
+    private <E extends ComponentDPDS> E resolveComponent(E component, URI componentAbsoulutePathUri)
             throws UnresolvableReferenceException, DeserializationException, JsonProcessingException {
 
         String componentRef = null;
@@ -126,7 +126,9 @@ public class ReferencesProcessor implements PropertiesProcessor {
             component = resolveComponentFromInternalRef(component);
         }
 
-        URI componentAbsoulutePathUri = null;
+        //URI componentAbsoulutePathUri = null;
+        if(componentRef == null || (componentRef != null && componentRef.contains("#")))
+            componentAbsoulutePathUri = null;
 
         try {
             if (componentRef != null) {
@@ -142,7 +144,7 @@ public class ReferencesProcessor implements PropertiesProcessor {
             PortDPDS port = (PortDPDS) component;
             if (port.hasApi()) {
                 port.getPromises().getApi().setBaseUri(componentAbsoulutePathUri);
-                StandardDefinitionDPDS api = resolveComponent(port.getPromises().getApi()/*, componentAbsoulutePathUri*/);
+                StandardDefinitionDPDS api = resolveComponent(port.getPromises().getApi(), componentAbsoulutePathUri);
                 port.getPromises().setApi(api);
             }
         }

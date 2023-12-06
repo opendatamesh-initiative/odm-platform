@@ -76,7 +76,17 @@ public class BlueprintCommands implements Runnable {
             version = "odm-cli blueprint createBlueprint 1.0.0",
             mixinStandardHelpOptions = true
     )
-    public void createBlueprint(@Option(names = "--blueprint-file", required = true) String blueprintPath, @Option(names = "--check") boolean check) {
+    public void createBlueprint(
+            @Option(
+                    names = "--blueprint-file",
+                    required = true,
+                    description = "Path of the blueprint file"
+            ) String blueprintPath,
+            @Option(
+                    names = "--check",
+                    description = "Whether to check or not the content of the repository (boolean)"
+            ) boolean check
+    ) {
         BlueprintResource blueprintResource;
         ObjectMapper objectMapper = new ObjectMapper();
         try {

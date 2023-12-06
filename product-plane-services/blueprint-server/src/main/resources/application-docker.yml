@@ -68,7 +68,7 @@ git:
         provider:
           token-uri: ${OAUTH_TOKEN_URI}
         registration:
-          client-id: ${OUATH_CLIENT_ID}
+          client-id: ${OAUTH_CLIENT_ID}
           client-secret: ${OAUTH_CLIENT_SECRET}
           scope: ${OAUTH_SCOPE}
           authorization-grant-type: client_credentials

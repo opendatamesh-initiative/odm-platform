@@ -127,7 +127,7 @@ public class ReferencesProcessor implements PropertiesProcessor {
         }
 
         //URI componentAbsoulutePathUri = null;
-        if(componentRef == null || (componentRef != null && componentRef.contains("#")))
+        if(/*componentRef == null || (*/componentRef != null && componentRef.contains("#"))//)
             componentAbsoulutePathUri = null;
 
         try {
@@ -205,7 +205,7 @@ public class ReferencesProcessor implements PropertiesProcessor {
             }
             resolvedComponent.setBaseUri(component.getBaseUri());
             resolvedComponent.setOriginalRef(component.getRef());
-        } else { // nothinh to do
+        } else { // nothing to do
             resolvedComponent = component;
         }
 

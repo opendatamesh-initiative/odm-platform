@@ -127,7 +127,7 @@ public class ReferencesProcessor implements PropertiesProcessor {
         }
 
         //URI componentAbsoulutePathUri = null;
-        if(/*componentRef == null || (*/componentRef != null && componentRef.contains("#"))//)
+        if(componentRef == null || (componentRef != null && componentRef.contains("#")))
             componentAbsoulutePathUri = null;
 
         try {

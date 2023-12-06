@@ -70,7 +70,6 @@ public class UploadIT extends ODMRegistryIT {
     }
 
     @Test
-    @Disabled // TEMP
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testUploadDpCoreWithMixRefVersionPublicGit() {
         DataProductDescriptorLocationResource descriptorLocation = new DataProductDescriptorLocationResource();

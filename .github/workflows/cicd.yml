@@ -31,7 +31,7 @@ jobs:
       - name: Set env # Extract version and branch from tag and save them as environment variables
         run: |
           echo "TAG_VERSION=$( echo ${{github.ref_name}} | sed 's/[^0-9.]//g' )" >> $GITHUB_ENV
-          BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+          BRANCH_NAME=$(git rev-parse --symbolic-full-name ${{ github.sha }} | sed 's/refs\/heads\///')
           echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
       - name: Update versions
         run: mvn versions:set -DgenerateBackupPoms=false -DnewVersion=${{ env.TAG_VERSION }}

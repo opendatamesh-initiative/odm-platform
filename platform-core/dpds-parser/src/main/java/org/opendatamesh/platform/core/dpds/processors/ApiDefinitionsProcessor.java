@@ -1,9 +1,7 @@
 package org.opendatamesh.platform.core.dpds.processors;
 
-import java.net.URI;
-import java.util.List;
-import java.util.Objects;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.opendatamesh.platform.core.dpds.api.asyncapi.AsyncApiParser;
 import org.opendatamesh.platform.core.dpds.api.dsapi.DataStoreApiParser;
 import org.opendatamesh.platform.core.dpds.api.openapi.OpenApiParser;
@@ -18,13 +16,11 @@ import org.opendatamesh.platform.core.dpds.model.definitions.DefinitionReference
 import org.opendatamesh.platform.core.dpds.model.interfaces.InterfaceComponentsDPDS;
 import org.opendatamesh.platform.core.dpds.model.interfaces.PortDPDS;
 import org.opendatamesh.platform.core.dpds.parser.ParseContext;
-import org.opendatamesh.platform.core.dpds.parser.location.UriFetcher;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.util.List;
+import java.util.Objects;
 
 public class ApiDefinitionsProcessor implements PropertiesProcessor {
 

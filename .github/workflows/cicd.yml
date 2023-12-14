@@ -28,8 +28,10 @@ jobs:
           cache: maven
           server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
           settings-path: ${{ github.workspace }} # location for the settings.xml file
-      - name: Set env # Extract version from tag and save it as environment variable
-        run: echo "TAG_VERSION=$( echo ${{github.ref_name}} | sed 's/[^0-9.]//g' )" >> $GITHUB_ENV
+      - name: Set env # Extract version and branch from tag and save them as environment variables
+        run: |
+          echo "TAG_VERSION=$( echo ${{github.ref_name}} | sed 's/[^0-9.]//g' )" >> $GITHUB_ENV
+          echo "BRANCH_NAME=$( echo ${{ github.event.base_ref }} | sed 's|refs/heads/||' )" >> $GITHUB_ENV
       - name: Update versions
         run: mvn versions:set -DgenerateBackupPoms=false -DnewVersion=${{ env.TAG_VERSION }}
       - name: Push new version
@@ -37,7 +39,7 @@ jobs:
           git config user.name "github-workflows-version-updater"
           git config user.email "<>"
           git commit -am "Update pom versions to ${{ env.TAG_VERSION }}"
-          git push origin HEAD:main
+          git push origin HEAD:${{ env.BRANCH_NAME }}
       - name: Build with Maven
         run: mvn -B clean package --file pom.xml
       - name: Publish to GitHub Packages Apache Maven

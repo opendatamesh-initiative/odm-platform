@@ -34,9 +34,10 @@ public class DPDSParser {
 
         if (options.isResoveExternalRef())
             processExternalReferences(context);
-        
-        if (options.isResoveApiDefinitions())
+
+        if (options.isResoveApiDefinitions()) {
             processApiDefinitions(context);
+        }
 
         if (options.isResoveReadOnlyProperties())
             processReadOnlyProperties(context);
@@ -79,7 +80,7 @@ public class DPDSParser {
     private DPDSParser processExternalReferences(ParseContext context) throws ParseException {
         try {
             ReferencesProcessor.process(context);
-        } catch (UnresolvableReferenceException | DeserializationException e) {
+        } catch (UnresolvableReferenceException | DeserializationException | JsonProcessingException e) {
             throw new ParseException("Impossible to resolve external reference of root descriptor document",
                     ParseException.Stage.RESOLVE_EXTERNAL_REFERENCES, e);
         }

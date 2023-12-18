@@ -15,7 +15,6 @@ import org.opendatamesh.platform.pp.devops.server.database.repositories.Activity
 import org.opendatamesh.platform.pp.devops.server.resources.context.ActivityContext;
 import org.opendatamesh.platform.pp.devops.server.resources.context.ActivityResultStatus;
 import org.opendatamesh.platform.pp.devops.server.resources.context.Context;
-import org.opendatamesh.platform.pp.devops.server.utils.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +23,8 @@ import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class ActivityService {
@@ -283,7 +284,7 @@ public class ActivityService {
             } else {
                 try {
                     activityOutputNode = ObjectMapperFactory.JSON_MAPPER.readValue(partialActivityResults, ObjectNode.class);
-                    int progressiveTaskNumber = MapUtils.findMaxTaskNumber((Map<String, ?>) activityOutputNode);
+                    int progressiveTaskNumber = findMaxTaskNumber((Map<String, ?>) activityOutputNode);
                     activityOutputNode.put("task" + progressiveTaskNumber, task.getResults());
                     result = ObjectMapperFactory.JSON_MAPPER.writeValueAsString(activityOutputNode);
                 } catch (JsonProcessingException e) {
@@ -544,6 +545,23 @@ public class ActivityService {
         }
 
         return dataProductVersion;
+    }
+
+    public static int findMaxTaskNumber(Map<String, ?> map) {
+
+        int maxTaskNumber = 0;
+        Pattern pattern = Pattern.compile("task(\\d+)");
+
+        for (String key : map.keySet()) {
+            Matcher matcher = pattern.matcher(key);
+            if (matcher.matches()) {
+                int currentTaskNumber = Integer.parseInt(matcher.group(1));
+                maxTaskNumber = Math.max(maxTaskNumber, currentTaskNumber);
+            }
+        }
+
+        return maxTaskNumber;
+
     }
 
     private LocalDateTime now() {

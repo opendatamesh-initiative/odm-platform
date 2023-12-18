@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 public class ActivityService {
@@ -459,7 +460,16 @@ public class ActivityService {
                     "An error occured in the backend database while searching activities",
                     t);
         }
-        Collections.sort(activitySearchResults, Comparator.comparing(Activity::getFinishedAt));
+        if(activitySearchResults != null) {
+            activitySearchResults = activitySearchResults.stream()
+                    .filter(
+                            activity ->
+                                    activity.getStatus().equals(ActivityStatus.PROCESSED) ||
+                                    activity.getStatus().equals(ActivityStatus.PROCESSING)
+                    )
+                    .collect(Collectors.toList());
+            activitySearchResults.sort(Comparator.comparing(Activity::getFinishedAt));
+        }
         return activitySearchResults;
     }
 

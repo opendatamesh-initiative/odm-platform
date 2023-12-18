@@ -26,7 +26,6 @@ public class Lifecycle {
     private String stage;
 
     @Column(name = "RESULTS")
-    @Convert(converter = HashMapConverter.class)
     private String results;
 
     @Column(name = "STARTED_AT")

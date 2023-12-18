@@ -1,21 +1,21 @@
 package org.opendatamesh.platform.pp.devops.server.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.opendatamesh.platform.core.commons.servers.exceptions.*;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.internals.LifecycleInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.internals.LifecycleTaskInfoDPDS;
-import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatus;
-import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskStatus;
-import org.opendatamesh.platform.pp.devops.api.resources.DevOpsApiStandardErrors;
-import org.opendatamesh.platform.pp.devops.api.resources.TaskResultResource;
+import org.opendatamesh.platform.pp.devops.api.resources.*;
 import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsClients;
 import org.opendatamesh.platform.pp.devops.server.database.entities.Activity;
 import org.opendatamesh.platform.pp.devops.server.database.entities.Task;
 import org.opendatamesh.platform.pp.devops.server.database.repositories.ActivityRepository;
+import org.opendatamesh.platform.pp.devops.server.resources.context.ActivityContext;
+import org.opendatamesh.platform.pp.devops.server.resources.context.ActivityResultStatus;
+import org.opendatamesh.platform.pp.devops.server.resources.context.Context;
+import org.opendatamesh.platform.pp.devops.server.utils.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ActivityService {
@@ -207,22 +204,8 @@ public class ActivityService {
 
         ObjectNode activityOutputNode = ObjectMapperFactory.JSON_MAPPER.createObjectNode();
         if (success) {
-            for(Task task: tasks) {
-                if(task.getStatus().equals(ActivityTaskStatus.PROCESSED)) {
-                    activityOutputNode.put(task.getId().toString(), task.getResults().toString());
-                }
-            }
-            try {
-				String output = ObjectMapperFactory.JSON_MAPPER.writeValueAsString(activityOutputNode);
-                Map<String, Object> results = ObjectMapperFactory.JSON_MAPPER.readValue(output, Map.class);
-                activity.setResults(results);
-            } catch (JsonProcessingException e) {
-				logger.warn("Impossible to serialize results aggregate", e);
-			}
-
             activity.setStatus(ActivityStatus.PROCESSED);
             lifecycleService.createLifecycle(activity);
-
         } else {
             for(Task task: tasks) {
                 if(task.getStatus().equals(ActivityTaskStatus.FAILED)) {
@@ -248,7 +231,25 @@ public class ActivityService {
 
         List<Task> plannedTasks = taskService.searchTasks(activityId, null, ActivityTaskStatus.PLANNED);
         if (plannedTasks != null && !plannedTasks.isEmpty()) {
-            startedTask = taskService.startTask(plannedTasks.get(0)); 
+            // Create context object for each Task
+            Context taskContext = createContext(activityId);
+            Task actualTask = plannedTasks.get(0);
+            try {
+                ObjectNode taskConfigs;
+                if(actualTask.getConfigurations() != null) {
+                    taskConfigs = ObjectMapperFactory.JSON_MAPPER.readValue(
+                            actualTask.getConfigurations(),
+                            ObjectNode.class
+                    );
+                } else {
+                    taskConfigs = ObjectMapperFactory.JSON_MAPPER.createObjectNode();
+                }
+                taskConfigs.put("context", taskContext.toJsonString());
+                actualTask.setConfigurations(taskConfigs.toString());
+            } catch (JsonProcessingException e) {
+                logger.warn("Impossible to deserialize config attribute of task to append context", e);
+            }
+            startedTask = taskService.startTask(actualTask);
             if(startedTask.getStatus().equals(ActivityTaskStatus.FAILED)) {
                 stopActivity(activityId, false);
             } else if(startedTask.getStatus().equals(ActivityTaskStatus.PROCESSED)) {
@@ -263,6 +264,35 @@ public class ActivityService {
 
     public Task stopTaskAndUpdateParentActivity(Long taskId, TaskResultResource taskResultResource) {
         Task task = taskService.stopTask(taskId, taskResultResource);
+        if(
+                task.getStatus().equals(ActivityTaskStatus.PROCESSED)
+                && task.getResults() != null
+        ) {
+            Activity parentActivity = readActivity(task.getActivityId());
+            String partialActivityResults = parentActivity.getResults();
+            ObjectNode activityOutputNode;
+            String result = null;
+            if(partialActivityResults == null) {
+                activityOutputNode = ObjectMapperFactory.JSON_MAPPER.createObjectNode();
+                activityOutputNode.put("task1", task.getResults());
+                try {
+                    result = ObjectMapperFactory.JSON_MAPPER.writeValueAsString(activityOutputNode);
+                } catch (JsonProcessingException e) {
+                    logger.warn("Impossible to serialize results aggregate", e);
+                }
+            } else {
+                try {
+                    activityOutputNode = ObjectMapperFactory.JSON_MAPPER.readValue(partialActivityResults, ObjectNode.class);
+                    int progressiveTaskNumber = MapUtils.findMaxTaskNumber((Map<String, ?>) activityOutputNode);
+                    activityOutputNode.put("task" + progressiveTaskNumber, task.getResults());
+                    result = ObjectMapperFactory.JSON_MAPPER.writeValueAsString(activityOutputNode);
+                } catch (JsonProcessingException e) {
+                    logger.warn("Impossible to deserialize previous results aggregate and/or aggregate new results to it", e);
+                }
+            }
+            parentActivity.setResults(result);
+            saveActivity(parentActivity);
+        }
         startNextPlannedTaskAndUpdateParentActivity(task.getActivityId());
         return task;
     }
@@ -339,6 +369,49 @@ public class ActivityService {
     }
 
     // -------------------------
+    // CONTEXT methods
+    // -------------------------
+
+    private Context createContext(Long activityId) {
+        Activity currentActivity = readActivity(activityId);
+        List<Activity> previousAndCurrentActivities = searchOrderedActivities(
+                currentActivity.getDataProductId(),
+                currentActivity.getDataProductVersion()
+        );
+        Context context = new Context();
+        ActivityContext activityContext;
+        for (Activity activity : previousAndCurrentActivities) {
+            activityContext = new ActivityContext();
+            ActivityResultStatus activityResultStatus = activity.getStatus().equals(ActivityStatus.PROCESSED) ?
+                    ActivityResultStatus.PROCESSED :
+                    ActivityResultStatus.PROCESSING;
+            activityContext.setStatus(activityResultStatus);
+            LocalDateTime activityFinishedAt = activity.getFinishedAt() != null ?
+                    activity.getFinishedAt() :
+                    null;
+            activityContext.setFinishedAt(activityFinishedAt);
+            Map<String, String> contextualizedActivityResults = null;
+            if(activity.getResults() != null) {
+                try {
+                    contextualizedActivityResults = ObjectMapperFactory.JSON_MAPPER.readValue(
+                            activity.getResults(),
+                            Map.class
+                    );
+                } catch (JsonProcessingException e) {
+                    logger.warn("Impossible to deserialize previous activity results to create context object", e);
+                }
+            }
+            activityContext.setResults(contextualizedActivityResults);
+            context.concatenateActivitiesContext(
+                    activity.getStage(),
+                    activityContext
+            );
+        }
+
+        return context;
+    }
+
+    // -------------------------
     // exists methods
     // -------------------------
 
@@ -369,6 +442,23 @@ public class ActivityService {
                     "An error occured in the backend database while searching activities",
                     t);
         }
+        return activitySearchResults;
+    }
+
+    public List<Activity> searchOrderedActivities(
+            String dataProductId,
+            String dataProductVersion
+    ) {
+        List<Activity> activitySearchResults = null;
+        try {
+            activitySearchResults = findActivities(dataProductId, dataProductVersion, null, null);
+        } catch (Throwable t) {
+            throw new InternalServerException(
+                    ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
+                    "An error occured in the backend database while searching activities",
+                    t);
+        }
+        Collections.sort(activitySearchResults, Comparator.comparing(Activity::getFinishedAt));
         return activitySearchResults;
     }
 

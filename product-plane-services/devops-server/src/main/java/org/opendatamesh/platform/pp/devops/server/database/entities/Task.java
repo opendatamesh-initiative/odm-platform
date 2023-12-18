@@ -35,8 +35,7 @@ public class Task  {
     @Column(name = "STATUS")
     private ActivityTaskStatus status;
 
-    @Column(name = "RESULTS", length=5000)
-    @Convert(converter = HashMapConverter.class)
+    @Column(name = "RESULTS")
     private String results;
 
     @Column(name = "ERRORS")

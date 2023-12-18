@@ -43,7 +43,7 @@ public class TaskResource  {
 
     @JsonProperty("results")
     @Schema(description = "Task results in case of successful execution")
-    Map<String, Object> results;
+    String results;
 
     @JsonProperty("errors")
     @Schema(description = "Task results in case of failures")

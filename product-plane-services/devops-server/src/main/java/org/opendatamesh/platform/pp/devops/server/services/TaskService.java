@@ -117,9 +117,10 @@ public class TaskService {
                     saveTask(task);
                 }
             } else {
-                Map<String, Object> results = new HashMap<>();
-                results.put("message", "Nothing to do. Task succeded by default");
-                task.setResults(results);
+                TaskResultResource taskResultResource = new TaskResultResource();
+                taskResultResource.setStatus(TaskResultStatus.PROCESSED);
+                taskResultResource.setResults("{\"message\":\"Nothing to do. Task succeded by default\"}");
+                task.setResults(taskResultResource.toJsonString());
                 task.setStatus(ActivityTaskStatus.PROCESSED);
                 task.setFinishedAt(now());
             }
@@ -128,7 +129,8 @@ public class TaskService {
              throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                 "An error occured in the backend database while saving task",
-                t);
+                t
+             );
         }
         
         return task;
@@ -185,12 +187,14 @@ public class TaskService {
                 }
             } else {
                 task.setStatus(ActivityTaskStatus.PROCESSED);
-                Map<String, Object> results = new HashMap<>();
-                results.put("message", "OK");
-                task.setResults(results);
+                taskResultResource = new TaskResultResource();
+                taskResultResource.setStatus(TaskResultStatus.PROCESSED);
+                taskResultResource.setResults("{\"message\":\"OK\"}");
+                task.setResults(taskResultResource.toJsonString());
             }
             task.setFinishedAt(now());
-            saveTask(task);
+            task = saveTask(task);
+            // Save Activity partial results
         } catch(Throwable t) {
              throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,

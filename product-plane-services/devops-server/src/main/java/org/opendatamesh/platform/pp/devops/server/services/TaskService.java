@@ -25,6 +25,7 @@ import org.opendatamesh.platform.up.executor.api.resources.TaskStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -45,8 +46,11 @@ public class TaskService {
 
     private static final Logger logger = LoggerFactory.getLogger(ActivityService.class);
 
-    public TaskService() {
+    private final ApplicationContext applicationContext;
 
+    @Autowired
+    public TaskService(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
     // ======================================================================================
@@ -195,6 +199,7 @@ public class TaskService {
             task.setFinishedAt(now());
             task = saveTask(task);
             // Save Activity partial results
+            applicationContext.getBean(ActivityService.class).updateActivityPartialResults(task);
         } catch(Throwable t) {
              throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Map;
 
 @Data
@@ -13,7 +14,7 @@ public class ActivityContext {
     private ActivityResultStatus status;
 
     @JsonProperty("finishedAt")
-    private LocalDateTime finishedAt;
+    private Date finishedAt;
 
     @JsonProperty("results")
     private Map<String, String> results;

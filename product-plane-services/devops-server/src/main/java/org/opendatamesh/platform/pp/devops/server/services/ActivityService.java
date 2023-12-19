@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -266,9 +267,15 @@ public class ActivityService {
 
     public Task stopTaskAndUpdateParentActivity(Long taskId, TaskResultResource taskResultResource) {
         Task task = taskService.stopTask(taskId, taskResultResource);
+        updateActivityPartialResults(task);
+        startNextPlannedTaskAndUpdateParentActivity(task.getActivityId());
+        return task;
+    }
+
+    public void updateActivityPartialResults(Task task) {
         if(
                 task.getStatus().equals(ActivityTaskStatus.PROCESSED)
-                && task.getResults() != null
+                        && task.getResults() != null
         ) {
             Activity parentActivity = readActivity(task.getActivityId());
             String partialActivityResults = parentActivity.getResults();
@@ -285,7 +292,7 @@ public class ActivityService {
             } else {
                 try {
                     activityOutputNode = ObjectMapperFactory.JSON_MAPPER.readValue(partialActivityResults, ObjectNode.class);
-                    int progressiveTaskNumber = findMaxTaskNumber((Map<String, ?>) activityOutputNode);
+                    int progressiveTaskNumber = findMaxTaskNumber(activityOutputNode);
                     activityOutputNode.put("task" + progressiveTaskNumber, task.getResults());
                     result = ObjectMapperFactory.JSON_MAPPER.writeValueAsString(activityOutputNode);
                 } catch (JsonProcessingException e) {
@@ -295,8 +302,6 @@ public class ActivityService {
             parentActivity.setResults(result);
             saveActivity(parentActivity);
         }
-        startNextPlannedTaskAndUpdateParentActivity(task.getActivityId());
-        return task;
     }
 
     // ======================================================================================
@@ -388,8 +393,8 @@ public class ActivityService {
                     ActivityResultStatus.PROCESSED :
                     ActivityResultStatus.PROCESSING;
             activityContext.setStatus(activityResultStatus);
-            LocalDateTime activityFinishedAt = activity.getFinishedAt() != null ?
-                    activity.getFinishedAt() :
+            Date activityFinishedAt = activity.getFinishedAt() != null ?
+                    Date.from(activity.getFinishedAt().atZone(ZoneId.systemDefault()).toInstant()) :
                     null;
             activityContext.setFinishedAt(activityFinishedAt);
             Map<String, String> contextualizedActivityResults = null;
@@ -468,7 +473,7 @@ public class ActivityService {
                                     activity.getStatus().equals(ActivityStatus.PROCESSING)
                     )
                     .collect(Collectors.toList());
-            activitySearchResults.sort(Comparator.comparing(Activity::getFinishedAt));
+            activitySearchResults.sort(Comparator.comparing(Activity::getId));
         }
         return activitySearchResults;
     }
@@ -557,7 +562,14 @@ public class ActivityService {
         return dataProductVersion;
     }
 
-    public static int findMaxTaskNumber(Map<String, ?> map) {
+    public static int findMaxTaskNumber(ObjectNode jsonContent) {
+
+        Map<String, Object> map = null;
+        try {
+            map = ObjectMapperFactory.JSON_MAPPER.readValue(jsonContent.toString(), Map.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
 
         int maxTaskNumber = 0;
         Pattern pattern = Pattern.compile("task(\\d+)");

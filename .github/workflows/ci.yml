@@ -1,8 +1,9 @@
 name: odm-platform CI
 on:
   push:
-    branches:
-      - 'main'
+    branches: # Execute on "main" branch and product branches, avoid others
+      - 'main' # Main branch
+      - '*.*' # Product branches (e.g., 0.7, 0.x, 1.x, ...)
 jobs:
   build:
     runs-on: ubuntu-latest

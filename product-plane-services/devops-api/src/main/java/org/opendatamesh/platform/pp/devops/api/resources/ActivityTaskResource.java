@@ -48,7 +48,7 @@ public class ActivityTaskResource  {
 
     @JsonProperty("results")
     @JsonPropertyDescription("The output returned by the executor after task succesfully execution")
-    Map<String, Object> results;
+    String results;
 
     @JsonProperty("errors")
     @JsonPropertyDescription("The output returned by the executor after task unsucesfully execution")
@@ -69,4 +69,5 @@ public class ActivityTaskResource  {
     @JsonPropertyDescription("Task finished time. Not valorized if the task has not been finished yet")
     @Schema(description = "Task finished time. Not valorized if the task has not been started yet")
     private Date finishedAt;
+
 }

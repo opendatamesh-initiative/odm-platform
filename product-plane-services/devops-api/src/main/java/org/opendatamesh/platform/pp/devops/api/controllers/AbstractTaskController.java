@@ -128,7 +128,6 @@ public abstract class AbstractTaskController {
     public TaskStatusResource stopTaskEndpoint(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "A TaskResult object",
-                    required = true,
                     content = @Content(
                             examples = {
                                     @ExampleObject(

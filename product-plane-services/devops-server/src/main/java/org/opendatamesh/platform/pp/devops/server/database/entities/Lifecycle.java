@@ -5,7 +5,6 @@ import org.opendatamesh.platform.core.dpds.utils.HashMapConverter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Map;
 
 @Data
 @Entity(name = "Lifecycle")
@@ -24,11 +23,10 @@ public class Lifecycle {
     private String dataProductVersion;
 
     @Column(name = "STAGE")
-    String stage;
+    private String stage;
 
-    @Column(name = "RESULTS", length=5000)
-    @Convert(converter = HashMapConverter.class)
-    private Map<String, Object> results;
+    @Column(name = "RESULTS")
+    private String results;
 
     @Column(name = "STARTED_AT")
     private LocalDateTime startedAt;

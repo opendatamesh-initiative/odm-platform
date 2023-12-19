@@ -1,8 +1,6 @@
 package org.opendatamesh.platform.pp.devops.server.services;
 
-import java.time.LocalDateTime;
-import java.util.*;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.*;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.model.core.StandardDefinitionDPDS;
@@ -25,10 +23,10 @@ import org.opendatamesh.platform.up.executor.api.resources.TaskStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Service
 public class TaskService {
@@ -46,12 +44,6 @@ public class TaskService {
 
     private static final Logger logger = LoggerFactory.getLogger(ActivityService.class);
 
-    private final ApplicationContext applicationContext;
-
-    @Autowired
-    public TaskService(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-    }
 
     // ======================================================================================
     // CREATE
@@ -111,6 +103,7 @@ public class TaskService {
     public Task startTask(Task task) {
 
         try {
+
             task.setStatus(ActivityTaskStatus.PROCESSING);
             task.setStartedAt(now());
             saveTask(task);
@@ -123,7 +116,8 @@ public class TaskService {
             } else {
                 TaskResultResource taskResultResource = new TaskResultResource();
                 taskResultResource.setStatus(TaskResultStatus.PROCESSED);
-                taskResultResource.setResults("{\"message\":\"Nothing to do. Task succeded by default\"}");
+                Map<String, Object> results = new HashMap<>();
+                results.put("message", "Nothing to do. Task succeded by default");
                 task.setResults(taskResultResource.toJsonString());
                 task.setStatus(ActivityTaskStatus.PROCESSED);
                 task.setFinishedAt(now());
@@ -183,7 +177,7 @@ public class TaskService {
                     );
                 if(taskResultResource.getStatus().equals(TaskResultStatus.PROCESSED)) {
                     task.setStatus(ActivityTaskStatus.PROCESSED);
-                    task.setResults(taskResultResource.getResults());
+                    task.setResults(ObjectMapperFactory.JSON_MAPPER.writeValueAsString(taskResultResource.getResults()));
                 }
                 else {
                     task.setStatus(ActivityTaskStatus.FAILED);
@@ -193,13 +187,15 @@ public class TaskService {
                 task.setStatus(ActivityTaskStatus.PROCESSED);
                 taskResultResource = new TaskResultResource();
                 taskResultResource.setStatus(TaskResultStatus.PROCESSED);
-                taskResultResource.setResults("{\"message\":\"OK\"}");
+                Map<String, Object> results = new HashMap<>();
+                results.put("message", "OK");
+                taskResultResource.setResults(results);
                 task.setResults(taskResultResource.toJsonString());
             }
             task.setFinishedAt(now());
             task = saveTask(task);
             // Save Activity partial results
-            applicationContext.getBean(ActivityService.class).updateActivityPartialResults(task);
+            //applicationContext.getBean(ActivityService.class).updateActivityPartialResults(task);
         } catch(Throwable t) {
              throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,

@@ -19,29 +19,14 @@ public class TaskResultResource {
 
     @JsonProperty("results")
     @Schema(description = "Optional JSON results of the Task execution returned from the executor")
-    Map<String, Object> resultsBeforeProcessing;
-
-    @JsonProperty("processedResults")
-    String results;
+    Map<String, Object> results;
 
     @JsonProperty("errors")
     @Schema(description = "Optional textual set of errors of the Task execution returned from the executor")
     String errors;
 
     public String toJsonString() throws JsonProcessingException {
-        return jsonizeContent(this);
-    }
-
-    public void convertResults() {
-        try {
-            this.results = jsonizeContent(resultsBeforeProcessing);
-        } catch (JsonProcessingException e) {
-            this.results = null;
-        }
-    }
-
-    private String jsonizeContent(Object content) throws JsonProcessingException {
-        return ObjectMapperFactory.JSON_MAPPER.writeValueAsString(content);
+        return ObjectMapperFactory.JSON_MAPPER.writeValueAsString(this);
     }
 
 }

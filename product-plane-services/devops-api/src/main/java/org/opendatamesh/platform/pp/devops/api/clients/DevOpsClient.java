@@ -125,7 +125,7 @@ public class DevOpsClient extends ODMClient {
         return patchActivityStart(activityId, ActivityStatusResource.class);
     }
 
-    public <T> ResponseEntity<T> patchActivityStart(Long activityId, Class<T> responseType) throws IOException {
+    public <T> ResponseEntity<T> patchActivityStart(Long activityId, Class<T> responseType) {
         return patchForEntity(
                 apiUrl(DevOpsAPIRoutes.ACTIVITIES, "/{id}/status?action=START"),
                 HttpEntity.EMPTY,
@@ -215,15 +215,15 @@ public class DevOpsClient extends ODMClient {
                 activityId.toString());
     }
 
-    public TaskStatusResource stopTask(Long taskId) throws IOException {
+    public TaskStatusResource stopTask(Long taskId) {
         return patchTaskStop(taskId).getBody();
     }
 
-    public ResponseEntity<TaskStatusResource> patchTaskStop(Long taskId) throws IOException {
+    public ResponseEntity<TaskStatusResource> patchTaskStop(Long taskId) {
         return patchTaskStop(taskId, TaskStatusResource.class);
     }
 
-    public <T> ResponseEntity<T> patchTaskStop(Long taskId, Class<T> responseType) throws IOException {
+    public <T> ResponseEntity<T> patchTaskStop(Long taskId, Class<T> responseType) {
         return patchForEntity(
                 apiUrl(DevOpsAPIRoutes.TASKS, "/{id}/status?action=STOP"),
                 HttpEntity.EMPTY,

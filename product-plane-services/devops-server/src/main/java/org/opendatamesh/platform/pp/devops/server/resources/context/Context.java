@@ -2,6 +2,7 @@ package org.opendatamesh.platform.pp.devops.server.resources.context;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.Data;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 
@@ -18,8 +19,11 @@ public class Context {
         this.context = new HashMap<>();
     }
 
-    public String toJsonString() throws JsonProcessingException {
-        return ObjectMapperFactory.JSON_MAPPER.writeValueAsString(this.context);
+    public ObjectNode toObjectNode() throws JsonProcessingException {
+        return ObjectMapperFactory.JSON_MAPPER.readValue(
+                ObjectMapperFactory.JSON_MAPPER.writeValueAsString(this.context),
+                ObjectNode.class
+        );
     }
 
     public void concatenateActivitiesContext(String activityStageName, ActivityContext activityContext) {

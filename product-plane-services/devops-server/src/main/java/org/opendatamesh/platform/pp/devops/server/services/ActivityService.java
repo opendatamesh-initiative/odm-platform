@@ -1,6 +1,7 @@
 package org.opendatamesh.platform.pp.devops.server.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.opendatamesh.platform.core.commons.servers.exceptions.*;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
@@ -247,7 +248,7 @@ public class ActivityService {
                 } else {
                     taskConfigs = ObjectMapperFactory.JSON_MAPPER.createObjectNode();
                 }
-                taskConfigs.put("context", taskContext.toJsonString());
+                taskConfigs.put("context", taskContext.toObjectNode());
                 actualTask.setConfigurations(taskConfigs.toString());
             } catch (JsonProcessingException e) {
                 logger.warn("Impossible to deserialize config attribute of task to append context", e);
@@ -284,6 +285,7 @@ public class ActivityService {
             if(partialActivityResults == null) {
                 activityOutputNode = ObjectMapperFactory.JSON_MAPPER.createObjectNode();
                 activityOutputNode.put("task1", task.getResults());
+
                 try {
                     result = ObjectMapperFactory.JSON_MAPPER.writeValueAsString(activityOutputNode);
                 } catch (JsonProcessingException e) {
@@ -397,7 +399,7 @@ public class ActivityService {
                     Date.from(activity.getFinishedAt().atZone(ZoneId.systemDefault()).toInstant()) :
                     null;
             activityContext.setFinishedAt(activityFinishedAt);
-            Map<String, String> contextualizedActivityResults = null;
+            Map<String, Object> contextualizedActivityResults = null;
             if(activity.getResults() != null) {
                 try {
                     contextualizedActivityResults = ObjectMapperFactory.JSON_MAPPER.readValue(

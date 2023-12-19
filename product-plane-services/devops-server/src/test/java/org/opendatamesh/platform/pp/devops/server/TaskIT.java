@@ -1,20 +1,13 @@
 package org.opendatamesh.platform.pp.devops.server;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.fail;
-
 import org.junit.jupiter.api.Test;
-import org.opendatamesh.platform.pp.devops.api.resources.ActivityResource;
-import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatusResource;
-import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskResource;
-import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskStatus;
-import org.opendatamesh.platform.pp.devops.api.resources.TaskStatusResource;
+import org.opendatamesh.platform.pp.devops.api.resources.*;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.annotation.DirtiesContext.MethodMode;
 
-import java.util.HashMap;
-import java.util.Map;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.fail;
 
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 public class TaskIT extends ODMDevOpsIT {
@@ -58,7 +51,7 @@ public class TaskIT extends ODMDevOpsIT {
         assertThat(readTaskRes.getId()).isNotNull();
         assertThat(readTaskRes.getExecutorRef()).isEqualTo("azure-devops");
         assertThat(readTaskRes.getTemplate()).isEqualTo("{\"organization\":\"andreagioia\",\"project\":\"opendatamesh\",\"pipelineId\":\"3\",\"branch\":\"main\"}");
-        assertThat(readTaskRes.getConfigurations()).isEqualTo("{\"stagesToSkip\":[],\"context\":\"{\\\"prod\\\":{\\\"status\\\":\\\"PROCESSING\\\"}}\"}");
+        assertThat(readTaskRes.getConfigurations()).isEqualTo("{\"stagesToSkip\":[],\"context\":{\"prod\":{\"status\":\"PROCESSING\"}}}");
         assertThat(readTaskRes.getStatus()).isEqualTo(ActivityTaskStatus.PROCESSING);
         assertThat(readTaskRes.getResults()).isNull();
         assertThat(readTaskRes.getErrors()).isNull();
@@ -104,10 +97,10 @@ public class TaskIT extends ODMDevOpsIT {
         assertThat(stoppedTaskRes.getId()).isNotNull();
         assertThat(stoppedTaskRes.getExecutorRef()).isEqualTo("azure-devops");
         assertThat(stoppedTaskRes.getTemplate()).isEqualTo("{\"organization\":\"andreagioia\",\"project\":\"opendatamesh\",\"pipelineId\":\"3\",\"branch\":\"main\"}");
-        assertThat(stoppedTaskRes.getConfigurations()).isEqualTo("{\"stagesToSkip\":[],\"context\":\"{\\\"prod\\\":{\\\"status\\\":\\\"PROCESSING\\\"}}\"}");
+        assertThat(stoppedTaskRes.getConfigurations()).isEqualTo("{\"stagesToSkip\":[],\"context\":{\"prod\":{\"status\":\"PROCESSING\"}}}");
         assertThat(stoppedTaskRes.getStatus()).isEqualTo(ActivityTaskStatus.PROCESSED);
         assertThat(stoppedTaskRes.getResults()).isNotNull();
-        assertThat(stoppedTaskRes.getResults()).isEqualTo("{\"status\":\"PROCESSED\",\"results\":\"{\\\"message\\\":\\\"OK\\\"}\"}");
+        assertThat(stoppedTaskRes.getResults()).isEqualTo("{\"status\":\"PROCESSED\",\"results\":{\"message\":\"OK\"}}");
         assertThat(stoppedTaskRes.getErrors()).isNull();
         assertThat(stoppedTaskRes.getCreatedAt()).isNotNull();
         assertThat(stoppedTaskRes.getStartedAt()).isNotNull();
@@ -231,7 +224,7 @@ public class TaskIT extends ODMDevOpsIT {
         assertThat(task.getId()).isNotNull();
         assertThat(task.getExecutorRef()).isEqualTo("azure-devops");
         assertThat(task.getTemplate()).isEqualTo("{\"organization\":\"andreagioia\",\"project\":\"opendatamesh\",\"pipelineId\":\"3\",\"branch\":\"main\"}");
-        assertThat(task.getConfigurations()).isEqualTo("{\"stagesToSkip\":[],\"context\":\"{\\\"prod\\\":{\\\"status\\\":\\\"PROCESSING\\\"}}\"}");
+        assertThat(task.getConfigurations()).isEqualTo("{\"stagesToSkip\":[],\"context\":{\"prod\":{\"status\":\"PROCESSING\"}}}");
         assertThat(task.getStatus()).isEqualTo(ActivityTaskStatus.PROCESSING);
         assertThat(task.getResults()).isNull();
         assertThat(task.getErrors()).isNull();
@@ -289,7 +282,7 @@ public class TaskIT extends ODMDevOpsIT {
         assertThat(readTaskRes.getId()).isNotNull();
         assertThat(readTaskRes.getExecutorRef()).isEqualTo("azure-devops");
         assertThat(readTaskRes.getTemplate()).isEqualTo("{\"organization\":\"andreagioia\",\"project\":\"opendatamesh\",\"pipelineId\":\"3\",\"branch\":\"main\"}");
-        assertThat(readTaskRes.getConfigurations()).isEqualTo("{\"stagesToSkip\":[],\"context\":\"{\\\"prod\\\":{\\\"status\\\":\\\"PROCESSING\\\"}}\"}");
+        assertThat(readTaskRes.getConfigurations()).isEqualTo("{\"stagesToSkip\":[],\"context\":{\"prod\":{\"status\":\"PROCESSING\"}}}");
         assertThat(readTaskRes.getStatus()).isEqualTo(ActivityTaskStatus.PROCESSING);
         assertThat(readTaskRes.getResults()).isNull();
         assertThat(readTaskRes.getErrors()).isNull();
@@ -325,7 +318,7 @@ public class TaskIT extends ODMDevOpsIT {
         assertThat(readTaskRes.getId()).isNotNull();
         assertThat(readTaskRes.getExecutorRef()).isEqualTo("azure-devops");
         assertThat(readTaskRes.getTemplate()).isEqualTo("{\"organization\":\"andreagioia\",\"project\":\"opendatamesh\",\"pipelineId\":\"3\",\"branch\":\"main\"}");
-        assertThat(readTaskRes.getConfigurations()).isEqualTo("{\"stagesToSkip\":[],\"context\":\"{\\\"prod\\\":{\\\"status\\\":\\\"PROCESSING\\\"}}\"}");
+        assertThat(readTaskRes.getConfigurations()).isEqualTo("{\"stagesToSkip\":[],\"context\":{\"prod\":{\"status\":\"PROCESSING\"}}}");
         assertThat(readTaskRes.getStatus()).isEqualTo(ActivityTaskStatus.PROCESSING);
         assertThat(readTaskRes.getResults()).isNull();
         assertThat(readTaskRes.getErrors()).isNull();
@@ -360,9 +353,9 @@ public class TaskIT extends ODMDevOpsIT {
         assertThat(readTaskRes.getId()).isNotNull();
         assertThat(readTaskRes.getExecutorRef()).isEqualTo("azure-devops");
         assertThat(readTaskRes.getTemplate()).isEqualTo("{\"organization\":\"andreagioia\",\"project\":\"opendatamesh\",\"pipelineId\":\"3\",\"branch\":\"main\"}");
-        assertThat(readTaskRes.getConfigurations()).isEqualTo("{\"stagesToSkip\":[],\"context\":\"{\\\"prod\\\":{\\\"status\\\":\\\"PROCESSING\\\"}}\"}");
+        assertThat(readTaskRes.getConfigurations()).isEqualTo("{\"stagesToSkip\":[],\"context\":{\"prod\":{\"status\":\"PROCESSING\"}}}");
         assertThat(readTaskRes.getStatus()).isEqualTo(ActivityTaskStatus.PROCESSED);
-        assertThat(readTaskRes.getResults()).isEqualTo("{\"status\":\"PROCESSED\",\"results\":\"{\\\"message\\\":\\\"OK\\\"}\"}");
+        assertThat(readTaskRes.getResults()).isEqualTo("{\"status\":\"PROCESSED\",\"results\":{\"message\":\"OK\"}}");
         assertThat(readTaskRes.getErrors()).isNull();
         assertThat(readTaskRes.getCreatedAt()).isNotNull();
         assertThat(readTaskRes.getStartedAt()).isNotNull();
@@ -393,7 +386,7 @@ public class TaskIT extends ODMDevOpsIT {
         assertThat(searchedTask.getId()).isNotNull();
         assertThat(searchedTask.getExecutorRef()).isEqualTo("azure-devops");
         assertThat(searchedTask.getTemplate()).isEqualTo("{\"organization\":\"andreagioia\",\"project\":\"opendatamesh\",\"pipelineId\":\"3\",\"branch\":\"main\"}");
-        assertThat(searchedTask.getConfigurations()).isEqualTo("{\"stagesToSkip\":[],\"context\":\"{\\\"prod\\\":{\\\"status\\\":\\\"PROCESSING\\\"}}\"}");
+        assertThat(searchedTask.getConfigurations()).isEqualTo("{\"stagesToSkip\":[],\"context\":{\"prod\":{\"status\":\"PROCESSING\"}}}");
         assertThat(searchedTask.getStatus()).isEqualTo(ActivityTaskStatus.PROCESSING);
         assertThat(searchedTask.getResults()).isNull();
         assertThat(searchedTask.getErrors()).isNull();
@@ -420,7 +413,7 @@ public class TaskIT extends ODMDevOpsIT {
         assertThat(searchedTask.getId()).isNotNull();
         assertThat(searchedTask.getExecutorRef()).isEqualTo("azure-devops");
         assertThat(searchedTask.getTemplate()).isEqualTo("{\"organization\":\"andreagioia\",\"project\":\"opendatamesh\",\"pipelineId\":\"3\",\"branch\":\"main\"}");
-        assertThat(searchedTask.getConfigurations()).isEqualTo("{\"stagesToSkip\":[],\"context\":\"{\\\"prod\\\":{\\\"status\\\":\\\"PROCESSING\\\"}}\"}");
+        assertThat(searchedTask.getConfigurations()).isEqualTo("{\"stagesToSkip\":[],\"context\":{\"prod\":{\"status\":\"PROCESSING\"}}}");
         assertThat(searchedTask.getStatus()).isEqualTo(ActivityTaskStatus.PROCESSING);
         assertThat(searchedTask.getResults()).isNull();
         assertThat(searchedTask.getErrors()).isNull();
@@ -447,7 +440,7 @@ public class TaskIT extends ODMDevOpsIT {
         assertThat(searchedTask.getId()).isNotNull();
         assertThat(searchedTask.getExecutorRef()).isEqualTo("azure-devops");
         assertThat(searchedTask.getTemplate()).isEqualTo("{\"organization\":\"andreagioia\",\"project\":\"opendatamesh\",\"pipelineId\":\"3\",\"branch\":\"main\"}");
-        assertThat(searchedTask.getConfigurations()).isEqualTo("{\"stagesToSkip\":[],\"context\":\"{\\\"prod\\\":{\\\"status\\\":\\\"PROCESSING\\\"}}\"}");
+        assertThat(searchedTask.getConfigurations()).isEqualTo("{\"stagesToSkip\":[],\"context\":{\"prod\":{\"status\":\"PROCESSING\"}}}");
         assertThat(searchedTask.getStatus()).isEqualTo(ActivityTaskStatus.PROCESSING);
         assertThat(searchedTask.getResults()).isNull();
         assertThat(searchedTask.getErrors()).isNull();
@@ -475,7 +468,7 @@ public class TaskIT extends ODMDevOpsIT {
         assertThat(searchedTask.getId()).isNotNull();
         assertThat(searchedTask.getExecutorRef()).isEqualTo("azure-devops");
         assertThat(searchedTask.getTemplate()).isEqualTo("{\"organization\":\"andreagioia\",\"project\":\"opendatamesh\",\"pipelineId\":\"3\",\"branch\":\"main\"}");
-        assertThat(searchedTask.getConfigurations()).isEqualTo("{\"stagesToSkip\":[],\"context\":\"{\\\"prod\\\":{\\\"status\\\":\\\"PROCESSING\\\"}}\"}");
+        assertThat(searchedTask.getConfigurations()).isEqualTo("{\"stagesToSkip\":[],\"context\":{\"prod\":{\"status\":\"PROCESSING\"}}}");
         assertThat(searchedTask.getStatus()).isEqualTo(ActivityTaskStatus.PROCESSING);
         assertThat(searchedTask.getResults()).isNull();
         assertThat(searchedTask.getErrors()).isNull();
@@ -502,7 +495,7 @@ public class TaskIT extends ODMDevOpsIT {
         assertThat(searchedTask.getId()).isNotNull();
         assertThat(searchedTask.getExecutorRef()).isEqualTo("azure-devops");
         assertThat(searchedTask.getTemplate()).isEqualTo("{\"organization\":\"andreagioia\",\"project\":\"opendatamesh\",\"pipelineId\":\"3\",\"branch\":\"main\"}");
-        assertThat(searchedTask.getConfigurations()).isEqualTo("{\"stagesToSkip\":[],\"context\":\"{\\\"prod\\\":{\\\"status\\\":\\\"PROCESSING\\\"}}\"}");
+        assertThat(searchedTask.getConfigurations()).isEqualTo("{\"stagesToSkip\":[],\"context\":{\"prod\":{\"status\":\"PROCESSING\"}}}");
         assertThat(searchedTask.getStatus()).isEqualTo(ActivityTaskStatus.PROCESSING);
         assertThat(searchedTask.getResults()).isNull();
         assertThat(searchedTask.getErrors()).isNull();

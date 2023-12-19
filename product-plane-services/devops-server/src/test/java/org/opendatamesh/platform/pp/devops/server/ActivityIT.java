@@ -1,19 +1,16 @@
 package org.opendatamesh.platform.pp.devops.server;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.fail;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.regex.Pattern;
-
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.pp.devops.api.resources.*;
-import org.opendatamesh.platform.pp.devops.server.database.entities.Lifecycle;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.annotation.DirtiesContext.MethodMode;
+
+import java.io.IOException;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.fail;
 
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 public class ActivityIT extends ODMDevOpsIT {

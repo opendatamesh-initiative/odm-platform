@@ -1,14 +1,16 @@
 package org.opendatamesh.platform.pp.devops.server.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.opendatamesh.platform.core.commons.servers.exceptions.*;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.internals.LifecycleInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.internals.LifecycleTaskInfoDPDS;
-import org.opendatamesh.platform.pp.devops.api.resources.*;
+import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatus;
+import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskStatus;
+import org.opendatamesh.platform.pp.devops.api.resources.DevOpsApiStandardErrors;
+import org.opendatamesh.platform.pp.devops.api.resources.TaskResultResource;
 import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsClients;
 import org.opendatamesh.platform.pp.devops.server.database.entities.Activity;
 import org.opendatamesh.platform.pp.devops.server.database.entities.Task;
@@ -16,6 +18,7 @@ import org.opendatamesh.platform.pp.devops.server.database.repositories.Activity
 import org.opendatamesh.platform.pp.devops.server.resources.context.ActivityContext;
 import org.opendatamesh.platform.pp.devops.server.resources.context.ActivityResultStatus;
 import org.opendatamesh.platform.pp.devops.server.resources.context.Context;
+import org.opendatamesh.platform.pp.devops.server.utils.ObjectNodeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -248,7 +251,7 @@ public class ActivityService {
                 } else {
                     taskConfigs = ObjectMapperFactory.JSON_MAPPER.createObjectNode();
                 }
-                taskConfigs.put("context", taskContext.toObjectNode());
+                taskConfigs.put("context", ObjectNodeUtils.toObjectNode(taskContext.getContext()));
                 actualTask.setConfigurations(taskConfigs.toString());
             } catch (JsonProcessingException e) {
                 logger.warn("Impossible to deserialize config attribute of task to append context", e);
@@ -284,9 +287,8 @@ public class ActivityService {
             String result = null;
             if(partialActivityResults == null) {
                 activityOutputNode = ObjectMapperFactory.JSON_MAPPER.createObjectNode();
-                activityOutputNode.put("task1", task.getResults());
-
                 try {
+                    activityOutputNode.put("task1", ObjectNodeUtils.toObjectNode(task.getResults()));
                     result = ObjectMapperFactory.JSON_MAPPER.writeValueAsString(activityOutputNode);
                 } catch (JsonProcessingException e) {
                     logger.warn("Impossible to serialize results aggregate", e);
@@ -295,7 +297,7 @@ public class ActivityService {
                 try {
                     activityOutputNode = ObjectMapperFactory.JSON_MAPPER.readValue(partialActivityResults, ObjectNode.class);
                     int progressiveTaskNumber = findMaxTaskNumber(activityOutputNode);
-                    activityOutputNode.put("task" + progressiveTaskNumber, task.getResults());
+                    activityOutputNode.put("task" + progressiveTaskNumber, ObjectNodeUtils.toObjectNode(task.getResults()));
                     result = ObjectMapperFactory.JSON_MAPPER.writeValueAsString(activityOutputNode);
                 } catch (JsonProcessingException e) {
                     logger.warn("Impossible to deserialize previous results aggregate and/or aggregate new results to it", e);

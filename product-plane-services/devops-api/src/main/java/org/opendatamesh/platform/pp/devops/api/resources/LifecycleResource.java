@@ -30,7 +30,7 @@ public class LifecycleResource {
 
     @JsonProperty("results")
     @Schema(description = "Results of the execution of the tasks for the current stage")
-    private Map<String, Object> results;
+    private String results;
 
     @JsonProperty("startedAt")
     @Schema(description = "Date from which the stage is valid for the Data Product")

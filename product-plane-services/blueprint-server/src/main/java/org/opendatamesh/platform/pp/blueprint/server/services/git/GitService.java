@@ -12,7 +12,6 @@ import org.opendatamesh.platform.pp.blueprint.server.utils.CustomFileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.util.List;

@@ -27,18 +27,17 @@ public class Activity {
     private String dataProductVersion;
 
     @Column(name = "STAGE")
-    String stage;
+    private String stage;
     
     @Enumerated(EnumType.STRING)
     @Column(name = "STATUS")
-    ActivityStatus status;
+    private ActivityStatus status;
 
-    @Column(name = "RESULTS", length=5000)
-    @Convert(converter = HashMapConverter.class)
-    private Map<String, Object> results;
+    @Column(name = "RESULTS")
+    private String results;
 
     @Column(name = "ERRORS")
-    String errors;
+    private String errors;
 
     @Column(name = "CREATED_AT")
     //@Temporal(TemporalType.TIMESTAMP)

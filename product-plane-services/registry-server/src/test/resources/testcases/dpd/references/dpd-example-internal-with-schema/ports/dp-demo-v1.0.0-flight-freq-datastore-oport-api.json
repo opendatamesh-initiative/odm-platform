@@ -1,0 +1,62 @@
+{
+             "datastoreapi": "1.0.0",
+             "info": {
+                 "title": "flight_frequency Data",
+                 "summary": "This API exposes the current flight_frequency data of each `Airline` entity",
+                 "version": "1.0.0",
+                 "datastoreName": "flight_frequency"
+             },
+             "services": {
+                 "development": {
+                     "serverInfo": {
+                         "$ref": "#components.serverInfo.flightFrequencyStoreServerInfo"
+                     },
+                     "serverVariables": {
+                         "host": "35.52.55.12"
+                     }
+                 }
+             },
+             "schema": {
+                 "databaseName": "airlinedemo",
+                 "tables": [
+                     {
+                         "name": "airline",
+                         "specification": "schemata",
+                         "specificationVersion": 1,
+                         "definition": {
+                            "mediaType": "text/json",
+                            "$ref": "dp-demo-v1.0.0-flight-freq-datastore-oport-api-schema.json"
+                        }
+                     }
+                 ]
+             },
+             "components": {
+                 "serverInfo": {
+                     "flightFrequencyStoreServerInfo": {
+                         "host:": "{host}",
+                         "port:": "3306",
+                         "dbmsType:": "MySQL",
+                         "dbmsVersion:": "8",
+                         "connectionProtocols": {
+                             "jdbc": {
+                                 "version": "1.0",
+                                 "url": "jdbc:mysql://{hosts}:3306/foodmart",
+                                 "driverName": "MySQL JDBC Driver",
+                                 "driverClass": "org.mysql.Driver",
+                                 "driverVersion": "latest",
+                                 "driverLibrary": {
+                                     "description": "MySQL JDBC Driver Library",
+                                     "dataType": "application/java-archive",
+                                     "$href": "https://jdbc.mysql.org/"
+                                 },
+                                 "driverDocs": {
+                                     "description": "MySQL JDBC Driver HomePage",
+                                     "dataType": "text/html",
+                                     "$href": "https://jdbc.mysql.org/mysql-8.jar"
+                                 }
+                             }
+                         }
+                     }
+                 }
+             }
+         }

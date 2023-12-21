@@ -1,0 +1,74 @@
+{
+   "dataProductDescriptor": "1.0.0",
+   "info": {
+      "fullyQualifiedName": "urn:org.opendatamesh:dataproducts:flightfrequency:1",
+      "name": "flightFrequency",
+      "version": "1.0.0",
+      "domain": "Airline",
+      "owner": {
+         "id": "john.smith@example.com"
+      }
+   },
+   "interfaceComponents": {
+      "outputPorts": [
+         {
+            "description": "This port exposes the last known status of each trip operated in the last 12 months",
+            "$ref": "ports/dp-demo-v1.0.0-flight-freq-datastore-oport.json"
+        },
+        {
+            "description": "This port expose all modifications in the status of each trip as events",
+            "$ref": "ports/dp-demo-v1.0.0-flight-freq-restapi-oport.json"
+        }
+      ]
+   },
+   "internalComponents": {
+      "lifecycleInfo": {
+         "provisionInfraDev": [
+            {
+               "service": {
+                  "$href": "azure-devops"
+               },
+               "template": {
+                  "specification": "spec",
+                  "specificationVersion": "2.0",
+                  "definition": {
+                     "organization": "[organizationName]",
+                     "project": "[projectName]",
+                     "pipelineId": "[pipelineID]",
+                     "branch": "master"
+                  }
+               },
+               "configurations": {
+                  "params": {
+                     "callbackBaseURL": "http://[IP]:8002/api/v1/pp/devops"
+                  },
+                  "stagesToSkip": []
+               }
+            }
+         ],
+         "deployAppDev": [
+            {
+               "service": {
+                  "$href": "azure-devops"
+               },
+               "template": {
+                  "specification": "spec",
+                  "specificationVersion": "2.0",
+                  "definition": {
+                     "organization": "[organizationName]",
+                     "project": "[projectName]",
+                     "pipelineId": "[pipelineID]",
+                     "branch": "master"
+                  }
+               },
+               "configurations": {
+                  "params": {
+                     "callbackBaseURL": "http://[IP]:8002/api/v1/pp/devops"
+                  },
+                  "stagesToSkip": []
+               }
+            }
+         ]
+      }
+   }
+}

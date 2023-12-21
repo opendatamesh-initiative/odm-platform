@@ -3,10 +3,8 @@ package org.opendatamesh.platform.pp.registry.server.utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.model.core.EntityTypeDPDS;
-import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
-import org.opendatamesh.platform.pp.registry.api.resources.DomainResource;
-import org.opendatamesh.platform.pp.registry.api.resources.ExternalComponentResource;
-import org.opendatamesh.platform.pp.registry.api.resources.OwnerResource;
+import org.opendatamesh.platform.core.dpds.parser.location.GitLocation;
+import org.opendatamesh.platform.pp.registry.api.resources.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -131,4 +129,5 @@ public class ODMRegistryResourceBuilder {
 
         return ownerResource;
     }
+
 }

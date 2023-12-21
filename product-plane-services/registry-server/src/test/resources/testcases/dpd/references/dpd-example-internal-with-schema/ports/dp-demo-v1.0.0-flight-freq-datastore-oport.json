@@ -1,0 +1,41 @@
+{
+    "fullyQualifiedName": "urn:org.opendatamesh:dataproducts:airlinedemo:1:outputports:flight_frequency_db",
+    "entityType": "outputport",
+    "name": "flight_frequency_db",
+    "version": "1.0.0",
+    "displayName": "flight_frequency_db",
+    "description": "Target database for airlines data. MySQL database.",
+    "promises": {
+       "platform": "westeurope.azure::mysql",
+       "serviceType": "datastore-services",
+       "api": {
+          "name": "flightFrequencyApi",
+          "version": "1.0.0",
+          "specification": "datastoreapi",
+          "specificationVersion": "1.0.0",
+          "definition": {
+            "mediaType": "text/json",
+            "$ref": "dp-demo-v1.0.0-flight-freq-datastore-oport-api.json"
+        },
+          "externalDocs": {
+             "description": "The OpenAPI v3.1.0 specification used to define the API of this port",
+             "mediaType": "text/html",
+             "$href": "https://spec.openapis.org/oas/v3.1.0"
+          }
+       },
+       "deprecationPolicy": {
+          "description": "When a new major version become available the previous one is kept online for 3 months",
+          "x-deprecation-period": "3M"
+       },
+       "slo": {
+          "description": "The slo are hight for all base service indicators because this service is business critical",
+          "x-operationalSlo": {
+             "availability": "0.99999",
+             "responsetime": "1s"
+          },
+          "x-qualitySlo": {
+             "freshness": "5m"
+          }
+       }
+    }
+ }

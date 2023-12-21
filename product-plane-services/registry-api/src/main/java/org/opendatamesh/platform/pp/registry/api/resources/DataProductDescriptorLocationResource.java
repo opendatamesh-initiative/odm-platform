@@ -30,4 +30,5 @@ public class DataProductDescriptorLocationResource {
         @Schema(description = "Tag of the Git repository")
         private String tag;
     }
+
 }

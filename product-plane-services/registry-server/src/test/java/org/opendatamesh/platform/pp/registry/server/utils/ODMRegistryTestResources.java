@@ -20,8 +20,6 @@ import lombok.Data;
 @Data
 public class ODMRegistryTestResources {
     
-   
-    
     public static final String TEST_REPO_SSH_URI = "git@github.com:opendatamesh-initiative/odm-demo.git";
     public static final String TEST_REPO_RAW_URI = "https://raw.githubusercontent.com/opendatamesh-initiative/odm-demo/main";
 
@@ -49,6 +47,11 @@ public class ODMRegistryTestResources {
     public static final ODMRegistryTestResources DPD_CORE_WITH_MIX_REF = new ODMRegistryTestResources(
             "testcases/dpd/references/dpd-core-mix/dpd-core.json");
 
+    public static final ODMRegistryTestResources DPD_EXAMPLE_WITH_INTERNAL_REF_WITH_SCHEMA =
+            new ODMRegistryTestResources(
+                    "testcases/dpd/references/dpd-example-internal-with-schema/dp-demo-v1.0.0.json"
+            );
+
     public static final ODMRegistryTestResources DPD_LIFECYCLE = new ODMRegistryTestResources(
             "testcases/dpd/lifecycle/dpd-lifecycle.json");
     public static final ODMRegistryTestResources DPD_LIFECYCLE_EMPTY = new ODMRegistryTestResources(
@@ -67,7 +70,8 @@ public class ODMRegistryTestResources {
         null,
         "https://raw.githubusercontent.com/opendatamesh-initiative/odm-specification-dpdescriptor/main/examples/tripexecution/data-product-descriptor.json",
         "examples/tripexecution/data-product-descriptor.json",
-        "git@github.com:opendatamesh-initiative/odm-specification-dpdescriptor.git");
+        "git@github.com:opendatamesh-initiative/odm-specification-dpdescriptor.git"
+    );
 
 
     public static final Map<Object, ResourceContentChecker> CONTENT_CHECKERS;
@@ -79,6 +83,7 @@ public class ODMRegistryTestResources {
 
         CONTENT_CHECKERS.put(DPD_CORE, new DPDCoreContentChecker());
         OBJECT_CHECKERS.put(DPD_CORE, new DPDCoreObjectChecker());
+        OBJECT_CHECKERS.put(DPD_EXAMPLE_WITH_INTERNAL_REF_WITH_SCHEMA, new DPDExampleObjectChecker());
     }
 
     public String localPath;

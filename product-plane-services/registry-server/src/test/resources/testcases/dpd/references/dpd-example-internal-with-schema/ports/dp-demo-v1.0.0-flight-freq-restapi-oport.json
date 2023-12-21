@@ -1,0 +1,44 @@
+{
+    "fullyQualifiedName": "urn:org.opendatamesh:dataproducts:airlinedemo:1:outputports:flight_frequency_api",
+    "entityType": "outputport",
+    "name": "flight_frequency_api",
+    "version": "1.0.0",
+    "displayName": "flight_frequency_api",
+    "description": "REST API to get airlines data.",
+    "promises": {
+       "platform": "westeurope.azure::vm",
+       "serviceType": "rest-services",
+       "api": {
+          "name": "flightFrequencyRestApi",
+          "version": "1.0.0",
+          "specification": "restapi",
+          "specificationVersion": "1.0.0",
+          "definition": {
+             "fullyQualifiedName": "urn:org.opendatamesh:dataproducts:airlinedemo:1:outputports:flight_frequency_api:top3flights",
+             "name": "top3flights",
+             "displayName": "top3flights",
+             "description": "This port exposes top 3 frequent flights",
+             "version": "1.0.0",
+             "promises": {
+                 "platform": "westeurope.azure:vm",
+                 "serviceType": "rest-services",
+                 "api": {
+                     "name": "top3flights",
+                     "version": "1.0.0",
+                     "specification": "openapi",
+                     "specificationVersion": "2.0.0",
+                     "definition": {
+                         "mediaType": "text/yaml",
+                         "$ref": "dp-demo-v1.0.0-flight-freq-restapi-oport-api.json"
+                     }
+                 }
+             }
+         },
+          "externalDocs": {
+             "description": "The OpenAPI v3.1.0 specification used to define the API of this port",
+             "mediaType": "text/html",
+             "$href": "https://spec.openapis.org/oas/v3.1.0"
+          }
+       }
+    }
+ }

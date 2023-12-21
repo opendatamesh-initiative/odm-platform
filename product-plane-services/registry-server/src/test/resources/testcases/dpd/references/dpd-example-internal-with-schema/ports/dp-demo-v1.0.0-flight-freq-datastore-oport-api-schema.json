@@ -1,0 +1,45 @@
+{
+    "name": "airline_freq",
+    "version": "1.0.0",
+    "fullyQualifiedName": "urn:dsas:com.company-xyz:tables:airline.airline_freq",
+    "displayName": "Trips Status Table",
+    "description": "The table that store the updated status of each trip",
+    "tableType": "LOCAL",
+    "columns": [
+        {
+            "name": "airline_code",
+            "fullyQualifiedName": "urn:dsas:com.company-xyz:tables:airline.airline_freq.id",
+            "displayName": "Airline ID",
+            "dataType": "VARCHAR",
+            "dataLength": "50",
+            "columnConstraint": "PRIMARY_KEY",
+            "ordinalPosition": 1
+        },
+        {
+            "name": "apt_org",
+            "fullyQualifiedName": "urn:dsas:com.company-xyz:tables:airline.airline_freq.apt_org",
+            "displayName": "Origin",
+            "dataType": "VARCHAR",
+            "dataLength": "50",
+            "columnConstraint": "PRIMARY_KEY",
+            "ordinalPosition": 2
+        },
+        {
+            "name": "apt_dst",
+            "fullyQualifiedName": "urn:dsas:com.company-xyz:tables:airline.airline_freq.apt_dst",
+            "displayName": "Destination",
+            "dataType": "VARCHAR",
+            "dataLength": "50",
+            "columnConstraint": "PRIMARY_KEY",
+            "ordinalPosition": 3
+        },
+        {
+            "name": "flt_freq",
+            "fullyQualifiedName": "urn:dsas:com.company-xyz:tables:airline.airline_freq.trip_status.flt_freq",
+            "displayName": "Flight Frequency",
+            "dataType": "INTEGER",
+            "columnConstraint": "NOT_NULL",
+            "ordinalPosition": 4
+        }
+    ]
+}

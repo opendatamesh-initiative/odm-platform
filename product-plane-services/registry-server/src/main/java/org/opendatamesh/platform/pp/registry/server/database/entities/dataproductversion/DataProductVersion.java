@@ -8,7 +8,9 @@ import org.opendatamesh.platform.pp.registry.server.database.entities.DataProduc
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.core.ExternalResource;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.info.Info;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.interfaces.InterfaceComponents;
+import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.interfaces.Port;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.internals.InternalComponents;
+import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.variables.Variable;
 
 import javax.persistence.*;
 import java.io.Serializable;

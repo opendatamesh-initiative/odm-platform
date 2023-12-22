@@ -27,6 +27,7 @@ import org.opendatamesh.platform.pp.registry.server.database.entities.dataproduc
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.internals.InfrastructuralComponent;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.internals.LifecycleTaskInfo;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.internals.LifecycleInfo;
+import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.variables.Variable;
 import org.opendatamesh.platform.pp.registry.server.database.mappers.DataProductVersionMapper;
 import org.opendatamesh.platform.pp.registry.server.database.repositories.DataProductVersionRepository;
 import org.opendatamesh.platform.pp.registry.server.resources.v1.observers.EventNotifier;
@@ -49,6 +50,9 @@ public class DataProductVersionService {
 
     @Autowired
     private DataProductVersionRepository dataProductVersionRepository;
+
+    @Autowired
+    VariableService variableService;
 
     @Autowired
     private ApiService apiService;
@@ -304,10 +308,7 @@ public class DataProductVersionService {
     }
 
     private Template saveTemplate(
-        TemplateStandardDefinition templateStdDef, String serverUrl)
-    throws JsonProcessingException {
-
-        
+        TemplateStandardDefinition templateStdDef, String serverUrl) {
 
         Template template = new Template(); // why not a mapper?
         template.setId(templateStdDef.getId());
@@ -574,6 +575,22 @@ public class DataProductVersionService {
         }
 
         return isValid;
+    }
+
+    public String replaceVariables(
+            String dataProductVersionRawContent, String dataProductId, String versionNumber
+    ) {
+        try {
+            dataProductVersionRawContent = variableService.replaceVariables(
+                    dataProductVersionRawContent,
+                    dataProductId,
+                    versionNumber
+            );
+        } catch (Exception e) {
+            logger.warn("Error serializing Data Product Version before or after replacing variables. ", e);
+        }
+
+        return dataProductVersionRawContent;
     }
 
 }

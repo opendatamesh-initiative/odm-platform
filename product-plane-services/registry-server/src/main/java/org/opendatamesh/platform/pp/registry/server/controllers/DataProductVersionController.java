@@ -14,6 +14,7 @@ import org.opendatamesh.platform.core.dpds.parser.location.UriLocation;
 import org.opendatamesh.platform.pp.registry.api.controllers.AbstractDataProductVersionController;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.DataProductVersion;
+import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.variables.Variable;
 import org.opendatamesh.platform.pp.registry.server.database.mappers.DataProductVersionMapper;
 import org.opendatamesh.platform.pp.registry.server.services.DataProductService;
 import org.opendatamesh.platform.pp.registry.server.services.DataProductVersionService;
@@ -72,15 +73,15 @@ public class DataProductVersionController extends AbstractDataProductVersionCont
         DataProductVersion dataProductVersion = dataProductService.addDataProductVersion(id, descriptorLocation, serverUrl);
         DataProductVersionDPDS dataProductVersionDPDS = dataProductVersionMapper.toResource(dataProductVersion);
         
-        String serailizedContent = null;
+        String serializedContent = null;
         try {
-            serailizedContent = DPDSSerializer.DEFAULT_JSON_SERIALIZER.serialize(dataProductVersionDPDS, "canonical");
+            serializedContent = DPDSSerializer.DEFAULT_JSON_SERIALIZER.serialize(dataProductVersionDPDS, "canonical");
         } catch (JsonProcessingException e) {
            throw new InternalServerException(
             ODMApiCommonErrors.SC500_02_DESCRIPTOR_ERROR,
             "Impossible to serialize data product version raw content", e);
         }
-        return serailizedContent;
+        return serializedContent;
     }
 
    @Override
@@ -98,7 +99,7 @@ public class DataProductVersionController extends AbstractDataProductVersionCont
                 "Data product not found");
         }
 
-        List<String> versions = new ArrayList<>();
+        List<String> versions;
         List<DataProductVersion> dataProductVersions = dataProductVersionService.searchDataProductVersions(id);
         versions = dataProductVersions.stream().map(dpv -> dpv.getVersionNumber()).collect(Collectors.toList());
         return versions;
@@ -129,16 +130,19 @@ public class DataProductVersionController extends AbstractDataProductVersionCont
 
         DataProductVersionDPDS dataProductVersionDPDS = dataProductVersionMapper.toResource(dataProductVersion);
         if(format == null) format = "canonical";
-        DPDSSerializer serializer = new DPDSSerializer();
-        String serailizedContent = null;
+        //DPDSSerializer serializer = new DPDSSerializer();
+        String serializedContent;
         try {
-            serailizedContent = DPDSSerializer.DEFAULT_JSON_SERIALIZER.serialize(dataProductVersionDPDS, format);
+            serializedContent = DPDSSerializer.DEFAULT_JSON_SERIALIZER.serialize(dataProductVersionDPDS, format);
         } catch (JsonProcessingException e) {
            throw new InternalServerException(
             ODMApiCommonErrors.SC502_70_NOTIFICATION_SERVICE_ERROR,
             "Impossible to serialize data product version raw content", e);
         }
-        return serailizedContent;
+        serializedContent = dataProductVersionService.replaceVariables(
+                serializedContent, dataProductVersion.getDataProductId(), dataProductVersion.getVersionNumber()
+        );
+        return serializedContent;
     }
 
     @Override

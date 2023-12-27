@@ -4,6 +4,7 @@ package org.opendatamesh.platform.pp.registry.server.services;
 import java.util.List;
 import java.util.Optional;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.BadGatewayException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
@@ -46,6 +47,9 @@ public class DataProductService {
 
     @Autowired
     private DataProductRepository dataProductRepository;
+
+    @Autowired
+    VariableService variableService;
    
     @Autowired
     ObjectMapper objectMapper;
@@ -391,7 +395,6 @@ public class DataProductService {
                 "Data product fqn [" + dataProduct.getFullyQualifiedName() + "] does not match with the fqn [" + dataProductVersion.getInfo().getFullyQualifiedName() + "] contained in data product descriptor");
         }
         
-        
         return addDataProductVersion(dataProductVersion, false, serverUrl);
     }
 
@@ -444,6 +447,19 @@ public class DataProductService {
         }
 
         dataProductVersion = dataProductVersionService.createDataProductVersion(dataProductVersion, false, serverUrl);
+
+        // Search for variables and save them
+        try {
+            variableService.searchAndSaveVariablesFromDescriptor(
+                    objectMapper.writeValueAsString(dataProductVersion),
+                    dataProductVersion.getDataProductId(),
+                    dataProductVersion.getVersionNumber()
+            );
+        } catch (JsonProcessingException e) {
+            logger.warn("Error serializing Data Product Version as string before searching for variables. ", e);
+        } catch (Throwable t) {
+            throw t;
+        }
 
         return dataProductVersion;
     }

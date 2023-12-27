@@ -1,8 +1,6 @@
 package org.opendatamesh.platform.pp.registry.api.controllers;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -10,24 +8,18 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
-import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
-import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
-import org.opendatamesh.platform.core.dpds.model.core.EntityTypeDPDS;
 import org.opendatamesh.platform.core.dpds.model.interfaces.InterfaceComponentsDPDS;
 import org.opendatamesh.platform.core.dpds.model.internals.ApplicationComponentDPDS;
-import org.opendatamesh.platform.core.dpds.parser.DPDSSerializer;
-import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
-
+import org.opendatamesh.platform.pp.registry.api.resources.VariableResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping(
@@ -230,4 +222,113 @@ public abstract class AbstractDataProductVersionComponentsController
     }
 
     public abstract String getDataProductVersionInfrastructures(String id, String version, String format);
+
+
+    // ======================================================================================
+    // GET /{id}/versions/{version}/variables
+    // ======================================================================================
+
+    @RequestMapping(
+            value = "/{id}/versions/{version}/variables",
+            method = RequestMethod.GET
+    )
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(
+            summary = "Get all the variables of the specified data product version",
+            description = "Get all the existing variables of the specified data product version."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "All existing variables of the data product version",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = InterfaceComponentsDPDS.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "[Not Found](https://www.rfc-editor.org/rfc/rfc9110.html#name-404-not-found)"
+                            + "\r\n - Error Code 40402 - Data product version does not exists",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorRes.class)
+                    )
+            )
+    })
+    public List<VariableResource> getVariablesEndpoint(
+            @Parameter(description = "The identifier of the data product")
+            @PathVariable(value = "id") String id,
+
+            @Parameter(description = "The version number")
+            @PathVariable(value = "version") String version
+    )   {
+        return getVariables(id, version);
+    }
+
+    public abstract List<VariableResource> getVariables(String id, String version);
+
+
+    // ======================================================================================
+    // PUT /{id}/versions/{version}/variables/{varId}
+    // ======================================================================================
+
+    @PutMapping(
+            value = "/{id}/versions/{version}/variables/{varId}"
+    )
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(
+            summary = "Update a variable of a data product version",
+            description = "Update the value of a specific variable of the provided data product"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Variable updated",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = InterfaceComponentsDPDS.class)
+                            )}
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "[Not Found](https://www.rfc-editor.org/rfc/rfc9110.html#name-404-not-found)"
+                            + "\r\n - Error Code 4040x - Data Product Version not found"
+                            + "\r\n - Error Code 4040x - Variable of Data Product Version not found",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorRes.class)
+                            )}
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "[Internal Server Error](https://www.rfc-editor.org/rfc/rfc9110.html#name-500-internal-server-error)"
+                            + "\r\n - Error Code 50001 - Error in the backend database"
+                            + "\r\n - Error Code 50002 - Error in in the backend service",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorRes.class)
+                            )}
+            )
+    })
+    public VariableResource updateVariableEndpoint(
+            @Parameter(description = "The identifier of the data product")
+            @PathVariable(value = "id") String id,
+
+            @Parameter(description = "The version number")
+            @PathVariable(value = "version") String version,
+
+            @Parameter(description = "The identifier of the variable")
+            @PathVariable(value = "varId") Long variableId,
+
+            @Parameter(description="The new value of the variable")
+            @RequestParam(name = "value") String variableValue
+    ) {
+        return updateVariable(id, version, variableId, variableValue);
+    }
+
+    public abstract VariableResource updateVariable(String id, String version, Long variableId, String variableValue);
+
 }

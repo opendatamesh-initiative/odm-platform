@@ -31,7 +31,8 @@ public enum RegistryApiStandardErrors implements ODMApiStandardErrors {
     SC404_04_SCHEMA_NOT_FOUND ("40404", "Schema not found"),
     SC404_05_TEMPLATE_NOT_FOUND ("40405", "Template not found"),
     SC404_06_DOMAIN_NOT_FOUND ("40406", "Domain not found"),
-    SC404_06_OWNER_NOT_FOUND ("40407", "Owner not found"),
+    SC404_07_OWNER_NOT_FOUND ("40407", "Owner not found"),
+    SC404_08_VARIABLE_NOT_FOUND ("40408", "Variable not found"),
 
     // Unprocessable Entity Exceptions
     SC422_01_DESCRIPTOR_URI_NOT_VALID ("42201", "Descriptor URI is not valid"),

@@ -850,7 +850,7 @@ public class RegistryClient extends ODMClient {
         return mapResponseEntity(
                 getResponse,
                 HttpStatus.OK,
-                VariableResource.class
+                VariableResource[].class
         );
     }
 
@@ -860,7 +860,7 @@ public class RegistryClient extends ODMClient {
 
     public ResponseEntity updateVariable(
             String dataProductId, String versionNumber, Long varId, String variableValue
-    ) throws IOException {
+    ) throws JsonProcessingException {
 
         ResponseEntity putVariableResponse = rest.exchange(
                 apiUrl(

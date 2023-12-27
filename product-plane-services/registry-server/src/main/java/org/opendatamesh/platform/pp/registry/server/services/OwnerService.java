@@ -164,7 +164,7 @@ public class OwnerService {
         Owner oldOwner = searchOwner(owner.getId());
         if(oldOwner == null) {
             throw new NotFoundException(
-                    RegistryApiStandardErrors.SC404_06_OWNER_NOT_FOUND,
+                    RegistryApiStandardErrors.SC404_07_OWNER_NOT_FOUND,
                     "Owner [" + owner.getId() + "] doesn't exists");
         }
 

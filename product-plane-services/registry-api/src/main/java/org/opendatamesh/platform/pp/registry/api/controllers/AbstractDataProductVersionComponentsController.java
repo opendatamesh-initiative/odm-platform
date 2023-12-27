@@ -273,7 +273,7 @@ public abstract class AbstractDataProductVersionComponentsController
     // ======================================================================================
 
     @PutMapping(
-            consumes = { "application/vnd.odmp.v1+json", "application/vnd.odmp+json", "application/json"}
+            value = "/{id}/versions/{version}/variables/{varId}"
     )
     @ResponseStatus(HttpStatus.OK)
     @Operation(
@@ -313,7 +313,7 @@ public abstract class AbstractDataProductVersionComponentsController
                             )}
             )
     })
-    public VariableResource updateProductEndpoint(
+    public VariableResource updateVariableEndpoint(
             @Parameter(description = "The identifier of the data product")
             @PathVariable(value = "id") String id,
 
@@ -321,7 +321,7 @@ public abstract class AbstractDataProductVersionComponentsController
             @PathVariable(value = "version") String version,
 
             @Parameter(description = "The identifier of the variable")
-            @PathVariable(value = "variableId") Long variableId,
+            @PathVariable(value = "varId") Long variableId,
 
             @Parameter(description="The new value of the variable")
             @RequestParam(name = "value") String variableValue

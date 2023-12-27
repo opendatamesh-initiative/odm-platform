@@ -200,7 +200,7 @@ public class OwnerIT extends ODMRegistryIT {
         verifyResponseError(
                 errorResponse,
                 HttpStatus.NOT_FOUND,
-                RegistryApiStandardErrors.SC404_06_OWNER_NOT_FOUND
+                RegistryApiStandardErrors.SC404_07_OWNER_NOT_FOUND
         );
 
     }
@@ -213,7 +213,7 @@ public class OwnerIT extends ODMRegistryIT {
         verifyResponseError(
                 errorResponse,
                 HttpStatus.NOT_FOUND,
-                RegistryApiStandardErrors.SC404_06_OWNER_NOT_FOUND
+                RegistryApiStandardErrors.SC404_07_OWNER_NOT_FOUND
         );
     }
 
@@ -229,7 +229,7 @@ public class OwnerIT extends ODMRegistryIT {
         verifyResponseError(
                 errorResponse,
                 HttpStatus.NOT_FOUND,
-                RegistryApiStandardErrors.SC404_06_OWNER_NOT_FOUND
+                RegistryApiStandardErrors.SC404_07_OWNER_NOT_FOUND
         );
     }
 

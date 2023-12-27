@@ -11,7 +11,7 @@ public class VariableResource {
 
     @JsonProperty("id")
     @Schema(description = "Auto generated Variable ID")
-    private String id;
+    private Long id;
 
     @JsonProperty("name")
     @Schema(description = "Variable name", required = true)

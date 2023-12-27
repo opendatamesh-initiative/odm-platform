@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.odm.cli.utils.FileReaders;
 import org.opendatamesh.odm.cli.utils.InputManager;
+import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.pp.blueprint.api.clients.BlueprintClient;
 import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintResource;
 import org.opendatamesh.platform.pp.blueprint.api.resources.ConfigResource;
@@ -100,11 +101,13 @@ public class BlueprintCommands implements Runnable {
         blueprintClient = setUpBlueprintClient();
 
         try {
-            ResponseEntity<BlueprintResource> blueprintResponseEntity = blueprintClient.createBlueprint(blueprintResource, check);
+            ResponseEntity<Object> blueprintResponseEntity = blueprintClient.createBlueprint(blueprintResource, check);
             if (blueprintResponseEntity.getStatusCode().equals(HttpStatus.CREATED))
                 System.out.println("Blueprint correctly created: \n" + blueprintResponseEntity.getBody().toString());
-            else
-                System.out.println("Got an unexpected response. Error code: " + blueprintResponseEntity.getStatusCode());
+            else {
+                ErrorRes error = (ErrorRes)blueprintResponseEntity.getBody();
+                System.out.println("Got an unexpected response. Error code: " + error.getCode() + "\nError message: " + error.getMessage());
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (ResourceAccessException e){

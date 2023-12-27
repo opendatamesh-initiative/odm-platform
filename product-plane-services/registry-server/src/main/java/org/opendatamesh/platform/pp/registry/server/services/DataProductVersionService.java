@@ -556,6 +556,60 @@ public class DataProductVersionService {
 
     }
 
+
+    // ======================================================================================
+    // DPV VARIABLES - GET, UPDATE & Replacement/Serialization
+    // ======================================================================================
+
+    public List<Variable> readDataProductVersionVariables(String dataProductId, String versionNumber) {
+
+        if(!dataProductVersionExists(dataProductId, versionNumber)) {
+            throw new NotFoundException(
+                    RegistryApiStandardErrors.SC404_02_VERSION_NOT_FOUND,
+                    "Data product Version [" + dataProductId + " - " + versionNumber + "] does not exist");
+        }
+
+        return variableService.searchVariables(dataProductId, versionNumber);
+
+    }
+
+    public Variable updateDataProductVersionVariable(
+            String dataProductId, String versionNumber, Long variableId, String variableValue
+    ) {
+        if(!dataProductVersionExists(dataProductId, versionNumber)) {
+            throw new NotFoundException(
+                    RegistryApiStandardErrors.SC404_02_VERSION_NOT_FOUND,
+                    "Data product Version [" + dataProductId + " - " + versionNumber + "] does not exist");
+        }
+
+        if(!variableService.variableExists(variableId)) {
+            throw new NotFoundException(
+                    RegistryApiStandardErrors.SC404_08_VARIABLE_NOT_FOUND,
+                    "Variable [" + variableId + "] of Data Product Version ["
+                            + dataProductId + " - " + versionNumber + "] does not exist"
+            );
+        }
+
+        return variableService.updateVariable(variableId, variableValue);
+    }
+
+    public String replaceVariables(
+            String dataProductVersionRawContent, String dataProductId, String versionNumber
+    ) {
+        try {
+            dataProductVersionRawContent = variableService.replaceVariables(
+                    dataProductVersionRawContent,
+                    dataProductId,
+                    versionNumber
+            );
+        } catch (Exception e) {
+            logger.warn("Error serializing Data Product Version before or after replacing variables. ", e);
+        }
+
+        return dataProductVersionRawContent;
+    }
+
+
     // ======================================================================================
     // OTHER
     // ======================================================================================
@@ -575,22 +629,6 @@ public class DataProductVersionService {
         }
 
         return isValid;
-    }
-
-    public String replaceVariables(
-            String dataProductVersionRawContent, String dataProductId, String versionNumber
-    ) {
-        try {
-            dataProductVersionRawContent = variableService.replaceVariables(
-                    dataProductVersionRawContent,
-                    dataProductId,
-                    versionNumber
-            );
-        } catch (Exception e) {
-            logger.warn("Error serializing Data Product Version before or after replacing variables. ", e);
-        }
-
-        return dataProductVersionRawContent;
     }
 
 }

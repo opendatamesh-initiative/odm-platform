@@ -135,7 +135,7 @@ public class OwnerService {
         Optional<Owner> ownerSearchResults = ownerRepository.findById(id);
         if(ownerSearchResults.isEmpty()) {
             throw new NotFoundException(
-                    RegistryApiStandardErrors.SC404_06_OWNER_NOT_FOUND,
+                    RegistryApiStandardErrors.SC404_07_OWNER_NOT_FOUND,
                     "Owner with id [" + id + "] doesn't exists");
         }
 

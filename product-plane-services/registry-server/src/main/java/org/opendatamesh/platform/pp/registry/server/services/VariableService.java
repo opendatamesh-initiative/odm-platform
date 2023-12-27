@@ -62,13 +62,9 @@ public class VariableService {
     public Variable updateVariable(Long variableId, String variableValue) {
         try {
             Variable variable = loadVariable(variableId);
-            if(variable != null) {
-                variable.setVariableValue(variableValue);
-                variable = saveVariable(variable);
-                return variable;
-            } else {
-                return null; // THROW AN ERROR OR SOMETHING BETTER THAN THIS
-            }
+            variable.setVariableValue(variableValue);
+            variable = saveVariable(variable);
+            return variable;
         } catch(Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
@@ -76,6 +72,10 @@ public class VariableService {
                     t
             );
         }
+    }
+
+    public Boolean variableExists(Long id) {
+        return loadVariable(id) != null;
     }
 
     private Variable loadVariable(Long id) {

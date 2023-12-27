@@ -23,10 +23,12 @@ import org.opendatamesh.platform.core.dpds.model.internals.InfrastructuralCompon
 import org.opendatamesh.platform.core.dpds.parser.DPDSSerializer;
 import org.opendatamesh.platform.pp.registry.api.controllers.AbstractDataProductVersionComponentsController;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
+import org.opendatamesh.platform.pp.registry.api.resources.VariableResource;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.DataProductVersion;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.internals.ApplicationComponent;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.internals.InfrastructuralComponent;
 import org.opendatamesh.platform.pp.registry.server.database.mappers.DataProductVersionMapper;
+import org.opendatamesh.platform.pp.registry.server.database.mappers.VariableMapper;
 import org.opendatamesh.platform.pp.registry.server.services.DataProductService;
 import org.opendatamesh.platform.pp.registry.server.services.DataProductVersionService;
 import org.slf4j.Logger;
@@ -50,6 +52,9 @@ public class DataProductVersionComponentsController extends AbstractDataProductV
 
     @Autowired
     private DataProductVersionMapper dataProductVersionMapper;
+
+    @Autowired
+    private VariableMapper variableMapper;
 
     @Autowired
     ObjectMapper objectMapper;
@@ -187,4 +192,19 @@ public class DataProductVersionComponentsController extends AbstractDataProductV
         }
         return result;
     }
+
+    @Override
+    public List<VariableResource> getVariables(String id, String version) {
+        return variableMapper.toResources(
+                dataProductVersionService.readDataProductVersionVariables(id, version)
+        );
+    }
+
+    @Override
+    public VariableResource updateVariable(String id, String version, Long variableId, String variableValue) {
+        return variableMapper.toResource(
+                dataProductVersionService.updateDataProductVersionVariable(id, version, variableId, variableValue)
+        );
+    }
+
 }

@@ -60,7 +60,6 @@ public class DPDSSerializer {
             result = serializeToCanonicalForm(descriptorResource);
         } else {
             result = writeValueAsString(descriptorResource);
-
         }
 
         return result;

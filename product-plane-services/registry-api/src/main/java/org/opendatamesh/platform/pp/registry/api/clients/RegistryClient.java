@@ -827,6 +827,64 @@ public class RegistryClient extends ODMClient {
     }
 
 
+    // ======================================================================================
+    // VARIABLE
+    // ======================================================================================
+
+
+    // ----------------------------------------
+    // READ
+    // ----------------------------------------
+
+    public ResponseEntity readDataProductVersionVariables(
+            String dataProductId, String versionNumber
+    ) throws JsonProcessingException {
+
+        ResponseEntity getResponse = rest.getForEntity(
+                apiUrl(RegistryAPIRoutes.DATA_PRODUCTS, "/{id}/versions/{version}/variables"),
+                Object.class,
+                dataProductId,
+                versionNumber
+        );
+
+        return mapResponseEntity(
+                getResponse,
+                HttpStatus.OK,
+                VariableResource[].class
+        );
+    }
+
+    // ----------------------------------------
+    // UPDATE
+    // ----------------------------------------
+
+    public ResponseEntity updateVariable(
+            String dataProductId, String versionNumber, Long varId, String variableValue
+    ) throws JsonProcessingException {
+
+        ResponseEntity putVariableResponse = rest.exchange(
+                apiUrl(
+                        RegistryAPIRoutes.DATA_PRODUCTS,
+                        "/{id}/versions/{version}/variables/{varId}?value={value}"
+                ),
+                HttpMethod.PUT,
+                null,
+                Object.class,
+                dataProductId,
+                versionNumber,
+                varId,
+                variableValue
+        );
+
+        return mapResponseEntity(
+                putVariableResponse,
+                HttpStatus.OK,
+                VariableResource.class
+        );
+
+    }
+
+
     // ----------------------------------------
     // Utils
     // ----------------------------------------

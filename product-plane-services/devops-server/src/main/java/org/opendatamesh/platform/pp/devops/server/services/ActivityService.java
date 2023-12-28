@@ -1,6 +1,7 @@
 package org.opendatamesh.platform.pp.devops.server.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.opendatamesh.platform.core.commons.servers.exceptions.*;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
@@ -19,9 +20,11 @@ import org.opendatamesh.platform.pp.devops.server.resources.context.ActivityCont
 import org.opendatamesh.platform.pp.devops.server.resources.context.ActivityResultStatus;
 import org.opendatamesh.platform.pp.devops.server.resources.context.Context;
 import org.opendatamesh.platform.pp.devops.server.utils.ObjectNodeUtils;
+import org.opendatamesh.platform.pp.registry.api.resources.VariableResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -305,7 +308,67 @@ public class ActivityService {
             }
             parentActivity.setResults(result);
             saveActivity(parentActivity);
+
+            updateDataProductVersionVariables(parentActivity);
+
         }
+    }
+
+    private void updateDataProductVersionVariables(Activity activity) {
+
+        List<VariableResource> dataProductVersionVariables = null;
+
+        try {
+            ResponseEntity<VariableResource[]> variablesResponse = clients
+                    .getRegistryClient()
+                    .readDataProductVersionVariables(
+                            activity.getDataProductId(),
+                            activity.getDataProductVersion()
+                    );
+            if(variablesResponse.getStatusCode().is2xxSuccessful()) {
+                dataProductVersionVariables = List.of(variablesResponse.getBody());
+            }
+        } catch (JsonProcessingException e) {
+            logger.warn("Error reading variables from registry; Variables replacement skipped. ", e);
+        }
+
+        if (dataProductVersionVariables != null) {
+            for(VariableResource var : dataProductVersionVariables) {
+                String[] varTree = var.getVariableName().split("\\.");
+                if(varTree[0].equalsIgnoreCase(activity.getStage()) && varTree[1].equals("results")) {
+                    JsonNode contextResults = null;
+                    try {
+                        contextResults = ObjectMapperFactory.JSON_MAPPER.readTree(activity.getResults());
+                    } catch (JsonProcessingException e) {
+                        logger.warn("Impossible to deserialize activity results as JSON while replacing variables. "
+                                + "Skipped. ", e);
+                    }
+                    Boolean variableValueFound = true;
+                    if(contextResults != null) {
+                        for(int i=2; i < varTree.length; i++) {
+                            contextResults = contextResults.get(varTree[i]);
+                            if(contextResults.isNull()) {
+                                variableValueFound = false;
+                                break;
+                            }
+                        }
+                    }
+                    if(variableValueFound && !contextResults.isNull()) {
+                        try {
+                            clients.getRegistryClient().updateVariable(
+                                    activity.getDataProductId(),
+                                    activity.getDataProductVersion(),
+                                    var.getId(),
+                                    contextResults.asText().replaceAll("^\"|\"$", "")
+                            );
+                        } catch (Exception e) {
+                            logger.warn("Impossible to update variable [" + var.getVariableName() + "]. Skipped. ", e);
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
     // ======================================================================================

@@ -272,14 +272,16 @@ public class ActivityService {
         return startedTask;
     }
 
-    public Task stopTaskAndUpdateParentActivity(Long taskId, TaskResultResource taskResultResource) {
+    public Task stopTaskAndUpdateParentActivity(
+            Long taskId, TaskResultResource taskResultResource, Boolean updateVariables
+    ) {
         Task task = taskService.stopTask(taskId, taskResultResource);
-        updateActivityPartialResults(task);
+        updateActivityPartialResults(task, updateVariables);
         startNextPlannedTaskAndUpdateParentActivity(task.getActivityId());
         return task;
     }
 
-    public void updateActivityPartialResults(Task task) {
+    public void updateActivityPartialResults(Task task, Boolean updateVariables) {
         if(
                 task.getStatus().equals(ActivityTaskStatus.PROCESSED)
                         && task.getResults() != null
@@ -309,7 +311,8 @@ public class ActivityService {
             parentActivity.setResults(result);
             saveActivity(parentActivity);
 
-            updateDataProductVersionVariables(parentActivity);
+            if(updateVariables)
+                updateDataProductVersionVariables(parentActivity);
 
         }
     }

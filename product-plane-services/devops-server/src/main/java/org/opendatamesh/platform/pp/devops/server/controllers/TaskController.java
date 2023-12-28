@@ -59,8 +59,8 @@ public class TaskController extends AbstractTaskController {
 	}
 
     @Override
-	public TaskStatusResource stopTask(Long id, TaskResultResource taskResultResource) {
-		Task task = activityService.stopTaskAndUpdateParentActivity(id, taskResultResource);
+	public TaskStatusResource stopTask(Long id, TaskResultResource taskResultResource, Boolean updateVariables) {
+		Task task = activityService.stopTaskAndUpdateParentActivity(id, taskResultResource, updateVariables);
         TaskStatusResource statusRes = new TaskStatusResource();
 		statusRes.setStatus(task.getStatus());
 		return statusRes;

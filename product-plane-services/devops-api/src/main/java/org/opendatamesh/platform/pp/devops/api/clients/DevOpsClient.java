@@ -225,7 +225,7 @@ public class DevOpsClient extends ODMClient {
 
     public <T> ResponseEntity<T> patchTaskStop(Long taskId, Class<T> responseType) {
         return patchForEntity(
-                apiUrl(DevOpsAPIRoutes.TASKS, "/{id}/status?action=STOP"),
+                apiUrl(DevOpsAPIRoutes.TASKS, "/{id}/status?action=STOP&updateVariables=false"),
                 HttpEntity.EMPTY,
                 responseType,
                 taskId);

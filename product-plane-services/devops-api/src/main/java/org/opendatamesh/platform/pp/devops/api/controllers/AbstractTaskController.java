@@ -147,16 +147,22 @@ public abstract class AbstractTaskController {
             @Parameter(description = "Identifier of the task")
             @Valid @PathVariable(value = "id") Long id,
             @Parameter(description="Add `action` parameter to the request to specify which action to perform to change the task's status. `STOP` is the only possible action executable on tasks")
-            @RequestParam(required = true, name = "action") String action)
+            @RequestParam(required = true, name = "action") String action,
+            @Parameter(description="Add `updateVariables=false` to the request to specify to disable variable extraction from results."
+                    + " `true` is the default value; Set the parameter only if you want to disable the feature.")
+            @RequestParam(required = false, name = "updateVariables") Boolean updateVariables
+        )
     {
+        if(updateVariables == null)
+            updateVariables = true;
         if("STOP".equalsIgnoreCase(action) == false) {
             throw new BadRequestException(
                 DevOpsApiStandardErrors.SC400_65_TASK_STATUS_ACTION_IS_INVALID, 
                 "Action [" + action + "] cannot be performend on task to change its status");
         }
-        return stopTask(id, taskResult);
+        return stopTask(id, taskResult, updateVariables);
     }
-    public abstract TaskStatusResource stopTask(Long id, TaskResultResource taskResultResource);
+    public abstract TaskStatusResource stopTask(Long id, TaskResultResource taskResultResource, Boolean updateVariables);
     
     // ===============================================================================
     // GET /tasks/{id}/status  

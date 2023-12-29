@@ -67,4 +67,13 @@ git:
   templates:
     path: "templates"
   auth:
+    oauth2:
+      client:
+        provider:
+          token-uri: "null"
+        registration:
+          client-id: "null"
+          client-secret: "null"
+          scope: "null"
+          authorization-grant-type: "null"
     pat: "null"

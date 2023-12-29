@@ -1,10 +1,10 @@
 package org.opendatamesh.platform.pp.blueprint.server.clients.azure;
 
 import org.opendatamesh.platform.core.commons.clients.ODMClient;
+import org.opendatamesh.platform.core.commons.oauth.OAuthTokenManager;
 import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintApiStandardErrors;
-import org.opendatamesh.platform.pp.blueprint.server.components.OAuthTokenManager;
 import org.opendatamesh.platform.pp.blueprint.server.resources.azure.AzureDevOpsRepoResource;
 import org.opendatamesh.platform.pp.blueprint.server.resources.azure.TeamProjectReferenceResource;
 import org.springframework.http.HttpEntity;

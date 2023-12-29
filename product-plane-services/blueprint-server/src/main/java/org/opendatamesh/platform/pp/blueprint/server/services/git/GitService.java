@@ -4,12 +4,11 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.TransportConfigCallback;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.transport.*;
+import org.opendatamesh.platform.core.commons.oauth.OAuthTokenManager;
 import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
 import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintApiStandardErrors;
-import org.opendatamesh.platform.pp.blueprint.server.components.OAuthTokenManager;
 import org.opendatamesh.platform.pp.blueprint.server.resources.internals.GitCheckResource;
 import org.opendatamesh.platform.pp.blueprint.server.utils.CustomFileUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.io.File;
@@ -20,7 +19,6 @@ public abstract class GitService {
 
     //TODO : timeouts on operations?
 
-    //@Autowired // Works ONLY with AzureDevOps - set it to autowire when GitHub will support OAuth2
     private OAuthTokenManager oAuthTokenManager;
 
     @Value("${git.templates.path}")
@@ -35,14 +33,8 @@ public abstract class GitService {
 
     private String paramsFileJson = "params.json";
 
-    @Autowired(required = false)
-    private void setOAuthTokenManager(OAuthTokenManager oAuthTokenManager) {
-        // Remove this method when GitHub will support OAuth2
-        if(gitProvider.equals("AZURE_DEVOPS")) {
-            this.oAuthTokenManager = oAuthTokenManager;
-        } else {
-            this.oAuthTokenManager = null;
-        }
+    protected GitService(OAuthTokenManager oAuthTokenManager) {
+        this.oAuthTokenManager = oAuthTokenManager;
     }
 
     // ======================================================================================

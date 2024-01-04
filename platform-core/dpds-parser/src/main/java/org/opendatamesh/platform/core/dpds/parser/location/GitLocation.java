@@ -1,6 +1,5 @@
 package org.opendatamesh.platform.core.dpds.parser.location;
 
-import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Ref;
@@ -56,13 +55,6 @@ public class GitLocation extends UriLocation {
     public void open() throws FetchException {
         if(opened == true) return;
         try {
-            /*
-            File sshDir = new File(FS.DETECTED.userHome(), ".ssh");
-		    SshdSessionFactory sshdSessionFactory = new SshdSessionFactoryBuilder()
-				.setPreferredAuthentications("publickey,keyboard-interactive,password")
-				.setHomeDirectory(FS.DETECTED.userHome())
-				.setSshDirectory(sshDir).build(new JGitKeyCache());
-		    SshSessionFactory.setInstance(sshdSessionFactory);*/
 
             String repoName = repoUri.substring(repoUri.lastIndexOf('/') + 1);
             File localRepoDirectory = File.createTempFile(repoName, "");
@@ -70,17 +62,6 @@ public class GitLocation extends UriLocation {
                 throw new IOException("Could not delete temporary file " + localRepoDirectory);
             }
 
-            /*CloneCommand clone = Git.cloneRepository()
-                .setURI(repoUri.toString())
-                .setDirectory(localRepoDirectory);
-            
-            if(branch != null) {
-                clone.setCloneAllBranches(true);
-                clone.setBranchesToClone(Arrays.asList("refs/heads/" + branch));
-                clone.setBranch("refs/heads/" + branch);
-            }
-           
-            Git cloneResult = clone.call();*/
             Git cloneResult;
             if(branch != null) {
                 cloneResult = gitService.cloneRepo(
@@ -119,14 +100,7 @@ public class GitLocation extends UriLocation {
     @Override
     public void close() throws FetchException {
         URI uri = getRootDocumentBaseUri();
-        File localRepoDirectory = new File(uri);
-        try {
-            FileUtils.deleteDirectory(localRepoDirectory);
-        } catch (IOException e) {
-            throw new FetchException("Could not delete temporary folder", uri);
-        }
-        
-        
+        gitService.deleteLocalRepository(uri.getPath());
         opened = false;
     }
     

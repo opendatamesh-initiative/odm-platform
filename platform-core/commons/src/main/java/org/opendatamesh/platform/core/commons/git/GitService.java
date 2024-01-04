@@ -1,5 +1,6 @@
 package org.opendatamesh.platform.core.commons.git;
 
+import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.TransportConfigCallback;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -36,23 +37,26 @@ public abstract class GitService {
     // ======================================================================================
     // CLONE Repository
     // ======================================================================================
+
     public Git cloneRepo(String sourceUrl, String destinationPath) {
+        return cloneRepo(sourceUrl, destinationPath, false, null, null);
+    }
+
+    public Git cloneRepo(
+            String sourceUrl, String destinationPath, Boolean cloneAllBranches, List branchList, String branch
+    ) {
         try {
+            CloneCommand cloneCommand = configureCloneCommand(
+                    sourceUrl, destinationPath, cloneAllBranches, branchList, branch
+            );
             if(isHttpsRemote(sourceUrl)) {
-                return Git.cloneRepository()
-                        .setURI(sourceUrl)
-                        .setDirectory(new File(destinationPath))
-                        .setCredentialsProvider(
+                cloneCommand.setCredentialsProvider(
                                 new UsernamePasswordCredentialsProvider("", oAuthTokenManager.getToken())
-                        )
-                        .call();
+                );
             } else {
-                return Git.cloneRepository()
-                        .setURI(sourceUrl)
-                        .setDirectory(new File(destinationPath))
-                        .setTransportConfigCallback(getSshTransportConfigCallback())
-                        .call();
+                cloneCommand.setTransportConfigCallback(getSshTransportConfigCallback());
             }
+            return cloneCommand.call();
         } catch (Throwable t) {
             throw new InternalServerException(
                     GitStandardErrors.SC500_01_GIT_ERROR,
@@ -62,38 +66,20 @@ public abstract class GitService {
         }
     }
 
-    public Git cloneRepo(
+    private CloneCommand configureCloneCommand(
             String sourceUrl, String destinationPath, Boolean cloneAllBranches, List branchList, String branch
     ) {
-        try {
-            if(isHttpsRemote(sourceUrl)) {
-                return Git.cloneRepository()
-                        .setURI(sourceUrl)
-                        .setDirectory(new File(destinationPath))
-                        .setCloneAllBranches(cloneAllBranches)
-                        .setBranchesToClone(branchList)
-                        .setBranch(branch)
-                        .setCredentialsProvider(
-                                new UsernamePasswordCredentialsProvider("", oAuthTokenManager.getToken())
-                        )
-                        .call();
-            } else {
-                return Git.cloneRepository()
-                        .setURI(sourceUrl)
-                        .setDirectory(new File(destinationPath))
-                        .setCloneAllBranches(cloneAllBranches)
-                        .setBranchesToClone(branchList)
-                        .setBranch(branch)
-                        .setTransportConfigCallback(getSshTransportConfigCallback())
-                        .call();
+        CloneCommand cloneCommand = Git.cloneRepository()
+                .setURI(sourceUrl)
+                .setDirectory(new File(destinationPath));
+        if(cloneAllBranches) {
+            cloneCommand.setCloneAllBranches(cloneAllBranches);
+            if(branchList != null && branch != null) {
+                cloneCommand.setBranchesToClone(branchList);
+                cloneCommand.setBranch(branch);
             }
-        } catch (Throwable t) {
-            throw new InternalServerException(
-                    GitStandardErrors.SC500_01_GIT_ERROR,
-                    "Error cloning repository - " + t.getMessage(),
-                    t
-            );
         }
+        return cloneCommand;
     }
 
 

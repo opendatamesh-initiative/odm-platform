@@ -1,6 +1,6 @@
-package org.opendatamesh.platform.pp.blueprint.server.services.git;
+package org.opendatamesh.platform.core.commons.git.providers.github;
 
-import org.opendatamesh.platform.pp.blueprint.server.clients.github.GitHubClient;
+import org.opendatamesh.platform.core.commons.git.GitService;
 
 public class GitHubService extends GitService {
 

@@ -1,15 +1,14 @@
 package org.opendatamesh.platform.pp.blueprint.server.configs;
 
+import org.opendatamesh.platform.core.commons.git.GitConfigurer;
+import org.opendatamesh.platform.core.commons.git.GitService;
 import org.opendatamesh.platform.core.commons.oauth.OAuthTokenManager;
-import org.opendatamesh.platform.pp.blueprint.server.services.git.AzureService;
-import org.opendatamesh.platform.pp.blueprint.server.services.git.GitHubService;
-import org.opendatamesh.platform.pp.blueprint.server.services.git.GitService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class GitServiceFactoryConfig {
+public class GitServiceConfig {
 
     @Value("${git.provider}")
     private String serviceType;
@@ -39,25 +38,23 @@ public class GitServiceFactoryConfig {
 
     @Bean
     public GitService gitService() {
-        switch (serviceType) {
-            case "AZURE_DEVOPS":
-                OAuthTokenManager oAuthTokenManager = new OAuthTokenManager(
-                        "azure-devops",
-                        "odm-azure-devops-blueprint-principal",
-                        tokenUri,
-                        clientId,
-                        clientSecret,
-                        scope,
-                        authorizationGrantType
-                );
-                return new AzureService(oAuthTokenManager);
-            case "GITHUB":
-                return new GitHubService(personalAccessToken);
-            default:
-                throw new RuntimeException(
-                        "Impossibile to initialize GitService - unknown Git Provider [" + serviceType + "]"
-                );
+        OAuthTokenManager oAuthTokenManager = null;
+        if(serviceType.equals("AZURE_DEVOPS")) {
+            oAuthTokenManager = new OAuthTokenManager(
+                    "azure-devops",
+                    "odm-azure-devops-blueprint-principal",
+                    tokenUri,
+                    clientId,
+                    clientSecret,
+                    scope,
+                    authorizationGrantType
+            );
         }
+        return GitConfigurer.configureGitClient(
+                serviceType,
+                oAuthTokenManager,
+                personalAccessToken
+        );
     }
 
 }

@@ -9,14 +9,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-
 import org.opendatamesh.platform.core.dpds.model.internals.LifecycleInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.internals.LifecycleTaskInfoDPDS;
+import org.opendatamesh.platform.core.dpds.serde.LifecycleInfoDeserializer;
 import org.opendatamesh.platform.core.dpds.serde.LifecycleTaskInfoDeserializer;
 
-import org.opendatamesh.platform.core.dpds.serde.LifecycleInfoDeserializer;
-
-public class ObjectMapperFactory {
+public class ObjectMapperFactory  {
 
     public static ObjectMapper JSON_MAPPER;
     public static ObjectMapper YAML_MAPPER;
@@ -69,4 +67,5 @@ public class ObjectMapperFactory {
                 .enable(StreamReadFeature.STRICT_DUPLICATE_DETECTION)
                 .build();
     }
+
 }

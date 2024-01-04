@@ -1,16 +1,17 @@
 package org.opendatamesh.platform.pp.blueprint.server.services;
 
 import org.eclipse.jgit.api.Git;
+import org.opendatamesh.platform.core.commons.git.GitService;
 import org.opendatamesh.platform.core.commons.servers.exceptions.*;
 import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintApiStandardErrors;
 import org.opendatamesh.platform.pp.blueprint.api.resources.ConfigResource;
 import org.opendatamesh.platform.pp.blueprint.server.database.entities.Blueprint;
 import org.opendatamesh.platform.pp.blueprint.server.database.repositories.BlueprintRepository;
 import org.opendatamesh.platform.pp.blueprint.server.resources.internals.GitCheckResource;
-import org.opendatamesh.platform.pp.blueprint.server.services.git.GitService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -28,7 +29,20 @@ public class BlueprintService {
     TemplatingService templatingService;
 
     @Autowired
+    GitCheckerService gitCheckerService;
+
+    @Autowired
     GitService gitService;
+
+    @Value("${git.templates.path}")
+    private String templatesPath;
+
+    @Value("${git.provider}")
+    private String gitProvider; // Remove it when GitHub will support OAuth2
+
+    private String targetPathSuffix = "/projects";
+
+    private String sourcePathSuffix = "/blueprints";
 
     private static final Logger logger = LoggerFactory.getLogger(BlueprintService.class);
 
@@ -73,9 +87,10 @@ public class BlueprintService {
         }
 
         if (checkBlueprint) {
-            GitCheckResource gitCheckResource = gitService.checkGitRepository(
+            GitCheckResource gitCheckResource = gitCheckerService.checkGitRepository(
                     blueprint.getRepositoryUrl(),
-                    blueprint.getBlueprintDirectory()
+                    blueprint.getBlueprintDirectory(),
+                    templatesPath
             );
 
             if (!gitCheckResource.getBlueprintDirectoryCheck()) {
@@ -302,7 +317,10 @@ public class BlueprintService {
 
             // Clone the BLUEPRINT repository
             logger.info("Cloning repository [" + blueprint.getRepositoryUrl() + "] ...");
-            Git gitRepo = gitService.cloneRepo(blueprint.getRepositoryUrl());
+            Git gitRepo = gitService.cloneRepo(
+                    blueprint.getRepositoryUrl(),
+                    templatesPath + sourcePathSuffix
+            );
             logger.info("Repository [" + blueprint.getRepositoryUrl() + "] correctly cloned");
 
             // Clean the repository to consider only the template
@@ -311,6 +329,7 @@ public class BlueprintService {
                     gitRepo,
                     blueprint.getBlueprintDirectory(),
                     configResource.getCreateRepo(),
+                    templatesPath + targetPathSuffix,
                     blueprint.getRepoBaseUrl() + configResource.getTargetRepo()
             );
             logger.info("Target repository initialized");
@@ -342,11 +361,11 @@ public class BlueprintService {
             logger.info("Repository correctly pushed");
 
             // Delete local repository
-            gitService.deleteLocalRepository();
+            gitService.deleteLocalRepository(templatesPath);
 
         } catch (Throwable t) {
             // Delete local repository
-            gitService.deleteLocalRepository();
+            gitService.deleteLocalRepository(templatesPath);
             throw t;
         }
     }

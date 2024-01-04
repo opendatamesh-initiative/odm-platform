@@ -2,9 +2,9 @@ package org.opendatamesh.platform.core.commons.git.providers.azuredevops;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.platform.core.commons.clients.ODMClient;
-import org.opendatamesh.platform.core.commons.git.GitStandardErrors;
-import org.opendatamesh.platform.core.commons.git.resources.azure.AzureDevOpsRepoResource;
-import org.opendatamesh.platform.core.commons.git.resources.azure.TeamProjectReferenceResource;
+import org.opendatamesh.platform.core.commons.git.resources.errors.GitStandardErrors;
+import org.opendatamesh.platform.core.commons.git.resources.azuredevops.AzureDevOpsRepoResource;
+import org.opendatamesh.platform.core.commons.git.resources.azuredevops.TeamProjectReferenceResource;
 import org.opendatamesh.platform.core.commons.oauth.OAuthTokenManager;
 import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
 import org.springframework.http.HttpEntity;

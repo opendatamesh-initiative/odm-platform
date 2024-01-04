@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.core.commons.git;
+package org.opendatamesh.platform.core.commons.git.resources.errors;
 
 import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiStandardErrors;
 

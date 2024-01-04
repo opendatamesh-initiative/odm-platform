@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.core.commons.git.resources.azure;
+package org.opendatamesh.platform.core.commons.git.resources.azuredevops;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

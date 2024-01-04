@@ -5,6 +5,7 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.TransportConfigCallback;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.transport.*;
+import org.opendatamesh.platform.core.commons.git.resources.errors.GitStandardErrors;
 import org.opendatamesh.platform.core.commons.oauth.OAuthTokenManager;
 import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
 import org.opendatamesh.platform.core.commons.utils.CustomFileUtils;

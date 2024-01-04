@@ -2,7 +2,7 @@ package org.opendatamesh.platform.core.commons.git.providers.github;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.platform.core.commons.clients.ODMClient;
-import org.opendatamesh.platform.core.commons.git.GitStandardErrors;
+import org.opendatamesh.platform.core.commons.git.resources.errors.GitStandardErrors;
 import org.opendatamesh.platform.core.commons.git.resources.github.GitRepoResource;
 import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
 import org.springframework.http.*;

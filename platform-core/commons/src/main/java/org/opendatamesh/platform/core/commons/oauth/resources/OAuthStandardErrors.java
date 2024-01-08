@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.core.commons.oauth;
+package org.opendatamesh.platform.core.commons.oauth.resources;
 
 import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiStandardErrors;
 

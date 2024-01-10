@@ -1,15 +1,10 @@
 package org.opendatamesh.platform.core.dpds.parser.location;
 
-import org.apache.commons.io.FileUtils;
-import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Ref;
-import org.eclipse.jgit.transport.SshSessionFactory;
-import org.eclipse.jgit.transport.sshd.JGitKeyCache;
-import org.eclipse.jgit.transport.sshd.SshdSessionFactory;
-import org.eclipse.jgit.transport.sshd.SshdSessionFactoryBuilder;
-import org.eclipse.jgit.util.FS;
+import org.opendatamesh.platform.core.commons.git.GitConfigurer;
+import org.opendatamesh.platform.core.commons.git.GitService;
 import org.opendatamesh.platform.core.dpds.exceptions.FetchException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +25,8 @@ public class GitLocation extends UriLocation {
 
     String tag;
 
+    GitService gitService;
+
     private static final Logger logger = LoggerFactory.getLogger(GitLocation.class);
     
 
@@ -47,18 +44,17 @@ public class GitLocation extends UriLocation {
         this.branch = branch;
         this.tag = tag;
         this.opened = false;
+        this.gitService = GitConfigurer.configureGitClient(
+                "GENERIC",
+                null,
+                null
+        );
     }
 
     @Override
     public void open() throws FetchException {
         if(opened == true) return;
         try {
-            File sshDir = new File(FS.DETECTED.userHome(), ".ssh");
-		    SshdSessionFactory sshdSessionFactory = new SshdSessionFactoryBuilder()
-				.setPreferredAuthentications("publickey,keyboard-interactive,password")
-				.setHomeDirectory(FS.DETECTED.userHome())
-				.setSshDirectory(sshDir).build(new JGitKeyCache());
-		    SshSessionFactory.setInstance(sshdSessionFactory);
 
             String repoName = repoUri.substring(repoUri.lastIndexOf('/') + 1);
             File localRepoDirectory = File.createTempFile(repoName, "");
@@ -66,17 +62,21 @@ public class GitLocation extends UriLocation {
                 throw new IOException("Could not delete temporary file " + localRepoDirectory);
             }
 
-            CloneCommand clone = Git.cloneRepository()
-                .setURI(repoUri.toString())
-                .setDirectory(localRepoDirectory);
-            
+            Git cloneResult;
             if(branch != null) {
-                clone.setCloneAllBranches(true);
-                clone.setBranchesToClone(Arrays.asList("refs/heads/" + branch));
-                clone.setBranch("refs/heads/" + branch);
+                cloneResult = gitService.cloneRepo(
+                        repoUri.toString(),
+                        localRepoDirectory.getPath(),
+                        true,
+                        Arrays.asList("refs/heads/" + branch),
+                        "refs/heads/" + branch
+                );
+            } else {
+                cloneResult = gitService.cloneRepo(
+                        repoUri.toString(),
+                        localRepoDirectory.getPath()
+                );
             }
-           
-            Git cloneResult = clone.call();
             logger.debug("Repo [" + repoName + "] cloned to local folder [" + localRepoDirectory + "]");
             
             List<Ref> call = cloneResult.branchList().call();
@@ -100,14 +100,7 @@ public class GitLocation extends UriLocation {
     @Override
     public void close() throws FetchException {
         URI uri = getRootDocumentBaseUri();
-        File localRepoDirectory = new File(uri);
-        try {
-            FileUtils.deleteDirectory(localRepoDirectory);
-        } catch (IOException e) {
-            throw new FetchException("Could not delete temporary folder", uri);
-        }
-        
-        
+        gitService.deleteLocalRepository(uri.getPath());
         opened = false;
     }
     

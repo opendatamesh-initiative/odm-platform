@@ -1,10 +1,10 @@
-package org.opendatamesh.platform.pp.blueprint.server.clients.github;
+package org.opendatamesh.platform.core.commons.git.providers.github;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.platform.core.commons.clients.ODMClient;
+import org.opendatamesh.platform.core.commons.git.resources.errors.GitStandardErrors;
+import org.opendatamesh.platform.core.commons.git.resources.github.GitRepoResource;
 import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
-import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
-import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintApiStandardErrors;
-import org.opendatamesh.platform.pp.blueprint.server.resources.github.GitRepoResource;
 import org.springframework.http.*;
 
 public class GitHubClient extends ODMClient {
@@ -14,7 +14,7 @@ public class GitHubClient extends ODMClient {
     public GitHubClient(String personalAccessToken) {
         super(
                 "https://api.github.com",
-                ObjectMapperFactory.JSON_MAPPER
+                new ObjectMapper()
         );
         this.personalAccessToken = personalAccessToken;
     }
@@ -41,17 +41,17 @@ public class GitHubClient extends ODMClient {
             switch (response.getStatusCode()) {
                 case UNAUTHORIZED:
                     throw new InternalServerException(
-                            BlueprintApiStandardErrors.SC401_01_GIT_ERROR,
+                            GitStandardErrors.SC401_01_GIT_ERROR,
                             "User unauthorized - " + response.getBody()
                     );
                 case FORBIDDEN:
                     throw new InternalServerException(
-                            BlueprintApiStandardErrors.SC403_01_GIT_ERROR,
+                            GitStandardErrors.SC403_01_GIT_ERROR,
                             "Operation forbidden for given user - " + response.getBody()
                     );
                 default:
                     throw new InternalServerException(
-                            BlueprintApiStandardErrors.SC500_01_GIT_ERROR,
+                            GitStandardErrors.SC500_01_GIT_ERROR,
                             "Error creating remote repository - " + response.getBody()
                     );
             }

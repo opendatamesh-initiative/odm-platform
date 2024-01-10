@@ -1,7 +1,7 @@
-package org.opendatamesh.platform.pp.blueprint.server.services.git;
+package org.opendatamesh.platform.core.commons.git.providers.azuredevops;
 
+import org.opendatamesh.platform.core.commons.git.GitService;
 import org.opendatamesh.platform.core.commons.oauth.OAuthTokenManager;
-import org.opendatamesh.platform.pp.blueprint.server.clients.azure.AzureDevOpsClient;
 
 public class AzureService extends GitService {
 

@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.pp.blueprint.server.clients.azure;
+package org.opendatamesh.platform.core.commons.git.providers.azuredevops;
 
 import org.opendatamesh.platform.core.commons.clients.ODMApiRoutes;
 

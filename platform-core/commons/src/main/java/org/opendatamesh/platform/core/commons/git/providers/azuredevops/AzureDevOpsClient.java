@@ -1,12 +1,12 @@
-package org.opendatamesh.platform.pp.blueprint.server.clients.azure;
+package org.opendatamesh.platform.core.commons.git.providers.azuredevops;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.platform.core.commons.clients.ODMClient;
+import org.opendatamesh.platform.core.commons.git.resources.errors.GitStandardErrors;
+import org.opendatamesh.platform.core.commons.git.resources.azuredevops.AzureDevOpsRepoResource;
+import org.opendatamesh.platform.core.commons.git.resources.azuredevops.TeamProjectReferenceResource;
 import org.opendatamesh.platform.core.commons.oauth.OAuthTokenManager;
 import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
-import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
-import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintApiStandardErrors;
-import org.opendatamesh.platform.pp.blueprint.server.resources.azure.AzureDevOpsRepoResource;
-import org.opendatamesh.platform.pp.blueprint.server.resources.azure.TeamProjectReferenceResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -19,9 +19,10 @@ public class AzureDevOpsClient extends ODMClient {
     public AzureDevOpsClient(OAuthTokenManager oAuthTokenManager) {
         super(
                 "https://dev.azure.com",
-                ObjectMapperFactory.JSON_MAPPER
+                new ObjectMapper()
         );
         this.oAuthTokenManager = oAuthTokenManager;
+
     }
 
     public void createRemoteRepository(String organization, String projectId, String repositoryName) {
@@ -50,22 +51,22 @@ public class AzureDevOpsClient extends ODMClient {
             switch (response.getStatusCode()) {
                 case UNAUTHORIZED:
                     throw new InternalServerException(
-                            BlueprintApiStandardErrors.SC401_01_GIT_ERROR,
+                            GitStandardErrors.SC401_01_GIT_ERROR,
                             "User unauthorized - " + response.getBody()
                     );
                 case FORBIDDEN:
                     throw new InternalServerException(
-                            BlueprintApiStandardErrors.SC403_01_GIT_ERROR,
+                            GitStandardErrors.SC403_01_GIT_ERROR,
                             "User authentication failed - " + response.getBody()
                     );
                 case CONFLICT:
                     throw new InternalServerException(
-                            BlueprintApiStandardErrors.SC409_01_GIT_CONFLICT,
+                            GitStandardErrors.SC409_01_GIT_CONFLICT,
                             "Resource already exists - " + response.getBody()
                     );
                 default:
                     throw new InternalServerException(
-                            BlueprintApiStandardErrors.SC500_01_GIT_ERROR,
+                            GitStandardErrors.SC500_01_GIT_ERROR,
                             "Error creating remote repository: " + response.getBody()
                     );
             }

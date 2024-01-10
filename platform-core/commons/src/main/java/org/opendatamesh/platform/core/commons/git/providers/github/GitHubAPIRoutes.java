@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.pp.blueprint.server.clients.github;
+package org.opendatamesh.platform.core.commons.git.providers.github;
 
 import org.opendatamesh.platform.core.commons.clients.ODMApiRoutes;
 

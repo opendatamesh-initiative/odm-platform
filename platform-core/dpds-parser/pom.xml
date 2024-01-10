@@ -154,13 +154,6 @@ License.
         </dependency>
 
 
-        <dependency>
-            <groupId>org.eclipse.jgit</groupId>
-            <artifactId>org.eclipse.jgit.ssh.apache</artifactId>
-            <version>6.6.0.202305301015-r</version>
-        </dependency>
-
-
         <!-- Test -->
        <dependency>
 			<groupId>org.junit.jupiter</groupId>
@@ -178,8 +171,14 @@ License.
             <artifactId>jakarta.persistence-api</artifactId>
         </dependency>
 
-        <!-- Internal 
+        <!-- Internals -->
         <dependency>
+            <groupId>org.opendatamesh</groupId>
+            <artifactId>odm-platform-core-commons</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <!--<dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-pp-registry-client</artifactId>
             <version>1.0.0</version>

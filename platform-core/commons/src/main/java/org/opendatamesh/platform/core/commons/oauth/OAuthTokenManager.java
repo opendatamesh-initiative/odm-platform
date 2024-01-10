@@ -1,5 +1,7 @@
 package org.opendatamesh.platform.core.commons.oauth;
 
+import org.opendatamesh.platform.core.commons.oauth.resources.OAuthStandardErrors;
+import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
 import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
@@ -26,14 +28,22 @@ public class OAuthTokenManager {
     ) {
         this.clientRegistrationId = clientRegistrationId;
         this.principal = principal;
-        this.authorizedClientServiceAndManager = OAuthClientConfigurer.getAuthorizedClientServiceAndManager(
-                clientRegistrationId,
-                tokenUri,
-                clientId,
-                clientSecret,
-                scope,
-                authorizationGrantType
-        );
+        try {
+            this.authorizedClientServiceAndManager = OAuthClientConfigurer.getAuthorizedClientServiceAndManager(
+                    clientRegistrationId,
+                    tokenUri,
+                    clientId,
+                    clientSecret,
+                    scope,
+                    authorizationGrantType
+            );
+        } catch (Throwable t) {
+            throw new InternalServerException(
+                    OAuthStandardErrors.SC500_01_OAUTH_ERROR,
+                    "Error configuring OAuth",
+                    t
+            );
+        }
     }
 
     public String getToken() {

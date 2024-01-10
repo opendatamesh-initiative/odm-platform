@@ -1,15 +1,14 @@
-package org.opendatamesh.platform.pp.blueprint.server.services.git;
+package org.opendatamesh.platform.core.commons.git;
 
+import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.TransportConfigCallback;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.transport.*;
+import org.opendatamesh.platform.core.commons.git.resources.errors.GitStandardErrors;
 import org.opendatamesh.platform.core.commons.oauth.OAuthTokenManager;
 import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
-import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintApiStandardErrors;
-import org.opendatamesh.platform.pp.blueprint.server.resources.internals.GitCheckResource;
-import org.opendatamesh.platform.pp.blueprint.server.utils.CustomFileUtils;
-import org.springframework.beans.factory.annotation.Value;
+import org.opendatamesh.platform.core.commons.utils.CustomFileUtils;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -21,17 +20,9 @@ public abstract class GitService {
 
     private OAuthTokenManager oAuthTokenManager;
 
-    @Value("${git.templates.path}")
-    private String templatesPath;
-
-    @Value("${git.provider}")
-    private String gitProvider; // Remove it when GitHub will support OAuth2
-
-    private String targetPathSuffix = "/projects";
-
-    private String sourcePathSuffix = "/blueprints";
-
-    private String paramsFileJson = "params.json";
+    protected GitService() {
+        this.oAuthTokenManager = null;
+    }
 
     protected GitService(OAuthTokenManager oAuthTokenManager) {
         this.oAuthTokenManager = oAuthTokenManager;
@@ -45,68 +36,51 @@ public abstract class GitService {
 
 
     // ======================================================================================
-    // CHECK Repository content
-    // ======================================================================================
-
-    public GitCheckResource checkGitRepository(String repositoryUrl, String blueprintDirectory) {
-
-        Git repoToCheck = cloneRepo(repositoryUrl);
-        File repoToCheckFile = repoToCheck.getRepository().getWorkTree();
-
-        GitCheckResource gitCheckResource = new GitCheckResource();
-
-        gitCheckResource.setBlueprintDirectoryCheck(
-                CustomFileUtils.existsAsDirectoryInDirectory(repoToCheckFile, blueprintDirectory)
-        );
-        gitCheckResource.setParamsDescriptionCheck(
-                CustomFileUtils.existsAsFileInDirectory(repoToCheckFile, paramsFileJson)
-        );
-
-        if(gitCheckResource.getParamsDescriptionCheck()) {
-            String paramsFileContent = CustomFileUtils.readFileAsString(new File(repoToCheckFile, paramsFileJson));
-            gitCheckResource.setParamsJsonFileContent(paramsFileContent);
-        }
-
-        // Clean state
-        repoToCheck.close();
-        deleteLocalRepository();
-
-        return gitCheckResource;
-
-    }
-
-    // ======================================================================================
     // CLONE Repository
     // ======================================================================================
 
-    public Git cloneRepo(String sourceUrl) {
-        return cloneRepo(sourceUrl, templatesPath + sourcePathSuffix);
+    public Git cloneRepo(String sourceUrl, String destinationPath) {
+        return cloneRepo(sourceUrl, destinationPath, false, null, null);
     }
 
-    private Git cloneRepo(String sourceUrl, String destinationPath) {
+    public Git cloneRepo(
+            String sourceUrl, String destinationPath, Boolean cloneAllBranches, List branchList, String branch
+    ) {
         try {
+            CloneCommand cloneCommand = configureCloneCommand(
+                    sourceUrl, destinationPath, cloneAllBranches, branchList, branch
+            );
             if(isHttpsRemote(sourceUrl)) {
-                return Git.cloneRepository()
-                        .setURI(sourceUrl)
-                        .setDirectory(new File(destinationPath))
-                        .setCredentialsProvider(
+                cloneCommand.setCredentialsProvider(
                                 new UsernamePasswordCredentialsProvider("", oAuthTokenManager.getToken())
-                        )
-                        .call();
+                );
             } else {
-                return Git.cloneRepository()
-                        .setURI(sourceUrl)
-                        .setDirectory(new File(destinationPath))
-                        .setTransportConfigCallback(getSshTransportConfigCallback())
-                        .call();
+                cloneCommand.setTransportConfigCallback(getSshTransportConfigCallback());
             }
+            return cloneCommand.call();
         } catch (Throwable t) {
             throw new InternalServerException(
-                    BlueprintApiStandardErrors.SC500_01_GIT_ERROR,
+                    GitStandardErrors.SC500_01_GIT_ERROR,
                     "Error cloning repository - " + t.getMessage(),
                     t
             );
         }
+    }
+
+    private CloneCommand configureCloneCommand(
+            String sourceUrl, String destinationPath, Boolean cloneAllBranches, List branchList, String branch
+    ) {
+        CloneCommand cloneCommand = Git.cloneRepository()
+                .setURI(sourceUrl)
+                .setDirectory(new File(destinationPath));
+        if(cloneAllBranches) {
+            cloneCommand.setCloneAllBranches(cloneAllBranches);
+            if(branchList != null && branch != null) {
+                cloneCommand.setBranchesToClone(branchList);
+                cloneCommand.setBranch(branch);
+            }
+        }
+        return cloneCommand;
     }
 
 
@@ -114,23 +88,25 @@ public abstract class GitService {
     // INIT new Git repository
     // ======================================================================================
 
-    public Git initTargetRepository(Git oldGitRepo, String blueprintDir, Boolean createRepoFlag, String targetOrigin) {
+    public Git initTargetRepository(
+            Git oldGitRepo, String blueprintDir, Boolean createRepoFlag, String destinationPath, String targetOrigin
+    ) {
         try {
             Git newGitRepo = null;
             File oldRepo = oldGitRepo.getRepository().getWorkTree();
             if (createRepoFlag) {
                 newGitRepo = Git.init()
-                        .setDirectory(new File(templatesPath + targetPathSuffix))
+                        .setDirectory(new File(destinationPath))
                         .call();
                 // Set origin to new Repo
                 newGitRepo = setOrigin(newGitRepo, targetOrigin);
             } else {
                 // Clone old repo
                 try {
-                    newGitRepo = cloneRepo(targetOrigin, templatesPath + targetPathSuffix);
+                    newGitRepo = cloneRepo(targetOrigin, destinationPath);
                 } catch(Throwable t) {
                     throw new InternalServerException(
-                            BlueprintApiStandardErrors.SC500_01_GIT_ERROR,
+                            GitStandardErrors.SC500_01_GIT_ERROR,
                             "createRepo=false, but an error occured cloning existing repository ["
                                     + targetOrigin + "]. Error: " + t.getMessage()
                                     + ". Check if the repository exists.",
@@ -153,7 +129,7 @@ public abstract class GitService {
             return newGitRepo;
         } catch (Throwable t) {
             throw new InternalServerException(
-                    BlueprintApiStandardErrors.SC500_01_GIT_ERROR,
+                    GitStandardErrors.SC500_01_GIT_ERROR,
                     "Error preparing local repository for templating - " + t.getMessage(),
                     t
             );
@@ -196,7 +172,7 @@ public abstract class GitService {
             return pushResults; // Needed for Windows to wait the end of the push command
         } catch (Throwable t) {
             throw new InternalServerException(
-                    BlueprintApiStandardErrors.SC500_01_GIT_ERROR,
+                    GitStandardErrors.SC500_01_GIT_ERROR,
                     "Error committing and pushing the project - " + t.getMessage(),
                     t
             );
@@ -211,8 +187,8 @@ public abstract class GitService {
     // DELETE local Repository
     // ======================================================================================
 
-    public void deleteLocalRepository() {
-        CustomFileUtils.removeDirectory(new File(templatesPath));
+    public void deleteLocalRepository(String localRepositoryPath) {
+        CustomFileUtils.removeDirectory(new File(localRepositoryPath));
     }
 
 
@@ -236,7 +212,7 @@ public abstract class GitService {
             return gitRepository;
         } catch (Throwable t) {
             throw new InternalServerException(
-                    BlueprintApiStandardErrors.SC500_01_GIT_ERROR,
+                    GitStandardErrors.SC500_01_GIT_ERROR,
                     "Error changing origin to the Git repository",
                     t
             );
@@ -262,5 +238,4 @@ public abstract class GitService {
             }
         };
     }
-
 }

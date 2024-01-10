@@ -160,18 +160,18 @@ License.
         </dependency>
 
         <!-- Git -->
-        <!-- JGit -->
+        <!-- JGit + Jsch -->
         <dependency>
             <groupId>org.eclipse.jgit</groupId>
             <artifactId>org.eclipse.jgit</artifactId>
             <version>6.6.0.202305301015-r</version>
         </dependency>
-        <!-- Jsch -->
         <dependency>
-            <groupId>com.jcraft</groupId>
-            <artifactId>jsch</artifactId>
-            <version>0.1.55</version>
+            <groupId>org.eclipse.jgit</groupId>
+            <artifactId>org.eclipse.jgit.ssh.apache</artifactId>
+            <version>6.6.0.202305301015-r</version>
         </dependency>
+
 
     </dependencies>
 

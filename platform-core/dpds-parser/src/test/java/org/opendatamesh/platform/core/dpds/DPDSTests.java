@@ -1,32 +1,14 @@
 package org.opendatamesh.platform.core.dpds;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
-import org.opendatamesh.platform.core.dpds.model.core.EntityTypeDPDS;
-import org.opendatamesh.platform.core.dpds.model.core.ExternalResourceDPDS;
-import org.opendatamesh.platform.core.dpds.model.core.StandardDefinitionDPDS;
-import org.opendatamesh.platform.core.dpds.model.definitions.DefinitionReferenceDPDS;
-import org.opendatamesh.platform.core.dpds.model.info.InfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.interfaces.InterfaceComponentsDPDS;
-import org.opendatamesh.platform.core.dpds.model.interfaces.PortDPDS;
-import org.opendatamesh.platform.core.dpds.model.interfaces.PromisesDPDS;
-import org.opendatamesh.platform.core.dpds.model.internals.ApplicationComponentDPDS;
-import org.opendatamesh.platform.core.dpds.model.internals.InfrastructuralComponentDPDS;
-import org.opendatamesh.platform.core.dpds.model.internals.InternalComponentsDPDS;
-import org.opendatamesh.platform.core.dpds.model.internals.LifecycleInfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.internals.LifecycleTaskInfoDPDS;
 import org.opendatamesh.platform.core.dpds.parser.DPDSParser;
 import org.opendatamesh.platform.core.dpds.parser.DPDSSerializer;
 import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
 import org.opendatamesh.platform.core.dpds.parser.ParseResult;
 import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
 import org.opendatamesh.platform.core.dpds.utils.DPDSTestResources;
+
+import static org.assertj.core.api.Assertions.fail;
 
 public class DPDSTests {
 

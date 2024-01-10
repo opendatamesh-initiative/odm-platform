@@ -7,6 +7,7 @@ public class GitHubService extends GitService {
     private GitHubClient gitHubClient;
 
     public GitHubService(String personalAccessToken) {
+        super(null);
         this.gitHubClient = new GitHubClient(personalAccessToken);
     }
 

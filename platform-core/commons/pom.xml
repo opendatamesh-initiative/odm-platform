@@ -159,14 +159,13 @@ License.
             <artifactId>tomcat-embed-core</artifactId>
         </dependency>
 
-        <!-- Git -->
-        <!-- JGit + Jsch -->
+        <!-- Git (JGit) -->
         <dependency>
             <groupId>org.eclipse.jgit</groupId>
             <artifactId>org.eclipse.jgit</artifactId>
             <version>6.6.0.202305301015-r</version>
         </dependency>
-        <dependency>
+        <dependency> <!-- Enable SSH transport -->
             <groupId>org.eclipse.jgit</groupId>
             <artifactId>org.eclipse.jgit.ssh.apache</artifactId>
             <version>6.6.0.202305301015-r</version>

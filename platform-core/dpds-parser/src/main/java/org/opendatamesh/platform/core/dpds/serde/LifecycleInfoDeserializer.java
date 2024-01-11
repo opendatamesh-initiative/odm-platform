@@ -2,14 +2,10 @@ package org.opendatamesh.platform.core.dpds.serde;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-
-import org.opendatamesh.platform.core.dpds.model.core.ExternalResourceDPDS;
-import org.opendatamesh.platform.core.dpds.model.core.StandardDefinitionDPDS;
 import org.opendatamesh.platform.core.dpds.model.internals.LifecycleInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.internals.LifecycleTaskInfoDPDS;
 

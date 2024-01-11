@@ -2,9 +2,8 @@ package org.opendatamesh.platform.pp.registry.server.database.entities;
 
 import lombok.Data;
 
-import java.util.Date;
-
 import javax.persistence.*;
+import java.util.Date;
 
 @Data
 @Entity(name = "Api")

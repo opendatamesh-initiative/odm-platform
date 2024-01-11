@@ -1,11 +1,11 @@
 package org.opendatamesh.platform.core.commons.clients;
 
-import java.io.IOException;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResponseErrorHandler;
+
+import java.io.IOException;
 
 @Component
 public class ODMRestTemplateErrorHandler implements ResponseErrorHandler {

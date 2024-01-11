@@ -1,10 +1,7 @@
 package org.opendatamesh.platform.core.dpds;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.fail;
-
-import java.util.List;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.core.StandardDefinitionDPDS;
@@ -16,8 +13,10 @@ import org.opendatamesh.platform.core.dpds.model.internals.LifecycleTaskInfoDPDS
 import org.opendatamesh.platform.core.dpds.parser.ParseResult;
 import org.opendatamesh.platform.core.dpds.utils.DPDSTestResources;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class DPDSParserRawContentTests extends DPDSTests {
 

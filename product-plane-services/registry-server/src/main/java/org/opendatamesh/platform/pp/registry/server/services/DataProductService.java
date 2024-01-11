@@ -1,21 +1,10 @@
 package org.opendatamesh.platform.pp.registry.server.services;
 
 
-import java.util.List;
-import java.util.Optional;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.opendatamesh.platform.core.commons.servers.exceptions.BadGatewayException;
-import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
-import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
-import org.opendatamesh.platform.core.commons.servers.exceptions.NotFoundException;
-import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
-import org.opendatamesh.platform.core.commons.servers.exceptions.UnprocessableEntityException;
-import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
-import org.opendatamesh.platform.core.dpds.exceptions.FetchException;
-import org.opendatamesh.platform.core.dpds.exceptions.DeserializationException;
-import org.opendatamesh.platform.core.dpds.exceptions.UnresolvableReferenceException;
-import org.opendatamesh.platform.core.dpds.exceptions.ValidationException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.opendatamesh.platform.core.commons.servers.exceptions.*;
+import org.opendatamesh.platform.core.dpds.exceptions.*;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.parser.DPDSParser;
 import org.opendatamesh.platform.core.dpds.parser.IdentifierStrategy;
@@ -37,7 +26,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DataProductService {

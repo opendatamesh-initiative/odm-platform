@@ -9,7 +9,9 @@ import org.opendatamesh.platform.core.dpds.exceptions.*;
 import org.opendatamesh.platform.core.dpds.exceptions.ParseException.Stage;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
-import org.opendatamesh.platform.core.dpds.processors.*;
+import org.opendatamesh.platform.core.dpds.processors.ApiDefinitionsProcessor;
+import org.opendatamesh.platform.core.dpds.processors.ReadOnlyPropertiesProcessor;
+import org.opendatamesh.platform.core.dpds.processors.ReferencesProcessor;
 
 import java.util.Set;
 

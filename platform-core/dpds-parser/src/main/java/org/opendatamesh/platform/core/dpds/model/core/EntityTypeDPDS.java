@@ -16,12 +16,10 @@
 
 package org.opendatamesh.platform.core.dpds.model.core;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import java.util.Arrays;
 import java.util.List;
-
-import org.opendatamesh.platform.core.dpds.model.interfaces.PortDPDS;
-
-import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * Enumeration of DPDS entity types.

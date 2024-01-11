@@ -1,7 +1,6 @@
 package org.opendatamesh.platform.pp.devops.server.database.entities;
 
 import lombok.Data;
-import org.opendatamesh.platform.core.dpds.utils.HashMapConverter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

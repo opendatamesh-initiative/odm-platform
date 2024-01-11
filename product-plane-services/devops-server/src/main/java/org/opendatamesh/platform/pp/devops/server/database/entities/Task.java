@@ -2,7 +2,6 @@ package org.opendatamesh.platform.pp.devops.server.database.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
-import org.opendatamesh.platform.core.dpds.utils.HashMapConverter;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskStatus;
 
 import javax.persistence.*;

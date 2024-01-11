@@ -1,15 +1,12 @@
 package org.opendatamesh.platform.pp.registry.api.resources;
 
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
-import io.swagger.v3.oas.annotations.media.Schema;
-import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)

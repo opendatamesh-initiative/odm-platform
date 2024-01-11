@@ -3,10 +3,9 @@ package org.opendatamesh.platform.pp.registry.server.database.entities.dataprodu
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.core.DefinitionReference;
 
 import java.util.List;
-
-import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.core.DefinitionReference;
 
 @Data
 @EqualsAndHashCode(callSuper=true)

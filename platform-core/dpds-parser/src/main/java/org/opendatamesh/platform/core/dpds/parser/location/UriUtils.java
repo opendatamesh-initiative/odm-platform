@@ -2,7 +2,6 @@ package org.opendatamesh.platform.core.dpds.parser.location;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Objects;
 
 public class UriUtils {
 

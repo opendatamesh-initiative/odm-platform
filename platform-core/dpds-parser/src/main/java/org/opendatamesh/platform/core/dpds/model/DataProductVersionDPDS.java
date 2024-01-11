@@ -5,20 +5,17 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.model.core.ComponentsDPDS;
 import org.opendatamesh.platform.core.dpds.model.core.ExternalResourceDPDS;
 import org.opendatamesh.platform.core.dpds.model.info.InfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.interfaces.InterfaceComponentsDPDS;
 import org.opendatamesh.platform.core.dpds.model.internals.InternalComponentsDPDS;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)

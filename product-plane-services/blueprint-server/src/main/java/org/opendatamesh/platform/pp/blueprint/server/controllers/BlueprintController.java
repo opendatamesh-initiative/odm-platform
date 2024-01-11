@@ -1,6 +1,5 @@
 package org.opendatamesh.platform.pp.blueprint.server.controllers;
 
-import org.apache.xpath.operations.Bool;
 import org.opendatamesh.platform.pp.blueprint.api.controllers.BlueprintAbstractController;
 import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintResource;
 import org.opendatamesh.platform.pp.blueprint.api.resources.ConfigResource;

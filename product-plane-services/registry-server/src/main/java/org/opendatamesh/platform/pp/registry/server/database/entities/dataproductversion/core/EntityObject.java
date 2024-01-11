@@ -1,10 +1,9 @@
 package org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.core;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
-
 import lombok.Data;
+
+import javax.persistence.Column;
+import javax.persistence.MappedSuperclass;
 
 @Data
 @MappedSuperclass

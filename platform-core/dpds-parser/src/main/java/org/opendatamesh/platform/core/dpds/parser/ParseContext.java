@@ -1,9 +1,8 @@
 package org.opendatamesh.platform.core.dpds.parser;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Data
 public class ParseContext {

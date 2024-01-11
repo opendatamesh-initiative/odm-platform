@@ -4,10 +4,8 @@ package org.opendatamesh.platform.pp.registry.server.database.entities.dataprodu
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.core.Component;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.core.ExternalResource;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.core.InternalComponent;
 

@@ -1,14 +1,10 @@
 package org.opendatamesh.platform.pp.devops.server.database.entities;
 
-import java.time.LocalDateTime;
-import java.util.Map;
-
-import javax.persistence.*;
-
-import org.opendatamesh.platform.core.dpds.utils.HashMapConverter;
+import lombok.Data;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatus;
 
-import lombok.Data;
+import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Data
 @Entity(name = "Activity")

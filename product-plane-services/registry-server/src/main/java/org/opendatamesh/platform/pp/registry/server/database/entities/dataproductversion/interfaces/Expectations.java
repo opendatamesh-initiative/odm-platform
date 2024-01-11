@@ -1,10 +1,9 @@
 package org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.interfaces;
 
 import lombok.Data;
+import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.core.SpecificationExtensionPoint;
 
 import javax.persistence.*;
-
-import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.core.SpecificationExtensionPoint;
 
 @Data
 @Entity(name = "Expectations")

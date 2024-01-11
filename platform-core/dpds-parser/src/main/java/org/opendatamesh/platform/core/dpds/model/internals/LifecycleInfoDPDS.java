@@ -1,16 +1,11 @@
 package org.opendatamesh.platform.core.dpds.model.internals;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+
+import java.util.*;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)

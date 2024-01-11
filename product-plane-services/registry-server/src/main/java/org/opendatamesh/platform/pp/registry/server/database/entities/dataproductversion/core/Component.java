@@ -3,12 +3,11 @@ package org.opendatamesh.platform.pp.registry.server.database.entities.dataprodu
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
+import java.util.Date;
 
 
 @Data

@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.model.core.EntityTypeDPDS;
-import org.opendatamesh.platform.pp.registry.api.parser.DomainIdentifierStrategy;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)

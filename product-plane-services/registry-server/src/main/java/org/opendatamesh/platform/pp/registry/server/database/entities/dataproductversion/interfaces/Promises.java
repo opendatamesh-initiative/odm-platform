@@ -1,12 +1,10 @@
 package org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.interfaces;
 
 import lombok.Data;
-
-import javax.persistence.*;
-
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.core.ApiStandardDefinition;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.core.SpecificationExtensionPoint;
-import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.core.StandardDefinition;
+
+import javax.persistence.*;
 
 @Data
 @Entity(name = "Promises")

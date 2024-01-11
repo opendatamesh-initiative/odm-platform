@@ -1,5 +1,6 @@
 package org.opendatamesh.platform.core.commons.utils;
 
+import org.apache.commons.io.FileUtils;
 import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
 
@@ -8,7 +9,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import org.apache.commons.io.FileUtils;
 
 public class CustomFileUtils {
 

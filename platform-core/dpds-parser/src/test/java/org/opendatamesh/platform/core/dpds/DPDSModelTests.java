@@ -1,8 +1,8 @@
 package org.opendatamesh.platform.core.dpds;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.core.dpds.model.core.ReferenceObjectDPDS;
 import org.opendatamesh.platform.core.dpds.model.core.StandardDefinitionDPDS;
@@ -10,9 +10,8 @@ import org.opendatamesh.platform.core.dpds.model.definitions.DefinitionReference
 import org.opendatamesh.platform.core.dpds.model.interfaces.InterfaceComponentsDPDS;
 import org.opendatamesh.platform.core.dpds.model.interfaces.PortDPDS;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 public class DPDSModelTests extends DPDSTests {
 

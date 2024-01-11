@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.Data;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
-import org.opendatamesh.platform.core.dpds.model.*;
+import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.core.ComponentDPDS;
 import org.opendatamesh.platform.core.dpds.model.core.EntityTypeDPDS;
 import org.opendatamesh.platform.core.dpds.model.core.StandardDefinitionDPDS;

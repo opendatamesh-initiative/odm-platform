@@ -1,16 +1,14 @@
 package org.opendatamesh.platform.pp.devops.server.configurations;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import lombok.Data;
 import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsConfigurations.ServiceConfigs;
 import org.opendatamesh.platform.pp.registry.api.clients.RegistryClient;
 import org.opendatamesh.platform.up.executor.api.clients.ExecutorClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
-import lombok.Data;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 @Data

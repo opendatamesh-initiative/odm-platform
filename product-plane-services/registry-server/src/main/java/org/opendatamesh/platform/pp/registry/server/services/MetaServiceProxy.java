@@ -2,7 +2,6 @@ package org.opendatamesh.platform.pp.registry.server.services;
 
 import org.opendatamesh.platform.core.commons.servers.exceptions.BadGatewayException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
-import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
 import org.opendatamesh.platform.up.notification.api.clients.NotificationClient;
 import org.opendatamesh.platform.up.notification.api.resources.ErrorResource;
 import org.opendatamesh.platform.up.notification.api.resources.EventResource;

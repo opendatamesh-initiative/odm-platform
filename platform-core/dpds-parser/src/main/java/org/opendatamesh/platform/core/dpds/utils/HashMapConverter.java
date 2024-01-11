@@ -2,7 +2,6 @@ package org.opendatamesh.platform.core.dpds.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

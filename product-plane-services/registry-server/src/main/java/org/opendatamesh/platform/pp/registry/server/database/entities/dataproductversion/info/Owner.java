@@ -1,11 +1,9 @@
 package org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.info;
 
 import lombok.Data;
-
-import javax.persistence.*;
-
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.DataProductVersion;
 
+import javax.persistence.*;
 import java.util.List;
 
 @Data

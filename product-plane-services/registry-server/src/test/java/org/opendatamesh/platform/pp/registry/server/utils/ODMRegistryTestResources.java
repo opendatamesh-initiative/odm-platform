@@ -1,6 +1,10 @@
 package org.opendatamesh.platform.pp.registry.server.utils;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import lombok.Data;
+import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
+import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
+import org.opendatamesh.platform.core.dpds.parser.location.GitLocation;
+import org.opendatamesh.platform.core.dpds.parser.location.UriLocation;
 
 import java.io.IOException;
 import java.net.URI;
@@ -10,12 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
-import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
-import org.opendatamesh.platform.core.dpds.parser.location.GitLocation;
-import org.opendatamesh.platform.core.dpds.parser.location.UriLocation;
-
-import lombok.Data;
+import static org.junit.jupiter.api.Assertions.fail;
 
 @Data
 public class ODMRegistryTestResources {

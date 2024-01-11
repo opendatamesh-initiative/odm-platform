@@ -1,10 +1,10 @@
 package org.opendatamesh.platform.pp.registry.server;
 
 import org.junit.jupiter.api.Test;
-import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
-import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
-import org.opendatamesh.platform.pp.registry.api.resources.DomainResource;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
+import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
+import org.opendatamesh.platform.pp.registry.api.resources.DomainResource;
+import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
 import org.opendatamesh.platform.pp.registry.server.utils.ODMRegistryTestResources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,7 +1,5 @@
 package org.opendatamesh.platform.pp.devops.server.controllers;
 
-import java.util.List;
-
 import org.opendatamesh.platform.pp.devops.api.controllers.AbstractTaskController;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskResource;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskStatus;
@@ -11,9 +9,10 @@ import org.opendatamesh.platform.pp.devops.server.database.entities.Task;
 import org.opendatamesh.platform.pp.devops.server.database.mappers.ActivityTaskMapper;
 import org.opendatamesh.platform.pp.devops.server.services.ActivityService;
 import org.opendatamesh.platform.pp.devops.server.services.TaskService;
-import org.opendatamesh.platform.up.executor.api.resources.TaskStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 public class TaskController extends AbstractTaskController {

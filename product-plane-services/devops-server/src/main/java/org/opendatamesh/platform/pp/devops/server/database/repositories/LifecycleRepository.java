@@ -3,7 +3,6 @@ package org.opendatamesh.platform.pp.devops.server.database.repositories;
 import org.opendatamesh.platform.pp.devops.server.database.entities.Lifecycle;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 

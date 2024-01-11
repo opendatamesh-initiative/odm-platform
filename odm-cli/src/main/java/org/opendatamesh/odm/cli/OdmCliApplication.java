@@ -1,7 +1,10 @@
 package org.opendatamesh.odm.cli;
 
 import ch.qos.logback.classic.LoggerContext;
-import org.opendatamesh.odm.cli.commands.*;
+import org.opendatamesh.odm.cli.commands.BlueprintCommands;
+import org.opendatamesh.odm.cli.commands.LocalCommands;
+import org.opendatamesh.odm.cli.commands.OdmCliInit;
+import org.opendatamesh.odm.cli.commands.RegistryCommands;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import picocli.CommandLine;

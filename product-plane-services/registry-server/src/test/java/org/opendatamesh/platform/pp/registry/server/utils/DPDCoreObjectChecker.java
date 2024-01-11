@@ -1,11 +1,5 @@
 package org.opendatamesh.platform.pp.registry.server.utils;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.core.EntityTypeDPDS;
 import org.opendatamesh.platform.core.dpds.model.core.ExternalResourceDPDS;
@@ -15,11 +9,13 @@ import org.opendatamesh.platform.core.dpds.model.info.InfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.interfaces.InterfaceComponentsDPDS;
 import org.opendatamesh.platform.core.dpds.model.interfaces.PortDPDS;
 import org.opendatamesh.platform.core.dpds.model.interfaces.PromisesDPDS;
-import org.opendatamesh.platform.core.dpds.model.internals.ApplicationComponentDPDS;
-import org.opendatamesh.platform.core.dpds.model.internals.InfrastructuralComponentDPDS;
-import org.opendatamesh.platform.core.dpds.model.internals.InternalComponentsDPDS;
-import org.opendatamesh.platform.core.dpds.model.internals.LifecycleInfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.internals.LifecycleTaskInfoDPDS;
+import org.opendatamesh.platform.core.dpds.model.internals.*;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 public class DPDCoreObjectChecker implements ResourceObjectChecker {

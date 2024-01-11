@@ -1,10 +1,6 @@
 package org.opendatamesh.platform.pp.registry.server.services;
 
-import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
-import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
-import org.opendatamesh.platform.core.commons.servers.exceptions.NotFoundException;
-import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
-import org.opendatamesh.platform.core.commons.servers.exceptions.UnprocessableEntityException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.*;
 import org.opendatamesh.platform.core.dpds.model.core.EntityTypeDPDS;
 import org.opendatamesh.platform.core.dpds.parser.IdentifierStrategy;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;

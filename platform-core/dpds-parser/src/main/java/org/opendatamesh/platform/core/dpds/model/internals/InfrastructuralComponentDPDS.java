@@ -5,11 +5,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.opendatamesh.platform.core.dpds.model.core.ComponentDPDS;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.opendatamesh.platform.core.dpds.model.core.ComponentDPDS;
 
 @Data
 @EqualsAndHashCode(callSuper=true)

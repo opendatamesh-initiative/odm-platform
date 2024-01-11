@@ -3,7 +3,6 @@ package org.opendatamesh.platform.pp.registry.server.database.entities.dataprodu
 import lombok.Data;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.opendatamesh.platform.core.dpds.model.internals.LifecycleInfoDPDS;
 
 import javax.persistence.*;
 import java.util.ArrayList;

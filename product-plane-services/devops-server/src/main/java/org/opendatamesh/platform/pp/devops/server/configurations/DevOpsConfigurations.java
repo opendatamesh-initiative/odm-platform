@@ -1,11 +1,10 @@
 package org.opendatamesh.platform.pp.devops.server.configurations;
 
-import java.util.Map;
-
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-import lombok.Data;
+import java.util.Map;
 
 @Component
 @ConfigurationProperties(prefix = "odm")

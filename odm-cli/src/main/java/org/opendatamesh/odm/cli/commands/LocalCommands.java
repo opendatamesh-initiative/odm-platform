@@ -5,7 +5,6 @@ import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
 import org.opendatamesh.platform.core.dpds.parser.DPDSParser;
 import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
 import org.opendatamesh.platform.core.dpds.parser.location.UriLocation;
-
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 

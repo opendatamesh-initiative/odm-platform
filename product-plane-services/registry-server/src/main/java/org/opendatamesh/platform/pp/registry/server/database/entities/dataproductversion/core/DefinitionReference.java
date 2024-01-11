@@ -1,10 +1,10 @@
 package org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.core;
 
+import lombok.Data;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Transient;
-
-import lombok.Data;
 
 @Embeddable
 @Data

@@ -1,12 +1,12 @@
 package org.opendatamesh.platform.pp.registry.api.resources;
 
-import java.util.Date;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.util.Date;
 
 // API & TEMPLATES:    todo make it abstract
 @Data

@@ -1,11 +1,11 @@
 package org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.core;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Data
 @EqualsAndHashCode(callSuper=true)

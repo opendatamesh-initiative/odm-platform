@@ -1,8 +1,8 @@
 package org.opendatamesh.platform.pp.devops.server.database.mappers;
 
 import org.mapstruct.Mapper;
-import org.opendatamesh.platform.pp.devops.server.database.entities.Lifecycle;
 import org.opendatamesh.platform.pp.devops.api.resources.LifecycleResource;
+import org.opendatamesh.platform.pp.devops.server.database.entities.Lifecycle;
 
 import java.util.List;
 

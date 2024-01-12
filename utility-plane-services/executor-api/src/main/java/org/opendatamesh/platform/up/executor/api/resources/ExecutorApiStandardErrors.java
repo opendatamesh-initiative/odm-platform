@@ -5,9 +5,11 @@ import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiStandardE
 public enum ExecutorApiStandardErrors implements ODMApiStandardErrors {
 
     // Bad Request Exceptions
-    
+    SC400_01_TASK_ID_IS_EMPTY ("40001", "Task Id wasn't provided"),
+
     // Not Found Exceptions
-    
+    SC404_01_PIPELINE_RUN_NOT_FOUND ("40401", "Pipeline run not found"),
+
     // Unprocessable Entity Exceptions
     SC422_05_TASK_IS_INVALID ("42201", "Task is invalid"),
   

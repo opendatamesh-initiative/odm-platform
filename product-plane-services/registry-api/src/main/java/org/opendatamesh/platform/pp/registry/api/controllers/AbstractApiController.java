@@ -29,9 +29,9 @@ import java.util.List;
 @Validated
 @Tag(
     name = "APIs", 
-    description = "API's definitions")
+    description = "API's definitions"
+)
 public abstract class AbstractApiController {
-
     
     private static final Logger logger = LoggerFactory.getLogger(AbstractApiController.class);
 
@@ -183,6 +183,43 @@ public abstract class AbstractApiController {
 
     public abstract ExternalComponentResource getApi(String id);
 
+
+    // ===============================================================================
+    // GET /apis/{id}/schemas
+    // ===============================================================================
+
+    @GetMapping(value = "/{id}/schemas")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(
+            summary = "Get the IDs of the schemas of the specified API definition",
+            description = "Get all the schema of the endpoints of the API definition identified by the input `id`"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "The requested list of schema IDs",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = List.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "[Not Found](https://www.rfc-editor.org/rfc/rfc9110.html#name-404-not-found)"
+                            + "\r\n - Error Code 40403 - Standard Definition not found",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
+            )
+    })
+    public List<Long> getApiSchemaIdsEndpoint(
+            @Parameter(description = "Identifier of the API definition")
+            @PathVariable(value = "id") String id
+    )  {
+        return getApiSchemaIds(id);
+    }
+
+    public abstract List<Long> getApiSchemaIds(String id);
+
+
     // ----------------------------------------
     // UPDATE Definition
     // ----------------------------------------
@@ -193,11 +230,8 @@ public abstract class AbstractApiController {
     // ===============================================================================
     // DELETE /products/{id}
     // ===============================================================================
-    
 
     // TODO add all error responses
-
-    
 
     @DeleteMapping(
         value = "/{id}"
@@ -230,4 +264,5 @@ public abstract class AbstractApiController {
     }
 
     public abstract void deleteApi(String id);
+
 }

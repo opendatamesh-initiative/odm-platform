@@ -161,7 +161,7 @@ public abstract class AbstractDataProductController
         )
     })
     public DataProductResource getDataProductEndpoint(
-        @Parameter(description = "Idenntifier of the data product")
+        @Parameter(description = "Identifier of the data product")
         @PathVariable(value = "id") String id) 
     {
         return getDataProduct(id);

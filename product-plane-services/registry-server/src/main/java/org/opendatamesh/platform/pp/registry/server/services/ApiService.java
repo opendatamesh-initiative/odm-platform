@@ -5,7 +5,9 @@ import org.opendatamesh.platform.core.dpds.model.core.EntityTypeDPDS;
 import org.opendatamesh.platform.core.dpds.parser.IdentifierStrategy;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
 import org.opendatamesh.platform.pp.registry.server.database.entities.Api;
+import org.opendatamesh.platform.pp.registry.server.database.entities.ApiToSchemaRelationship;
 import org.opendatamesh.platform.pp.registry.server.database.repositories.ApiRepository;
+import org.opendatamesh.platform.pp.registry.server.database.repositories.ApiToSchemaRelationshipRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +16,16 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ApiService {
 
     @Autowired
     private ApiRepository apiRepository;
+
+    @Autowired
+    ApiToSchemaRelationshipRepository apiToSchemaRelationshipRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(ApiService.class);
 
@@ -119,6 +125,18 @@ public class ApiService {
         }
 
         return api;
+    }
+
+    public List<Long> getSchemaIds(String id) {
+        if(!apiExists(id)) {
+            throw new NotFoundException(
+                    RegistryApiStandardErrors.SC404_03_API_NOT_FOUND,
+                    "API definition with id [" + id + "] does not exists"
+            );
+        }
+
+        List<ApiToSchemaRelationship> apiToSchemaRelationships = apiToSchemaRelationshipRepository.findByIdApiId(id);
+        return apiToSchemaRelationships.stream().map(rel -> rel.getSchemaId()).collect(Collectors.toList());
     }
 
     public Api loadDefinition(String definitionId) {

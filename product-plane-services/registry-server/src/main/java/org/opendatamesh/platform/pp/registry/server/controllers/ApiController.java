@@ -5,7 +5,6 @@ import org.opendatamesh.platform.pp.registry.api.controllers.AbstractApiControll
 import org.opendatamesh.platform.pp.registry.api.resources.ExternalComponentResource;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
 import org.opendatamesh.platform.pp.registry.server.database.entities.Api;
-import org.opendatamesh.platform.pp.registry.server.database.entities.ApiToSchemaRelationship;
 import org.opendatamesh.platform.pp.registry.server.database.mappers.ApiDefinitionMapper;
 import org.opendatamesh.platform.pp.registry.server.services.ApiService;
 import org.slf4j.Logger;
@@ -65,8 +64,8 @@ public class ApiController extends AbstractApiController {
     }
 
     @Override
-    public List<Long> getApiSchemaIds(String id) {
-        return apiDefinitionService.getSchemaIds(id);
+    public List<Long> getApiEndpoints(String id) {
+        return apiDefinitionService.getApiEndpointSchemaIds(id);
     }
 
     @Override

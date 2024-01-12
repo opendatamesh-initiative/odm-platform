@@ -188,7 +188,7 @@ public abstract class AbstractApiController {
     // GET /apis/{id}/schemas
     // ===============================================================================
 
-    @GetMapping(value = "/{id}/schemas")
+    @GetMapping(value = "/{id}/endpoints")
     @ResponseStatus(HttpStatus.OK)
     @Operation(
             summary = "Get the IDs of the schemas of the specified API definition",
@@ -210,14 +210,14 @@ public abstract class AbstractApiController {
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
             )
     })
-    public List<Long> getApiSchemaIdsEndpoint(
+    public List<Long> getApiEndpointsEndpoint(
             @Parameter(description = "Identifier of the API definition")
             @PathVariable(value = "id") String id
     )  {
-        return getApiSchemaIds(id);
+        return getApiEndpoints(id);
     }
 
-    public abstract List<Long> getApiSchemaIds(String id);
+    public abstract List<Long> getApiEndpoints(String id);
 
 
     // ----------------------------------------

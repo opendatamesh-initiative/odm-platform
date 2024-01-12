@@ -127,7 +127,7 @@ public class ApiService {
         return api;
     }
 
-    public List<Long> getSchemaIds(String id) {
+    public List<Long> getApiEndpointSchemaIds(String id) {
         if(!apiExists(id)) {
             throw new NotFoundException(
                     RegistryApiStandardErrors.SC404_03_API_NOT_FOUND,

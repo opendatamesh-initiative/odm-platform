@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.up.executor.api.resources.TaskResource;
+import org.opendatamesh.platform.up.executor.api.resources.TaskStatus;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -102,7 +103,7 @@ public abstract class AbstractExecutorController {
     public abstract TaskResource createTask(TaskResource task);
 
     // ===============================================================================
-    // POST /tasks  
+    // GET /tasks
     // ===============================================================================
     @Operation(
         summary = "Get the task updated version",
@@ -126,4 +127,53 @@ public abstract class AbstractExecutorController {
     }  
     
     public abstract TaskResource readTask(TaskResource task);
+
+    // ===============================================================================
+    // GET /tasks/{taskId}/status
+    // ===============================================================================
+
+    @Operation(
+            summary = "Get the task updated version",
+            description = "Get the an updated version of the given task"
+    )
+    @GetMapping(
+            value = "/{taskId}/status"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "The requested task status with updated state from Azure",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = TaskStatus.class)
+                            )}
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "[Not Found](https://www.rfc-editor.org/rfc/rfc9110.html#name-404-not-found)"
+                            + "\r\n - Error Code 40401 - Pipeline run for Task not found",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorRes.class)
+                            )}
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "[Internal Server Error](https://www.rfc-editor.org/rfc/rfc9110.html#name-500-internal-server-error)"
+                            + "\r\n - Error Code 50050 - Error in in the backend service",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorRes.class)
+                            )}
+            )
+    })
+    public TaskStatus readTaskStatusEndpoint(@PathVariable(value = "taskId") Long taskId) {
+        return readTaskStatus(taskId);
+    }
+
+    public abstract TaskStatus readTaskStatus(Long taskId);
+
 }

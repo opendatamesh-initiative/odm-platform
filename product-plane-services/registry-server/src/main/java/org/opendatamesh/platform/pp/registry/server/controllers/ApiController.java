@@ -64,6 +64,11 @@ public class ApiController extends AbstractApiController {
     }
 
     @Override
+    public List<Long> getApiEndpoints(String id) {
+        return apiDefinitionService.getApiEndpointSchemaIds(id);
+    }
+
+    @Override
     public void deleteApi(String id) {
         apiDefinitionService.deleteDefinition(id);
     }

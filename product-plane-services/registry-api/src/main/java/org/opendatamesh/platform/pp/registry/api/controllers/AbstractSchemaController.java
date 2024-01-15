@@ -34,7 +34,7 @@ public abstract class AbstractSchemaController {
     private static final Logger logger = LoggerFactory.getLogger(AbstractSchemaController.class);
 
     public AbstractSchemaController() { 
-        logger.debug("Schemas controller succesfully started");
+        logger.debug("Schemas controller successfully started");
     }
 
     // @see https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Annotations#arrayschema
@@ -134,7 +134,7 @@ public abstract class AbstractSchemaController {
         @RequestParam(required = false, name = "apiId") 
         String apiId,
 
-        @Parameter(description="Add `content` parameter in request to specify to include or not raw content in response. The defualt is false")
+        @Parameter(description="Add `content` parameter in request to specify to include or not raw content in response. The default is false")
         @RequestParam(required = false, defaultValue = "false", name = "content") 
         boolean includeContent
     )
@@ -147,7 +147,6 @@ public abstract class AbstractSchemaController {
     // ===============================================================================
     // GET /schemas/{id}
     // ===============================================================================
-    
 
     @GetMapping(
         value = "/{id}"
@@ -174,7 +173,7 @@ public abstract class AbstractSchemaController {
         )
     })
     public SchemaResource getSchemaEndpoint(
-        @Parameter(description = "Idenntifier of the schema")
+        @Parameter(description = "Identifier of the schema")
         @PathVariable(value = "id") Long id) 
     {
        return getSchema(id);
@@ -211,8 +210,8 @@ public abstract class AbstractSchemaController {
                 content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
         )
     })
-    public String getSchemaContentEandpoint(
-        @Parameter(description = "Idenntifier of the schema")
+    public String getSchemaContentEndpoint(
+        @Parameter(description = "Identifier of the schema")
         @PathVariable(value = "id") Long id) 
     {
        return getSchemaContent(id);
@@ -250,7 +249,7 @@ public abstract class AbstractSchemaController {
         )
     })
     public List<ApiToSchemaRelationshipResource> getSchemaRelationshipsEndpoint(
-        @Parameter(description = "Idenntifier of the schema")
+        @Parameter(description = "Identifier of the schema")
         @PathVariable(value = "id") Long id) 
     {
         return getSchemaRelationships(id);
@@ -262,7 +261,7 @@ public abstract class AbstractSchemaController {
     // UPDATE /schemas/{id}
     // ----------------------------------------
 
-    // Schemas are immutable ojects, they cannot be updated after creations
+    // Schemas are immutable objects, they cannot be updated after creations
 
 
     // ----------------------------------------

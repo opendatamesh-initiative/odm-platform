@@ -127,7 +127,7 @@ public abstract class AbstractTemplateController {
                             @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class)) })
     })
     public ExternalComponentResource getTemplateEndpoint(
-            @Parameter(description = "Idenntifier of the Template definition") @PathVariable(value = "id") String id) {
+            @Parameter(description = "Identifier of the Template definition") @PathVariable(value = "id") String id) {
     
         return getTemplate(id);
     }

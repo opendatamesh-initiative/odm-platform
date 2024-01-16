@@ -7,6 +7,12 @@ public enum ExecutorApiStandardErrors implements ODMApiStandardErrors {
     // Bad Request Exceptions
     SC400_01_TASK_ID_IS_EMPTY ("40001", "Task Id wasn't provided"),
 
+    // Unathorized Exceptions
+    SC401_01_EXECUTOR_UNATHORIZED("40101", "The executor client id isn't authorized for the request"),
+
+    // Forbidden exception
+    SC403_01_EXECUTOR_FORBIDDEN("40301", "The request is forbidden for the executor client id"),
+
     // Not Found Exceptions
     SC404_01_PIPELINE_RUN_NOT_FOUND ("40401", "Pipeline run not found"),
 

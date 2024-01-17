@@ -200,14 +200,12 @@ public class TaskService {
             if (odmExecutor != null) {
                 TaskStatus taskRealStatus = odmExecutor.readTaskStatus(task.getId());
                 if(taskRealStatus != null) {
-                    switch (taskRealStatus) {
-                        case PROCESSED:
-                            task.setStatus(ActivityTaskStatus.PROCESSED);
-                        case FAILED:
-                            task.setStatus(ActivityTaskStatus.FAILED);
-                        case ABORTED:
-                            task.setStatus(ActivityTaskStatus.ABORTED);
-                    }
+                    if(taskRealStatus.equals(TaskStatus.PROCESSED))
+                        task.setStatus(ActivityTaskStatus.PROCESSED);
+                    else if (taskRealStatus.equals(TaskStatus.PROCESSED))
+                        task.setStatus(ActivityTaskStatus.FAILED);
+                    else if (taskRealStatus.equals(TaskStatus.ABORTED))
+                        task.setStatus(ActivityTaskStatus.ABORTED);
                 }
             }
 

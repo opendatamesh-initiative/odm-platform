@@ -287,7 +287,9 @@ public class RegistryClient extends ODMClient {
         return mapResponseEntity(
                 getResponse,
                 HttpStatus.OK,
-                InfrastructuralComponentDPDS[].class);
+                InfrastructuralComponentDPDS[].class
+        );
+
     }
 
     // ----------------------------------------

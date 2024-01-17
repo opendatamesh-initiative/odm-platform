@@ -4,6 +4,7 @@ import lombok.Data;
 import org.opendatamesh.platform.core.commons.clients.ODMClient;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.up.executor.api.resources.TaskResource;
+import org.opendatamesh.platform.up.executor.api.resources.TaskStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
@@ -22,7 +23,6 @@ public class ExecutorClient extends ODMClient {
     // ----------------------------------------
     // CREATE
     // ----------------------------------------
-    
 
     public TaskResource createTask(Object payload) throws IOException {
         return postTask(payload).getBody();
@@ -60,7 +60,6 @@ public class ExecutorClient extends ODMClient {
     // ----------------------------------------
     // READ
     // ----------------------------------------
-
     
     public TaskResource readTask(Long id) {
 
@@ -71,4 +70,20 @@ public class ExecutorClient extends ODMClient {
 
         return getTaskResponse.getBody();
     }
+
+    public TaskStatus readTaskStatus(Long id) {
+
+        ResponseEntity<TaskStatus> getTaskStatusResponse = rest.getForEntity(
+                apiUrl(ExecutorAPIRoutes.TASK_STATUS),
+                TaskStatus.class,
+                id
+        );
+
+        if(getTaskStatusResponse.getStatusCode().is2xxSuccessful())
+            return getTaskStatusResponse.getBody();
+        else
+            throw new RuntimeException(getTaskStatusResponse.getBody().toString());
+
+    }
+
 }

@@ -42,6 +42,8 @@ public class TaskService {
     @Autowired
     DevOpsClients clients;
 
+    private ExecutorClient odmExecutor;
+
     private static final Logger logger = LoggerFactory.getLogger(ActivityService.class);
 
 
@@ -143,7 +145,7 @@ public class TaskService {
             callbackRef += "/" + task.getId() + "/status?action=STOP";
             taskRes.setCallbackRef(callbackRef);
 
-            ExecutorClient odmExecutor = clients.getExecutorClient(task.getExecutorRef());
+            odmExecutor = clients.getExecutorClient(task.getExecutorRef());
             if (odmExecutor != null) {
                 taskRes = odmExecutor.createTask(taskRes);
             } else {
@@ -192,10 +194,24 @@ public class TaskService {
                 taskResultResource.setResults(results);
                 task.setResults(taskResultResource.toJsonString());
             }
+
+            // Ask to the DevOps provider the real status of the Task
+            odmExecutor = clients.getExecutorClient(task.getExecutorRef());
+            if (odmExecutor != null) {
+                TaskStatus taskRealStatus = odmExecutor.readTaskStatus(task.getId());
+                switch (taskRealStatus) {
+                    case PROCESSED:
+                        task.setStatus(ActivityTaskStatus.PROCESSED);
+                    case FAILED:
+                        task.setStatus(ActivityTaskStatus.FAILED);
+                    case ABORTED:
+                        task.setStatus(ActivityTaskStatus.ABORTED);
+                }
+            }
+
             task.setFinishedAt(now());
             task = saveTask(task);
-            // Save Activity partial results
-            //applicationContext.getBean(ActivityService.class).updateActivityPartialResults(task);
+
         } catch(Throwable t) {
              throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,

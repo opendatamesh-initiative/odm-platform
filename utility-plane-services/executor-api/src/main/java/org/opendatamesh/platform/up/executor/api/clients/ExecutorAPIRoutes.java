@@ -4,7 +4,9 @@ import org.opendatamesh.platform.core.commons.clients.ODMApiRoutes;
 
 public enum ExecutorAPIRoutes implements ODMApiRoutes {
        
-        TASKS("/tasks");
+        TASKS("/tasks"),
+
+        TASK_STATUS("/tasks/{id}/status");
 
         private final String path;
 

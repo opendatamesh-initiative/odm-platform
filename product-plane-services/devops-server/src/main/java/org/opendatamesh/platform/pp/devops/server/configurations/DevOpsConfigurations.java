@@ -24,7 +24,7 @@ public class DevOpsConfigurations {
     @Data
     public static class UtiltyPlaneConfigs {
         Map<String, ServiceConfigs> policyServices;
-        Map<String, ServiceConfigs> executorServices;
+        Map<String, ExecutorServicesConfigs> executorServices;
         Map<String, ServiceConfigs> notificationServices;
     }
    
@@ -33,4 +33,12 @@ public class DevOpsConfigurations {
         Boolean active;
         String address;
     }
+
+    @Data
+    public static class ExecutorServicesConfigs {
+        Boolean active;
+        String address;
+        Boolean checkAfterCallback;
+    }
+
 }

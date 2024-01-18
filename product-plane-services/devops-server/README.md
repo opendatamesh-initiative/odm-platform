@@ -113,11 +113,6 @@ docker build -t odmp-devops-postgres-app . -f ./product-plane-services/devops-se
    --build-arg FLYWAY_SCRIPTS_DIR=postgresql
 ```
 
-*_One useful extra argument is `CHECK_AFTER_CALLBACK`; 
-It's default value it's `true`, and it means that when receiving a callback from the devops provider which is executing 
-the pipelines it calls the executor to check the real status of the pipeline instead of relying on the callback. 
-Set it to `false` to disable it._
-
 ### Run application
 Run the Docker image.
 

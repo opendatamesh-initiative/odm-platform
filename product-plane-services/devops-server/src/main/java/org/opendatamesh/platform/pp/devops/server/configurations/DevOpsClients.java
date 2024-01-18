@@ -24,14 +24,19 @@ public class DevOpsClients {
         registryClient = new RegistryClient(configs.getProductPlane().getRegistryService().getAddress());
         executorsClients = new HashMap<String, ExecutorClient>(); 
         for(String adapterName : configs.getUtilityPlane().getExecutorServices().keySet()) {
-            ServiceConfigs serviceConfigs = configs.getUtilityPlane().getExecutorServices().get(adapterName);
-            if(serviceConfigs != null && serviceConfigs.getActive()) {
-                executorsClients.put(adapterName, new ExecutorClient(serviceConfigs.getAddress()));
+            DevOpsConfigurations.ExecutorServicesConfigs executorServicesConfigs =
+                    configs.getUtilityPlane().getExecutorServices().get(adapterName);
+            if(executorServicesConfigs != null && executorServicesConfigs.getActive()) {
+                executorsClients.put(adapterName, new ExecutorClient(
+                        executorServicesConfigs.getAddress(),
+                        executorServicesConfigs.getCheckAfterCallback()
+                ));
             }
         }
     }
 
     public ExecutorClient getExecutorClient(String adapterName) {
         return executorsClients.get(adapterName);
-    }    
+    }
+
 }

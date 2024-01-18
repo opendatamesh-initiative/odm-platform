@@ -44,9 +44,6 @@ public class TaskService {
     @Autowired
     DevOpsClients clients;
 
-    @Value("${odm.utilityPlane.executorServices.checkAfterCallback}")
-    private Boolean checkAfterCallback;
-
     private ExecutorClient odmExecutor;
 
     private static final Logger logger = LoggerFactory.getLogger(ActivityService.class);
@@ -200,19 +197,17 @@ public class TaskService {
                 task.setResults(taskResultResource.toJsonString());
             }
 
-            if(checkAfterCallback) {
-                // Ask to the DevOps provider the real status of the Task
-                odmExecutor = clients.getExecutorClient(task.getExecutorRef());
-                if (odmExecutor != null) {
-                    TaskStatus taskRealStatus = odmExecutor.readTaskStatus(task.getId());
-                    if(taskRealStatus != null) {
-                        if(taskRealStatus.equals(TaskStatus.PROCESSED))
-                            task.setStatus(ActivityTaskStatus.PROCESSED);
-                        else if (taskRealStatus.equals(TaskStatus.PROCESSED))
-                            task.setStatus(ActivityTaskStatus.FAILED);
-                        else if (taskRealStatus.equals(TaskStatus.ABORTED))
-                            task.setStatus(ActivityTaskStatus.ABORTED);
-                    }
+            // Ask to the DevOps provider the real status of the Task
+            odmExecutor = clients.getExecutorClient(task.getExecutorRef());
+            if (odmExecutor != null && odmExecutor.getCheckAfterCallback()) {
+                TaskStatus taskRealStatus = odmExecutor.readTaskStatus(task.getId());
+                if(taskRealStatus != null) {
+                    if(taskRealStatus.equals(TaskStatus.PROCESSED))
+                        task.setStatus(ActivityTaskStatus.PROCESSED);
+                    else if (taskRealStatus.equals(TaskStatus.PROCESSED))
+                        task.setStatus(ActivityTaskStatus.FAILED);
+                    else if (taskRealStatus.equals(TaskStatus.ABORTED))
+                        task.setStatus(ActivityTaskStatus.ABORTED);
                 }
             }
 

@@ -1,6 +1,7 @@
 package org.opendatamesh.platform.up.executor.api.clients;
 
 import lombok.Data;
+import org.apache.xpath.operations.Bool;
 import org.opendatamesh.platform.core.commons.clients.ODMClient;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.up.executor.api.resources.TaskResource;
@@ -12,8 +13,11 @@ import java.io.IOException;
 @Data
 public class ExecutorClient extends ODMClient {
 
-    public ExecutorClient(String serverAddress) {
+    private Boolean checkAfterCallback;
+
+    public ExecutorClient(String serverAddress, Boolean checkAfterCallback) {
         super(serverAddress, ObjectMapperFactory.JSON_MAPPER);
+        this.checkAfterCallback = checkAfterCallback;
     }
 
     // ======================================================================================

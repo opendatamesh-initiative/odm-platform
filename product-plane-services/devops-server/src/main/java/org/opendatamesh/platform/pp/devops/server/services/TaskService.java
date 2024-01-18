@@ -44,7 +44,7 @@ public class TaskService {
     @Autowired
     DevOpsClients clients;
 
-    @Value("${odm.utilityPlane.executorService.checkAfterCallback}")
+    @Value("${odm.utilityPlane.executorServices.checkAfterCallback}")
     private Boolean checkAfterCallback;
 
     private ExecutorClient odmExecutor;

@@ -77,3 +77,4 @@ odm:
       azure-devops:
         active: true
         address: http://${AZUREDEVOPS_HOSTNAME}:${AZUREDEVOPS_PORT}
+      checkAfterCallback: ${CHECK_AFTER_CALLBACK}

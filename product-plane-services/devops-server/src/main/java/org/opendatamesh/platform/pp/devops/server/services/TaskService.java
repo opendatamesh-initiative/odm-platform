@@ -23,6 +23,7 @@ import org.opendatamesh.platform.up.executor.api.resources.TaskStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -30,6 +31,7 @@ import java.util.*;
 
 @Service
 public class TaskService {
+
     @Autowired
     TaskRepository taskRepository;
 
@@ -41,6 +43,9 @@ public class TaskService {
 
     @Autowired
     DevOpsClients clients;
+
+    @Value("${odm.utilityPlane.executorService.checkAfterCallback}")
+    private Boolean checkAfterCallback;
 
     private ExecutorClient odmExecutor;
 
@@ -195,17 +200,19 @@ public class TaskService {
                 task.setResults(taskResultResource.toJsonString());
             }
 
-            // Ask to the DevOps provider the real status of the Task
-            odmExecutor = clients.getExecutorClient(task.getExecutorRef());
-            if (odmExecutor != null) {
-                TaskStatus taskRealStatus = odmExecutor.readTaskStatus(task.getId());
-                if(taskRealStatus != null) {
-                    if(taskRealStatus.equals(TaskStatus.PROCESSED))
-                        task.setStatus(ActivityTaskStatus.PROCESSED);
-                    else if (taskRealStatus.equals(TaskStatus.PROCESSED))
-                        task.setStatus(ActivityTaskStatus.FAILED);
-                    else if (taskRealStatus.equals(TaskStatus.ABORTED))
-                        task.setStatus(ActivityTaskStatus.ABORTED);
+            if(checkAfterCallback) {
+                // Ask to the DevOps provider the real status of the Task
+                odmExecutor = clients.getExecutorClient(task.getExecutorRef());
+                if (odmExecutor != null) {
+                    TaskStatus taskRealStatus = odmExecutor.readTaskStatus(task.getId());
+                    if(taskRealStatus != null) {
+                        if(taskRealStatus.equals(TaskStatus.PROCESSED))
+                            task.setStatus(ActivityTaskStatus.PROCESSED);
+                        else if (taskRealStatus.equals(TaskStatus.PROCESSED))
+                            task.setStatus(ActivityTaskStatus.FAILED);
+                        else if (taskRealStatus.equals(TaskStatus.ABORTED))
+                            task.setStatus(ActivityTaskStatus.ABORTED);
+                    }
                 }
             }
 

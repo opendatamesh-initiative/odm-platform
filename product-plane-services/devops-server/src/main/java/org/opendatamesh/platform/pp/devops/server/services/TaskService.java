@@ -173,6 +173,14 @@ public class TaskService {
 
     public Task stopTask(Task task, TaskResultResource taskResultResource) {
 		try {
+
+            // Ask to the DevOps provider the real status of the Task
+            TaskStatus taskRealStatus = null;
+            odmExecutor = clients.getExecutorClient(task.getExecutorRef());
+            if (odmExecutor != null && odmExecutor.getCheckAfterCallback()) {
+                taskRealStatus = odmExecutor.readTaskStatus(task.getId());
+            }
+
             if(!(taskResultResource == null)) {
                 if(taskResultResource.getStatus() == null)
                     throw new UnprocessableEntityException(
@@ -180,34 +188,48 @@ public class TaskService {
                             "Task status cannot be null"
                     );
                 if(taskResultResource.getStatus().equals(TaskResultStatus.PROCESSED)) {
-                    task.setStatus(ActivityTaskStatus.PROCESSED);
-                    task.setResults(ObjectMapperFactory.JSON_MAPPER.writeValueAsString(taskResultResource.getResults()));
+                    if (taskRealStatus != null && taskRealStatus.equals(TaskStatus.FAILED)) {
+                        task.setStatus(ActivityTaskStatus.FAILED);
+                        task.setErrors("Check of the Task Status on the DevOps provider [" + task.getExecutorRef() +
+                                "] return a FAILURE. Check the provider for any extra information.");
+                    } else if (taskRealStatus != null && taskRealStatus.equals(TaskStatus.ABORTED)) {
+                        task.setStatus(ActivityTaskStatus.ABORTED);
+                        task.setErrors("Check of the Task Status on the DevOps provider [" + task.getExecutorRef() +
+                                "] return an ABORTED. Check the provider for any extra information.");
+                    } else {
+                        task.setStatus(ActivityTaskStatus.PROCESSED);
+                        task.setResults(ObjectMapperFactory.JSON_MAPPER.writeValueAsString(taskResultResource.getResults()));
+                    }
                 }
                 else {
-                    task.setStatus(ActivityTaskStatus.FAILED);
-                    task.setErrors(taskResultResource.getErrors());
+                    if (taskRealStatus != null && taskRealStatus.equals(TaskStatus.PROCESSED)) {
+                        task.setStatus(ActivityTaskStatus.PROCESSED);
+                    } else if (taskRealStatus != null && taskRealStatus.equals(TaskStatus.ABORTED)) {
+                        task.setStatus(ActivityTaskStatus.ABORTED);
+                        task.setErrors("Check of the Task Status on the DevOps provider [" + task.getExecutorRef() +
+                                "] return an ABORTED. Check the provider for any extra information.");
+                    } else {
+                        task.setStatus(ActivityTaskStatus.FAILED);
+                        task.setErrors(taskResultResource.getErrors());
+                    }
                 }
             } else {
-                task.setStatus(ActivityTaskStatus.PROCESSED);
-                taskResultResource = new TaskResultResource();
-                taskResultResource.setStatus(TaskResultStatus.PROCESSED);
-                Map<String, Object> results = new HashMap<>();
-                results.put("message", "OK");
-                taskResultResource.setResults(results);
-                task.setResults(taskResultResource.toJsonString());
-            }
-
-            // Ask to the DevOps provider the real status of the Task
-            odmExecutor = clients.getExecutorClient(task.getExecutorRef());
-            if (odmExecutor != null && odmExecutor.getCheckAfterCallback()) {
-                TaskStatus taskRealStatus = odmExecutor.readTaskStatus(task.getId());
-                if(taskRealStatus != null) {
-                    if(taskRealStatus.equals(TaskStatus.PROCESSED))
-                        task.setStatus(ActivityTaskStatus.PROCESSED);
-                    else if (taskRealStatus.equals(TaskStatus.PROCESSED))
-                        task.setStatus(ActivityTaskStatus.FAILED);
-                    else if (taskRealStatus.equals(TaskStatus.ABORTED))
-                        task.setStatus(ActivityTaskStatus.ABORTED);
+                if (taskRealStatus != null && taskRealStatus.equals(TaskStatus.FAILED)) {
+                    task.setStatus(ActivityTaskStatus.FAILED);
+                    task.setErrors("Check of the Task Status on the DevOps provider [" + task.getExecutorRef() +
+                            "] return a FAILURE. Check the provider for any extra information.");
+                } else if (taskRealStatus != null && taskRealStatus.equals(TaskStatus.ABORTED)) {
+                    task.setStatus(ActivityTaskStatus.ABORTED);
+                    task.setErrors("Check of the Task Status on the DevOps provider [" + task.getExecutorRef() +
+                            "] return an ABORTED. Check the provider for any extra information.");
+                } else {
+                    task.setStatus(ActivityTaskStatus.PROCESSED);
+                    taskResultResource = new TaskResultResource();
+                    taskResultResource.setStatus(TaskResultStatus.PROCESSED);
+                    Map<String, Object> results = new HashMap<>();
+                    results.put("message", "OK");
+                    taskResultResource.setResults(results);
+                    task.setResults(taskResultResource.toJsonString());
                 }
             }
 

@@ -40,8 +40,14 @@ public class DataProductVersionValidator {
     ) {
         this.mapper = ObjectMapperFactory.JSON_MAPPER;
         this.validationSchemaBaseUrl = validationSchemaBaseUrl;
-        this.validationSchemaMinSupportedVersion = validationSchemaMinSupportedVersion;
-        this.validationSchemaMaxSupportedVersion = validationSchemaMaxSupportedVersion;
+        this.validationSchemaMinSupportedVersion =
+                validationSchemaMinSupportedVersion == null || validationSchemaMinSupportedVersion.equals("")
+                        ? null
+                        : validationSchemaMinSupportedVersion;
+        this.validationSchemaMaxSupportedVersion =
+                validationSchemaMaxSupportedVersion == null || validationSchemaMaxSupportedVersion.equals("")
+                        ? null
+                        : validationSchemaMaxSupportedVersion;
     }
 
     public Set<ValidationMessage> validateSchema(JsonNode jsonNode, String version) {

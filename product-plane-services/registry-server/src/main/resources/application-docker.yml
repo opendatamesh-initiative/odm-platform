@@ -57,6 +57,12 @@ spring:
 # ODM projects configurations
 #############################
 odm:
+  schemas:
+    validation:
+      baseUrl: "https://raw.githubusercontent.com/opendatamesh-initiative/odm-specification-dpdescriptor/main/schemas/"
+      supportedVersions:
+        min: "1.0.0"
+        max: null
   utilityPlane:
     policyServices:
       open-policy-agent:

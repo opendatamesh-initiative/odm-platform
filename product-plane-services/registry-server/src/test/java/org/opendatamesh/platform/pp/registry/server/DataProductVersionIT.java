@@ -48,7 +48,11 @@ public class DataProductVersionIT extends ODMRegistryIT {
 
         DataProductVersionDPDS dataProductVersion = null;
         
-        DPDSParser parser = new DPDSParser();
+        DPDSParser parser = new DPDSParser(
+                "https://raw.githubusercontent.com/opendatamesh-initiative/odm-specification-dpdescriptor/main/schemas/",
+                "1.0.0",
+                null
+        );
         DescriptorLocation location = new UriLocation(descriptorContent);
         ParseOptions options = new ParseOptions();
         //options.setResoveExternalRef(false);

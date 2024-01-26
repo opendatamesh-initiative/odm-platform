@@ -14,6 +14,12 @@ public class DPDSTests {
 
     public static final ParseOptions DEFAULT_PARSE_OPTION;
 
+    protected static final DPDSParser parser = new DPDSParser(
+            "https://raw.githubusercontent.com/opendatamesh-initiative/odm-specification-dpdescriptor/main/schemas/",
+            "1.0.0",
+            null
+    );
+
     static {
         DEFAULT_PARSE_OPTION = new ParseOptions();
         DEFAULT_PARSE_OPTION.setServerUrl("http://localhost:80");
@@ -42,7 +48,11 @@ public class DPDSTests {
             options = DEFAULT_PARSE_OPTION;
         }
 
-        DPDSParser parser = new DPDSParser();
+        DPDSParser parser = new DPDSParser(
+                "https://raw.githubusercontent.com/opendatamesh-initiative/odm-specification-dpdescriptor/main/schemas/",
+                "1.0.0",
+                null
+        );
         try {
             result = parser.parse(location, options);
         } catch (Throwable e) {

@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.internals.LifecycleTaskInfoDPDS;
-import org.opendatamesh.platform.core.dpds.parser.DPDSParser;
 import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
 import org.opendatamesh.platform.core.dpds.parser.ParseResult;
 import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
@@ -17,8 +16,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class DPDSParserLifecycleTest extends DPDSTests {
 
-   
-
     @Test
     public void lifecycleDpdTest() {
 
@@ -29,7 +26,6 @@ public class DPDSParserLifecycleTest extends DPDSTests {
             fail("Impossible to get descriptor location", t);
         }
 
-        DPDSParser parser = new DPDSParser();
         ParseOptions options = new ParseOptions();
         options.setServerUrl("http://localhost:80");
 
@@ -116,7 +112,6 @@ public class DPDSParserLifecycleTest extends DPDSTests {
             fail("Impossible to get descriptor location", t);
         }
 
-        DPDSParser parser = new DPDSParser();
         ParseOptions options = new ParseOptions();
         options.setServerUrl("http://localhost:80");
 
@@ -184,7 +179,6 @@ public class DPDSParserLifecycleTest extends DPDSTests {
             fail("Impossible to get descriptor location", e);
         }
 
-        DPDSParser parser = new DPDSParser();
         ParseOptions options = new ParseOptions();
         options.setServerUrl("http://localhost:80");
 
@@ -296,7 +290,6 @@ public class DPDSParserLifecycleTest extends DPDSTests {
             fail("Impossible to get descriptor location", e);
         }
 
-        DPDSParser parser = new DPDSParser();
         ParseOptions options = new ParseOptions();
         options.setServerUrl("http://localhost:80");
 

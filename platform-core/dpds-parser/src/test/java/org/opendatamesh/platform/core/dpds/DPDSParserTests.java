@@ -8,7 +8,6 @@ import org.opendatamesh.platform.core.dpds.model.interfaces.InterfaceComponentsD
 import org.opendatamesh.platform.core.dpds.model.internals.ApplicationComponentDPDS;
 import org.opendatamesh.platform.core.dpds.model.internals.InfrastructuralComponentDPDS;
 import org.opendatamesh.platform.core.dpds.model.internals.InternalComponentsDPDS;
-import org.opendatamesh.platform.core.dpds.parser.DPDSParser;
 import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
 import org.opendatamesh.platform.core.dpds.parser.ParseResult;
 import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
@@ -186,7 +185,6 @@ public class DPDSParserTests extends DPDSTests {
             fail("Impossible to get descriptor location fomp path [" + DPDSTestResources.DPD_FULL.getLocalPath() + "]", t);
         }
 
-        DPDSParser parser = new DPDSParser();
         ParseOptions options = new ParseOptions();
         options.setServerUrl("http://localhost:80");
 

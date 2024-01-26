@@ -20,8 +20,21 @@ public class DPDSParser {
 
     // private static final Logger logger =
     // LoggerFactory.getLogger(DPDSParser.class);
+    private String validationSchemaBaseUrl;
 
-    public DPDSParser() {
+    private DataProductVersionValidator schemaValidator;
+
+    public DPDSParser(
+            String validationSchemaBaseUrl,
+            String validationSchemaMinSupportedVersion,
+            String validationSchemaMaxSupportedVersion
+    ) {
+        this.validationSchemaBaseUrl = validationSchemaBaseUrl;
+        this.schemaValidator = new DataProductVersionValidator(
+                validationSchemaBaseUrl,
+                validationSchemaMinSupportedVersion,
+                validationSchemaMaxSupportedVersion
+        );
     }
 
     public ParseResult parse(DescriptorLocation location, ParseOptions options) throws ParseException {
@@ -113,21 +126,21 @@ public class DPDSParser {
         return this;
     }
 
-    public DPDSParser validateSchema(DataProductVersionDPDS descriptor) throws DeserializationException, ValidationException {
+    public DPDSParser validateSchema(
+            DataProductVersionDPDS descriptor
+    ) throws DeserializationException, ValidationException {
+
         Set<ValidationMessage> errors;
 
-        // TODO validate against the right schema version
-        DataProductVersionValidator schemaValidator = new DataProductVersionValidator();
-
         DPDSSerializer serializer = new DPDSSerializer("json", false);
-        String serailizedContent = null;
+        String serializedContent = null;
 
         try {
-            serailizedContent = serializer.serialize(descriptor, "canonical");
+            serializedContent = serializer.serialize(descriptor, "canonical");
         } catch (JsonProcessingException e) {
             throw new DeserializationException("Impossible to serialize data product version raw content", e);
         }
-        errors = schemaValidator.validateSchema(serailizedContent);
+        errors = schemaValidator.validateSchema(serializedContent, descriptor.getDataProductDescriptor());
 
         if (!errors.isEmpty()) {
             throw new ValidationException(

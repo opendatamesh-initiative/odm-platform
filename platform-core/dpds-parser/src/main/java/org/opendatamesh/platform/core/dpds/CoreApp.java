@@ -50,7 +50,11 @@ public class CoreApp /* implements CommandLineRunner */ {
         //URI descriptorUri = new URI("examples/tripexecution/data-product-descriptor.json");
         location = new GitLocation(repoUri, descriptorUri);
        
-        DPDSParser parser = new DPDSParser();
+        DPDSParser parser = new DPDSParser(
+                "https://raw.githubusercontent.com/opendatamesh-initiative/odm-specification-dpdescriptor/main/schemas/",
+                "1.0.0",
+                null
+        );
         ParseOptions options = new ParseOptions();
         options.setServerUrl( "http://localhost:80");
 

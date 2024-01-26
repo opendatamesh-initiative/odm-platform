@@ -9,7 +9,6 @@ import org.opendatamesh.platform.core.dpds.exceptions.DeserializationException;
 import org.opendatamesh.platform.core.dpds.exceptions.FetchException;
 import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
 import org.opendatamesh.platform.core.dpds.exceptions.ValidationException;
-import org.opendatamesh.platform.core.dpds.parser.DPDSParser;
 import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
 import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
 import org.opendatamesh.platform.core.dpds.parser.location.UriLocation;
@@ -29,7 +28,6 @@ public class DPDSParserErrorTests extends DPDSTests {
 
         DescriptorLocation location = new UriLocation("     ");
 
-        DPDSParser parser = new DPDSParser();
         assertThatThrownBy(() -> {
             parser.parse(location, DEFAULT_PARSE_OPTION);
         })
@@ -52,7 +50,6 @@ public class DPDSParserErrorTests extends DPDSTests {
                 "  }"  //
         );
 
-        DPDSParser parser = new DPDSParser();
         assertThatThrownBy(() -> {
             parser.parse(location, DEFAULT_PARSE_OPTION);
         })
@@ -88,7 +85,6 @@ public class DPDSParserErrorTests extends DPDSTests {
         }
         DescriptorLocation location = new UriLocation(descriptorContent);
 
-        DPDSParser parser = new DPDSParser();
         assertThatThrownBy(() -> {
             parser.parse(location, DEFAULT_PARSE_OPTION);
         })
@@ -119,7 +115,6 @@ public class DPDSParserErrorTests extends DPDSTests {
         }
         DescriptorLocation location = new UriLocation(descriptorContent);
 
-        DPDSParser parser = new DPDSParser();
         assertThatThrownBy(() -> {
             parser.parse(location, DEFAULT_PARSE_OPTION);
         })
@@ -149,7 +144,6 @@ public class DPDSParserErrorTests extends DPDSTests {
         }
         DescriptorLocation location = new UriLocation(descriptorContent);
 
-        DPDSParser parser = new DPDSParser();
         assertThatThrownBy(() -> {
             parser.parse(location, DEFAULT_PARSE_OPTION);
         })
@@ -179,7 +173,6 @@ public class DPDSParserErrorTests extends DPDSTests {
         }
         DescriptorLocation location = new UriLocation(descriptorContent);
 
-        DPDSParser parser = new DPDSParser();
         assertThatThrownBy(() -> {
             parser.parse(location, DEFAULT_PARSE_OPTION);
         })
@@ -212,7 +205,6 @@ public class DPDSParserErrorTests extends DPDSTests {
         }
         DescriptorLocation location = new UriLocation(descriptorContent);
 
-        DPDSParser parser = new DPDSParser();
         assertThatThrownBy(() -> {
             parser.parse(location, DEFAULT_PARSE_OPTION);
         })
@@ -244,7 +236,6 @@ public class DPDSParserErrorTests extends DPDSTests {
         }
         DescriptorLocation location = new UriLocation(descriptorContent);
 
-        DPDSParser parser = new DPDSParser();
         assertThatThrownBy(() -> {
             parser.parse(location, DEFAULT_PARSE_OPTION);
         })
@@ -262,8 +253,7 @@ public class DPDSParserErrorTests extends DPDSTests {
         ParseOptions options = new ParseOptions();
         options.setServerUrl("http://localhost:80");
         options.setValidateReadOnlyProperties(true);
-    
-        DPDSParser parser = new DPDSParser();
+
         assertThatThrownBy(() -> {
             parser.parse(location, options);
         })
@@ -301,7 +291,6 @@ public class DPDSParserErrorTests extends DPDSTests {
         }
         location.setRootDocumentBaseUri(baseUri);
 
-        DPDSParser parser = new DPDSParser();
         assertThatThrownBy(() -> {
             parser.parse(location, DEFAULT_PARSE_OPTION);
         })

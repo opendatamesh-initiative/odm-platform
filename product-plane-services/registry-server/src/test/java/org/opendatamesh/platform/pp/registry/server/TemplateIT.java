@@ -67,7 +67,11 @@ public class TemplateIT extends ODMRegistryIT {
         DataProductVersionDPDS dataProductVersion = null;
         System.out.println(descriptorContent);
         
-        DPDSParser parser = new DPDSParser();
+        DPDSParser parser = new DPDSParser(
+                "https://raw.githubusercontent.com/opendatamesh-initiative/odm-specification-dpdescriptor/main/schemas/",
+                "1.0.0",
+                null
+        );
         DescriptorLocation location = new UriLocation(descriptorContent);
         ParseOptions options = new ParseOptions();
         options.setServerUrl("http://localhost");

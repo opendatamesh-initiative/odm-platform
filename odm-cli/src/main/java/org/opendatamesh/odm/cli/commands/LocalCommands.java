@@ -54,7 +54,11 @@ public class LocalCommands implements Runnable {
         System.out.println("Validating file ...");
 
         UriLocation descriptorLocation = new UriLocation(descriptorContent);
-        DPDSParser descriptorParser = new DPDSParser();
+        DPDSParser descriptorParser = new DPDSParser(
+                "https://raw.githubusercontent.com/opendatamesh-initiative/odm-specification-dpdescriptor/main/schemas/",
+                "1.0.0",
+                null
+        );
         ParseOptions options = new ParseOptions();
 
         descriptorParser.parse(descriptorLocation, options);

@@ -23,6 +23,7 @@ import org.opendatamesh.platform.up.notification.api.resources.EventType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -52,7 +53,15 @@ public class DataProductService {
 
     @Autowired
     EventNotifier eventNotifier;
-    
+
+    @Value("${odm.schemas.validation.baseUrl}")
+    private String schemaValidationBaseUrl;
+
+    @Value("${odm.schemas.validation.supportedVersions.min}")
+    private String schemaValidationMinSupportedVersion;
+
+    @Value("${odm.schemas.validation.supportedVersions.max}")
+    private String schemaValidationMaxSupportedVersion;
 
     private static final Logger logger = LoggerFactory.getLogger(DataProductService.class);
 
@@ -457,7 +466,11 @@ public class DataProductService {
     private DataProductVersion descriptorToDataProductVersion(DescriptorLocation descriptorLocation, String serverUrl) {
         DataProductVersion dataProductVersion = null;
 
-        DPDSParser descriptorParser = new DPDSParser();
+        DPDSParser descriptorParser = new DPDSParser(
+                schemaValidationBaseUrl,
+                schemaValidationMinSupportedVersion,
+                schemaValidationMaxSupportedVersion
+        );
         ParseOptions options = new ParseOptions();
         options.setServerUrl(serverUrl);
                

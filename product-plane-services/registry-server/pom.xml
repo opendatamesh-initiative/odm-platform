@@ -402,7 +402,7 @@ License.
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>${basedir}/scripts/redoc-static-html-gen.sh</executable>
+                            <executable>${basedir}/scripts/generate-redoc-static-html.sh</executable>
                         </configuration>
                     </execution>
                 </executions>-->

@@ -1,6 +1,7 @@
 package org.opendatamesh.platform.core.dpds.api.dsapi;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -67,6 +68,29 @@ public class DataStoreApiParser extends ApiParser {
                     endpoint.setSchema(schema);
                     endpoints.add(endpoint);
                 }
+            } else if(!apiNode.at("/schema").isMissingNode()) {
+                JsonNode rawSchema = apiNode.at("/schema");
+                ApiDefinitionEndpointDPDS endpoint;
+                String name = null, schemaMediaType = null, realSchema = null;
+                if(rawSchema.get("name") != null) {
+                    name = rawSchema.get("name").asText();
+                } else {
+                    name = "endpoint-1";
+                }
+                realSchema = mapper.writeValueAsString(rawSchema);
+
+                if(!rawSchema.at("/mediaType").isMissingNode()) {
+                    schemaMediaType = rawSchema.at("/mediaType").asText();
+                } else {
+                    schemaMediaType = "application/json";
+                }
+                endpoint = new ApiDefinitionEndpointDPDS();
+                endpoint.setName(name);
+                ApiDefinitionEndpointDPDS.Schema schema = new ApiDefinitionEndpointDPDS.Schema();
+                schema.setMediaType(schemaMediaType);
+                schema.setContent(realSchema);
+                endpoint.setSchema(schema);
+                endpoints.add(endpoint);
             }
         } catch (JsonProcessingException e) {
             throw new DeserializationException("Impossible to parse api definition", e);

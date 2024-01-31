@@ -214,6 +214,8 @@ You can invoke REST endpoints through *OpenAPI UI* available at the following ur
 
 * [http://localhost:8001/api/v1/pp/registry/swagger-ui/index.html](http://localhost:8001/api/v1/pp/registry/swagger-ui/index.html)
 
+*_for a static version of the API documentation, check the `APIdoc.md` file_
+
 ## Database 
 
 If the application is running using an in memory instance of H2 database you can check the database content through H2 Web Console available at the following url:

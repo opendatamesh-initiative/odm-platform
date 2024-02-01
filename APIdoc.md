@@ -150,5 +150,5 @@ In addition to this, a script in the root directory allow to generate the docume
 and aggregate them in a new `redocly-docs` directory on the `root` level (i.e., that is `odm-platform`).
 
 ```bash
-./generate-full-redoc-static-html
+./generate-full-redoc-static-html.sh
 ```

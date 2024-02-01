@@ -58,7 +58,7 @@ public class OpenApiConfiguration {
                     ""
                     )
 
-                .version("v1.0.0")
+                .version("v0.8.0")
                 .license(new License().name("Apache 2.0").url("https://github.com/opendatamesh-initiative/odm-platform/blob/main/LICENSE"))
                 .contact(new Contact()
                     .name("ODM Platform Team")

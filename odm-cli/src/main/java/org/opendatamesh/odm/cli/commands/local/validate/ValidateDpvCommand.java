@@ -1,41 +1,34 @@
-package org.opendatamesh.odm.cli.commands;
+package org.opendatamesh.odm.cli.commands.local.validate;
 
 import org.opendatamesh.odm.cli.utils.FileReaders;
 import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
 import org.opendatamesh.platform.core.dpds.parser.DPDSParser;
 import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
 import org.opendatamesh.platform.core.dpds.parser.location.UriLocation;
-import picocli.CommandLine;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
 
 import java.io.IOException;
 
-
 @Command(
-        name = "local",
-        description = "use the cli for local functionalities",
-        version = "odm-cli local 1.0.0",
+        name = "dpv",
+        description = "Validate the syntax of a Data Product Version JSON descriptor",
+        version = "odm-cli local validate dpv 1.0.0",
         mixinStandardHelpOptions = true
 )
-public class LocalCommands implements Runnable {
+public class ValidateDpvCommand implements Runnable {
 
-    public static void main(String[] args) {
-        CommandLine.run(new LocalCommands(), args);
-    }
-
-    @Command(
-            name = "validate-dpv",
-            description = "Validate the syntax of a Data Product Version given the path of a Data Product Version file",
-            version = "odm-cli local validate-dpv 1.0.0",
-            mixinStandardHelpOptions = true
-    )
-    void validateDpv(@CommandLine.Option(
+    @Option(
             names = {"-f", "--file"},
-            description = "Path of a Data Product Version file",
+            description = "Path of the JSON descriptor of the Data Product Version object",
             required = true
-    )String filePath) {
+    )
+    String dataProductVersionDescriptorPath;
+
+    @Override
+    public void run() {
         try {
-            String descriptorContent = FileReaders.readFileFromPath(filePath);
+            String descriptorContent = FileReaders.readFileFromPath(dataProductVersionDescriptorPath);
             validateDPV(descriptorContent);
             System.out.println("\nValid Data Product Version");
         } catch (IOException e) {
@@ -65,10 +58,4 @@ public class LocalCommands implements Runnable {
 
     }
 
-    @Override
-    public void run() {
-        System.out.println("Allows to communicate with blueprint module");
-    }
-
 }
-

@@ -15,15 +15,15 @@ public final class FileReaders {
         Path resolvedPath = Paths.get(localPath).toAbsolutePath();
 
         if (!Files.exists(resolvedPath) || !Files.isRegularFile(resolvedPath)) {
-            throw new IOException("File \"" + resolvedPath + "\" not found");
+            throw new IOException("File [" + resolvedPath + "] not found.");
         }
 
         try {
             String fileContent = Files.readString(resolvedPath, StandardCharsets.UTF_8);
-            System.out.println("Reading file: " + resolvedPath);
+            System.out.println("Reading file [" + resolvedPath + "]");
             return fileContent;
         } catch (IOException e) {
-            throw new IOException("Error reading the file: " + e.getMessage());
+            throw new IOException("Error reading the file [" + resolvedPath +"]: " + e.getMessage());
         }
     }
 

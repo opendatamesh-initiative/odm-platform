@@ -1,6 +1,7 @@
 package org.opendatamesh.odm.cli.commands.local.validate;
 
-import org.opendatamesh.odm.cli.utils.FileReaders;
+import org.opendatamesh.odm.cli.utils.FileReaderUtils;
+import org.opendatamesh.odm.cli.utils.PrintUtils;
 import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
 import org.opendatamesh.platform.core.dpds.parser.DPDSParser;
 import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
@@ -28,21 +29,33 @@ public class ValidateDpvCommand implements Runnable {
     @Override
     public void run() {
         try {
-            String descriptorContent = FileReaders.readFileFromPath(dataProductVersionDescriptorPath);
+            String descriptorContent = FileReaderUtils.readFileFromPath(dataProductVersionDescriptorPath);
             validateDPV(descriptorContent);
             System.out.println("\nValid Data Product Version");
         } catch (IOException e) {
-            RuntimeException exception = new RuntimeException(e.getMessage());
+            System.out.println("\nInvalid Data Product Version");
+            RuntimeException exception = new RuntimeException(
+                    "Error parsing Data Product Version file: " + e.getMessage()
+            );
             exception.setStackTrace(new StackTraceElement[0]);
             throw exception;
         } catch (ParseException e) {
+            System.out.println("\nInvalid Data Product Version");
             RuntimeException exception = new RuntimeException("Data Product Version not valid: " + e.getMessage());
+            exception.setStackTrace(new StackTraceElement[0]);
+            throw exception;
+        } catch (Exception e) {
+            System.out.println("\nInvalid Data Product Version");
+            RuntimeException exception = new RuntimeException(
+                    "Generic error validationg Data Product Version: " + e.getMessage()
+                            + ". Check for missing parts of the descriptor."
+            );
             exception.setStackTrace(new StackTraceElement[0]);
             throw exception;
         }
     }
 
-    private void validateDPV(String descriptorContent) throws ParseException {
+    private void validateDPV(String descriptorContent) throws Exception {
 
         System.out.println("Validating file ...");
 
@@ -54,7 +67,11 @@ public class ValidateDpvCommand implements Runnable {
         );
         ParseOptions options = new ParseOptions();
 
-        descriptorParser.parse(descriptorLocation, options);
+        PrintUtils.silentExecution(
+                () -> {
+                    descriptorParser.parse(descriptorLocation, options);
+                }
+        );
 
     }
 

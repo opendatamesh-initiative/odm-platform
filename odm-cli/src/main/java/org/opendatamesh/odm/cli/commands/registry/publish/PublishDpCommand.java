@@ -1,14 +1,11 @@
 package org.opendatamesh.odm.cli.commands.registry.publish;
 
-import org.opendatamesh.odm.cli.commands.registry.RegistryCommands;
-import org.opendatamesh.odm.cli.utils.FileReaders;
-import org.opendatamesh.platform.pp.registry.api.clients.RegistryClient;
+import org.opendatamesh.odm.cli.utils.FileReaderUtils;
 import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.ResourceAccessException;
 import picocli.CommandLine.Command;
-import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.ParentCommand;
 
@@ -38,7 +35,7 @@ public class PublishDpCommand implements Runnable {
         String dp = null;
 
         try {
-            dp = FileReaders.readFileFromPath(dataProductDescriptorPath);
+            dp = FileReaderUtils.readFileFromPath(dataProductDescriptorPath);
         } catch (IOException e) {
             System.out.println(
                     "Impossible to read file [" + dataProductDescriptorPath + "]. Check if the file exists and retry"

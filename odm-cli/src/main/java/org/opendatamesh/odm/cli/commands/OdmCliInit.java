@@ -16,8 +16,6 @@ public class OdmCliInit implements Runnable {
     }
 
     @Override
-    public void run() {
-        System.out.println("Welcome to ODM CLI");
-    }
+    public void run() { }
 
 }

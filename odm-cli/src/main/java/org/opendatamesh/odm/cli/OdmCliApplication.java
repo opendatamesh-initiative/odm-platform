@@ -18,6 +18,7 @@ public class OdmCliApplication {
         LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
         lc.getLogger("org").setLevel(ch.qos.logback.classic.Level.OFF);
 
+
         // Init
         CommandLine odmCliCommand = new CommandLine(new OdmCliInit());
 

@@ -4,8 +4,8 @@ import org.opendatamesh.odm.cli.commands.registry.get.GetCommand;
 import org.opendatamesh.odm.cli.commands.registry.list.ListCommand;
 import org.opendatamesh.odm.cli.commands.registry.publish.PublishCommand;
 import org.opendatamesh.odm.cli.commands.registry.upload.UploadCommand;
-import org.opendatamesh.odm.cli.utils.FileReaders;
-import org.opendatamesh.odm.cli.utils.InputManager;
+import org.opendatamesh.odm.cli.utils.FileReaderUtils;
+import org.opendatamesh.odm.cli.utils.InputManagerUtils;
 import org.opendatamesh.platform.pp.registry.api.clients.RegistryClient;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -54,12 +54,12 @@ public class RegistryCommands implements Runnable {
     private RegistryClient setUpRegistryClient(){
         Properties properties = null;
         try {
-            properties = FileReaders.getPropertiesFromFilePath(propertiesFileOption);
+            properties = FileReaderUtils.getPropertiesFromFilePath(propertiesFileOption);
         } catch (IOException e) {
             System.out.println("No properties file has been found");
         }
 
-        String serverUrl = InputManager.getPropertyValue(properties, "registry-server", serverUrlOption);
+        String serverUrl = InputManagerUtils.getPropertyValue(properties, "registry-server", serverUrlOption);
         if (serverUrl == null) {
             System.out.println("The registry server URL wasn't specified. Use the -s option or create a file with the \"registry-server\" property");
             throw new RuntimeException("The registry server URL wasn't specified");

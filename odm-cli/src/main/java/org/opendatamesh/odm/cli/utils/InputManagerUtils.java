@@ -2,7 +2,7 @@ package org.opendatamesh.odm.cli.utils;
 
 import java.util.Properties;
 
-public final class InputManager {
+public final class InputManagerUtils {
 
     /**
      * Checks if the user has inserted the specific property value.

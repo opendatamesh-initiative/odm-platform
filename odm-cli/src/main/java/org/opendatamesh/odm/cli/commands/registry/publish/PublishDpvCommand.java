@@ -1,14 +1,11 @@
 package org.opendatamesh.odm.cli.commands.registry.publish;
 
-import org.opendatamesh.odm.cli.commands.registry.RegistryCommands;
-import org.opendatamesh.odm.cli.utils.FileReaders;
+import org.opendatamesh.odm.cli.utils.FileReaderUtils;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
-import org.opendatamesh.platform.pp.registry.api.clients.RegistryClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.ResourceAccessException;
 import picocli.CommandLine.Command;
-import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.ParentCommand;
 
@@ -45,7 +42,7 @@ public class PublishDpvCommand implements Runnable {
         String dpv = null;
 
         try {
-            dpv = FileReaders.readFileFromPath(dataProductVersionDescriptorPath);
+            dpv = FileReaderUtils.readFileFromPath(dataProductVersionDescriptorPath);
         } catch (IOException e) {
             System.out.println(
                     "Impossible to read file [" + dataProductVersionDescriptorPath +

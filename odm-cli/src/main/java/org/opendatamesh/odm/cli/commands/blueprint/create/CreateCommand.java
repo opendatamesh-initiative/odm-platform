@@ -2,7 +2,7 @@ package org.opendatamesh.odm.cli.commands.blueprint.create;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.odm.cli.commands.blueprint.BlueprintCommands;
-import org.opendatamesh.odm.cli.utils.FileReaders;
+import org.opendatamesh.odm.cli.utils.FileReaderUtils;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintResource;
 import org.springframework.http.HttpStatus;
@@ -45,7 +45,7 @@ public class CreateCommand implements Runnable {
         ObjectMapper objectMapper = new ObjectMapper();
 
         try {
-            String blueprint = FileReaders.readFileFromPath(blueprintPath);
+            String blueprint = FileReaderUtils.readFileFromPath(blueprintPath);
             blueprintResource = objectMapper.readValue(blueprint, BlueprintResource.class);
         } catch (IOException e) {
             System.out.println(

@@ -8,7 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
 
-public final class FileReaders {
+public final class FileReaderUtils {
 
     public static String readFileFromPath(String localPath) throws IOException {
 

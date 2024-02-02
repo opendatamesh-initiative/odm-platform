@@ -1,14 +1,11 @@
 package org.opendatamesh.odm.cli.commands.registry.upload;
 
-import org.opendatamesh.odm.cli.commands.registry.RegistryCommands;
-import org.opendatamesh.odm.cli.utils.InputManager;
-import org.opendatamesh.platform.pp.registry.api.clients.RegistryClient;
+import org.opendatamesh.odm.cli.utils.InputManagerUtils;
 import org.opendatamesh.platform.pp.registry.api.resources.DataProductDescriptorLocationResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.ResourceAccessException;
 import picocli.CommandLine.Command;
-import picocli.CommandLine.Mixin;
 import picocli.CommandLine.ParentCommand;
 
 @Command(
@@ -29,16 +26,16 @@ public class UploadDpvCommand implements Runnable {
         DataProductDescriptorLocationResource.Git git = new DataProductDescriptorLocationResource.Git();
 
         //Request input from user
-        String repositorySshUri = InputManager.getValueFromUser("Insert repository ssh URI: ");
+        String repositorySshUri = InputManagerUtils.getValueFromUser("Insert repository ssh URI: ");
         git.setRepositorySshUri(repositorySshUri);
 
-        String branch = InputManager.getValueFromUser(
+        String branch = InputManagerUtils.getValueFromUser(
                 "Insert branch (blank for \"main\"): ", "main"
         );
         git.setBranch(branch);
         dpLocation.setGit(git);
 
-        String rootDocumentUri = InputManager.getValueFromUser(
+        String rootDocumentUri = InputManagerUtils.getValueFromUser(
                 "Insert the root document URI (inside the repo you previously specified): "
         );
         dpLocation.setRootDocumentUri(rootDocumentUri);

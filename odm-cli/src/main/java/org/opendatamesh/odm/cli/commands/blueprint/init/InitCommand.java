@@ -4,12 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.odm.cli.commands.blueprint.BlueprintCommands;
-import org.opendatamesh.odm.cli.utils.InputManager;
+import org.opendatamesh.odm.cli.utils.InputManagerUtils;
 import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintResource;
 import org.opendatamesh.platform.pp.blueprint.api.resources.ConfigResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.client.ResourceAccessException;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -55,10 +54,10 @@ public class InitCommand implements Runnable {
                 );
 
                 ConfigResource configResource = new ConfigResource();
-                String targetRepo = InputManager.getValueFromUser("Insert target repo: ");
+                String targetRepo = InputManagerUtils.getValueFromUser("Insert target repo: ");
                 configResource.setTargetRepo(targetRepo);
 
-                String createRepo = InputManager.getValueFromUser("Create repo [T/F]: ");
+                String createRepo = InputManagerUtils.getValueFromUser("Create repo [T/F]: ");
                 switch (createRepo){
                     case "T":
                         configResource.setCreateRepo(true);
@@ -79,7 +78,7 @@ public class InitCommand implements Runnable {
                             + param.get("name") + ", \n\tDescription: " + param.get("description") +
                             ", \n\tDefault value: " + param.get("defaultValue")  +  "\n}";
 
-                    String paramInput = InputManager.getValueFromUser(message, param.get("defaultValue"));
+                    String paramInput = InputManagerUtils.getValueFromUser(message, param.get("defaultValue"));
                     configMap.put(param.get("name"), paramInput);
                 }
                 configResource.setConfig(configMap);

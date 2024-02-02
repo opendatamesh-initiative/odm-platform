@@ -6,7 +6,6 @@ import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.ResourceAccessException;
 import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
 import picocli.CommandLine.ParentCommand;
 
 @Command(

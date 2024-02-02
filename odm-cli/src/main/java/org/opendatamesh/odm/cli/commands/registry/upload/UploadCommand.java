@@ -8,6 +8,7 @@ import picocli.CommandLine.ParentCommand;
         name = "upload",
         description = "Commands to upload objects",
         mixinStandardHelpOptions = true,
+        version = "odm-cli registry upload 1.0.0",
         subcommands = {
                 UploadDpvCommand.class
         }

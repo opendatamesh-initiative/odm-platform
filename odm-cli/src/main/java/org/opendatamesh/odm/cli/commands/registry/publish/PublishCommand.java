@@ -7,6 +7,7 @@ import picocli.CommandLine.ParentCommand;
 @Command(
         name = "publish",
         description = "Commands to publish data products and versions",
+        version = "odm-cli registry publish 1.0.0",
         mixinStandardHelpOptions = true,
         subcommands = {
                 PublishDpCommand.class,

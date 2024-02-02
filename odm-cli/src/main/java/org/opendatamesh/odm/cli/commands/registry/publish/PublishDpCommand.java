@@ -23,8 +23,8 @@ public class PublishDpCommand implements Runnable {
     private PublishCommand publishCommand;
 
     @Option(
-            names = "--dpv-file",
-            description = "Path of the JSON descriptor of the Data Product Version object",
+            names = "--dp-file",
+            description = "Path of the JSON descriptor of the Data Product object",
             required = true
     )
     String dataProductDescriptorPath;

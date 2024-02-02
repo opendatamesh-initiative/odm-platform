@@ -8,6 +8,7 @@ import picocli.CommandLine.ParentCommand;
         name = "list",
         description = "Commands to list data products and versions",
         mixinStandardHelpOptions = true,
+        version = "odm-cli registry list 1.0.0",
         subcommands = {
                 ListDpCommand.class,
                 ListDpvCommand.class

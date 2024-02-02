@@ -1,5 +1,6 @@
 package org.opendatamesh.odm.cli.commands.registry.list;
 
+import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import picocli.CommandLine.Command;
@@ -27,6 +28,13 @@ public class ListDpvCommand implements Runnable {
     @Override
     public void run() {
         try {
+
+            ResponseEntity<DataProductResource> dataProductResourceResponseEntity =
+                    listCommand.registryCommands.getRegistryClient().getDataProduct(dataProductId);
+            if(!dataProductResourceResponseEntity.getStatusCode().is2xxSuccessful()) {
+                System.out.println("Data Product [" + dataProductId +"] not found.");
+                return;
+            }
 
             ResponseEntity<String[]> dataProductVersionsResponseEntity =
                     listCommand.registryCommands.getRegistryClient().getDataProductVersions(dataProductId);

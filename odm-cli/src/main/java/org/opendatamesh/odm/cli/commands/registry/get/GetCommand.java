@@ -8,6 +8,7 @@ import picocli.CommandLine.ParentCommand;
         name = "get",
         description = "Commands to get data products and versions",
         mixinStandardHelpOptions = true,
+        version = "odm-cli registry get 1.0.0",
         subcommands = {
                 GetDpCommand.class,
                 GetDpvCommand.class

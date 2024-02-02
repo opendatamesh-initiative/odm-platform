@@ -1,5 +1,8 @@
 package org.opendatamesh.odm.cli.commands;
 
+import org.opendatamesh.odm.cli.commands.blueprint.BlueprintCommands;
+import org.opendatamesh.odm.cli.commands.local.LocalCommands;
+import org.opendatamesh.odm.cli.commands.registry.RegistryCommands;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -7,7 +10,12 @@ import picocli.CommandLine.Command;
         name = "odm-cli",
         description = "ODM CLI init method",
         version = "odm-cli 1.0.0",
-        mixinStandardHelpOptions = true
+        mixinStandardHelpOptions = true,
+        subcommands = {
+                LocalCommands.class,
+                RegistryCommands.class,
+                BlueprintCommands.class
+        }
 )
 public class OdmCliInit implements Runnable {
 
@@ -16,6 +24,8 @@ public class OdmCliInit implements Runnable {
     }
 
     @Override
-    public void run() { }
+    public void run() {
+
+    }
 
 }

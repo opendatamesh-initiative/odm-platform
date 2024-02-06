@@ -35,15 +35,18 @@ spring:
 ##########################
 # Server configuration
 ##########################
+app:
+  workdir:
+
 server:
   port: 9001
-  servlet:
-    contextPath: /api/v1/planes/utility/policy-services/opa
   error:
-    include-stacktrace: always
     include-message: always
+  servlet:
+    context-path: /api/v1/up/policy-service/
 timeout:
-  seconds : 30
+  seconds: 30
+
 
 ##########################
 # OPA configuration

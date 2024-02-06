@@ -216,48 +216,6 @@ License.
                     <maxAttempts>180</maxAttempts>
                     <mainClass>${platform.mainclass}</mainClass>
                 </configuration>
-                <!--
-                <executions>
-                    <execution>
-                        <id>pre-integration-test</id>
-                         <configuration>
-                            <mainClass>org.opendatamesh.platform.pp.registry.server.ODMRegistryApp</mainClass>
-                            <classesDirectory>../registry-server/target/classes</classesDirectory>
-                        </configuration>
-                        <goals>
-                            <goal>start</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>post-integration-test</id>
-                         <configuration>
-                            <mainClass>org.opendatamesh.platform.pp.registry.server.ODMRegistryApp</mainClass>
-                            <classesDirectory>../registry-server/target/classes</classesDirectory>
-                        </configuration>
-                        <goals>
-                            <goal>stop</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                        <configuration>
-                            <classifier>exec</classifier>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>start-application</id>
-                        <configuration>
-                            <mainClass>org.opendatamesh.platform.pp.registry.server.ODMRegistryApp</mainClass>
-                            <classesDirectory>../registry-server/target/classes</classesDirectory>
-                        </configuration>
-                        <goals>
-                            <goal>start</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                -->
             </plugin>
 
         </plugins>

@@ -4,9 +4,9 @@ import org.opendatamesh.platform.core.commons.clients.ODMApiRoutes;
 
 public enum Routes implements ODMApiRoutes {
 
-    POLICYSERVICE_POLICY("/api/v1/planes/utility/policy-services/opa/policies"),
-    POLICYSERVICE_SUITE("/api/v1/planes/utility/policy-services/opa/suites"),
-    POLICYSERVICE_VALIDATE_BASEURL("/api/v1/planes/utility/policy-services/opa/validate");
+    POLICYSERVICE_POLICY("/api/v1/up/policy-service/policies"),
+    POLICYSERVICE_SUITE("/api/v1/up/policy-service/suites"),
+    POLICYSERVICE_VALIDATE_BASEURL("/api/v1/up/policy-service/validate");
 
     private final String path;
 

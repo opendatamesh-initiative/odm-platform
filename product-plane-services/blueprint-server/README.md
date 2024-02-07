@@ -35,7 +35,8 @@ where:
      ]
      ```
 
-Both directory/file names and file contents could be templated, each parameter of the blueprint must have the following naming convention: `${parameterName}`.
+Both directory/file names and file contents could be templated, each parameter of the blueprint must have the following naming convention: `${parameterName}`. 
+The variable name can't also contain special characters such as `",",".","-","_", ...`
 
 For example, given the parameters `dirName=renamedDirectory`, `fileName=renamedFile` and `fileContent=test`, and the following blueprint:
 ```txt

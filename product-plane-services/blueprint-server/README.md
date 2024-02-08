@@ -278,6 +278,17 @@ where:
 ```
 *_this is different from the local app configuration, OAuth2 parameter `scope` must include repository privileges and OAuth2  parameter `token-uri` must be explciited as full URI_
 
+In addition to the default parameters, 3 extra parameters could be added to change the Apache Velocity default behavior:
+* VELOCITY_VARIABLE_START_DELIMITER
+  * default value: "${"
+  * define the _start characters_ to identify a variable
+* VELOCITY_VARIABLE_STOP_DELIMITER
+  * default value: "}"
+  * define the _stop characters_ to identify a variable
+* VELOCITY_VARIABLE_STRICT_EVALUATION
+  * default value: true
+  * define whether to fail or not if a value for a variable is missing
+
 ### Run application
 Run the Docker image.
 
@@ -361,6 +372,8 @@ PERSONAL_ACCESS_TOKEN=<personal-access-token>
 *_Remember that `GIT_PROVIDER` should be one of `[AZURE_DEVOPS, GITHUB]`; For the former set the `PERSONAL_ACCESS_TOKEN` as `null` and populate the `OAUTH` fields; for the latter the opposite_ 
 
 *_Database name, port, password and parameters, as well as spring port, could be changed_
+
+*_In addition to this default settings, as for the Docker execution, also the variables VELOCITY_VARIABLE_START_DELIMITER, VELOCITY_VARIABLE_STOP_DELIMITER and VELOCITY_VARIABLE_STRICT_EVALUATION could be setted_ 
 
 Then, build the docker-compose file:
 ```bash

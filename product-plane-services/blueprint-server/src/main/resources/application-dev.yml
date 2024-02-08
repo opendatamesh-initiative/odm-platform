@@ -63,6 +63,6 @@ git:
         start: "${"
         stop: "}"
       evaluation:
-        strict: false # If true it fails for missing variables
+        strict: true # If true it fails for missing variables
   auth:
     pat: "null"

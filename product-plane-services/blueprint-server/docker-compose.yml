@@ -43,6 +43,9 @@ services:
         OAUTH_CLIENT_SECRET: "${OAUTH_CLIENT_SECRET}"
         OAUTH_SCOPE: "${OAUTH_SCOPE}"
         PERSONAL_ACCESS_TOKEN: "${PERSONAL_ACCESS_TOKEN}"
+        VELOCITY_VARIABLE_START_DELIMITER: "${"
+        VELOCITY_VARIABLE_STOP_DELIMITER: "}"
+        VELOCITY_VARIABLE_STRICT_EVALUATION: "true"
     volumes:
       - $HOME/.ssh:/root/.ssh
       - $SSH_AUTH_SOCK:/ssh-agent

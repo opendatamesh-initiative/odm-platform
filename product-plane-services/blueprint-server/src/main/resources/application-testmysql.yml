@@ -66,5 +66,11 @@ git:
   provider: "GITHUB"
   templates:
     path: "templates"
+    variable:
+      delimiter: # Start and stop characters for identifying a variable
+        start: "${"
+        stop: "}"
+      evaluation:
+        strict: false # If true it fails for missing variables
   auth:
     pat: "null"

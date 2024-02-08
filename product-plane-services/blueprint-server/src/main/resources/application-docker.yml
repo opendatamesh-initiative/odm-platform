@@ -62,6 +62,12 @@ git:
   provider: ${GIT_PROVIDER}
   templates:
     path: "templates"
+    variable:
+      delimiter: # Start and stop characters for identifying a variable
+        start: ${VELOCITY_VARIABLE_START_DELIMITER}
+        stop: ${VELOCITY_VARIABLE_STOP_DELIMITER}
+      evaluation:
+        strict: ${VELOCITY_VARIABLE_STRICT_EVALUATION} # If true it fails for missing variables
   auth:
     oauth2:
       client:

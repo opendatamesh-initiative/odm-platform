@@ -166,5 +166,5 @@ This script require:
 
 An example of execution could be:
 ```bash
-sh upload-redoc-static-html-to-s3 v1.0.0 odmdocbucket
+sh upload-redoc-static-html-to-s3.sh v1.0.0 odmdocbucket
 ```

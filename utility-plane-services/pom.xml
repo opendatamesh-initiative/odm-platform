@@ -25,14 +25,14 @@ License.
     <parent>
         <groupId>org.opendatamesh</groupId>
         <artifactId>odm-platform</artifactId>
-        <version>0.7.2</version>
+        <version>0.7.1</version>
     </parent>
 
     <groupId>org.opendatamesh</groupId>
     <artifactId>odm-platform-up-services</artifactId>
     <name>ODM Platform UTILITY PLANE SERVICES</name>
     <description>Open Data Mesh Platform Utility Plane Services</description>
-    <version>0.7.2</version>
+    <version>0.7.1</version>
     <url>https://github.com/opendatamesh-initiative/odm-platform-pp-services</url>
     <packaging>pom</packaging>
 

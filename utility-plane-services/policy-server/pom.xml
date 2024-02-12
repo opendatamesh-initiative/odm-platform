@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.opendatamesh</groupId>
         <artifactId>odm-platform-up-services</artifactId>
-        <version>0.7.2</version>
+        <version>0.7.1</version>
         <relativePath>../</relativePath>
     </parent>
 
@@ -15,7 +15,7 @@
     <artifactId>odm-platform-up-policy-server</artifactId>
     <name>ODM Platform Policy Service OPA Server</name>
     <description>Open Data Mesh Platform Policy Service Open Policy Agent Server</description>
-    <version>0.7.2</version>
+    <version>0.7.1</version>
 
     <licenses>
         <license>
@@ -104,7 +104,7 @@
         <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-up-policy-api</artifactId>
-            <version>0.7.2</version>
+            <version>0.7.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

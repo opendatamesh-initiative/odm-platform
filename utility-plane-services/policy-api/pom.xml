@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.opendatamesh</groupId>
         <artifactId>odm-platform-up-services</artifactId>
-        <version>0.7.1</version>
+        <version>0.7.2</version>
         <relativePath>../</relativePath>
     </parent>
 
@@ -16,7 +16,7 @@
     <name>ODM Platform Policy Service OPA API</name>
     <description>Open Data Mesh Platform Policy Service Open Policy Agent API</description>
     <url>https://github.com/opendatamesh-initiative/odm-platform</url>
-    <version>0.7.1</version>
+    <version>0.7.2</version>
 
     <properties>
         <java.version>11</java.version>
@@ -88,13 +88,13 @@
         <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-pp-registry-api</artifactId>
-            <version>0.7.1</version>
+            <version>0.7.2</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-core-commons</artifactId>
-            <version>0.7.1</version>
+            <version>0.7.2</version>
             <scope>compile</scope>
         </dependency>
 

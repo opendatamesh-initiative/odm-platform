@@ -157,7 +157,7 @@ After the generation, it's also possible to upload the static files to an AWS S3
 This script require:
 * AWS CLI installed
 * 2 parameters:
-  * first one, the version of the doc to upload (e.g., _v1.0.0_)
+  * first one, the version of the doc to upload (e.g., _1.0.0_)
   * second one, the name of the AWS S3 Bucket (default value for the official ODM S3 Bucket: _odmdocbucket_)
 * 3 environment variables:
   * AWS_ACCESS_KEY_ID
@@ -166,5 +166,5 @@ This script require:
 
 An example of execution could be: 
 ```bash
-sh upload-redoc-static-html-to-s3 v1.0.0 odmdocbucket
+sh upload-redoc-static-html-to-s3 1.0.0 odmdocbucket
 ```

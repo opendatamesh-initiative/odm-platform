@@ -150,5 +150,21 @@ In addition to this, a script in the root directory allow to generate the docume
 and aggregate them in a new `redocly-docs` directory on the `root` level (i.e., that is `odm-platform`).
 
 ```bash
-./generate-full-redoc-static-html
+sh generate-full-redoc-static-html.sh
+```
+
+After the generation, it's also possible to upload the static files to an AWS S3 Bucket with the sript `upload-redoc-static-html-to-s3` on the `root` level.
+This script require:
+* AWS CLI installed
+* 2 parameters:
+  * first one, the version of the doc to upload (e.g., _v1.0.0_)
+  * second one, the name of the AWS S3 Bucket (default value for the official ODM S3 Bucket: _odmdocbucket_)
+* 3 environment variables:
+  * AWS_ACCESS_KEY_ID
+  * AWS_SECRET_ACCESS_KEY
+  * AWS_DEFAULT_REGION (default value for the official ODM S3 Bucket: _eu-central-1_)
+
+An example of execution could be: 
+```bash
+sh upload-redoc-static-html-to-s3 v1.0.0 odmdocbucket
 ```

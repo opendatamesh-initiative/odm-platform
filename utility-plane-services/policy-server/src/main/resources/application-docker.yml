@@ -5,7 +5,7 @@ spring:
   profile: docker
   jpa:
     hibernate:
-      ddl-auto: validate # [validate, none]
+      ddl-auto: none #validate # [validate, none] - validate not working for mysql
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     properties:

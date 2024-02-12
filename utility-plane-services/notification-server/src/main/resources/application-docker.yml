@@ -21,7 +21,7 @@ spring:
   # JPA configuration
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: none #validate - not working for mysql
       #show-sql: true
       naming:
         implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
@@ -50,7 +50,7 @@ spring:
     user: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
     #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
-    schemas: ${DATABASE_SCHEMA}
+    schemas: ${DATABASE_SCHEMA} # Not working for mysql - temp fix only for branch 0.7
     locations: classpath:db/migration/${FLYWAY_SCRIPTS_DIR}
     clean-on-validation-error: true
 

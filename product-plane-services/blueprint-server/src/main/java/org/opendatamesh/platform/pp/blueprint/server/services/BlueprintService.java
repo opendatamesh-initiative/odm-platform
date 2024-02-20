@@ -165,7 +165,7 @@ public class BlueprintService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while loading activity with id [" + blueprintId + "]",
+                    "An error occured in the backend database while loading blueprint with id [" + blueprintId + "]",
                     t
             );
         }

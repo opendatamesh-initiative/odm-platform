@@ -1,0 +1,7 @@
+{
+  "paramName": "spring.datasource.password",
+  "paramValue": "pwd123",
+  "secret": true,
+  "displayName": "DB password",
+  "description": "Password of the database"
+}

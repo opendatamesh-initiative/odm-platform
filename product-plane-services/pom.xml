@@ -64,6 +64,8 @@ License.
         <module>blueprint-server</module>
         <module>devops-api</module>
         <module>devops-server</module>
+        <module>params-api</module>
+        <module>params-server</module>
         <module>registry-api</module>
         <module>registry-server</module>
     </modules>

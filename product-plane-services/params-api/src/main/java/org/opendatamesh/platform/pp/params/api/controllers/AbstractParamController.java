@@ -186,7 +186,7 @@ public abstract class AbstractParamController {
                             description = "example of a parameter",
                             value = EXAMPLE_ONE
                     )}))
-            @RequestBody ParamResource param
+            @RequestBody(required = false) ParamResource param
     ) {
         return updateParam(id, param);
     }

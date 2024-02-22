@@ -24,20 +24,21 @@ public final class ParamsUpdater {
 
     public void updateConfigurations() throws JsonProcessingException {
         String activeProfile = configurableEnvironment.getActiveProfiles()[0];
-        for (PropertySource<?> propertySource : configurableEnvironment.getPropertySources()) {
-            if (propertySource.getName().startsWith("applicationConfig:") &&
-                    propertySource.getName().contains(activeProfile)) {
-                Map<String, Object> properties = extractProperties((EnumerablePropertySource<?>) propertySource);
-                updateProperties(properties);
-            }
-        }
+        Map<String, Object> properties = extractPropertiesForProfile(activeProfile);
+        updateProperties(properties);
     }
 
-    private Map<String, Object> extractProperties(EnumerablePropertySource<?> propertySource) {
+    private Map<String, Object> extractPropertiesForProfile(String profile) {
         Map<String, Object> properties = new HashMap<>();
-        for (String propertyName : propertySource.getPropertyNames()) {
-            Object propertyValue = propertySource.getProperty(propertyName);
-            properties.put(propertyName, propertyValue);
+        for(PropertySource<?> propertySource : configurableEnvironment.getPropertySources()) {
+            if(propertySource.getName().contains("application-"+profile+".yml")) {
+                if (propertySource instanceof EnumerablePropertySource) {
+                    EnumerablePropertySource<?> enumerablePropertySource = (EnumerablePropertySource<?>) propertySource;
+                    for (String propertyName : enumerablePropertySource.getPropertyNames()) {
+                        properties.put(propertyName, enumerablePropertySource.getProperty(propertyName));
+                    }
+                }
+            }
         }
         return properties;
     }

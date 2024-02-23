@@ -1,4 +1,4 @@
 package org.opendatamesh.platform.pp.policy.api.resources;
 
-public class EngineResource {
+public class PolicyEvaluationResultResource {
 }

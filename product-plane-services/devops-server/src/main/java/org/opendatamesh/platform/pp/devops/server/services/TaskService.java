@@ -32,6 +32,9 @@ import java.util.*;
 public class TaskService {
 
     @Autowired
+    PolicyServiceProxy policyServiceProxy;
+
+    @Autowired
     TaskRepository taskRepository;
 
     @Autowired
@@ -42,9 +45,6 @@ public class TaskService {
 
     @Autowired
     DevOpsClients clients;
-
-    @Autowired
-    PolicyServiceProxy policyServiceProxy;
 
     private ExecutorClient odmExecutor;
 

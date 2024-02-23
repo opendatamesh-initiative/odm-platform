@@ -66,6 +66,7 @@ License.
         <module>devops-server</module>
         <module>registry-api</module>
         <module>registry-server</module>
+        <module>policy-api</module>
     </modules>
 
 </project>

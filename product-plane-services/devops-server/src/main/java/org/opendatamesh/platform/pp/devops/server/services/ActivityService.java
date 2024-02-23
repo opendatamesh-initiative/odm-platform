@@ -39,6 +39,9 @@ import java.util.stream.Collectors;
 public class ActivityService {
 
     @Autowired
+    PolicyServiceProxy policyServiceProxy;
+
+    @Autowired
     ActivityRepository activityRepository;
 
     @Autowired
@@ -49,9 +52,6 @@ public class ActivityService {
 
     @Autowired
     LifecycleService lifecycleService;
-
-    @Autowired
-    PolicyServiceProxy policyServiceProxy;
 
     private static final Logger logger = LoggerFactory.getLogger(ActivityService.class);
 

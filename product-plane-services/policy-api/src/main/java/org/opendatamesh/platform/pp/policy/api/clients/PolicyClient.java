@@ -7,6 +7,9 @@ import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicySuiteResource;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -31,24 +34,97 @@ public class PolicyClient extends ODMClient {
     // Policy
     // ----------------------------------------
 
-    public ResponseEntity createPolicy(PolicyResource policyResource) {
-        return null;
+    public ResponseEntity createPolicy(PolicyResource policyResource) throws JsonProcessingException {
+
+        ResponseEntity postPolicyResponse = rest.postForEntity(
+                apiUrl(PolicyAPIRoutes.POLICIES),
+                policyResource,
+                Object.class
+        );
+
+        ResponseEntity response = mapResponseEntity(
+                postPolicyResponse,
+                HttpStatus.CREATED,
+                PolicyResource.class
+        );
+
+        return response;
+
     }
 
-    public ResponseEntity updatePolicy(Long id, PolicyResource policyResource) {
-        return null;
+    public ResponseEntity updatePolicy(Long policyId, PolicyResource policyResource) throws JsonProcessingException {
+
+        ResponseEntity putPolicyResponse = rest.exchange(
+                apiUrlOfItem(PolicyAPIRoutes.POLICIES),
+                HttpMethod.PUT,
+                new HttpEntity<>(policyResource),
+                Object.class,
+                policyId
+        );
+
+        ResponseEntity response = mapResponseEntity(
+                putPolicyResponse,
+                HttpStatus.OK,
+                PolicyResource.class
+        );
+
+        return response;
+
     }
 
-    public ResponseEntity readAllPolicies() {
-        return null;
+    public ResponseEntity readAllPolicies() throws JsonProcessingException {
+
+        ResponseEntity getResponse = rest.getForEntity(
+                apiUrl(PolicyAPIRoutes.POLICIES),
+                Object.class
+        );
+
+        ResponseEntity response = mapResponseEntity(
+                getResponse,
+                HttpStatus.OK,
+                Page.class // Convert to LIST //TODO
+        );
+
+        return response;
+
     }
 
-    public ResponseEntity readOnePolicy(Long id) {
-        return null;
+    public ResponseEntity readOnePolicy(Long policyId) throws JsonProcessingException {
+        
+        ResponseEntity getResponse = rest.getForEntity(
+                apiUrlOfItem(PolicyAPIRoutes.POLICIES),
+                Object.class,
+                policyId
+        );
+
+        ResponseEntity response = mapResponseEntity(
+                getResponse,
+                HttpStatus.OK,
+                PolicyResource.class
+        );
+
+        return response;
+        
     }
 
-    public ResponseEntity deletePolicy(Long id) {
-        return null;
+    public ResponseEntity deletePolicy(Long policyId) throws JsonProcessingException {
+
+        ResponseEntity deleteResponse = rest.exchange(
+                apiUrlOfItem(PolicyAPIRoutes.POLICIES),
+                HttpMethod.DELETE,
+                null,
+                Object.class,
+                policyId
+        );
+
+        ResponseEntity response = mapResponseEntity(
+                deleteResponse,
+                HttpStatus.OK,
+                PolicyResource.class
+        );
+
+        return response;
+        
     }
 
 

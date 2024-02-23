@@ -149,13 +149,6 @@ License.
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Auto Documentation -->
-        <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-ui</artifactId>
-            <version>1.6.11</version>
-        </dependency>
-
         <!-- Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -244,5 +237,132 @@ License.
         </dependency>
 
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>11</source>
+                    <target>11</target>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.24</version>
+                        </path>
+                        <!-- This is needed when using Lombok 1.18.16 and above -->
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok-mapstruct-binding</artifactId>
+                            <version>0.2.0</version>
+                        </path>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>1.5.3.Final</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.3.3.RELEASE</version>
+                <configuration>
+                    <wait>1000</wait>
+                    <maxAttempts>180</maxAttempts>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>pre-integration-test</id>
+                        <goals>
+                            <goal>start</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>post-integration-test</id>
+                        <goals>
+                            <goal>stop</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!--Integration tests-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Test temp disabled -->
+            <!--<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/*IT.java</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/ODMPolicyIT.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>-->
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>generate-doc</id>
+            <build>
+                <plugins>
+                    <!-- Auto - doc -->
+                    <plugin>
+                        <groupId>org.springdoc</groupId>
+                        <artifactId>springdoc-openapi-maven-plugin</artifactId>
+                        <version>0.2</version>
+                        <executions>
+                            <execution>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <apiDocsUrl>http://localhost:8005/api/v1/pp/policy/v3/api-docs</apiDocsUrl>
+                            <outputFileName>openapi.json</outputFileName>
+                            <outputDir>${project.build.directory}</outputDir>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <id>redoc-static-html-gen</id>
+                                <phase>post-integration-test</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>${basedir}/scripts/generate-redoc-static-html.sh</executable>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

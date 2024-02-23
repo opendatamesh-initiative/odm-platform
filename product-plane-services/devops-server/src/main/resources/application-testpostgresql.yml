@@ -74,7 +74,7 @@ odm:
       address: http://localhost:8003
     policyService:
       active: false
-      address: http://localhost:8004 # Check if it's the real port
+      address: http://localhost:8005
   utilityPlane:
     notificationServices:
       blindata:

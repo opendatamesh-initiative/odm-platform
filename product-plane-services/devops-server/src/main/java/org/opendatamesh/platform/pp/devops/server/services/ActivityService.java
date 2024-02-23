@@ -50,6 +50,9 @@ public class ActivityService {
     @Autowired
     LifecycleService lifecycleService;
 
+    @Autowired
+    PolicyServiceProxy policyServiceProxy;
+
     private static final Logger logger = LoggerFactory.getLogger(ActivityService.class);
 
     public ActivityService() {
@@ -172,6 +175,9 @@ public class ActivityService {
         }
 
         // TODO validate stage transition with policy engine (FROM stage TO stage)
+        if(!policyServiceProxy.validateStageTransition()) { // Define which object evaluate
+            // Throw an exception for illegal stage transition
+        }
 
         // update activity's status
         try {
@@ -232,6 +238,9 @@ public class ActivityService {
             activity.setStatus(ActivityStatus.FAILED);
         }
         activity = saveActivity(activity);
+
+        // TODO
+        policyServiceProxy.validateContextualCoherence(); // Define which object pass to it
 
         return activity;
     }

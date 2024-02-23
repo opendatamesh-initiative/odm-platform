@@ -31,12 +31,12 @@ import java.net.URISyntaxException;
 
 @RestController
 public class UploadsController extends AbstractUploadsController {
+
     @Autowired
     private DataProductService dataProductService;
 
     @Autowired
     private DataProductVersionMapper dataProductVersionMapper;
-
 
     @Autowired
     ObjectMapper objectMapper;

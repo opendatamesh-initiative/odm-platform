@@ -25,4 +25,5 @@ public class DataProduct {
 
     @Column(name = "DESCRIPTION")
     private String description;
+
 }

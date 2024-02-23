@@ -25,7 +25,6 @@ import org.opendatamesh.platform.pp.registry.server.database.entities.dataproduc
 import org.opendatamesh.platform.pp.registry.server.database.mappers.DataProductVersionMapper;
 import org.opendatamesh.platform.pp.registry.server.database.repositories.DataProductVersionRepository;
 import org.opendatamesh.platform.pp.registry.server.resources.v1.observers.EventNotifier;
-import org.opendatamesh.platform.pp.registry.server.resources.v1.policyservice.PolicyName;
 import org.opendatamesh.platform.up.notification.api.resources.EventResource;
 import org.opendatamesh.platform.up.notification.api.resources.EventType;
 import org.slf4j.Logger;
@@ -612,8 +611,7 @@ public class DataProductVersionService {
         Boolean isValid = false;
 
         try {
-            isValid = policyServiceProxy.validateDataProductVersion(
-                    dataProductVersion, PolicyName.dataproduct);
+            isValid = policyServiceProxy.validateDataProductVersion(dataProductVersion);
         } catch (Throwable t) {
             throw new BadGatewayException(
                 ODMApiCommonErrors.SC502_71_POLICY_SERVICE_ERROR,

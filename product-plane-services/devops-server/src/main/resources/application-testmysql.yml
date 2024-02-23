@@ -70,11 +70,10 @@ odm:
     blueprintService:
       active: false
       address: http://localhost:8003
+    policyService:
+      active: false
+      address: http://localhost:8004 # Check if it's the real port
   utilityPlane:
-    policyServices:
-      open-policy-agent:
-        active: false
-        address: http://localhost:9001
     notificationServices:
       blindata:
         active: false

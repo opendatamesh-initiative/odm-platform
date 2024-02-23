@@ -63,11 +63,11 @@ odm:
       supportedVersions:
         min: "1.0.0"
         max: null
+  productPlane:
+    policyService:
+      active: ${POLICYSERVICE_ACTIVE}
+      address: http://${POLICYSERVICE_HOSTNAME}:${POLICYSERVICE_PORT} # Check if it's the real port
   utilityPlane:
-    policyServices:
-      open-policy-agent:
-        active: ${POLICYSERVICE_ACTIVE}
-        address: http://${POLICYSERVICE_HOSTNAME}:${POLICYSERVICE_PORT}
     notificationServices:
       blindata:
         active: ${METASERVICE_ACTIVE}

@@ -13,12 +13,12 @@ import org.springframework.http.ResponseEntity;
 
 public class PolicyServiceProxy extends PolicyClient {
 
-    @Value("${odm.utilityPlane.policyServices.open-policy-agent.active}")
+    @Value("${odm.productPlane.policyService.active}")
     private String policyServiceActive;
 
     private static final Logger logger = LoggerFactory.getLogger(PolicyServiceProxy.class);
 
-    public PolicyServiceProxy(@Value("${odm.utilityPlane.policyServices.open-policy-agent.address}") final String serverAddress) {
+    public PolicyServiceProxy(@Value("${odm.productPlane.policyService.address}") final String serverAddress) {
         super(serverAddress, ObjectMapperFactory.JSON_MAPPER);
     }
 

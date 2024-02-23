@@ -182,15 +182,15 @@ License.
         </dependency>
 
         <!-- Flyway -->
-        <dependency>
+        <!--<dependency>
             <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
+            <artifactId>flyway-core</artifactId>-->
             <!--<version>9.8.1</version>-->
-        </dependency>
+        <!--</dependency>
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-mysql</artifactId>
-        </dependency>
+        </dependency>--> <!-- TEMP DISABLED -->
 
         <!-- Others -->
         <dependency>

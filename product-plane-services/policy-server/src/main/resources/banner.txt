@@ -8,5 +8,5 @@ ${Ansi.BLUE}    \____/|_____/|_|  |_|  |_|    |_|\__,_|\__|_| \___/|_|  |_| |_| 
 
 ${Ansi.BLUE}   ===========================  
 
-${Ansi.BLUE}   > DEVOPS MODULE 1.0.0
+${Ansi.BLUE}   > POLICY SERVICE MODULE 1.0.0
 ${Ansi.BLUE}   ${application.title} ${application.formatted-version}

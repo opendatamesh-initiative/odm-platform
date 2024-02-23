@@ -4,7 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.platform.core.commons.clients.ODMClient;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
+import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
+import org.opendatamesh.platform.pp.policy.api.resources.PolicySuiteResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -54,11 +56,11 @@ public class PolicyClient extends ODMClient {
     // Suite
     // ----------------------------------------
 
-    public ResponseEntity createSuite(PolicyResource policyResource) {
+    public ResponseEntity createSuite(PolicySuiteResource policySuiteResource) {
         return null;
     }
 
-    public ResponseEntity updateSuite(Long id, PolicyResource policyResource) {
+    public ResponseEntity updateSuite(Long id, PolicySuiteResource policySuiteResource) {
         return null;
     }
 
@@ -79,11 +81,11 @@ public class PolicyClient extends ODMClient {
     // Engine
     // ----------------------------------------
 
-    public ResponseEntity createEngine(PolicyResource policyResource) {
+    public ResponseEntity createEngine(PolicyEngineResource policyEngineResource) {
         return null;
     }
 
-    public ResponseEntity updateEngine(Long id, PolicyResource policyResource) {
+    public ResponseEntity updateEngine(Long id, PolicyEngineResource policyEngineResource) {
         return null;
     }
 

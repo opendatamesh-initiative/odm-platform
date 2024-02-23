@@ -5,7 +5,7 @@ import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErr
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsConfigurations;
 import org.opendatamesh.platform.pp.policy.api.clients.PolicyClient;
-import org.opendatamesh.platform.pp.policy.api.resources.PolicyResultResource;
+import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
 import org.opendatamesh.platform.up.notification.api.resources.EventResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,7 +109,7 @@ public class PolicyServiceProxy extends PolicyClient {
     private Boolean getPolicyValidationResult(EventResource eventResource) {
         try {
             // 2. Invoke the PolicyService
-            ResponseEntity<PolicyResultResource> policyResponse = validatePolicy(); // Pass the event //TODO
+            ResponseEntity<PolicyEvaluationResultResource> policyResponse = validatePolicy(); // Pass the event //TODO
             // 3. Process results
             if(policyResponse.getStatusCode().is2xxSuccessful()) {
                 // TODO - handle results

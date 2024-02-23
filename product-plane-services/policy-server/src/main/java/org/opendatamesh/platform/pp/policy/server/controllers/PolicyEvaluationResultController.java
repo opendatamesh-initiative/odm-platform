@@ -43,9 +43,4 @@ public class PolicyEvaluationResultController extends AbstractPolicyEvaluationRe
         return MOCKED_POLICY_EVAL_RESULT;
     }
 
-    @Override
-    public PolicyEvaluationResultResource validatePolicy(EventResource eventResource) {
-        return MOCKED_POLICY_EVAL_RESULT;
-    }
-
 }

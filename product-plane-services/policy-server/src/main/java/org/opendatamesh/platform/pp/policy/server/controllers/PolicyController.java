@@ -16,7 +16,7 @@ import java.util.List;
 @Controller
 public class PolicyController extends AbstractPolicyController {
     private final PolicyResource MOCKED_POLICY = new PolicyResource();
-    private final PolicyEvaluationResultResource MOCKED_POLICY_EVALUATION_RESULT = new PolicyEvaluationResultResource();
+    private final PolicyEvaluationResultResource MOCKED_POLICY_EVAL_RESULT = new PolicyEvaluationResultResource();
 
     @Override
     public Page<PolicyResource> getPolicies(Pageable pageable, PolicySearchOptions searchOptions) {
@@ -46,7 +46,7 @@ public class PolicyController extends AbstractPolicyController {
 
     @Override
     public PolicyEvaluationResultResource validateObject(EventResource eventResource) {
-        return MOCKED_POLICY_EVALUATION_RESULT;
+        return MOCKED_POLICY_EVAL_RESULT;
     }
 
 }

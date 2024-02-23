@@ -110,9 +110,9 @@ public class PolicyServiceProxy extends PolicyClient {
 
     private Boolean getPolicyValidationResult(EventResource eventResource) {
         try {
-            // 2. Invoke the PolicyService
-            ResponseEntity<PolicyEvaluationResultResource> policyResponse = validatePolicies(eventResource); // Pass the event //TODO
-            // 3. Process results
+            // Invoke the PolicyService
+            ResponseEntity<PolicyEvaluationResultResource> policyResponse = validateObject(eventResource);
+            // Process results
             if(policyResponse.getStatusCode().is2xxSuccessful()) {
                 // TODO - handle results
                 return true;

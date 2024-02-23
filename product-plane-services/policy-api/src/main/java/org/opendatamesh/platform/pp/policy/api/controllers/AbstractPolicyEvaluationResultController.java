@@ -49,10 +49,4 @@ public abstract class AbstractPolicyEvaluationResultController {
             @PathVariable(value = "uuid") String uuid
     );
 
-    @PostMapping(value = "/validate")
-    public abstract PolicyEvaluationResultResource validatePolicy(
-            @Parameter(description = "")
-            @RequestBody EventResource eventResource
-    );
-
 }

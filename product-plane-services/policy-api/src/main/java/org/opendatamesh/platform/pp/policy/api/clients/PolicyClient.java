@@ -129,6 +129,24 @@ public class PolicyClient extends ODMClient {
         
     }
 
+    public ResponseEntity validateObject(EventResource eventResource) throws JsonProcessingException {
+
+        ResponseEntity validateObjectResponse = rest.postForEntity(
+                apiUrl(PolicyAPIRoutes.POLICIES, "/*/validate-object"),
+                eventResource,
+                Object.class
+        );
+
+        ResponseEntity response = mapResponseEntity(
+                validateObjectResponse,
+                HttpStatus.OK,
+                PolicyEvaluationResultResource.class
+        );
+
+        return response;
+
+    }
+
 
     // ----------------------------------------
     // Suite
@@ -423,24 +441,6 @@ public class PolicyClient extends ODMClient {
 
         ResponseEntity response = mapResponseEntity(
                 deletePolicyEvaluationResultResponse,
-                HttpStatus.OK,
-                PolicyEvaluationResultResource.class
-        );
-
-        return response;
-
-    }
-
-    public ResponseEntity validatePolicies(EventResource eventResource) throws JsonProcessingException {
-
-        ResponseEntity validatePolicyResponse = rest.postForEntity(
-                apiUrl(PolicyAPIRoutes.RESULTS),
-                eventResource,
-                Object.class
-        );
-
-        ResponseEntity response = mapResponseEntity(
-                validatePolicyResponse,
                 HttpStatus.OK,
                 PolicyEvaluationResultResource.class
         );

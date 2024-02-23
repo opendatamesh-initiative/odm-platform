@@ -47,4 +47,5 @@ public abstract class AbstractPolicyEngineController {
             @Parameter(description = "")
             @PathVariable(value = "uuid") String uuid
     );
+
 }

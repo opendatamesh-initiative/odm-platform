@@ -4,6 +4,7 @@ import org.assertj.core.util.Lists;
 import org.opendatamesh.platform.pp.policy.api.controllers.AbstractPolicyEvaluationResultController;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultSearchOptions;
+import org.opendatamesh.platform.up.notification.api.resources.EventResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -41,4 +42,10 @@ public class PolicyEvaluationResultController extends AbstractPolicyEvaluationRe
     public PolicyEvaluationResultResource deletePolicyEvaluationResult(String uuid) {
         return MOCKED_POLICY_EVAL_RESULT;
     }
+
+    @Override
+    public PolicyEvaluationResultResource validatePolicy(EventResource eventResource) {
+        return MOCKED_POLICY_EVAL_RESULT;
+    }
+
 }

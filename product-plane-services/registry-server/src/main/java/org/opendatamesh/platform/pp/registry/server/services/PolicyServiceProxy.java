@@ -49,7 +49,7 @@ public class PolicyServiceProxy extends PolicyClient {
 
         try {
             // Pass the EVENT (still to define it) to PolicyService for validation --> validatePolicy(eventResource)
-            ResponseEntity<PolicyEvaluationResultResource> responseEntity = validatePolicy();
+            ResponseEntity<PolicyEvaluationResultResource> responseEntity = validatePolicies(eventResource);
             if (responseEntity.getStatusCode().is2xxSuccessful()) {
                 // Handle validation results
                 answer = true; // TODO: result processing

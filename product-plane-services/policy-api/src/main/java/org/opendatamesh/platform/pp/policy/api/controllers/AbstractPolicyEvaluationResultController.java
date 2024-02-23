@@ -3,6 +3,7 @@ package org.opendatamesh.platform.pp.policy.api.controllers;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultSearchOptions;
+import org.opendatamesh.platform.up.notification.api.resources.EventResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -47,4 +48,11 @@ public abstract class AbstractPolicyEvaluationResultController {
             @Parameter(description = "")
             @PathVariable(value = "uuid") String uuid
     );
+
+    @PostMapping(value = "/validate")
+    public abstract PolicyEvaluationResultResource validatePolicy(
+            @Parameter(description = "")
+            @RequestBody EventResource eventResource
+    );
+
 }

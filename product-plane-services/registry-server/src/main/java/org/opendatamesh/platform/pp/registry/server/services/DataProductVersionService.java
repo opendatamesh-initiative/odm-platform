@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.platform.core.commons.servers.exceptions.*;
+import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
 import org.opendatamesh.platform.pp.registry.server.database.entities.Api;
 import org.opendatamesh.platform.pp.registry.server.database.entities.ApiToSchemaRelationship;
@@ -608,10 +609,12 @@ public class DataProductVersionService {
     // ======================================================================================
 
     public boolean isCompliantWithGlobalPolicies(DataProductVersion dataProductVersion) {
+
         Boolean isValid = false;
+        DataProductVersionDPDS dataProductVersionDPDS = dataProductVersionMapper.toResource(dataProductVersion);
 
         try {
-            isValid = policyServiceProxy.validateDataProductVersion(dataProductVersion);
+            isValid = policyServiceProxy.validateDataProductVersionCreation(dataProductVersionDPDS);
         } catch (Throwable t) {
             throw new BadGatewayException(
                 ODMApiCommonErrors.SC502_71_POLICY_SERVICE_ERROR,

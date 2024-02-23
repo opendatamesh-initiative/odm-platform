@@ -1,11 +1,14 @@
 package org.opendatamesh.platform.pp.registry.server.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.BadGatewayException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
+import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.pp.policy.api.clients.PolicyClient;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyResultResource;
-import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.DataProductVersion;
+import org.opendatamesh.platform.up.notification.api.resources.EventResource;
+import org.opendatamesh.platform.up.notification.api.resources.EventType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +28,7 @@ public class PolicyServiceProxy extends PolicyClient {
     }
 
     // TODO return also why is not compliant
-    public Boolean validateDataProductVersion(DataProductVersion dataProductVersion) {
+    public Boolean validateDataProductVersionCreation(DataProductVersionDPDS dataProductVersion) throws JsonProcessingException {
 
         if (policyServiceActive.equals("false")) {
             logger.debug("Skipping policy service");
@@ -35,8 +38,17 @@ public class PolicyServiceProxy extends PolicyClient {
         // Results placeholder
         Boolean answer = false;
 
+        // EVENT creation
+        // TODO: check if is an UPDATE (new version of an existing product) or a NEW ENTITY to set beforeState and afterState
+        EventResource eventResource = new EventResource(
+                EventType.DATA_PRODUCT_VERSION_CREATED,
+                dataProductVersion.getInfo().getDataProductId(),
+                null, // BEFORE STATE
+                dataProductVersion.toEventString() // AFTER STATE
+        );
+
         try {
-            // Pass the EVENT (still to define it) to PolicyService for validation
+            // Pass the EVENT (still to define it) to PolicyService for validation --> validatePolicy(eventResource)
             ResponseEntity<PolicyResultResource> responseEntity = validatePolicy();
             if (responseEntity.getStatusCode().is2xxSuccessful()) {
                 // Handle validation results

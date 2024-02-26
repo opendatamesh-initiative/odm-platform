@@ -1,18 +1,23 @@
 package org.opendatamesh.platform.pp.policy.api.controllers;
 
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultSearchOptions;
-import org.opendatamesh.platform.up.notification.api.resources.EventResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 @RequestMapping(
         value = "/policy-evaluation-results"
+)
+@Validated
+@Tag(
+        name = "Policy Evaluation Results",
+        description = "Endpoints associated to Policy Evaluation Results"
 )
 public abstract class AbstractPolicyEvaluationResultController {
 

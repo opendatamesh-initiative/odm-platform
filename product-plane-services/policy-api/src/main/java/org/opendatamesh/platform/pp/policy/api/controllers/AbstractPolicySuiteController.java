@@ -1,17 +1,23 @@
 package org.opendatamesh.platform.pp.policy.api.controllers;
 
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicySuiteResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicySuiteSearchOptions;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 @RequestMapping(
         value = "/policy-suites"
+)
+@Validated
+@Tag(
+        name = "Policy Suites",
+        description = "Endpoints associated to Policy Suites"
 )
 public abstract class AbstractPolicySuiteController {
 

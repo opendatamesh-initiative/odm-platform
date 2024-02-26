@@ -19,11 +19,11 @@ public class DevOpsConfigurations {
         ServiceConfigs registryService;
         ServiceConfigs devopsService;
         ServiceConfigs blueprintService;
+        ServiceConfigs policyService;
     }
 
     @Data
     public static class UtiltyPlaneConfigs {
-        Map<String, ServiceConfigs> policyServices;
         Map<String, ExecutorServicesConfigs> executorServices;
         Map<String, ServiceConfigs> notificationServices;
     }

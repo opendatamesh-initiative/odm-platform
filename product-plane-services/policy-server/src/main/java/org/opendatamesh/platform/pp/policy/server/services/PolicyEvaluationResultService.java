@@ -4,16 +4,15 @@ import org.opendatamesh.platform.pp.policy.server.database.entities.PolicyEvalua
 import org.opendatamesh.platform.pp.policy.server.database.mappers.PolicyEvaluationResultMapper;
 import org.opendatamesh.platform.pp.policy.server.database.repositories.PolicyEvaluationResultRepository;
 import org.opendatamesh.platform.pp.policy.server.database.utils.PagingAndSortingAndSpecificationExecutorRepository;
-import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultRes;
+import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultSearchOptions;
 import org.opendatamesh.platform.pp.policy.server.services.utils.GenericMappedAndFilteredCrudService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 //TODO change id type when configured
 @Service
-public class PolicyEvaluationResultService extends GenericMappedAndFilteredCrudService<PolicyEvaluationResultSearchOptions, PolicyEvaluationResultRes, PolicyEvaluationResult, String> {
+public class PolicyEvaluationResultService extends GenericMappedAndFilteredCrudService<PolicyEvaluationResultSearchOptions, PolicyEvaluationResultResource, PolicyEvaluationResult, String> {
 
     //@Autowired
     private PolicyEvaluationResultRepository repository;
@@ -49,12 +48,12 @@ public class PolicyEvaluationResultService extends GenericMappedAndFilteredCrudS
     }
 
     @Override
-    protected PolicyEvaluationResultRes toRes(PolicyEvaluationResult entity) {
+    protected PolicyEvaluationResultResource toRes(PolicyEvaluationResult entity) {
         return mapper.toRes(entity);
     }
 
     @Override
-    protected PolicyEvaluationResult toEntity(PolicyEvaluationResultRes resource) {
+    protected PolicyEvaluationResult toEntity(PolicyEvaluationResultResource resource) {
         return mapper.toEntity(resource);
     }
 }

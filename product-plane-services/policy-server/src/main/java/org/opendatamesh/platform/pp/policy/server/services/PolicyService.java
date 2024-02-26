@@ -1,19 +1,18 @@
 package org.opendatamesh.platform.pp.policy.server.services;
 
-import org.opendatamesh.platform.pp.policy.api.resources.PolicyRes;
+import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicySearchOptions;
 import org.opendatamesh.platform.pp.policy.server.database.entities.Policy;
 import org.opendatamesh.platform.pp.policy.server.database.mappers.PolicyMapper;
 import org.opendatamesh.platform.pp.policy.server.database.repositories.PolicyRepository;
 import org.opendatamesh.platform.pp.policy.server.database.utils.PagingAndSortingAndSpecificationExecutorRepository;
 import org.opendatamesh.platform.pp.policy.server.services.utils.GenericMappedAndFilteredCrudService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 //TODO change id type when configured
 @Service
-public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySearchOptions, PolicyRes, Policy, String> {
+public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySearchOptions, PolicyResource, Policy, String> {
 
     //@Autowired
     private PolicyRepository repository;
@@ -48,12 +47,12 @@ public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySea
     }
 
     @Override
-    protected PolicyRes toRes(Policy entity) {
+    protected PolicyResource toRes(Policy entity) {
         return mapper.toRes(entity);
     }
 
     @Override
-    protected Policy toEntity(PolicyRes resource) {
+    protected Policy toEntity(PolicyResource resource) {
         return mapper.toEntity(resource);
     }
 }

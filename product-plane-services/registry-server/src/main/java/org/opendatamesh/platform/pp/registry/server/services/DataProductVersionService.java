@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.platform.core.commons.servers.exceptions.*;
+import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
 import org.opendatamesh.platform.pp.registry.server.database.entities.Api;
 import org.opendatamesh.platform.pp.registry.server.database.entities.ApiToSchemaRelationship;
@@ -25,7 +26,6 @@ import org.opendatamesh.platform.pp.registry.server.database.entities.dataproduc
 import org.opendatamesh.platform.pp.registry.server.database.mappers.DataProductVersionMapper;
 import org.opendatamesh.platform.pp.registry.server.database.repositories.DataProductVersionRepository;
 import org.opendatamesh.platform.pp.registry.server.resources.v1.observers.EventNotifier;
-import org.opendatamesh.platform.pp.registry.server.resources.v1.policyservice.PolicyName;
 import org.opendatamesh.platform.up.notification.api.resources.EventResource;
 import org.opendatamesh.platform.up.notification.api.resources.EventType;
 import org.slf4j.Logger;
@@ -609,11 +609,12 @@ public class DataProductVersionService {
     // ======================================================================================
 
     public boolean isCompliantWithGlobalPolicies(DataProductVersion dataProductVersion) {
+
         Boolean isValid = false;
+        DataProductVersionDPDS dataProductVersionDPDS = dataProductVersionMapper.toResource(dataProductVersion);
 
         try {
-            isValid = policyServiceProxy.validateDataProductVersion(
-                    dataProductVersion, PolicyName.dataproduct);
+            isValid = policyServiceProxy.validateDataProductVersionCreation(dataProductVersionDPDS);
         } catch (Throwable t) {
             throw new BadGatewayException(
                 ODMApiCommonErrors.SC502_71_POLICY_SERVICE_ERROR,

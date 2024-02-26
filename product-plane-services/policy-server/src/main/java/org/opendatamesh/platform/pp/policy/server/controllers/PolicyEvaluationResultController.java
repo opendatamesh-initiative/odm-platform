@@ -2,8 +2,9 @@ package org.opendatamesh.platform.pp.policy.server.controllers;
 
 import org.assertj.core.util.Lists;
 import org.opendatamesh.platform.pp.policy.api.controllers.AbstractPolicyEvaluationResultController;
-import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultRes;
+import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultSearchOptions;
+import org.opendatamesh.platform.up.notification.api.resources.EventResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -14,31 +15,32 @@ import java.util.List;
 @Controller
 public class PolicyEvaluationResultController extends AbstractPolicyEvaluationResultController {
 
-    private final PolicyEvaluationResultRes MOCKED_POLICY_EVAL_RESULT = new PolicyEvaluationResultRes();
+    private final PolicyEvaluationResultResource MOCKED_POLICY_EVAL_RESULT = new PolicyEvaluationResultResource();
 
     @Override
-    public Page<PolicyEvaluationResultRes> getPolicyEvaluationResults(Pageable pageable, PolicyEvaluationResultSearchOptions searchOptions) {
-        List<PolicyEvaluationResultRes> list = Lists.newArrayList(MOCKED_POLICY_EVAL_RESULT);
+    public Page<PolicyEvaluationResultResource> getPolicyEvaluationResults(Pageable pageable, PolicyEvaluationResultSearchOptions searchOptions) {
+        List<PolicyEvaluationResultResource> list = Lists.newArrayList(MOCKED_POLICY_EVAL_RESULT);
         return new PageImpl<>(list, pageable, list.size());
     }
 
     @Override
-    public PolicyEvaluationResultRes getPolicyEvaluationResult(String uuid) {
+    public PolicyEvaluationResultResource getPolicyEvaluationResult(String uuid) {
         return MOCKED_POLICY_EVAL_RESULT;
     }
 
     @Override
-    public PolicyEvaluationResultRes createPolicyEvaluationResult(PolicyEvaluationResultRes policyEvaluationResult) {
+    public PolicyEvaluationResultResource createPolicyEvaluationResult(PolicyEvaluationResultResource policyEvaluationResult) {
         return MOCKED_POLICY_EVAL_RESULT;
     }
 
     @Override
-    public PolicyEvaluationResultRes modifyPolicyEvaluationResult(String uuid, PolicyEvaluationResultRes policyEvaluationResult) {
+    public PolicyEvaluationResultResource modifyPolicyEvaluationResult(String uuid, PolicyEvaluationResultResource policyEvaluationResult) {
         return MOCKED_POLICY_EVAL_RESULT;
     }
 
     @Override
-    public PolicyEvaluationResultRes deletePolicyEvaluationResult(String uuid) {
+    public PolicyEvaluationResultResource deletePolicyEvaluationResult(String uuid) {
         return MOCKED_POLICY_EVAL_RESULT;
     }
+
 }

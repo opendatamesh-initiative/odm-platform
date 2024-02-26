@@ -23,7 +23,6 @@ import org.opendatamesh.platform.up.executor.api.resources.TaskStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -31,6 +30,9 @@ import java.util.*;
 
 @Service
 public class TaskService {
+
+    @Autowired
+    PolicyServiceProxy policyServiceProxy;
 
     @Autowired
     TaskRepository taskRepository;
@@ -105,7 +107,6 @@ public class TaskService {
     }
     
     public Task startTask(Task task) {
-
         try {
 
             task.setStatus(ActivityTaskStatus.PROCESSING);
@@ -213,6 +214,10 @@ public class TaskService {
                         task.setErrors(taskResultResource.getErrors());
                     }
                 }
+
+                // TODO
+                policyServiceProxy.validateCallbackResult(); // Pass the taskResultResource or a subobject of it
+
             } else {
                 if (taskRealStatus != null && taskRealStatus.equals(TaskStatus.FAILED)) {
                     task.setStatus(ActivityTaskStatus.FAILED);

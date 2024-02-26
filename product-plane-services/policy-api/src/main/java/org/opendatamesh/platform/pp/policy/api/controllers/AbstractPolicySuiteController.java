@@ -1,50 +1,57 @@
 package org.opendatamesh.platform.pp.policy.api.controllers;
 
 import io.swagger.v3.oas.annotations.Parameter;
-import org.opendatamesh.platform.pp.policy.api.resources.PolicySuiteRes;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.opendatamesh.platform.pp.policy.api.resources.PolicySuiteResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicySuiteSearchOptions;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 @RequestMapping(
         value = "/policy-suites"
+)
+@Validated
+@Tag(
+        name = "Policy Suites",
+        description = "Endpoints associated to Policy Suites"
 )
 public abstract class AbstractPolicySuiteController {
 
     @GetMapping
-    public abstract Page<PolicySuiteRes> getPolicySuites(
+    public abstract Page<PolicySuiteResource> getPolicySuites(
             @PageableDefault(size = 20, page = 0)
             Pageable pageable,
             PolicySuiteSearchOptions searchOptions
     );
 
     @GetMapping(value = "/{uuid}")
-    public abstract PolicySuiteRes getPolicySuite(
+    public abstract PolicySuiteResource getPolicySuite(
             @Parameter(description = "", required = true)
             @PathVariable(value = "uuid") String uuid
     );
 
     @PostMapping
-    public abstract PolicySuiteRes createPolicySuite(
+    public abstract PolicySuiteResource createPolicySuite(
             @Parameter(description = "")
-            @RequestBody PolicySuiteRes policySuite
+            @RequestBody PolicySuiteResource policySuite
     );
 
     @PutMapping(value = "/{uuid}")
-    public abstract PolicySuiteRes modifyPolicySuite(
+    public abstract PolicySuiteResource modifyPolicySuite(
             @Parameter(description = "")
             @PathVariable(value = "uuid") String uuid,
             @Parameter(description = "")
-            @RequestBody PolicySuiteRes policySuite
+            @RequestBody PolicySuiteResource policySuite
     );
 
     @DeleteMapping(value = "/{uuid}")
-    public abstract PolicySuiteRes deletePolicySuite(
+    public abstract PolicySuiteResource deletePolicySuite(
             @Parameter(description = "")
             @PathVariable(value = "uuid") String uuid
     );
+
 }

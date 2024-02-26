@@ -3,74 +3,91 @@ package org.opendatamesh.platform.pp.params.api.components;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.opendatamesh.platform.pp.params.api.clients.ParamsClient;
 import org.opendatamesh.platform.pp.params.api.resources.ParamResource;
+import org.springframework.boot.env.YamlPropertySourceLoader;
 import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.EnumerablePropertySource;
-import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.PropertySource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.ResponseEntity;
 
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 public final class ParamsUpdater {
 
-    protected final ParamsClient paramServiceClient;
-    protected final ConfigurableEnvironment configurableEnvironment;
+    protected final ParamsClient paramsServiceClient;
+    protected final ConfigurableEnvironment environment;
 
-    public ParamsUpdater(ParamsClient paramServiceClient, ConfigurableEnvironment configurableEnvironment) {
-        this.paramServiceClient = paramServiceClient;
-        this.configurableEnvironment = configurableEnvironment;
+    protected final ResourceLoader resourceLoader;
+
+    public ParamsUpdater(
+            String paramsServiceClientAddress,
+            String paramsServiceClientUUID,
+            ConfigurableEnvironment environment,
+            ResourceLoader resourceLoader
+    ) {
+        this.paramsServiceClient = new ParamsClient(
+                paramsServiceClientAddress,
+                paramsServiceClientUUID
+        );
+        this.environment = environment;
+        this.resourceLoader = resourceLoader;
+
     }
 
-    public void updateConfigurations() throws JsonProcessingException {
-        String activeProfile = configurableEnvironment.getActiveProfiles()[0];
-        Map<String, Object> properties = extractPropertiesForProfile(activeProfile);
-        updateProperties(properties);
+    public void updateConfigurations() throws IOException {
+        List<ParamResource> params = getParamsFromService();
+        if(params != null)
+            updateProperties(params);
     }
 
-    private Map<String, Object> extractPropertiesForProfile(String profile) {
-        Map<String, Object> properties = new HashMap<>();
-        for(PropertySource<?> propertySource : configurableEnvironment.getPropertySources()) {
-            if(propertySource.getName().contains("application-"+profile+".yml")) {
-                if (propertySource instanceof EnumerablePropertySource) {
-                    EnumerablePropertySource<?> enumerablePropertySource = (EnumerablePropertySource<?>) propertySource;
-                    for (String propertyName : enumerablePropertySource.getPropertyNames()) {
-                        properties.put(propertyName, enumerablePropertySource.getProperty(propertyName));
-                    }
-                }
+    private List<ParamResource> getParamsFromService() throws JsonProcessingException {
+        ResponseEntity getParamsResponse =  paramsServiceClient.getParams();
+        List<ParamResource> params = null;
+        if(getParamsResponse.getStatusCode().is2xxSuccessful()) {
+            ParamResource[] paramsArray = (ParamResource[]) getParamsResponse.getBody();
+            params = List.of(paramsArray);
+        }
+        return params;
+    }
+
+    private void updateProperties(List<ParamResource> params) throws IOException {
+        MapPropertySource propertySourceToUpdate = extractPropertiesFromEnvironment();
+        Map<String, Object> updatedProperties = initializeUpdatedProperties(propertySourceToUpdate);
+        for (ParamResource paramResource : params) {
+            String propertyName = paramResource.getParamName();
+            String propertyValue = paramResource.getParamValue();
+            if(updatedProperties.keySet().contains(propertyName)) {
+                updatedProperties.put(propertyName, propertyValue);
             }
         }
-        return properties;
+        updatePropertiesFromEnvironment(updatedProperties);
     }
 
-    protected void updateProperties(Map<String, Object> properties) throws JsonProcessingException {
-        for (Map.Entry<String, Object> entry : properties.entrySet()) {
-            String propertyName = entry.getKey();
-            ResponseEntity paramServiceResponse = paramServiceClient.getOneParamByName(propertyName);
-            if (paramServiceResponse.getStatusCode().is2xxSuccessful()) {
-                ParamResource paramResource = (ParamResource) paramServiceResponse.getBody();
-                String updatedValue = paramResource.getParamValue();
-                if(updatedValue != null)
-                    updateProperty(propertyName, updatedValue);
-            }
-        }
+    private MapPropertySource extractPropertiesFromEnvironment() throws IOException {
+        Resource resource = resourceLoader.getResource(
+                "classpath:application-"+environment.getActiveProfiles()[0]+".yml"
+        );
+        return (MapPropertySource) new YamlPropertySourceLoader().load("propertySourceToUpdate", resource).get(0);
     }
 
-    protected void updateProperty(String propertyName, String propertyValue) {
-        MutablePropertySources propertySources = configurableEnvironment.getPropertySources();
-        propertySources.addFirst(new CustomPropertySource(propertyName, propertyValue));
+    private HashMap initializeUpdatedProperties(MapPropertySource propertySource) {
+        HashMap<String, Object> props = new HashMap<>();
+        for(String propertyName : propertySource.getPropertyNames()) {
+            props.put(propertyName, propertySource.getProperty(propertyName));
+        }
+        return props;
     }
 
-    // Custom PropertySource class
-    private static class CustomPropertySource extends PropertySource<String> {
-        CustomPropertySource(String name, String source) {
-            super(name, source);
-        }
-
-        @Override
-        public Object getProperty(String name) {
-            return null; // Not used
-        }
+    private void updatePropertiesFromEnvironment(Map props) {
+        MapPropertySource updatedPropertySource = new MapPropertySource("updatedPropertySource", props);
+        environment.getPropertySources().replace(
+                "application-" + environment.getActiveProfiles()[0], updatedPropertySource
+        );
     }
 
 }

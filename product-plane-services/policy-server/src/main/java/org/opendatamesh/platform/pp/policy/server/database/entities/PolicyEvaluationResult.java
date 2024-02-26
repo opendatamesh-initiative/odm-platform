@@ -22,7 +22,7 @@ public class PolicyEvaluationResult {
     private String dataProductVersionNumber;
 
     @Column(name = "POLICY_HISTORY_ID")
-    private String policyHistoryId;
+    private Long policyHistoryId;
 
     @Column(name = "POLICY_UUID")
     private String policyUUID;

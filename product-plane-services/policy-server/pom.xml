@@ -182,15 +182,15 @@ License.
         </dependency>
 
         <!-- Flyway -->
-        <!--<dependency>
+        <dependency>
             <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>-->
+            <artifactId>flyway-core</artifactId>
             <!--<version>9.8.1</version>-->
-        <!--</dependency>
+        </dependency>
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-mysql</artifactId>
-        </dependency>--> <!-- TEMP DISABLED -->
+        </dependency>
 
         <!-- Others -->
         <dependency>
@@ -304,7 +304,7 @@ License.
                 </executions>
             </plugin>
             <!-- Test temp disabled -->
-            <!--<plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
@@ -315,7 +315,7 @@ License.
                         <exclude>**/ODMPolicyIT.java</exclude>
                     </excludes>
                 </configuration>
-            </plugin>-->
+            </plugin>
         </plugins>
     </build>
 

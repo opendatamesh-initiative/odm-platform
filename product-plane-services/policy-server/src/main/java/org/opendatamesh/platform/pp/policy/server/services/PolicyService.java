@@ -7,22 +7,28 @@ import org.opendatamesh.platform.pp.policy.server.database.mappers.PolicyMapper;
 import org.opendatamesh.platform.pp.policy.server.database.repositories.PolicyRepository;
 import org.opendatamesh.platform.pp.policy.server.database.utils.PagingAndSortingAndSpecificationExecutorRepository;
 import org.opendatamesh.platform.pp.policy.server.services.utils.GenericMappedAndFilteredCrudService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
-//TODO change id type when configured
 @Service
-public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySearchOptions, PolicyResource, Policy, String> {
+public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySearchOptions, PolicyResource, Policy, Long> {
 
-    //@Autowired
+    @Autowired
     private PolicyRepository repository;
 
-    //@Autowired
+    @Autowired
     private PolicyMapper mapper;
 
     @Override
-    protected void validate(Policy objectToValidate) {
+    protected void validate(Policy policy) {
+        if(!StringUtils.hasText(policy.getName())){
 
+        }
+        if(policy.getPolicyEngineId() == null || policy.getPolicyEngine() == null){
+
+        }
     }
 
     @Override
@@ -31,13 +37,13 @@ public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySea
     }
 
     @Override
-    protected String getIdentifier(Policy object) {
-        return null;
+    protected Long getIdentifier(Policy object) {
+        return object.getId();
     }
 
     @Override
-    protected PagingAndSortingAndSpecificationExecutorRepository<Policy, String> getRepository() {
-        return null;
+    protected PagingAndSortingAndSpecificationExecutorRepository<Policy, Long> getRepository() {
+        return repository;
     }
 
 

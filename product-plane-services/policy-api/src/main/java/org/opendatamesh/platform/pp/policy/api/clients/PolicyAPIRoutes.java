@@ -5,7 +5,6 @@ import org.opendatamesh.platform.core.commons.clients.ODMApiRoutes;
 public enum PolicyAPIRoutes implements ODMApiRoutes {
 
     POLICIES("/policies"),
-    SUITES("/policy-suites"),
     ENGINES("/policy-engines"),
     RESULTS("/policy-evaluation-results");
 

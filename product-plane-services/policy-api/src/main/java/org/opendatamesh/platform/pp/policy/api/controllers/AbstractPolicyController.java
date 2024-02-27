@@ -49,9 +49,15 @@ public abstract class AbstractPolicyController {
     );
 
     @DeleteMapping(value = "/{id}")
-    public abstract PolicyResource deletePolicy(
+    public abstract void deletePolicy(
             @Parameter(description = "")
             @PathVariable(value = "id") Long id
+    );
+
+    @GetMapping(value = "/versions/{versionId}")
+    public abstract PolicyResource getPolicyVersion(
+            @Parameter(description = "")
+            @PathVariable(value = "versionId") Long versionId
     );
 
 }

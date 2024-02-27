@@ -1,5 +1,6 @@
 package org.opendatamesh.platform.pp.policy.server.services;
 
+import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineSearchOptions;
 import org.opendatamesh.platform.pp.policy.server.database.entities.PolicyEngine;
@@ -23,8 +24,11 @@ public class PolicyEngineService extends GenericMappedAndFilteredCrudService<Pol
 
     @Override
     protected void validate(PolicyEngine objectToValidate) {
-        if(!StringUtils.hasText(objectToValidate.getAdapterUrl())){
-
+        if (!StringUtils.hasText(objectToValidate.getAdapterUrl())) {
+            throw new BadRequestException(); //TODO
+        }
+        if (!StringUtils.hasText(objectToValidate.getName())) {
+            throw new BadRequestException(); //TODO
         }
     }
 

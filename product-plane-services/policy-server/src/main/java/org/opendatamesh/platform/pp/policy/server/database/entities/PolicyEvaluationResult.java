@@ -10,7 +10,7 @@ public class PolicyEvaluationResult extends TimestampedEntity {
 
     @Id
     @Column(name = "ID")
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "DATA_PRODUCT_ID")
@@ -19,8 +19,12 @@ public class PolicyEvaluationResult extends TimestampedEntity {
     @Column(name = "DATA_PRODUCT_VERSION")
     private String dataProductVersionNumber;
 
-    @Column(name = "POLICY_ID")
+    @Column(name = "POLICY_ID", insertable = false, updatable = false)
     private Long policyId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "POLICY_ID")
+    private Policy policy;
 
     @Column(name = "INPUT_OBJECT")
     private String inputObject;
@@ -55,8 +59,49 @@ public class PolicyEvaluationResult extends TimestampedEntity {
         this.dataProductVersionNumber = dataProductVersionNumber;
     }
 
+    public Long getPolicyId() {
+        return policyId;
+    }
+
+    public void setPolicyId(Long policyId) {
+        this.policyId = policyId;
+        Policy p = new Policy();
+        p.setId(policyId);
+        this.policy = p;
+    }
+
+    public Policy getPolicy() {
+        return policy;
+    }
+
+    public void setPolicy(Policy policy) {
+        this.policy = policy;
+        if (policy != null) {
+            this.policyId = policy.getId();
+        }
+    }
+
     public String getInputObject() {
         return inputObject;
     }
 
+    public void setInputObject(String inputObject) {
+        this.inputObject = inputObject;
+    }
+
+    public String getOutputObject() {
+        return outputObject;
+    }
+
+    public void setOutputObject(String outputObject) {
+        this.outputObject = outputObject;
+    }
+
+    public Boolean getResult() {
+        return result;
+    }
+
+    public void setResult(Boolean result) {
+        this.result = result;
+    }
 }

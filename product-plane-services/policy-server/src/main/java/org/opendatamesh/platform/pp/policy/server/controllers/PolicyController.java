@@ -20,23 +20,28 @@ public class PolicyController extends AbstractPolicyController {
     }
 
     @Override
-    public PolicyResource getPolicy(Long id) {
-        return service.findOneResource(id);
+    public PolicyResource getPolicy(Long rootId) {
+        return service.findOnePolicyResource(rootId);
     }
 
     @Override
     public PolicyResource createPolicy(PolicyResource policy) {
-        return service.createResource(policy);
+        return service.createPolicyResource(policy);
     }
 
     @Override
-    public PolicyResource modifyPolicy(Long id, PolicyResource policy) {
-        return service.overwriteResource(id, policy);
+    public PolicyResource modifyPolicy(Long rootId, PolicyResource policy) {
+        return service.overwritePolicyResource(rootId, policy);
     }
 
     @Override
-    public PolicyResource deletePolicy(Long id) {
-        return service.deleteReturningResource(id);
+    public void deletePolicy(Long rootId) {
+        service.deletePolicy(rootId);
+    }
+
+    @Override
+    public PolicyResource getPolicyVersion(Long versionId) {
+        return service.findOneResource(versionId);
     }
 
 }

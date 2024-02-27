@@ -1,18 +1,16 @@
 package org.opendatamesh.platform.pp.policy.server.database.entities;
 
-import lombok.Data;
+import org.opendatamesh.platform.pp.policy.server.database.utils.TimestampedEntity;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 
-@Data
 @Entity(name = "PolicyEvaluationResults")
-@Table(name = "POLICY_EVALUATION_RESULTS", schema="ODMPOLICY")
-public class PolicyEvaluationResult {
+@Table(name = "POLICY_EVALUATION_RESULTS", schema = "ODMPOLICY")
+public class PolicyEvaluationResult extends TimestampedEntity {
 
     @Id
     @Column(name = "ID")
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "DATA_PRODUCT_ID")
@@ -21,8 +19,12 @@ public class PolicyEvaluationResult {
     @Column(name = "DATA_PRODUCT_VERSION")
     private String dataProductVersionNumber;
 
-    @Column(name = "POLICY_ID")
+    @Column(name = "POLICY_ID", insertable = false, updatable = false)
     private Long policyId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "POLICY_ID")
+    private Policy policy;
 
     @Column(name = "INPUT_OBJECT")
     private String inputObject;
@@ -33,10 +35,73 @@ public class PolicyEvaluationResult {
     @Column(name = "RESULT")
     private Boolean result;
 
-    @Column(name = "CREATED_AT")
-    private Timestamp createdAt;
+    public Long getId() {
+        return id;
+    }
 
-    @Column(name = "UPDATED_AT")
-    private Timestamp updatedAt;
+    public void setId(Long id) {
+        this.id = id;
+    }
 
+    public String getDataProductId() {
+        return dataProductId;
+    }
+
+    public void setDataProductId(String dataProductId) {
+        this.dataProductId = dataProductId;
+    }
+
+    public String getDataProductVersionNumber() {
+        return dataProductVersionNumber;
+    }
+
+    public void setDataProductVersionNumber(String dataProductVersionNumber) {
+        this.dataProductVersionNumber = dataProductVersionNumber;
+    }
+
+    public Long getPolicyId() {
+        return policyId;
+    }
+
+    public void setPolicyId(Long policyId) {
+        this.policyId = policyId;
+        Policy p = new Policy();
+        p.setId(policyId);
+        this.policy = p;
+    }
+
+    public Policy getPolicy() {
+        return policy;
+    }
+
+    public void setPolicy(Policy policy) {
+        this.policy = policy;
+        if (policy != null) {
+            this.policyId = policy.getId();
+        }
+    }
+
+    public String getInputObject() {
+        return inputObject;
+    }
+
+    public void setInputObject(String inputObject) {
+        this.inputObject = inputObject;
+    }
+
+    public String getOutputObject() {
+        return outputObject;
+    }
+
+    public void setOutputObject(String outputObject) {
+        this.outputObject = outputObject;
+    }
+
+    public Boolean getResult() {
+        return result;
+    }
+
+    public void setResult(Boolean result) {
+        this.result = result;
+    }
 }

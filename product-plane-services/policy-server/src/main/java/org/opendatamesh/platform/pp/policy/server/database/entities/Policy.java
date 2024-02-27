@@ -3,37 +3,38 @@ package org.opendatamesh.platform.pp.policy.server.database.entities;
 import org.opendatamesh.platform.pp.policy.server.database.utils.TimestampedEntity;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "POLICIES", schema = "ODMPOLICY")
 public class Policy extends TimestampedEntity {
     @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID")
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "root_id")
+    @Column(name = "ROOT_ID")
     private Long rootId;
 
-    @Column(name = "name")
+    @Column(name = "NAME")
     private String name;
 
-    @Column(name = "display_name")
+    @Column(name = "DISPLAY_NAME")
     private String displayName;
 
-    @Column(name = "description")
+    @Column(name = "DESCRIPTION")
     private String description;
 
-    @Column(name = "blocking_flag")
+    @Column(name = "BLOCKING_FLAG")
     private Boolean blockingFlag;
 
-    @Column(name = "raw_content")
-    private String rawContent;
-
-    @Column(name = "suite")
+    @Column(name = "SUITE")
     private String suite;
 
-    @Column(name = "is_last_version")
+    @Column(name = "RAW_CONTENT")
+    private String rawContent;
+
+    @Column(name = "IS_LAST_VERSION")
     private Boolean isLastVersion;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -10,7 +10,7 @@ public class PolicyEvaluationResult extends TimestampedEntity {
 
     @Id
     @Column(name = "ID")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "DATA_PRODUCT_ID")
@@ -19,11 +19,8 @@ public class PolicyEvaluationResult extends TimestampedEntity {
     @Column(name = "DATA_PRODUCT_VERSION")
     private String dataProductVersionNumber;
 
-    @Column(name = "POLICY_HISTORY_ID")
-    private Long policyHistoryId;
-
-    @Column(name = "POLICY_UUID")
-    private String policyUUID;
+    @Column(name = "POLICY_ID")
+    private Long policyId;
 
     @Column(name = "INPUT_OBJECT")
     private String inputObject;
@@ -58,43 +55,8 @@ public class PolicyEvaluationResult extends TimestampedEntity {
         this.dataProductVersionNumber = dataProductVersionNumber;
     }
 
-    public Long getPolicyHistoryId() {
-        return policyHistoryId;
-    }
-
-    public void setPolicyHistoryId(Long policyHistoryId) {
-        this.policyHistoryId = policyHistoryId;
-    }
-
-    public String getPolicyUUID() {
-        return policyUUID;
-    }
-
-    public void setPolicyUUID(String policyUUID) {
-        this.policyUUID = policyUUID;
-    }
-
     public String getInputObject() {
         return inputObject;
     }
 
-    public void setInputObject(String inputObject) {
-        this.inputObject = inputObject;
-    }
-
-    public String getOutputObject() {
-        return outputObject;
-    }
-
-    public void setOutputObject(String outputObject) {
-        this.outputObject = outputObject;
-    }
-
-    public Boolean getResult() {
-        return result;
-    }
-
-    public void setResult(Boolean result) {
-        this.result = result;
-    }
 }

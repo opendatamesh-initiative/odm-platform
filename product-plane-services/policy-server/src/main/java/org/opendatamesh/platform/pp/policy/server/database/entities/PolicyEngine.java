@@ -1,8 +1,8 @@
 package org.opendatamesh.platform.pp.policy.server.database.entities;
 
+import lombok.Data;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.opendatamesh.platform.pp.policy.server.database.utils.TimestampedEntity;
 
 import javax.persistence.*;
@@ -13,14 +13,17 @@ import java.util.List;
 public class PolicyEngine extends TimestampedEntity {
 
     @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID")
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "display_name")
+    @Column(name = "NAME")
+    private String name;
+
+    @Column(name = "DISPLAY_NAME")
     private String displayName;
 
-    @Column(name = "adapter_url")
+    @Column(name = "ADAPTER_URL")
     private String adapterUrl;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "policyEngineId")

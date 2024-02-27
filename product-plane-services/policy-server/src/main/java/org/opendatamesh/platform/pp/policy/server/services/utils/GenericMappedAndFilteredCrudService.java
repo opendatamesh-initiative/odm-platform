@@ -4,9 +4,11 @@ import org.opendatamesh.platform.pp.policy.server.database.utils.PagingAndSortin
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
 
+@Service
 public abstract class GenericMappedAndFilteredCrudService<F, R, T, ID extends Serializable> extends GenericMappedCrudService<R, T, ID> {
 
     public final Page<R> findAllResourcesFiltered(Pageable pageable, F filters) {

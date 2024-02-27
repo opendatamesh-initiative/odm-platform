@@ -7,6 +7,7 @@ import org.opendatamesh.platform.core.commons.clients.ODMIntegrationTest;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.policy.api.clients.PolicyClient;
+import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
 import org.opendatamesh.platform.pp.policy.api.resources.exceptions.PolicyApiStandardErrors;
 import org.slf4j.Logger;
@@ -114,6 +115,37 @@ public class ODMPolicyIT extends ODMIntegrationTest {
         policyResource = postPolicyResponse.getBody();
 
         return policyResource;
+
+    }
+
+    protected PolicyEngineResource createPolicyEngineResource(String filePath) {
+        try {
+            return resourceBuilder.readResourceFromFile(filePath, PolicyEngineResource.class);
+        } catch (Throwable t) {
+            t.printStackTrace();
+            fail("Impossible to read policy from file: " + t.getMessage());
+            return null;
+        }
+    }
+
+    protected PolicyEngineResource createPolicyEngine(String filePath) {
+
+        PolicyEngineResource policyEngineResource = createPolicyEngineResource(filePath);
+
+        ResponseEntity<PolicyEngineResource> postPolicyEngineResponse = null;
+
+        try {
+            postPolicyEngineResponse = policyClient.createPolicyEngine(policyEngineResource);
+        } catch (Throwable t) {
+            t.printStackTrace();
+            fail("Impossible to create policy: " + t.getMessage());
+            return null;
+        }
+
+        verifyResponseEntity(postPolicyEngineResponse, HttpStatus.CREATED, true);
+        policyEngineResource = postPolicyEngineResponse.getBody();
+
+        return policyEngineResource;
 
     }
 

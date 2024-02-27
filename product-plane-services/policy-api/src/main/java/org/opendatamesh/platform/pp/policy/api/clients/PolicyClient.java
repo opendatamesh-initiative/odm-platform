@@ -8,7 +8,6 @@ import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
-import org.opendatamesh.platform.pp.policy.api.resources.PolicySuiteResource;
 import org.opendatamesh.platform.up.notification.api.resources.EventResource;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpEntity;

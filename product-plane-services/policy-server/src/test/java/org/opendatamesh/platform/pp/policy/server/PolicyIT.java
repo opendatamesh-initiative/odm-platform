@@ -64,7 +64,16 @@ public class PolicyIT extends ODMPolicyIT {
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     public void testReadOnePolicy() throws JsonProcessingException {
 
+        // Resources + Creation
+        PolicyResource policyResource = createPolicy(ODMPolicyResources.RESOURCE_POLICY_1);
 
+        // GET request
+        ResponseEntity<PolicyResource> readResponse = policyClient.readOnePolicy(policyResource.getId());
+        verifyResponseEntity(readResponse, HttpStatus.OK, true);
+        policyResource = readResponse.getBody();
+
+        // Verification
+        verifyResourcePolicyOne(policyResource);
 
     }
 
@@ -98,9 +107,6 @@ public class PolicyIT extends ODMPolicyIT {
 
     private void verifyResourcePolicyOne(PolicyResource policyResource) {
 
-        /*
-        * TODO: re-enable this section after Resources creation
-        *
         assertThat(policyResource.getId()).isNotNull();
         assertThat(policyResource.getRootId()).isEqualTo(policyResource.getId());
         assertThat(policyResource.getName()).isEqualTo("dataproduct-name-checker");
@@ -112,15 +118,11 @@ public class PolicyIT extends ODMPolicyIT {
         assertThat(policyResource.getIsLastVersion()).isEqualTo(true);
         assertThat(policyResource.getCreatedAt()).isNotNull();
         assertThat(policyResource.getUpdatedAt()).isEqualTo(policyResource.getCreatedAt());
-        * */
 
     }
 
     private void verifyResourcePolicyOneUpdated(PolicyResource oldPolicyResource, PolicyResource policyResource) {
 
-        /*
-        * TODO: re-enable this section after Resources creation
-        *
         assertThat(policyResource.getId()).isNotNull();
         assertThat(policyResource.getRootId()).isEqualTo(1);
         assertThat(policyResource.getName()).isEqualTo("dataproduct-name-checker");
@@ -131,16 +133,12 @@ public class PolicyIT extends ODMPolicyIT {
         assertThat(policyResource.getSuite()).isEqualTo("CREATION");
         assertThat(policyResource.getIsLastVersion()).isEqualTo(true);
         assertThat(policyResource.getCreatedAt()).isNotNull();
-        assertThat(policyResource.getUpdatedAt()).isGreaterThan(policyResource.getCreatedAt());
-        * */
+        assertThat(policyResource.getUpdatedAt()).isAfter(policyResource.getCreatedAt());
 
     }
 
     private void verifyResourcePolicyTwo(PolicyResource policyResource) {
 
-        /*
-        * TODO: re-enable this section after Resources creation
-        *
         assertThat(policyResource.getId()).isNotNull();
         assertThat(policyResource.getRootId()).isEqualTo(policyResource.getId());
         assertThat(policyResource.getName()).isEqualTo("dataproduct-name-checker");
@@ -152,7 +150,6 @@ public class PolicyIT extends ODMPolicyIT {
         assertThat(policyResource.getIsLastVersion()).isEqualTo(true);
         assertThat(policyResource.getCreatedAt()).isNotNull();
         assertThat(policyResource.getUpdatedAt()).isEqualTo(policyResource.getCreatedAt());
-        * */
 
     }
     

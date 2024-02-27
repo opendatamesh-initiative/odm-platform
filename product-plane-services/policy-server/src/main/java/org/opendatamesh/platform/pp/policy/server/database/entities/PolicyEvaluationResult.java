@@ -21,11 +21,8 @@ public class PolicyEvaluationResult {
     @Column(name = "DATA_PRODUCT_VERSION")
     private String dataProductVersionNumber;
 
-    @Column(name = "POLICY_HISTORY_ID")
-    private Long policyHistoryId;
-
-    @Column(name = "POLICY_UUID")
-    private String policyUUID;
+    @Column(name = "POLICY_ID")
+    private Long policyId;
 
     @Column(name = "INPUT_OBJECT")
     private String inputObject;
@@ -38,5 +35,8 @@ public class PolicyEvaluationResult {
 
     @Column(name = "CREATED_AT")
     private Timestamp createdAt;
+
+    @Column(name = "UPDATED_AT")
+    private Timestamp updatedAt;
 
 }

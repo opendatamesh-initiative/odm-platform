@@ -2,10 +2,7 @@ package org.opendatamesh.platform.pp.policy.server.database.entities;
 
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Data
@@ -14,11 +11,15 @@ import java.sql.Timestamp;
 public class Policy {
 
     @Id
-    @Column(name = "UUID")
-    private String id;
+    @Column(name = "ID")
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    private Long id;
 
-    @Column(name = "POLICY_ENGINE_UUID")
-    private String policyEngineUUID;
+    @Column(name = "ROOT_ID")
+    private Long rootId;
+
+    @Column(name = "POLICY_ENGINE_ID")
+    private Long policyEngineID;
 
     @Column(name = "NAME")
     private String name;
@@ -37,6 +38,9 @@ public class Policy {
 
     @Column(name = "RAW_CONTENT")
     private String rawContent;
+
+    @Column(name = "IS_LAST_VERSION")
+    private Boolean isLastVersion;
 
     @Column(name = "CREATED_AT")
     private Timestamp createdAt;

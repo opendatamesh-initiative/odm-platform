@@ -28,10 +28,10 @@ public abstract class AbstractPolicyEvaluationResultController {
             PolicyEvaluationResultSearchOptions searchOptions
     );
 
-    @GetMapping(value = "/{uuid}")
+    @GetMapping(value = "/{id}")
     public abstract PolicyEvaluationResultResource getPolicyEvaluationResult(
             @Parameter(description = "", required = true)
-            @PathVariable(value = "uuid") String uuid
+            @PathVariable(value = "id") Long id
     );
 
     @PostMapping
@@ -40,18 +40,18 @@ public abstract class AbstractPolicyEvaluationResultController {
             @RequestBody PolicyEvaluationResultResource policyEvaluationResult
     );
 
-    @PutMapping(value = "/{uuid}")
+    @PutMapping(value = "/{id}")
     public abstract PolicyEvaluationResultResource modifyPolicyEvaluationResult(
             @Parameter(description = "")
-            @PathVariable(value = "uuid") String uuid,
+            @PathVariable(value = "id") Long id,
             @Parameter(description = "")
             @RequestBody PolicyEvaluationResultResource policyEvaluationResult
     );
 
-    @DeleteMapping(value = "/{uuid}")
+    @DeleteMapping(value = "/{id}")
     public abstract PolicyEvaluationResultResource deletePolicyEvaluationResult(
             @Parameter(description = "")
-            @PathVariable(value = "uuid") String uuid
+            @PathVariable(value = "id") Long id
     );
 
 }

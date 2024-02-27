@@ -1,44 +1,42 @@
 package org.opendatamesh.platform.pp.policy.server.controllers;
 
-import org.assertj.core.util.Lists;
 import org.opendatamesh.platform.pp.policy.api.controllers.AbstractPolicyEngineController;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineSearchOptions;
+import org.opendatamesh.platform.pp.policy.server.services.PolicyEngineService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
-
-import java.util.List;
 
 @Controller
 public class PolicyEngineController extends AbstractPolicyEngineController {
 
-    private final PolicyEngineResource MOCKED_POLICY_ENGINE = new PolicyEngineResource();
+    @Autowired
+    private PolicyEngineService service;
 
     @Override
     public Page<PolicyEngineResource> getPolicyEngines(Pageable pageable, PolicyEngineSearchOptions searchOptions) {
-        List<PolicyEngineResource> list = Lists.newArrayList(MOCKED_POLICY_ENGINE);
-        return new PageImpl<>(list, pageable, list.size());
+        return service.findAllResourcesFiltered(pageable, searchOptions);
     }
 
     @Override
-    public PolicyEngineResource getPolicyEngine(String uuid) {
-        return MOCKED_POLICY_ENGINE;
+    public PolicyEngineResource getPolicyEngine(Long id) {
+        return service.findOneResource(id);
     }
 
     @Override
     public PolicyEngineResource createPolicyEngine(PolicyEngineResource policyEngine) {
-        return MOCKED_POLICY_ENGINE;
+        return service.createResource(policyEngine);
     }
 
     @Override
-    public PolicyEngineResource modifyPolicyEngine(String uuid, PolicyEngineResource policyEngine) {
-        return MOCKED_POLICY_ENGINE;
+    public PolicyEngineResource modifyPolicyEngine(Long id, PolicyEngineResource policyEngine) {
+        return service.overwriteResource(id, policyEngine);
     }
 
     @Override
-    public PolicyEngineResource deletePolicyEngine(String uuid) {
-        return MOCKED_POLICY_ENGINE;
+    public PolicyEngineResource deletePolicyEngine(Long id) {
+        return service.deleteReturningResource(id);
     }
 }

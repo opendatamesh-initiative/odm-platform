@@ -4,4 +4,5 @@ import org.springframework.test.annotation.DirtiesContext;
 
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 public class PolicyEvaluationResultErrorsIT extends ODMPolicyIT {
+
 }

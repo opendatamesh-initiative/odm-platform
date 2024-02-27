@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.platform.core.commons.clients.ODMClient;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
+import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
@@ -19,6 +20,10 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 
 public class PolicyClient extends ODMClient {
+
+    public PolicyClient(String serverAddress) {
+        super(serverAddress, ObjectMapperFactory.JSON_MAPPER);
+    }
 
     public PolicyClient(String serverAddress, ObjectMapper mapper) {
         super(serverAddress, mapper);

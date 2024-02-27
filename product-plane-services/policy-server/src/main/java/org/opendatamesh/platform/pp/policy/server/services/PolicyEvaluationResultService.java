@@ -1,11 +1,13 @@
 package org.opendatamesh.platform.pp.policy.server.services;
 
+import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
+import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
+import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultSearchOptions;
+import org.opendatamesh.platform.pp.policy.server.database.entities.Policy;
 import org.opendatamesh.platform.pp.policy.server.database.entities.PolicyEvaluationResult;
 import org.opendatamesh.platform.pp.policy.server.database.mappers.PolicyEvaluationResultMapper;
 import org.opendatamesh.platform.pp.policy.server.database.repositories.PolicyEvaluationResultRepository;
 import org.opendatamesh.platform.pp.policy.server.database.utils.PagingAndSortingAndSpecificationExecutorRepository;
-import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
-import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultSearchOptions;
 import org.opendatamesh.platform.pp.policy.server.services.utils.GenericMappedAndFilteredCrudService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
@@ -20,15 +22,25 @@ public class PolicyEvaluationResultService extends GenericMappedAndFilteredCrudS
     @Autowired
     private PolicyEvaluationResultMapper mapper;
 
+    @Autowired
+    private PolicyService policyService;
 
     @Override
-    protected void validate(PolicyEvaluationResult objectToValidate) {
-
+    protected void validate(PolicyEvaluationResult evaluationResult) {
+        if (evaluationResult.getPolicyId() == null) {
+            throw new BadRequestException();//TODO
+        }
+        if(evaluationResult.getResult() == null){
+            throw new BadRequestException(); //TODO
+        }
     }
 
     @Override
-    protected void reconcile(PolicyEvaluationResult objectToReconcile) {
-
+    protected void reconcile(PolicyEvaluationResult evaluationResult) {
+        if (evaluationResult.getPolicyId() != null) {
+            Policy policy = policyService.findOne(evaluationResult.getPolicyId());
+            evaluationResult.setPolicy(policy);
+        }
     }
 
     @Override

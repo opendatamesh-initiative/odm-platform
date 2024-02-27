@@ -6,4 +6,6 @@ import org.opendatamesh.platform.pp.policy.server.database.utils.PagingAndSortin
 public interface PolicyRepository extends PagingAndSortingAndSpecificationExecutorRepository<Policy, Long> {
 
     Policy findByRootIdAndIsLastVersionTrue(Long rootId);
+
+    boolean existsByNameAndRootIdNot(String name, Long rootId);
 }

@@ -42,11 +42,17 @@ public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySea
     public PolicyResource createPolicyResource(PolicyResource policyToCreate) {
         PolicyResource createdPolicy = createResource(policyToCreate);
         createdPolicy.setRootId(createdPolicy.getId());
+        createdPolicy.setIsLastVersion(true);
         return overwriteResource(createdPolicy.getId(), createdPolicy);
     }
 
     public PolicyResource overwritePolicyResource(Long rootId, PolicyResource policy) {
+        Policy lastVersionPolicy = findOnePolicy(rootId);
+        lastVersionPolicy.setLastVersion(false);
+        overwrite(lastVersionPolicy.getId(), lastVersionPolicy);
+
         policy.setRootId(rootId);
+        policy.setIsLastVersion(true);
         return createResource(policy);
     }
 
@@ -64,6 +70,9 @@ public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySea
         }
         if (policy.getPolicyEngineId() == null || policy.getPolicyEngine() == null) {
             throw new BadRequestException(); //TODO
+        }
+        if(repository.existsByNameAndRootIdNot(policy.getName(), policy.getRootId())){
+            throw new BadRequestException(); //TODO policy with this name already exists
         }
     }
 

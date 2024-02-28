@@ -1,12 +1,12 @@
 package org.opendatamesh.platform.pp.policy.server.services.utils;
 
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.function.Supplier;
 
-@Service
+@Component
 public class TransactionHandler {
 
     @Transactional(propagation = Propagation.REQUIRED)

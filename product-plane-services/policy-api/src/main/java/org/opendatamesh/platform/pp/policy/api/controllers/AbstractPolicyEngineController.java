@@ -35,7 +35,18 @@ public abstract class AbstractPolicyEngineController {
             @PathVariable(value = "id") Long id
     );
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(
+            consumes = {
+                    "application/vnd.odmp.v1+json",
+                    "application/vnd.odmp+json",
+                    "application/json"
+            },
+            produces = {
+                    "application/vnd.odmp.v1+json",
+                    "application/vnd.odmp+json",
+                    "application/json"
+            }
+    )
     public abstract PolicyEngineResource createPolicyEngine(
             @Parameter(description = "")
             @RequestBody PolicyEngineResource policyEngine

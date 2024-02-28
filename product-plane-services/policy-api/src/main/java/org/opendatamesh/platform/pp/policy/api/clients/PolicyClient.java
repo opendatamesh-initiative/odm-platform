@@ -18,11 +18,11 @@ import java.util.List;
 public class PolicyClient extends ODMClient {
 
     public PolicyClient(String serverAddress) {
-        super(serverAddress, ObjectMapperFactory.JSON_MAPPER);
+        super(serverAddress, new RestTemplate(), ObjectMapperFactory.JSON_MAPPER);
     }
 
     public PolicyClient(String serverAddress, ObjectMapper mapper) {
-        super(serverAddress, mapper);
+        super(serverAddress, new RestTemplate(), mapper);
     }
 
 

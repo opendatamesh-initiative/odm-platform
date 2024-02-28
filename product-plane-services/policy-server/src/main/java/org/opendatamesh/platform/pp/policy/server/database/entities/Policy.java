@@ -3,7 +3,6 @@ package org.opendatamesh.platform.pp.policy.server.database.entities;
 import org.opendatamesh.platform.pp.policy.server.database.utils.TimestampedEntity;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 
 @Entity
 @Table(name = "POLICIES", schema = "ODMPOLICY")

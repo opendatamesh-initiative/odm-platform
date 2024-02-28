@@ -18,5 +18,5 @@ public class PolicyResource extends TimestampedResource {
     private String rawContent;
     private String suite;
     private Boolean isLastVersion;
-    //TODO policy engine ref
+    private Long policyEngineId;
 }

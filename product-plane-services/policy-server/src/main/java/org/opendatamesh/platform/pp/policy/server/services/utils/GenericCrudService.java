@@ -25,6 +25,86 @@ public abstract class GenericCrudService<T, ID extends Serializable> {
     }
 
     public final T findOne(ID identifier) {
+       return autowiredFindOne(identifier);
+    }
+
+    protected void afterFindOne(T foundObject, ID identifier) {
+
+    }
+
+    protected void beforeCreation(T objectToCreate) {
+
+    }
+
+    public final T create(T objectToCreate) {
+        return autowiredCreate(objectToCreate);
+    }
+
+    protected void afterCreation(T objectToCreate, T result) {
+
+    }
+
+    protected void afterCreationCommit(T createdEntity) {
+
+    }
+
+    protected void beforeOverwrite(T objectToOverwrite) {
+
+    }
+
+    public final T overwrite(ID identifier, T objectToOverwrite) {
+        return autowiredOverwrite(identifier, objectToOverwrite);
+    }
+
+    protected void afterOverWrite(T objectToOverwrite, T result) {
+
+    }
+
+    protected void afterOverwriteCommit(T overwrittenObject) {
+
+    }
+
+    protected void beforeDelete(ID identifier) {
+
+    }
+
+    public final void delete(ID identifier) {
+        autowiredDelete(identifier);
+    }
+
+    protected void afterDelete(ID identifier) {
+
+    }
+
+    protected void afterDeleteCommit(T entity) {
+
+    }
+
+    public final <R> R deleteReturning(ID identifier, Function<T, R> mapper) {
+        return autowiredDeleteReturning(identifier, mapper);
+    }
+
+    public final void checkExistenceOrThrow(ID identifier) {
+        if (!exists(identifier)) {
+            throw new NotFoundException(PolicyApiStandardErrors.SC404_01_RESOURCE_NOT_FOUND, "Resource with id=" + identifier + " not found");
+        }
+    }
+
+    protected abstract PagingAndSortingRepository<T, ID> getRepository();
+
+    protected boolean exists(ID identifier) {
+        return getRepository().existsById(identifier);
+    }
+
+    protected abstract void validate(T objectToValidate);
+
+    protected abstract void reconcile(T objectToReconcile);
+
+    protected abstract ID getIdentifier(T object);
+
+    //DO NOT OVERRIDE THE FOLLOWING METHODS IN CONCRETE CLASSES !!!
+
+    public T autowiredFindOne(ID identifier) {
         T result = getRepository().findById(identifier).orElse(null);
         if (result == null) {
             throw new NotFoundException(PolicyApiStandardErrors.SC404_01_RESOURCE_NOT_FOUND, "Resource with id=" + identifier + " not found");
@@ -33,11 +113,7 @@ public abstract class GenericCrudService<T, ID extends Serializable> {
         return result;
     }
 
-    protected void afterFindOne(T foundObject, ID identifier) {
-
-    }
-
-    public T create(T objectToCreate) {
+    public T autowiredCreate(T objectToCreate) {
         T result = transactionTemplate.execute(status -> {
             if (getIdentifier(objectToCreate) != null) {
                 throw new BadRequestException(PolicyApiStandardErrors.SC422_01_MALFORMED_RESOURCE, "The resource to create has already an identifier");
@@ -53,19 +129,7 @@ public abstract class GenericCrudService<T, ID extends Serializable> {
         return result;
     }
 
-    protected void afterCreationCommit(T createdEntity) {
-
-    }
-
-    protected void afterCreation(T objectToCreate, T result) {
-
-    }
-
-    protected void beforeCreation(T objectToCreate) {
-
-    }
-
-    public T overwrite(ID identifier, T objectToOverwrite) {
+    public T autowiredOverwrite(ID identifier, T objectToOverwrite) {
         T overwrittenObject = transactionTemplate.execute(status -> {
             if (getIdentifier(objectToOverwrite) != identifier) {
                 throw new BadRequestException(PolicyApiStandardErrors.SC422_01_MALFORMED_RESOURCE, "The resource to overwrite has an identifier that is different from the given one.");
@@ -82,19 +146,7 @@ public abstract class GenericCrudService<T, ID extends Serializable> {
         return overwrittenObject;
     }
 
-    protected void afterOverwriteCommit(T overwrittenObject) {
-
-    }
-
-    protected void beforeOverwrite(T objectToOverwrite) {
-
-    }
-
-    protected void afterOverWrite(T objectToOverwrite, T result) {
-
-    }
-
-    public void delete(ID identifier) {
+    public void autowiredDelete(ID identifier) {
         transactionTemplate.executeWithoutResult(status -> {
             checkExistenceOrThrow(identifier);
             beforeDelete(identifier);
@@ -103,42 +155,12 @@ public abstract class GenericCrudService<T, ID extends Serializable> {
         });
     }
 
-    public final <R> R deleteReturning(ID identifier, Function<T, R> mapper) {
+    public <R> R autowiredDeleteReturning(ID identifier, Function<T, R> mapper) {
         T entity = findOne(identifier);
         R resource = mapper.apply(entity);
         delete(identifier);
         afterDeleteCommit(entity);
         return resource;
     }
-
-    protected void afterDeleteCommit(T entity) {
-
-    }
-
-    public final void checkExistenceOrThrow(ID identifier) {
-        if (!exists(identifier)) {
-            throw new NotFoundException(PolicyApiStandardErrors.SC404_01_RESOURCE_NOT_FOUND, "Resource with id=" + identifier + " not found");
-        }
-    }
-
-    protected abstract PagingAndSortingRepository<T, ID> getRepository();
-
-    protected void afterDelete(ID identifier) {
-
-    }
-
-    protected void beforeDelete(ID identifier) {
-
-    }
-
-    protected boolean exists(ID identifier) {
-        return getRepository().existsById(identifier);
-    }
-
-    protected abstract void validate(T objectToValidate);
-
-    protected abstract void reconcile(T objectToReconcile);
-
-    protected abstract ID getIdentifier(T object);
 
 }

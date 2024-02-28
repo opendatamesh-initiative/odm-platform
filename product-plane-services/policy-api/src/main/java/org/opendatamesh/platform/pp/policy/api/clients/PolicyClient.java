@@ -167,7 +167,7 @@ public class PolicyClient extends ODMClient {
 
     }
 
-    public ResponseEntity updateEngine(
+    public ResponseEntity updatePolicyEngine(
             Long policyEngineId, PolicyEngineResource policyEngineResource
     ) throws JsonProcessingException {
 

@@ -23,7 +23,7 @@ public class PolicyEngineIT extends ODMPolicyIT {
 
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-    public void testCreatePolicyEngineAllProperties() {
+    public void testCreatePolicyEngine() {
 
         // Resources + Creation
         PolicyEngineResource policyEngineResource = createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);
@@ -49,7 +49,7 @@ public class PolicyEngineIT extends ODMPolicyIT {
         policyEngineResourceUpdated.setCreatedAt(policyEngineResource.getCreatedAt());
 
         // PUT request
-        ResponseEntity<PolicyEngineResource> putResponse = policyClient.updateEngine(
+        ResponseEntity<PolicyEngineResource> putResponse = policyClient.updatePolicyEngine(
                 policyEngineResource.getId(),
                 policyEngineResourceUpdated
         );

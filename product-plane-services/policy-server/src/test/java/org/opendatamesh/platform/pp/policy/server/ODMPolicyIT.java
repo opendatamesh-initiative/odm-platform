@@ -8,6 +8,7 @@ import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.policy.api.clients.PolicyClient;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineResource;
+import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
 import org.opendatamesh.platform.pp.policy.api.resources.exceptions.PolicyApiStandardErrors;
 import org.slf4j.Logger;
@@ -123,7 +124,7 @@ public class ODMPolicyIT extends ODMIntegrationTest {
             return resourceBuilder.readResourceFromFile(filePath, PolicyEngineResource.class);
         } catch (Throwable t) {
             t.printStackTrace();
-            fail("Impossible to read policy from file: " + t.getMessage());
+            fail("Impossible to read policy engine from file: " + t.getMessage());
             return null;
         }
     }
@@ -138,7 +139,7 @@ public class ODMPolicyIT extends ODMIntegrationTest {
             postPolicyEngineResponse = policyClient.createPolicyEngine(policyEngineResource);
         } catch (Throwable t) {
             t.printStackTrace();
-            fail("Impossible to create policy: " + t.getMessage());
+            fail("Impossible to create policy engine: " + t.getMessage());
             return null;
         }
 
@@ -146,6 +147,37 @@ public class ODMPolicyIT extends ODMIntegrationTest {
         policyEngineResource = postPolicyEngineResponse.getBody();
 
         return policyEngineResource;
+
+    }
+
+    protected PolicyEvaluationResultResource createPolicyEvaluationResultResource(String filePath) {
+        try {
+            return resourceBuilder.readResourceFromFile(filePath, PolicyEvaluationResultResource.class);
+        } catch (Throwable t) {
+            t.printStackTrace();
+            fail("Impossible to read policy evaluation result from file: " + t.getMessage());
+            return null;
+        }
+    }
+
+    protected PolicyEvaluationResultResource createPolicyEvaluationResult(String filePath) {
+
+        PolicyEvaluationResultResource policyEvaluationResultResource = createPolicyEvaluationResultResource(filePath);
+
+        ResponseEntity<PolicyEvaluationResultResource> postPolicyEvaluationResultResponse = null;
+
+        try {
+            postPolicyEvaluationResultResponse = policyClient.createPolicyEvaluationResult(policyEvaluationResultResource);
+        } catch (Throwable t) {
+            t.printStackTrace();
+            fail("Impossible to create policy evaluation result: " + t.getMessage());
+            return null;
+        }
+
+        verifyResponseEntity(postPolicyEvaluationResultResponse, HttpStatus.CREATED, true);
+        policyEvaluationResultResource = postPolicyEvaluationResultResponse.getBody();
+
+        return policyEvaluationResultResource;
 
     }
 

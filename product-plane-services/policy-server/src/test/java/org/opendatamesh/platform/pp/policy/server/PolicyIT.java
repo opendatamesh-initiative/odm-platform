@@ -2,6 +2,7 @@ package org.opendatamesh.platform.pp.policy.server;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
+import org.opendatamesh.platform.pp.policy.api.resources.PagedPolicyResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,9 +45,9 @@ public class PolicyIT extends ODMPolicyIT {
         createPolicy(ODMPolicyResources.RESOURCE_POLICY_2);
 
         // GET request
-        ResponseEntity<PolicyResource[]> readResponse = policyClient.readAllPolicies();
+        ResponseEntity<PagedPolicyResource> readResponse = policyClient.readAllPolicies();
         verifyResponseEntity(readResponse, HttpStatus.OK, true);
-        List<PolicyResource> policies = List.of(readResponse.getBody());
+        List<PolicyResource> policies = readResponse.getBody().getContent();
 
         // Verification
         assertThat(policies).size().isEqualTo(2);
@@ -115,7 +116,7 @@ public class PolicyIT extends ODMPolicyIT {
         assertThat(policyResource.getBlockingFlag()).isEqualTo(false);
         assertThat(policyResource.getRawContent()).isEqualTo("package dataproduct-name-checker\n\ndefault allow := false\n\nallow := true {                                     \n    startswith(input.name, \"dp-\")\n}");
         assertThat(policyResource.getSuite()).isEqualTo("CREATION");
-        //assertThat(policyResource.getIsLastVersion()).isEqualTo(true);
+        assertThat(policyResource.getLastVersion()).isEqualTo(true);
         assertThat(policyResource.getCreatedAt()).isNotNull();
         assertThat(policyResource.getUpdatedAt()).isEqualTo(policyResource.getCreatedAt());
 
@@ -131,7 +132,7 @@ public class PolicyIT extends ODMPolicyIT {
         assertThat(policyResource.getBlockingFlag()).isEqualTo(false);
         assertThat(policyResource.getRawContent()).isEqualTo("package dataproduct-name-checker\n\ndefault allow := false\n\nallow := true {                                     \n    startswith(input.name, \"dp-\")\n}");
         assertThat(policyResource.getSuite()).isEqualTo("CREATION");
-        //assertThat(policyResource.getIsLastVersion()).isEqualTo(true);
+        assertThat(policyResource.getLastVersion()).isEqualTo(true);
         assertThat(policyResource.getCreatedAt()).isNotNull();
         assertThat(policyResource.getUpdatedAt()).isAfter(policyResource.getCreatedAt());
 
@@ -147,7 +148,7 @@ public class PolicyIT extends ODMPolicyIT {
         assertThat(policyResource.getBlockingFlag()).isEqualTo(false);
         assertThat(policyResource.getRawContent()).isEqualTo("package dataproduct-name-checker\n\ndefault allow := false\n\nallow := true {                                     \n    startswith(input.name, \"dp-\")\n}");
         assertThat(policyResource.getSuite()).isEqualTo("CREATION");
-        //assertThat(policyResource.getIsLastVersion()).isEqualTo(true);
+        assertThat(policyResource.getLastVersion()).isEqualTo(true);
         assertThat(policyResource.getCreatedAt()).isNotNull();
         assertThat(policyResource.getUpdatedAt()).isEqualTo(policyResource.getCreatedAt());
 

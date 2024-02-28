@@ -30,18 +30,35 @@ import org.springframework.web.bind.annotation.*;
 )
 public abstract class AbstractPolicyEngineController {
 
+    // ===============================================================================
+    // Resource examples
+    // ===============================================================================
+
     private static final String EXAMPLE_POLICY_ENGINE_CREATION = "{\n" + //
             "   \"name\": \"opa-policy-checker\",\n" + //
             "   \"displayName\": \"OPA Policy Checker\",\n" + //
             "   \"adapterUrl\": \"http://localhost:9001/api/v1/up/policy-engine-adapter\"\n" + //
             "}";
 
+    // ===============================================================================
+    // GET /policy-engines
+    // ===============================================================================
+
     @GetMapping
-    public abstract Page<PolicyEngineResource> getPolicyEngines(
+    public Page<PolicyEngineResource> getPolicyEnginesEndpoint(
             @PageableDefault(size = 20, page = 0)
             Pageable pageable,
             PolicyEngineSearchOptions searchOptions
-    );
+    ) {
+        return getPolicyEngines(pageable, searchOptions);
+    }
+
+    public abstract Page<PolicyEngineResource> getPolicyEngines(Pageable pageable, PolicyEngineSearchOptions searchOptions);
+
+
+    // ===============================================================================
+    // GET /policy-engines/{id}
+    // ===============================================================================
 
     @GetMapping(value = "/{id}")
     public abstract PolicyEngineResource getPolicyEngine(
@@ -49,6 +66,9 @@ public abstract class AbstractPolicyEngineController {
             @PathVariable(value = "id") Long id
     );
 
+    // ===============================================================================
+    // POST /policy-engines
+    // ===============================================================================
 
     @Operation(
             summary = "Create a Policy Engine",
@@ -109,6 +129,11 @@ public abstract class AbstractPolicyEngineController {
 
     public abstract PolicyEngineResource createPolicyEngine(PolicyEngineResource policyEngineResource);
 
+
+    // ===============================================================================
+    // PUT /policy-engines/{id}
+    // ===============================================================================
+
     @PutMapping(value = "/{id}")
     public abstract PolicyEngineResource modifyPolicyEngine(
             @Parameter(description = "")
@@ -116,6 +141,10 @@ public abstract class AbstractPolicyEngineController {
             @Parameter(description = "")
             @RequestBody PolicyEngineResource policyEngine
     );
+
+    // ===============================================================================
+    // DELETE /policy-engines/{id}
+    // ===============================================================================
 
     @DeleteMapping(value = "/{id}")
     public abstract PolicyEngineResource deletePolicyEngine(

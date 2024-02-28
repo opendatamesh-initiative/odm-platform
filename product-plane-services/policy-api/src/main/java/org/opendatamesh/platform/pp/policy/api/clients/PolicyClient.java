@@ -2,6 +2,7 @@ package org.opendatamesh.platform.pp.policy.api.clients;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.poi.ss.formula.functions.T;
 import org.opendatamesh.platform.core.commons.clients.ODMClient;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
@@ -351,7 +352,7 @@ public class PolicyClient extends ODMClient {
     // Utils
     // ======================================================================================
 
-    protected ResponseEntity mapResponseEntity(
+    private ResponseEntity mapResponseEntity(
             ResponseEntity response,
             HttpStatus acceptedStatusCode,
             Class acceptedClass

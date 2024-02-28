@@ -2,8 +2,11 @@ package org.opendatamesh.platform.pp.policy.server;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
+import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
+import org.opendatamesh.platform.pp.policy.api.resources.exceptions.PolicyApiStandardErrors;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
@@ -31,6 +34,31 @@ public class PolicyEngineIT extends ODMPolicyIT {
 
     }
 
+    // ======================================================================================
+    // UPDATE PolicyEngine
+    // ======================================================================================
+
+    @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+    public void testUpdatePolicyEngine() throws JsonProcessingException {
+
+        // Resources + Creation
+        PolicyEngineResource policyEngineResource = createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);
+        PolicyEngineResource policyEngineResourceUpdated = createPolicyEngineResource(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1_UPDATED);
+
+        // PUT request
+        ResponseEntity<PolicyEngineResource> putResponse = policyClient.updateEngine(
+                policyEngineResource.getId(),
+                policyEngineResourceUpdated
+        );
+        verifyResponseEntity(putResponse, HttpStatus.OK, true);
+        policyEngineResourceUpdated = putResponse.getBody();
+
+        // Verification
+        verifyResourcePolicyEngineOneUpdated(policyEngineResourceUpdated);
+
+    }
+
 
     // ======================================================================================
     // READ ALL PolicyEngines
@@ -41,51 +69,40 @@ public class PolicyEngineIT extends ODMPolicyIT {
     public void testReadAllPolicies() throws JsonProcessingException {
 
         // Resources + Creation
-        createPolicy(ODMPolicyResources.RESOURCE_POLICY_1);
-        createPolicy(ODMPolicyResources.RESOURCE_POLICY_2);
+        createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);
+        createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_2);
 
         // GET request
-        ResponseEntity<PolicyResource[]> readResponse = policyClient.readAllPolicies();
-        verifyResponseEntity(readResponse, HttpStatus.OK, true);
-        List<PolicyResource> policies = List.of(readResponse.getBody());
+        ResponseEntity<Page> getResponse = policyClient.readAllPolicyEngines();
+        verifyResponseEntity(getResponse, HttpStatus.OK, true);
+        List<PolicyEngineResource> policyEngines = getResponse.getBody().getContent();
 
         // Verification
-        assertThat(policies).size().isEqualTo(2);
-        //verifyResourcePolicyOne(policies.get(0));
-        verifyResourcePolicyTwo(policies.get(1));
+        assertThat(policyEngines).size().isEqualTo(2);
+        verifyResourcePolicyEngineOne(policyEngines.get(0));
+        verifyResourcePolicyEngineTwo(policyEngines.get(1));
 
     }
 
 
     // ======================================================================================
-    // READ ONE Policy
+    // READ ONE PolicyEngine
     // ======================================================================================
 
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-    public void testReadOnePolicy() throws JsonProcessingException {
+    public void testReadOnePolicyEngine() throws JsonProcessingException {
 
         // Resources + Creation
-        PolicyResource policyResource = createPolicy(ODMPolicyResources.RESOURCE_POLICY_1);
+        PolicyEngineResource policyEngineResource = createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);
 
         // GET request
-        ResponseEntity<PolicyResource> readResponse = policyClient.readOnePolicy(policyResource.getId());
-        verifyResponseEntity(readResponse, HttpStatus.OK, true);
-        policyResource = readResponse.getBody();
+        ResponseEntity<PolicyEngineResource> getResponse = policyClient.readOnePolicyEngine(policyEngineResource.getId());
+        verifyResponseEntity(getResponse, HttpStatus.OK, true);
+        policyEngineResource = getResponse.getBody();
 
         // Verification
-        //verifyResourcePolicyOne(policyResource);
-
-    }
-
-
-    // ======================================================================================
-    // UPDATE Policy
-    // ======================================================================================
-
-    @Test
-    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-    public void testUpdatePolicy() throws JsonProcessingException, InterruptedException {
+        verifyResourcePolicyEngineOne(policyEngineResource);
 
     }
 
@@ -96,8 +113,22 @@ public class PolicyEngineIT extends ODMPolicyIT {
 
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-    public void testDeletePolicy() throws JsonProcessingException {
+    public void testDeletePolicyEngine() throws JsonProcessingException {
 
+        // Resources + Creation
+        PolicyEngineResource policyEngineResource = createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);
+
+        // DELETE request
+        ResponseEntity<Void> deleteResponse = policyClient.deletePolicyEngine(policyEngineResource.getId());
+        verifyResponseEntity(deleteResponse, HttpStatus.OK, false);
+
+        // GET request to check that the entity is not on the DB anymore
+        ResponseEntity<ErrorRes> getResponse = policyClient.readOnePolicyEngine(policyEngineResource.getId());
+        verifyResponseError(
+                getResponse,
+                HttpStatus.NOT_FOUND,
+                PolicyApiStandardErrors.SC404_01_RESOURCE_NOT_FOUND
+        );
 
     }
 
@@ -117,35 +148,25 @@ public class PolicyEngineIT extends ODMPolicyIT {
 
     }
 
-    private void verifyResourcePolicyOneUpdated(PolicyResource oldPolicyResource, PolicyResource policyResource) {
+    private void verifyResourcePolicyEngineOneUpdated(PolicyEngineResource policyEngineResource) {
 
-        assertThat(policyResource.getId()).isNotNull();
-        assertThat(policyResource.getRootId()).isEqualTo(1);
-        assertThat(policyResource.getName()).isEqualTo("dataproduct-name-checker");
-        assertThat(policyResource.getDisplayName()).isEqualTo("Data Product Name Checker");
-        assertThat(policyResource.getDescription()).isEqualTo("Check the Data Product name");
-        assertThat(policyResource.getBlockingFlag()).isEqualTo(false);
-        assertThat(policyResource.getRawContent()).isEqualTo("package dataproduct-name-checker\n\ndefault allow := false\n\nallow := true {                                     \n    startswith(input.name, \"dp-\")\n}");
-        assertThat(policyResource.getSuite()).isEqualTo("CREATION");
-        //assertThat(policyResource.getIsLastVersion()).isEqualTo(true);
-        assertThat(policyResource.getCreatedAt()).isNotNull();
-        assertThat(policyResource.getUpdatedAt()).isAfter(policyResource.getCreatedAt());
+        assertThat(policyEngineResource.getId()).isNotNull();
+        assertThat(policyEngineResource.getName()).isEqualTo("opa-policy-checker");
+        assertThat(policyEngineResource.getDisplayName()).isEqualTo("OPA Policy Checker V2");
+        assertThat(policyEngineResource.getAdapterUrl()).isEqualTo("http://localhost:9001/api/v1/up/policy-engine-adapter-2");
+        assertThat(policyEngineResource.getCreatedAt()).isNotNull();
+        assertThat(policyEngineResource.getUpdatedAt()).isAfter(policyEngineResource.getCreatedAt());
 
     }
 
-    private void verifyResourcePolicyTwo(PolicyResource policyResource) {
+    private void verifyResourcePolicyEngineTwo(PolicyEngineResource policyEngineResource) {
 
-        assertThat(policyResource.getId()).isNotNull();
-        assertThat(policyResource.getRootId()).isEqualTo(policyResource.getId());
-        assertThat(policyResource.getName()).isEqualTo("dataproduct-name-checker");
-        assertThat(policyResource.getDisplayName()).isEqualTo("Data Product Name Checker");
-        assertThat(policyResource.getDescription()).isEqualTo("Check whether the name of the input Data Product is compliant with global naming convention or not");
-        assertThat(policyResource.getBlockingFlag()).isEqualTo(false);
-        assertThat(policyResource.getRawContent()).isEqualTo("package dataproduct-name-checker\n\ndefault allow := false\n\nallow := true {                                     \n    startswith(input.name, \"dp-\")\n}");
-        assertThat(policyResource.getSuite()).isEqualTo("CREATION");
-        //assertThat(policyResource.getIsLastVersion()).isEqualTo(true);
-        assertThat(policyResource.getCreatedAt()).isNotNull();
-        assertThat(policyResource.getUpdatedAt()).isEqualTo(policyResource.getCreatedAt());
+        assertThat(policyEngineResource.getId()).isNotNull();
+        assertThat(policyEngineResource.getName()).isEqualTo("lambda-policy-checker");
+        assertThat(policyEngineResource.getDisplayName()).isEqualTo("Custom Lambda Policy Checker");
+        assertThat(policyEngineResource.getAdapterUrl()).isEqualTo("https://abcdefg.lambda-url.us-east-1.on.aws");
+        assertThat(policyEngineResource.getCreatedAt()).isNotNull();
+        assertThat(policyEngineResource.getUpdatedAt()).isEqualTo(policyEngineResource.getCreatedAt());
 
     }
 

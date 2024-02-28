@@ -28,25 +28,24 @@ public class PolicyEvaluationResultService extends GenericMappedAndFilteredCrudS
     @Override
     protected void validate(PolicyEvaluationResult evaluationResult) {
         if (evaluationResult.getPolicyId() == null) {
-            throw new BadRequestException();//TODO
+            throw new BadRequestException();
         }
-        if(evaluationResult.getResult() == null){
-            throw new BadRequestException(); //TODO
+        if (evaluationResult.getResult() == null) {
+            throw new BadRequestException();
         }
     }
 
     @Override
     protected void reconcile(PolicyEvaluationResult evaluationResult) {
         if (evaluationResult.getPolicyId() != null) {
-            Policy policy = policyService.findOne(evaluationResult.getPolicyId());
+            Policy policy = policyService.findPolicyVersion(evaluationResult.getPolicyId());
+            if(Boolean.FALSE.equals(policy.getLastVersion())){
+                throw new BadRequestException();//TODO Invalid result???
+            }
             evaluationResult.setPolicy(policy);
         }
     }
 
-    @Override
-    protected Long getIdentifier(PolicyEvaluationResult object) {
-        return object.getId();
-    }
 
     @Override
     protected PagingAndSortingAndSpecificationExecutorRepository<PolicyEvaluationResult, Long> getRepository() {

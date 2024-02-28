@@ -3,10 +3,9 @@ package org.opendatamesh.platform.pp.policy.server;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
+import org.opendatamesh.platform.pp.policy.api.resources.PagedPolicyEngineResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineResource;
-import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
 import org.opendatamesh.platform.pp.policy.api.resources.exceptions.PolicyApiStandardErrors;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
@@ -45,6 +44,9 @@ public class PolicyEngineIT extends ODMPolicyIT {
         // Resources + Creation
         PolicyEngineResource policyEngineResource = createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);
         PolicyEngineResource policyEngineResourceUpdated = createPolicyEngineResource(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1_UPDATED);
+        // TODO: discuss update strategies (ID and CreationTime actually MUST be in the updated object and i don't love it)
+        policyEngineResourceUpdated.setId(policyEngineResource.getId());
+        policyEngineResourceUpdated.setCreatedAt(policyEngineResource.getCreatedAt());
 
         // PUT request
         ResponseEntity<PolicyEngineResource> putResponse = policyClient.updateEngine(
@@ -73,7 +75,7 @@ public class PolicyEngineIT extends ODMPolicyIT {
         createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_2);
 
         // GET request
-        ResponseEntity<Page> getResponse = policyClient.readAllPolicyEngines();
+        ResponseEntity<PagedPolicyEngineResource> getResponse = policyClient.readAllPolicyEngines();
         verifyResponseEntity(getResponse, HttpStatus.OK, true);
         List<PolicyEngineResource> policyEngines = getResponse.getBody().getContent();
 
@@ -108,7 +110,7 @@ public class PolicyEngineIT extends ODMPolicyIT {
 
 
     // ======================================================================================
-    // DELETE Policy
+    // DELETE PolicyEngine
     // ======================================================================================
 
     @Test

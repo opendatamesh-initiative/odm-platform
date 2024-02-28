@@ -2,16 +2,15 @@ package org.opendatamesh.platform.pp.policy.api.clients;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.poi.ss.formula.functions.T;
 import org.opendatamesh.platform.core.commons.clients.ODMClient;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
-import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineResource;
-import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
-import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
+import org.opendatamesh.platform.pp.policy.api.resources.*;
 import org.opendatamesh.platform.up.notification.api.resources.EventResource;
-import org.springframework.data.domain.Page;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -83,7 +82,7 @@ public class PolicyClient extends ODMClient {
         ResponseEntity response = mapResponseEntity(
                 getPoliciesResponse,
                 HttpStatus.OK,
-                Page.class // Convert to LIST //TODO
+                PagedPolicyResource.class
         );
 
         return response;
@@ -200,7 +199,7 @@ public class PolicyClient extends ODMClient {
         ResponseEntity response = mapResponseEntity(
                 getPolicyEnginesResponse,
                 HttpStatus.OK,
-                Page.class // Convert to LIST //TODO
+                PagedPolicyEngineResource.class
         );
 
         return response;
@@ -302,7 +301,7 @@ public class PolicyClient extends ODMClient {
         ResponseEntity response = mapResponseEntity(
                 getPolicyEvaluationResultsResponse,
                 HttpStatus.OK,
-                Page.class // Convert to LIST //TODO
+                PagedPolicyEvaluationResultResource.class
         );
 
         return response;

@@ -2,7 +2,6 @@ package org.opendatamesh.platform.pp.policy.api.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -34,16 +33,39 @@ public abstract class AbstractPolicyEngineController {
     // Resource examples
     // ===============================================================================
 
-    private static final String EXAMPLE_POLICY_ENGINE_CREATION = "{\n" + //
+    private static final String EXAMPLE_POLICY_ENGINE = "{\n" + //
+            "   \"id\": 1,\n" + //
+            "   \"name\": \"opa-policy-checker\",\n" + //
+            "   \"displayName\": \"OPA Policy Checker\",\n" + //
+            "   \"adapterUrl\": \"http://localhost:9001/api/v1/up/policy-engine-adapter\",\n" + //
+            "   \"createdAt\": \"a\",\n" + //
+            "   \"updatedAt\": \"a\"\n" + //
+            "}";
+
+    private static final String EXAMPLE_POLICY_ENGINE_CREATE = "{\n" + //
             "   \"name\": \"opa-policy-checker\",\n" + //
             "   \"displayName\": \"OPA Policy Checker\",\n" + //
             "   \"adapterUrl\": \"http://localhost:9001/api/v1/up/policy-engine-adapter\"\n" + //
             "}";
 
+    private static final String EXAMPLE_POLICY_ENGINE_UPDATE = "{\n" + //
+            "   \"id\": 1,\n" + //
+            "   \"name\": \"opa-policy-checker\",\n" + //
+            "   \"displayName\": \"OPA Policy Checker\",\n" + //
+            "   \"adapterUrl\": \"http://localhost:9001/api/v1/up/policy-engine-adapter\",\n" + //
+            "   \"createdAt\": \"a\"\n" + //
+            "}";
+
+
     // ===============================================================================
     // GET /policy-engines
     // ===============================================================================
 
+    @Operation(
+            summary = "Get all Policy Engines",
+            description = "Get all the registered Policy Engine paginated"
+    )
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping
     public Page<PolicyEngineResource> getPolicyEnginesEndpoint(
             @PageableDefault(size = 20, page = 0)
@@ -60,11 +82,20 @@ public abstract class AbstractPolicyEngineController {
     // GET /policy-engines/{id}
     // ===============================================================================
 
+    @Operation(
+            summary = "Get a Policy Engine",
+            description = "Get the Policy Engine identified by the given ID"
+    )
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/{id}")
-    public abstract PolicyEngineResource getPolicyEngine(
+    public PolicyEngineResource getPolicyEngineEndpoint(
             @Parameter(description = "", required = true)
             @PathVariable(value = "id") Long id
-    );
+    ) {
+        return getPolicyEngine(id);
+    }
+
+    public abstract PolicyEngineResource getPolicyEngine(Long id);
 
     // ===============================================================================
     // POST /policy-engines
@@ -78,13 +109,11 @@ public abstract class AbstractPolicyEngineController {
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "201",
-                    description = "Blueprint created",
+                    description = "Policy Engine created",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = PolicyEngineResource.class),
-                            examples = {
-                                    @ExampleObject(name = "engine1", value = EXAMPLE_POLICY_ENGINE_CREATION)
-                            }
+                            examples = {@ExampleObject(name = "engine1", value = EXAMPLE_POLICY_ENGINE)}
                     )
             ),
             @ApiResponse(
@@ -121,7 +150,13 @@ public abstract class AbstractPolicyEngineController {
             }
     )
     public PolicyEngineResource createPolicyEngineEndpoint(
-            @Parameter(description = "")
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "A Policy Engine JSON object",
+                    content = @Content(examples = {@ExampleObject(
+                            name = "policy-engine-example",
+                            description = "Example of a Policy Engine for OPA",
+                            value = EXAMPLE_POLICY_ENGINE_CREATE
+                    )}))
             @RequestBody PolicyEngineResource policyEngine
     ) {
         return createPolicyEngine(policyEngine);
@@ -134,22 +169,58 @@ public abstract class AbstractPolicyEngineController {
     // PUT /policy-engines/{id}
     // ===============================================================================
 
-    @PutMapping(value = "/{id}")
-    public abstract PolicyEngineResource modifyPolicyEngine(
-            @Parameter(description = "")
+    @Operation(
+            summary = "Update a Policy Engine",
+            description = "Update the given Policy Engine"
+    )
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping(
+            value = "/{id}",
+            consumes = {
+                    "application/vnd.odmp.v1+json",
+                    "application/vnd.odmp+json",
+                    "application/json"
+            },
+            produces = {
+                    "application/vnd.odmp.v1+json",
+                    "application/vnd.odmp+json",
+                    "application/json"
+            }
+    )
+    public PolicyEngineResource modifyPolicyEngineEndpoint(
+            @Parameter(description = "ID of the Policy Engine to update")
             @PathVariable(value = "id") Long id,
-            @Parameter(description = "")
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "A Policy Engine JSON object",
+                    content = @Content(examples = {@ExampleObject(
+                            name = "policy-engine-example",
+                            description = "Example of a Policy Engine for OPA",
+                            value = EXAMPLE_POLICY_ENGINE_UPDATE
+                    )}))
             @RequestBody PolicyEngineResource policyEngine
-    );
+    ) {
+        return modifyPolicyEngine(id, policyEngine);
+    }
+
+    public abstract PolicyEngineResource modifyPolicyEngine(Long id, PolicyEngineResource policyEngine);
 
     // ===============================================================================
     // DELETE /policy-engines/{id}
     // ===============================================================================
 
+    @Operation(
+            summary = "Delete a Policy Engine",
+            description = "Delete a Policy Engine given its ID"
+    )
+    @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(value = "/{id}")
-    public abstract PolicyEngineResource deletePolicyEngine(
-            @Parameter(description = "")
+    public PolicyEngineResource deletePolicyEngineEndpoint(
+            @Parameter(description = "ID of the Policy Engine to delete")
             @PathVariable(value = "id") Long id
-    );
+    ) {
+        return deletePolicyEngine(id);
+    }
+
+    public abstract PolicyEngineResource deletePolicyEngine(Long id);
 
 }

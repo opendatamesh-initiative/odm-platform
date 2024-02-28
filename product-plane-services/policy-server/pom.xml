@@ -94,7 +94,7 @@ License.
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-jpamodelgen</artifactId>
-            <version>5.3.6.Final</version>
+            <version>5.4.3.Final</version>
             <optional>true</optional>
         </dependency>
 
@@ -263,6 +263,11 @@ License.
                             <groupId>org.mapstruct</groupId>
                             <artifactId>mapstruct-processor</artifactId>
                             <version>1.5.3.Final</version>
+                        </path>
+                        <path>
+                            <groupId>org.hibernate</groupId>
+                            <artifactId>hibernate-jpamodelgen</artifactId>
+                            <version>5.4.3.Final</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>

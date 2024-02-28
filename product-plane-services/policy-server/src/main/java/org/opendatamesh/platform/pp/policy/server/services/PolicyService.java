@@ -4,16 +4,21 @@ import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestExcep
 import org.opendatamesh.platform.core.commons.servers.exceptions.NotFoundException;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicySearchOptions;
+import org.opendatamesh.platform.pp.policy.api.resources.exceptions.PolicyApiStandardErrors;
 import org.opendatamesh.platform.pp.policy.server.database.entities.Policy;
 import org.opendatamesh.platform.pp.policy.server.database.entities.PolicyEngine;
 import org.opendatamesh.platform.pp.policy.server.database.mappers.PolicyMapper;
 import org.opendatamesh.platform.pp.policy.server.database.repositories.PolicyRepository;
 import org.opendatamesh.platform.pp.policy.server.database.utils.PagingAndSortingAndSpecificationExecutorRepository;
+import org.opendatamesh.platform.pp.policy.server.database.utils.SpecsUtils;
 import org.opendatamesh.platform.pp.policy.server.services.utils.GenericMappedAndFilteredCrudService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySearchOptions, PolicyResource, Policy, Long> {
@@ -27,37 +32,40 @@ public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySea
     @Autowired
     private PolicyEngineService policyEngineService;
 
-    public PolicyResource findOnePolicyResource(Long rootId) {
-        return toRes(findOnePolicy(rootId));
+    @Override
+    protected Policy findById(Long rootId) {
+        return repository.findByRootIdAndIsLastVersionTrue(rootId);
     }
 
-    public Policy findOnePolicy(Long rootId) {
-        final Policy policy = repository.findByRootIdAndIsLastVersionTrue(rootId);
-        if (policy == null) {
-            throw new NotFoundException();//TODO
+    @Override
+    protected void beforeCreation(Policy objectToCreate) {
+        if (objectToCreate.getId() != null) {
+            throw new BadRequestException();
         }
-        return policy;
+        if (objectToCreate.getRootId() != null) {
+            throw new BadRequestException();
+        }
     }
 
-    public PolicyResource createPolicyResource(PolicyResource policyToCreate) {
-        PolicyResource createdPolicy = createResource(policyToCreate);
-        createdPolicy.setRootId(createdPolicy.getId());
-        createdPolicy.setLastVersion(Boolean.TRUE);
-        return overwriteResource(createdPolicy.getId(), createdPolicy);
+    @Override
+    protected void afterCreation(Policy objectToCreate, Policy result) {
+        result.setRootId(result.getId());
+        result.setLastVersion(Boolean.TRUE);
     }
 
-    public PolicyResource overwritePolicyResource(Long rootId, PolicyResource policy) {
-        Policy lastVersionPolicy = findOnePolicy(rootId);
+    @Override
+    protected void beforeOverwrite(Policy policy) {
+        if (policy.getRootId() == null) {
+            throw new BadRequestException();
+        }
+        Policy lastVersionPolicy = findOne(policy.getRootId());
         lastVersionPolicy.setLastVersion(Boolean.FALSE);
-        overwrite(lastVersionPolicy.getId(), lastVersionPolicy);
-
-        policy.setRootId(rootId);
         policy.setLastVersion(Boolean.TRUE);
-        return createResource(policy);
     }
 
-    public void deletePolicy(Long rootId) {
-        Policy policyToDelete = findOnePolicy(rootId);
+
+    public void logicalDelete(Long rootId) {
+        Policy policyToDelete = findOne(rootId);
         policyToDelete.setLastVersion(Boolean.FALSE);
         repository.save(policyToDelete);
     }
@@ -85,11 +93,6 @@ public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySea
     }
 
     @Override
-    protected Long getIdentifier(Policy object) {
-        return object.getId();
-    }
-
-    @Override
     protected PagingAndSortingAndSpecificationExecutorRepository<Policy, Long> getRepository() {
         return repository;
     }
@@ -97,7 +100,9 @@ public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySea
 
     @Override
     protected Specification<Policy> getSpecFromFilters(PolicySearchOptions filters) {
-        return null;
+        List<Specification<Policy>> specifications = new ArrayList<>();
+        specifications.add(PolicyRepository.Specs.hasLastVersion(Boolean.TRUE));
+        return SpecsUtils.combineWithAnd(specifications);
     }
 
     @Override
@@ -108,5 +113,15 @@ public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySea
     @Override
     protected Policy toEntity(PolicyResource resource) {
         return mapper.toEntity(resource);
+    }
+
+    public Policy findPolicyVersion(Long versionId) {
+        return repository
+                .findById(versionId)
+                .orElseThrow(() -> new NotFoundException(PolicyApiStandardErrors.SC404_01_RESOURCE_NOT_FOUND, "Policy with version=" + versionId + " not found"));
+    }
+
+    public PolicyResource findPolicyResourceVersion(Long versionId) {
+        return mapper.toRes(findPolicyVersion(versionId));
     }
 }

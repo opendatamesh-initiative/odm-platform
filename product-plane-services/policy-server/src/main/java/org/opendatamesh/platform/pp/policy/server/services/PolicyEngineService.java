@@ -37,10 +37,6 @@ public class PolicyEngineService extends GenericMappedAndFilteredCrudService<Pol
         // No reconcile action needed
     }
 
-    @Override
-    protected Long getIdentifier(PolicyEngine object) {
-        return object.getId();
-    }
 
     @Override
     protected PagingAndSortingAndSpecificationExecutorRepository<PolicyEngine, Long> getRepository() {

@@ -91,20 +91,20 @@ public class Policy extends TimestampedEntity {
         this.blockingFlag = blockingFlag;
     }
 
-    public String getRawContent() {
-        return rawContent;
-    }
-
-    public void setRawContent(String rawContent) {
-        this.rawContent = rawContent;
-    }
-
     public String getSuite() {
         return suite;
     }
 
     public void setSuite(String suite) {
         this.suite = suite;
+    }
+
+    public String getRawContent() {
+        return rawContent;
+    }
+
+    public void setRawContent(String rawContent) {
+        this.rawContent = rawContent;
     }
 
     public Boolean getLastVersion() {

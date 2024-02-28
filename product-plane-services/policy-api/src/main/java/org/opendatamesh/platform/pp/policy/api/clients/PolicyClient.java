@@ -10,10 +10,7 @@ import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultR
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
 import org.opendatamesh.platform.up.notification.api.resources.EventResource;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -28,9 +25,6 @@ public class PolicyClient extends ODMClient {
         super(serverAddress, mapper);
     }
 
-    public PolicyClient(String serverAddress, RestTemplate restTemplate, ObjectMapper mapper) {
-        super(serverAddress, restTemplate, mapper);
-    }
 
     // ======================================================================================
     // Proxy services

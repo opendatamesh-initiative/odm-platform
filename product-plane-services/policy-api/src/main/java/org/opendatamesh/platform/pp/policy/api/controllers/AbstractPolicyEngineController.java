@@ -7,6 +7,7 @@ import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineSearchOptio
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,7 +35,7 @@ public abstract class AbstractPolicyEngineController {
             @PathVariable(value = "id") Long id
     );
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public abstract PolicyEngineResource createPolicyEngine(
             @Parameter(description = "")
             @RequestBody PolicyEngineResource policyEngine

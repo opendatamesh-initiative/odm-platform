@@ -37,7 +37,7 @@ public abstract class GenericCrudService<T, ID extends Serializable> {
 
     }
 
-    public final T create(T objectToCreate) {
+    public T create(T objectToCreate) {
         T result = transactionTemplate.execute(status -> {
             if (getIdentifier(objectToCreate) != null) {
                 throw new BadRequestException(PolicyApiStandardErrors.SC422_01_MALFORMED_RESOURCE, "The resource to create has already an identifier");
@@ -65,7 +65,7 @@ public abstract class GenericCrudService<T, ID extends Serializable> {
 
     }
 
-    public final T overwrite(ID identifier, T objectToOverwrite) {
+    public T overwrite(ID identifier, T objectToOverwrite) {
         T overwrittenObject = transactionTemplate.execute(status -> {
             if (getIdentifier(objectToOverwrite) != identifier) {
                 throw new BadRequestException(PolicyApiStandardErrors.SC422_01_MALFORMED_RESOURCE, "The resource to overwrite has an identifier that is different from the given one.");
@@ -94,7 +94,7 @@ public abstract class GenericCrudService<T, ID extends Serializable> {
 
     }
 
-    public final void delete(ID identifier) {
+    public void delete(ID identifier) {
         transactionTemplate.executeWithoutResult(status -> {
             checkExistenceOrThrow(identifier);
             beforeDelete(identifier);

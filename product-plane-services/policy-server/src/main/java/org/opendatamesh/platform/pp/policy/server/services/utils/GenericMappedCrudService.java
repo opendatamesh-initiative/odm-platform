@@ -1,28 +1,33 @@
 package org.opendatamesh.platform.pp.policy.server.services.utils;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 
 public abstract class GenericMappedCrudService<R, T, ID extends Serializable> extends GenericCrudService<T, ID> {
 
+    @Autowired
+    private TransactionHandler transactionHandler;
+
     protected abstract R toRes(T entity);
 
     protected abstract T toEntity(R resource);
 
-    @Transactional
     public final Page<R> findAllResources(Pageable pageable) {
-        final Page<T> entitiesPage = findAll(pageable);
-        return entitiesPage.map(this::toRes);
+        return transactionHandler.runInTransaction(() -> {
+            final Page<T> entitiesPage = findAll(pageable);
+            return entitiesPage.map(this::toRes);
+        });
     }
 
-    @Transactional
     public final R findOneResource(ID identifier) {
-        final T entity = findOne(identifier);
-        return toRes(entity);
+        return transactionHandler.runInTransaction(() -> {
+            final T entity = findOne(identifier);
+            return toRes(entity);
+        });
     }
 
     public final R createResource(R objectToCreate) {

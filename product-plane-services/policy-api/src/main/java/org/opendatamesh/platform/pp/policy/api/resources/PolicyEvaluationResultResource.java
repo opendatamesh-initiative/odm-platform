@@ -15,5 +15,5 @@ public class PolicyEvaluationResultResource extends TimestampedResource {
     private String inputObject;
     private String outputObject;
     private Boolean result;
-    //TODO add reference to the policy
+    private Long policyId;
 }

@@ -2,6 +2,7 @@ package org.opendatamesh.platform.pp.policy.api.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -24,8 +25,8 @@ import org.springframework.web.bind.annotation.*;
 )
 @Validated
 @Tag(
-        name = "Policy Engines",
-        description = "Endpoints associated to Policy Engines"
+        name = "PolicyEngines",
+        description = "Endpoints associated to PolicyEngines"
 )
 public abstract class AbstractPolicyEngineController {
 
@@ -62,11 +63,38 @@ public abstract class AbstractPolicyEngineController {
     // ===============================================================================
 
     @Operation(
-            summary = "Get all Policy Engines",
-            description = "Get all the registered Policy Engine paginated"
+            summary = "Get all PolicyEngines",
+            description = "Get all the registered PolicyEngine paginated"
     )
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "All the PolicyEngines",
+                    content = {
+                            @Content(mediaType = "application/vnd.odmp.v1+json",
+                                    array = @ArraySchema(schema = @Schema(implementation = PolicyEngineResource.class))),
+                            @Content(mediaType = "application/vnd.odmp+json",
+                                    array = @ArraySchema(schema = @Schema(implementation = PolicyEngineResource.class))),
+                            @Content(mediaType = "application/json",
+                                    array = @ArraySchema(schema = @Schema(implementation = PolicyEngineResource.class)))
+                    }
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "[Internal Server Error](https://www.rfc-editor.org/rfc/rfc9110.html#name-500-internal-server-error)"
+                            + "\r\n - Error Code 50000 - Error in the backend database"
+                            + "\r\n - Error Code 50001 - Error in in the backend service",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
+            )
+    })
+    @GetMapping(
+            produces = {
+                    "application/vnd.odmp.v1+json",
+                    "application/vnd.odmp+json",
+                    "application/json"
+            }
+    )
     public Page<PolicyEngineResource> getPolicyEnginesEndpoint(
             @PageableDefault(size = 20, page = 0)
             Pageable pageable,
@@ -83,11 +111,45 @@ public abstract class AbstractPolicyEngineController {
     // ===============================================================================
 
     @Operation(
-            summary = "Get a Policy Engine",
-            description = "Get the Policy Engine identified by the given ID"
+            summary = "Get a PolicyEngine",
+            description = "Get the PolicyEngine identified by the given ID"
     )
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = "/{id}")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "The requested PolicyEngine",
+                    content = {
+                            @Content(mediaType = "application/vnd.odmp.v1+json",
+                                    schema = @Schema(implementation = PolicyEngineResource.class)),
+                            @Content(mediaType = "application/vnd.odmp+json",
+                                    schema = @Schema(implementation = PolicyEngineResource.class)),
+                            @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = PolicyEngineResource.class))
+                    }
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "[Not Found](https://www.rfc-editor.org/rfc/rfc9110.html#name-404-not-found)"
+                            + "\r\n - Error Code 40401 - PolicyEngine not found",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "[Internal Server Error](https://www.rfc-editor.org/rfc/rfc9110.html#name-500-internal-server-error)"
+                            + "\r\n - Error Code 50000 - Error in the backend database"
+                            + "\r\n - Error Code 50001 - Error in in the backend service",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
+            )
+    })
+    @GetMapping(
+            value = "/{id}",
+            produces = {
+                    "application/vnd.odmp.v1+json",
+                    "application/vnd.odmp+json",
+                    "application/json"
+            }
+    )
     public PolicyEngineResource getPolicyEngineEndpoint(
             @Parameter(description = "", required = true)
             @PathVariable(value = "id") Long id
@@ -102,14 +164,14 @@ public abstract class AbstractPolicyEngineController {
     // ===============================================================================
 
     @Operation(
-            summary = "Create a Policy Engine",
-            description = "Create a single Policy Engine"
+            summary = "Create a PolicyEngine",
+            description = "Create a single PolicyEngine"
     )
     @ResponseStatus(HttpStatus.CREATED)
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "201",
-                    description = "Policy Engine created",
+                    description = "PolicyEngine created",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = PolicyEngineResource.class),
@@ -151,10 +213,10 @@ public abstract class AbstractPolicyEngineController {
     )
     public PolicyEngineResource createPolicyEngineEndpoint(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "A Policy Engine JSON object",
+                    description = "A PolicyEngine JSON object",
                     content = @Content(examples = {@ExampleObject(
                             name = "policy-engine-example",
-                            description = "Example of a Policy Engine for OPA",
+                            description = "Example of a PolicyEngine for OPA",
                             value = EXAMPLE_POLICY_ENGINE_CREATE
                     )}))
             @RequestBody PolicyEngineResource policyEngine
@@ -170,10 +232,47 @@ public abstract class AbstractPolicyEngineController {
     // ===============================================================================
 
     @Operation(
-            summary = "Update a Policy Engine",
-            description = "Update the given Policy Engine"
+            summary = "Update a PolicyEngine",
+            description = "Update the given PolicyEngine"
     )
     @ResponseStatus(HttpStatus.OK)
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "PolicyEngine updated",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = PolicyEngineResource.class),
+                            examples = {@ExampleObject(name = "engine1", value = EXAMPLE_POLICY_ENGINE)}
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "[Bad Request](https://www.rfc-editor.org/rfc/rfc9110.html#name-400-bad-request)"
+                            + "\r\n - Error Code 40001 - PolicyEngine is empty",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "[Not Found](https://www.rfc-editor.org/rfc/rfc9110.html#name-404-not-found)"
+                            + "\r\n - Error Code 40401 - PolicyEngine not found",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
+            ),
+            @ApiResponse(
+                    responseCode = "422",
+                    description = "[Unprocessable Content](https://www.rfc-editor.org/rfc/rfc9110.html#name-422-unprocessable-content)"
+                            + "\r\n - Error Code 42201 - PolicyEngine is invalid"
+                            + "\r\n - Error Code 42202 - PolicyEngine already exists",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "[Internal Server Error](https://www.rfc-editor.org/rfc/rfc9110.html#name-500-internal-server-error)"
+                            + "\r\n - Error Code 50000 - Error in the backend database"
+                            + "\r\n - Error Code 50001 - Error in in the backend service",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
+            )
+    })
     @PutMapping(
             value = "/{id}",
             consumes = {
@@ -188,13 +287,13 @@ public abstract class AbstractPolicyEngineController {
             }
     )
     public PolicyEngineResource modifyPolicyEngineEndpoint(
-            @Parameter(description = "ID of the Policy Engine to update")
+            @Parameter(description = "ID of the PolicyEngine to update")
             @PathVariable(value = "id") Long id,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "A Policy Engine JSON object",
+                    description = "A PolicyEngine JSON object",
                     content = @Content(examples = {@ExampleObject(
                             name = "policy-engine-example",
-                            description = "Example of a Policy Engine for OPA",
+                            description = "Example of a PolicyEngine for OPA",
                             value = EXAMPLE_POLICY_ENGINE_UPDATE
                     )}))
             @RequestBody PolicyEngineResource policyEngine
@@ -209,13 +308,39 @@ public abstract class AbstractPolicyEngineController {
     // ===============================================================================
 
     @Operation(
-            summary = "Delete a Policy Engine",
-            description = "Delete a Policy Engine given its ID"
+            summary = "Delete a PolicyEngine",
+            description = "Delete a PolicyEngine given its ID"
     )
     @ResponseStatus(HttpStatus.OK)
-    @DeleteMapping(value = "/{id}")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "The requested PolicyEngine was delete successfully"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "[Not Found](https://www.rfc-editor.org/rfc/rfc9110.html#name-404-not-found)"
+                            + "\r\n - Error Code 40401 - PolicyEngine not found",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "[Internal Server Error](https://www.rfc-editor.org/rfc/rfc9110.html#name-500-internal-server-error)"
+                            + "\r\n - Error Code 50000 - Error in the backend database"
+                            + "\r\n - Error Code 50001 - Error in in the backend service",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
+            )
+    })
+    @DeleteMapping(
+            value = "/{id}",
+            produces = {
+                    "application/vnd.odmp.v1+json",
+                    "application/vnd.odmp+json",
+                    "application/json"
+            }
+    )
     public PolicyEngineResource deletePolicyEngineEndpoint(
-            @Parameter(description = "ID of the Policy Engine to delete")
+            @Parameter(description = "ID of the PolicyEngine to delete")
             @PathVariable(value = "id") Long id
     ) {
         return deletePolicyEngine(id);

@@ -1,19 +1,51 @@
 package org.opendatamesh.platform.pp.policy.api.resources;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.opendatamesh.platform.pp.policy.api.resources.utils.TimestampedResource;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PolicyResource extends TimestampedResource {
+
+    @JsonProperty("id")
+    @Schema(description = "Auto-generated ID of the Policy")
     private Long id;
+
+    @JsonProperty("rootId")
+    @Schema(description = "ID of the parent Policy (the same of the previous ID if the policy was never updated)")
     private Long rootId;
+
+    @JsonProperty("name")
+    @Schema(description = "Unique name of the Policy")
     private String name;
+
+    @JsonProperty("displayName")
+    @Schema(description = "Human readable display name of the Policy")
     private String displayName;
+
+    @JsonProperty("description")
+    @Schema(description = "Policy description")
     private String description;
+
+    @JsonProperty("blockingFlag")
+    @Schema(description = "Whether the Policy is blocking or not in regards to the suite")
     private Boolean blockingFlag;
+
+    @JsonProperty("rawContent")
+    @Schema(description = "Raw content of the Policy implementation if exists")
     private String rawContent;
+
+    @JsonProperty("suite")
+    @Schema(description = "A tag, a phase, something that identify in which stages of the lifecycle the Policy must be evaluated")
     private String suite;
+
+    @JsonProperty("isLastVersion")
+    @Schema(description = "Whether or not the Policy is the last version")
     private Boolean isLastVersion;
+
+    @JsonProperty("policyEngineId")
+    @Schema(description = "ID of the PolicyEngine that will evaluate the Policy")
     private Long policyEngineId;
 
     public Long getId() {

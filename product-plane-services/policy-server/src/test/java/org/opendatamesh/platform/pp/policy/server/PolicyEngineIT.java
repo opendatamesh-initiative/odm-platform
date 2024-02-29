@@ -44,7 +44,7 @@ public class PolicyEngineIT extends ODMPolicyIT {
         // Resources + Creation
         PolicyEngineResource policyEngineResource = createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);
         PolicyEngineResource policyEngineResourceUpdated = createPolicyEngineResource(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1_UPDATED);
-        // TODO: discuss update strategies (ID and CreationTime actually MUST be in the updated object and i don't love it)
+        // TODO: discuss update strategies (ID and CreationTime actually MUST be in the updated object)
         policyEngineResourceUpdated.setId(policyEngineResource.getId());
         policyEngineResourceUpdated.setCreatedAt(policyEngineResource.getCreatedAt());
 

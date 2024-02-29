@@ -130,7 +130,7 @@ public class PolicyClient extends ODMClient {
     public ResponseEntity validateObject(EventResource eventResource) throws JsonProcessingException {
 
         ResponseEntity validateObjectResponse = rest.postForEntity(
-                apiUrl(PolicyAPIRoutes.POLICIES, "/*/validate-object"),
+                apiUrl(PolicyAPIRoutes.VALIDATION),
                 eventResource,
                 Object.class
         );

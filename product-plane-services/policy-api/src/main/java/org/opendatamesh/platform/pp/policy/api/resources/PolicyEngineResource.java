@@ -9,19 +9,19 @@ import org.opendatamesh.platform.pp.policy.api.resources.utils.TimestampedResour
 public class PolicyEngineResource extends TimestampedResource {
 
     @JsonProperty("id")
-    @Schema(description = "")
+    @Schema(description = "Auto-generated ID of the PolicyEngine")
     private Long id;
 
     @JsonProperty("name")
-    @Schema(description = "")
+    @Schema(description = "Unique name of the PolicyEngine")
     private String name;
 
     @JsonProperty("displayName")
-    @Schema(description = "")
+    @Schema(description = "Human readable display name of the PolicyEngine")
     private String displayName;
 
     @JsonProperty("adapterUrl")
-    @Schema(description = "")
+    @Schema(description = "URL to reach the PolicyEngine")
     private String adapterUrl;
 
     public Long getId() {

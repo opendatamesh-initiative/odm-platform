@@ -14,4 +14,5 @@ public class ValidationController extends AbstractValidationController {
     public PolicyEvaluationResultResource validateObject(EventResource eventResource) {
         return MOCKED_POLICY_EVAL_RESULT;
     }
+
 }

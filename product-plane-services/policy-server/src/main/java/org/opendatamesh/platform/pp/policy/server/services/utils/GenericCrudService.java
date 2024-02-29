@@ -55,7 +55,7 @@ public abstract class GenericCrudService<T, ID extends Serializable> {
     //CREATE METHODS
 
     public final T create(T objectToCreate) {
-        T result = executeInTransactionTemplate(status -> {
+        T result = transactionTemplate.execute(status -> {
             validate(objectToCreate);
             reconcile(objectToCreate);
             beforeCreation(objectToCreate);
@@ -82,7 +82,7 @@ public abstract class GenericCrudService<T, ID extends Serializable> {
     //UPDATE METHODS
 
     public final T overwrite(ID identifier, T objectToOverwrite) {
-        T overwrittenObject = executeInTransactionTemplate(status -> {
+        T overwrittenObject = transactionTemplate.execute(status -> {
             validate(objectToOverwrite);
             checkExistenceOrThrow(identifier);
             reconcile(objectToOverwrite);
@@ -110,7 +110,7 @@ public abstract class GenericCrudService<T, ID extends Serializable> {
     //DELETE METHODS
 
     public final void delete(ID identifier) {
-        executeWithoutResultInTransactionTemplate(status -> {
+        transactionTemplate.executeWithoutResult(status -> {
             checkExistenceOrThrow(identifier);
             beforeDelete(identifier);
             getRepository().deleteById(identifier);
@@ -150,11 +150,4 @@ public abstract class GenericCrudService<T, ID extends Serializable> {
 
     protected abstract void reconcile(T objectToReconcile);
 
-    public T executeInTransactionTemplate(TransactionCallback<T> action) {
-        return transactionTemplate.execute(action);
-    }
-
-    public void executeWithoutResultInTransactionTemplate(Consumer<TransactionStatus> status) {
-        transactionTemplate.executeWithoutResult(status);
-    }
 }

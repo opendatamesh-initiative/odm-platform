@@ -98,9 +98,10 @@ public class ODMPolicyIT extends ODMIntegrationTest {
         }
     }
 
-    protected PolicyResource createPolicy(String filePath) {
+    protected PolicyResource createPolicy(String filePath, Long engineId) {
 
         PolicyResource policyResource = createPolicyResource(filePath);
+        policyResource.setPolicyEngineId(engineId);
 
         ResponseEntity<PolicyResource> postPolicyResponse = null;
 
@@ -160,9 +161,10 @@ public class ODMPolicyIT extends ODMIntegrationTest {
         }
     }
 
-    protected PolicyEvaluationResultResource createPolicyEvaluationResult(String filePath) {
+    protected PolicyEvaluationResultResource createPolicyEvaluationResult(String filePath, Long policyId) {
 
         PolicyEvaluationResultResource policyEvaluationResultResource = createPolicyEvaluationResultResource(filePath);
+        policyEvaluationResultResource.setPolicyId(policyId);
 
         ResponseEntity<PolicyEvaluationResultResource> postPolicyEvaluationResultResponse = null;
 

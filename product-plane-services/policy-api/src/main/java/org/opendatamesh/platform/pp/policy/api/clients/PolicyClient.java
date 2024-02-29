@@ -89,12 +89,12 @@ public class PolicyClient extends ODMClient {
 
     }
 
-    public ResponseEntity readOnePolicy(Long policyId) throws JsonProcessingException {
+    public ResponseEntity readOnePolicy(Long policyRootId) throws JsonProcessingException {
         
         ResponseEntity getPolicyResponse = rest.getForEntity(
                 apiUrlOfItem(PolicyAPIRoutes.POLICIES),
                 Object.class,
-                policyId
+                policyRootId
         );
 
         ResponseEntity response = mapResponseEntity(
@@ -105,6 +105,23 @@ public class PolicyClient extends ODMClient {
 
         return response;
         
+    }
+
+    public ResponseEntity readOnePolicyVersion(Long policyVersionId) throws JsonProcessingException {
+
+        ResponseEntity getPolicyResponse = rest.getForEntity(
+                apiUrl(PolicyAPIRoutes.POLICIES, "/versions/" + policyVersionId),
+                Object.class
+        );
+
+        ResponseEntity response = mapResponseEntity(
+                getPolicyResponse,
+                HttpStatus.OK,
+                PolicyResource.class
+        );
+
+        return response;
+
     }
 
     public ResponseEntity deletePolicy(Long policyId) throws JsonProcessingException {

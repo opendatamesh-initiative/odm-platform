@@ -1,44 +1,55 @@
 package org.opendatamesh.platform.pp.policy.server.services;
 
+import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
+import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
+import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultSearchOptions;
+import org.opendatamesh.platform.pp.policy.server.database.entities.Policy;
 import org.opendatamesh.platform.pp.policy.server.database.entities.PolicyEvaluationResult;
 import org.opendatamesh.platform.pp.policy.server.database.mappers.PolicyEvaluationResultMapper;
 import org.opendatamesh.platform.pp.policy.server.database.repositories.PolicyEvaluationResultRepository;
 import org.opendatamesh.platform.pp.policy.server.database.utils.PagingAndSortingAndSpecificationExecutorRepository;
-import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
-import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultSearchOptions;
 import org.opendatamesh.platform.pp.policy.server.services.utils.GenericMappedAndFilteredCrudService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-//TODO change id type when configured
 @Service
-public class PolicyEvaluationResultService extends GenericMappedAndFilteredCrudService<PolicyEvaluationResultSearchOptions, PolicyEvaluationResultResource, PolicyEvaluationResult, String> {
+public class PolicyEvaluationResultService extends GenericMappedAndFilteredCrudService<PolicyEvaluationResultSearchOptions, PolicyEvaluationResultResource, PolicyEvaluationResult, Long> {
 
-    //@Autowired
+    @Autowired
     private PolicyEvaluationResultRepository repository;
 
-    //@Autowired
+    @Autowired
     private PolicyEvaluationResultMapper mapper;
 
+    @Autowired
+    private PolicyService policyService;
 
     @Override
-    protected void validate(PolicyEvaluationResult objectToValidate) {
-
+    protected void validate(PolicyEvaluationResult evaluationResult) {
+        if (evaluationResult.getPolicyId() == null) {
+            throw new BadRequestException();
+        }
+        if (evaluationResult.getResult() == null) {
+            throw new BadRequestException();
+        }
     }
 
     @Override
-    protected void reconcile(PolicyEvaluationResult objectToReconcile) {
-
+    protected void reconcile(PolicyEvaluationResult evaluationResult) {
+        if (evaluationResult.getPolicyId() != null) {
+            Policy policy = policyService.findPolicyVersion(evaluationResult.getPolicyId());
+            if(Boolean.FALSE.equals(policy.getLastVersion())){
+                throw new BadRequestException();//TODO Invalid result???
+            }
+            evaluationResult.setPolicy(policy);
+        }
     }
 
-    @Override
-    protected String getIdentifier(PolicyEvaluationResult object) {
-        return null;
-    }
 
     @Override
-    protected PagingAndSortingAndSpecificationExecutorRepository<PolicyEvaluationResult, String> getRepository() {
-        return null;
+    protected PagingAndSortingAndSpecificationExecutorRepository<PolicyEvaluationResult, Long> getRepository() {
+        return repository;
     }
 
 

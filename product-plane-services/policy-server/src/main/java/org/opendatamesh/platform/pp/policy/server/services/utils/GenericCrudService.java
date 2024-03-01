@@ -7,9 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.io.Serializable;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public abstract class GenericCrudService<T, ID extends Serializable> {
@@ -20,12 +23,14 @@ public abstract class GenericCrudService<T, ID extends Serializable> {
 
     }
 
+    //READ METHODS
+
     public final Page<T> findAll(Pageable pageable) {
         return getRepository().findAll(pageable);
     }
 
     public final T findOne(ID identifier) {
-        T result = getRepository().findById(identifier).orElse(null);
+        T result = findById(identifier);
         if (result == null) {
             throw new NotFoundException(PolicyApiStandardErrors.SC404_01_RESOURCE_NOT_FOUND, "Resource with id=" + identifier + " not found");
         }
@@ -33,15 +38,24 @@ public abstract class GenericCrudService<T, ID extends Serializable> {
         return result;
     }
 
+    protected T findById(ID identifier) {
+        return getRepository().findById(identifier).orElse(null);
+    }
+
     protected void afterFindOne(T foundObject, ID identifier) {
 
     }
 
+    public final void checkExistenceOrThrow(ID identifier) {
+        if (!exists(identifier)) {
+            throw new NotFoundException(PolicyApiStandardErrors.SC404_01_RESOURCE_NOT_FOUND, "Resource with id=" + identifier + " not found");
+        }
+    }
+
+    //CREATE METHODS
+
     public final T create(T objectToCreate) {
         T result = transactionTemplate.execute(status -> {
-            if (getIdentifier(objectToCreate) != null) {
-                throw new BadRequestException(PolicyApiStandardErrors.SC422_01_MALFORMED_RESOURCE, "The resource to create has already an identifier");
-            }
             validate(objectToCreate);
             reconcile(objectToCreate);
             beforeCreation(objectToCreate);
@@ -65,11 +79,10 @@ public abstract class GenericCrudService<T, ID extends Serializable> {
 
     }
 
+    //UPDATE METHODS
+
     public final T overwrite(ID identifier, T objectToOverwrite) {
         T overwrittenObject = transactionTemplate.execute(status -> {
-            if (getIdentifier(objectToOverwrite) != identifier) {
-                throw new BadRequestException(PolicyApiStandardErrors.SC422_01_MALFORMED_RESOURCE, "The resource to overwrite has an identifier that is different from the given one.");
-            }
             validate(objectToOverwrite);
             checkExistenceOrThrow(identifier);
             reconcile(objectToOverwrite);
@@ -94,6 +107,8 @@ public abstract class GenericCrudService<T, ID extends Serializable> {
 
     }
 
+    //DELETE METHODS
+
     public final void delete(ID identifier) {
         transactionTemplate.executeWithoutResult(status -> {
             checkExistenceOrThrow(identifier);
@@ -115,14 +130,6 @@ public abstract class GenericCrudService<T, ID extends Serializable> {
 
     }
 
-    public final void checkExistenceOrThrow(ID identifier) {
-        if (!exists(identifier)) {
-            throw new NotFoundException(PolicyApiStandardErrors.SC404_01_RESOURCE_NOT_FOUND, "Resource with id=" + identifier + " not found");
-        }
-    }
-
-    protected abstract PagingAndSortingRepository<T, ID> getRepository();
-
     protected void afterDelete(ID identifier) {
 
     }
@@ -131,14 +138,16 @@ public abstract class GenericCrudService<T, ID extends Serializable> {
 
     }
 
+    //UTILS
+
     protected boolean exists(ID identifier) {
         return getRepository().existsById(identifier);
     }
 
+    protected abstract PagingAndSortingRepository<T, ID> getRepository();
+
     protected abstract void validate(T objectToValidate);
 
     protected abstract void reconcile(T objectToReconcile);
-
-    protected abstract ID getIdentifier(T object);
 
 }

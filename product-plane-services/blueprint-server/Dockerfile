@@ -2,7 +2,7 @@ FROM openjdk:17-alpine
 
 VOLUME /tmp
 
-COPY ./product-plane-services/blueprint-server/target/odm-platform-pp-blueprint-server-*.jar ./application.jar
+COPY ./product-plane-services/policy-server/target/odm-platform-pp-policy-server-*.jar ./application.jar
 
 ARG SPRING_PROFILES_ACTIVE=docker
 ARG SPRING_HOSTNAME=localhost

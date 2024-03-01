@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.pp.policy.api.resources.PagedPolicyResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineResource;
-import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
 import org.opendatamesh.platform.pp.policy.api.resources.exceptions.PolicyApiStandardErrors;
 import org.springframework.http.HttpStatus;

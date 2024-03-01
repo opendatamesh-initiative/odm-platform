@@ -1,7 +1,6 @@
 package org.opendatamesh.platform.pp.policy.server.services;
 
-import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
-import org.opendatamesh.platform.core.commons.servers.exceptions.NotFoundException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.*;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicySearchOptions;
 import org.opendatamesh.platform.pp.policy.api.resources.exceptions.PolicyApiStandardErrors;
@@ -40,10 +39,16 @@ public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySea
     @Override
     protected void beforeCreation(Policy objectToCreate) {
         if (objectToCreate.getId() != null) {
-            throw new BadRequestException();
+            throw new InternalServerException(
+                    ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
+                    "Impossible to create a Policy without an ID"
+            );
         }
         if (objectToCreate.getRootId() != null) {
-            throw new BadRequestException();
+            throw new InternalServerException(
+                    ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
+                    "Impossible to create a Policy without a rootID"
+            );
         }
     }
 
@@ -56,7 +61,10 @@ public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySea
     @Override
     protected void beforeOverwrite(Policy policy) {
         if (policy.getRootId() == null) {
-            throw new BadRequestException();
+            throw new InternalServerException(
+                    ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
+                    "Impossible to create a Policy without a rootID"
+            );
         }
         Policy lastVersionPolicy = findOne(policy.getRootId());
         lastVersionPolicy.setLastVersion(Boolean.FALSE);
@@ -73,14 +81,29 @@ public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySea
 
     @Override
     protected void validate(Policy policy) {
+        if(policy == null) {
+            throw new BadRequestException(
+                    PolicyApiStandardErrors.SC400_02_POLICY_IS_EMPTY,
+                    "Policy object cannot be null"
+            );
+        }
         if (!StringUtils.hasText(policy.getName())) {
-            throw new BadRequestException(); //TODO
+            throw new UnprocessableEntityException(
+                    PolicyApiStandardErrors.SC422_02_POLICY_IS_INVALID,
+                    "Policy name cannot be null"
+            );
         }
         if (policy.getPolicyEngineId() == null || policy.getPolicyEngine() == null) {
-            throw new BadRequestException(); //TODO
+            throw new UnprocessableEntityException(
+                    PolicyApiStandardErrors.SC422_02_POLICY_IS_INVALID,
+                    "Policy engineID or PolicyEngine object cannot be null"
+            );
         }
         if (repository.existsByNameAndRootIdNot(policy.getName(), policy.getRootId())) {
-            throw new BadRequestException(); //TODO policy with this name already exists
+            throw new UnprocessableEntityException(
+                    PolicyApiStandardErrors.SC422_04_POLICY_ALREADY_EXISTS,
+                    "Policy with name [" + policy.getName() + "] already exists with a differet rootID"
+            );
         }
     }
 
@@ -118,7 +141,10 @@ public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySea
     public Policy findPolicyVersion(Long versionId) {
         return repository
                 .findById(versionId)
-                .orElseThrow(() -> new NotFoundException(PolicyApiStandardErrors.SC404_01_RESOURCE_NOT_FOUND, "Policy with version=" + versionId + " not found"));
+                .orElseThrow(() -> new NotFoundException(
+                        PolicyApiStandardErrors.SC404_01_RESOURCE_NOT_FOUND,
+                        "Policy with version [" + versionId + "] not found")
+                );
     }
 
     public PolicyResource findPolicyResourceVersion(Long versionId) {

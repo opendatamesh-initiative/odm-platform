@@ -1,5 +1,7 @@
 package org.opendatamesh.platform.pp.policy.server.services.utils;
 
+import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
 import org.opendatamesh.platform.pp.policy.server.database.utils.PagingAndSortingAndSpecificationExecutorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,7 +24,14 @@ public abstract class GenericMappedAndFilteredCrudService<F, R, T, ID extends Se
 
     public final Page<T> findAllFiltered(Pageable pageable, F filters) {
         Specification<T> spec = getSpecFromFilters(filters);
-        return getRepository().findAll(spec, pageable);
+        try {
+            return getRepository().findAll(spec, pageable);
+        } catch (Exception e) {
+            throw new InternalServerException(
+                    ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
+                    e.getMessage()
+            );
+        }
     }
 
     protected abstract PagingAndSortingAndSpecificationExecutorRepository<T, ID> getRepository();

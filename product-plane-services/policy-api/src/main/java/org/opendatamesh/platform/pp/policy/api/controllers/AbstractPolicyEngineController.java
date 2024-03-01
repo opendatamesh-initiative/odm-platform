@@ -219,7 +219,7 @@ public abstract class AbstractPolicyEngineController {
                             description = "Example of a PolicyEngine for OPA",
                             value = EXAMPLE_POLICY_ENGINE_CREATE
                     )}))
-            @RequestBody PolicyEngineResource policyEngine
+            @RequestBody(required = false) PolicyEngineResource policyEngine
     ) {
         return createPolicyEngine(policyEngine);
     }
@@ -296,12 +296,13 @@ public abstract class AbstractPolicyEngineController {
                             description = "Example of a PolicyEngine for OPA",
                             value = EXAMPLE_POLICY_ENGINE_UPDATE
                     )}))
-            @RequestBody PolicyEngineResource policyEngine
+            @RequestBody(required = false) PolicyEngineResource policyEngine
     ) {
         return modifyPolicyEngine(id, policyEngine);
     }
 
     public abstract PolicyEngineResource modifyPolicyEngine(Long id, PolicyEngineResource policyEngine);
+
 
     // ===============================================================================
     // DELETE /policy-engines/{id}

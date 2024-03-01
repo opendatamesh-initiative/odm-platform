@@ -1,8 +1,10 @@
 package org.opendatamesh.platform.pp.policy.server.services;
 
 import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.UnprocessableEntityException;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultSearchOptions;
+import org.opendatamesh.platform.pp.policy.api.resources.exceptions.PolicyApiStandardErrors;
 import org.opendatamesh.platform.pp.policy.server.database.entities.Policy;
 import org.opendatamesh.platform.pp.policy.server.database.entities.PolicyEvaluationResult;
 import org.opendatamesh.platform.pp.policy.server.database.mappers.PolicyEvaluationResultMapper;
@@ -27,11 +29,23 @@ public class PolicyEvaluationResultService extends GenericMappedAndFilteredCrudS
 
     @Override
     protected void validate(PolicyEvaluationResult evaluationResult) {
+        if(evaluationResult == null) {
+            throw new BadRequestException(
+                    PolicyApiStandardErrors.SC400_03_POLICY_EVALUATION_RESULT_IS_EMPTY,
+                    "PolicyEvaluationResult object cannot be null"
+            );
+        }
         if (evaluationResult.getPolicyId() == null) {
-            throw new BadRequestException();
+            throw new UnprocessableEntityException(
+                    PolicyApiStandardErrors.SC422_03_POLICY_EVALUATION_RESULT_IS_INVALID,
+                    "PolicyEvaluationResult policyID cannot be null"
+            );
         }
         if (evaluationResult.getResult() == null) {
-            throw new BadRequestException();
+            throw new UnprocessableEntityException(
+                    PolicyApiStandardErrors.SC422_03_POLICY_EVALUATION_RESULT_IS_INVALID,
+                    "PolicyEvaluationResult result cannot be null"
+            );
         }
     }
 
@@ -40,7 +54,11 @@ public class PolicyEvaluationResultService extends GenericMappedAndFilteredCrudS
         if (evaluationResult.getPolicyId() != null) {
             Policy policy = policyService.findPolicyVersion(evaluationResult.getPolicyId());
             if(Boolean.FALSE.equals(policy.getLastVersion())){
-                throw new BadRequestException();//TODO Invalid result???
+                throw new BadRequestException(
+                        PolicyApiStandardErrors.SC422_03_POLICY_EVALUATION_RESULT_IS_INVALID,
+                        "The policy with policy ID ["+ evaluationResult.getPolicyId() + "] is inactive. "
+                                + "Cannot add a result to a inactive policy"
+                );
             }
             evaluationResult.setPolicy(policy);
         }
@@ -67,4 +85,5 @@ public class PolicyEvaluationResultService extends GenericMappedAndFilteredCrudS
     protected PolicyEvaluationResult toEntity(PolicyEvaluationResultResource resource) {
         return mapper.toEntity(resource);
     }
+
 }

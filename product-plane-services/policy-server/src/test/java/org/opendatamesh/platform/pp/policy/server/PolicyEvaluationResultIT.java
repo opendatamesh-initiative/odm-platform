@@ -4,7 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.pp.policy.api.resources.PagedPolicyEvaluationResultResource;
+import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
+import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
 import org.opendatamesh.platform.pp.policy.api.resources.exceptions.PolicyApiStandardErrors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +28,12 @@ public class PolicyEvaluationResultIT extends ODMPolicyIT {
     public void testCreatePolicyEvaluationResult() {
 
         // Resources + Creation
-        PolicyEvaluationResultResource policyEvaluationResultResource = createPolicyEvaluationResult(ODMPolicyResources.RESOURCE_POLICY_EVALUATION_RESULT_1);
+        PolicyEngineResource parentEngineResource = createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);
+        PolicyResource parentPolicyResource = createPolicy(ODMPolicyResources.RESOURCE_POLICY_1, parentEngineResource.getId());
+        PolicyEvaluationResultResource policyEvaluationResultResource = createPolicyEvaluationResult(
+                ODMPolicyResources.RESOURCE_POLICY_EVALUATION_RESULT_1,
+                parentPolicyResource.getId()
+        );
 
         // Verification
         verifyResourcePolicyEvaluationResultOne(policyEvaluationResultResource);
@@ -42,9 +49,16 @@ public class PolicyEvaluationResultIT extends ODMPolicyIT {
     public void testUpdatePolicyEvaluationResult() throws JsonProcessingException {
 
         // Resources + Creation
-        PolicyEvaluationResultResource policyEvaluationResultResource = createPolicyEvaluationResult(ODMPolicyResources.RESOURCE_POLICY_EVALUATION_RESULT_1);
-        PolicyEvaluationResultResource policyEvaluationResultResourceUpdated = createPolicyEvaluationResultResource(ODMPolicyResources.RESOURCE_POLICY_EVALUATION_RESULT_1_UPDATED);
-        // TODO: discuss update strategies (ID and CreationTime actually MUST be in the updated object and i don't love it)
+        PolicyEngineResource parentEngineResource = createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);
+        PolicyResource parentPolicyResource = createPolicy(ODMPolicyResources.RESOURCE_POLICY_1, parentEngineResource.getId());
+        PolicyEvaluationResultResource policyEvaluationResultResource = createPolicyEvaluationResult(
+                ODMPolicyResources.RESOURCE_POLICY_EVALUATION_RESULT_1,
+                parentPolicyResource.getId()
+        );
+        PolicyEvaluationResultResource policyEvaluationResultResourceUpdated = createPolicyEvaluationResultResource(
+                ODMPolicyResources.RESOURCE_POLICY_EVALUATION_RESULT_1_UPDATED
+        );
+        // TODO: discuss update strategies (ID and CreationTime actually MUST be in the updated object)
         policyEvaluationResultResourceUpdated.setId(policyEvaluationResultResource.getId());
         policyEvaluationResultResourceUpdated.setCreatedAt(policyEvaluationResultResource.getCreatedAt());
 
@@ -71,8 +85,10 @@ public class PolicyEvaluationResultIT extends ODMPolicyIT {
     public void testReadAllPolicies() throws JsonProcessingException {
 
         // Resources + Creation
-        createPolicyEvaluationResult(ODMPolicyResources.RESOURCE_POLICY_EVALUATION_RESULT_1);
-        createPolicyEvaluationResult(ODMPolicyResources.RESOURCE_POLICY_EVALUATION_RESULT_2);
+        PolicyEngineResource parentEngineResource = createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);
+        PolicyResource parentPolicyResource = createPolicy(ODMPolicyResources.RESOURCE_POLICY_1, parentEngineResource.getId());
+        createPolicyEvaluationResult(ODMPolicyResources.RESOURCE_POLICY_EVALUATION_RESULT_1, parentPolicyResource.getId());
+        createPolicyEvaluationResult(ODMPolicyResources.RESOURCE_POLICY_EVALUATION_RESULT_2, parentPolicyResource.getId());
 
         // GET request
         ResponseEntity<PagedPolicyEvaluationResultResource> getResponse = policyClient.readAllPolicyEvaluationResults();
@@ -96,7 +112,12 @@ public class PolicyEvaluationResultIT extends ODMPolicyIT {
     public void testReadOnePolicyEvaluationResult() throws JsonProcessingException {
 
         // Resources + Creation
-        PolicyEvaluationResultResource policyEvaluationResultResource = createPolicyEvaluationResult(ODMPolicyResources.RESOURCE_POLICY_EVALUATION_RESULT_1);
+        PolicyEngineResource parentEngineResource = createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);
+        PolicyResource parentPolicyResource = createPolicy(ODMPolicyResources.RESOURCE_POLICY_1, parentEngineResource.getId());
+        PolicyEvaluationResultResource policyEvaluationResultResource = createPolicyEvaluationResult(
+                ODMPolicyResources.RESOURCE_POLICY_EVALUATION_RESULT_1,
+                parentPolicyResource.getId()
+        );
 
         // GET request
         ResponseEntity<PolicyEvaluationResultResource> getResponse = policyClient.readOnePolicyEvaluationResult(policyEvaluationResultResource.getId());
@@ -118,7 +139,12 @@ public class PolicyEvaluationResultIT extends ODMPolicyIT {
     public void testDeletePolicyEvaluationResult() throws JsonProcessingException {
 
         // Resources + Creation
-        PolicyEvaluationResultResource policyEvaluationResultResource = createPolicyEvaluationResult(ODMPolicyResources.RESOURCE_POLICY_EVALUATION_RESULT_1);
+        PolicyEngineResource parentEngineResource = createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);
+        PolicyResource parentPolicyResource = createPolicy(ODMPolicyResources.RESOURCE_POLICY_1, parentEngineResource.getId());
+        PolicyEvaluationResultResource policyEvaluationResultResource = createPolicyEvaluationResult(
+                ODMPolicyResources.RESOURCE_POLICY_EVALUATION_RESULT_1,
+                parentPolicyResource.getId()
+        );
 
         // DELETE request
         ResponseEntity<Void> deleteResponse = policyClient.deletePolicyEvaluationResult(policyEvaluationResultResource.getId());
@@ -163,7 +189,7 @@ public class PolicyEvaluationResultIT extends ODMPolicyIT {
         assertThat(policyEvaluationResultResource.getInputObject()).isEqualTo("{\"name\":\"dp-1\",\"description\":\"DataProduct1Draft\",\"domain\":\"Marketing\"}");
         assertThat(policyEvaluationResultResource.getOutputObject()).isEqualTo("{\"allow\":false}");
         assertThat(policyEvaluationResultResource.getCreatedAt()).isNotNull();
-        assertThat(policyEvaluationResultResource.getUpdatedAt()).isEqualTo(policyEvaluationResultResource.getCreatedAt());
+        assertThat(policyEvaluationResultResource.getUpdatedAt()).isAfter(policyEvaluationResultResource.getCreatedAt());
 
     }
 

@@ -98,7 +98,7 @@ public abstract class AbstractValidationController implements PolicyValidationCo
     )
     public PolicyEvaluationResultResource validateObjectEndpoint(
             @Parameter(description = "")
-            @RequestBody EventResource eventResource
+            @RequestBody(required = false) EventResource eventResource
     ) {
         return validateObject(eventResource);
     }

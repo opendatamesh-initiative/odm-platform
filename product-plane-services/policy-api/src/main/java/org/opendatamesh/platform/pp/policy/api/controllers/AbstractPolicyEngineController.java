@@ -188,7 +188,7 @@ public abstract class AbstractPolicyEngineController implements PolicyEngineCont
                     responseCode = "422",
                     description = "[Unprocessable Content](https://www.rfc-editor.org/rfc/rfc9110.html#name-422-unprocessable-content)"
                             + "\r\n - Error Code 42201 - PolicyEngine is invalid"
-                            + "\r\n - Error Code 42202 - PolicyEngine already exists",
+                            + "\r\n - Error Code 42205 - PolicyEngine already exists",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
             ),
             @ApiResponse(
@@ -219,7 +219,7 @@ public abstract class AbstractPolicyEngineController implements PolicyEngineCont
                             description = "Example of a PolicyEngine for OPA",
                             value = EXAMPLE_POLICY_ENGINE_CREATE
                     )}))
-            @RequestBody PolicyEngineResource policyEngine
+            @RequestBody(required = false) PolicyEngineResource policyEngine
     ) {
         return createPolicyEngine(policyEngine);
     }
@@ -296,12 +296,13 @@ public abstract class AbstractPolicyEngineController implements PolicyEngineCont
                             description = "Example of a PolicyEngine for OPA",
                             value = EXAMPLE_POLICY_ENGINE_UPDATE
                     )}))
-            @RequestBody PolicyEngineResource policyEngine
+            @RequestBody(required = false) PolicyEngineResource policyEngine
     ) {
         return modifyPolicyEngine(id, policyEngine);
     }
 
     public abstract PolicyEngineResource modifyPolicyEngine(Long id, PolicyEngineResource policyEngine);
+
 
     // ===============================================================================
     // DELETE /policy-engines/{id}

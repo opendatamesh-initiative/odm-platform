@@ -252,6 +252,12 @@ public abstract class AbstractPolicyController implements PolicyController {
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
             ),
             @ApiResponse(
+                    responseCode = "404",
+                    description = "[Not Found](https://www.rfc-editor.org/rfc/rfc9110.html#name-404-not-found)"
+                            + "\r\n - Error Code 40401 - Parent PolicyEngine not found",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
+            ),
+            @ApiResponse(
                     responseCode = "422",
                     description = "[Unprocessable Content](https://www.rfc-editor.org/rfc/rfc9110.html#name-422-unprocessable-content)"
                             + "\r\n - Error Code 42201 - Policy is invalid"
@@ -286,7 +292,7 @@ public abstract class AbstractPolicyController implements PolicyController {
                             description = "Example of a Policy OPA",
                             value = EXAMPLE_POLICY_CREATE
                     )}))
-            @RequestBody PolicyResource policy
+            @RequestBody(required = false) PolicyResource policy
     ) {
         return createPolicy(policy);
     }
@@ -322,7 +328,8 @@ public abstract class AbstractPolicyController implements PolicyController {
             @ApiResponse(
                     responseCode = "404",
                     description = "[Not Found](https://www.rfc-editor.org/rfc/rfc9110.html#name-404-not-found)"
-                            + "\r\n - Error Code 40401 - Policy not found",
+                            + "\r\n - Error Code 40401 - Policy not found"
+                            + "\r\n - Error Code 40401 - Parent PolicyEngine not found",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
             ),
             @ApiResponse(
@@ -363,7 +370,7 @@ public abstract class AbstractPolicyController implements PolicyController {
                             description = "Example of a Policy OPA",
                             value = EXAMPLE_POLICY_UPDATE
                     )}))
-            @RequestBody PolicyResource policy
+            @RequestBody(required = false) PolicyResource policy
     ) {
         return modifyPolicy(id, policy);
     }

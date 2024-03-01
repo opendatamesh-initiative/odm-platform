@@ -1,8 +1,10 @@
 package org.opendatamesh.platform.pp.policy.server.services;
 
 import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.UnprocessableEntityException;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineSearchOptions;
+import org.opendatamesh.platform.pp.policy.api.resources.exceptions.PolicyApiStandardErrors;
 import org.opendatamesh.platform.pp.policy.server.database.entities.PolicyEngine;
 import org.opendatamesh.platform.pp.policy.server.database.mappers.PolicyEngineMapper;
 import org.opendatamesh.platform.pp.policy.server.database.repositories.PolicyEngineRepository;
@@ -24,11 +26,34 @@ public class PolicyEngineService extends GenericMappedAndFilteredCrudService<Pol
 
     @Override
     protected void validate(PolicyEngine objectToValidate) {
+        if(objectToValidate == null) {
+            throw new BadRequestException(
+                    PolicyApiStandardErrors.SC400_01_POLICY_ENGINE_IS_EMPTY,
+                    "PolicyEngine object cannot be null"
+            );
+        }
+
         if (!StringUtils.hasText(objectToValidate.getAdapterUrl())) {
-            throw new BadRequestException(); //TODO
+            throw new UnprocessableEntityException(
+                    PolicyApiStandardErrors.SC422_01_POLICY_ENGINE_IS_INVALID,
+                    "PolicyEngine adapterUrl cannot be null"
+            );
         }
         if (!StringUtils.hasText(objectToValidate.getName())) {
-            throw new BadRequestException(); //TODO
+            throw new UnprocessableEntityException(
+                    PolicyApiStandardErrors.SC422_01_POLICY_ENGINE_IS_INVALID,
+                    "PolicyEngine name cannot be null"
+            );
+        }
+    }
+
+    @Override
+    protected void beforeCreation(PolicyEngine policyEngine) {
+        if(repository.existsByName(policyEngine.getName())) {
+            throw new UnprocessableEntityException(
+                    PolicyApiStandardErrors.SC422_05_POLICY_ENGINE_ALREADY_EXISTS,
+                    "PolicyEngine with name [" + policyEngine.getName() + "] already exists"
+            );
         }
     }
 
@@ -57,4 +82,5 @@ public class PolicyEngineService extends GenericMappedAndFilteredCrudService<Pol
     protected PolicyEngine toEntity(PolicyEngineResource resource) {
         return mapper.toEntity(resource);
     }
+
 }

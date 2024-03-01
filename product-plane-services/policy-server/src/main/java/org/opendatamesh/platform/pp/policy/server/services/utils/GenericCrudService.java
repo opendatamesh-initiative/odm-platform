@@ -1,18 +1,16 @@
 package org.opendatamesh.platform.pp.policy.server.services.utils;
 
-import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.NotFoundException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
 import org.opendatamesh.platform.pp.policy.api.resources.exceptions.PolicyApiStandardErrors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.io.Serializable;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 public abstract class GenericCrudService<T, ID extends Serializable> {
@@ -26,20 +24,44 @@ public abstract class GenericCrudService<T, ID extends Serializable> {
     //READ METHODS
 
     public final Page<T> findAll(Pageable pageable) {
-        return getRepository().findAll(pageable);
+        try {
+            return getRepository().findAll(pageable);
+        } catch (Exception e) {
+            throw new InternalServerException(
+                    ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
+                    e.getMessage()
+            );
+        }
     }
 
     public final T findOne(ID identifier) {
-        T result = findById(identifier);
+        T result;
+        try {
+            result = findById(identifier);
+        } catch (Exception e) {
+            throw new InternalServerException(
+                    ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
+                    e.getMessage()
+            );
+        }
         if (result == null) {
-            throw new NotFoundException(PolicyApiStandardErrors.SC404_01_RESOURCE_NOT_FOUND, "Resource with id=" + identifier + " not found");
+            throw new NotFoundException(
+                    PolicyApiStandardErrors.SC404_01_RESOURCE_NOT_FOUND,
+                    "Resource with id [" + identifier + "] not found");
         }
         afterFindOne(result, identifier);
         return result;
     }
 
     protected T findById(ID identifier) {
-        return getRepository().findById(identifier).orElse(null);
+        try {
+            return getRepository().findById(identifier).orElse(null);
+        } catch (Exception e) {
+            throw new InternalServerException(
+                    ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
+                    e.getMessage()
+            );
+        }
     }
 
     protected void afterFindOne(T foundObject, ID identifier) {
@@ -48,7 +70,10 @@ public abstract class GenericCrudService<T, ID extends Serializable> {
 
     public final void checkExistenceOrThrow(ID identifier) {
         if (!exists(identifier)) {
-            throw new NotFoundException(PolicyApiStandardErrors.SC404_01_RESOURCE_NOT_FOUND, "Resource with id=" + identifier + " not found");
+            throw new NotFoundException(
+                    PolicyApiStandardErrors.SC404_01_RESOURCE_NOT_FOUND,
+                    "Resource with id [" + identifier + "] not found"
+            );
         }
     }
 
@@ -59,7 +84,15 @@ public abstract class GenericCrudService<T, ID extends Serializable> {
             validate(objectToCreate);
             reconcile(objectToCreate);
             beforeCreation(objectToCreate);
-            T r = getRepository().save(objectToCreate);
+            T r;
+            try {
+                r = getRepository().save(objectToCreate);
+            } catch (Exception e) {
+                throw new InternalServerException(
+                        ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
+                        e.getMessage()
+                );
+            }
             afterCreation(objectToCreate, r);
             return r;
         });
@@ -87,7 +120,15 @@ public abstract class GenericCrudService<T, ID extends Serializable> {
             checkExistenceOrThrow(identifier);
             reconcile(objectToOverwrite);
             beforeOverwrite(objectToOverwrite);
-            T result = getRepository().save(objectToOverwrite);
+            T result;
+            try {
+                result = getRepository().save(objectToOverwrite);
+            } catch (Exception e) {
+                throw new InternalServerException(
+                        ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
+                        e.getMessage()
+                );
+            }
             afterOverWrite(objectToOverwrite, result);
             return result;
         });
@@ -113,7 +154,14 @@ public abstract class GenericCrudService<T, ID extends Serializable> {
         transactionTemplate.executeWithoutResult(status -> {
             checkExistenceOrThrow(identifier);
             beforeDelete(identifier);
-            getRepository().deleteById(identifier);
+            try {
+                getRepository().deleteById(identifier);
+            } catch (Exception e) {
+                throw new InternalServerException(
+                        ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
+                        e.getMessage()
+                );
+            }
             afterDelete(identifier);
         });
     }
@@ -141,7 +189,14 @@ public abstract class GenericCrudService<T, ID extends Serializable> {
     //UTILS
 
     protected boolean exists(ID identifier) {
-        return getRepository().existsById(identifier);
+        try {
+            return getRepository().existsById(identifier);
+        } catch (Exception e) {
+            throw new InternalServerException(
+                    ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
+                    e.getMessage()
+            );
+        }
     }
 
     protected abstract PagingAndSortingRepository<T, ID> getRepository();

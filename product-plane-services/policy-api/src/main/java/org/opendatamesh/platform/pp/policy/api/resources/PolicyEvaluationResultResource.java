@@ -1,16 +1,39 @@
 package org.opendatamesh.platform.pp.policy.api.resources;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.opendatamesh.platform.pp.policy.api.resources.utils.TimestampedResource;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PolicyEvaluationResultResource extends TimestampedResource {
+
+    @JsonProperty("id")
+    @Schema(description = "Auto-generated ID of the PolicyEvaluationResult")
     private Long id;
-    private String dataProductVersion;
+
+    @JsonProperty("dataProductId")
+    @Schema(description = "ID of the Data Product evaluated (if the evaluation subject was a Data Product)")
     private String dataProductId;
+
+    @JsonProperty("dataProductVersion")
+    @Schema(description = "Version number of the Data Product evaluated (if the evaluation subject was a Data Product)")
+    private String dataProductVersion;
+
+    @JsonProperty("inputObject")
+    @Schema(description = "JSON representation of the evaluated object")
     private String inputObject;
+
+    @JsonProperty("outputObject")
+    @Schema(description = "JSON representation of the evaluation output object")
     private String outputObject;
+
+    @JsonProperty("result")
+    @Schema(description = "Whether the evaluation is successful or not")
     private Boolean result;
+
+    @JsonProperty("policyId")
+    @Schema(description = "ID of the policy used for the evaluation")
     private Long policyId;
 
     public Long getId() {
@@ -68,4 +91,5 @@ public class PolicyEvaluationResultResource extends TimestampedResource {
     public void setPolicyId(Long policyId) {
         this.policyId = policyId;
     }
+
 }

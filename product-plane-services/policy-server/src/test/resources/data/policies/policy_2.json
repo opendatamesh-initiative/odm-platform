@@ -1,0 +1,8 @@
+{
+  "name": "lambda-name-checker",
+  "displayName": "Custom Lambda Name Checker",
+  "description": "Check whether the name of the input Data Product is compliant with global naming convention or not",
+  "blockingFlag": false,
+  "suite": "CREATION",
+  "policyEngineId": 2
+}

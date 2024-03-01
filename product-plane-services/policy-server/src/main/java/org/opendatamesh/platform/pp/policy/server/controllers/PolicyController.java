@@ -7,9 +7,9 @@ import org.opendatamesh.platform.pp.policy.server.services.PolicyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 public class PolicyController extends AbstractPolicyController {
     @Autowired
     private PolicyService service;

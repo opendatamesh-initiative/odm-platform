@@ -17,7 +17,7 @@ public class PolicyEvaluationResult extends TimestampedEntity {
     private String dataProductId;
 
     @Column(name = "DATA_PRODUCT_VERSION")
-    private String dataProductVersionNumber;
+    private String dataProductVersion;
 
     @Column(name = "POLICY_ID", insertable = false, updatable = false)
     private Long policyId;
@@ -51,12 +51,12 @@ public class PolicyEvaluationResult extends TimestampedEntity {
         this.dataProductId = dataProductId;
     }
 
-    public String getDataProductVersionNumber() {
-        return dataProductVersionNumber;
+    public String getDataProductVersion() {
+        return dataProductVersion;
     }
 
-    public void setDataProductVersionNumber(String dataProductVersionNumber) {
-        this.dataProductVersionNumber = dataProductVersionNumber;
+    public void setDataProductVersion(String dataProductVersionNumber) {
+        this.dataProductVersion = dataProductVersionNumber;
     }
 
     public Long getPolicyId() {

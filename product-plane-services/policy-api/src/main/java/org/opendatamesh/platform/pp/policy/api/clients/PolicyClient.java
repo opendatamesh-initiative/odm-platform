@@ -4,11 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.platform.core.commons.clients.ODMClient;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
-import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineResource;
-import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
-import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
+import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
+import org.opendatamesh.platform.pp.policy.api.resources.*;
 import org.opendatamesh.platform.up.notification.api.resources.EventResource;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -19,13 +17,14 @@ import java.util.List;
 
 public class PolicyClient extends ODMClient {
 
-    public PolicyClient(String serverAddress, ObjectMapper mapper) {
-        super(serverAddress, mapper);
+    public PolicyClient(String serverAddress) {
+        super(serverAddress, new RestTemplate(), ObjectMapperFactory.JSON_MAPPER);
     }
 
-    public PolicyClient(String serverAddress, RestTemplate restTemplate, ObjectMapper mapper) {
-        super(serverAddress, restTemplate, mapper);
+    public PolicyClient(String serverAddress, ObjectMapper mapper) {
+        super(serverAddress, new RestTemplate(), mapper);
     }
+
 
     // ======================================================================================
     // Proxy services
@@ -83,19 +82,19 @@ public class PolicyClient extends ODMClient {
         ResponseEntity response = mapResponseEntity(
                 getPoliciesResponse,
                 HttpStatus.OK,
-                Page.class // Convert to LIST //TODO
+                PagedPolicyResource.class
         );
 
         return response;
 
     }
 
-    public ResponseEntity readOnePolicy(Long policyId) throws JsonProcessingException {
+    public ResponseEntity readOnePolicy(Long policyRootId) throws JsonProcessingException {
         
         ResponseEntity getPolicyResponse = rest.getForEntity(
                 apiUrlOfItem(PolicyAPIRoutes.POLICIES),
                 Object.class,
-                policyId
+                policyRootId
         );
 
         ResponseEntity response = mapResponseEntity(
@@ -106,6 +105,23 @@ public class PolicyClient extends ODMClient {
 
         return response;
         
+    }
+
+    public ResponseEntity readOnePolicyVersion(Long policyVersionId) throws JsonProcessingException {
+
+        ResponseEntity getPolicyResponse = rest.getForEntity(
+                apiUrl(PolicyAPIRoutes.POLICIES, "/versions/" + policyVersionId),
+                Object.class
+        );
+
+        ResponseEntity response = mapResponseEntity(
+                getPolicyResponse,
+                HttpStatus.OK,
+                PolicyResource.class
+        );
+
+        return response;
+
     }
 
     public ResponseEntity deletePolicy(Long policyId) throws JsonProcessingException {
@@ -131,7 +147,7 @@ public class PolicyClient extends ODMClient {
     public ResponseEntity validateObject(EventResource eventResource) throws JsonProcessingException {
 
         ResponseEntity validateObjectResponse = rest.postForEntity(
-                apiUrl(PolicyAPIRoutes.POLICIES, "/*/validate-object"),
+                apiUrl(PolicyAPIRoutes.VALIDATION),
                 eventResource,
                 Object.class
         );
@@ -168,7 +184,7 @@ public class PolicyClient extends ODMClient {
 
     }
 
-    public ResponseEntity updateEngine(
+    public ResponseEntity updatePolicyEngine(
             Long policyEngineId, PolicyEngineResource policyEngineResource
     ) throws JsonProcessingException {
 
@@ -200,7 +216,7 @@ public class PolicyClient extends ODMClient {
         ResponseEntity response = mapResponseEntity(
                 getPolicyEnginesResponse,
                 HttpStatus.OK,
-                Page.class // Convert to LIST //TODO
+                PagedPolicyEngineResource.class
         );
 
         return response;
@@ -302,7 +318,7 @@ public class PolicyClient extends ODMClient {
         ResponseEntity response = mapResponseEntity(
                 getPolicyEvaluationResultsResponse,
                 HttpStatus.OK,
-                Page.class // Convert to LIST //TODO
+                PagedPolicyEvaluationResultResource.class
         );
 
         return response;
@@ -352,7 +368,7 @@ public class PolicyClient extends ODMClient {
     // Utils
     // ======================================================================================
 
-    protected ResponseEntity mapResponseEntity(
+    private ResponseEntity mapResponseEntity(
             ResponseEntity response,
             HttpStatus acceptedStatusCode,
             Class acceptedClass

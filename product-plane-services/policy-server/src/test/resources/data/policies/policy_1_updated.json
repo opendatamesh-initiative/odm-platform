@@ -1,8 +1,8 @@
 {
   "name": "dataproduct-name-checker",
   "displayName": "Data Product Name Checker",
-  "description": "Check whether the name of the input Data Product is compliant with global naming convention or not",
-  "blockingFlag": true,
+  "description": "Check the Data Product name",
+  "blockingFlag": false,
   "rawContent": "package dataproduct-name-checker\n\ndefault allow := false\n\nallow := true {                                     \n    startswith(input.name, \"dp-\")\n}",
   "suite": "CREATION",
   "policyEngineId": 1

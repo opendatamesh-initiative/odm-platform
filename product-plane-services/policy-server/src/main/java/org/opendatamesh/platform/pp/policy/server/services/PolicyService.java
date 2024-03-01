@@ -1,6 +1,8 @@
 package org.opendatamesh.platform.pp.policy.server.services;
 
-import org.opendatamesh.platform.core.commons.servers.exceptions.*;
+import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.NotFoundException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.UnprocessableEntityException;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicySearchOptions;
 import org.opendatamesh.platform.pp.policy.api.resources.exceptions.PolicyApiStandardErrors;
@@ -31,6 +33,10 @@ public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySea
     @Autowired
     private PolicyEngineService policyEngineService;
 
+    protected PolicyService() {
+        super(Policy.class.getName());
+    }
+
     @Override
     protected Policy findById(Long rootId) {
         return repository.findByRootIdAndIsLastVersionTrue(rootId);
@@ -45,15 +51,15 @@ public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySea
             );
         }
         if (objectToCreate.getId() != null) {
-            throw new InternalServerException(
-                    ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
-                    "Impossible to create a Policy without an ID"
+            throw new UnprocessableEntityException(
+                    PolicyApiStandardErrors.SC422_02_POLICY_IS_INVALID,
+                    "Impossible to create a Policy with an explicit Id"
             );
         }
         if (objectToCreate.getRootId() != null) {
-            throw new InternalServerException(
-                    ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
-                    "Impossible to create a Policy without a rootID"
+            throw new UnprocessableEntityException(
+                    PolicyApiStandardErrors.SC422_02_POLICY_IS_INVALID,
+                    "Impossible to create a Policy with an explicit rootId"
             );
         }
     }
@@ -148,8 +154,8 @@ public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySea
         return repository
                 .findById(versionId)
                 .orElseThrow(() -> new NotFoundException(
-                        PolicyApiStandardErrors.SC404_01_RESOURCE_NOT_FOUND,
-                        "Policy with version [" + versionId + "] not found")
+                        PolicyApiStandardErrors.SC404_02_POLICY_NOT_FOUND,
+                        "Policy with ID [" + versionId + "] not found")
                 );
     }
 

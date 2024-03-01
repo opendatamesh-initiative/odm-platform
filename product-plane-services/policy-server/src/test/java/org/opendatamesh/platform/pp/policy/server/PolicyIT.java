@@ -24,7 +24,7 @@ public class PolicyIT extends ODMPolicyIT {
 
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-    public void testCreatePolicyAllProperties() {
+    public void testCreatePolicy() {
 
         // Resources + Creation
         PolicyEngineResource parentEngineResource = createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);
@@ -192,7 +192,8 @@ public class PolicyIT extends ODMPolicyIT {
         verifyResponseError(
                 getResponse,
                 HttpStatus.NOT_FOUND,
-                PolicyApiStandardErrors.SC404_01_RESOURCE_NOT_FOUND
+                PolicyApiStandardErrors.SC404_02_POLICY_NOT_FOUND,
+                "Policy with ID [" + policyResource.getId() + "] not found"
         );
 
     }

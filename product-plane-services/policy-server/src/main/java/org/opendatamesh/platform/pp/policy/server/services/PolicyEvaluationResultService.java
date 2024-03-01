@@ -6,6 +6,7 @@ import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultR
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultSearchOptions;
 import org.opendatamesh.platform.pp.policy.api.resources.exceptions.PolicyApiStandardErrors;
 import org.opendatamesh.platform.pp.policy.server.database.entities.Policy;
+import org.opendatamesh.platform.pp.policy.server.database.entities.PolicyEngine;
 import org.opendatamesh.platform.pp.policy.server.database.entities.PolicyEvaluationResult;
 import org.opendatamesh.platform.pp.policy.server.database.mappers.PolicyEvaluationResultMapper;
 import org.opendatamesh.platform.pp.policy.server.database.repositories.PolicyEvaluationResultRepository;
@@ -26,6 +27,10 @@ public class PolicyEvaluationResultService extends GenericMappedAndFilteredCrudS
 
     @Autowired
     private PolicyService policyService;
+
+    protected PolicyEvaluationResultService() {
+        super(PolicyEvaluationResult.class.getName());
+    }
 
     @Override
     protected void validate(PolicyEvaluationResult evaluationResult) {

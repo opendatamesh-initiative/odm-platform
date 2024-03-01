@@ -103,12 +103,13 @@ public class PolicyEngineErrorsIT extends ODMPolicyIT {
         // Resources
         PolicyEngineResource policyEngineResource = createPolicyEngineResource(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);
 
-        // 40401 - Resource not found
+        // 40401 - PolicyEngine not found
         ResponseEntity putResponse = policyClient.updatePolicyEngine(2L, policyEngineResource);
         verifyResponseError(
                 putResponse,
                 HttpStatus.NOT_FOUND,
-                PolicyApiStandardErrors.SC404_01_RESOURCE_NOT_FOUND
+                PolicyApiStandardErrors.SC404_01_POLICY_ENGINE_NOT_FOUND,
+                "PolicyEngine with ID [2] not found"
         );
 
     }
@@ -165,7 +166,8 @@ public class PolicyEngineErrorsIT extends ODMPolicyIT {
         verifyResponseError(
                 getResponse,
                 HttpStatus.NOT_FOUND,
-                PolicyApiStandardErrors.SC404_01_RESOURCE_NOT_FOUND
+                PolicyApiStandardErrors.SC404_01_POLICY_ENGINE_NOT_FOUND,
+                "PolicyEngine with ID [2] not found"
         );
 
     }
@@ -183,7 +185,8 @@ public class PolicyEngineErrorsIT extends ODMPolicyIT {
         verifyResponseError(
                 deleteResponse,
                 HttpStatus.NOT_FOUND,
-                PolicyApiStandardErrors.SC404_01_RESOURCE_NOT_FOUND
+                PolicyApiStandardErrors.SC404_01_POLICY_ENGINE_NOT_FOUND,
+                "PolicyEngine with ID [2] not found"
         );
 
     }

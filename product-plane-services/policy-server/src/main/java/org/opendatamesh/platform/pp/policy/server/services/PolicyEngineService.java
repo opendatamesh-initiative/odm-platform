@@ -24,6 +24,10 @@ public class PolicyEngineService extends GenericMappedAndFilteredCrudService<Pol
     @Autowired
     private PolicyEngineMapper mapper;
 
+    protected PolicyEngineService() {
+        super(PolicyEngine.class.getName());
+    }
+
     @Override
     protected void validate(PolicyEngine objectToValidate) {
         if(objectToValidate == null) {

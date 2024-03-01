@@ -188,7 +188,7 @@ public abstract class AbstractPolicyEngineController {
                     responseCode = "422",
                     description = "[Unprocessable Content](https://www.rfc-editor.org/rfc/rfc9110.html#name-422-unprocessable-content)"
                             + "\r\n - Error Code 42201 - PolicyEngine is invalid"
-                            + "\r\n - Error Code 42202 - PolicyEngine already exists",
+                            + "\r\n - Error Code 42205 - PolicyEngine already exists",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
             ),
             @ApiResponse(

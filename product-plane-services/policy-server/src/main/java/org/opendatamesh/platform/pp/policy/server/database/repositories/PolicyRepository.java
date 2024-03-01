@@ -12,6 +12,8 @@ public interface PolicyRepository extends PagingAndSortingAndSpecificationExecut
 
     boolean existsByNameAndRootIdNot(String name, Long rootId);
 
+    boolean existsByName(String name);
+
     class Specs extends SpecsUtils {
         public static Specification<Policy> hasLastVersion(Boolean lastVersion) {
             return ((root, query, criteriaBuilder) ->

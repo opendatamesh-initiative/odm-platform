@@ -36,11 +36,11 @@ public class PolicyEngineService extends GenericMappedAndFilteredCrudService<Pol
         if (!StringUtils.hasText(objectToValidate.getAdapterUrl())) {
             throw new UnprocessableEntityException(
                     PolicyApiStandardErrors.SC422_01_POLICY_ENGINE_IS_INVALID,
-                    "PolicyEngine adapterURL cannot be null"
+                    "PolicyEngine adapterUrl cannot be null"
             );
         }
         if (!StringUtils.hasText(objectToValidate.getName())) {
-            throw new BadRequestException(
+            throw new UnprocessableEntityException(
                     PolicyApiStandardErrors.SC422_01_POLICY_ENGINE_IS_INVALID,
                     "PolicyEngine name cannot be null"
             );

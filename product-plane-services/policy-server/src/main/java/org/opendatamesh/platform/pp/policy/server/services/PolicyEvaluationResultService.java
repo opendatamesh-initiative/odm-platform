@@ -54,10 +54,10 @@ public class PolicyEvaluationResultService extends GenericMappedAndFilteredCrudS
         if (evaluationResult.getPolicyId() != null) {
             Policy policy = policyService.findPolicyVersion(evaluationResult.getPolicyId());
             if(Boolean.FALSE.equals(policy.getLastVersion())){
-                throw new BadRequestException(
+                throw new UnprocessableEntityException(
                         PolicyApiStandardErrors.SC422_03_POLICY_EVALUATION_RESULT_IS_INVALID,
-                        "The policy with policy ID ["+ evaluationResult.getPolicyId() + "] is inactive. "
-                                + "Cannot add a result to a inactive policy"
+                        "The policy with ID ["+ evaluationResult.getPolicyId() + "] is inactive. "
+                                + "Cannot add a result to an inactive policy"
                 );
             }
             evaluationResult.setPolicy(policy);

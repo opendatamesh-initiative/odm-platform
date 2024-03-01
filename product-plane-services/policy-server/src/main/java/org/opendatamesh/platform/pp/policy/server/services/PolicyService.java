@@ -38,6 +38,12 @@ public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySea
 
     @Override
     protected void beforeCreation(Policy objectToCreate) {
+        if(repository.existsByName(objectToCreate.getName())) {
+            throw new UnprocessableEntityException(
+                    PolicyApiStandardErrors.SC422_04_POLICY_ALREADY_EXISTS,
+                    "Policy with name [" + objectToCreate.getName() + "] already exists"
+            );
+        }
         if (objectToCreate.getId() != null) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
@@ -61,9 +67,9 @@ public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySea
     @Override
     protected void beforeOverwrite(Policy policy) {
         if (policy.getRootId() == null) {
-            throw new InternalServerException(
-                    ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
-                    "Impossible to create a Policy without a rootID"
+            throw new UnprocessableEntityException(
+                    PolicyApiStandardErrors.SC422_02_POLICY_IS_INVALID,
+                    "Impossible to update a Policy without a rootID"
             );
         }
         Policy lastVersionPolicy = findOne(policy.getRootId());
@@ -96,7 +102,7 @@ public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySea
         if (policy.getPolicyEngineId() == null || policy.getPolicyEngine() == null) {
             throw new UnprocessableEntityException(
                     PolicyApiStandardErrors.SC422_02_POLICY_IS_INVALID,
-                    "Policy engineID or PolicyEngine object cannot be null"
+                    "Policy policyEngineId or PolicyEngine object cannot be null"
             );
         }
         if (repository.existsByNameAndRootIdNot(policy.getName(), policy.getRootId())) {

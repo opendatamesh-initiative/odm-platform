@@ -197,10 +197,15 @@ public abstract class AbstractPolicyEvaluationResultController {
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
             ),
             @ApiResponse(
+                    responseCode = "404",
+                    description = "[Not Found](https://www.rfc-editor.org/rfc/rfc9110.html#name-404-not-found)"
+                            + "\r\n - Error Code 40401 - Parent Policy not found",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
+            ),
+            @ApiResponse(
                     responseCode = "422",
                     description = "[Unprocessable Content](https://www.rfc-editor.org/rfc/rfc9110.html#name-422-unprocessable-content)"
-                            + "\r\n - Error Code 42201 - PolicyEvaluationResult is invalid"
-                            + "\r\n - Error Code 42202 - PolicyEvaluationResult already exists",
+                            + "\r\n - Error Code 42201 - PolicyEvaluationResult is invalid",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
             ),
             @ApiResponse(
@@ -231,7 +236,7 @@ public abstract class AbstractPolicyEvaluationResultController {
                             description = "Example of a PolicyEvaluationResult for OPA",
                             value = EXAMPLE_POLICY_EVALUATION_RESULT_CREATE
                     )}))
-            @RequestBody PolicyEvaluationResultResource policyEvaluationResult
+            @RequestBody(required = false) PolicyEvaluationResultResource policyEvaluationResult
     ) {
         return createPolicyEvaluationResult(policyEvaluationResult);
     }
@@ -268,14 +273,14 @@ public abstract class AbstractPolicyEvaluationResultController {
             @ApiResponse(
                     responseCode = "404",
                     description = "[Not Found](https://www.rfc-editor.org/rfc/rfc9110.html#name-404-not-found)"
-                            + "\r\n - Error Code 40401 - PolicyEvaluationResult not found",
+                            + "\r\n - Error Code 40401 - PolicyEvaluationResult not found"
+                            + "\r\n - Error Code 40401 - Parent Policy not found",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
             ),
             @ApiResponse(
                     responseCode = "422",
                     description = "[Unprocessable Content](https://www.rfc-editor.org/rfc/rfc9110.html#name-422-unprocessable-content)"
-                            + "\r\n - Error Code 42201 - PolicyEvaluationResult is invalid"
-                            + "\r\n - Error Code 42202 - PolicyEvaluationResult already exists",
+                            + "\r\n - Error Code 42201 - PolicyEvaluationResult is invalid",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
             ),
             @ApiResponse(
@@ -309,7 +314,7 @@ public abstract class AbstractPolicyEvaluationResultController {
                             description = "Example of a PolicyEvaluationResult for OPA",
                             value = EXAMPLE_POLICY_EVALUATION_RESULT_UPDATE
                     )}))
-            @RequestBody PolicyEvaluationResultResource policyEvaluationResult
+            @RequestBody(required = false) PolicyEvaluationResultResource policyEvaluationResult
     ) {
         return modifyPolicyEvaluationResult(id, policyEvaluationResult);
     }

@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.*;
         name = "PolicyEngines",
         description = "Endpoints associated to PolicyEngines"
 )
-public abstract class AbstractPolicyEngineController {
+public abstract class AbstractPolicyEngineController implements PolicyEngineController {
 
     // ===============================================================================
     // Resource examples
@@ -339,13 +339,13 @@ public abstract class AbstractPolicyEngineController {
                     "application/json"
             }
     )
-    public PolicyEngineResource deletePolicyEngineEndpoint(
+    public void deletePolicyEngineEndpoint(
             @Parameter(description = "ID of the PolicyEngine to delete")
             @PathVariable(value = "id") Long id
     ) {
-        return deletePolicyEngine(id);
+        deletePolicyEngine(id);
     }
 
-    public abstract PolicyEngineResource deletePolicyEngine(Long id);
+    public abstract void deletePolicyEngine(Long id);
 
 }

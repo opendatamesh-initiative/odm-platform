@@ -6,7 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.opendatamesh.platform.core.commons.clients.ODMIntegrationTest;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
-import org.opendatamesh.platform.pp.policy.api.clients.PolicyClient;
+import org.opendatamesh.platform.pp.policy.api.clients.PolicyClientOld;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
@@ -41,7 +41,7 @@ public class ODMPolicyIT extends ODMIntegrationTest {
     @LocalServerPort
     protected String port;
 
-    protected PolicyClient policyClient;
+    protected PolicyClientOld policyClient;
 
     protected ODMPolicyResourceBuilder resourceBuilder;
 
@@ -58,7 +58,7 @@ public class ODMPolicyIT extends ODMIntegrationTest {
 
         mapper = ObjectMapperFactory.JSON_MAPPER; // Probably removable
         resourceBuilder = new ODMPolicyResourceBuilder();
-        policyClient = new PolicyClient("http://localhost:" + port);
+        policyClient = new PolicyClientOld("http://localhost:" + port);
 
     }
 

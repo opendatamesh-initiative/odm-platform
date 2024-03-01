@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.*;
         name = "Policies",
         description = "Endpoints associated to Policies"
 )
-public abstract class AbstractPolicyController {
+public abstract class AbstractPolicyController implements PolicyController {
 
     // ===============================================================================
     // Resource examples

@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.*;
         name = "Policy Evaluation Results",
         description = "Endpoints associated to Policy Evaluation Results"
 )
-public abstract class AbstractPolicyEvaluationResultController {
+public abstract class AbstractPolicyEvaluationResultController implements PolicyEvaluationResultController {
 
     // ===============================================================================
     // Resource examples
@@ -184,7 +184,7 @@ public abstract class AbstractPolicyEvaluationResultController {
     );
 
     @DeleteMapping(value = "/{id}")
-    public abstract PolicyEvaluationResultResource deletePolicyEvaluationResult(
+    public abstract void deletePolicyEvaluationResult(
             @Parameter(description = "")
             @PathVariable(value = "id") Long id
     );

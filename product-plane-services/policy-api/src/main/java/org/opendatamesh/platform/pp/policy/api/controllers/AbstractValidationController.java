@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
         name = "Validation",
         description = "Endpoints associated to Policy validation"
 )
-public abstract class AbstractValidationController {
+public abstract class AbstractValidationController implements PolicyValidationController {
 
     // ===============================================================================
     // Resource examples
@@ -42,7 +42,7 @@ public abstract class AbstractValidationController {
             "   \"createdAt\": \"a\",\n" + //
             "   \"updatedAt\": \"a\"\n" + //
             "}";
-    
+
 
     // ===============================================================================
     // POST /validation

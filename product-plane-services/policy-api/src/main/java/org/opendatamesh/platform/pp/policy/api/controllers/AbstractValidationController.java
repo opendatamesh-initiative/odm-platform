@@ -10,8 +10,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineResource;
+import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationRequestResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
-import org.opendatamesh.platform.up.notification.api.resources.EventResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -98,11 +98,9 @@ public abstract class AbstractValidationController implements PolicyValidationCo
     )
     public PolicyEvaluationResultResource validateObjectEndpoint(
             @Parameter(description = "")
-            @RequestBody(required = false) EventResource eventResource
+            @RequestBody(required = false) PolicyEvaluationRequestResource evaluationRequest
     ) {
-        return validateObject(eventResource);
+        return validateObject(evaluationRequest);
     }
-
-    public abstract PolicyEvaluationResultResource validateObject(EventResource eventResource);
 
 }

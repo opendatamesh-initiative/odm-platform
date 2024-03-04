@@ -17,6 +17,7 @@ import java.util.List;
 
 public class PolicyClientOld extends ODMClient {
 
+
     public PolicyClientOld(String serverAddress) {
         super(serverAddress, new RestTemplate(), ObjectMapperFactory.JSON_MAPPER);
     }
@@ -89,12 +90,29 @@ public class PolicyClientOld extends ODMClient {
 
     }
 
-    public ResponseEntity readOnePolicy(Long policyId) throws JsonProcessingException {
+    public ResponseEntity readOnePolicy(Long policyRootId) throws JsonProcessingException {
 
         ResponseEntity getPolicyResponse = rest.getForEntity(
                 apiUrlOfItem(PolicyAPIRoutes.POLICIES),
                 Object.class,
-                policyId
+                policyRootId
+        );
+
+        ResponseEntity response = mapResponseEntity(
+                getPolicyResponse,
+                HttpStatus.OK,
+                PolicyResource.class
+        );
+
+        return response;
+
+    }
+
+    public ResponseEntity readOnePolicyVersion(Long policyVersionId) throws JsonProcessingException {
+
+        ResponseEntity getPolicyResponse = rest.getForEntity(
+                apiUrl(PolicyAPIRoutes.POLICIES, "/versions/" + policyVersionId),
+                Object.class
         );
 
         ResponseEntity response = mapResponseEntity(
@@ -363,5 +381,4 @@ public class PolicyClientOld extends ODMClient {
                 ErrorRes.class
         );
     }
-
 }

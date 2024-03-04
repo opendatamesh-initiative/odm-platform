@@ -115,7 +115,7 @@ public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySea
 
     @Override
     protected void reconcile(Policy objectToReconcile) {
-        if (objectToReconcile.getPolicyEngineId() != null) {//TODO understand if a policy can exist without an engine
+        if (objectToReconcile.getPolicyEngineId() != null) {
             PolicyEngine policyEngine = policyEngineService.findOne(objectToReconcile.getPolicyEngineId());
             objectToReconcile.setPolicyEngine(policyEngine);
         }

@@ -2,6 +2,9 @@ package org.opendatamesh.platform.pp.registry.server.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.opendatamesh.platform.core.commons.servers.exceptions.BadGatewayException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.pp.policy.api.clients.PolicyClient;
@@ -43,33 +46,37 @@ public class PolicyServiceProxy {
             logger.info("Policy Service is not active;");
             return true;
         }
+        try {
+            PolicyEvaluationRequestResource evaluationRequest = buildEvaluationRequest(mostRecentDataProduct, newDataProductVersion);
+            PolicyEvaluationResultResource evaluationResult = policyClient.validateObject(evaluationRequest);
 
-        PolicyEvaluationRequestResource evaluationRequest = buildEvaluationRequest(mostRecentDataProduct, newDataProductVersion);
-        PolicyEvaluationResultResource evaluationResult = policyClient.validateObject(evaluationRequest);
+            if (Boolean.FALSE.equals(evaluationResult.getResult())) {
+                logger.warn("Policy evaluation failed during DataProduct version creation. Reason:\n{}", evaluationResult.getOutputObject());
+            }
 
-        if (Boolean.FALSE.equals(evaluationResult.getResult())) {
-            //TODO prettify the log of failed policies
-            logger.warn(evaluationResult.getOutputObject());
+            return Boolean.TRUE.equals(evaluationResult.getResult());
+        } catch (JsonProcessingException e) {
+            throw new InternalServerException(e);//TODO
+        } catch (Exception e) {
+            throw new BadGatewayException(
+                    ODMApiCommonErrors.SC502_71_POLICY_SERVICE_ERROR,
+                    "An error occured while invoking policy service to validate data product version: " + e.getMessage(),
+                    e
+            );
         }
-
-        return evaluationResult.getResult();
     }
 
-    private PolicyEvaluationRequestResource buildEvaluationRequest(DataProductVersionDPDS mostRecentDataProduct, DataProductVersionDPDS newDataProductVersion) {
-        try {
-            PolicyEvaluationRequestResource evaluationRequest = new PolicyEvaluationRequestResource();
-            evaluationRequest.setResourceType(PolicyEvaluationRequestResource.ResourceType.DATA_PRODUCT);
-            evaluationRequest.setAfterState(objectMapper.writeValueAsString(newDataProductVersion));
-            if (mostRecentDataProduct == null) {
-                evaluationRequest.setEvent(PolicyEvaluationRequestResource.EventType.DATA_PRODUCT_CREATION);
-            } else {
-                evaluationRequest.setEvent(PolicyEvaluationRequestResource.EventType.DATA_PRODUCT_UPDATE);
-                evaluationRequest.setCurrentState(objectMapper.writeValueAsString(mostRecentDataProduct));
-            }
-            return evaluationRequest;
-        } catch (JsonProcessingException e) {
-            //TODO
-            throw new RuntimeException(e);
+    private PolicyEvaluationRequestResource buildEvaluationRequest(DataProductVersionDPDS mostRecentDataProduct, DataProductVersionDPDS newDataProductVersion) throws JsonProcessingException {
+        PolicyEvaluationRequestResource evaluationRequest = new PolicyEvaluationRequestResource();
+        evaluationRequest.setResourceType(PolicyEvaluationRequestResource.ResourceType.DATA_PRODUCT);
+        evaluationRequest.setAfterState(objectMapper.writeValueAsString(newDataProductVersion));
+        if (mostRecentDataProduct == null) {
+            evaluationRequest.setEvent(PolicyEvaluationRequestResource.EventType.DATA_PRODUCT_CREATION);
+        } else {
+            evaluationRequest.setEvent(PolicyEvaluationRequestResource.EventType.DATA_PRODUCT_UPDATE);
+            evaluationRequest.setCurrentState(objectMapper.writeValueAsString(mostRecentDataProduct));
         }
+        return evaluationRequest;
+
     }
 }

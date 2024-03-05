@@ -2,6 +2,9 @@ package org.opendatamesh.platform.pp.devops.server.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.opendatamesh.platform.core.commons.servers.exceptions.BadGatewayException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityResource;
 import org.opendatamesh.platform.pp.devops.api.resources.TaskResultResource;
@@ -20,14 +23,14 @@ public class PolicyServiceProxy {
 
     private PolicyClient policyClient;
     private final boolean policyServiceActive;
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
     private static final Logger logger = LoggerFactory.getLogger(PolicyServiceProxy.class);
 
     @Autowired
     public PolicyServiceProxy(DevOpsConfigurations configurations) {
         this.objectMapper = new ObjectMapper();
-        if (configurations.getProductPlane().getPolicyService().getActive()) {
+        if (Boolean.TRUE.equals(configurations.getProductPlane().getPolicyService().getActive())) {
             this.policyClient = new PolicyClientImpl(
                     configurations.getProductPlane().getPolicyService().getAddress(),
                     ObjectMapperFactory.JSON_MAPPER
@@ -39,7 +42,11 @@ public class PolicyServiceProxy {
     }
 
     public boolean isStageTransitionValid(ActivityResource lastExecutedActivity, ActivityResource activityToBeExecuted) {
-        if (!policyServiceActive) return true;
+        if (!policyServiceActive) {
+            logger.info("Policy Service is not active;");
+            return true;
+        }
+
         try {
             PolicyEvaluationRequestResource evaluationRequest = new PolicyEvaluationRequestResource();
             evaluationRequest.setEvent(PolicyEvaluationRequestResource.EventType.ACTIVITY_STAGE_TRANSITION);
@@ -51,17 +58,25 @@ public class PolicyServiceProxy {
 
             PolicyEvaluationResultResource evaluationResult = policyClient.validateObject(evaluationRequest);
             if (Boolean.FALSE.equals(evaluationResult.getResult())) {
-                logger.warn("");//TODO
+                logger.warn("Policy evaluation failed during stage transition. Reason:\n{}", evaluationResult.getOutputObject());
             }
             return evaluationResult.getResult();
         } catch (JsonProcessingException e) {
-            //TODO
-            throw new RuntimeException(e);
+            throw new InternalServerException(e); //TODO
+        } catch (Exception e) {
+            throw new BadGatewayException(
+                    ODMApiCommonErrors.SC502_71_POLICY_SERVICE_ERROR,
+                    "An error occured while invoking policy service to validate data product version: " + e.getMessage(),
+                    e
+            );
         }
     }
 
     public boolean isCallbackResultValid(TaskResultResource taskResult) {
-        if (!policyServiceActive) return true;
+        if (!policyServiceActive) {
+            logger.info("Policy Service is not active;");
+            return true;
+        }
         try {
             PolicyEvaluationRequestResource evaluationRequest = new PolicyEvaluationRequestResource();
             evaluationRequest.setEvent(PolicyEvaluationRequestResource.EventType.TASK_EXECUTOR_INITIAL_CALL);
@@ -70,17 +85,25 @@ public class PolicyServiceProxy {
 
             PolicyEvaluationResultResource evaluationResult = policyClient.validateObject(evaluationRequest);
             if (Boolean.FALSE.equals(evaluationResult.getResult())) {
-                logger.warn("");//TODO
+                logger.warn("Policy evaluation failed on callback result validation. Reason:\n{}", evaluationResult.getOutputObject());
             }
             return evaluationResult.getResult();
         } catch (JsonProcessingException e) {
-            //TODO
-            throw new RuntimeException(e);
+            throw new InternalServerException(e); //TODO
+        } catch (Exception e) {
+            throw new BadGatewayException(
+                    ODMApiCommonErrors.SC502_71_POLICY_SERVICE_ERROR,
+                    "An error occured while invoking policy service to validate data product version: " + e.getMessage(),
+                    e
+            );
         }
     }
 
     public boolean isContextuallyCoherent(ActivityResource activity) {
-        if (!policyServiceActive) return true;
+        if (!policyServiceActive) {
+            logger.info("Policy Service is not active;");
+            return true;
+        }
         try {
             PolicyEvaluationRequestResource evaluationRequest = new PolicyEvaluationRequestResource();
             evaluationRequest.setEvent(PolicyEvaluationRequestResource.EventType.TASK_EXECUTOR_FINAL_CALL);
@@ -89,13 +112,17 @@ public class PolicyServiceProxy {
 
             PolicyEvaluationResultResource evaluationResult = policyClient.validateObject(evaluationRequest);
             if (Boolean.FALSE.equals(evaluationResult.getResult())) {
-                logger.warn("");//TODO
+                logger.warn("Policy evaluation failed during context coherence validation. Reason:\n{}", evaluationResult.getOutputObject());
             }
             return evaluationResult.getResult();
         } catch (JsonProcessingException e) {
-            //TODO
-            throw new RuntimeException(e);
+            throw new InternalServerException(e); //TODO
+        } catch (Exception e) {
+            throw new BadGatewayException(
+                    ODMApiCommonErrors.SC502_71_POLICY_SERVICE_ERROR,
+                    "An error occured while invoking policy service to validate data product version: " + e.getMessage(),
+                    e
+            );
         }
     }
-
 }

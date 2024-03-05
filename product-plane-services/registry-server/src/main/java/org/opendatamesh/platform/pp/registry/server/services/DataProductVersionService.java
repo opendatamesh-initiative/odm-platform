@@ -603,18 +603,9 @@ public class DataProductVersionService {
     // ======================================================================================
 
     public boolean isCompliantWithGlobalPolicies(DataProductVersion dataProductVersion) {
-        try {
-            DataProductVersionDPDS newDataProductVersionDPDS = dataProductVersionMapper.toResource(dataProductVersion);
-            DataProductVersionDPDS mostRecentDataProduct = getMostRecentDataProductVersion(dataProductVersion);
-
-            return policyServiceProxy.validateDataProductVersionCreation(mostRecentDataProduct, newDataProductVersionDPDS);
-        } catch (Throwable t) {
-            throw new BadGatewayException(
-                    ODMApiCommonErrors.SC502_71_POLICY_SERVICE_ERROR,
-                    "An error occured while invoking policy service to validate data product version: " + t.getMessage(),
-                    t
-            );
-        }
+        DataProductVersionDPDS newDataProductVersionDPDS = dataProductVersionMapper.toResource(dataProductVersion);
+        DataProductVersionDPDS mostRecentDataProduct = getMostRecentDataProductVersion(dataProductVersion);
+        return policyServiceProxy.validateDataProductVersionCreation(mostRecentDataProduct, newDataProductVersionDPDS);
     }
 
     private DataProductVersionDPDS getMostRecentDataProductVersion(DataProductVersion dataProductVersion) {

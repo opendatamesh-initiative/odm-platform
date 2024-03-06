@@ -16,8 +16,8 @@ public abstract class GenericMappedAndFilteredCrudService<F, R, T, ID extends Se
     @Autowired
     private TransactionHandler transactionHandler;
 
-    protected GenericMappedAndFilteredCrudService(String entityClassName) {
-        super(entityClassName);
+    protected GenericMappedAndFilteredCrudService(Class<T> classType) {
+        super(classType);
     }
 
     public final Page<R> findAllResourcesFiltered(Pageable pageable, F filters) {

@@ -34,7 +34,7 @@ public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySea
     private PolicyEngineService policyEngineService;
 
     protected PolicyService() {
-        super(Policy.class.getName());
+        super(Policy.class);
     }
 
     @Override

@@ -25,7 +25,7 @@ public class PolicyEngineService extends GenericMappedAndFilteredCrudService<Pol
     private PolicyEngineMapper mapper;
 
     protected PolicyEngineService() {
-        super(PolicyEngine.class.getName());
+        super(PolicyEngine.class);
     }
 
     @Override

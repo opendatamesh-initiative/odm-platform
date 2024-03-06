@@ -12,8 +12,8 @@ public abstract class GenericMappedCrudService<R, T, ID extends Serializable> ex
     @Autowired
     private TransactionHandler transactionHandler;
 
-    protected GenericMappedCrudService(String entityClassName) {
-        super(entityClassName);
+    protected GenericMappedCrudService(Class<T> classType) {
+        super(classType);
     }
 
     protected abstract R toRes(T entity);

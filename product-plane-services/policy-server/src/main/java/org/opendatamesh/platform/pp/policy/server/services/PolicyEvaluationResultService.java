@@ -29,7 +29,7 @@ public class PolicyEvaluationResultService extends GenericMappedAndFilteredCrudS
     private PolicyService policyService;
 
     protected PolicyEvaluationResultService() {
-        super(PolicyEvaluationResult.class.getName());
+        super(PolicyEvaluationResult.class);
     }
 
     @Override

@@ -17,10 +17,10 @@ public abstract class GenericCrudService<T, ID extends Serializable> {
     @Autowired
     private TransactionTemplate transactionTemplate;
 
-    private String entityClassName;
+    private Class<T> classType;
 
-    protected GenericCrudService(String entityClassName) {
-        this.entityClassName = entityClassName;
+    protected GenericCrudService(Class<T> classType) {
+        this.classType = classType;
     }
 
     //READ METHODS
@@ -48,8 +48,8 @@ public abstract class GenericCrudService<T, ID extends Serializable> {
         }
         if (result == null) {
             throw new NotFoundException(
-                    ErrorCodeMapper.getErrorCodeForClass(entityClassName),
-                    ErrorCodeMapper.getErrorMessageForClass(entityClassName, identifier)
+                    ErrorCodeMapper.getErrorCodeForClass(classType),
+                    ErrorCodeMapper.getErrorMessageForClass(classType, identifier)
             );
         }
         afterFindOne(result, identifier);
@@ -74,8 +74,8 @@ public abstract class GenericCrudService<T, ID extends Serializable> {
     public final void checkExistenceOrThrow(ID identifier) {
         if (!exists(identifier)) {
             throw new NotFoundException(
-                    ErrorCodeMapper.getErrorCodeForClass(entityClassName),
-                    ErrorCodeMapper.getErrorMessageForClass(entityClassName, identifier)
+                    ErrorCodeMapper.getErrorCodeForClass(classType),
+                    ErrorCodeMapper.getErrorMessageForClass(classType, identifier)
             );
         }
     }

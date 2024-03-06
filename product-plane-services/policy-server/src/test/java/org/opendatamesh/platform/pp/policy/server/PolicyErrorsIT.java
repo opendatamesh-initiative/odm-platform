@@ -143,7 +143,7 @@ public class PolicyErrorsIT extends ODMPolicyIT {
                 putResponse,
                 HttpStatus.NOT_FOUND,
                 PolicyApiStandardErrors.SC404_02_POLICY_NOT_FOUND,
-                "Policy with ID [7] not found"
+                "Resource with ID [7] not found"
         );
 
         // 40401 - Resource not found (parent policy engine not found)
@@ -154,7 +154,7 @@ public class PolicyErrorsIT extends ODMPolicyIT {
                 putResponse,
                 HttpStatus.NOT_FOUND,
                 PolicyApiStandardErrors.SC404_01_POLICY_ENGINE_NOT_FOUND,
-                "PolicyEngine with ID [3] not found"
+                "Resource with ID [3] not found"
         );
 
     }
@@ -233,7 +233,7 @@ public class PolicyErrorsIT extends ODMPolicyIT {
                 getResponse,
                 HttpStatus.NOT_FOUND,
                 PolicyApiStandardErrors.SC404_02_POLICY_NOT_FOUND,
-                "Policy with ID [2] not found"
+                "Resource with ID [2] not found"
         );
 
     }
@@ -251,7 +251,7 @@ public class PolicyErrorsIT extends ODMPolicyIT {
                 deleteResponse,
                 HttpStatus.NOT_FOUND,
                 PolicyApiStandardErrors.SC404_02_POLICY_NOT_FOUND,
-                "Policy with ID [2] not found"
+                "Resource with ID [2] not found"
         );
 
     }

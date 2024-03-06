@@ -25,12 +25,11 @@ public class PolicyEngineService extends GenericMappedAndFilteredCrudService<Pol
     private PolicyEngineMapper mapper;
 
     protected PolicyEngineService() {
-        super(PolicyEngine.class);
     }
 
     @Override
     protected void validate(PolicyEngine objectToValidate) {
-        if(objectToValidate == null) {
+        if (objectToValidate == null) {
             throw new BadRequestException(
                     PolicyApiStandardErrors.SC400_01_POLICY_ENGINE_IS_EMPTY,
                     "PolicyEngine object cannot be null"
@@ -53,7 +52,7 @@ public class PolicyEngineService extends GenericMappedAndFilteredCrudService<Pol
 
     @Override
     protected void beforeCreation(PolicyEngine policyEngine) {
-        if(repository.existsByName(policyEngine.getName())) {
+        if (repository.existsByName(policyEngine.getName())) {
             throw new UnprocessableEntityException(
                     PolicyApiStandardErrors.SC422_05_POLICY_ENGINE_ALREADY_EXISTS,
                     "PolicyEngine with name [" + policyEngine.getName() + "] already exists"
@@ -87,4 +86,8 @@ public class PolicyEngineService extends GenericMappedAndFilteredCrudService<Pol
         return mapper.toEntity(resource);
     }
 
+    @Override
+    protected Class<PolicyEngine> getEntityClass() {
+        return PolicyEngine.class;
+    }
 }

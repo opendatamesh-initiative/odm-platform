@@ -130,7 +130,7 @@ public class PolicyEngineIT extends ODMPolicyIT {
                 getResponse,
                 HttpStatus.NOT_FOUND,
                 PolicyApiStandardErrors.SC404_01_POLICY_ENGINE_NOT_FOUND,
-                "PolicyEngine with ID [" + policyEngineResource.getId() + "] not found"
+                "Resource with ID [" + policyEngineResource.getId() + "] not found"
         );
 
     }

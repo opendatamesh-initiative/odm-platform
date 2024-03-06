@@ -60,7 +60,7 @@ public class PolicyServiceProxy {
             if (Boolean.FALSE.equals(evaluationResult.getResult())) {
                 logger.warn("Policy evaluation failed during stage transition. Reason:\n{}", evaluationResult.getOutputObject());
             }
-            return evaluationResult.getResult();
+            return Boolean.TRUE.equals(evaluationResult.getResult());
         } catch (JsonProcessingException e) {
             throw new InternalServerException(e); //TODO
         } catch (Exception e) {
@@ -87,7 +87,7 @@ public class PolicyServiceProxy {
             if (Boolean.FALSE.equals(evaluationResult.getResult())) {
                 logger.warn("Policy evaluation failed on callback result validation. Reason:\n{}", evaluationResult.getOutputObject());
             }
-            return evaluationResult.getResult();
+            return Boolean.TRUE.equals(evaluationResult.getResult());
         } catch (JsonProcessingException e) {
             throw new InternalServerException(e); //TODO
         } catch (Exception e) {
@@ -114,7 +114,7 @@ public class PolicyServiceProxy {
             if (Boolean.FALSE.equals(evaluationResult.getResult())) {
                 logger.warn("Policy evaluation failed during context coherence validation. Reason:\n{}", evaluationResult.getOutputObject());
             }
-            return evaluationResult.getResult();
+            return Boolean.TRUE.equals(evaluationResult.getResult());
         } catch (JsonProcessingException e) {
             throw new InternalServerException(e); //TODO
         } catch (Exception e) {

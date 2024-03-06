@@ -6,7 +6,6 @@ import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultR
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultSearchOptions;
 import org.opendatamesh.platform.pp.policy.api.resources.exceptions.PolicyApiStandardErrors;
 import org.opendatamesh.platform.pp.policy.server.database.entities.Policy;
-import org.opendatamesh.platform.pp.policy.server.database.entities.PolicyEngine;
 import org.opendatamesh.platform.pp.policy.server.database.entities.PolicyEvaluationResult;
 import org.opendatamesh.platform.pp.policy.server.database.mappers.PolicyEvaluationResultMapper;
 import org.opendatamesh.platform.pp.policy.server.database.repositories.PolicyEvaluationResultRepository;
@@ -29,12 +28,12 @@ public class PolicyEvaluationResultService extends GenericMappedAndFilteredCrudS
     private PolicyService policyService;
 
     protected PolicyEvaluationResultService() {
-        super(PolicyEvaluationResult.class);
+
     }
 
     @Override
     protected void validate(PolicyEvaluationResult evaluationResult) {
-        if(evaluationResult == null) {
+        if (evaluationResult == null) {
             throw new BadRequestException(
                     PolicyApiStandardErrors.SC400_03_POLICY_EVALUATION_RESULT_IS_EMPTY,
                     "PolicyEvaluationResult object cannot be null"
@@ -58,10 +57,10 @@ public class PolicyEvaluationResultService extends GenericMappedAndFilteredCrudS
     protected void reconcile(PolicyEvaluationResult evaluationResult) {
         if (evaluationResult.getPolicyId() != null) {
             Policy policy = policyService.findPolicyVersion(evaluationResult.getPolicyId());
-            if(Boolean.FALSE.equals(policy.getLastVersion())){
+            if (Boolean.FALSE.equals(policy.getLastVersion())) {
                 throw new UnprocessableEntityException(
                         PolicyApiStandardErrors.SC422_03_POLICY_EVALUATION_RESULT_IS_INVALID,
-                        "The policy with ID ["+ evaluationResult.getPolicyId() + "] is inactive. "
+                        "The policy with ID [" + evaluationResult.getPolicyId() + "] is inactive. "
                                 + "Cannot add a result to an inactive policy"
                 );
             }
@@ -89,6 +88,11 @@ public class PolicyEvaluationResultService extends GenericMappedAndFilteredCrudS
     @Override
     protected PolicyEvaluationResult toEntity(PolicyEvaluationResultResource resource) {
         return mapper.toEntity(resource);
+    }
+
+    @Override
+    protected Class<PolicyEvaluationResult> getEntityClass() {
+        return PolicyEvaluationResult.class;
     }
 
 }

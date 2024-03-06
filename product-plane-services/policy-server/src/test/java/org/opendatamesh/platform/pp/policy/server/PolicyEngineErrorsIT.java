@@ -109,7 +109,7 @@ public class PolicyEngineErrorsIT extends ODMPolicyIT {
                 putResponse,
                 HttpStatus.NOT_FOUND,
                 PolicyApiStandardErrors.SC404_01_POLICY_ENGINE_NOT_FOUND,
-                "PolicyEngine with ID [2] not found"
+                "Resource with ID [2] not found"
         );
 
     }
@@ -167,7 +167,7 @@ public class PolicyEngineErrorsIT extends ODMPolicyIT {
                 getResponse,
                 HttpStatus.NOT_FOUND,
                 PolicyApiStandardErrors.SC404_01_POLICY_ENGINE_NOT_FOUND,
-                "PolicyEngine with ID [2] not found"
+                "Resource with ID [2] not found"
         );
 
     }
@@ -186,7 +186,7 @@ public class PolicyEngineErrorsIT extends ODMPolicyIT {
                 deleteResponse,
                 HttpStatus.NOT_FOUND,
                 PolicyApiStandardErrors.SC404_01_POLICY_ENGINE_NOT_FOUND,
-                "PolicyEngine with ID [2] not found"
+                "Resource with ID [2] not found"
         );
 
     }

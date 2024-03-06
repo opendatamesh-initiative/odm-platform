@@ -193,7 +193,7 @@ public class PolicyIT extends ODMPolicyIT {
                 getResponse,
                 HttpStatus.NOT_FOUND,
                 PolicyApiStandardErrors.SC404_02_POLICY_NOT_FOUND,
-                "Policy with ID [" + policyResource.getId() + "] not found"
+                "Resource with ID [" + policyResource.getId() + "] not found"
         );
 
     }

@@ -10,6 +10,10 @@ public abstract class ODMApiException extends RuntimeException{
 		super();
 	}
 
+	public ODMApiException(String message) {
+        super(message);
+    }
+
 	public ODMApiException(ODMApiStandardErrors error, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
 		super(message, cause, enableSuppression, writableStackTrace);
 		setError(error);
@@ -44,29 +48,29 @@ public abstract class ODMApiException extends RuntimeException{
 	 * @return the error code
 	 */
 	public String getStandardErrorCode() {
-		return error!=null?error.code():null;		
+		return error!=null?error.code():null;
 	}
 
 	/**
 	 * @return the error description
 	 */
 	public String getStandardErrorDescription() {
-		return error!=null?error.description():null;	
+		return error!=null?error.description():null;
 	}
 
-	
+
 
 	/**
 	 * @return the errorName
 	 */
 	public String getErrorName() {
-		return getClass().getSimpleName();	
+		return getClass().getSimpleName();
 	}
 
 	/**
 	 * @return the status
 	 */
-	public abstract HttpStatus getStatus();	
-	
+	public abstract HttpStatus getStatus();
+
 
 }

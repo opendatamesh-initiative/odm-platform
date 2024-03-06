@@ -162,7 +162,7 @@ public class PolicyEvaluationResultErrorsIT extends ODMPolicyIT {
                 putResponse,
                 HttpStatus.NOT_FOUND,
                 PolicyApiStandardErrors.SC404_03_POLICY_EVALUATION_RESULT_NOT_FOUND,
-                "PolicyEvaluationResult with ID [7] not found"
+                "Resource with ID [7] not found"
         );
 
         // 40402 - Resource not found (parent policy not found)
@@ -262,7 +262,7 @@ public class PolicyEvaluationResultErrorsIT extends ODMPolicyIT {
                 getResponse,
                 HttpStatus.NOT_FOUND,
                 PolicyApiStandardErrors.SC404_03_POLICY_EVALUATION_RESULT_NOT_FOUND,
-                "PolicyEvaluationResult with ID [2] not found"
+                "Resource with ID [2] not found"
         );
 
     }
@@ -281,7 +281,7 @@ public class PolicyEvaluationResultErrorsIT extends ODMPolicyIT {
                 deleteResponse,
                 HttpStatus.NOT_FOUND,
                 PolicyApiStandardErrors.SC404_03_POLICY_EVALUATION_RESULT_NOT_FOUND,
-                "PolicyEvaluationResult with ID [2] not found"
+                "Resource with ID [2] not found"
         );
 
     }

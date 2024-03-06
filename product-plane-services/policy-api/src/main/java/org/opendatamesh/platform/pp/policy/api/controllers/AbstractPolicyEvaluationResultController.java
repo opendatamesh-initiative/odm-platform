@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
-import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultSearchOptions;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -142,7 +141,7 @@ public abstract class AbstractPolicyEvaluationResultController {
             @ApiResponse(
                     responseCode = "404",
                     description = "[Not Found](https://www.rfc-editor.org/rfc/rfc9110.html#name-404-not-found)"
-                            + "\r\n - Error Code 40401 - PolicyEvaluationResult not found",
+                            + "\r\n - Error Code 40403 - PolicyEvaluationResult not found",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
             ),
             @ApiResponse(
@@ -199,7 +198,7 @@ public abstract class AbstractPolicyEvaluationResultController {
             @ApiResponse(
                     responseCode = "404",
                     description = "[Not Found](https://www.rfc-editor.org/rfc/rfc9110.html#name-404-not-found)"
-                            + "\r\n - Error Code 40401 - Parent Policy not found",
+                            + "\r\n - Error Code 40402 - Parent Policy not found",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
             ),
             @ApiResponse(
@@ -273,8 +272,8 @@ public abstract class AbstractPolicyEvaluationResultController {
             @ApiResponse(
                     responseCode = "404",
                     description = "[Not Found](https://www.rfc-editor.org/rfc/rfc9110.html#name-404-not-found)"
-                            + "\r\n - Error Code 40401 - PolicyEvaluationResult not found"
-                            + "\r\n - Error Code 40401 - Parent Policy not found",
+                            + "\r\n - Error Code 40402 - Parent Policy not found"
+                            + "\r\n - Error Code 40403 - PolicyEvaluationResult not found",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
             ),
             @ApiResponse(
@@ -341,7 +340,7 @@ public abstract class AbstractPolicyEvaluationResultController {
             @ApiResponse(
                     responseCode = "404",
                     description = "[Not Found](https://www.rfc-editor.org/rfc/rfc9110.html#name-404-not-found)"
-                            + "\r\n - Error Code 40401 - PolicyEvaluationResult not found",
+                            + "\r\n - Error Code 40403 - PolicyEvaluationResult not found",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
             ),
             @ApiResponse(

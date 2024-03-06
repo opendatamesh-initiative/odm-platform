@@ -143,7 +143,7 @@ public abstract class AbstractPolicyController {
             @ApiResponse(
                     responseCode = "404",
                     description = "[Not Found](https://www.rfc-editor.org/rfc/rfc9110.html#name-404-not-found)"
-                            + "\r\n - Error Code 40401 - Policy not found",
+                            + "\r\n - Error Code 40402 - Policy not found",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
             ),
             @ApiResponse(
@@ -197,7 +197,7 @@ public abstract class AbstractPolicyController {
             @ApiResponse(
                     responseCode = "404",
                     description = "[Not Found](https://www.rfc-editor.org/rfc/rfc9110.html#name-404-not-found)"
-                            + "\r\n - Error Code 40401 - Policy not found",
+                            + "\r\n - Error Code 40402 - Policy not found",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
             ),
             @ApiResponse(
@@ -328,7 +328,7 @@ public abstract class AbstractPolicyController {
             @ApiResponse(
                     responseCode = "404",
                     description = "[Not Found](https://www.rfc-editor.org/rfc/rfc9110.html#name-404-not-found)"
-                            + "\r\n - Error Code 40401 - Policy not found"
+                            + "\r\n - Error Code 40402 - Policy not found"
                             + "\r\n - Error Code 40401 - Parent PolicyEngine not found",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
             ),
@@ -395,7 +395,7 @@ public abstract class AbstractPolicyController {
             @ApiResponse(
                     responseCode = "404",
                     description = "[Not Found](https://www.rfc-editor.org/rfc/rfc9110.html#name-404-not-found)"
-                            + "\r\n - Error Code 40401 - Policy not found",
+                            + "\r\n - Error Code 40402 - Policy not found",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
             ),
             @ApiResponse(

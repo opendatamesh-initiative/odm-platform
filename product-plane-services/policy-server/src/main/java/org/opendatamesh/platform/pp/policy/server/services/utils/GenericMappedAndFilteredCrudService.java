@@ -16,6 +16,10 @@ public abstract class GenericMappedAndFilteredCrudService<F, R, T, ID extends Se
     @Autowired
     private TransactionHandler transactionHandler;
 
+    protected GenericMappedAndFilteredCrudService(Class<T> classType) {
+        super(classType);
+    }
+
     public final Page<R> findAllResourcesFiltered(Pageable pageable, F filters) {
         return transactionHandler.runInTransaction(() ->
                 findAllFiltered(pageable, filters).map(this::toRes)

@@ -155,7 +155,8 @@ public class PolicyEvaluationResultIT extends ODMPolicyIT {
         verifyResponseError(
                 getResponse,
                 HttpStatus.NOT_FOUND,
-                PolicyApiStandardErrors.SC404_01_RESOURCE_NOT_FOUND
+                PolicyApiStandardErrors.SC404_03_POLICY_EVALUATION_RESULT_NOT_FOUND,
+                "PolicyEvaluationResult with ID [" + policyEvaluationResultResource.getId() + "] not found"
         );
 
     }

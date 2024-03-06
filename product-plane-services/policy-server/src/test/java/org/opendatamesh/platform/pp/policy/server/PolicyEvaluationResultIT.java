@@ -63,7 +63,7 @@ public class PolicyEvaluationResultIT extends ODMPolicyIT {
         policyEvaluationResultResourceUpdated.setCreatedAt(policyEvaluationResultResource.getCreatedAt());
 
         // PUT request
-        ResponseEntity<PolicyEvaluationResultResource> putResponse = policyClient.updatePolicyEvaluationResult(
+        ResponseEntity<PolicyEvaluationResultResource> putResponse = policyClient.updatePolicyEvaluationResultResponseEntity(
                 policyEvaluationResultResource.getId(),
                 policyEvaluationResultResourceUpdated
         );
@@ -91,7 +91,7 @@ public class PolicyEvaluationResultIT extends ODMPolicyIT {
         createPolicyEvaluationResult(ODMPolicyResources.RESOURCE_POLICY_EVALUATION_RESULT_2, parentPolicyResource.getId());
 
         // GET request
-        ResponseEntity<PagedPolicyEvaluationResultResource> getResponse = policyClient.readAllPolicyEvaluationResults();
+        ResponseEntity<PagedPolicyEvaluationResultResource> getResponse = policyClient.readAllPolicyEvaluationResultsResponseEntity();
         verifyResponseEntity(getResponse, HttpStatus.OK, true);
         List<PolicyEvaluationResultResource> policyEvaluationResults = getResponse.getBody().getContent();
 
@@ -120,7 +120,7 @@ public class PolicyEvaluationResultIT extends ODMPolicyIT {
         );
 
         // GET request
-        ResponseEntity<PolicyEvaluationResultResource> getResponse = policyClient.readOnePolicyEvaluationResult(policyEvaluationResultResource.getId());
+        ResponseEntity<PolicyEvaluationResultResource> getResponse = policyClient.readOnePolicyEvaluationResultResponseEntity(policyEvaluationResultResource.getId());
         verifyResponseEntity(getResponse, HttpStatus.OK, true);
         policyEvaluationResultResource = getResponse.getBody();
 
@@ -147,11 +147,11 @@ public class PolicyEvaluationResultIT extends ODMPolicyIT {
         );
 
         // DELETE request
-        ResponseEntity<Void> deleteResponse = policyClient.deletePolicyEvaluationResult(policyEvaluationResultResource.getId());
+        ResponseEntity<Void> deleteResponse = policyClient.deletePolicyEvaluationResultResponseEntity(policyEvaluationResultResource.getId());
         verifyResponseEntity(deleteResponse, HttpStatus.OK, false);
 
         // GET request to check that the entity is not on the DB anymore
-        ResponseEntity<ErrorRes> getResponse = policyClient.readOnePolicyEvaluationResult(policyEvaluationResultResource.getId());
+        ResponseEntity<ErrorRes> getResponse = policyClient.readOnePolicyEvaluationResultResponseEntity(policyEvaluationResultResource.getId());
         verifyResponseError(
                 getResponse,
                 HttpStatus.NOT_FOUND,

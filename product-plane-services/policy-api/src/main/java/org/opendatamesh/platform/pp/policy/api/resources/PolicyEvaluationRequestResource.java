@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PolicyEvaluationRequestResource {
-    @JsonProperty("type")
+    @JsonProperty("resourceType")
     @Schema(description = "Resource type")
     private ResourceType resourceType;
 

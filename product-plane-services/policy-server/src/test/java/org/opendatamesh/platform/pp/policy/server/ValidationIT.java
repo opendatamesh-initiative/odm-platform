@@ -23,7 +23,7 @@ public class ValidationIT extends ODMPolicyIT {
         // Resources
         EventResource mockEventResource = new EventResource();
         ResponseEntity<PolicyEvaluationResultResource> postResponse =
-                policyClient.validateObject(mockEventResource);
+                policyClient.validateObjectResponseEntity(mockEventResource);
         PolicyEvaluationResultResource policyEvaluationResultResource = postResponse.getBody();
 
         // Verification

@@ -62,16 +62,16 @@ public enum PolicyApiStandardErrors implements ODMApiStandardErrors {
     public String code() { return code; }
     public String description() { return description; }
 
-    public static  PolicyApiStandardErrors getIsEmptyError(String className){
-        return IS_EMPTY_ERRORS.getOrDefault(className, null); //TODO define default error
-    }
     public static PolicyApiStandardErrors getNotFoundError(String className){
         return NOT_FOUND_ERRORS.getOrDefault(className, null); //TODO define default error
     }
-    public static PolicyApiStandardErrors getIsInvalidError(String className){
-        return IS_INVALID.getOrDefault(className, null); //TODO define default error
-    }
-    public static PolicyApiStandardErrors getAlreadyExistsError(String className){
-        return ALREADY_EXISTS.getOrDefault(className, null); //TODO define default error
+
+    public static PolicyApiStandardErrors getByCode(String code) {
+        for (PolicyApiStandardErrors error : values()) {
+            if (error.code.equals(code)) {
+                return error;
+            }
+        }
+        return null; // or throw an exception for not found, based on your use case
     }
 }

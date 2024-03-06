@@ -33,6 +33,9 @@ else
 
 fi
 
+# Generate index.html for github pages
+./ghpagesgenerator.sh
+
 # Add changes to the staging area
 git add .
 

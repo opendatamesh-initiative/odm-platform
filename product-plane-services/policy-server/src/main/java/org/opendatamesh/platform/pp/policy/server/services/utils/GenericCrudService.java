@@ -3,7 +3,7 @@ package org.opendatamesh.platform.pp.policy.server.services.utils;
 import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.NotFoundException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
-import org.opendatamesh.platform.pp.policy.api.resources.exceptions.PolicyApiStandardErrors;
+import org.opendatamesh.platform.pp.policy.server.database.utils.ErrorCodeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,8 +17,10 @@ public abstract class GenericCrudService<T, ID extends Serializable> {
     @Autowired
     private TransactionTemplate transactionTemplate;
 
-    protected GenericCrudService() {
+    private Class<T> classType;
 
+    protected GenericCrudService(Class<T> classType) {
+        this.classType = classType;
     }
 
     //READ METHODS
@@ -46,8 +48,9 @@ public abstract class GenericCrudService<T, ID extends Serializable> {
         }
         if (result == null) {
             throw new NotFoundException(
-                    PolicyApiStandardErrors.SC404_01_RESOURCE_NOT_FOUND,
-                    "Resource with id [" + identifier + "] not found");
+                    ErrorCodeMapper.getErrorCodeForClass(classType),
+                    ErrorCodeMapper.getErrorMessageForClass(classType, identifier)
+            );
         }
         afterFindOne(result, identifier);
         return result;
@@ -71,8 +74,8 @@ public abstract class GenericCrudService<T, ID extends Serializable> {
     public final void checkExistenceOrThrow(ID identifier) {
         if (!exists(identifier)) {
             throw new NotFoundException(
-                    PolicyApiStandardErrors.SC404_01_RESOURCE_NOT_FOUND,
-                    "Resource with id [" + identifier + "] not found"
+                    ErrorCodeMapper.getErrorCodeForClass(classType),
+                    ErrorCodeMapper.getErrorMessageForClass(classType, identifier)
             );
         }
     }

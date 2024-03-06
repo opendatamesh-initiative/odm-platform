@@ -44,13 +44,14 @@ public class PolicyEvaluationResultErrorsIT extends ODMPolicyIT {
                 ODMPolicyResources.RESOURCE_POLICY_EVALUATION_RESULT_1
         );
 
-        // 40401 - Resource not found (parent policy not found)
+        // 40401 - Policy not found (parent policy not found)
         policyEvaluationResultResource.setPolicyId(3L);
         ResponseEntity<ErrorRes> postResponse = policyClient.createPolicyEvaluationResult(policyEvaluationResultResource);
         verifyResponseError(
                 postResponse,
                 HttpStatus.NOT_FOUND,
-                PolicyApiStandardErrors.SC404_01_RESOURCE_NOT_FOUND
+                PolicyApiStandardErrors.SC404_02_POLICY_NOT_FOUND,
+                "Policy with ID [3] not found"
         );
 
     }
@@ -152,7 +153,7 @@ public class PolicyEvaluationResultErrorsIT extends ODMPolicyIT {
                 parentPolicyResource.getId()
         );
 
-        // 40401 - Resource not found (parent policy evaluation result)
+        // 40403 - PolicyEvaluationResult not found (parent policy evaluation result)
         policyEvaluationResultResource.setPolicyId(parentPolicyResource.getId());
         ResponseEntity<ErrorRes> putResponse = policyClient.updatePolicyEvaluationResult(
                 7L, policyEvaluationResultResource
@@ -160,11 +161,11 @@ public class PolicyEvaluationResultErrorsIT extends ODMPolicyIT {
         verifyResponseError(
                 putResponse,
                 HttpStatus.NOT_FOUND,
-                PolicyApiStandardErrors.SC404_01_RESOURCE_NOT_FOUND,
-                "Resource with id [7] not found"
+                PolicyApiStandardErrors.SC404_03_POLICY_EVALUATION_RESULT_NOT_FOUND,
+                "PolicyEvaluationResult with ID [7] not found"
         );
 
-        // 40401 - Resource not found (parent policy not found)
+        // 40402 - Resource not found (parent policy not found)
         policyEvaluationResultResource.setPolicyId(3L);
         putResponse = policyClient.updatePolicyEvaluationResult(
                 policyEvaluationResultResource.getId(), policyEvaluationResultResource
@@ -172,8 +173,8 @@ public class PolicyEvaluationResultErrorsIT extends ODMPolicyIT {
         verifyResponseError(
                 putResponse,
                 HttpStatus.NOT_FOUND,
-                PolicyApiStandardErrors.SC404_01_RESOURCE_NOT_FOUND,
-                "Policy with version [3] not found"
+                PolicyApiStandardErrors.SC404_02_POLICY_NOT_FOUND,
+                "Policy with ID [3] not found"
         );
 
     }
@@ -255,12 +256,13 @@ public class PolicyEvaluationResultErrorsIT extends ODMPolicyIT {
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     public void testReadOnePolicyEvaluationResultError404xx() throws JsonProcessingException {
 
-        // 40401 - Resource not found
+        // 40403 - PolicyEvaluationResult not found
         ResponseEntity getResponse = policyClient.readOnePolicyEvaluationResult(2L);
         verifyResponseError(
                 getResponse,
                 HttpStatus.NOT_FOUND,
-                PolicyApiStandardErrors.SC404_01_RESOURCE_NOT_FOUND
+                PolicyApiStandardErrors.SC404_03_POLICY_EVALUATION_RESULT_NOT_FOUND,
+                "PolicyEvaluationResult with ID [2] not found"
         );
 
     }
@@ -278,7 +280,8 @@ public class PolicyEvaluationResultErrorsIT extends ODMPolicyIT {
         verifyResponseError(
                 deleteResponse,
                 HttpStatus.NOT_FOUND,
-                PolicyApiStandardErrors.SC404_01_RESOURCE_NOT_FOUND
+                PolicyApiStandardErrors.SC404_03_POLICY_EVALUATION_RESULT_NOT_FOUND,
+                "PolicyEvaluationResult with ID [2] not found"
         );
 
     }

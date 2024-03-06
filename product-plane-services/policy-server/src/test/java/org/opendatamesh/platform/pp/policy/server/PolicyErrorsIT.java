@@ -45,7 +45,29 @@ public class PolicyErrorsIT extends ODMPolicyIT {
         Long policyPolicyEngineId = policyResource.getPolicyEngineId();
         ResponseEntity<ErrorRes> postResponse;
 
+        // 42201 - Policy is invalid - Impossible to create a Policy with an explicit an ID
+        policyResource.setId(1L);
+        postResponse = policyClient.createPolicy(policyResource);
+        verifyResponseError(
+                postResponse,
+                HttpStatus.UNPROCESSABLE_ENTITY,
+                PolicyApiStandardErrors.SC422_02_POLICY_IS_INVALID,
+                "Impossible to create a Policy with an explicit Id"
+        );
+
+        // 42201 - Policy is invalid - Impossible to create a Policy with an explicit an rootId
+        policyResource.setId(null);
+        policyResource.setRootId(1L);
+        postResponse = policyClient.createPolicy(policyResource);
+        verifyResponseError(
+                postResponse,
+                HttpStatus.UNPROCESSABLE_ENTITY,
+                PolicyApiStandardErrors.SC422_02_POLICY_IS_INVALID,
+                "Impossible to create a Policy with an explicit rootId"
+        );
+
         // 42201 - Policy is invalid - Policy name cannot be null
+        policyResource.setRootId(null);
         policyResource.setName(null);
         postResponse = policyClient.createPolicy(policyResource);
         verifyResponseError(
@@ -120,8 +142,8 @@ public class PolicyErrorsIT extends ODMPolicyIT {
         verifyResponseError(
                 putResponse,
                 HttpStatus.NOT_FOUND,
-                PolicyApiStandardErrors.SC404_01_RESOURCE_NOT_FOUND,
-                "Resource with id [7] not found"
+                PolicyApiStandardErrors.SC404_02_POLICY_NOT_FOUND,
+                "Policy with ID [7] not found"
         );
 
         // 40401 - Resource not found (parent policy engine not found)
@@ -131,8 +153,8 @@ public class PolicyErrorsIT extends ODMPolicyIT {
         verifyResponseError(
                 putResponse,
                 HttpStatus.NOT_FOUND,
-                PolicyApiStandardErrors.SC404_01_RESOURCE_NOT_FOUND,
-                "Resource with id [3] not found"
+                PolicyApiStandardErrors.SC404_01_POLICY_ENGINE_NOT_FOUND,
+                "PolicyEngine with ID [3] not found"
         );
 
     }
@@ -205,12 +227,13 @@ public class PolicyErrorsIT extends ODMPolicyIT {
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     public void testReadOnePolicyError404xx() throws JsonProcessingException {
 
-        // 40401 - Resource not found
+        // 40401 - Policy not found
         ResponseEntity getResponse = policyClient.readOnePolicy(2L);
         verifyResponseError(
                 getResponse,
                 HttpStatus.NOT_FOUND,
-                PolicyApiStandardErrors.SC404_01_RESOURCE_NOT_FOUND
+                PolicyApiStandardErrors.SC404_02_POLICY_NOT_FOUND,
+                "Policy with ID [2] not found"
         );
 
     }
@@ -227,7 +250,8 @@ public class PolicyErrorsIT extends ODMPolicyIT {
         verifyResponseError(
                 deleteResponse,
                 HttpStatus.NOT_FOUND,
-                PolicyApiStandardErrors.SC404_01_RESOURCE_NOT_FOUND
+                PolicyApiStandardErrors.SC404_02_POLICY_NOT_FOUND,
+                "Policy with ID [2] not found"
         );
 
     }

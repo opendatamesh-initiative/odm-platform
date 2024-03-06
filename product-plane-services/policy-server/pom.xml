@@ -238,6 +238,11 @@ License.
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency> <!-- Immutable Map -->
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>31.0.1-jre</version>
+        </dependency>
 
         <!-- Internals -->
         <dependency>

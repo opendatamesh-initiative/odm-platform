@@ -153,12 +153,12 @@ and aggregate them in a new `redocly-docs` directory on the `root` level (i.e., 
 sh generate-full-redoc-static-html.sh
 ```
 
-After the generation, it's also possible to upload the static files to an AWS S3 Bucket with the sript `upload-redoc-static-html-to-s3` on the `root` level.
+After the generation, it's also possible to upload the static files to an AWS S3 Bucket with the script `upload-redoc-static-html-to-s3` on the `root` level.
 This script require:
 * AWS CLI installed
 * 2 parameters:
   * first one, the version of the doc to upload (e.g., _1.0.0_)
-  * second one, the name of the AWS S3 Bucket (default value for the official ODM S3 Bucket: _odmdocbucket_)
+  * second one, the name of the AWS S3 Bucket
 * 3 environment variables:
   * AWS_ACCESS_KEY_ID
   * AWS_SECRET_ACCESS_KEY
@@ -166,5 +166,19 @@ This script require:
 
 An example of execution could be: 
 ```bash
-sh upload-redoc-static-html-to-s3 1.0.0 odmdocbucket
+./upload-redoc-static-html-to-s3.sh 1.0.0 odmdocbucket
 ```
+
+In addition to the S3 options, it could also be possible to upload the static files to the default GitHub repository 
+for the API documentation with the script `upload-redoc-static-html-to-github` on the `root` level.
+This script require:
+* Git
+* SSH Key for editing `odminitiative` repositories
+* 1 parameter: the version of the pushed documentation (e.g., _1.0.0_)
+
+An example of execution could be:
+```bash
+./upload-redoc-static-html-to-github.sh 1.0.0
+```
+
+The latter option is also the default one in CICD pipelines.

@@ -89,3 +89,7 @@ jobs:
           docker push opendatamesh/odm-platform-devops:${{ env.TAG_VERSION }}
           docker push opendatamesh/odm-platform-blueprint:${{ env.TAG_VERSION }}
           docker push opendatamesh/odm-platform-policy:${{ env.TAG_VERSION }}
+      - name: Publish API doc
+        run: |
+          ./generate-full-redoc-static-html.sh
+          ./upload-redoc-static-html-to-github.sh ${{ env.TAG_VERSION }}

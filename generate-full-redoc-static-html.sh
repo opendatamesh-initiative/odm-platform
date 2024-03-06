@@ -32,4 +32,4 @@ for FILE in $REDOC_FILES; do
     echo "Renamed and copied $FILE to $NEW_NAME"
 done
 
-echo "Aggregated documentation generated successfully in '$AGGREGATED_DOC_DIR'"
+echo "Aggregated documentation generated successfully in $AGGREGATED_DOC_DIR"

@@ -8,13 +8,11 @@ import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.internals.LifecycleInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.internals.LifecycleTaskInfoDPDS;
-import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatus;
-import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskStatus;
-import org.opendatamesh.platform.pp.devops.api.resources.DevOpsApiStandardErrors;
-import org.opendatamesh.platform.pp.devops.api.resources.TaskResultResource;
+import org.opendatamesh.platform.pp.devops.api.resources.*;
 import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsClients;
 import org.opendatamesh.platform.pp.devops.server.database.entities.Activity;
 import org.opendatamesh.platform.pp.devops.server.database.entities.Task;
+import org.opendatamesh.platform.pp.devops.server.database.mappers.ActivityMapper;
 import org.opendatamesh.platform.pp.devops.server.database.repositories.ActivityRepository;
 import org.opendatamesh.platform.pp.devops.server.resources.context.ActivityContext;
 import org.opendatamesh.platform.pp.devops.server.resources.context.ActivityResultStatus;
@@ -52,6 +50,9 @@ public class ActivityService {
 
     @Autowired
     LifecycleService lifecycleService;
+
+    @Autowired
+    private ActivityMapper mapper;
 
     private static final Logger logger = LoggerFactory.getLogger(ActivityService.class);
 
@@ -174,9 +175,10 @@ public class ActivityService {
                             + "] of data product [" + activity.getDataProductVersion() + "]");
         }
 
-        // TODO validate stage transition with policy engine (FROM stage TO stage)
-        if(!policyServiceProxy.validateStageTransition()) { // Define which object evaluate
-            // Throw an exception for illegal stage transition
+        //TODO get the activity before
+        ActivityResource lastExecutedActivity = null;
+        if (!policyServiceProxy.isStageTransitionValid(lastExecutedActivity, mapper.toResource(activity))) {
+            //TODO Throw an exception for illegal stage transition
         }
 
         // update activity's status
@@ -239,8 +241,9 @@ public class ActivityService {
         }
         activity = saveActivity(activity);
 
-        // TODO
-        policyServiceProxy.validateContextualCoherence(); // Define which object pass to it
+        if (!policyServiceProxy.isContextuallyCoherent(mapper.toResource(activity))) {
+            //TODO throw exception
+        }
 
         return activity;
     }

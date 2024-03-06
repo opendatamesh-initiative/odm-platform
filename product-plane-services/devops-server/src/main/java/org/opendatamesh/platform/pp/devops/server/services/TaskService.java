@@ -215,8 +215,9 @@ public class TaskService {
                     }
                 }
 
-                // TODO
-                policyServiceProxy.validateCallbackResult(); // Pass the taskResultResource or a subobject of it
+                if(!policyServiceProxy.isCallbackResultValid(taskResultResource)){
+                    //TODO throw exception
+                }
 
             } else {
                 if (taskRealStatus != null && taskRealStatus.equals(TaskStatus.FAILED)) {

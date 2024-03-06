@@ -34,7 +34,7 @@ public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySea
     private PolicyEngineService policyEngineService;
 
     protected PolicyService() {
-        super(Policy.class);
+
     }
 
     @Override
@@ -44,7 +44,7 @@ public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySea
 
     @Override
     protected void beforeCreation(Policy objectToCreate) {
-        if(repository.existsByName(objectToCreate.getName())) {
+        if (repository.existsByName(objectToCreate.getName())) {
             throw new UnprocessableEntityException(
                     PolicyApiStandardErrors.SC422_04_POLICY_ALREADY_EXISTS,
                     "Policy with name [" + objectToCreate.getName() + "] already exists"
@@ -93,7 +93,7 @@ public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySea
 
     @Override
     protected void validate(Policy policy) {
-        if(policy == null) {
+        if (policy == null) {
             throw new BadRequestException(
                     PolicyApiStandardErrors.SC400_02_POLICY_IS_EMPTY,
                     "Policy object cannot be null"
@@ -121,7 +121,7 @@ public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySea
 
     @Override
     protected void reconcile(Policy objectToReconcile) {
-        if (objectToReconcile.getPolicyEngineId() != null) {//TODO understand if a policy can exist without an engine
+        if (objectToReconcile.getPolicyEngineId() != null) {
             PolicyEngine policyEngine = policyEngineService.findOne(objectToReconcile.getPolicyEngineId());
             objectToReconcile.setPolicyEngine(policyEngine);
         }
@@ -162,4 +162,10 @@ public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySea
     public PolicyResource findPolicyResourceVersion(Long versionId) {
         return mapper.toRes(findPolicyVersion(versionId));
     }
+
+    @Override
+    protected Class<Policy> getEntityClass() {
+        return Policy.class;
+    }
+
 }

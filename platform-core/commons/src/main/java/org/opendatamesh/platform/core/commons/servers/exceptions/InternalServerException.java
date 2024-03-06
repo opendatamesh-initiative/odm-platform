@@ -18,6 +18,10 @@ public class InternalServerException extends ODMApiException {
 	public InternalServerException() {
 	}
 
+	public InternalServerException(String message) {
+		super(message);
+	}
+
 	public InternalServerException(ODMApiStandardErrors error, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
 		super(error, message, cause, enableSuppression, writableStackTrace);
 	}

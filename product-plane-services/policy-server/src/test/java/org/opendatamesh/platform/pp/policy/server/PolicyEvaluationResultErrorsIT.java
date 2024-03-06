@@ -1,14 +1,12 @@
 package org.opendatamesh.platform.pp.policy.server;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.apache.xpath.operations.Bool;
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
 import org.opendatamesh.platform.pp.policy.api.resources.exceptions.PolicyApiStandardErrors;
-import org.opendatamesh.platform.pp.policy.server.database.entities.PolicyEvaluationResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
@@ -25,7 +23,7 @@ public class PolicyEvaluationResultErrorsIT extends ODMPolicyIT {
     public void testCreatePolicyEvaluationResultError400xx() throws JsonProcessingException {
 
         // 40001 - Empty PolicyEvaluationResult
-        ResponseEntity<ErrorRes> postResponse = policyClient.createPolicyEvaluationResult(null);
+        ResponseEntity<ErrorRes> postResponse = policyClient.createPolicyEvaluationResultResponseEntity(null);
         verifyResponseError(
                 postResponse,
                 HttpStatus.BAD_REQUEST,
@@ -46,7 +44,7 @@ public class PolicyEvaluationResultErrorsIT extends ODMPolicyIT {
 
         // 40401 - Policy not found (parent policy not found)
         policyEvaluationResultResource.setPolicyId(3L);
-        ResponseEntity<ErrorRes> postResponse = policyClient.createPolicyEvaluationResult(policyEvaluationResultResource);
+        ResponseEntity<ErrorRes> postResponse = policyClient.createPolicyEvaluationResultResponseEntity(policyEvaluationResultResource);
         verifyResponseError(
                 postResponse,
                 HttpStatus.NOT_FOUND,
@@ -70,7 +68,7 @@ public class PolicyEvaluationResultErrorsIT extends ODMPolicyIT {
 
         // 42203 - PolicyEvaluationResult is invalid - PolicyEvaluationResult policyID cannot be null
         policyEvaluationResultResource.setPolicyId(null);
-        postResponse = policyClient.createPolicyEvaluationResult(policyEvaluationResultResource);
+        postResponse = policyClient.createPolicyEvaluationResultResponseEntity(policyEvaluationResultResource);
         verifyResponseError(
                 postResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
@@ -81,7 +79,7 @@ public class PolicyEvaluationResultErrorsIT extends ODMPolicyIT {
         // 42203 - PolicyEngine is invalid - PolicyEngine name cannot be null
         policyEvaluationResultResource.setPolicyId(policyEvaluationResultPolicyId);
         policyEvaluationResultResource.setResult(null);
-        postResponse = policyClient.createPolicyEvaluationResult(policyEvaluationResultResource);
+        postResponse = policyClient.createPolicyEvaluationResultResponseEntity(policyEvaluationResultResource);
         verifyResponseError(
                 postResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
@@ -98,10 +96,10 @@ public class PolicyEvaluationResultErrorsIT extends ODMPolicyIT {
         updatedParentPolicyResource.setPolicyEngineId(parentPolicyEngine.getId());
         updatedParentPolicyResource.setRootId(parentPolicyResource.getRootId());
         updatedParentPolicyResource.setCreatedAt(parentPolicyResource.getCreatedAt());
-        policyClient.updatePolicy(parentPolicyResource.getRootId(), updatedParentPolicyResource);
+        policyClient.updatePolicyResponseEntity(parentPolicyResource.getRootId(), updatedParentPolicyResource);
         policyEvaluationResultResource.setPolicyId(parentPolicyResource.getId());
         policyEvaluationResultResource.setResult(policyEvaluationResultResult);
-        postResponse = policyClient.createPolicyEvaluationResult(policyEvaluationResultResource);
+        postResponse = policyClient.createPolicyEvaluationResultResponseEntity(policyEvaluationResultResource);
         verifyResponseError(
                 postResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
@@ -129,7 +127,7 @@ public class PolicyEvaluationResultErrorsIT extends ODMPolicyIT {
         );
 
         // 40001 - Empty PolicyEvaluationResult
-        ResponseEntity<ErrorRes> putResponse = policyClient.updatePolicyEvaluationResult(
+        ResponseEntity<ErrorRes> putResponse = policyClient.updatePolicyEvaluationResultResponseEntity(
                 policyEvaluationResultResource.getId(), null
         );
         verifyResponseError(
@@ -155,19 +153,19 @@ public class PolicyEvaluationResultErrorsIT extends ODMPolicyIT {
 
         // 40403 - PolicyEvaluationResult not found (parent policy evaluation result)
         policyEvaluationResultResource.setPolicyId(parentPolicyResource.getId());
-        ResponseEntity<ErrorRes> putResponse = policyClient.updatePolicyEvaluationResult(
+        ResponseEntity<ErrorRes> putResponse = policyClient.updatePolicyEvaluationResultResponseEntity(
                 7L, policyEvaluationResultResource
         );
         verifyResponseError(
                 putResponse,
                 HttpStatus.NOT_FOUND,
                 PolicyApiStandardErrors.SC404_03_POLICY_EVALUATION_RESULT_NOT_FOUND,
-                "PolicyEvaluationResult with ID [7] not found"
+                "Resource with ID [7] not found"
         );
 
         // 40402 - Resource not found (parent policy not found)
         policyEvaluationResultResource.setPolicyId(3L);
-        putResponse = policyClient.updatePolicyEvaluationResult(
+        putResponse = policyClient.updatePolicyEvaluationResultResponseEntity(
                 policyEvaluationResultResource.getId(), policyEvaluationResultResource
         );
         verifyResponseError(
@@ -196,7 +194,7 @@ public class PolicyEvaluationResultErrorsIT extends ODMPolicyIT {
 
         // 42203 - PolicyEvaluationResult is invalid - PolicyEvaluationResult policyID cannot be null
         policyEvaluationResultResource.setPolicyId(null);
-        putResponse = policyClient.updatePolicyEvaluationResult(
+        putResponse = policyClient.updatePolicyEvaluationResultResponseEntity(
                 policyEvaluationResultResource.getId(), policyEvaluationResultResource
         );
         verifyResponseError(
@@ -209,7 +207,7 @@ public class PolicyEvaluationResultErrorsIT extends ODMPolicyIT {
         // 42203 - PolicyEngine is invalid - PolicyEngine name cannot be null
         policyEvaluationResultResource.setPolicyId(policyEvaluationResultPolicyId);
         policyEvaluationResultResource.setResult(null);
-        putResponse = policyClient.updatePolicyEvaluationResult(
+        putResponse = policyClient.updatePolicyEvaluationResultResponseEntity(
                 policyEvaluationResultResource.getId(), policyEvaluationResultResource
         );
         verifyResponseError(
@@ -226,10 +224,10 @@ public class PolicyEvaluationResultErrorsIT extends ODMPolicyIT {
         updatedParentPolicyResource.setPolicyEngineId(parentEngineResource.getId());
         updatedParentPolicyResource.setRootId(parentPolicyResource.getRootId());
         updatedParentPolicyResource.setCreatedAt(parentPolicyResource.getCreatedAt());
-        policyClient.updatePolicy(parentPolicyResource.getRootId(), updatedParentPolicyResource);
+        policyClient.updatePolicyResponseEntity(parentPolicyResource.getRootId(), updatedParentPolicyResource);
         policyEvaluationResultResource.setPolicyId(parentPolicyResource.getId());
         policyEvaluationResultResource.setResult(policyEvaluationResultResult);
-        putResponse = policyClient.updatePolicyEvaluationResult(
+        putResponse = policyClient.updatePolicyEvaluationResultResponseEntity(
                 policyEvaluationResultResource.getId(), policyEvaluationResultResource
         );
         verifyResponseError(
@@ -257,12 +255,12 @@ public class PolicyEvaluationResultErrorsIT extends ODMPolicyIT {
     public void testReadOnePolicyEvaluationResultError404xx() throws JsonProcessingException {
 
         // 40403 - PolicyEvaluationResult not found
-        ResponseEntity getResponse = policyClient.readOnePolicyEvaluationResult(2L);
+        ResponseEntity getResponse = policyClient.readOnePolicyEvaluationResultResponseEntity(2L);
         verifyResponseError(
                 getResponse,
                 HttpStatus.NOT_FOUND,
                 PolicyApiStandardErrors.SC404_03_POLICY_EVALUATION_RESULT_NOT_FOUND,
-                "PolicyEvaluationResult with ID [2] not found"
+                "Resource with ID [2] not found"
         );
 
     }
@@ -276,12 +274,12 @@ public class PolicyEvaluationResultErrorsIT extends ODMPolicyIT {
     public void testDeleteOnePolicyEvaluationResultError404xx() throws JsonProcessingException {
 
         // 40401 - Resource not found
-        ResponseEntity deleteResponse = policyClient.deletePolicyEvaluationResult(2L);
+        ResponseEntity deleteResponse = policyClient.deletePolicyEvaluationResultResponseEntity(2L);
         verifyResponseError(
                 deleteResponse,
                 HttpStatus.NOT_FOUND,
                 PolicyApiStandardErrors.SC404_03_POLICY_EVALUATION_RESULT_NOT_FOUND,
-                "PolicyEvaluationResult with ID [2] not found"
+                "Resource with ID [2] not found"
         );
 
     }

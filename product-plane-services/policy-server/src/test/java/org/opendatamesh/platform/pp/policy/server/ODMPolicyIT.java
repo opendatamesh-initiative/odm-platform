@@ -6,7 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.opendatamesh.platform.core.commons.clients.ODMIntegrationTest;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
-import org.opendatamesh.platform.pp.policy.api.clients.PolicyClient;
+import org.opendatamesh.platform.pp.policy.api.clients.PolicyClientImpl;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
@@ -35,13 +35,13 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 //@ActiveProfiles("dev")
 //@ActiveProfiles("testpostgresql")
 //@ActiveProfiles("testmysql")
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = { ODMPolicyApp.class })
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = {ODMPolicyApp.class})
 public class ODMPolicyIT extends ODMIntegrationTest {
 
     @LocalServerPort
     protected String port;
 
-    protected PolicyClient policyClient;
+    protected PolicyClientImpl policyClient;
 
     protected ODMPolicyResourceBuilder resourceBuilder;
 
@@ -58,7 +58,7 @@ public class ODMPolicyIT extends ODMIntegrationTest {
 
         mapper = ObjectMapperFactory.JSON_MAPPER; // Probably removable
         resourceBuilder = new ODMPolicyResourceBuilder();
-        policyClient = new PolicyClient("http://localhost:" + port);
+        policyClient = new PolicyClientImpl("http://localhost:" + port, mapper);
 
     }
 
@@ -106,7 +106,7 @@ public class ODMPolicyIT extends ODMIntegrationTest {
         ResponseEntity<PolicyResource> postPolicyResponse = null;
 
         try {
-            postPolicyResponse = policyClient.createPolicy(policyResource);
+            postPolicyResponse = policyClient.createPolicyResponseEntity(policyResource);
         } catch (Throwable t) {
             t.printStackTrace();
             fail("Impossible to create policy: " + t.getMessage());
@@ -137,7 +137,7 @@ public class ODMPolicyIT extends ODMIntegrationTest {
         ResponseEntity<PolicyEngineResource> postPolicyEngineResponse = null;
 
         try {
-            postPolicyEngineResponse = policyClient.createPolicyEngine(policyEngineResource);
+            postPolicyEngineResponse = policyClient.createPolicyEngineResponseEntity(policyEngineResource);
         } catch (Throwable t) {
             t.printStackTrace();
             fail("Impossible to create policy engine: " + t.getMessage());
@@ -169,7 +169,7 @@ public class ODMPolicyIT extends ODMIntegrationTest {
         ResponseEntity<PolicyEvaluationResultResource> postPolicyEvaluationResultResponse = null;
 
         try {
-            postPolicyEvaluationResultResponse = policyClient.createPolicyEvaluationResult(policyEvaluationResultResource);
+            postPolicyEvaluationResultResponse = policyClient.createPolicyEvaluationResultResponseEntity(policyEvaluationResultResource);
         } catch (Throwable t) {
             t.printStackTrace();
             fail("Impossible to create policy evaluation result: " + t.getMessage());

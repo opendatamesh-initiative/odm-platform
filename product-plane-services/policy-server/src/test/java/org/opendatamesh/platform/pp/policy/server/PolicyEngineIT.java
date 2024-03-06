@@ -49,7 +49,7 @@ public class PolicyEngineIT extends ODMPolicyIT {
         policyEngineResourceUpdated.setCreatedAt(policyEngineResource.getCreatedAt());
 
         // PUT request
-        ResponseEntity<PolicyEngineResource> putResponse = policyClient.updatePolicyEngine(
+        ResponseEntity<PolicyEngineResource> putResponse = policyClient.updatePolicyEngineResponseEntity(
                 policyEngineResource.getId(),
                 policyEngineResourceUpdated
         );
@@ -75,7 +75,7 @@ public class PolicyEngineIT extends ODMPolicyIT {
         createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_2);
 
         // GET request
-        ResponseEntity<PagedPolicyEngineResource> getResponse = policyClient.readAllPolicyEngines();
+        ResponseEntity<PagedPolicyEngineResource> getResponse = policyClient.readAllPolicyEnginesResponseEntity();
         verifyResponseEntity(getResponse, HttpStatus.OK, true);
         List<PolicyEngineResource> policyEngines = getResponse.getBody().getContent();
 
@@ -99,7 +99,7 @@ public class PolicyEngineIT extends ODMPolicyIT {
         PolicyEngineResource policyEngineResource = createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);
 
         // GET request
-        ResponseEntity<PolicyEngineResource> getResponse = policyClient.readOnePolicyEngine(policyEngineResource.getId());
+        ResponseEntity<PolicyEngineResource> getResponse = policyClient.readOnePolicyEngineResponseEntity(policyEngineResource.getId());
         verifyResponseEntity(getResponse, HttpStatus.OK, true);
         policyEngineResource = getResponse.getBody();
 
@@ -121,16 +121,16 @@ public class PolicyEngineIT extends ODMPolicyIT {
         PolicyEngineResource policyEngineResource = createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);
 
         // DELETE request
-        ResponseEntity<Void> deleteResponse = policyClient.deletePolicyEngine(policyEngineResource.getId());
+        ResponseEntity<Void> deleteResponse = policyClient.deletePolicyEngineResponseEntity(policyEngineResource.getId());
         verifyResponseEntity(deleteResponse, HttpStatus.OK, false);
 
         // GET request to check that the entity is not on the DB anymore
-        ResponseEntity<ErrorRes> getResponse = policyClient.readOnePolicyEngine(policyEngineResource.getId());
+        ResponseEntity<ErrorRes> getResponse = policyClient.readOnePolicyEngineResponseEntity(policyEngineResource.getId());
         verifyResponseError(
                 getResponse,
                 HttpStatus.NOT_FOUND,
                 PolicyApiStandardErrors.SC404_01_POLICY_ENGINE_NOT_FOUND,
-                "PolicyEngine with ID [" + policyEngineResource.getId() + "] not found"
+                "Resource with ID [" + policyEngineResource.getId() + "] not found"
         );
 
     }

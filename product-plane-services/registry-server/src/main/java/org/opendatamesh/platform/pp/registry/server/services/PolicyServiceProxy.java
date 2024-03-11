@@ -48,9 +48,9 @@ public class PolicyServiceProxy {
         }
         try {
             PolicyEvaluationRequestResource evaluationRequest = buildEvaluationRequest(mostRecentDataProduct, newDataProductVersion);
-            ValidationResponseResource evaluationResult = policyClient.validateObject(evaluationRequest);
+            ValidationResponseResource evaluationResult = policyClient.validateInputObject(evaluationRequest);
 
-            if (!evaluationResult.getResult()) {
+            if (Boolean.FALSE.equals(evaluationResult.getResult())) {
                 logger.warn("Policy evaluation failed during DataProduct version creation");
             }
 

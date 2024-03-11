@@ -15,8 +15,8 @@ public class ValidationControllerImpl extends AbstractValidationController {
     ValidationService service;
 
     @Override
-    public ValidationResponseResource validateObject(PolicyEvaluationRequestResource evaluationRequest) {
-        return service.validateObject(evaluationRequest);
+    public ValidationResponseResource validateInputObject(PolicyEvaluationRequestResource evaluationRequest) {
+        return service.validateInput(evaluationRequest);
     }
 
 }

@@ -101,9 +101,9 @@ public abstract class AbstractValidationController implements PolicyValidationCo
             @Parameter(description = "")
             @RequestBody(required = false) PolicyEvaluationRequestResource evaluationRequest
     ) {
-        return validateObject(evaluationRequest);
+        return validateInputObject(evaluationRequest);
     }
 
-    public abstract ValidationResponseResource validateObject(PolicyEvaluationRequestResource evaluationRequest);
+    public abstract ValidationResponseResource validateInputObject(PolicyEvaluationRequestResource evaluationRequest);
 
 }

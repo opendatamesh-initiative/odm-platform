@@ -6,6 +6,6 @@ import org.opendatamesh.platform.pp.policy.api.resources.ValidationResponseResou
 
 public interface PolicyValidationController {
 
-    ValidationResponseResource validateObject(PolicyEvaluationRequestResource eventResource);
+    ValidationResponseResource validateInputObject(PolicyEvaluationRequestResource eventResource);
 
 }

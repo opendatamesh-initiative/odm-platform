@@ -57,8 +57,8 @@ public class PolicyServiceProxy {
             }
             evaluationRequest.setAfterState(objectMapper.writeValueAsString(activityToBeExecuted));
 
-            ValidationResponseResource evaluationResult = policyClient.validateObject(evaluationRequest);
-            if (!evaluationResult.getResult()) {
+            ValidationResponseResource evaluationResult = policyClient.validateInputObject(evaluationRequest);
+            if (Boolean.FALSE.equals(evaluationResult.getResult())) {
                 logger.warn("Policy evaluation failed during stage transition.");
             }
             return evaluationResult.getResult();
@@ -84,8 +84,8 @@ public class PolicyServiceProxy {
             evaluationRequest.setResourceType(PolicyEvaluationRequestResource.ResourceType.TASK_RESULT);
             evaluationRequest.setCurrentState(objectMapper.writeValueAsString(taskResult));
 
-            ValidationResponseResource evaluationResult = policyClient.validateObject(evaluationRequest);
-            if (!evaluationResult.getResult()) {
+            ValidationResponseResource evaluationResult = policyClient.validateInputObject(evaluationRequest);
+            if (Boolean.FALSE.equals(evaluationResult.getResult())) {
                 logger.warn("Policy evaluation failed on callback result validation.");
             }
             return evaluationResult.getResult();
@@ -111,8 +111,8 @@ public class PolicyServiceProxy {
             evaluationRequest.setResourceType(PolicyEvaluationRequestResource.ResourceType.ACTIVITY);
             evaluationRequest.setCurrentState(objectMapper.writeValueAsString(activity));
 
-            ValidationResponseResource evaluationResult = policyClient.validateObject(evaluationRequest);
-            if (!evaluationResult.getResult()) {
+            ValidationResponseResource evaluationResult = policyClient.validateInputObject(evaluationRequest);
+            if (Boolean.FALSE.equals(evaluationResult.getResult())) {
                 logger.warn("Policy evaluation failed during context coherence validation.");
             }
             return evaluationResult.getResult();

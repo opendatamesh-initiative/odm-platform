@@ -135,7 +135,7 @@ public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySea
         List<Specification<Policy>> specifications = new ArrayList<>();
         specifications.add(PolicyRepository.Specs.hasLastVersion(Boolean.TRUE));
 
-        if(filters.getSuite() != null) {
+        if(StringUtils.hasText(filters.getSuite())) {
             specifications.add(PolicyRepository.Specs.hasSuite(filters.getSuite()));
         }
 
@@ -163,18 +163,6 @@ public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySea
 
     public PolicyResource findPolicyResourceVersion(Long versionId) {
         return mapper.toRes(findPolicyVersion(versionId));
-    }
-
-    public List<Policy> findAllFilteredList(PolicySearchOptions filters) {
-        Specification<Policy> spec = getSpecFromFilters(filters);
-        try {
-            return repository.findAll(spec);
-        } catch (Exception e) {
-            throw new InternalServerException(
-                    ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    e.getMessage()
-            );
-        }
     }
 
     @Override

@@ -1,8 +1,6 @@
 package org.opendatamesh.platform.pp.policy.server.services;
 
-import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
-import org.opendatamesh.platform.core.commons.servers.exceptions.NotFoundException;
-import org.opendatamesh.platform.core.commons.servers.exceptions.UnprocessableEntityException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.*;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicySearchOptions;
 import org.opendatamesh.platform.pp.policy.api.resources.exceptions.PolicyApiStandardErrors;
@@ -132,11 +130,15 @@ public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySea
         return repository;
     }
 
-
     @Override
     protected Specification<Policy> getSpecFromFilters(PolicySearchOptions filters) {
         List<Specification<Policy>> specifications = new ArrayList<>();
         specifications.add(PolicyRepository.Specs.hasLastVersion(Boolean.TRUE));
+
+        if(StringUtils.hasText(filters.getSuite())) {
+            specifications.add(PolicyRepository.Specs.hasSuite(filters.getSuite()));
+        }
+
         return SpecsUtils.combineWithAnd(specifications);
     }
 

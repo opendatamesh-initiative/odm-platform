@@ -13,6 +13,7 @@ import org.opendatamesh.platform.pp.policy.api.clients.PolicyClient;
 import org.opendatamesh.platform.pp.policy.api.clients.PolicyClientImpl;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationRequestResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
+import org.opendatamesh.platform.pp.policy.api.resources.ValidationResponseResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,11 +57,11 @@ public class PolicyServiceProxy {
             }
             evaluationRequest.setAfterState(objectMapper.writeValueAsString(activityToBeExecuted));
 
-            PolicyEvaluationResultResource evaluationResult = policyClient.validateObject(evaluationRequest);
+            ValidationResponseResource evaluationResult = policyClient.validateInputObject(evaluationRequest);
             if (Boolean.FALSE.equals(evaluationResult.getResult())) {
-                logger.warn("Policy evaluation failed during stage transition. Reason:\n{}", evaluationResult.getOutputObject());
+                logger.warn("Policy evaluation failed during stage transition.");
             }
-            return Boolean.TRUE.equals(evaluationResult.getResult());
+            return evaluationResult.getResult();
         } catch (JsonProcessingException e) {
             throw new InternalServerException(e); //TODO
         } catch (Exception e) {
@@ -83,11 +84,11 @@ public class PolicyServiceProxy {
             evaluationRequest.setResourceType(PolicyEvaluationRequestResource.ResourceType.TASK_RESULT);
             evaluationRequest.setCurrentState(objectMapper.writeValueAsString(taskResult));
 
-            PolicyEvaluationResultResource evaluationResult = policyClient.validateObject(evaluationRequest);
+            ValidationResponseResource evaluationResult = policyClient.validateInputObject(evaluationRequest);
             if (Boolean.FALSE.equals(evaluationResult.getResult())) {
-                logger.warn("Policy evaluation failed on callback result validation. Reason:\n{}", evaluationResult.getOutputObject());
+                logger.warn("Policy evaluation failed on callback result validation.");
             }
-            return Boolean.TRUE.equals(evaluationResult.getResult());
+            return evaluationResult.getResult();
         } catch (JsonProcessingException e) {
             throw new InternalServerException(e); //TODO
         } catch (Exception e) {
@@ -110,11 +111,11 @@ public class PolicyServiceProxy {
             evaluationRequest.setResourceType(PolicyEvaluationRequestResource.ResourceType.ACTIVITY);
             evaluationRequest.setCurrentState(objectMapper.writeValueAsString(activity));
 
-            PolicyEvaluationResultResource evaluationResult = policyClient.validateObject(evaluationRequest);
+            ValidationResponseResource evaluationResult = policyClient.validateInputObject(evaluationRequest);
             if (Boolean.FALSE.equals(evaluationResult.getResult())) {
-                logger.warn("Policy evaluation failed during context coherence validation. Reason:\n{}", evaluationResult.getOutputObject());
+                logger.warn("Policy evaluation failed during context coherence validation.");
             }
-            return Boolean.TRUE.equals(evaluationResult.getResult());
+            return evaluationResult.getResult();
         } catch (JsonProcessingException e) {
             throw new InternalServerException(e); //TODO
         } catch (Exception e) {

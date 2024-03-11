@@ -12,6 +12,7 @@ import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationRequestResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
+import org.opendatamesh.platform.pp.policy.api.resources.ValidationResponseResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -96,11 +97,13 @@ public abstract class AbstractValidationController implements PolicyValidationCo
                     "application/json"
             }
     )
-    public PolicyEvaluationResultResource validateObjectEndpoint(
+    public ValidationResponseResource validateObjectEndpoint(
             @Parameter(description = "")
             @RequestBody(required = false) PolicyEvaluationRequestResource evaluationRequest
     ) {
-        return validateObject(evaluationRequest);
+        return validateInputObject(evaluationRequest);
     }
+
+    public abstract ValidationResponseResource validateInputObject(PolicyEvaluationRequestResource evaluationRequest);
 
 }

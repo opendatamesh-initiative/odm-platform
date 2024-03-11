@@ -11,6 +11,14 @@ public class PolicyEvaluationRequestResource {
     @Schema(description = "Resource type")
     private ResourceType resourceType;
 
+    @JsonProperty("dataProductId")
+    @Schema(description = "ID of the Data Product evaluated (if the evaluation subject was a Data Product)")
+    private String dataProductId;
+
+    @JsonProperty("dataProductVersion")
+    @Schema(description = "Version number of the Data Product evaluated (if the evaluation subject was a Data Product)")
+    private String dataProductVersion;
+
     @JsonProperty("event")
     @Schema(description = "The event that triggered the evaluation")
     private EventType event;
@@ -43,6 +51,22 @@ public class PolicyEvaluationRequestResource {
 
     public void setResourceType(ResourceType resourceType) {
         this.resourceType = resourceType;
+    }
+
+    public String getDataProductId() {
+        return dataProductId;
+    }
+
+    public void setDataProductId(String dataProductId) {
+        this.dataProductId = dataProductId;
+    }
+
+    public String getDataProductVersion() {
+        return dataProductVersion;
+    }
+
+    public void setDataProductVersion(String dataProductVersion) {
+        this.dataProductVersion = dataProductVersion;
     }
 
     public EventType getEvent() {

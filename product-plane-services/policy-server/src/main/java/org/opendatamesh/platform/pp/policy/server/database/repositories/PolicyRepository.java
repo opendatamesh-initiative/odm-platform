@@ -6,6 +6,10 @@ import org.opendatamesh.platform.pp.policy.server.database.utils.PagingAndSortin
 import org.opendatamesh.platform.pp.policy.server.database.utils.SpecsUtils;
 import org.springframework.data.jpa.domain.Specification;
 
+import javax.persistence.criteria.Predicate;
+import java.util.ArrayList;
+import java.util.List;
+
 public interface PolicyRepository extends PagingAndSortingAndSpecificationExecutorRepository<Policy, Long> {
 
     Policy findByRootIdAndIsLastVersionTrue(Long rootId);
@@ -15,10 +19,17 @@ public interface PolicyRepository extends PagingAndSortingAndSpecificationExecut
     boolean existsByName(String name);
 
     class Specs extends SpecsUtils {
+
         public static Specification<Policy> hasLastVersion(Boolean lastVersion) {
             return ((root, query, criteriaBuilder) ->
                     criteriaBuilder.equal(root.get(Policy_.isLastVersion), lastVersion)
             );
         }
+        public static Specification<Policy> hasSuite(String suite) {
+            return ((root, query, criteriaBuilder) ->
+                    criteriaBuilder.equal(root.get(Policy_.suite), suite)
+            );
+        }
+
     }
 }

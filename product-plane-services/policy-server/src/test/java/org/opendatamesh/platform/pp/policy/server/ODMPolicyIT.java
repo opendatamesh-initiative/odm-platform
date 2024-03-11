@@ -8,6 +8,7 @@ import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.policy.api.clients.PolicyClientImpl;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineResource;
+import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationRequestResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
 import org.opendatamesh.platform.pp.policy.api.resources.exceptions.PolicyApiStandardErrors;
@@ -181,6 +182,16 @@ public class ODMPolicyIT extends ODMIntegrationTest {
 
         return policyEvaluationResultResource;
 
+    }
+
+    protected PolicyEvaluationRequestResource createPolicyEvaluationRequestResource(String filePath) {
+        try {
+            return resourceBuilder.readResourceFromFile(filePath, PolicyEvaluationRequestResource.class);
+        } catch (Throwable t) {
+            t.printStackTrace();
+            fail("Impossible to read policy evaluation request from file: " + t.getMessage());
+            return null;
+        }
     }
 
     // ======================================================================================

@@ -1,0 +1,8 @@
+{
+  "name": "dataproduct-schema-checker",
+  "displayName": "Schema Compatibility Checker",
+  "description": "Check whether the updated schema is retro-compatible with the previous schema or not",
+  "blockingFlag": true,
+  "suite": "DATA_PRODUCT_UPDATE",
+  "policyEngineId": 1
+}

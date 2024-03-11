@@ -100,8 +100,8 @@ public class PolicyClientImpl extends ODMClient implements PolicyClient {
         restUtils.delete(apiUrlOfItem(PolicyAPIRoutes.RESULTS), id);
     }
 
-    public PolicyEvaluationResultResource validateObject(PolicyEvaluationRequestResource evaluationRequest) {
-        return restUtils.genericPost(apiUrl(PolicyAPIRoutes.VALIDATION), evaluationRequest, PolicyEvaluationResultResource.class);
+    public ValidationResponseResource validateObject(PolicyEvaluationRequestResource evaluationRequest) {
+        return restUtils.genericPost(apiUrl(PolicyAPIRoutes.VALIDATION), evaluationRequest, ValidationResponseResource.class);
     }
 
     //REST METHODS
@@ -216,18 +216,20 @@ public class PolicyClientImpl extends ODMClient implements PolicyClient {
 
     }
 
-    public ResponseEntity validateObjectResponseEntity(EventResource eventResource) throws JsonProcessingException {
+    public ResponseEntity validateObjectResponseEntity(
+            PolicyEvaluationRequestResource evaluationRequestResource
+    ) throws JsonProcessingException {
 
         ResponseEntity validateObjectResponse = rest.postForEntity(
                 apiUrl(PolicyAPIRoutes.VALIDATION),
-                eventResource,
+                evaluationRequestResource,
                 Object.class
         );
 
         ResponseEntity response = mapResponseEntity(
                 validateObjectResponse,
                 HttpStatus.OK,
-                PolicyEvaluationResultResource.class
+                ValidationResponseResource.class
         );
 
         return response;

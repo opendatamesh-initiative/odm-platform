@@ -10,7 +10,7 @@ import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.pp.policy.api.clients.PolicyClient;
 import org.opendatamesh.platform.pp.policy.api.clients.PolicyClientImpl;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationRequestResource;
-import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
+import org.opendatamesh.platform.pp.policy.api.resources.ValidationResponseResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -48,13 +48,13 @@ public class PolicyServiceProxy {
         }
         try {
             PolicyEvaluationRequestResource evaluationRequest = buildEvaluationRequest(mostRecentDataProduct, newDataProductVersion);
-            PolicyEvaluationResultResource evaluationResult = policyClient.validateObject(evaluationRequest);
+            ValidationResponseResource evaluationResult = policyClient.validateObject(evaluationRequest);
 
-            if (Boolean.FALSE.equals(evaluationResult.getResult())) {
-                logger.warn("Policy evaluation failed during DataProduct version creation. Reason:\n{}", evaluationResult.getOutputObject());
+            if (!evaluationResult.getResult()) {
+                logger.warn("Policy evaluation failed during DataProduct version creation");
             }
 
-            return Boolean.TRUE.equals(evaluationResult.getResult());
+            return evaluationResult.getResult();
         } catch (JsonProcessingException e) {
             throw new InternalServerException(e);//TODO
         } catch (Exception e) {

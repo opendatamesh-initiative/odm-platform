@@ -30,7 +30,8 @@ public class ValidationService {
         // TODO: add true logic and remove this part
         String MOCKED_INPUT_OBJECT = "";
 
-        // Fetch policy to evaluateList<Policy> policiesToEvaluate = policySelectorService.selectPoliciesBySuite(policyEvaluationRequestResource.getEvent());
+        // Fetch policy to evaluate
+        List<Policy> policiesToEvaluate = policySelectorService.selectPoliciesBySuite(policyEvaluationRequestResource.getEvent());
 
         // Evaluate policies and update response
         PolicyEvaluationResultResource policyResult;

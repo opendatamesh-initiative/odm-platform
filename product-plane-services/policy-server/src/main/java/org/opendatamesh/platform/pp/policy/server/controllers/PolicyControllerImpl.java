@@ -1,7 +1,6 @@
 package org.opendatamesh.platform.pp.policy.server.controllers;
 
 import org.opendatamesh.platform.pp.policy.api.controllers.AbstractPolicyController;
-import org.opendatamesh.platform.pp.policy.api.controllers.PolicyController;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicySearchOptions;
 import org.opendatamesh.platform.pp.policy.server.services.PolicyService;

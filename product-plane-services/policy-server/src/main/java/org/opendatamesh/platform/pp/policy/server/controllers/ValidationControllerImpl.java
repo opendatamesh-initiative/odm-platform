@@ -2,7 +2,6 @@ package org.opendatamesh.platform.pp.policy.server.controllers;
 
 import org.opendatamesh.platform.pp.policy.api.controllers.AbstractValidationController;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationRequestResource;
-import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
 import org.opendatamesh.platform.pp.policy.api.resources.ValidationResponseResource;
 import org.opendatamesh.platform.pp.policy.server.services.ValidationService;
 import org.springframework.beans.factory.annotation.Autowired;

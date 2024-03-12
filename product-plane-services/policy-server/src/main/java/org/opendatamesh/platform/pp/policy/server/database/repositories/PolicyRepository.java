@@ -6,10 +6,6 @@ import org.opendatamesh.platform.pp.policy.server.database.utils.PagingAndSortin
 import org.opendatamesh.platform.pp.policy.server.database.utils.SpecsUtils;
 import org.springframework.data.jpa.domain.Specification;
 
-import javax.persistence.criteria.Predicate;
-import java.util.ArrayList;
-import java.util.List;
-
 public interface PolicyRepository extends PagingAndSortingAndSpecificationExecutorRepository<Policy, Long> {
 
     Policy findByRootIdAndIsLastVersionTrue(Long rootId);

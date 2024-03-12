@@ -3,7 +3,6 @@ package org.opendatamesh.platform.pp.policy.server;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.pp.policy.api.resources.*;
-import org.opendatamesh.platform.up.notification.api.resources.EventResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;

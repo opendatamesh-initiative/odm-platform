@@ -2,6 +2,7 @@ package org.opendatamesh.platform.pp.policy.server.services;
 
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
 import org.opendatamesh.platform.pp.policy.server.database.entities.Policy;
+import org.opendatamesh.platform.pp.policy.server.database.entities.PolicyEngine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,9 +14,12 @@ public class PolicyDispatcherService {
     @Autowired
     PolicyEvaluationResultService policyEvaluationResultService;
 
+    //private policyEngineClient;
+
     // MOCK
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     private Random random = new Random();
+    // END MOCK
 
     public PolicyEvaluationResultResource dispatchPolicy(
             Policy policyToEvaluate, PolicyEvaluationResultResource basePolicyEvaluationResult
@@ -28,6 +32,12 @@ public class PolicyDispatcherService {
         dispatchResponse.setDataProductId(basePolicyEvaluationResult.getDataProductId());
         dispatchResponse.setDataProductVersion(basePolicyEvaluationResult.getDataProductVersion());
 
+        // TODO:
+        //  get the selected client / re-configure the same client (a generic PolicyEngineClient)
+        //  from the policyToEvaluate.getPolicyEngine()
+        PolicyEngine policyEngine = policyToEvaluate.getPolicyEngine();
+        //policyEngineClient = new PolicyEngineClient(policyEngine.getAdapterUrl())
+
         // Dispatch Policy and Input to be evaluated
         // TODO: dispatch the Policy to the right engine instead of using random values
         String outputObject = String.valueOf(random.nextInt());
@@ -36,7 +46,9 @@ public class PolicyDispatcherService {
         StringBuilder sb = new StringBuilder(lenght);
         for(int i=0; i<lenght; i++)
             sb.append(CHARACTERS.charAt(random.nextInt(CHARACTERS.length())));
-
+        //something = policyEngineClient.validate(dispatchResponse.getInputObject(), policyToEvaluate.getName())
+        //result = something.something
+        //outputObject = something.somethingelse
 
         // Update response
         dispatchResponse.setResult(result);

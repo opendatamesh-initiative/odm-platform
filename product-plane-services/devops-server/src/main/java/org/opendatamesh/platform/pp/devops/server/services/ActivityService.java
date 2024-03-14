@@ -18,7 +18,10 @@ import org.opendatamesh.platform.pp.devops.server.resources.context.ActivityCont
 import org.opendatamesh.platform.pp.devops.server.resources.context.ActivityResultStatus;
 import org.opendatamesh.platform.pp.devops.server.resources.context.Context;
 import org.opendatamesh.platform.pp.devops.server.utils.ObjectNodeUtils;
+import org.opendatamesh.platform.pp.event.notifier.api.clients.EventNotifierClient;
 import org.opendatamesh.platform.pp.registry.api.resources.VariableResource;
+import org.opendatamesh.platform.up.notification.api.resources.EventResource;
+import org.opendatamesh.platform.up.notification.api.resources.EventType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +53,9 @@ public class ActivityService {
 
     @Autowired
     LifecycleService lifecycleService;
+
+    @Autowired
+    EventNotifierClient eventNotifier;
 
     @Autowired
     private ActivityMapper mapper;
@@ -111,6 +117,22 @@ public class ActivityService {
 
         // create tasks associated with the given activity
         List<Task> tasks = taskService.createTasks(activity.getId(), activitiesInfo);
+
+        try {
+            EventResource eventResource = new EventResource(
+                    EventType.DATA_PRODUCT_ACTIVITY_CREATED,
+                    activity.getId().toString(),
+                    null,
+                    ObjectMapperFactory.JSON_MAPPER.writeValueAsString(mapper.toResource(activity))
+            );
+            eventNotifier.notifyEvent(eventResource);
+        } catch (Throwable t) {
+            throw new BadGatewayException(
+                    ODMApiCommonErrors.SC502_70_NOTIFICATION_SERVICE_ERROR,
+                    "Impossible to upload activity to notificationService: " + t.getMessage(),
+                    t
+            );
+        }
     
         if (startAfterCreation) {
             activity = startActivity(activity, tasks);
@@ -162,7 +184,7 @@ public class ActivityService {
                 "Activity object cannot be null");
         }
 
-        // verify if there is an alredy running activity
+        // verify if there is an already running activity
         List<Activity> activities = searchActivities(
                 activity.getDataProductId(),
                 activity.getDataProductVersion(),
@@ -191,7 +213,23 @@ public class ActivityService {
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                    "An error occured in the backend database while updating activity [" + activity.getId() + "]",
                  t);
-        }       
+        }
+
+        try {
+            EventResource eventResource = new EventResource(
+                    EventType.DATA_PRODUCT_ACTIVITY_STARTED,
+                    activity.getId().toString(),
+                    null,
+                    ObjectMapperFactory.JSON_MAPPER.writeValueAsString(mapper.toResource(activity))
+            );
+            eventNotifier.notifyEvent(eventResource);
+        } catch (Throwable t) {
+            throw new BadGatewayException(
+                    ODMApiCommonErrors.SC502_70_NOTIFICATION_SERVICE_ERROR,
+                    "Impossible to upload activity to notificationService: " + t.getMessage(),
+                    t
+            );
+        }
         
         // start next planned task if any
         startNextPlannedTaskAndUpdateParentActivity(activity.getId());
@@ -243,6 +281,22 @@ public class ActivityService {
 
         if (!policyServiceProxy.isContextuallyCoherent(mapper.toResource(activity))) {
             //TODO throw exception
+        }
+
+        try {
+            EventResource eventResource = new EventResource(
+                    EventType.DATA_PRODUCT_ACTIVITY_COMPLETED,
+                    activity.getId().toString(),
+                    null,
+                    ObjectMapperFactory.JSON_MAPPER.writeValueAsString(mapper.toResource(activity))
+            );
+            eventNotifier.notifyEvent(eventResource);
+        } catch (Throwable t) {
+            throw new BadGatewayException(
+                    ODMApiCommonErrors.SC502_70_NOTIFICATION_SERVICE_ERROR,
+                    "Impossible to upload activity to notificationService: " + t.getMessage(),
+                    t
+            );
         }
 
         return activity;

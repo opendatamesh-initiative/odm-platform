@@ -9,13 +9,17 @@ import org.opendatamesh.platform.up.notification.api.resources.NotificationResou
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
-public class NotificationServiceProxy extends NotificationClient {
+@Service
+public class NotificationServiceProxy {
 
     private static final Logger logger = LoggerFactory.getLogger(NotificationServiceProxy.class);
 
+    private NotificationClient notificationClient;
+
     public NotificationServiceProxy(String serverAddress) {
-        super(serverAddress);
+        this.notificationClient = new NotificationClient(serverAddress);
     }
 
     public void postEventToNotifcationService(EventResource event) {
@@ -25,7 +29,7 @@ public class NotificationServiceProxy extends NotificationClient {
 
         try {
 
-            ResponseEntity responseEntity = createNotification(notification);
+            ResponseEntity responseEntity = notificationClient.createNotification(notification);
 
             if(responseEntity.getStatusCode().is2xxSuccessful()){
                 notification = (NotificationResource) responseEntity.getBody();

@@ -11,13 +11,13 @@ import org.opendatamesh.platform.core.dpds.parser.IdentifierStrategy;
 import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
 import org.opendatamesh.platform.core.dpds.parser.ParseResult;
 import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
+import org.opendatamesh.platform.pp.event.notifier.api.clients.EventNotifierClient;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
 import org.opendatamesh.platform.pp.registry.server.database.entities.DataProduct;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.DataProductVersion;
 import org.opendatamesh.platform.pp.registry.server.database.mappers.DataProductMapper;
 import org.opendatamesh.platform.pp.registry.server.database.mappers.DataProductVersionMapper;
 import org.opendatamesh.platform.pp.registry.server.database.repositories.DataProductRepository;
-import org.opendatamesh.platform.pp.registry.server.resources.v1.observers.EventNotifier;
 import org.opendatamesh.platform.up.notification.api.resources.EventResource;
 import org.opendatamesh.platform.up.notification.api.resources.EventType;
 import org.slf4j.Logger;
@@ -52,7 +52,7 @@ public class DataProductService {
     private DataProductVersionMapper dataProductVersionMapper;
 
     @Autowired
-    EventNotifier eventNotifier;
+    EventNotifierClient eventNotifier;
 
     @Value("${odm.schemas.validation.baseUrl}")
     private String schemaValidationBaseUrl;
@@ -569,6 +569,5 @@ public class DataProductService {
                 "An unexpected exception occured while resolving internal references", e);
         }  
     }
-
    
 }

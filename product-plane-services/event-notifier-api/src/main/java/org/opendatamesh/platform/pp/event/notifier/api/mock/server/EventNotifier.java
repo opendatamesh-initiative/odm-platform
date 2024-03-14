@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.pp.registry.server.resources.v1.observers;
+package org.opendatamesh.platform.pp.event.notifier.api.mock.server;
 
 import org.opendatamesh.platform.up.notification.api.resources.EventResource;
 
@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EventNotifier {
+
     private List<Observer> observers = new ArrayList<>();
 
     public void addObserver(Observer observer) {

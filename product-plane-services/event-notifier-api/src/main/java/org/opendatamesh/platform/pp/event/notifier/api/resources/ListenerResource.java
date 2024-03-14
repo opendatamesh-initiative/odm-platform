@@ -19,9 +19,9 @@ public class ListenerResource {
     @Schema(description = "Human readable display name of the listening Notification Adapter")
     private String displayName;
 
-    @JsonProperty("listenerUrl")
-    @Schema(description = "URL to reach the listening Notification Adapter")
-    private String listenerUrl;
+    @JsonProperty("listenerServerAddress")
+    @Schema(description = "Server Address to reach the listening Notification Adapter")
+    private String listenerServerAddress;
 
     public Long getId() {
         return id;
@@ -47,12 +47,12 @@ public class ListenerResource {
         this.displayName = displayName;
     }
 
-    public String getListenerUrl() {
-        return listenerUrl;
+    public String getListenerServerAddress() {
+        return listenerServerAddress;
     }
 
-    public void setListenerUrl(String listenerUrl) {
-        this.listenerUrl = listenerUrl;
+    public void setListenerServerAddress(String listenerUrl) {
+        this.listenerServerAddress = listenerUrl;
     }
 
 }

@@ -2,8 +2,6 @@ package org.opendatamesh.platform.pp.event.notifier.api.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.opendatamesh.platform.pp.event.notifier.api.resources.ListenerResource;
 import org.opendatamesh.platform.up.notification.api.resources.EventResource;

@@ -66,6 +66,6 @@ odm:
   utilityPlane:
     notificationServices:
       blindata:
-        active: false
+        active: true
         address: http://localhost:9002
 

@@ -34,7 +34,7 @@ public class EventNotifierProxy {
                 null,
                 dataProduct
         );
-        notifyEvent(eventResource, "Impossible to upload Data Product to notificationServices: ");
+        notifyDataProductEvent(eventResource);
     }
 
     public void notifyDataProductUpdate(
@@ -46,7 +46,7 @@ public class EventNotifierProxy {
                 previousDataProduct,
                 currentDataProduct
         );
-        notifyEvent(eventResource, "Impossible to upload Data Product to notificationServices: ");
+        notifyDataProductEvent(eventResource);
     }
 
     public void notifyDataProductDeletion(DataProductResource dataProduct) {
@@ -56,7 +56,7 @@ public class EventNotifierProxy {
                 dataProduct,
                 null
         );
-        notifyEvent(eventResource, "Impossible to upload Data Product to notificationServices: ");
+        notifyDataProductEvent(eventResource);
     }
 
 
@@ -71,7 +71,7 @@ public class EventNotifierProxy {
                 null,
                 dataProductVersion
         );
-        notifyEvent(eventResource, "Impossible to upload Data Product Version to notificationServices: ");
+        notifyDataProductVersionEvent(eventResource);
     }
 
     public void notifyDataProductVersionDeletion(DataProductVersionDPDS dataProductVersion) {
@@ -81,7 +81,7 @@ public class EventNotifierProxy {
                 dataProductVersion,
                 null
         );
-        notifyEvent(eventResource, "Impossible to upload Data Product Version to notificationServices: ");
+        notifyDataProductVersionEvent(eventResource);
     }
 
 
@@ -89,7 +89,21 @@ public class EventNotifierProxy {
     // Dispatch events
     // ======================================================================================
 
-    public void notifyEvent(EventResource eventResource, String errorMessage) {
+    private void notifyDataProductEvent(EventResource eventResource) {
+        notifyEvent(
+                eventResource,
+                "Impossible to upload Data Product to notificationServices: "
+        );
+    }
+
+    private void notifyDataProductVersionEvent(EventResource eventResource) {
+        notifyEvent(
+                eventResource,
+                "Impossible to upload Data Product Version to notificationServices: "
+        );
+    }
+
+    private void notifyEvent(EventResource eventResource, String errorMessage) {
         try {
             eventNotifierClient.notifyEvent(eventResource);
         } catch (Throwable t) {

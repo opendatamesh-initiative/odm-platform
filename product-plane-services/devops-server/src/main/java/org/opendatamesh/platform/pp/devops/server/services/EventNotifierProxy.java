@@ -27,36 +27,33 @@ public class EventNotifierProxy {
     // ======================================================================================
 
     public void notifyActivityCreation(ActivityResource activity) {
-        EventResource eventResource = buildEvent(
+        EventResource eventResource = buildActivityEvent(
                 EventType.DATA_PRODUCT_ACTIVITY_CREATED,
                 activity.getId().toString(),
                 null,
-                activity,
-                "Error serializing Activity as JSON: "
+                activity
         );
-        notifyEvent(eventResource, "Impossible to upload Activity to notificationServices: ");
+        notifyActivityEvent(eventResource);
     }
 
     public void notifyActivityStart(ActivityResource activity) {
-        EventResource eventResource = buildEvent(
+        EventResource eventResource = buildActivityEvent(
                 EventType.DATA_PRODUCT_ACTIVITY_STARTED,
                 activity.getId().toString(),
                 null,
-                activity,
-                "Error serializing Activity as JSON: "
+                activity
         );
-        notifyEvent(eventResource, "Impossible to upload Activity to notificationServices: ");
+        notifyActivityEvent(eventResource);
     }
 
     public void notifyActivityCompletion(ActivityResource activity) {
-        EventResource eventResource = buildEvent(
+        EventResource eventResource = buildActivityEvent(
                 EventType.DATA_PRODUCT_ACTIVITY_COMPLETED,
                 activity.getId().toString(),
                 null,
-                activity,
-                "Error serializing Activity as JSON: "
+                activity
         );
-        notifyEvent(eventResource, "Impossible to upload Activity to notificationServices: ");
+        notifyActivityEvent(eventResource);
     }
 
 
@@ -65,36 +62,33 @@ public class EventNotifierProxy {
     // ======================================================================================
 
     public void notifyTaskCreation(TaskResource task) {
-        EventResource eventResource = buildEvent(
+        EventResource eventResource = buildTaskEvent(
                 EventType.DATA_PRODUCT_TASK_CREATED,
                 task.getId().toString(),
                 null,
-                task,
-                "Error serializing Task as JSON: "
+                task
         );
-        notifyEvent(eventResource, "Impossible to upload Task to notificationServices: ");
+        notifyTaskEvent(eventResource);
     }
 
     public void notifyTaskStart(TaskResource task) {
-        EventResource eventResource = buildEvent(
+        EventResource eventResource = buildTaskEvent(
                 EventType.DATA_PRODUCT_TASK_STARTED,
                 task.getId().toString(),
                 null,
-                task,
-                "Error serializing Task as JSON: "
+                task
         );
-        notifyEvent(eventResource, "Impossible to upload Task to notificationServices: ");
+        notifyTaskEvent(eventResource);
     }
 
     public void notifyTaskCompletion(TaskResource task) {
-        EventResource eventResource = buildEvent(
+        EventResource eventResource = buildTaskEvent(
                 EventType.DATA_PRODUCT_TASK_COMPLETED,
                 task.getId().toString(),
                 null,
-                task,
-                "Error serializing Task as JSON: "
+                task
         );
-        notifyEvent(eventResource, "Impossible to upload Task to notificationServices: ");
+        notifyTaskEvent(eventResource);
     }
 
 
@@ -102,7 +96,21 @@ public class EventNotifierProxy {
     // Dispatch events
     // ======================================================================================
 
-    public void notifyEvent(EventResource eventResource, String errorMessage) {
+    private void notifyActivityEvent(EventResource eventResource) {
+        notifyEvent(
+                eventResource,
+                "Impossible to upload Activity to notificationServices: "
+        );
+    }
+
+    private void notifyTaskEvent(EventResource eventResource) {
+        notifyEvent(
+                eventResource,
+                "Impossible to upload Task to notificationServices: "
+        );
+    }
+
+    private void notifyEvent(EventResource eventResource, String errorMessage) {
         try {
             eventNotifierClient.notifyEvent(eventResource);
         } catch (Throwable t) {
@@ -119,7 +127,31 @@ public class EventNotifierProxy {
     // Event creation
     // ======================================================================================
 
-    public EventResource buildEvent(
+    private EventResource buildActivityEvent(
+            EventType eventType, String eventSubjectId, Object beforeState, Object afterState
+    ) {
+        return buildEvent(
+                eventType,
+                eventSubjectId,
+                beforeState,
+                afterState,
+                "Error serializing Activity as JSON: "
+        );
+    }
+
+    private EventResource buildTaskEvent(
+            EventType eventType, String eventSubjectId, Object beforeState, Object afterState
+    ) {
+        return buildEvent(
+                eventType,
+                eventSubjectId,
+                beforeState,
+                afterState,
+                "Error serializing Task as JSON: "
+        );
+    }
+
+    private EventResource buildEvent(
             EventType eventType, String eventSubjectId, Object beforeState, Object afterState, String errorMessage
     ) {
         try {

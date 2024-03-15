@@ -52,6 +52,9 @@ public class ActivityService {
     LifecycleService lifecycleService;
 
     @Autowired
+    EventNotifierProxy eventNotifierProxy;
+
+    @Autowired
     private ActivityMapper mapper;
 
     private static final Logger logger = LoggerFactory.getLogger(ActivityService.class);
@@ -111,6 +114,8 @@ public class ActivityService {
 
         // create tasks associated with the given activity
         List<Task> tasks = taskService.createTasks(activity.getId(), activitiesInfo);
+
+        eventNotifierProxy.notifyActivityCreation(mapper.toResource(activity));
     
         if (startAfterCreation) {
             activity = startActivity(activity, tasks);
@@ -162,7 +167,7 @@ public class ActivityService {
                 "Activity object cannot be null");
         }
 
-        // verify if there is an alredy running activity
+        // verify if there is an already running activity
         List<Activity> activities = searchActivities(
                 activity.getDataProductId(),
                 activity.getDataProductVersion(),
@@ -191,7 +196,9 @@ public class ActivityService {
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                    "An error occured in the backend database while updating activity [" + activity.getId() + "]",
                  t);
-        }       
+        }
+
+        eventNotifierProxy.notifyActivityStart(mapper.toResource(activity));
         
         // start next planned task if any
         startNextPlannedTaskAndUpdateParentActivity(activity.getId());
@@ -244,6 +251,8 @@ public class ActivityService {
         if (!policyServiceProxy.isContextuallyCoherent(mapper.toResource(activity))) {
             //TODO throw exception
         }
+
+        eventNotifierProxy.notifyActivityCompletion(mapper.toResource(activity));
 
         return activity;
     }

@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.pp.registry.server.services;
+package org.opendatamesh.platform.pp.event.notifier.api.mock.server.observers;
 
 import org.opendatamesh.platform.core.commons.servers.exceptions.BadGatewayException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
@@ -8,27 +8,28 @@ import org.opendatamesh.platform.up.notification.api.resources.EventResource;
 import org.opendatamesh.platform.up.notification.api.resources.NotificationResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MetaServiceProxy extends NotificationClient {
+public class NotificationServiceProxy {
 
-    private static final Logger logger = LoggerFactory.getLogger(MetaServiceProxy.class);
+    private static final Logger logger = LoggerFactory.getLogger(NotificationServiceProxy.class);
 
-    public MetaServiceProxy(@Value("${odm.utilityPlane.notificationServices.blindata.address}") final String serverAddress) {
-        super(serverAddress);
+    private NotificationClient notificationClient;
+
+    public NotificationServiceProxy(String serverAddress) {
+        this.notificationClient = new NotificationClient(serverAddress);
     }
 
-    public void postEventToMetaService(EventResource event) {
+    public void postEventToNotifcationService(EventResource event) {
 
         NotificationResource notification = new NotificationResource();
         notification.setEvent(event);
 
         try {
 
-            ResponseEntity responseEntity = createNotification(notification);
+            ResponseEntity responseEntity = notificationClient.createNotification(notification);
 
             if(responseEntity.getStatusCode().is2xxSuccessful()){
                 notification = (NotificationResource) responseEntity.getBody();
@@ -43,9 +44,10 @@ public class MetaServiceProxy extends NotificationClient {
 
         } catch (Exception e) {
             throw new BadGatewayException(
-                ODMApiCommonErrors.SC502_70_NOTIFICATION_SERVICE_ERROR,
+                    ODMApiCommonErrors.SC502_70_NOTIFICATION_SERVICE_ERROR,
                     e.getMessage()
             );
         }
     }
+
 }

@@ -3,13 +3,13 @@ package org.opendatamesh.platform.pp.registry.server.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.platform.core.commons.servers.exceptions.*;
+import org.opendatamesh.platform.pp.event.notifier.api.clients.EventNotifierClient;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.DataProductVersion;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.info.Owner;
 import org.opendatamesh.platform.pp.registry.server.database.mappers.OwnerMapper;
 import org.opendatamesh.platform.pp.registry.server.database.repositories.DataProductVersionRepository;
 import org.opendatamesh.platform.pp.registry.server.database.repositories.OwnerRepository;
-import org.opendatamesh.platform.pp.registry.server.resources.v1.observers.EventNotifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +35,7 @@ public class OwnerService {
     private OwnerMapper ownerMapper;
 
     @Autowired
-    EventNotifier eventNotifier;
+    EventNotifierClient eventNotifier;
 
 
     private static final Logger logger = LoggerFactory.getLogger(OwnerService.class);

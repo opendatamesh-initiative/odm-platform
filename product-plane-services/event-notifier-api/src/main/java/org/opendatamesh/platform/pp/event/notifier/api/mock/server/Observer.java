@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.pp.registry.server.resources.v1.observers;
+package org.opendatamesh.platform.pp.event.notifier.api.mock.server;
 
 import org.opendatamesh.platform.up.notification.api.resources.EventResource;
 

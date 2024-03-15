@@ -20,7 +20,7 @@ public class EventNotifierProxy {
     @Autowired
     EventNotifierClient eventNotifierClient;
 
-    ObjectMapper mapper = ObjectMapperFactory.JSON_MAPPER;
+    private final ObjectMapper mapper = ObjectMapperFactory.JSON_MAPPER;
 
     // ======================================================================================
     // Activity Events
@@ -31,9 +31,10 @@ public class EventNotifierProxy {
                 EventType.DATA_PRODUCT_ACTIVITY_CREATED,
                 activity.getId().toString(),
                 null,
-                activity
+                activity,
+                "Error serializing Activity as JSON: "
         );
-        notifyEvent(eventResource);
+        notifyEvent(eventResource, "Impossible to upload Activity to notificationServices: ");
     }
 
     public void notifyActivityStart(ActivityResource activity) {
@@ -41,9 +42,10 @@ public class EventNotifierProxy {
                 EventType.DATA_PRODUCT_ACTIVITY_STARTED,
                 activity.getId().toString(),
                 null,
-                activity
+                activity,
+                "Error serializing Activity as JSON: "
         );
-        notifyEvent(eventResource);
+        notifyEvent(eventResource, "Impossible to upload Activity to notificationServices: ");
     }
 
     public void notifyActivityCompletion(ActivityResource activity) {
@@ -51,9 +53,10 @@ public class EventNotifierProxy {
                 EventType.DATA_PRODUCT_ACTIVITY_COMPLETED,
                 activity.getId().toString(),
                 null,
-                activity
+                activity,
+                "Error serializing Activity as JSON: "
         );
-        notifyEvent(eventResource);
+        notifyEvent(eventResource, "Impossible to upload Activity to notificationServices: ");
     }
 
 
@@ -66,9 +69,10 @@ public class EventNotifierProxy {
                 EventType.DATA_PRODUCT_TASK_CREATED,
                 task.getId().toString(),
                 null,
-                task
+                task,
+                "Error serializing Task as JSON: "
         );
-        notifyEvent(eventResource);
+        notifyEvent(eventResource, "Impossible to upload Task to notificationServices: ");
     }
 
     public void notifyTaskStart(TaskResource task) {
@@ -76,9 +80,10 @@ public class EventNotifierProxy {
                 EventType.DATA_PRODUCT_TASK_STARTED,
                 task.getId().toString(),
                 null,
-                task
+                task,
+                "Error serializing Task as JSON: "
         );
-        notifyEvent(eventResource);
+        notifyEvent(eventResource, "Impossible to upload Task to notificationServices: ");
     }
 
     public void notifyTaskCompletion(TaskResource task) {
@@ -86,9 +91,10 @@ public class EventNotifierProxy {
                 EventType.DATA_PRODUCT_TASK_COMPLETED,
                 task.getId().toString(),
                 null,
-                task
+                task,
+                "Error serializing Task as JSON: "
         );
-        notifyEvent(eventResource);
+        notifyEvent(eventResource, "Impossible to upload Task to notificationServices: ");
     }
 
 
@@ -96,13 +102,13 @@ public class EventNotifierProxy {
     // Dispatch events
     // ======================================================================================
 
-    public void notifyEvent(EventResource eventResource) {
+    public void notifyEvent(EventResource eventResource, String errorMessage) {
         try {
             eventNotifierClient.notifyEvent(eventResource);
         } catch (Throwable t) {
             throw new BadGatewayException(
                     ODMApiCommonErrors.SC502_70_NOTIFICATION_SERVICE_ERROR,
-                    "Impossible to upload activity to notificationService: " + t.getMessage(),
+                    errorMessage + t.getMessage(),
                     t
             );
         }
@@ -113,7 +119,9 @@ public class EventNotifierProxy {
     // Event creation
     // ======================================================================================
 
-    public EventResource buildEvent(EventType eventType, String eventSubjectId, Object beforeState, Object afterState) {
+    public EventResource buildEvent(
+            EventType eventType, String eventSubjectId, Object beforeState, Object afterState, String errorMessage
+    ) {
         try {
             return new EventResource(
                     eventType,
@@ -124,8 +132,9 @@ public class EventNotifierProxy {
         } catch (JsonProcessingException e) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
-                    "Error serializing Task as JSON: " + e.getMessage()
+                    errorMessage + e.getMessage()
             );
         }
     }
+
 }

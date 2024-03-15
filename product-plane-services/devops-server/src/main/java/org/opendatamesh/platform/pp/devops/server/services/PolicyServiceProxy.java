@@ -12,7 +12,6 @@ import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsConfigura
 import org.opendatamesh.platform.pp.policy.api.clients.PolicyClient;
 import org.opendatamesh.platform.pp.policy.api.clients.PolicyClientImpl;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationRequestResource;
-import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
 import org.opendatamesh.platform.pp.policy.api.resources.ValidationResponseResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -126,4 +125,5 @@ public class PolicyServiceProxy {
             );
         }
     }
+
 }

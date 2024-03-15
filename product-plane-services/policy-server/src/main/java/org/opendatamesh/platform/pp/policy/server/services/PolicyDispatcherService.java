@@ -6,6 +6,8 @@ import org.opendatamesh.platform.pp.policy.server.database.entities.PolicyEngine
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 @Service
@@ -14,7 +16,8 @@ public class PolicyDispatcherService {
     @Autowired
     PolicyEvaluationResultService policyEvaluationResultService;
 
-    //private policyEngineClient;
+    //TODO: replace Object with PolicyEngineClient
+    Map<String, Object> policyEngineClients = new HashMap<>();
 
     // MOCK
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -32,20 +35,18 @@ public class PolicyDispatcherService {
         dispatchResponse.setDataProductId(basePolicyEvaluationResult.getDataProductId());
         dispatchResponse.setDataProductVersion(basePolicyEvaluationResult.getDataProductVersion());
 
-        // TODO:
-        //  get the selected client / re-configure the same client (a generic PolicyEngineClient)
-        //  from the policyToEvaluate.getPolicyEngine()
-        PolicyEngine policyEngine = policyToEvaluate.getPolicyEngine();
-        //policyEngineClient = new PolicyEngineClient(policyEngine.getAdapterUrl())
+        // TODO
+        //PolicyEngineClient policyEngineClient = getPolicyEngineClient(policyToEvaluate.getPolicyEngine());
 
         // Dispatch Policy and Input to be evaluated
-        // TODO: dispatch the Policy to the right engine instead of using random values
+        // MOCK - TODO: remove it
         String outputObject = String.valueOf(random.nextInt());
         Boolean result = random.nextBoolean();
         Integer lenght = 32;
         StringBuilder sb = new StringBuilder(lenght);
         for(int i=0; i<lenght; i++)
             sb.append(CHARACTERS.charAt(random.nextInt(CHARACTERS.length())));
+        // TODO: dispatch the Policy to the right engine instead of using random values
         //something = policyEngineClient.validate(dispatchResponse.getInputObject(), policyToEvaluate.getName())
         //result = something.something
         //outputObject = something.somethingelse
@@ -56,10 +57,25 @@ public class PolicyDispatcherService {
 
         // Create PolicyEvaluationResult and store it in DB
         dispatchResponse = policyEvaluationResultService.createResource(dispatchResponse);
-        // TODO: error handling
 
         return dispatchResponse;
 
+    }
+
+    // TODO: replace Object with PolicyEngineClient
+    private Object getPolicyEngineClient(PolicyEngine policyEngine) {
+        if(policyEngineClients.containsKey(policyEngine.getName())) {
+            return policyEngineClients.get(policyEngine.getName());
+        } else {
+            // TODO: replace it with real PolicyEngineClient creation
+            Object policyEngineClient = null;
+            // PolicyEngineClient policyEngineClient = new PolicyEngineClient(policyEngine.getAdapterUrl());
+            policyEngineClients.put(
+                    policyEngine.getName(),
+                    policyEngineClient
+            );
+            return policyEngineClient;
+        }
     }
 
 }

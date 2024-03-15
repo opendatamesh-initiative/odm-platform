@@ -16,13 +16,10 @@ import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsConfigura
 import org.opendatamesh.platform.pp.devops.server.database.entities.Task;
 import org.opendatamesh.platform.pp.devops.server.database.mappers.TaskMapper;
 import org.opendatamesh.platform.pp.devops.server.database.repositories.TaskRepository;
-import org.opendatamesh.platform.pp.event.notifier.api.clients.EventNotifierClient;
 import org.opendatamesh.platform.pp.registry.api.resources.ExternalComponentResource;
 import org.opendatamesh.platform.up.executor.api.clients.ExecutorClient;
 import org.opendatamesh.platform.up.executor.api.resources.TaskResource;
 import org.opendatamesh.platform.up.executor.api.resources.TaskStatus;
-import org.opendatamesh.platform.up.notification.api.resources.EventResource;
-import org.opendatamesh.platform.up.notification.api.resources.EventType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +47,7 @@ public class TaskService {
     DevOpsClients clients;
 
     @Autowired
-    EventNotifierClient eventNotifier;
+    EventNotifierProxy eventNotifierProxy;
 
     private ExecutorClient odmExecutor;
 
@@ -96,21 +93,7 @@ public class TaskService {
                     t);
         }
 
-        try {
-            EventResource eventResource = new EventResource(
-                    EventType.DATA_PRODUCT_TASK_CREATED,
-                    task.getId().toString(),
-                    null,
-                    ObjectMapperFactory.JSON_MAPPER.writeValueAsString(taskMapper.toResource(task))
-            );
-            eventNotifier.notifyEvent(eventResource);
-        } catch (Throwable t) {
-            throw new BadGatewayException(
-                    ODMApiCommonErrors.SC502_70_NOTIFICATION_SERVICE_ERROR,
-                    "Impossible to upload task to notificationService: " + t.getMessage(),
-                    t
-            );
-        }
+        eventNotifierProxy.notifyTaskCreation(taskMapper.toResource(task));
 
         return task;
     }
@@ -135,27 +118,13 @@ public class TaskService {
             task.setStartedAt(now());
             saveTask(task);
 
-            try {
-                EventResource eventResource = new EventResource(
-                        EventType.DATA_PRODUCT_TASK_STARTED,
-                        task.getId().toString(),
-                        null,
-                        ObjectMapperFactory.JSON_MAPPER.writeValueAsString(taskMapper.toResource(task))
-                );
-                eventNotifier.notifyEvent(eventResource);
-            } catch (Throwable t) {
-                throw new BadGatewayException(
-                        ODMApiCommonErrors.SC502_70_NOTIFICATION_SERVICE_ERROR,
-                        "Impossible to upload task to notificationService: " + t.getMessage(),
-                        t
-                );
-            }
+            eventNotifierProxy.notifyTaskStart(taskMapper.toResource(task));
 
             if(task.getExecutorRef() != null) {
                 task = submitTask(task);
                 if (task.getStatus().equals(ActivityTaskStatus.FAILED)) {
                     task = saveTask(task);
-                    notifyTaskCompletion(task);
+                    eventNotifierProxy.notifyTaskCompletion(taskMapper.toResource(task));
                 }
             } else {
                 TaskResultResource taskResultResource = new TaskResultResource();
@@ -165,7 +134,7 @@ public class TaskService {
                 task.setResults(taskResultResource.toJsonString());
                 task.setStatus(ActivityTaskStatus.PROCESSED);
                 task.setFinishedAt(now());
-                notifyTaskCompletion(task);
+                eventNotifierProxy.notifyTaskCompletion(taskMapper.toResource(task));
             }
             
         } catch(Throwable t) {
@@ -195,7 +164,7 @@ public class TaskService {
                 taskRes.setStatus(TaskStatus.FAILED);
                 taskRes.setErrors("Executor [" + task.getExecutorRef() + "] supported"); // CHECK
                 taskRes.setFinishedAt(new Date());
-                notifyTaskCompletion(taskMapper.toEntity(taskRes));
+                eventNotifierProxy.notifyTaskCompletion(taskRes);
             }
 
             task = taskMapper.toEntity(taskRes);
@@ -203,7 +172,7 @@ public class TaskService {
             task.setStatus(ActivityTaskStatus.FAILED);
             task.setErrors(t.getMessage());
             task.setFinishedAt(now());
-            notifyTaskCompletion(task);
+            eventNotifierProxy.notifyTaskCompletion(taskMapper.toResource(task));
         }
        
         return task;
@@ -284,7 +253,7 @@ public class TaskService {
             task.setFinishedAt(now());
             task = saveTask(task);
 
-            notifyTaskCompletion(task);
+            eventNotifierProxy.notifyTaskCompletion(taskMapper.toResource(task));
 
         } catch(Throwable t) {
              throw new InternalServerException(
@@ -493,24 +462,6 @@ public class TaskService {
         now = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), 
         now.getHour(), now.getMinute(), now.getSecond(), 0);
         return now;
-    }
-
-    private void notifyTaskCompletion(Task task) {
-        try {
-            EventResource eventResource = new EventResource(
-                    EventType.DATA_PRODUCT_TASK_COMPLETED,
-                    task.getId().toString(),
-                    null,
-                    ObjectMapperFactory.JSON_MAPPER.writeValueAsString(taskMapper.toResource(task))
-            );
-            eventNotifier.notifyEvent(eventResource);
-        } catch (Throwable t) {
-            throw new BadGatewayException(
-                    ODMApiCommonErrors.SC502_70_NOTIFICATION_SERVICE_ERROR,
-                    "Impossible to upload task to notificationService: " + t.getMessage(),
-                    t
-            );
-        }
     }
 	
 }

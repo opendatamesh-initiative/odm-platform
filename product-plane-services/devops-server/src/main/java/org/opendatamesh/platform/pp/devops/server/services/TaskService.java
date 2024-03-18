@@ -46,6 +46,9 @@ public class TaskService {
     @Autowired
     DevOpsClients clients;
 
+    @Autowired
+    EventNotifierProxy eventNotifierProxy;
+
     private ExecutorClient odmExecutor;
 
     private static final Logger logger = LoggerFactory.getLogger(ActivityService.class);
@@ -90,6 +93,8 @@ public class TaskService {
                     t);
         }
 
+        eventNotifierProxy.notifyTaskCreation(taskMapper.toResource(task));
+
         return task;
     }
 
@@ -113,10 +118,13 @@ public class TaskService {
             task.setStartedAt(now());
             saveTask(task);
 
+            eventNotifierProxy.notifyTaskStart(taskMapper.toResource(task));
+
             if(task.getExecutorRef() != null) {
                 task = submitTask(task);
                 if (task.getStatus().equals(ActivityTaskStatus.FAILED)) {
-                    saveTask(task);
+                    task = saveTask(task);
+                    eventNotifierProxy.notifyTaskCompletion(taskMapper.toResource(task));
                 }
             } else {
                 TaskResultResource taskResultResource = new TaskResultResource();
@@ -126,6 +134,7 @@ public class TaskService {
                 task.setResults(taskResultResource.toJsonString());
                 task.setStatus(ActivityTaskStatus.PROCESSED);
                 task.setFinishedAt(now());
+                eventNotifierProxy.notifyTaskCompletion(taskMapper.toResource(task));
             }
             
         } catch(Throwable t) {
@@ -155,6 +164,7 @@ public class TaskService {
                 taskRes.setStatus(TaskStatus.FAILED);
                 taskRes.setErrors("Executor [" + task.getExecutorRef() + "] supported"); // CHECK
                 taskRes.setFinishedAt(new Date());
+                eventNotifierProxy.notifyTaskCompletion(taskRes);
             }
 
             task = taskMapper.toEntity(taskRes);
@@ -162,6 +172,7 @@ public class TaskService {
             task.setStatus(ActivityTaskStatus.FAILED);
             task.setErrors(t.getMessage());
             task.setFinishedAt(now());
+            eventNotifierProxy.notifyTaskCompletion(taskMapper.toResource(task));
         }
        
         return task;
@@ -241,6 +252,8 @@ public class TaskService {
 
             task.setFinishedAt(now());
             task = saveTask(task);
+
+            eventNotifierProxy.notifyTaskCompletion(taskMapper.toResource(task));
 
         } catch(Throwable t) {
              throw new InternalServerException(
@@ -450,6 +463,5 @@ public class TaskService {
         now.getHour(), now.getMinute(), now.getSecond(), 0);
         return now;
     }
-
 	
 }

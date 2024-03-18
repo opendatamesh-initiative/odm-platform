@@ -57,7 +57,6 @@ public class ODMPolicyIT extends ODMIntegrationTest {
     @PostConstruct
     public void init() {
 
-        mapper = ObjectMapperFactory.JSON_MAPPER; // Probably removable
         resourceBuilder = new ODMPolicyResourceBuilder();
         policyClient = new PolicyClientImpl("http://localhost:" + port, mapper);
 

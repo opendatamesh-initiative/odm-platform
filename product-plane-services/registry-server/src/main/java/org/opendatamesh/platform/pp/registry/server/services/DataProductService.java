@@ -17,7 +17,6 @@ import org.opendatamesh.platform.pp.registry.server.database.entities.dataproduc
 import org.opendatamesh.platform.pp.registry.server.database.mappers.DataProductMapper;
 import org.opendatamesh.platform.pp.registry.server.database.mappers.DataProductVersionMapper;
 import org.opendatamesh.platform.pp.registry.server.database.repositories.DataProductRepository;
-import org.opendatamesh.platform.pp.registry.server.resources.v1.observers.EventNotifier;
 import org.opendatamesh.platform.up.notification.api.resources.EventResource;
 import org.opendatamesh.platform.up.notification.api.resources.EventType;
 import org.slf4j.Logger;
@@ -52,7 +51,7 @@ public class DataProductService {
     private DataProductVersionMapper dataProductVersionMapper;
 
     @Autowired
-    EventNotifier eventNotifier;
+    EventNotifierProxy eventNotifierProxy;
 
     @Value("${odm.schemas.validation.baseUrl}")
     private String schemaValidationBaseUrl;
@@ -108,21 +107,7 @@ public class DataProductService {
                 t);
         }
 
-        try {
-            EventResource eventResource = new EventResource(
-                    EventType.DATA_PRODUCT_CREATED,
-                    dataProduct.getId(),
-                    null,
-                    dataProductMapper.toResource(dataProduct).toEventString()
-            );
-            eventNotifier.notifyEvent(eventResource);
-        } catch (Throwable t) {
-            throw new BadGatewayException(
-                ODMApiCommonErrors.SC502_70_NOTIFICATION_SERVICE_ERROR,
-                    "Impossible to upload data product to metaService: " + t.getMessage(),
-                    t
-            );
-        }
+        eventNotifierProxy.notifyDataProductCreation(dataProductMapper.toResource(dataProduct));
        
         return dataProduct;
     }
@@ -294,19 +279,10 @@ public class DataProductService {
                 t);
         }
 
-        try {
-            EventResource eventResource = new EventResource(
-                    EventType.DATA_PRODUCT_UPDATED,
-                    dataProduct.getId(),
-                    dataProductMapper.toResource(oldDataProduct).toEventString(),
-                    dataProductMapper.toResource(dataProduct).toEventString()
-            );
-            eventNotifier.notifyEvent(eventResource);
-        } catch (Throwable t) {
-            throw new BadGatewayException(
-                ODMApiCommonErrors.SC502_70_NOTIFICATION_SERVICE_ERROR,
-                    "Impossible to upload data product version to metaService", t);
-        }
+        eventNotifierProxy.notifyDataProductUpdate(
+                dataProductMapper.toResource(oldDataProduct),
+                dataProductMapper.toResource(dataProduct)
+        );
 
         return dataProduct;
     }
@@ -331,19 +307,7 @@ public class DataProductService {
                 t);
         }
 
-        try {
-            EventResource eventResource = new EventResource(
-                    EventType.DATA_PRODUCT_DELETED,
-                    dataProduct.getId(),
-                    dataProductMapper.toResource(dataProduct).toEventString(),
-                    null
-            );
-            eventNotifier.notifyEvent(eventResource);
-        } catch (Throwable t) {
-            throw new BadGatewayException(
-                ODMApiCommonErrors.SC502_70_NOTIFICATION_SERVICE_ERROR,
-                    "Impossible to upload data product to metaService", t);
-        }
+        eventNotifierProxy.notifyDataProductDeletion(dataProductMapper.toResource(dataProduct));
 
         return dataProduct;
     }
@@ -569,6 +533,5 @@ public class DataProductService {
                 "An unexpected exception occured while resolving internal references", e);
         }  
     }
-
    
 }

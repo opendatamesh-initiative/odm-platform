@@ -1,41 +1,24 @@
 package org.opendatamesh.platform.pp.policy.server.services.validation;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
-import org.opendatamesh.platform.pp.devops.api.clients.DevOpsClient;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationRequestResource;
 import org.opendatamesh.platform.pp.policy.api.resources.events.TaskResultEventTypeResource;
 import org.opendatamesh.platform.pp.policy.api.services.mappers.JsonNodeMapper;
-import org.springframework.beans.factory.annotation.Value;
+import org.opendatamesh.platform.pp.policy.server.config.OdmClients;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PolicyEnricherService {
 
-    @Value("${odm.productPlane.devopsService.active}")
-    private Boolean devOpsServiceActive;
-
-    @Value("${odm.productPlane.devopsService.address}")
-    private String devOpsServerAddress;
-
-    DevOpsClient devOpsClient;
+    @Autowired
+    OdmClients odmClients;
 
     private static final ObjectMapper mapper = ObjectMapperFactory.JSON_MAPPER;
 
-    public PolicyEnricherService() {
-
-        if(devOpsServiceActive)
-            this.devOpsClient = new DevOpsClient("fakeAddress");
-        else
-            this.devOpsClient = null;
-    }
-
-    public JsonNode enrichInputObject(PolicyEvaluationRequestResource.EventType eventType, JsonNode inputObject) {
-
-        return inputObject;
-    };
+    public PolicyEnricherService() { }
 
     public PolicyEvaluationRequestResource enrichRequest(PolicyEvaluationRequestResource request) {
         switch (request.getEvent()) {
@@ -47,13 +30,13 @@ public class PolicyEnricherService {
     }
 
     private PolicyEvaluationRequestResource enrichActivityExecutionResultEvent(PolicyEvaluationRequestResource request) {
-        if(devOpsServiceActive) {
+        if(odmClients.getDevOpsClient() != null) {
             try {
                 TaskResultEventTypeResource taskResultEventTypeResource = mapper.readValue(
                         request.getCurrentState().asText(), TaskResultEventTypeResource.class
                 );
                 if(taskResultEventTypeResource != null) {
-                    ActivityResource activityResource = devOpsClient.readActivity(
+                    ActivityResource activityResource = odmClients.getDevOpsClient().readActivity(
                             Long.valueOf(taskResultEventTypeResource.getTask().getActivityId())
                     );
                     taskResultEventTypeResource.setActivity(activityResource);

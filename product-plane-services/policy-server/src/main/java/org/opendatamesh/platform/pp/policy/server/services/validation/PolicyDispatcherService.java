@@ -1,7 +1,9 @@
-package org.opendatamesh.platform.pp.policy.server.services;
+package org.opendatamesh.platform.pp.policy.server.services.validation;
 
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
 import org.opendatamesh.platform.pp.policy.server.database.entities.Policy;
+import org.opendatamesh.platform.pp.policy.server.services.PolicyEngineProxy;
+import org.opendatamesh.platform.pp.policy.server.services.PolicyEvaluationResultService;
 import org.opendatamesh.platform.pp.policy.server.services.mocks.PolicyEngineValidationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,7 +32,7 @@ public class PolicyDispatcherService {
         // Dispatch validation request
         PolicyEngineValidationResponse validationResponse = policyEngineProxy.validatePolicy(
                 policyToEvaluate,
-                dispatchResponse.getInputObject()
+                dispatchResponse.getInputObject().toString() // FIX AFTER REAL POLICY ENGINE ADAPTER
         );
 
         // Update response

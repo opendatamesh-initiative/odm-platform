@@ -173,7 +173,7 @@ public class PolicyEvaluationResultIT extends ODMPolicyIT {
         assertThat(policyEvaluationResultResource.getResult()).isEqualTo(true);
         assertThat(policyEvaluationResultResource.getDataProductId()).isEqualTo("abc123");
         assertThat(policyEvaluationResultResource.getDataProductVersion()).isEqualTo("1.0.0");
-        assertThat(policyEvaluationResultResource.getInputObject()).isEqualTo("{\"name\":\"dp-1\",\"description\":\"DataProduct1Draft\",\"domain\":\"Marketing\"}");
+        assertThat(policyEvaluationResultResource.getInputObject().textValue()).isEqualTo("{\"name\":\"dp-1\",\"description\":\"DataProduct1Draft\",\"domain\":\"Marketing\"}");
         assertThat(policyEvaluationResultResource.getOutputObject()).isEqualTo("{\"allow\":true}");
         assertThat(policyEvaluationResultResource.getCreatedAt()).isNotNull();
         assertThat(policyEvaluationResultResource.getUpdatedAt()).isEqualTo(policyEvaluationResultResource.getCreatedAt());
@@ -187,7 +187,7 @@ public class PolicyEvaluationResultIT extends ODMPolicyIT {
         assertThat(policyEvaluationResultResource.getResult()).isEqualTo(false);
         assertThat(policyEvaluationResultResource.getDataProductId()).isEqualTo("abc123");
         assertThat(policyEvaluationResultResource.getDataProductVersion()).isEqualTo("1.0.0");
-        assertThat(policyEvaluationResultResource.getInputObject()).isEqualTo("{\"name\":\"dp-1\",\"description\":\"DataProduct1Draft\",\"domain\":\"Marketing\"}");
+        assertThat(policyEvaluationResultResource.getInputObject().textValue()).isEqualTo("{\"name\":\"dp-1\",\"description\":\"DataProduct1Draft\",\"domain\":\"Marketing\"}");
         assertThat(policyEvaluationResultResource.getOutputObject()).isEqualTo("{\"allow\":false}");
         assertThat(policyEvaluationResultResource.getCreatedAt()).isNotNull();
         assertThat(policyEvaluationResultResource.getUpdatedAt()).isAfter(policyEvaluationResultResource.getCreatedAt());
@@ -201,7 +201,7 @@ public class PolicyEvaluationResultIT extends ODMPolicyIT {
         assertThat(policyEvaluationResultResource.getResult()).isEqualTo(true);
         assertThat(policyEvaluationResultResource.getDataProductId()).isEqualTo("def456");
         assertThat(policyEvaluationResultResource.getDataProductVersion()).isEqualTo("1.7.14");
-        assertThat(policyEvaluationResultResource.getInputObject()).isEqualTo("{\"name\":\"dp-1-7-14\",\"description\":\"DataProduct1714Draft\",\"domain\":\"Sales\"}");
+        assertThat(policyEvaluationResultResource.getInputObject().textValue()).isEqualTo("{\"name\":\"dp-1-7-14\",\"description\":\"DataProduct1714Draft\",\"domain\":\"Sales\"}");
         assertThat(policyEvaluationResultResource.getOutputObject()).isEqualTo("{\"allow\":true}");
         assertThat(policyEvaluationResultResource.getCreatedAt()).isNotNull();
         assertThat(policyEvaluationResultResource.getUpdatedAt()).isEqualTo(policyEvaluationResultResource.getCreatedAt());

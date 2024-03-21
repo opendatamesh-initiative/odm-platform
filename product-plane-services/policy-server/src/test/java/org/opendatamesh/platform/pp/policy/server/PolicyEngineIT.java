@@ -68,7 +68,7 @@ public class PolicyEngineIT extends ODMPolicyIT {
 
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-    public void testReadAllPolicies() throws JsonProcessingException {
+    public void testReadAllPolicyEngines() throws JsonProcessingException {
 
         // Resources + Creation
         createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);

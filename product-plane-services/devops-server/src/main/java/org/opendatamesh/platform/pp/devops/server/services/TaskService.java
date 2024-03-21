@@ -226,7 +226,14 @@ public class TaskService {
                     }
                 }
 
-                if(!policyServiceProxy.isCallbackResultValid(taskResultResource)){
+                //DRAFT
+                /* TODO:
+                *   * add to the event also the next task to execute?
+                *       * Maybe to check if there is any variable that needs a value from the results?
+                *   * missing info about DataProduct and Activity, useful or not?
+                 */
+
+                if(!policyServiceProxy.isCallbackResultValid(taskMapper.toResource(task))){
                     //TODO throw exception
                 }
 

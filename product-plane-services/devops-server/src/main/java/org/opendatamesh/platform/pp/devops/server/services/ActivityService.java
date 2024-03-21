@@ -11,8 +11,11 @@ import org.opendatamesh.platform.core.dpds.model.internals.LifecycleTaskInfoDPDS
 import org.opendatamesh.platform.pp.devops.api.resources.*;
 import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsClients;
 import org.opendatamesh.platform.pp.devops.server.database.entities.Activity;
+import org.opendatamesh.platform.pp.devops.server.database.entities.Lifecycle;
 import org.opendatamesh.platform.pp.devops.server.database.entities.Task;
 import org.opendatamesh.platform.pp.devops.server.database.mappers.ActivityMapper;
+import org.opendatamesh.platform.pp.devops.server.database.mappers.LifecycleMapper;
+import org.opendatamesh.platform.pp.devops.server.database.mappers.TaskMapper;
 import org.opendatamesh.platform.pp.devops.server.database.repositories.ActivityRepository;
 import org.opendatamesh.platform.pp.devops.server.resources.context.ActivityContext;
 import org.opendatamesh.platform.pp.devops.server.resources.context.ActivityResultStatus;
@@ -50,6 +53,12 @@ public class ActivityService {
 
     @Autowired
     LifecycleService lifecycleService;
+
+    @Autowired
+    LifecycleMapper lifecycleMapper;
+
+    @Autowired
+    TaskMapper taskMapper;
 
     @Autowired
     EventNotifierProxy eventNotifierProxy;
@@ -128,6 +137,7 @@ public class ActivityService {
         return activityRepository.saveAndFlush(activity);
     }
 
+
     // ======================================================================================
     // START/STOP
     // ======================================================================================
@@ -181,8 +191,23 @@ public class ActivityService {
         }
 
         //TODO get the activity before
-        ActivityResource lastExecutedActivity = null;
+        /*ActivityResource lastExecutedActivity = null;
         if (!policyServiceProxy.isStageTransitionValid(lastExecutedActivity, mapper.toResource(activity))) {
+            //TODO Throw an exception for illegal stage transition
+        }*/
+
+        // DRAFT
+        /* TODO:
+        *   * is the lifecycle enough? Does we need contextual info? (The context for the first task)
+         */
+        Lifecycle lifecycle = lifecycleService.getDataProductVersionCurrentLifecycle(
+                activity.getDataProductId(),
+                activity.getDataProductVersion()
+        );
+        LifecycleResource lifecycleResource = lifecycle == null ? null : lifecycleMapper.toResource(lifecycle);
+        if (!policyServiceProxy.isStageTransitionValid(
+                lifecycleResource, mapper.toResource(activity), taskMapper.toResources(plannedTasks))
+        ) {
             //TODO Throw an exception for illegal stage transition
         }
 
@@ -231,6 +256,16 @@ public class ActivityService {
         if (success) {
             activity.setStatus(ActivityStatus.PROCESSED);
             lifecycleService.createLifecycle(activity);
+
+            //DRAFT
+            /* TODO:
+            *   * missing info about previous DataProductVersion object or previous Lifecycle of the current version, useful or not?
+            *   * missing info about Activity, useful or not?!
+             */
+            DataProductVersionDPDS dataProductVersion = readDataProductVersion(activity);
+            if (!policyServiceProxy.isContextuallyCoherent(dataProductVersion)) {
+                //TODO throw exception
+            }
         } else {
             for(Task task: tasks) {
                 if(task.getStatus().equals(ActivityTaskStatus.FAILED)) {
@@ -248,9 +283,10 @@ public class ActivityService {
         }
         activity = saveActivity(activity);
 
-        if (!policyServiceProxy.isContextuallyCoherent(mapper.toResource(activity))) {
+        // Policy validate solo in caso di successo?
+        /*if (!policyServiceProxy.isContextuallyCoherent(mapper.toResource(activity))) {
             //TODO throw exception
-        }
+        }*/
 
         eventNotifierProxy.notifyActivityCompletion(mapper.toResource(activity));
 

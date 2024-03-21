@@ -68,7 +68,7 @@ public class PolicyServiceProxy {
 
     private PolicyEvaluationRequestResource buildEvaluationRequest(DataProductVersionDPDS mostRecentDataProduct, DataProductVersionDPDS newDataProductVersion) throws JsonProcessingException {
         PolicyEvaluationRequestResource evaluationRequest = new PolicyEvaluationRequestResource();
-        evaluationRequest.setResourceType(PolicyEvaluationRequestResource.ResourceType.DATA_PRODUCT);
+        //evaluationRequest.setResourceType(PolicyEvaluationRequestResource.ResourceType.DATA_PRODUCT);
         evaluationRequest.setAfterState(objectMapper.writeValueAsString(newDataProductVersion));
         if (mostRecentDataProduct == null) {
             evaluationRequest.setEvent(PolicyEvaluationRequestResource.EventType.DATA_PRODUCT_CREATION);

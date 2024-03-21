@@ -7,9 +7,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PolicyEvaluationRequestResource {
-    @JsonProperty("resourceType")
+    /*@JsonProperty("resourceType")
     @Schema(description = "Resource type")
-    private ResourceType resourceType;
+    private ResourceType resourceType;*/
 
     @JsonProperty("dataProductId")
     @Schema(description = "ID of the Data Product evaluated (if the evaluation subject was a Data Product)")
@@ -35,11 +35,11 @@ public class PolicyEvaluationRequestResource {
         DATA_PRODUCT_CREATION,
         DATA_PRODUCT_UPDATE,
         ACTIVITY_STAGE_TRANSITION,
-        TASK_EXECUTOR_INITIAL_CALL,
-        TASK_EXECUTOR_FINAL_CALL
+        TASK_EXECUTION_RESULT,
+        ACTIVITY_EXECUTION_RESULT
     }
 
-    public enum ResourceType {
+    /*public enum ResourceType {
         DATA_PRODUCT,
         ACTIVITY,
         TASK_RESULT
@@ -51,7 +51,7 @@ public class PolicyEvaluationRequestResource {
 
     public void setResourceType(ResourceType resourceType) {
         this.resourceType = resourceType;
-    }
+    }*/
 
     public String getDataProductId() {
         return dataProductId;

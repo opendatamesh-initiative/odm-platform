@@ -53,3 +53,16 @@ spring:
     #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
     locations: classpath:db/migration/${FLYWAY_SCRIPTS_DIR}
     clean-on-validation-error: true
+
+
+#############################
+# ODM projects configurations
+#############################
+odm:
+  productPlane:
+    registryService:
+      active: true
+      address: http://localhost:8001
+    devopsService:
+      active: true
+      address: http://localhost:8002

@@ -8,6 +8,8 @@ import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultR
 import org.opendatamesh.platform.pp.policy.api.resources.PolicySearchOptions;
 import org.opendatamesh.platform.pp.policy.api.resources.ValidationResponseResource;
 import org.opendatamesh.platform.pp.policy.server.database.entities.Policy;
+import org.opendatamesh.platform.pp.policy.server.services.validation.PolicyDispatcherService;
+import org.opendatamesh.platform.pp.policy.server.services.validation.PolicyEnricherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,7 +27,7 @@ public class ValidationService {
     PolicyDispatcherService policyDispatcherService;
 
     @Autowired
-    PolicyEnricher policyEnricher;
+    PolicyEnricherService policyEnricherService;
 
     private static final JsonNodeFactory jsonNodeFactory = ObjectMapperFactory.JSON_MAPPER.getNodeFactory();
 
@@ -36,7 +38,7 @@ public class ValidationService {
     public ValidationResponseResource validateInput(PolicyEvaluationRequestResource policyEvaluationRequestResource) {
 
         // Enrich Request
-        policyEvaluationRequestResource = policyEnricher.enrichRequest(policyEvaluationRequestResource);
+        policyEvaluationRequestResource = policyEnricherService.enrichRequest(policyEvaluationRequestResource);
 
         // Initialize response
         ValidationResponseResource response = new ValidationResponseResource();

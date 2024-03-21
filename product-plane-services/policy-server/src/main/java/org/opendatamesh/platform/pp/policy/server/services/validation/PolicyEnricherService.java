@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.pp.policy.server.services;
+package org.opendatamesh.platform.pp.policy.server.services.validation;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,17 +8,28 @@ import org.opendatamesh.platform.pp.devops.api.resources.ActivityResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationRequestResource;
 import org.opendatamesh.platform.pp.policy.api.resources.events.TaskResultEventTypeResource;
 import org.opendatamesh.platform.pp.policy.api.services.mappers.JsonNodeMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PolicyEnricher {
+public class PolicyEnricherService {
+
+    @Value("${odm.productPlane.devopsService.active}")
+    private Boolean devOpsServiceActive;
+
+    @Value("${odm.productPlane.devopsService.address}")
+    private String devOpsServerAddress;
 
     DevOpsClient devOpsClient;
 
     private static final ObjectMapper mapper = ObjectMapperFactory.JSON_MAPPER;
 
-    public PolicyEnricher() {
-        this.devOpsClient = new DevOpsClient("fakeAddress");
+    public PolicyEnricherService() {
+
+        if(devOpsServiceActive)
+            this.devOpsClient = new DevOpsClient("fakeAddress");
+        else
+            this.devOpsClient = null;
     }
 
     public JsonNode enrichInputObject(PolicyEvaluationRequestResource.EventType eventType, JsonNode inputObject) {
@@ -27,11 +38,18 @@ public class PolicyEnricher {
     };
 
     public PolicyEvaluationRequestResource enrichRequest(PolicyEvaluationRequestResource request) {
-        if(request.getEvent().equals(PolicyEvaluationRequestResource.EventType.TASK_EXECUTION_RESULT)) {
+        switch (request.getEvent()) {
+            case ACTIVITY_EXECUTION_RESULT:
+                return enrichActivityExecutionResultEvent(request);
+            default:
+                return request;
+        }
+    }
 
-            TaskResultEventTypeResource taskResultEventTypeResource = null;
+    private PolicyEvaluationRequestResource enrichActivityExecutionResultEvent(PolicyEvaluationRequestResource request) {
+        if(devOpsServiceActive) {
             try {
-                taskResultEventTypeResource = mapper.readValue(
+                TaskResultEventTypeResource taskResultEventTypeResource = mapper.readValue(
                         request.getCurrentState().asText(), TaskResultEventTypeResource.class
                 );
                 if(taskResultEventTypeResource != null) {

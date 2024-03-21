@@ -28,9 +28,6 @@ public class PolicyServiceProxy {
     private final boolean policyServiceActive;
 
     @Autowired
-    ActivityService activityService;
-
-    @Autowired
     EventTypeMapper eventTypeMapper;
 
     private static final Logger logger = LoggerFactory.getLogger(PolicyServiceProxy.class);
@@ -85,7 +82,7 @@ public class PolicyServiceProxy {
     }
 
 
-    public boolean isCallbackResultValid(Long activityId, TaskResource taskResource) {
+    public boolean isCallbackResultValid(TaskResource taskResource) {
         if (!policyServiceActive) {
             logger.info("Policy Service is not active;");
             return true;
@@ -94,9 +91,8 @@ public class PolicyServiceProxy {
             PolicyEvaluationRequestResource evaluationRequest = new PolicyEvaluationRequestResource();
             evaluationRequest.setEvent(PolicyEvaluationRequestResource.EventType.TASK_EXECUTION_RESULT);
             evaluationRequest.setResourceType(PolicyEvaluationRequestResource.ResourceType.TASK_RESULT);
-            ActivityResource activityResource = activityService.loadActivityResource(activityId);
             evaluationRequest.setCurrentState(JsonNodeMapper.toJsonNode(
-                    eventTypeMapper.toResource(activityResource, taskResource)
+                    eventTypeMapper.toResource(null, taskResource)
             ));
             ValidationResponseResource evaluationResult = policyClient.validateInputObject(evaluationRequest);
             if (Boolean.FALSE.equals(evaluationResult.getResult())) {

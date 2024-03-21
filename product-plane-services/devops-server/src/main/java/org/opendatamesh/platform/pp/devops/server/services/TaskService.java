@@ -46,9 +46,6 @@ public class TaskService {
     @Autowired
     EventNotifierProxy eventNotifierProxy;
 
-    @Autowired
-    ActivityService activityService;
-
     private ExecutorClient odmExecutor;
 
     private static final Logger logger = LoggerFactory.getLogger(ActivityService.class);
@@ -227,7 +224,7 @@ public class TaskService {
                 }
 
                 // Interactions with PolicyService
-                if(!policyServiceProxy.isCallbackResultValid(task.getActivityId(), taskMapper.toResource(task))){
+                if(!policyServiceProxy.isCallbackResultValid(taskMapper.toResource(task))){
                     throw new InternalServerException(
                             ODMApiCommonErrors.SC500_73_POLICY_SERVICE_EVALUATION_ERROR,
                             "Some blocking policy has not passed evaluation"

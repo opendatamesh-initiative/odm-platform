@@ -24,6 +24,9 @@ public class ValidationService {
     @Autowired
     PolicyDispatcherService policyDispatcherService;
 
+    @Autowired
+    PolicyEnricher policyEnricher;
+
     private static final JsonNodeFactory jsonNodeFactory = ObjectMapperFactory.JSON_MAPPER.getNodeFactory();
 
     // ======================================================================================
@@ -31,6 +34,9 @@ public class ValidationService {
     // ======================================================================================
 
     public ValidationResponseResource validateInput(PolicyEvaluationRequestResource policyEvaluationRequestResource) {
+
+        // Enrich Request
+        policyEvaluationRequestResource = policyEnricher.enrichRequest(policyEvaluationRequestResource);
 
         // Initialize response
         ValidationResponseResource response = new ValidationResponseResource();

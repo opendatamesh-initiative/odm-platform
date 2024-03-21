@@ -55,9 +55,6 @@ public class ActivityService {
     LifecycleService lifecycleService;
 
     @Autowired
-    LifecycleMapper lifecycleMapper;
-
-    @Autowired
     TaskMapper taskMapper;
 
     @Autowired
@@ -190,11 +187,10 @@ public class ActivityService {
                             + "] of data product [" + activity.getDataProductVersion() + "]");
         }
 
-        Lifecycle lifecycle = lifecycleService.getDataProductVersionCurrentLifecycle(
+        LifecycleResource lifecycleResource = lifecycleService.getDataProductVersionCurrentLifecycleResource(
                 activity.getDataProductId(),
                 activity.getDataProductVersion()
         );
-        LifecycleResource lifecycleResource = lifecycle == null ? null : lifecycleMapper.toResource(lifecycle);
         if (!policyServiceProxy.isStageTransitionValid(
                 lifecycleResource, mapper.toResource(activity), taskMapper.toResources(plannedTasks))
         ) {
@@ -251,6 +247,10 @@ public class ActivityService {
             lifecycleService.createLifecycle(activity);
             activity = saveActivity(activity);
 
+            // WARNING
+            /* TODO: this readDataProductVersion make a lot of tests wrong due to errors in the Mocks for the test
+            *   * before mergine on main ABSOLUTELY FIX IT
+            */
             DataProductVersionDPDS dataProductVersion = readDataProductVersion(activity);
             if (!policyServiceProxy.isContextuallyCoherent(mapper.toResource(activity), dataProductVersion)) {
                 throw new InternalServerException(

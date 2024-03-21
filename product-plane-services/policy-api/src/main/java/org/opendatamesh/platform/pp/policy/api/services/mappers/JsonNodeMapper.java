@@ -23,4 +23,28 @@ public class JsonNodeMapper {
         }
     };
 
+    public static final JsonNode toJsonNode(String inputString) {
+        try {
+            return mapper.readTree(inputString);
+        } catch (JsonProcessingException e) {
+            throw new InternalServerException(
+                    ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
+                    "Error serializing object as JSON",
+                    e
+            );
+        }
+    };
+
+    public static final String toStringFromJsonNode(JsonNode jsonNode) {
+        try {
+            return mapper.writeValueAsString(jsonNode);
+        } catch (JsonProcessingException e) {
+            throw new InternalServerException(
+                    ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
+                    "Error deserializing JSON as string",
+                    e
+            );
+        }
+    }
+
 }

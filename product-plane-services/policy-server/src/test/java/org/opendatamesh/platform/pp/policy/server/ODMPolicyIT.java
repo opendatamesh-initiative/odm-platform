@@ -46,7 +46,7 @@ public class ODMPolicyIT extends ODMIntegrationTest {
 
     protected ODMPolicyResourceBuilder resourceBuilder;
 
-    protected ObjectMapper mapper; // Probably removable
+    protected ObjectMapper mapper;
 
     protected Logger logger = LoggerFactory.getLogger(ODMPolicyIT.class);
 
@@ -57,6 +57,7 @@ public class ODMPolicyIT extends ODMIntegrationTest {
     @PostConstruct
     public void init() {
 
+        mapper = ObjectMapperFactory.JSON_MAPPER;
         resourceBuilder = new ODMPolicyResourceBuilder();
         policyClient = new PolicyClientImpl("http://localhost:" + port, mapper);
 

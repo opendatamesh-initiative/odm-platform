@@ -2,6 +2,7 @@ package org.opendatamesh.platform.pp.policy.api.resources;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.opendatamesh.platform.pp.policy.api.resources.utils.TimestampedResource;
 
@@ -22,7 +23,7 @@ public class PolicyEvaluationResultResource extends TimestampedResource {
 
     @JsonProperty("inputObject")
     @Schema(description = "JSON representation of the evaluated object")
-    private String inputObject;
+    private JsonNode inputObject;
 
     @JsonProperty("outputObject")
     @Schema(description = "JSON representation of the evaluation output object")
@@ -60,11 +61,11 @@ public class PolicyEvaluationResultResource extends TimestampedResource {
         this.dataProductVersion = dataProductVersion;
     }
 
-    public String getInputObject() {
+    public JsonNode getInputObject() {
         return inputObject;
     }
 
-    public void setInputObject(String inputObject) {
+    public void setInputObject(JsonNode inputObject) {
         this.inputObject = inputObject;
     }
 

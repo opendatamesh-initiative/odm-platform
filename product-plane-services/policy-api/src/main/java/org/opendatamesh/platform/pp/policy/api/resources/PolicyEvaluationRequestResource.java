@@ -2,14 +2,15 @@ package org.opendatamesh.platform.pp.policy.api.resources;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PolicyEvaluationRequestResource {
-    /*@JsonProperty("resourceType")
+    @JsonProperty("resourceType")
     @Schema(description = "Resource type")
-    private ResourceType resourceType;*/
+    private ResourceType resourceType;
 
     @JsonProperty("dataProductId")
     @Schema(description = "ID of the Data Product evaluated (if the evaluation subject was a Data Product)")
@@ -25,11 +26,11 @@ public class PolicyEvaluationRequestResource {
 
     @JsonProperty("currentState")
     @Schema(description = "The current state")
-    private String currentState;
+    private JsonNode currentState;
 
     @JsonProperty("afterState")
     @Schema(description = "The next state")
-    private String afterState;
+    private JsonNode afterState;
 
     public enum EventType {
         DATA_PRODUCT_CREATION,
@@ -39,9 +40,10 @@ public class PolicyEvaluationRequestResource {
         ACTIVITY_EXECUTION_RESULT
     }
 
-    /*public enum ResourceType {
+    public enum ResourceType {
         DATA_PRODUCT,
-        ACTIVITY,
+        ACTIVITY_TRANSITION,
+        ACTIVITY_RESULT,
         TASK_RESULT
     }
 
@@ -51,7 +53,7 @@ public class PolicyEvaluationRequestResource {
 
     public void setResourceType(ResourceType resourceType) {
         this.resourceType = resourceType;
-    }*/
+    }
 
     public String getDataProductId() {
         return dataProductId;
@@ -77,19 +79,19 @@ public class PolicyEvaluationRequestResource {
         this.event = event;
     }
 
-    public String getCurrentState() {
+    public JsonNode getCurrentState() {
         return currentState;
     }
 
-    public void setCurrentState(String currentState) {
+    public void setCurrentState(JsonNode currentState) {
         this.currentState = currentState;
     }
 
-    public String getAfterState() {
+    public JsonNode getAfterState() {
         return afterState;
     }
 
-    public void setAfterState(String afterState) {
+    public void setAfterState(JsonNode afterState) {
         this.afterState = afterState;
     }
 }

@@ -7,10 +7,7 @@ import org.opendatamesh.platform.core.dpds.model.core.StandardDefinitionDPDS;
 import org.opendatamesh.platform.core.dpds.model.internals.LifecycleTaskInfoDPDS;
 import org.opendatamesh.platform.core.dpds.parser.IdentifierStrategy;
 import org.opendatamesh.platform.pp.devops.api.clients.DevOpsAPIRoutes;
-import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskStatus;
-import org.opendatamesh.platform.pp.devops.api.resources.DevOpsApiStandardErrors;
-import org.opendatamesh.platform.pp.devops.api.resources.TaskResultResource;
-import org.opendatamesh.platform.pp.devops.api.resources.TaskResultStatus;
+import org.opendatamesh.platform.pp.devops.api.resources.*;
 import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsClients;
 import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsConfigurations;
 import org.opendatamesh.platform.pp.devops.server.database.entities.Task;
@@ -48,6 +45,9 @@ public class TaskService {
 
     @Autowired
     EventNotifierProxy eventNotifierProxy;
+
+    @Autowired
+    ActivityService activityService;
 
     private ExecutorClient odmExecutor;
 
@@ -226,15 +226,12 @@ public class TaskService {
                     }
                 }
 
-                //DRAFT
-                /* TODO:
-                *   * add to the event also the next task to execute?
-                *       * Maybe to check if there is any variable that needs a value from the results?
-                *   * missing info about DataProduct and Activity, useful or not?
-                 */
-
-                if(!policyServiceProxy.isCallbackResultValid(taskMapper.toResource(task))){
-                    //TODO throw exception
+                // Interactions with PolicyService
+                if(!policyServiceProxy.isCallbackResultValid(task.getActivityId(), taskMapper.toResource(task))){
+                    throw new InternalServerException(
+                            ODMApiCommonErrors.SC500_73_POLICY_SERVICE_EVALUATION_ERROR,
+                            "Some blocking policy has not passed evaluation"
+                    );
                 }
 
             } else {

@@ -190,16 +190,6 @@ public class ActivityService {
                             + "] of data product [" + activity.getDataProductVersion() + "]");
         }
 
-        //TODO get the activity before
-        /*ActivityResource lastExecutedActivity = null;
-        if (!policyServiceProxy.isStageTransitionValid(lastExecutedActivity, mapper.toResource(activity))) {
-            //TODO Throw an exception for illegal stage transition
-        }*/
-
-        // DRAFT
-        /* TODO:
-        *   * is the lifecycle enough? Does we need contextual info? (The context for the first task)
-         */
         Lifecycle lifecycle = lifecycleService.getDataProductVersionCurrentLifecycle(
                 activity.getDataProductId(),
                 activity.getDataProductVersion()
@@ -208,7 +198,10 @@ public class ActivityService {
         if (!policyServiceProxy.isStageTransitionValid(
                 lifecycleResource, mapper.toResource(activity), taskMapper.toResources(plannedTasks))
         ) {
-            //TODO Throw an exception for illegal stage transition
+            throw new InternalServerException(
+                    ODMApiCommonErrors.SC500_73_POLICY_SERVICE_EVALUATION_ERROR,
+                    "Some blocking policy on Activity start has not passed evaluation"
+            );
         }
 
         // update activity's status
@@ -256,16 +249,16 @@ public class ActivityService {
         if (success) {
             activity.setStatus(ActivityStatus.PROCESSED);
             lifecycleService.createLifecycle(activity);
+            activity = saveActivity(activity);
 
-            //DRAFT
-            /* TODO:
-            *   * missing info about previous DataProductVersion object or previous Lifecycle of the current version, useful or not?
-            *   * missing info about Activity, useful or not?!
-             */
             DataProductVersionDPDS dataProductVersion = readDataProductVersion(activity);
-            if (!policyServiceProxy.isContextuallyCoherent(dataProductVersion)) {
-                //TODO throw exception
+            if (!policyServiceProxy.isContextuallyCoherent(mapper.toResource(activity), dataProductVersion)) {
+                throw new InternalServerException(
+                        ODMApiCommonErrors.SC500_73_POLICY_SERVICE_EVALUATION_ERROR,
+                        "Some blocking policy on Activity results has not passed evaluation"
+                );
             }
+
         } else {
             for(Task task: tasks) {
                 if(task.getStatus().equals(ActivityTaskStatus.FAILED)) {
@@ -278,15 +271,9 @@ public class ActivityService {
             } catch (JsonProcessingException e) {
 				logger.warn("Impossible to serialize errors aggregate", e);
 			}
-
             activity.setStatus(ActivityStatus.FAILED);
+            activity = saveActivity(activity);
         }
-        activity = saveActivity(activity);
-
-        // Policy validate solo in caso di successo?
-        /*if (!policyServiceProxy.isContextuallyCoherent(mapper.toResource(activity))) {
-            //TODO throw exception
-        }*/
 
         eventNotifierProxy.notifyActivityCompletion(mapper.toResource(activity));
 
@@ -500,6 +487,18 @@ public class ActivityService {
         }
 
         return activity;
+    }
+
+    public ActivityResource loadActivityResource(Long activityId) {
+        ActivityResource activityResource = null;
+
+        Activity activity = loadActivity(activityId);
+
+        if(activity != null) {
+            activityResource = mapper.toResource(activity);
+        }
+
+        return activityResource;
     }
 
     // -------------------------

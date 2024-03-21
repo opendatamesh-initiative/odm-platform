@@ -1,16 +1,13 @@
 package org.opendatamesh.platform.pp.policy.server.services;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
-import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationRequestResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicySearchOptions;
 import org.opendatamesh.platform.pp.policy.api.resources.ValidationResponseResource;
-import org.opendatamesh.platform.pp.policy.api.resources.exceptions.PolicyApiStandardErrors;
 import org.opendatamesh.platform.pp.policy.server.database.entities.Policy;
-import org.opendatamesh.platform.pp.policy.server.resources.PolicyEvaluationInputObjectResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -26,6 +23,8 @@ public class ValidationService {
 
     @Autowired
     PolicyDispatcherService policyDispatcherService;
+
+    private static final JsonNodeFactory jsonNodeFactory = ObjectMapperFactory.JSON_MAPPER.getNodeFactory();
 
     // ======================================================================================
     // Validation
@@ -91,19 +90,9 @@ public class ValidationService {
         PolicyEvaluationResultResource policyEvaluationResultResource = new PolicyEvaluationResultResource();
 
         // Extract object to validate
-        PolicyEvaluationInputObjectResource inputObjectResource = new PolicyEvaluationInputObjectResource();
-        inputObjectResource.setCurrentState(request.getCurrentState());
-        inputObjectResource.setAfterState(request.getAfterState());
-        String inputObject;
-        try {
-            inputObject = ObjectMapperFactory.JSON_MAPPER.writeValueAsString(inputObjectResource);
-        } catch (JsonProcessingException e) {
-            throw new InternalServerException(
-                    ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
-                    "Error serializing as JSON inputObject to forward for policy evaluation",
-                    e
-            );
-        }
+        ObjectNode inputObject = jsonNodeFactory.objectNode();
+        inputObject.put("currentState", request.getCurrentState());
+        inputObject.put("afterState", request.getAfterState());
 
         policyEvaluationResultResource.setDataProductId(request.getDataProductId());
         policyEvaluationResultResource.setDataProductVersion(request.getDataProductVersion());

@@ -1,10 +1,16 @@
 package org.opendatamesh.platform.pp.policy.server.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
+import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationRequestResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicySearchOptions;
 import org.opendatamesh.platform.pp.policy.api.resources.ValidationResponseResource;
+import org.opendatamesh.platform.pp.policy.api.resources.exceptions.PolicyApiStandardErrors;
 import org.opendatamesh.platform.pp.policy.server.database.entities.Policy;
+import org.opendatamesh.platform.pp.policy.server.resources.PolicyEvaluationInputObjectResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -85,12 +91,23 @@ public class ValidationService {
         PolicyEvaluationResultResource policyEvaluationResultResource = new PolicyEvaluationResultResource();
 
         // Extract object to validate
-        // TODO: add true logic and remove this part
-        String MOCKED_INPUT_OBJECT = "";
+        PolicyEvaluationInputObjectResource inputObjectResource = new PolicyEvaluationInputObjectResource();
+        inputObjectResource.setCurrentState(request.getCurrentState());
+        inputObjectResource.setAfterState(request.getAfterState());
+        String inputObject;
+        try {
+            inputObject = ObjectMapperFactory.JSON_MAPPER.writeValueAsString(inputObjectResource);
+        } catch (JsonProcessingException e) {
+            throw new InternalServerException(
+                    ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
+                    "Error serializing as JSON inputObject to forward for policy evaluation",
+                    e
+            );
+        }
 
         policyEvaluationResultResource.setDataProductId(request.getDataProductId());
         policyEvaluationResultResource.setDataProductVersion(request.getDataProductVersion());
-        policyEvaluationResultResource.setInputObject(MOCKED_INPUT_OBJECT);
+        policyEvaluationResultResource.setInputObject(inputObject);
 
         return policyEvaluationResultResource;
 

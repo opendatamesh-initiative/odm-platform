@@ -7,6 +7,8 @@ import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationRequest
 import org.opendatamesh.platform.pp.policy.api.resources.events.TaskResultEventTypeResource;
 import org.opendatamesh.platform.pp.policy.api.services.mappers.JsonNodeMapper;
 import org.opendatamesh.platform.pp.policy.server.config.OdmClients;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,8 @@ public class PolicyEnricherService {
     OdmClients odmClients;
 
     private static final ObjectMapper mapper = ObjectMapperFactory.JSON_MAPPER;
+
+    private static final Logger logger = LoggerFactory.getLogger(PolicyEnricherService.class);
 
     public PolicyEnricherService() { }
 
@@ -42,8 +46,8 @@ public class PolicyEnricherService {
                     taskResultEventTypeResource.setActivity(activityResource);
                     request.setCurrentState(JsonNodeMapper.toJsonNode(taskResultEventTypeResource));
                 }
-            } catch (Exception e) {
-                // nothing
+            } catch (Throwable t) {
+                logger.warn("Error enriching ACTIVITY_EXECUTION_RESULT event", t);
             }
         }
         return request;

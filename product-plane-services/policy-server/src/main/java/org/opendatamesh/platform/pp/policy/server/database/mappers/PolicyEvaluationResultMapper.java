@@ -1,12 +1,10 @@
 package org.opendatamesh.platform.pp.policy.server.database.mappers;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.networknt.schema.utils.JsonNodeUtil;
-import jdk.jfr.Name;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
-import org.opendatamesh.platform.pp.policy.api.services.mappers.JsonNodeMapper;
+import org.opendatamesh.platform.pp.policy.api.mappers.JsonNodeMapper;
 import org.opendatamesh.platform.pp.policy.server.database.entities.PolicyEvaluationResult;
 import org.opendatamesh.platform.pp.policy.server.database.mappers.utils.BaseMapper;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;

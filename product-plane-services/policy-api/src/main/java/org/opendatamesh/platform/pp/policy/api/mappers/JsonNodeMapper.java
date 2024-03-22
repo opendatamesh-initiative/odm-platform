@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.pp.policy.api.services.mappers;
+package org.opendatamesh.platform.pp.policy.api.mappers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -7,11 +7,11 @@ import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerE
 import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 
-public class JsonNodeMapper {
+public final class JsonNodeMapper {
 
     private static final ObjectMapper mapper = ObjectMapperFactory.JSON_MAPPER;
 
-    public static final JsonNode toJsonNode(Object object) {
+    public static JsonNode toJsonNode(Object object) {
         try {
             return mapper.readTree(mapper.writeValueAsString(object));
         } catch (JsonProcessingException e) {
@@ -23,7 +23,7 @@ public class JsonNodeMapper {
         }
     };
 
-    public static final JsonNode toJsonNode(String inputString) {
+    public static JsonNode toJsonNode(String inputString) {
         try {
             return mapper.readTree(inputString);
         } catch (JsonProcessingException e) {
@@ -35,7 +35,7 @@ public class JsonNodeMapper {
         }
     };
 
-    public static final String toStringFromJsonNode(JsonNode jsonNode) {
+    public static String toStringFromJsonNode(JsonNode jsonNode) {
         try {
             return mapper.writeValueAsString(jsonNode);
         } catch (JsonProcessingException e) {

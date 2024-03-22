@@ -5,7 +5,7 @@ import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationRequestResource;
 import org.opendatamesh.platform.pp.policy.api.resources.events.TaskResultEventTypeResource;
-import org.opendatamesh.platform.pp.policy.api.services.mappers.JsonNodeMapper;
+import org.opendatamesh.platform.pp.policy.api.mappers.JsonNodeMapper;
 import org.opendatamesh.platform.pp.policy.server.services.proxies.DevOpsProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.pp.policy.api.services.mappers;
+package org.opendatamesh.platform.pp.policy.api.mappers;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

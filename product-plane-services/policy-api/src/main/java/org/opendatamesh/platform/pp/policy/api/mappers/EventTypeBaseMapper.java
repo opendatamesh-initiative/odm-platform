@@ -15,15 +15,15 @@ import org.opendatamesh.platform.up.executor.api.resources.TaskResource;
 import java.util.List;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface EventTypeMapper {
+public interface EventTypeBaseMapper {
 
     @Mapping(target = "dataProductVersion", source = "dataProductVersionDPDS")
-    DataProductEventTypeResource toResource(DataProductVersionDPDS dataProductVersionDPDS);
+    DataProductEventTypeResource toEventResource(DataProductVersionDPDS dataProductVersionDPDS);
 
     @Mapping(target = "lifecycle", source = "lifecycleResource")
     @Mapping(target = "activity", source = "activityResource")
     @Mapping(target = "tasks", source = "taskResourceList")
-    ActivityStageTransitionEventTypeResource toResource(
+    ActivityStageTransitionEventTypeResource toEventResource(
             LifecycleResource lifecycleResource,
             ActivityResource activityResource,
             List<TaskResource> taskResourceList
@@ -31,14 +31,14 @@ public interface EventTypeMapper {
 
     @Mapping(target = "activity", source = "activityResource")
     @Mapping(target = "task", source = "taskResource")
-    TaskResultEventTypeResource toResource(
+    TaskResultEventTypeResource toEventResource(
             ActivityResource activityResource,
             TaskResource taskResource
     );
 
     @Mapping(target = "activity", source = "activityResource")
     @Mapping(target = "dataProductVersion", source = "dataProductVersionDPDS")
-    ActivityResultEventTypeResource toResource(
+    ActivityResultEventTypeResource toEventResource(
             ActivityResource activityResource,
             DataProductVersionDPDS dataProductVersionDPDS
     );

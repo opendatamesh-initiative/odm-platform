@@ -7,10 +7,10 @@ import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.pp.policy.api.clients.PolicyClient;
 import org.opendatamesh.platform.pp.policy.api.clients.PolicyClientImpl;
+import org.opendatamesh.platform.pp.policy.api.mappers.utils.JsonNodeUtils;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationRequestResource;
 import org.opendatamesh.platform.pp.policy.api.resources.ValidationResponseResource;
-import org.opendatamesh.platform.pp.policy.api.mappers.EventTypeMapper;
-import org.opendatamesh.platform.pp.policy.api.mappers.JsonNodeMapper;
+import org.opendatamesh.platform.pp.registry.server.database.mappers.EventTypeMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,6 @@ public class PolicyServiceProxy {
 
     @Autowired
     EventTypeMapper eventTypeMapper;
-
 
     private static final Logger logger = LoggerFactory.getLogger(PolicyServiceProxy.class);
 
@@ -70,12 +69,12 @@ public class PolicyServiceProxy {
     private PolicyEvaluationRequestResource buildEvaluationRequest(DataProductVersionDPDS mostRecentDataProduct, DataProductVersionDPDS newDataProductVersion) throws JsonProcessingException {
         PolicyEvaluationRequestResource evaluationRequest = new PolicyEvaluationRequestResource();
         evaluationRequest.setResourceType(PolicyEvaluationRequestResource.ResourceType.DATA_PRODUCT);
-        evaluationRequest.setAfterState(JsonNodeMapper.toJsonNode(eventTypeMapper.toResource(newDataProductVersion)));
+        evaluationRequest.setAfterState(JsonNodeUtils.toJsonNode(eventTypeMapper.toEventResource(newDataProductVersion)));
         if (mostRecentDataProduct == null) {
             evaluationRequest.setEvent(PolicyEvaluationRequestResource.EventType.DATA_PRODUCT_CREATION);
         } else {
             evaluationRequest.setEvent(PolicyEvaluationRequestResource.EventType.DATA_PRODUCT_UPDATE);
-            evaluationRequest.setCurrentState(JsonNodeMapper.toJsonNode(eventTypeMapper.toResource(mostRecentDataProduct)));
+            evaluationRequest.setCurrentState(JsonNodeUtils.toJsonNode(eventTypeMapper.toEventResource(mostRecentDataProduct)));
         }
         return evaluationRequest;
 

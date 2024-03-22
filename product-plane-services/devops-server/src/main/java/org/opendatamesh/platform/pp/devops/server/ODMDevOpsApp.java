@@ -5,7 +5,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"org.opendatamesh.platform.pp.devops.server", "org.opendatamesh.platform.pp.policy.api.mappers"})
 public class ODMDevOpsApp {
 
     public static void main(String[] args) {

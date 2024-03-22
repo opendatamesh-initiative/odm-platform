@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
-import org.opendatamesh.platform.pp.policy.api.mappers.JsonNodeMapper;
+import org.opendatamesh.platform.pp.policy.api.mappers.utils.JsonNodeUtils;
 import org.opendatamesh.platform.pp.policy.server.database.entities.PolicyEvaluationResult;
 import org.opendatamesh.platform.pp.policy.server.database.mappers.utils.BaseMapper;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
@@ -23,13 +23,12 @@ public interface PolicyEvaluationResultMapper extends BaseMapper<PolicyEvaluatio
 
     @Named("stringToJsonNode")
     static JsonNode stringToJsonNode(String value) {
-        return JsonNodeMapper.toJsonNode(value);
+        return JsonNodeUtils.toJsonNode(value);
     };
 
     @Named("jsonNodeToString")
     static String jsonNodeToString(JsonNode value) {
-        return JsonNodeMapper.toStringFromJsonNode(value);
+        return JsonNodeUtils.toStringFromJsonNode(value);
     };
-
 
 }

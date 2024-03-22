@@ -7,12 +7,12 @@ import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityResource;
 import org.opendatamesh.platform.pp.devops.api.resources.LifecycleResource;
 import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsConfigurations;
+import org.opendatamesh.platform.pp.devops.server.database.mappers.EventTypeMapper;
 import org.opendatamesh.platform.pp.policy.api.clients.PolicyClient;
 import org.opendatamesh.platform.pp.policy.api.clients.PolicyClientImpl;
+import org.opendatamesh.platform.pp.policy.api.mappers.utils.JsonNodeUtils;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationRequestResource;
 import org.opendatamesh.platform.pp.policy.api.resources.ValidationResponseResource;
-import org.opendatamesh.platform.pp.policy.api.mappers.EventTypeMapper;
-import org.opendatamesh.platform.pp.policy.api.mappers.JsonNodeMapper;
 import org.opendatamesh.platform.up.executor.api.resources.TaskResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,12 +60,12 @@ public class PolicyServiceProxy {
             evaluationRequest.setEvent(PolicyEvaluationRequestResource.EventType.ACTIVITY_STAGE_TRANSITION);
             evaluationRequest.setResourceType(PolicyEvaluationRequestResource.ResourceType.ACTIVITY_TRANSITION);
             if (currentLifecycle != null) {
-                evaluationRequest.setCurrentState(JsonNodeMapper.toJsonNode(
-                        eventTypeMapper.toResource(currentLifecycle, null, null)
+                evaluationRequest.setCurrentState(JsonNodeUtils.toJsonNode(
+                        eventTypeMapper.toEventResource(currentLifecycle, null, null)
                 ));
             }
-            evaluationRequest.setAfterState(JsonNodeMapper.toJsonNode(
-                    eventTypeMapper.toResource(currentLifecycle, activityToBeExecuted, activityTasksToBeExecuted)
+            evaluationRequest.setAfterState(JsonNodeUtils.toJsonNode(
+                    eventTypeMapper.toEventResource(currentLifecycle, activityToBeExecuted, activityTasksToBeExecuted)
             ));
             ValidationResponseResource evaluationResult = policyClient.validateInputObject(evaluationRequest);
             if (Boolean.FALSE.equals(evaluationResult.getResult())) {
@@ -91,8 +91,8 @@ public class PolicyServiceProxy {
             PolicyEvaluationRequestResource evaluationRequest = new PolicyEvaluationRequestResource();
             evaluationRequest.setEvent(PolicyEvaluationRequestResource.EventType.TASK_EXECUTION_RESULT);
             evaluationRequest.setResourceType(PolicyEvaluationRequestResource.ResourceType.TASK_RESULT);
-            evaluationRequest.setCurrentState(JsonNodeMapper.toJsonNode(
-                    eventTypeMapper.toResource(null, taskResource)
+            evaluationRequest.setCurrentState(JsonNodeUtils.toJsonNode(
+                    eventTypeMapper.toEventResource(null, taskResource)
             ));
             ValidationResponseResource evaluationResult = policyClient.validateInputObject(evaluationRequest);
             if (Boolean.FALSE.equals(evaluationResult.getResult())) {
@@ -117,8 +117,8 @@ public class PolicyServiceProxy {
             PolicyEvaluationRequestResource evaluationRequest = new PolicyEvaluationRequestResource();
             evaluationRequest.setEvent(PolicyEvaluationRequestResource.EventType.ACTIVITY_EXECUTION_RESULT);
             evaluationRequest.setResourceType(PolicyEvaluationRequestResource.ResourceType.ACTIVITY_RESULT);
-            evaluationRequest.setCurrentState(JsonNodeMapper.toJsonNode(
-                    eventTypeMapper.toResource(activityResource, dataProductVersionDPDS)
+            evaluationRequest.setCurrentState(JsonNodeUtils.toJsonNode(
+                    eventTypeMapper.toEventResource(activityResource, dataProductVersionDPDS)
             ));
             ValidationResponseResource evaluationResult = policyClient.validateInputObject(evaluationRequest);
             if (Boolean.FALSE.equals(evaluationResult.getResult())) {

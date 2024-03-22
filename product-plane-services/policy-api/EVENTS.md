@@ -30,7 +30,9 @@ Each object shown in the examples has been trimmed as it merely serves as an exa
 </div>
 
 ## Registry Events
-Events representing operations from the Registry Server.
+Events representing operations from the Registry Server, that are:
+* DATA_PRODUCT_CREATION
+* DATA_PRODUCT_UPDATE
 
 ### DATA_PRODUCT_CREATION
 
@@ -181,7 +183,10 @@ The composed input object that will be forwarded to the right Policy Engine Adap
 ```
 
 ## DevOps Events
-Events representing operations from the DevOps Server.
+Events representing operations from the DevOps Server, that are:
+* ACTIVITY_STAGE_TRANSITION
+* TASK_EXECUTION_RESULT
+* ACTIVITY_EXECUTION_RESULT
 
 ### ACTIVITY_STAGE_TRANSITION
 

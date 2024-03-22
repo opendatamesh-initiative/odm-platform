@@ -3,11 +3,10 @@ package org.opendatamesh.platform.pp.policy.server.services;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
-import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationRequestResource;
-import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
-import org.opendatamesh.platform.pp.policy.api.resources.PolicySearchOptions;
-import org.opendatamesh.platform.pp.policy.api.resources.ValidationResponseResource;
+import org.opendatamesh.platform.pp.policy.api.resources.*;
 import org.opendatamesh.platform.pp.policy.server.database.entities.Policy;
+import org.opendatamesh.platform.pp.policy.server.database.entities.PolicyEngine;
+import org.opendatamesh.platform.pp.policy.server.database.mappers.PolicyMapper;
 import org.opendatamesh.platform.pp.policy.server.services.validation.PolicyDispatcherService;
 import org.opendatamesh.platform.pp.policy.server.services.validation.PolicyEnricherService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +21,9 @@ public class ValidationService {
 
     @Autowired
     PolicyService policyService;
+
+    @Autowired
+    PolicyMapper policyMapper;
 
     @Autowired
     PolicyDispatcherService policyDispatcherService;
@@ -53,7 +55,11 @@ public class ValidationService {
         PolicyEvaluationResultResource policyResult;
         for (Policy policyToEvaluate : policiesToEvaluate) {
             basePolicyResult.setPolicyId(policyToEvaluate.getId());
-            policyResult = validateInputSinglePolicy(policyToEvaluate, basePolicyResult);
+            policyResult = validateInputSinglePolicy(
+                    policyMapper.toRes(policyToEvaluate),
+                    policyToEvaluate.getPolicyEngine(),
+                    basePolicyResult
+            );
             policyResults.add(policyResult);
             if(!policyResult.getResult() && validationResult) {
                 validationResult = false;
@@ -69,9 +75,9 @@ public class ValidationService {
     }
 
     private PolicyEvaluationResultResource validateInputSinglePolicy(
-            Policy policy, PolicyEvaluationResultResource basePolicyResult
+            PolicyResource policy, PolicyEngine policyEngine, PolicyEvaluationResultResource basePolicyResult
     ) {
-        return policyDispatcherService.dispatchPolicy(policy, basePolicyResult);
+        return policyDispatcherService.dispatchPolicy(policy, policyEngine, basePolicyResult);
     }
 
 

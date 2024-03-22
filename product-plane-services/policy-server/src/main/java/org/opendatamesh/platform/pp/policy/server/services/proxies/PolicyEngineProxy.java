@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.pp.policy.server.services;
+package org.opendatamesh.platform.pp.policy.server.services.proxies;
 
 import org.opendatamesh.platform.pp.policy.server.database.entities.Policy;
 import org.opendatamesh.platform.pp.policy.server.database.entities.PolicyEngine;

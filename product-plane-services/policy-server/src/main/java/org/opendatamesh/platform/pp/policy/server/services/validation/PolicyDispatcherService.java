@@ -2,7 +2,7 @@ package org.opendatamesh.platform.pp.policy.server.services.validation;
 
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
 import org.opendatamesh.platform.pp.policy.server.database.entities.Policy;
-import org.opendatamesh.platform.pp.policy.server.services.PolicyEngineProxy;
+import org.opendatamesh.platform.pp.policy.server.services.proxies.PolicyEngineProxy;
 import org.opendatamesh.platform.pp.policy.server.services.PolicyEvaluationResultService;
 import org.opendatamesh.platform.pp.policy.server.services.mocks.PolicyEngineValidationResponse;
 import org.springframework.beans.factory.annotation.Autowired;

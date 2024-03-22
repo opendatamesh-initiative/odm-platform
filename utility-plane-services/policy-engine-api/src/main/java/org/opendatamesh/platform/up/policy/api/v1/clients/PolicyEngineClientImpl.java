@@ -2,17 +2,18 @@ package org.opendatamesh.platform.up.policy.api.v1.clients;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.opendatamesh.platform.core.commons.clients.ODMClient;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
+import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.up.policy.api.v1.resources.DocumentResource;
 import org.opendatamesh.platform.up.policy.api.v1.resources.EvaluationResource;
+import org.opendatamesh.platform.up.policy.api.v1.resources.errors.PolicyEngineApiStandardErrors;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.util.List;
 
 public class PolicyEngineClientImpl extends ODMClient implements PolicyEngineClient {
 
@@ -24,33 +25,60 @@ public class PolicyEngineClientImpl extends ODMClient implements PolicyEngineCli
         super(serverAddress, ObjectMapperFactory.JSON_MAPPER);
     }
 
+
+    // ======================================================================================
+    // Evaluate Document
+    // ======================================================================================
+
     public EvaluationResource evaluateDocument(DocumentResource document) {
+        ResponseEntity<ObjectNode> evaluationResponse = evaluateDocumentResponseEntity(document);
+        return mapResponseOrThrowError(evaluationResponse);
+    }
+
+    public ResponseEntity<ObjectNode> evaluateDocumentResponseEntity(DocumentResource document) {
         return rest.exchange(
                 apiUrl(PolicyEngineAPIRoutes.EVALUATE_POLICY),
                 HttpMethod.POST,
                 new HttpEntity<>(document),
-                EvaluationResource.class
-        ).getBody();
+                ObjectNode.class
+        );
     }
 
-    public ResponseEntity evaluateDocumentResponseEntity(DocumentResource document) throws JsonProcessingException {
-        ResponseEntity evaluationResponse = rest.exchange(
-                apiUrl(PolicyEngineAPIRoutes.EVALUATE_POLICY),
-                HttpMethod.POST,
-                new HttpEntity<>(document),
-                Object.class
-        );
-        ResponseEntity response = mapResponseEntity(evaluationResponse,
-                HttpStatus.OK,
-                EvaluationResource.class
-        );
-        return response;
+
+    // ======================================================================================
+    // Utils
+    // ======================================================================================
+
+    private EvaluationResource mapResponseOrThrowError(ResponseEntity<ObjectNode> response) {
+        if(!response.getStatusCode().is2xxSuccessful()) {
+            extractAndThrowError(response);
+        }
+        try {
+            return mapper.treeToValue(response.getBody(), EvaluationResource.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e); //TODO
+        }
     }
 
-    protected ResponseEntity mapResponseEntity(ResponseEntity response,
-                                               HttpStatus acceptedStatusCode,
-                                               Class acceptedClass) throws JsonProcessingException {
-        return mapResponseEntity(response, List.of(acceptedStatusCode), acceptedClass, ErrorRes.class);
+    private void extractAndThrowError(ResponseEntity<ObjectNode> response) {
+        try {
+            ErrorRes errorRes = mapper.treeToValue(response.getBody(), ErrorRes.class);
+            PolicyEngineApiStandardErrors error = PolicyEngineApiStandardErrors.getByCode(errorRes.getCode());
+            switch (response.getStatusCode()) {
+                case BAD_REQUEST:
+                    throw new BadRequestException(
+                            error,
+                            errorRes.getMessage()
+                    );
+                default:
+                    throw new InternalServerException(
+                            error,
+                            errorRes.getMessage()
+                    );
+            }
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e); // TODO
+        }
     }
 
 }

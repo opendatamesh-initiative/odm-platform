@@ -1,21 +1,21 @@
-package org.opendatamesh.platform.pp.policy.server.services.proxies;
+package org.opendatamesh.platform.pp.policy.server.services.proxies.policy.engine;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
 import org.opendatamesh.platform.pp.policy.server.database.entities.PolicyEngine;
+import org.opendatamesh.platform.pp.policy.server.services.proxies.PolicyEngineProxy;
 import org.opendatamesh.platform.up.policy.api.v1.clients.PolicyEngineClient;
-import org.opendatamesh.platform.up.policy.api.v1.clients.PolicyEngineClientMock;
 import org.opendatamesh.platform.up.policy.api.v1.resources.DocumentResource;
 import org.opendatamesh.platform.up.policy.api.v1.resources.EvaluationResource;
-import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Service;
 
-@Service
-@Profile({"test", "testmysql", "testpostgresql"})
-public class PolicyEngineProxyMock implements PolicyEngineProxy {
+import java.util.HashMap;
+import java.util.Map;
 
-    private static final PolicyEngineClient policyEngineClient = new PolicyEngineClientMock();
+public abstract class AbstractPolicyEngineProxy implements PolicyEngineProxy {
 
+    protected static Map<String, PolicyEngineClient> policyEngineClients = new HashMap<>();
+
+    @Override
     public EvaluationResource validatePolicy(
             Long policyEvaluationResultId,
             PolicyResource policyToEvaluate,
@@ -26,7 +26,9 @@ public class PolicyEngineProxyMock implements PolicyEngineProxy {
         documentResource.setPolicy(policyToEvaluate);
         documentResource.setPolicyEvaluationId(policyEvaluationResultId);
         documentResource.setObjectToEvaluate(objectToEvaluate);
-        return policyEngineClient.evaluateDocument(documentResource);
+        return getPolicyEngineClient(policyEngine).evaluateDocument(documentResource);
     }
+
+    protected abstract PolicyEngineClient getPolicyEngineClient(PolicyEngine policyEngine);
 
 }

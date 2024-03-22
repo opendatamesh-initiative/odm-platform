@@ -8,7 +8,7 @@ public enum PolicyEngineAPIRoutes implements ODMApiRoutes {
 
     private final String path;
 
-    private static final String CONTEXT_PATH = "/api/v1/up/CONTEXT_PATH + ";
+    private static final String CONTEXT_PATH = "/api/v1/up/policy-engine";
 
     PolicyEngineAPIRoutes(String path) {
         this.path = CONTEXT_PATH + path;

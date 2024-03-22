@@ -28,7 +28,7 @@ import javax.validation.Valid;
         name = "Policies evaluation API",
         description = "API to evaluate one policy for a given object"
 )
-public abstract class AbstractPolicyEngineController {
+public abstract class AbstractPolicyEngineController implements PolicyEngineController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
@@ -63,13 +63,13 @@ public abstract class AbstractPolicyEngineController {
                     )
             )
     })
-    public ResponseEntity evaluate(
+    public EvaluationResource evaluate(
             @Parameter(description = "JSON object containing the object to be evaluated and the policy to validate against")
             @Valid @RequestBody DocumentResource document
     ){
         return evaluateDocument(document);
     }
 
-    public abstract ResponseEntity evaluateDocument(DocumentResource document);
+    public abstract EvaluationResource evaluateDocument(DocumentResource document);
 
 }

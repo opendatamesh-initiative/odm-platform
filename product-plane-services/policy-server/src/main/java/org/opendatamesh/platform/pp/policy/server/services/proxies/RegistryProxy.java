@@ -17,6 +17,12 @@ public class RegistryProxy {
             @Value("${odm.productPlane.registryService.active}") Boolean registryServiceActive,
             @Value("${odm.productPlane.registryService.address}") String registryServerAddress
     ) {
+        if(registryServiceActive == null | registryServerAddress == null) {
+            throw new NullPointerException(
+                    "Missing at least one of required configurations odm.productPlane.registryService.active "
+                            + "and odm.productPlane.registryService.address"
+            );
+        }
         if(registryServiceActive) {
             this.registryClient = new RegistryClient(registryServerAddress);
         } else {

@@ -249,10 +249,11 @@ public class ActivityService {
 
             // WARNING
             /* TODO: this readDataProductVersion make a lot of tests wrong due to errors in the Mocks for the test
-            *   * before mergine on main ABSOLUTELY FIX IT
+            *   * before merging on main ABSOLUTELY FIX IT
             */
             DataProductVersionDPDS dataProductVersion = readDataProductVersion(activity);
             if (!policyServiceProxy.isContextuallyCoherent(mapper.toResource(activity), dataProductVersion)) {
+                // TODO: replace this exception with something else
                 throw new InternalServerException(
                         ODMApiCommonErrors.SC500_73_POLICY_SERVICE_EVALUATION_ERROR,
                         "Some blocking policy on Activity results has not passed evaluation"
@@ -487,18 +488,6 @@ public class ActivityService {
         }
 
         return activity;
-    }
-
-    public ActivityResource loadActivityResource(Long activityId) {
-        ActivityResource activityResource = null;
-
-        Activity activity = loadActivity(activityId);
-
-        if(activity != null) {
-            activityResource = mapper.toResource(activity);
-        }
-
-        return activityResource;
     }
 
     // -------------------------

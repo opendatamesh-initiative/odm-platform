@@ -18,6 +18,12 @@ public class DevOpsProxy {
             @Value("${odm.productPlane.devopsService.active}") Boolean devOpsServiceActive,
             @Value("${odm.productPlane.devopsService.address}") String devOpsServerAddress
     ) {
+        if(devOpsServiceActive == null | devOpsServerAddress == null) {
+            throw new NullPointerException(
+                    "Missing at least one of required configurations odm.productPlane.devopsService.active "
+                            + "and odm.productPlane.devopsService.address"
+            );
+        }
         if(devOpsServiceActive) {
             this.devOpsClient = new DevOpsClient(devOpsServerAddress);
         } else {
@@ -31,8 +37,8 @@ public class DevOpsProxy {
         if(devOpsClient != null) {
             try {
                 activityResource = devOpsClient.readActivity(longId);
-            } catch (Throwable t) {
-                logger.warn("Error fetching ActivityResource from DevOps Server", t);
+            } catch (Exception e) {
+                logger.warn("Error fetching ActivityResource from DevOps Server", e);
             }
         } else {
             logger.info("DevOps Service not active, skipping interaction with it.");

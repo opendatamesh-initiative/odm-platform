@@ -114,14 +114,7 @@ public class LifecycleService {
     }
 
     public LifecycleResource getDataProductVersionCurrentLifecycleResource(String dataProductId, String versionNumber) {
-        try {
-            return lifecycleMapper.toResource(
-                    lifecycleRepository.findByDataProductIdAndDataProductVersionAndFinishedAtIsNull(
-                            dataProductId, versionNumber)
-            );
-        } catch (Throwable t) {
-            return null;
-        }
+        return lifecycleMapper.toResource(getDataProductVersionCurrentLifecycle(dataProductId, versionNumber));
     }
 
 }

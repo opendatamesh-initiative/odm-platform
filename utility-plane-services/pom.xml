@@ -32,6 +32,12 @@ License.
     <artifactId>odm-platform-up-services</artifactId>
     <name>ODM Platform UTILITY PLANE SERVICES</name>
     <description>Open Data Mesh Platform Utility Plane Services</description>
+    <dependencies>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+        </dependency>
+    </dependencies>
     <version>1.0.0</version>
     <url>https://github.com/opendatamesh-initiative/odm-platform-pp-services</url>
     <packaging>pom</packaging>
@@ -61,8 +67,7 @@ License.
     <modules>
         <module>notification-api</module>
         <module>notification-server</module>
-        <module>policy-api</module>
-        <module>policy-server</module>
+        <module>policy-engine-api</module>
         <module>executor-api</module>
     </modules>
 

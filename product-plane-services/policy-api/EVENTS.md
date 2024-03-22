@@ -41,7 +41,9 @@ In this event only the `afterState` attribute is populated.
 #### Current State
 An empty object, that is the state before the creation of the Data Product Version.
 ```json
-{}
+{
+  "dataProductVersion": {}
+}
 ```
 
 #### After State
@@ -69,7 +71,9 @@ that is the state after the creation of the Data Product Version
 The composed input object that will be forwarded to the right Policy Engine Adapter.
 ```json
 {
-  "currentState": {},
+  "currentState": {
+    "dataProductVersion": {}
+  },
   "afterState": {
     "dataProductVersion": {
       "dataProductDescriptor": "1.0.0",

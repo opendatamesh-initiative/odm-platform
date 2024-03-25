@@ -12,10 +12,6 @@ import org.opendatamesh.platform.pp.policy.server.services.validation.PolicyDisp
 import org.opendatamesh.platform.pp.policy.server.services.validation.PolicyEnricherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.springframework.expression.Expression;
-import org.springframework.expression.ExpressionParser;
-import org.springframework.expression.spel.standard.SpelExpressionParser;
-import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -97,7 +93,7 @@ public class ValidationService {
             JsonNode inputObject
     ) {
         List<Policy> policySubset = selectPoliciesBySuite(suite);
-        policySubset = selectPoliciesBySpELExpression(policySubset, inputObject);
+        policySubset = selectPoliciesByMVELExpression(policySubset, inputObject);
         return policySubset;
     }
 
@@ -110,25 +106,28 @@ public class ValidationService {
 
     }
 
-    private List<Policy> selectPoliciesBySpELExpression(List<Policy> policies, JsonNode inputObject) {
+    private List<Policy> selectPoliciesByMVELExpression(List<Policy> policies, JsonNode inputObject) {
 
         // Test expression
-        String testSpELExpression = "['afterState']['domain'] == 'sampleDomain' and ['afterState']['domain'] != 'sampleDomainTwo'";
-        // Parse SpEL expression
-        ExpressionParser parser = new SpelExpressionParser();
-        Expression expression = parser.parseExpression(testSpELExpression);
+        String testMVELExpression = "afterState.domain == 'sampleDomain' && afterState.domain != 'sampleDomainTwo'";
         // Create context
-        Map<String, Object> context = convertJsonNodeToMap(inputObject);
+        Map<String, Object> inputObjectMap = convertJsonNodeToMap(inputObject);
 
         // Create a new list to store filtered policies
         List<Policy> filteredPolicies = new ArrayList<>();
 
         // Iterate over policies and filter them based on the SpEL expression
         for (Policy policy : policies) {
-            // Evaluate SpEL expression for each policy
-            boolean result = expression.getValue(context, Boolean.class);
+            // Evaluate MVEL expression for each policy
+            Boolean result;
+            try {
+                result = org.mvel2.MVEL.eval(testMVELExpression, inputObjectMap, Boolean.class);
+            } catch (Exception e) {
+                result = false;
+            }
             if (result) {
-                filteredPolicies.add(policy); // Add the policy if the expression evaluates to true
+                // Add the policy if the expression evaluates to true
+                filteredPolicies.add(policy);
             }
         }
 

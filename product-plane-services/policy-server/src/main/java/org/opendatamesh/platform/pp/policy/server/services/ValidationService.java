@@ -13,6 +13,7 @@ import org.opendatamesh.platform.pp.policy.server.services.validation.PolicyEnri
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.mvel2.MVEL;
 
 import java.util.*;
 
@@ -121,7 +122,7 @@ public class ValidationService {
             // Evaluate MVEL expression for each policy
             Boolean result;
             try {
-                result = org.mvel2.MVEL.eval(testMVELExpression, inputObjectMap, Boolean.class);
+                result = MVEL.eval(testMVELExpression, inputObjectMap, Boolean.class);
             } catch (Exception e) {
                 result = false;
             }

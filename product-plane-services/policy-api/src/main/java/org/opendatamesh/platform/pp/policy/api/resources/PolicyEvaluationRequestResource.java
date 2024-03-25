@@ -2,6 +2,7 @@ package org.opendatamesh.platform.pp.policy.api.resources;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 
@@ -25,23 +26,24 @@ public class PolicyEvaluationRequestResource {
 
     @JsonProperty("currentState")
     @Schema(description = "The current state")
-    private String currentState;
+    private JsonNode currentState;
 
     @JsonProperty("afterState")
     @Schema(description = "The next state")
-    private String afterState;
+    private JsonNode afterState;
 
     public enum EventType {
         DATA_PRODUCT_CREATION,
         DATA_PRODUCT_UPDATE,
         ACTIVITY_STAGE_TRANSITION,
-        TASK_EXECUTOR_INITIAL_CALL,
-        TASK_EXECUTOR_FINAL_CALL
+        TASK_EXECUTION_RESULT,
+        ACTIVITY_EXECUTION_RESULT
     }
 
     public enum ResourceType {
         DATA_PRODUCT,
-        ACTIVITY,
+        ACTIVITY_TRANSITION,
+        ACTIVITY_RESULT,
         TASK_RESULT
     }
 
@@ -77,19 +79,19 @@ public class PolicyEvaluationRequestResource {
         this.event = event;
     }
 
-    public String getCurrentState() {
+    public JsonNode getCurrentState() {
         return currentState;
     }
 
-    public void setCurrentState(String currentState) {
+    public void setCurrentState(JsonNode currentState) {
         this.currentState = currentState;
     }
 
-    public String getAfterState() {
+    public JsonNode getAfterState() {
         return afterState;
     }
 
-    public void setAfterState(String afterState) {
+    public void setAfterState(JsonNode afterState) {
         this.afterState = afterState;
     }
 }

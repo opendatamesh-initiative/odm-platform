@@ -1,10 +1,15 @@
 package org.opendatamesh.platform.pp.policy.server.services;
 
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationRequestResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicySearchOptions;
 import org.opendatamesh.platform.pp.policy.api.resources.ValidationResponseResource;
 import org.opendatamesh.platform.pp.policy.server.database.entities.Policy;
+import org.opendatamesh.platform.pp.policy.server.services.validation.PolicyDispatcherService;
+import org.opendatamesh.platform.pp.policy.server.services.validation.PolicyEnricherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -21,11 +26,19 @@ public class ValidationService {
     @Autowired
     PolicyDispatcherService policyDispatcherService;
 
+    @Autowired
+    PolicyEnricherService policyEnricherService;
+
+    private static final JsonNodeFactory jsonNodeFactory = ObjectMapperFactory.JSON_MAPPER.getNodeFactory();
+
     // ======================================================================================
     // Validation
     // ======================================================================================
 
     public ValidationResponseResource validateInput(PolicyEvaluationRequestResource policyEvaluationRequestResource) {
+
+        // Enrich Request
+        policyEvaluationRequestResource = policyEnricherService.enrichRequest(policyEvaluationRequestResource);
 
         // Initialize response
         ValidationResponseResource response = new ValidationResponseResource();
@@ -85,12 +98,13 @@ public class ValidationService {
         PolicyEvaluationResultResource policyEvaluationResultResource = new PolicyEvaluationResultResource();
 
         // Extract object to validate
-        // TODO: add true logic and remove this part
-        String MOCKED_INPUT_OBJECT = "";
+        ObjectNode inputObject = jsonNodeFactory.objectNode();
+        inputObject.put("currentState", request.getCurrentState());
+        inputObject.put("afterState", request.getAfterState());
 
         policyEvaluationResultResource.setDataProductId(request.getDataProductId());
         policyEvaluationResultResource.setDataProductVersion(request.getDataProductVersion());
-        policyEvaluationResultResource.setInputObject(MOCKED_INPUT_OBJECT);
+        policyEvaluationResultResource.setInputObject(inputObject);
 
         return policyEvaluationResultResource;
 

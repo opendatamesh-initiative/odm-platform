@@ -59,3 +59,16 @@ spring:
     schemas: ODMPOLICY
     locations: classpath:db/migration/postgresql
     clean-on-validation-error: true
+
+
+#############################
+# ODM projects configurations
+#############################
+odm:
+  productPlane:
+    registryService:
+      active: false
+      address: http://localhost:8001
+    devopsService:
+      active: false
+      address: http://localhost:8002

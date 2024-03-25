@@ -16,6 +16,8 @@ import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
+
+import org.graalvm.polyglot.*;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -97,7 +99,7 @@ public class ValidationService {
             JsonNode inputObject
     ) {
         List<Policy> policySubset = selectPoliciesBySuite(suite);
-        policySubset = selectPoliciesBySpELExpression(policySubset, inputObject);
+        policySubset = selectPoliciesByJavaScriptExpression(policySubset, inputObject);
         return policySubset;
     }
 
@@ -110,25 +112,21 @@ public class ValidationService {
 
     }
 
-    private List<Policy> selectPoliciesBySpELExpression(List<Policy> policies, JsonNode inputObject) {
+    private List<Policy> selectPoliciesByJavaScriptExpression(List<Policy> policies, JsonNode inputObject) {
 
-        // Test expression
-        String testSpELExpression = "['afterState']['domain'] == 'sampleDomain' and ['afterState']['domain'] != 'sampleDomainTwo'";
-        // Parse SpEL expression
-        ExpressionParser parser = new SpelExpressionParser();
-        Expression expression = parser.parseExpression(testSpELExpression);
-        // Create context
-        Map<String, Object> context = convertJsonNodeToMap(inputObject);
+        // Test expression (in the real version it will be part of the policy)
+        String testJavascriptExpression = "input.afterState.domain === 'sampleDomain' && input.afterState.domain !== 'sampleDomainTwo'";
 
         // Create a new list to store filtered policies
         List<Policy> filteredPolicies = new ArrayList<>();
 
         // Iterate over policies and filter them based on the SpEL expression
         for (Policy policy : policies) {
-            // Evaluate SpEL expression for each policy
-            boolean result = expression.getValue(context, Boolean.class);
+            // Evaluate JavaScript expression for each policy
+            boolean result = javascriptRuleEvaluator(inputObject, testJavascriptExpression);
             if (result) {
-                filteredPolicies.add(policy); // Add the policy if the expression evaluates to true
+                // Add the policy if the expression evaluates to true
+                filteredPolicies.add(policy);
             }
         }
 
@@ -157,19 +155,12 @@ public class ValidationService {
 
     }
 
-    public static Map<String, Object> convertJsonNodeToMap(JsonNode jsonNode) {
-        Map<String, Object> map = new HashMap<>();
-        Iterator<String> fieldNames = jsonNode.fieldNames();
-        while (fieldNames.hasNext()) {
-            String fieldName = fieldNames.next();
-            JsonNode fieldValue = jsonNode.get(fieldName);
-            if (fieldValue.isObject()) {
-                map.put(fieldName, convertJsonNodeToMap(fieldValue));
-            } else {
-                map.put(fieldName, fieldValue.asText());
-            }
+    public static Boolean javascriptRuleEvaluator(JsonNode jsonNode, String rule) {
+        System.out.println("Input JSON object: " + jsonNode.toString());
+        try (Context context = Context.create()) {
+            Value jsFunction = context.eval("js", "(function(input) { input = JSON.parse(input); return " + rule + "; })");
+            return jsFunction.execute(jsonNode.toString()).asBoolean();
         }
-        return map;
     }
 
 }

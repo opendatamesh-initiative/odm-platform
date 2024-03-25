@@ -207,6 +207,18 @@ License.
             <artifactId>flyway-mysql</artifactId>
         </dependency>
 
+        <!-- JavaScript Engine -->
+        <dependency>
+            <groupId>org.graalvm.sdk</groupId>
+            <artifactId>graal-sdk</artifactId>
+            <version>21.3.0</version> <!-- Replace with the latest version -->
+        </dependency>
+        <dependency>
+            <groupId>org.graalvm.js</groupId>
+            <artifactId>js</artifactId>
+            <version>21.3.0</version> <!-- Replace with the latest version -->
+        </dependency>
+
         <!-- Others -->
         <dependency>
             <groupId>org.slf4j</groupId>

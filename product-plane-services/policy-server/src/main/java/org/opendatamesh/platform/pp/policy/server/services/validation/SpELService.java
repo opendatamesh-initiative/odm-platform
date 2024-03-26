@@ -1,8 +1,10 @@
 package org.opendatamesh.platform.pp.policy.server.services.validation;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationRequestResource.EventType;
-import org.opendatamesh.platform.pp.policy.api.utils.EventTypeObjectConverterUtils;
+import org.opendatamesh.platform.pp.policy.api.resources.exceptions.PolicyApiStandardErrors;
+import org.opendatamesh.platform.pp.policy.server.utils.EventTypeObjectConverterUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.expression.EvaluationException;
@@ -25,7 +27,17 @@ public class SpELService {
 
         // Create context
         //Map<String, Object> context = convertJsonNodeToMap(inputObject); // Needed if Java Class of inputObject is unknown
-        Class<?> context = EventTypeObjectConverterUtils.convertJsonNode(inputObject, eventType);
+        Object context;
+        try {
+            context = EventTypeObjectConverterUtils.convertJsonNode(inputObject, eventType);
+        } catch (Exception e) {
+            throw new BadRequestException(
+                    PolicyApiStandardErrors.SC400_05_MALFORMED_INPUT_OBJECT,
+                    "Input Object for event [" + eventType.toString() + "] is not a [" +
+                            EventTypeObjectConverterUtils.getClassFromEventType(eventType) + "]",
+                    e
+            );
+        }
 
         // Evaluate expression
         Boolean evaluationResult = false;

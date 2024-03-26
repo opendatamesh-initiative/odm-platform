@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.pp.policy.api.utils;
+package org.opendatamesh.platform.pp.policy.server.utils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,25 +8,22 @@ import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerE
 import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationRequestResource.EventType;
-import org.opendatamesh.platform.pp.policy.api.resources.events.ActivityResultEventTypeResource;
-import org.opendatamesh.platform.pp.policy.api.resources.events.ActivityStageTransitionEventTypeResource;
-import org.opendatamesh.platform.pp.policy.api.resources.events.DataProductEventTypeResource;
-import org.opendatamesh.platform.pp.policy.api.resources.events.TaskResultEventTypeResource;
 import org.opendatamesh.platform.pp.policy.api.resources.exceptions.PolicyApiStandardErrors;
+import org.opendatamesh.platform.pp.policy.server.resources.*;
 
 public final class EventTypeObjectConverterUtils {
 
     private static final ObjectMapper objectMapper = ObjectMapperFactory.JSON_MAPPER;
 
     private static final ImmutableMap<EventType, Class<?>> eventTypeClassMap = ImmutableMap.of(
-            EventType.DATA_PRODUCT_CREATION, DataProductEventTypeResource.class,
-            EventType.DATA_PRODUCT_UPDATE, DataProductEventTypeResource.class,
-            EventType.ACTIVITY_STAGE_TRANSITION, ActivityStageTransitionEventTypeResource.class,
-            EventType.TASK_EXECUTION_RESULT, TaskResultEventTypeResource.class,
-            EventType.ACTIVITY_EXECUTION_RESULT, ActivityResultEventTypeResource.class
+            EventType.DATA_PRODUCT_CREATION, DataProductEvent.class,
+            EventType.DATA_PRODUCT_UPDATE, DataProductEvent.class,
+            EventType.ACTIVITY_STAGE_TRANSITION, ActivityStageTransitionEvent.class,
+            EventType.TASK_EXECUTION_RESULT, TaskResultEvent.class,
+            EventType.ACTIVITY_EXECUTION_RESULT, ActivityResultEvent.class
     );
 
-    public static <T> T convertJsonNode(JsonNode jsonNode, EventType eventType) {
+    public static Class<?> getClassFromEventType(EventType eventType) {
         Class<?> jsonNodeClass = eventTypeClassMap.get(eventType);
         if(jsonNodeClass == null) {
             throw new BadRequestException(
@@ -34,7 +31,11 @@ public final class EventTypeObjectConverterUtils {
                     "Unknown event [" + eventType + "]"
             );
         }
-        return convertJsonNodeToClass(jsonNode, jsonNodeClass);
+        return jsonNodeClass;
+    }
+
+    public static <T> T convertJsonNode(JsonNode jsonNode, EventType eventType) {
+        return convertJsonNodeToClass(jsonNode, getClassFromEventType(eventType));
     }
 
     private static <T> T convertJsonNodeToClass(JsonNode jsonNode, Class<?> jsonNodeClass) {
@@ -43,7 +44,8 @@ public final class EventTypeObjectConverterUtils {
         } catch (Exception e) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
-                    "Serialization error converting JSON object to " + jsonNodeClass
+                    "Serialization error converting JSON object to " + jsonNodeClass,
+                    e
             );
         }
     }

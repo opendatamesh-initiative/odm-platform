@@ -40,7 +40,7 @@ public final class EventTypeObjectConverterUtils {
     private static <T> T convertJsonNodeToClass(JsonNode jsonNode, Class<?> jsonNodeClass) {
         try {
             return objectMapper.convertValue(jsonNode, (Class<T>) jsonNodeClass);
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "Serialization error converting JSON object to " + jsonNodeClass

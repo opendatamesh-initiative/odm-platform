@@ -1,6 +1,14 @@
 {
   "resourceType": "DATA_PRODUCT",
   "event": "DATA_PRODUCT_CREATION",
-  "currentState": null,
-  "afterState": {"fullyQualifiedName":"urn:org.opendatamesh:dataproducts:tripExecution","description":"Thisisprod-1","domain":"sampleDomain"}
+  "currentState": {
+    "dataProductVersion": {}
+  },
+  "afterState": {
+    "dataProductVersion": {
+      "fullyQualifiedName":"urn:org.opendatamesh:dataproducts:tripExecution",
+      "description":"Thisisprod-1",
+      "domain":"sampleDomain"
+    }
+  }
 }

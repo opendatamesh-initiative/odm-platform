@@ -100,7 +100,7 @@ public class ValidationService {
         // Default Policy Selection strategy: filter by EVENT
         List<Policy> policySubset = selectPoliciesBySuite(suite);
         // Custom Policy Selection strategy: evaluate CONDITION of policies on input object
-        policySubset = selectPoliciesBySpELExpression(policySubset, inputObject);
+        policySubset = selectPoliciesBySpELExpression(policySubset, inputObject, suite);
         return policySubset;
     }
 
@@ -113,14 +113,20 @@ public class ValidationService {
 
     }
 
-    private List<Policy> selectPoliciesBySpELExpression(List<Policy> policies, JsonNode inputObject) {
+    private List<Policy> selectPoliciesBySpELExpression(
+            List<Policy> policies, JsonNode inputObject, PolicyEvaluationRequestResource.EventType eventType
+    ) {
 
         // Iterate over policies and filter them based on the SpEL expression
         List<Policy> filteredPolicies = new ArrayList<>();
         for (Policy policy : policies) {
             // Evaluate SpEL expression for each policy
             if(policy.getFilteringExpression() != null) {
-                Boolean result = spelService.evaluateSpELExpression(inputObject, policy.getFilteringExpression());
+                Boolean result = spelService.evaluateSpELExpression(
+                        inputObject,
+                        policy.getFilteringExpression(),
+                        eventType
+                );
                 if (result) {
                     // Add the policy if the expression evaluates to true
                     filteredPolicies.add(policy);

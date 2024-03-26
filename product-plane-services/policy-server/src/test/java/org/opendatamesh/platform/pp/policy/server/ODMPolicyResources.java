@@ -14,5 +14,6 @@ public class ODMPolicyResources {
     public static final String RESOURCE_POLICY_EVALUATION_RESULT_2 = "src/test/resources/data/results/policy_evaluation_result_2.json";
     public static final String RESOURCE_POLICY_EVALUATION_REQUEST = "src/test/resources/data/validation/validation_request.json";
     public static final String RESOURCE_POLICY_EVALUATION_REQUEST_2 = "src/test/resources/data/validation/validation_request_2.json";
+    public static final String RESOURCE_POLICY_EVALUATION_REQUEST_WRONG_INPUT = "src/test/resources/data/validation/validation_request_wrong_input.json";
 
 }

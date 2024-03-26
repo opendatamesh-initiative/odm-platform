@@ -1,0 +1,16 @@
+{
+  "resourceType": "DATA_PRODUCT",
+  "event": "DATA_PRODUCT_CREATION",
+  "currentState": {
+    "dataProductVersion": {
+      "randomProperty": "randomValue"
+    }
+  },
+  "afterState": {
+    "dataProductVersion": {
+      "randomObject": {
+        "randomProperty": "randomValue"
+      }
+    }
+  }
+}

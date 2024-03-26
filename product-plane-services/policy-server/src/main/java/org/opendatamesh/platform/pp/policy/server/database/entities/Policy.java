@@ -30,6 +30,9 @@ public class Policy extends TimestampedEntity {
     @Column(name = "SUITE")
     private String suite;
 
+    @Column(name = "FILTERING_EXPRESSION")
+    private String filteringExpression;
+
     @Column(name = "RAW_CONTENT")
     private String rawContent;
 
@@ -97,6 +100,14 @@ public class Policy extends TimestampedEntity {
 
     public void setSuite(String suite) {
         this.suite = suite;
+    }
+
+    public String getFilteringExpression() {
+        return filteringExpression;
+    }
+
+    public void setFilteringExpression(String filteringExpression) {
+        this.filteringExpression = filteringExpression;
     }
 
     public String getRawContent() {

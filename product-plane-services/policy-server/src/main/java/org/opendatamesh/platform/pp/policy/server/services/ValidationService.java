@@ -10,15 +10,13 @@ import org.opendatamesh.platform.pp.policy.server.database.entities.PolicyEngine
 import org.opendatamesh.platform.pp.policy.server.database.mappers.PolicyMapper;
 import org.opendatamesh.platform.pp.policy.server.services.validation.PolicyDispatcherService;
 import org.opendatamesh.platform.pp.policy.server.services.validation.PolicyEnricherService;
+import org.opendatamesh.platform.pp.policy.server.services.validation.SpELService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.springframework.expression.Expression;
-import org.springframework.expression.ExpressionParser;
-import org.springframework.expression.spel.standard.SpelExpressionParser;
-import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ValidationService {
@@ -34,6 +32,9 @@ public class ValidationService {
 
     @Autowired
     PolicyEnricherService policyEnricherService;
+
+    @Autowired
+    SpELService spelService;
 
     private static final JsonNodeFactory jsonNodeFactory = ObjectMapperFactory.JSON_MAPPER.getNodeFactory();
 
@@ -96,7 +97,9 @@ public class ValidationService {
             PolicyEvaluationRequestResource.EventType suite,
             JsonNode inputObject
     ) {
+        // Default Policy Selection strategy: filter by EVENT
         List<Policy> policySubset = selectPoliciesBySuite(suite);
+        // Custom Policy Selection strategy: evaluate CONDITION of policies on input object
         policySubset = selectPoliciesBySpELExpression(policySubset, inputObject);
         return policySubset;
     }
@@ -112,23 +115,16 @@ public class ValidationService {
 
     private List<Policy> selectPoliciesBySpELExpression(List<Policy> policies, JsonNode inputObject) {
 
-        // Test expression
-        String testSpELExpression = "['afterState']['domain'] == 'sampleDomain' and ['afterState']['domain'] != 'sampleDomainTwo'";
-        // Parse SpEL expression
-        ExpressionParser parser = new SpelExpressionParser();
-        Expression expression = parser.parseExpression(testSpELExpression);
-        // Create context
-        Map<String, Object> context = convertJsonNodeToMap(inputObject);
-
-        // Create a new list to store filtered policies
-        List<Policy> filteredPolicies = new ArrayList<>();
-
         // Iterate over policies and filter them based on the SpEL expression
+        List<Policy> filteredPolicies = new ArrayList<>();
         for (Policy policy : policies) {
             // Evaluate SpEL expression for each policy
-            boolean result = expression.getValue(context, Boolean.class);
-            if (result) {
-                filteredPolicies.add(policy); // Add the policy if the expression evaluates to true
+            if(policy.getFilteringExpression() != null) {
+                Boolean result = spelService.evaluateSpELExpression(inputObject, policy.getFilteringExpression());
+                if (result) {
+                    // Add the policy if the expression evaluates to true
+                    filteredPolicies.add(policy);
+                }
             }
         }
 
@@ -155,21 +151,6 @@ public class ValidationService {
 
         return policyEvaluationResultResource;
 
-    }
-
-    public static Map<String, Object> convertJsonNodeToMap(JsonNode jsonNode) {
-        Map<String, Object> map = new HashMap<>();
-        Iterator<String> fieldNames = jsonNode.fieldNames();
-        while (fieldNames.hasNext()) {
-            String fieldName = fieldNames.next();
-            JsonNode fieldValue = jsonNode.get(fieldName);
-            if (fieldValue.isObject()) {
-                map.put(fieldName, convertJsonNodeToMap(fieldValue));
-            } else {
-                map.put(fieldName, fieldValue.asText());
-            }
-        }
-        return map;
     }
 
 }

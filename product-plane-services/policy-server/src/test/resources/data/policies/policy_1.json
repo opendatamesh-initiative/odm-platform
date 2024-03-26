@@ -5,5 +5,6 @@
   "blockingFlag": true,
   "rawContent": "package dataproduct-name-checker\n\ndefault allow := false\n\nallow := true {                                     \n    startswith(input.name, \"dp-\")\n}",
   "suite": "DATA_PRODUCT_CREATION",
+  "filteringExpression": "['afterState']['domain'] == 'sampleDomain' and ['afterState']['domain'] != 'sampleDomainTwo'",
   "policyEngineId": 1
 }

@@ -1,26 +1,23 @@
-package org.opendatamesh.platform.pp.policy.server.services.validation;
+package org.opendatamesh.platform.pp.policy.server.utils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationRequestResource.EventType;
 import org.opendatamesh.platform.pp.policy.api.resources.exceptions.PolicyApiStandardErrors;
-import org.opendatamesh.platform.pp.policy.server.utils.EventTypeObjectConverterUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.expression.EvaluationException;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
-import org.springframework.stereotype.Service;
 
-@Service
-public class SpELService {
+public final class SpELUtils {
 
     private static final ExpressionParser SPEL_PARSER = new SpelExpressionParser();
 
-    private static final Logger logger = LoggerFactory.getLogger(SpELService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SpELUtils.class);
 
-    public Boolean evaluateSpELExpression(JsonNode inputObject, String spelExpression, EventType eventType) {
+    public static Boolean evaluateSpELExpression(JsonNode inputObject, String spelExpression, EventType eventType) {
 
         // Parse SpEL expression
         Expression expression = SPEL_PARSER.parseExpression(spelExpression);
@@ -33,8 +30,7 @@ public class SpELService {
         } catch (Exception e) {
             throw new BadRequestException(
                     PolicyApiStandardErrors.SC400_05_MALFORMED_INPUT_OBJECT,
-                    "Input Object for event [" + eventType.toString() + "] is not a [" +
-                            EventTypeObjectConverterUtils.getClassFromEventType(eventType) + "]",
+                    "Malformed input Object for event [" + eventType.toString() + "]",
                     e
             );
         }
@@ -44,7 +40,7 @@ public class SpELService {
         try {
             evaluationResult = expression.getValue(context, Boolean.class);
         } catch (EvaluationException e) {
-            logger.error(
+            LOGGER.error(
                     "Error evaluating SpEL Expression [" + spelExpression
                             + "]. Policy will be filtered out from set of policies to be evaluated."
                             + "Error: " + e.getMessage()

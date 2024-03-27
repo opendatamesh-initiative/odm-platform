@@ -10,7 +10,7 @@ import org.opendatamesh.platform.pp.policy.server.database.entities.PolicyEngine
 import org.opendatamesh.platform.pp.policy.server.database.mappers.PolicyMapper;
 import org.opendatamesh.platform.pp.policy.server.services.validation.PolicyDispatcherService;
 import org.opendatamesh.platform.pp.policy.server.services.validation.PolicyEnricherService;
-import org.opendatamesh.platform.pp.policy.server.services.validation.SpELService;
+import org.opendatamesh.platform.pp.policy.server.utils.SpELUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -32,9 +32,6 @@ public class ValidationService {
 
     @Autowired
     PolicyEnricherService policyEnricherService;
-
-    @Autowired
-    SpELService spelService;
 
     private static final JsonNodeFactory jsonNodeFactory = ObjectMapperFactory.JSON_MAPPER.getNodeFactory();
 
@@ -122,7 +119,7 @@ public class ValidationService {
         for (Policy policy : policies) {
             // Evaluate SpEL expression for each policy
             if(policy.getFilteringExpression() != null) {
-                Boolean result = spelService.evaluateSpELExpression(
+                Boolean result = SpELUtils.evaluateSpELExpression(
                         inputObject,
                         policy.getFilteringExpression(),
                         eventType

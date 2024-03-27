@@ -1,5 +1,6 @@
 package org.opendatamesh.platform.pp.policy.server.utils;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
@@ -13,7 +14,9 @@ import org.opendatamesh.platform.pp.policy.server.resources.*;
 
 public final class EventTypeObjectConverterUtils {
 
-    private static final ObjectMapper objectMapper = ObjectMapperFactory.JSON_MAPPER;
+    private static final ObjectMapper objectMapper = ObjectMapperFactory.JSON_MAPPER.configure(
+            DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true
+    );
 
     private static final ImmutableMap<EventType, Class<?>> eventTypeClassMap = ImmutableMap.of(
             EventType.DATA_PRODUCT_CREATION, DataProductEvent.class,
@@ -23,7 +26,11 @@ public final class EventTypeObjectConverterUtils {
             EventType.ACTIVITY_EXECUTION_RESULT, ActivityResultEvent.class
     );
 
-    public static Class<?> getClassFromEventType(EventType eventType) {
+    public static <T> T convertJsonNode(JsonNode jsonNode, EventType eventType) {
+        return convertJsonNodeToClass(jsonNode, getClassFromEventType(eventType));
+    }
+
+    private static Class<?> getClassFromEventType(EventType eventType) {
         Class<?> jsonNodeClass = eventTypeClassMap.get(eventType);
         if(jsonNodeClass == null) {
             throw new BadRequestException(
@@ -32,10 +39,6 @@ public final class EventTypeObjectConverterUtils {
             );
         }
         return jsonNodeClass;
-    }
-
-    public static <T> T convertJsonNode(JsonNode jsonNode, EventType eventType) {
-        return convertJsonNodeToClass(jsonNode, getClassFromEventType(eventType));
     }
 
     private static <T> T convertJsonNodeToClass(JsonNode jsonNode, Class<?> jsonNodeClass) {

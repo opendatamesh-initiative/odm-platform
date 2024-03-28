@@ -247,10 +247,6 @@ public class ActivityService {
             lifecycleService.createLifecycle(activity);
             activity = saveActivity(activity);
 
-            // WARNING
-            /* TODO: this readDataProductVersion make a lot of tests wrong due to errors in the Mocks for the test
-            *   * before merging on main ABSOLUTELY FIX IT
-            */
             DataProductVersionDPDS dataProductVersion = readDataProductVersion(activity);
             if (!policyServiceProxy.isContextuallyCoherent(mapper.toResource(activity), dataProductVersion)) {
                 // TODO: replace this exception with something else

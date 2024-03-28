@@ -73,6 +73,6 @@ odm:
         address: http://localhost:9002
     executorServices:
       azure-devops:
-        active: false
+        active: true
         address: http://localhost:9003
         checkAfterCallback: false

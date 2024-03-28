@@ -10,9 +10,9 @@
       "info": {
         "fullyQualifiedName":"urn:org.opendatamesh:dataproducts:tripExecution",
         "name": "tripExecution",
-        "version": "1.0.0",
+        "version": "1.0.3",
         "description":"Thisisprod-1",
-        "domain":"sampleDomain",
+        "domain":"notSampleDomain",
         "owner": {
           "id": "john.doe@company-xyz.com"
         }

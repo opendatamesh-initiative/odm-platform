@@ -10,6 +10,7 @@ import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 public final class JsonNodeUtils {
 
     private static final ObjectMapper mapper = ObjectMapperFactory.JSON_MAPPER;
+    //private static final ObjectMapper mapper = ObjectMapperFactory.JSON_MAPPER.configure(JsonGenerator.Feature.ESCAPE_NON_ASCII, false);
 
     public static JsonNode toJsonNode(Object object) {
         try {
@@ -21,7 +22,7 @@ public final class JsonNodeUtils {
                     e
             );
         }
-    };
+    }
 
     public static JsonNode toJsonNode(String inputString) {
         try {
@@ -33,7 +34,7 @@ public final class JsonNodeUtils {
                     e
             );
         }
-    };
+    }
 
     public static String toStringFromJsonNode(JsonNode jsonNode) {
         try {

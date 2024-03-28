@@ -1,18 +1,16 @@
 package org.opendatamesh.platform.pp.policy.api.resources.events;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityResource;
 import org.opendatamesh.platform.up.executor.api.resources.TaskResource;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class TaskResultEventTypeResource {
 
     @JsonProperty("activity")
-    ActivityResource activity;
+    ActivityResource activity = null;
 
     @JsonProperty("task")
-    TaskResource task;
+    TaskResource task = new TaskResource();
 
     public ActivityResource getActivity() {
         return activity;

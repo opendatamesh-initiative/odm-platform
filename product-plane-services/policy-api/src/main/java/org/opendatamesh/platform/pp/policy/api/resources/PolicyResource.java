@@ -40,6 +40,10 @@ public class PolicyResource extends TimestampedResource {
     @Schema(description = "A tag, a phase, something that identify in which stages of the lifecycle the Policy must be evaluated")
     private String suite;
 
+    @JsonProperty("filteringExpression")
+    @Schema(description = "A SpEL expression to be evaluated on the input object of a validation request to exclude or include the Policy in the set of policies to be evaluated")
+    private String filteringExpression;
+
     @JsonProperty("isLastVersion")
     @Schema(description = "Whether or not the Policy is the last version")
     private Boolean isLastVersion;
@@ -110,6 +114,14 @@ public class PolicyResource extends TimestampedResource {
 
     public void setSuite(String suite) {
         this.suite = suite;
+    }
+
+    public String getFilteringExpression() {
+        return filteringExpression;
+    }
+
+    public void setFilteringExpression(String filteringExpression) {
+        this.filteringExpression = filteringExpression;
     }
 
     public Boolean getLastVersion() {

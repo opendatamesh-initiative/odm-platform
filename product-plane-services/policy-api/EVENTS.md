@@ -74,7 +74,7 @@ The composed input object that will be forwarded to the right Policy Engine Adap
 ```json
 {
   "currentState": {
-    "dataProductVersion": {}
+    "dataProductVersion": null
   },
   "afterState": {
     "dataProductVersion": {
@@ -204,9 +204,9 @@ given the current lifecycle of the Data Product Version subject of the Activity.
 An empty `ActivityStageTransitionEventTypeResource` object, if it's the first Activity for the specific Data Product Version.
 ```json
 {
-  "lifecycle": {},
-  "activity": {},
-  "tasks": {}
+  "lifecycle": null,
+  "activity": null,
+  "tasks": null
 }
 ```
 A LifecycleResource JSON object in case of a Data Product Version with at least one previous Activity executed.
@@ -232,8 +232,8 @@ A LifecycleResource JSON object in case of a Data Product Version with at least 
     "startedAt": "2024-03-21T12:04:11.000+00:00",
     "finishedAt": "2024-03-21T12:17:11.000+00:00"
   },
-  "activity": {},
-  "tasks": {}
+  "activity": null,
+  "tasks": null
 }
 ```
 
@@ -242,7 +242,7 @@ A composite object putting together the JSON object of the ActivityResource to e
 and the JSON representation of the list of TaskResource included in the Activity.
 ```json
 {
-  "lifecycle": {},
+  "lifecycle": null,
   "activity": {
     "id": 2,
     "dataProductId": "ca8802b6-bc59-3ad8-8436-fdfe79c9c512",
@@ -282,12 +282,12 @@ In the scenario of a first Activity for a specific Data Product Version:
 ```json
 {
   "currentState": {
-    "lifecycle": {},
-    "activity": {},
-    "tasks": {}
+    "lifecycle": null,
+    "activity": null,
+    "tasks": null
   },
   "afterState": {
-    "lifecycle": {},
+    "lifecycle": null,
     "activity": {
       "id": 2,
       "dataProductId": "ca8802b6-bc59-3ad8-8436-fdfe79c9c512",
@@ -346,11 +346,11 @@ In the scenario of a Data Product Version with at least one previous Activity ex
       "startedAt": "2024-03-21T12:04:11.000+00:00",
       "finishedAt": "2024-03-21T12:17:11.000+00:00"
     },
-    "activity": {},
-    "tasks": {}
+    "activity": null,
+    "tasks": null
   },
   "afterState": {
-    "lifecycle": {},
+    "lifecycle": null,
     "activity": {
       "id": 2,
       "dataProductId": "ca8802b6-bc59-3ad8-8436-fdfe79c9c512",
@@ -454,8 +454,8 @@ and the results attribute of the task will contain it.
 An empty `TaskExecutionResultEventTypeResource` object, given that there isn't any future state for the reception of a Task Result.
 ```json
 {
-  "activity": {},
-  "task": {}
+  "activity": null,
+  "task": null
 }
 ```
 
@@ -495,8 +495,8 @@ The composed input object that will be forwarded to the right Policy Engine Adap
     }
   },
   "afterState": {
-    "activity": {},
-    "task": {}
+    "activity": null,
+    "task": null
   }
 }
 ```
@@ -551,8 +551,8 @@ An empty `ActivityResultEventTypeResource` object, given that there isn't any fu
 
 ```json
 {
-  "activity": {},
-  "dataProductVersion": {}
+  "activity": null,
+  "dataProductVersion": null
 }
 ```
 
@@ -590,8 +590,8 @@ The composed input object that will be forwarded to the right Policy Engine Adap
     }
   },
   "afterState": {
-    "activity": {},
-    "dataProductVersion": {}
+    "activity": null,
+    "dataProductVersion": null
   }
 }
 ```

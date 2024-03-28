@@ -2,6 +2,7 @@ package org.opendatamesh.platform.pp.policy.api.mappers;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.NullValueMappingStrategy;
 import org.mapstruct.ReportingPolicy;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityResource;
@@ -14,7 +15,11 @@ import org.opendatamesh.platform.up.executor.api.resources.TaskResource;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(
+        componentModel = "spring",
+        unmappedTargetPolicy = ReportingPolicy.IGNORE,
+        nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT
+)
 public interface EventTypeBaseMapper {
 
     @Mapping(target = "dataProductVersion", source = "dataProductVersionDPDS")

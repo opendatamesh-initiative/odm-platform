@@ -19,7 +19,7 @@ public class ValidationIT extends ODMPolicyIT {
 
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-    public void testValidateObject() throws JsonProcessingException {
+    public void testValidateObjectSpELFilteringPassed() throws JsonProcessingException {
 
         // Resources
         PolicyEngineResource parentEngineResource = createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);
@@ -64,6 +64,33 @@ public class ValidationIT extends ODMPolicyIT {
         assertThat(policyEvaluationResults.get(1).getInputObject()).isEqualTo(evaluatedPolicies.get(1).getInputObject());
         assertThat(policyEvaluationResults.get(1).getDataProductId()).isEqualTo(evaluatedPolicies.get(1).getDataProductId());
         assertThat(policyEvaluationResults.get(1).getDataProductVersion()).isEqualTo(evaluatedPolicies.get(1).getDataProductVersion());
+
+    }
+
+    @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+    public void testValidateObjectSpELFilteringNotPassed() throws JsonProcessingException {
+
+        // Resources
+        PolicyEngineResource parentEngineResource = createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);
+        createPolicy(ODMPolicyResources.RESOURCE_POLICY_1, parentEngineResource.getId());
+        parentEngineResource = createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_2);
+        createPolicy(ODMPolicyResources.RESOURCE_POLICY_2, parentEngineResource.getId());
+        createPolicy(ODMPolicyResources.RESOURCE_POLICY_3, parentEngineResource.getId());
+        PolicyEvaluationRequestResource evaluationRequestResource = createPolicyEvaluationRequestResource(
+                ODMPolicyResources.RESOURCE_POLICY_EVALUATION_REQUEST_2
+        );
+        ResponseEntity<ValidationResponseResource> postResponse =
+                policyClient.validateInputObjectResponseEntity(evaluationRequestResource);
+        verifyResponseEntity(postResponse, HttpStatus.OK, true);
+        ValidationResponseResource validationResponseResource = postResponse.getBody();
+        List<PolicyEvaluationResultResource> evaluatedPolicies = validationResponseResource.getPolicyResults();
+
+        // Verification
+        verifyResponseEntity(postResponse, HttpStatus.OK,true);
+        assertThat(validationResponseResource).isNotNull();
+        // Assert that no policies are validated thanks to PolicySelector filtering with SpEL expression
+        assertThat(evaluatedPolicies.size()).isEqualTo(0);
 
     }
 

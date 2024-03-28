@@ -49,7 +49,7 @@ public class RestUtils {
             if (!HttpStatus.OK.equals(responseEntity.getStatusCode())) {
                 throwServiceExceptionByResourceType(clazz, objectMapper, responseEntity);
             }
-            JavaType type = objectMapper.getTypeFactory().constructParametricType(PolicyApiStandardErrors.class, clazz);
+            JavaType type = objectMapper.getTypeFactory().constructParametricType(Page.class, clazz);
             return objectMapper.treeToValue(responseEntity.getBody(), type);
         } catch (RestClientException e) {
             throw new InternalServerException();//TODO

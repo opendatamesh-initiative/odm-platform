@@ -119,7 +119,7 @@ public class ValidationService {
         for (Policy policy : policies) {
             // Evaluate SpEL expression for each policy
             if(policy.getFilteringExpression() != null) {
-                Boolean result = SpELUtils.evaluateSpELExpression(
+                boolean result = SpELUtils.eventObjectMatchesSpelExpression(
                         inputObject,
                         policy.getFilteringExpression(),
                         eventType

@@ -17,7 +17,7 @@ public final class SpELUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SpELUtils.class);
 
-    public static Boolean evaluateSpELExpression(JsonNode inputObject, String spelExpression, EventType eventType) {
+    public static boolean eventObjectMatchesSpelExpression(JsonNode inputObject, String spelExpression, EventType eventType) {
 
         // Parse SpEL expression
         Expression expression = SPEL_PARSER.parseExpression(spelExpression);

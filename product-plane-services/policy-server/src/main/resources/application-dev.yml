@@ -56,9 +56,9 @@ spring:
 odm:
   productPlane:
     registryService:
-      active: false
+      active: true
       address: http://localhost:8001
     devopsService:
-      active: false
+      active: true
       address: http://localhost:8002
 

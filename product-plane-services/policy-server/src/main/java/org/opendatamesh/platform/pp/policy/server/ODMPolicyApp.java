@@ -12,4 +12,5 @@ public class ODMPolicyApp {
     public static void main(String[] args) {
         SpringApplication.run(ODMPolicyApp.class, args);
     }
+
 }

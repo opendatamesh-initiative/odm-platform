@@ -37,7 +37,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @ExtendWith(SpringExtension.class)
-//@ActiveProfiles("dev")
+//@ActiveProfiles("test")
 //@ActiveProfiles("testpostgresql")
 //@ActiveProfiles("testmysql")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = { ODMRegistryApp.class })

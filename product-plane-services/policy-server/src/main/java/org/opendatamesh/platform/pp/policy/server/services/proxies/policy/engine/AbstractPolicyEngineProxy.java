@@ -13,8 +13,6 @@ import java.util.Map;
 
 public abstract class AbstractPolicyEngineProxy implements PolicyEngineProxy {
 
-    protected static Map<String, PolicyEngineClient> policyEngineClients = new HashMap<>();
-
     @Override
     public EvaluationResource validatePolicy(
             Long policyEvaluationResultId,

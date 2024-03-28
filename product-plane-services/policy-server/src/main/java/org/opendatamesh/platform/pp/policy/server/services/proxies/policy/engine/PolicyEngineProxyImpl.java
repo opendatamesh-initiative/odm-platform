@@ -11,16 +11,8 @@ public class PolicyEngineProxyImpl extends AbstractPolicyEngineProxy {
 
     @Override
     protected PolicyEngineClient getPolicyEngineClient(PolicyEngine policyEngine) {
-        if(policyEngineClients.containsKey(policyEngine.getName())) {
-            return policyEngineClients.get(policyEngine.getName());
-        } else {
-            PolicyEngineClient policyEngineClient = new PolicyEngineClientImpl(policyEngine.getAdapterUrl());
-            policyEngineClients.put(
-                    policyEngine.getName(),
-                    policyEngineClient
-            );
-            return policyEngineClient;
-        }
+        PolicyEngineClient policyEngineClient = new PolicyEngineClientImpl(policyEngine.getAdapterUrl());
+        return policyEngineClient;
     }
 
 }

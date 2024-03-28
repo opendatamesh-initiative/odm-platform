@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 @Service
-@Profile("!test & !testmysql & !testpostgresql")
 public class PolicyEngineProxyImpl extends AbstractPolicyEngineProxy {
 
     @Override

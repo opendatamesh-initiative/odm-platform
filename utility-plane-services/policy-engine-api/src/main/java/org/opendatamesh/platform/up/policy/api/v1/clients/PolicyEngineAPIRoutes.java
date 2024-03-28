@@ -14,11 +14,6 @@ public enum PolicyEngineAPIRoutes implements ODMApiRoutes {
         this.path = CONTEXT_PATH + path;
     }
 
-    @Override
-    public String toString() {
-        return this.path;
-    }
-
     public String getPath() {
         return path;
     }

@@ -18,11 +18,6 @@ public enum PolicyAPIRoutes implements ODMApiRoutes {
     }
 
     @Override
-    public String toString() {
-        return this.path;
-    }
-
-    @Override
     public String getPath() {
         return path;
     }

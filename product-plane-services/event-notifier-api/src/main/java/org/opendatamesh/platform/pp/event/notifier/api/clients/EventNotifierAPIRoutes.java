@@ -4,7 +4,7 @@ import org.opendatamesh.platform.core.commons.clients.ODMApiRoutes;
 
 public enum EventNotifierAPIRoutes implements ODMApiRoutes {
 
-    EVENT_NOTIFIER("/policies");
+    EVENT_NOTIFIER("/notify");
 
     private final String path;
 
@@ -12,11 +12,6 @@ public enum EventNotifierAPIRoutes implements ODMApiRoutes {
 
     EventNotifierAPIRoutes(String path) {
         this.path = CONTEXT_PATH + path;
-    }
-
-    @Override
-    public String toString() {
-        return this.path;
     }
 
     @Override

@@ -6,10 +6,10 @@ import java.util.Date;
 
 @MappedSuperclass
 public class TimestampedEntity {
-    @Column(name = "created_at", updatable = false)
+    @Column(name = "CREATED_AT", updatable = false)
     private Timestamp createdAt;
 
-    @Column(name = "updated_at")
+    @Column(name = "UPDATED_AT")
     private Timestamp updatedAt;
 
     @PrePersist

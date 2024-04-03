@@ -69,6 +69,7 @@ License.
         <module>policy-api</module>
         <module>policy-server</module>
         <module>event-notifier-api</module>
+        <module>event-notifier-server</module>
     </modules>
 
 </project>

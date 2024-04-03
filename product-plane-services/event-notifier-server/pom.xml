@@ -30,9 +30,9 @@ License.
     </parent>
 
     <groupId>org.opendatamesh</groupId>
-    <artifactId>odm-platform-pp-policy-server</artifactId>
-    <name>ODM Platform Policy Server</name>
-    <description>Open Data Mesh Platform's Policy service server</description>
+    <artifactId>odm-platform-pp-event-notifier-server</artifactId>
+    <name>ODM Platform Event Notifier Server</name>
+    <description>Open Data Mesh Platform's Event Notifier service server</description>
     <version>1.0.0</version>
     <url>https://github.com/opendatamesh-initiative/odm-platform</url>
 
@@ -80,93 +80,6 @@ License.
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
-        <!-- Hibernate -->
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-jpamodelgen</artifactId>
-            <version>5.4.3.Final</version>
-            <optional>true</optional>
-        </dependency>
-
-        <!-- Javax Persistence -->
-        <dependency>
-            <groupId>jakarta.persistence</groupId>
-            <artifactId>jakarta.persistence-api</artifactId>
-        </dependency>
-
-        <!-- Auto Documentation -->
-        <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-ui</artifactId>
-            <version>1.6.11</version>
-        </dependency>
-
-        <!-- Lombok -->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.24</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- Mapstruct -->
-        <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct</artifactId>
-            <version>1.5.3.Final</version>
-        </dependency>
-
-        <!-- Json handling -->
-        <dependency>
-            <groupId>com.networknt</groupId>
-            <artifactId>json-schema-validator</artifactId>
-            <version>1.0.72</version>
-        </dependency>
-
-        <!-- H2 in-memory DB - DEV -->
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
-        <!-- PostreSQL - TEST -->
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
-        <!-- MySQL - TEST -->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.33</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <!-- Test -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <!-- <scope>test</scope>-->
-        </dependency>
-        <dependency>
-            <groupId>org.junit.vintage</groupId>
-            <artifactId>junit-vintage-engine</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-test</artifactId>
-            <scope>test</scope>
         </dependency>
 
         <!-- TestContainers -->
@@ -230,42 +143,6 @@ License.
                     <artifactId>log4j</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency> <!-- Immutable Map -->
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>31.0.1-jre</version>
-        </dependency>
-
-        <!-- Internals -->
-        <dependency>
-            <groupId>org.opendatamesh</groupId>
-            <artifactId>odm-platform-core-dpds-parser</artifactId>
-            <version>1.0.0</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.opendatamesh</groupId>
-            <artifactId>odm-platform-core-commons</artifactId>
-            <version>1.0.0</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.opendatamesh</groupId>
-            <artifactId>odm-platform-pp-policy-api</artifactId>
-            <version>1.0.0</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.opendatamesh</groupId>
-            <artifactId>odm-platform-pp-registry-api</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.opendatamesh</groupId>
-            <artifactId>odm-platform-up-policy-engine-api</artifactId>
-            <version>1.0.0</version>
-            <scope>compile</scope>
         </dependency>
 
     </dependencies>
@@ -349,7 +226,7 @@ License.
                         <include>**/*IT.java</include>
                     </includes>
                     <excludes>
-                        <exclude>**/ODMPolicyIT.java</exclude>
+                        <exclude>**/ODMEventNotifierIT.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>
@@ -375,7 +252,7 @@ License.
                             </execution>
                         </executions>
                         <configuration>
-                            <apiDocsUrl>http://localhost:8005/api/v1/pp/policy/v3/api-docs</apiDocsUrl>
+                            <apiDocsUrl>http://localhost:8006/api/v1/pp/event-notifier/v3/api-docs</apiDocsUrl>
                             <outputFileName>openapi.json</outputFileName>
                             <outputDir>${project.build.directory}</outputDir>
                         </configuration>

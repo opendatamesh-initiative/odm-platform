@@ -62,7 +62,7 @@ odm:
   productPlane:
     registryService:
       active: true
-      address: http://localhost:8001
+      address: http://${REGISTRY_HOSTNAME}:${REGISTRY_PORT}
     devopsService:
       active: true
-      address: http://localhost:8002
+      address: http://${DEVOPS_HOSTNAME}:${DEVOPS_PORT}

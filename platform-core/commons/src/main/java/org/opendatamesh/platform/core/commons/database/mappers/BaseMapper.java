@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.pp.policy.server.database.mappers.utils;
+package org.opendatamesh.platform.core.commons.database.mappers;
 
 public interface BaseMapper<R, T> {
     T toEntity(R resource);

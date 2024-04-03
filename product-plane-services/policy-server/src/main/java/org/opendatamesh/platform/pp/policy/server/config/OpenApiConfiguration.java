@@ -23,7 +23,7 @@ public class OpenApiConfiguration {
                 .description(
                     "# TODO"
                 )
-                .version("v0.0.1")
+                .version("v1.0.0")
                 .license(new License().name("Apache 2.0").url("http://springdoc.org"))
                 .contact(new Contact()
                     .name("ODM Platform Team")

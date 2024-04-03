@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.pp.policy.server.database.utils;
+package org.opendatamesh.platform.core.commons.database.utils;
 
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.NoRepositoryBean;

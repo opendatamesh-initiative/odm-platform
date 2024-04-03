@@ -114,6 +114,6 @@ public abstract class AbstractEventNotifierController implements EventNotifierCo
         notifyEvent(event);
     }
 
-    public abstract void notifyEvent(ListenerResource listenerResource);
+    public abstract void notifyEvent(EventResource eventResource);
 
 }

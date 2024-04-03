@@ -8,7 +8,7 @@ import org.opendatamesh.platform.pp.policy.api.resources.exceptions.PolicyApiSta
 import org.opendatamesh.platform.pp.policy.server.database.entities.PolicyEngine;
 import org.opendatamesh.platform.pp.policy.server.database.mappers.PolicyEngineMapper;
 import org.opendatamesh.platform.pp.policy.server.database.repositories.PolicyEngineRepository;
-import org.opendatamesh.platform.pp.policy.server.database.utils.PagingAndSortingAndSpecificationExecutorRepository;
+import org.opendatamesh.platform.core.commons.database.utils.PagingAndSortingAndSpecificationExecutorRepository;
 import org.opendatamesh.platform.pp.policy.server.services.utils.GenericMappedAndFilteredCrudService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;

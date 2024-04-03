@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
+import org.opendatamesh.platform.pp.policy.api.clients.PolicyEngineClient;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineSearchOptions;
 import org.springframework.data.domain.Page;
@@ -28,7 +29,7 @@ import org.springframework.web.bind.annotation.*;
         name = "PolicyEngines",
         description = "Endpoints associated to PolicyEngines"
 )
-public abstract class AbstractPolicyEngineController implements PolicyEngineController {
+public abstract class AbstractPolicyEngineController implements PolicyEngineClient {
 
     // ===============================================================================
     // Resource examples

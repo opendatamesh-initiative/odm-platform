@@ -11,10 +11,8 @@ import org.opendatamesh.platform.core.dpds.model.internals.LifecycleTaskInfoDPDS
 import org.opendatamesh.platform.pp.devops.api.resources.*;
 import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsClients;
 import org.opendatamesh.platform.pp.devops.server.database.entities.Activity;
-import org.opendatamesh.platform.pp.devops.server.database.entities.Lifecycle;
 import org.opendatamesh.platform.pp.devops.server.database.entities.Task;
 import org.opendatamesh.platform.pp.devops.server.database.mappers.ActivityMapper;
-import org.opendatamesh.platform.pp.devops.server.database.mappers.LifecycleMapper;
 import org.opendatamesh.platform.pp.devops.server.database.mappers.TaskMapper;
 import org.opendatamesh.platform.pp.devops.server.database.repositories.ActivityRepository;
 import org.opendatamesh.platform.pp.devops.server.resources.context.ActivityContext;
@@ -40,7 +38,7 @@ import java.util.stream.Collectors;
 public class ActivityService {
 
     @Autowired
-    PolicyServiceProxy policyServiceProxy;
+    DevopsPolicyServiceProxy policyServiceProxy;
 
     @Autowired
     ActivityRepository activityRepository;

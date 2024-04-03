@@ -7,6 +7,7 @@ import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.pp.policy.api.clients.PolicyClient;
 import org.opendatamesh.platform.pp.policy.api.clients.PolicyClientImpl;
+import org.opendatamesh.platform.pp.policy.api.clients.PolicyValidationClient;
 import org.opendatamesh.platform.pp.policy.api.mappers.utils.JsonNodeUtils;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationRequestResource;
 import org.opendatamesh.platform.pp.policy.api.resources.ValidationResponseResource;
@@ -18,22 +19,22 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PolicyServiceProxy {
+public class RegistryPolicyServiceProxy {
 
-    private PolicyClient policyClient;
+    private PolicyValidationClient policyValidationClient;
     private final boolean policyServiceActive;
 
     @Autowired
-    EventTypeMapper eventTypeMapper;
+    private EventTypeMapper eventTypeMapper;
 
-    private static final Logger logger = LoggerFactory.getLogger(PolicyServiceProxy.class);
+    private static final Logger logger = LoggerFactory.getLogger(RegistryPolicyServiceProxy.class);
 
-    public PolicyServiceProxy(
+    public RegistryPolicyServiceProxy(
             @Value("${odm.productPlane.policyService.address}") final String serverAddress,
             @Value("${odm.productPlane.policyService.active}") String policyServiceActive
     ) {
         if ("true".equals(policyServiceActive)) {
-            this.policyClient = new PolicyClientImpl(
+            this.policyValidationClient = new PolicyClientImpl(
                     serverAddress,
                     ObjectMapperFactory.JSON_MAPPER
             );
@@ -50,7 +51,7 @@ public class PolicyServiceProxy {
         }
         try {
             PolicyEvaluationRequestResource evaluationRequest = buildEvaluationRequest(mostRecentDataProduct, newDataProductVersion);
-            ValidationResponseResource evaluationResult = policyClient.validateInputObject(evaluationRequest);
+            ValidationResponseResource evaluationResult = policyValidationClient.validateInputObject(evaluationRequest);
 
             if (Boolean.FALSE.equals(evaluationResult.getResult())) {
                 logger.warn("Policy evaluation failed during DataProduct version creation");

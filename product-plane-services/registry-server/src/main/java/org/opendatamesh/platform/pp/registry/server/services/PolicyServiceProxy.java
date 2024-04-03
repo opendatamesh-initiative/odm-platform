@@ -70,6 +70,8 @@ public class PolicyServiceProxy {
         PolicyEvaluationRequestResource evaluationRequest = new PolicyEvaluationRequestResource();
         evaluationRequest.setResourceType(PolicyEvaluationRequestResource.ResourceType.DATA_PRODUCT);
         evaluationRequest.setAfterState(JsonNodeUtils.toJsonNode(eventTypeMapper.toEventResource(newDataProductVersion)));
+        evaluationRequest.setDataProductId(newDataProductVersion.getInfo().getDataProductId());
+        evaluationRequest.setDataProductVersion(newDataProductVersion.getInfo().getVersionNumber());
         if (mostRecentDataProduct == null) {
             evaluationRequest.setEvent(PolicyEvaluationRequestResource.EventType.DATA_PRODUCT_CREATION);
         } else {

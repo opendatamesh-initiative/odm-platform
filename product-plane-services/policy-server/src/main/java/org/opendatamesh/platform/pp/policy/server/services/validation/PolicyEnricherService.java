@@ -44,6 +44,8 @@ public class PolicyEnricherService {
                 );
                 taskResultEventTypeResource.setActivity(activityResource);
                 request.setCurrentState(JsonNodeUtils.toJsonNode(taskResultEventTypeResource));
+                request.setDataProductId(activityResource.getDataProductId());
+                request.setDataProductVersion(activityResource.getDataProductVersion());
             }
         } catch (Exception e) {
             logger.warn("Error enriching ACTIVITY_EXECUTION_RESULT event", e);

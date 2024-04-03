@@ -57,6 +57,8 @@ public class PolicyServiceProxy {
 
         try {
             PolicyEvaluationRequestResource evaluationRequest = new PolicyEvaluationRequestResource();
+            evaluationRequest.setDataProductId(activityToBeExecuted.getDataProductId());
+            evaluationRequest.setDataProductVersion(activityToBeExecuted.getDataProductVersion());
             evaluationRequest.setEvent(PolicyEvaluationRequestResource.EventType.ACTIVITY_STAGE_TRANSITION);
             evaluationRequest.setResourceType(PolicyEvaluationRequestResource.ResourceType.ACTIVITY_TRANSITION);
             if (currentLifecycle != null) {
@@ -115,6 +117,8 @@ public class PolicyServiceProxy {
         }
         try {
             PolicyEvaluationRequestResource evaluationRequest = new PolicyEvaluationRequestResource();
+            evaluationRequest.setDataProductId(activityResource.getDataProductId());
+            evaluationRequest.setDataProductVersion(activityResource.getDataProductVersion());
             evaluationRequest.setEvent(PolicyEvaluationRequestResource.EventType.ACTIVITY_EXECUTION_RESULT);
             evaluationRequest.setResourceType(PolicyEvaluationRequestResource.ResourceType.ACTIVITY_RESULT);
             evaluationRequest.setCurrentState(JsonNodeUtils.toJsonNode(

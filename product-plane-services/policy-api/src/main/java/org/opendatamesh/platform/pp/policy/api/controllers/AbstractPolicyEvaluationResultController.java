@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
+import org.opendatamesh.platform.pp.policy.api.clients.PolicyEvaluationResultClient;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultSearchOptions;
 import org.springframework.data.domain.Page;
@@ -28,7 +29,7 @@ import org.springframework.web.bind.annotation.*;
         name = "Policy Evaluation Results",
         description = "Endpoints associated to Policy Evaluation Results"
 )
-public abstract class AbstractPolicyEvaluationResultController implements PolicyEvaluationResultController {
+public abstract class AbstractPolicyEvaluationResultController implements PolicyEvaluationResultClient {
 
     // ===============================================================================
     // Resource examples

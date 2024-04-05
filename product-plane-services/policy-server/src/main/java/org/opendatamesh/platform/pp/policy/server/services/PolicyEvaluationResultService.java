@@ -1,5 +1,6 @@
 package org.opendatamesh.platform.pp.policy.server.services;
 
+import org.opendatamesh.platform.core.commons.database.utils.SpecsUtils;
 import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.UnprocessableEntityException;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
@@ -14,6 +15,10 @@ import org.opendatamesh.platform.pp.policy.server.services.utils.GenericMappedAn
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class PolicyEvaluationResultService extends GenericMappedAndFilteredCrudService<PolicyEvaluationResultSearchOptions, PolicyEvaluationResultResource, PolicyEvaluationResult, Long> {
@@ -77,7 +82,14 @@ public class PolicyEvaluationResultService extends GenericMappedAndFilteredCrudS
 
     @Override
     protected Specification<PolicyEvaluationResult> getSpecFromFilters(PolicyEvaluationResultSearchOptions filters) {
-        return null;
+        List<Specification<PolicyEvaluationResult>> specifications = new ArrayList<>();
+        if (StringUtils.hasText(filters.getDataProductId())) {
+            specifications.add(PolicyEvaluationResultRepository.Specs.hasDataProductId(filters.getDataProductId()));
+        }
+        if (StringUtils.hasText(filters.getDataProductVersion())) {
+            specifications.add(PolicyEvaluationResultRepository.Specs.hasDataProductVersion(filters.getDataProductVersion()));
+        }
+        return SpecsUtils.combineWithAnd(specifications);
     }
 
     @Override

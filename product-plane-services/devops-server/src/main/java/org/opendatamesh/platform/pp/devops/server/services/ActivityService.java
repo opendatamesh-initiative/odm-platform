@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 public class ActivityService {
 
     @Autowired
-    PolicyServiceProxy policyServiceProxy;
+    DevopsPolicyServiceProxy policyServiceProxy;
 
     @Autowired
     ActivityRepository activityRepository;

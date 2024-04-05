@@ -37,6 +37,10 @@ public class PolicyEvaluationResultResource extends TimestampedResource {
     @Schema(description = "ID of the policy used for the evaluation")
     private Long policyId;
 
+    @JsonProperty("policy")
+    @Schema(description = "The policy used for the evaluation")
+    private PolicyResource policy;
+
     public Long getId() {
         return id;
     }
@@ -93,4 +97,11 @@ public class PolicyEvaluationResultResource extends TimestampedResource {
         this.policyId = policyId;
     }
 
+    public PolicyResource getPolicy() {
+        return policy;
+    }
+
+    public void setPolicy(PolicyResource policy) {
+        this.policy = policy;
+    }
 }

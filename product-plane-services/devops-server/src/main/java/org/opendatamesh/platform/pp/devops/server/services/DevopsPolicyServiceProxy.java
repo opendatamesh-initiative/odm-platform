@@ -8,8 +8,8 @@ import org.opendatamesh.platform.pp.devops.api.resources.ActivityResource;
 import org.opendatamesh.platform.pp.devops.api.resources.LifecycleResource;
 import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsConfigurations;
 import org.opendatamesh.platform.pp.devops.server.database.mappers.EventTypeMapper;
-import org.opendatamesh.platform.pp.policy.api.clients.PolicyClient;
 import org.opendatamesh.platform.pp.policy.api.clients.PolicyClientImpl;
+import org.opendatamesh.platform.pp.policy.api.clients.PolicyValidationClient;
 import org.opendatamesh.platform.pp.policy.api.mappers.utils.JsonNodeUtils;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationRequestResource;
 import org.opendatamesh.platform.pp.policy.api.resources.ValidationResponseResource;
@@ -22,20 +22,20 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class PolicyServiceProxy {
+public class DevopsPolicyServiceProxy {
 
-    private PolicyClient policyClient;
+    private PolicyValidationClient policyValidationClient;
     private final boolean policyServiceActive;
 
     @Autowired
     EventTypeMapper eventTypeMapper;
 
-    private static final Logger logger = LoggerFactory.getLogger(PolicyServiceProxy.class);
+    private static final Logger logger = LoggerFactory.getLogger(DevopsPolicyServiceProxy.class);
 
     @Autowired
-    public PolicyServiceProxy(DevOpsConfigurations configurations) {
+    public DevopsPolicyServiceProxy(DevOpsConfigurations configurations) {
         if (Boolean.TRUE.equals(configurations.getProductPlane().getPolicyService().getActive())) {
-            this.policyClient = new PolicyClientImpl(
+            this.policyValidationClient = new PolicyClientImpl(
                     configurations.getProductPlane().getPolicyService().getAddress(),
                     ObjectMapperFactory.JSON_MAPPER
             );
@@ -69,7 +69,7 @@ public class PolicyServiceProxy {
             evaluationRequest.setAfterState(JsonNodeUtils.toJsonNode(
                     eventTypeMapper.toEventResource(currentLifecycle, activityToBeExecuted, activityTasksToBeExecuted)
             ));
-            ValidationResponseResource evaluationResult = policyClient.validateInputObject(evaluationRequest);
+            ValidationResponseResource evaluationResult = policyValidationClient.validateInputObject(evaluationRequest);
             if (Boolean.FALSE.equals(evaluationResult.getResult())) {
                 logger.warn("Policy evaluation failed during stage transition.");
             }
@@ -96,7 +96,7 @@ public class PolicyServiceProxy {
             evaluationRequest.setCurrentState(JsonNodeUtils.toJsonNode(
                     eventTypeMapper.toEventResource(null, taskResource)
             ));
-            ValidationResponseResource evaluationResult = policyClient.validateInputObject(evaluationRequest);
+            ValidationResponseResource evaluationResult = policyValidationClient.validateInputObject(evaluationRequest);
             if (Boolean.FALSE.equals(evaluationResult.getResult())) {
                 logger.warn("Policy evaluation failed on callback result validation.");
             }
@@ -124,7 +124,7 @@ public class PolicyServiceProxy {
             evaluationRequest.setCurrentState(JsonNodeUtils.toJsonNode(
                     eventTypeMapper.toEventResource(activityResource, dataProductVersionDPDS)
             ));
-            ValidationResponseResource evaluationResult = policyClient.validateInputObject(evaluationRequest);
+            ValidationResponseResource evaluationResult = policyValidationClient.validateInputObject(evaluationRequest);
             if (Boolean.FALSE.equals(evaluationResult.getResult())) {
                 logger.warn("Policy evaluation failed during context coherence validation.");
             }

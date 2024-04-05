@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
+import org.opendatamesh.platform.pp.policy.api.clients.PolicyValidationClient;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationRequestResource;
 import org.opendatamesh.platform.pp.policy.api.resources.ValidationResponseResource;
@@ -25,7 +26,7 @@ import org.springframework.web.bind.annotation.*;
         name = "Validation",
         description = "Endpoints associated to Policy validation"
 )
-public abstract class AbstractValidationController implements PolicyValidationController {
+public abstract class AbstractValidationController implements PolicyValidationClient {
 
     // ===============================================================================
     // Resource examples

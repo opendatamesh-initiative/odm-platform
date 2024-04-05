@@ -16,7 +16,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
-public class PolicyClientImpl extends ODMClient implements PolicyClient {
+public class PolicyClientImpl extends ODMClient implements PolicyClient, PolicyEngineClient, PolicyEvaluationResultClient, PolicyValidationClient {
 
     private final RestUtils restUtils;
 
@@ -51,7 +51,7 @@ public class PolicyClientImpl extends ODMClient implements PolicyClient {
     }
 
     public PolicyResource modifyPolicy(Long id, PolicyResource policy) {
-        return restUtils.modify(apiUrlOfItem(PolicyAPIRoutes.POLICIES), id, policy, PolicyResource.class);
+        return restUtils.put(apiUrlOfItem(PolicyAPIRoutes.POLICIES), id, policy, PolicyResource.class);
     }
 
     public void deletePolicy(Long id) {
@@ -71,7 +71,7 @@ public class PolicyClientImpl extends ODMClient implements PolicyClient {
     }
 
     public PolicyEngineResource modifyPolicyEngine(Long id, PolicyEngineResource policyEngine) {
-        return restUtils.modify(apiUrlOfItem(PolicyAPIRoutes.ENGINES), id, policyEngine, PolicyEngineResource.class);
+        return restUtils.put(apiUrlOfItem(PolicyAPIRoutes.ENGINES), id, policyEngine, PolicyEngineResource.class);
     }
 
     public void deletePolicyEngine(Long id) {
@@ -92,7 +92,7 @@ public class PolicyClientImpl extends ODMClient implements PolicyClient {
     }
 
     public PolicyEvaluationResultResource modifyPolicyEvaluationResult(Long id, PolicyEvaluationResultResource policyEvaluationResult) {
-        return restUtils.modify(apiUrlOfItem(PolicyAPIRoutes.RESULTS), id, policyEvaluationResult, PolicyEvaluationResultResource.class);
+        return restUtils.put(apiUrlOfItem(PolicyAPIRoutes.RESULTS), id, policyEvaluationResult, PolicyEvaluationResultResource.class);
     }
 
     public void deletePolicyEvaluationResult(Long id) {

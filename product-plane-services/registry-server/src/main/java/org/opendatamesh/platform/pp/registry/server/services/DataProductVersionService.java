@@ -64,7 +64,7 @@ public class DataProductVersionService {
     EventNotifierProxy eventNotifierProxy;
 
     @Autowired
-    private PolicyServiceProxy policyServiceProxy;
+    private RegistryPolicyServiceProxy policyServiceProxy;
 
     private static final Logger logger = LoggerFactory.getLogger(DataProductVersionService.class);
 

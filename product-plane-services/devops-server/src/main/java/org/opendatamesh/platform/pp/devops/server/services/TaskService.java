@@ -29,7 +29,7 @@ import java.util.*;
 public class TaskService {
 
     @Autowired
-    PolicyServiceProxy policyServiceProxy;
+    DevopsPolicyServiceProxy policyServiceProxy;
 
     @Autowired
     TaskRepository taskRepository;

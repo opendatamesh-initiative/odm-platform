@@ -26,14 +26,14 @@ public class PolicyEnricherService {
 
     public PolicyEvaluationRequestResource enrichRequest(PolicyEvaluationRequestResource request) {
         switch (request.getEvent()) {
-            case ACTIVITY_EXECUTION_RESULT:
-                return enrichActivityExecutionResultEvent(request);
+            case TASK_EXECUTION_RESULT:
+                return enrichTaskExecutionResultEvent(request);
             default:
                 return request;
         }
     }
 
-    private PolicyEvaluationRequestResource enrichActivityExecutionResultEvent(PolicyEvaluationRequestResource request) {
+    private PolicyEvaluationRequestResource enrichTaskExecutionResultEvent(PolicyEvaluationRequestResource request) {
         try {
             TaskResultEventTypeResource taskResultEventTypeResource = mapper.readValue(
                     request.getCurrentState().asText(), TaskResultEventTypeResource.class
@@ -44,9 +44,11 @@ public class PolicyEnricherService {
                 );
                 taskResultEventTypeResource.setActivity(activityResource);
                 request.setCurrentState(JsonNodeUtils.toJsonNode(taskResultEventTypeResource));
+                request.setDataProductId(activityResource.getDataProductId());
+                request.setDataProductVersion(activityResource.getDataProductVersion());
             }
         } catch (Exception e) {
-            logger.warn("Error enriching ACTIVITY_EXECUTION_RESULT event", e);
+            logger.warn("Error enriching TASK_EXECUTION_RESULT event", e);
         }
         return request;
     }

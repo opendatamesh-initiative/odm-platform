@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
@@ -28,6 +29,9 @@ public class RestUtils {
         this.rest = restTemplate;
         objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        SimpleModule simpleModule = new SimpleModule()
+                .addAbstractTypeMapping(Page.class, PageUtility.class);
+        objectMapper.registerModule(simpleModule);
     }
 
     public <R, F> Page<R> getPage(String url, Pageable pageable, F filters, Class<R> clazz) throws InternalServerException {
@@ -48,7 +52,7 @@ public class RestUtils {
             if (!HttpStatus.OK.equals(responseEntity.getStatusCode())) {
                 throwServiceExceptionByResourceType(clazz, objectMapper, responseEntity);
             }
-            JavaType type = objectMapper.getTypeFactory().constructParametricType(PageImplUtility.class, clazz);
+            JavaType type = objectMapper.getTypeFactory().constructParametricType(Page.class, clazz);
             return objectMapper.treeToValue(responseEntity.getBody(), type);
         } catch (RestClientException | JsonProcessingException e) {
             throw new InternalServerException(e);

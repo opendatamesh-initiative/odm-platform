@@ -63,3 +63,9 @@ blindata:
   password: "owner123"
   tenantUUID: "fc8dbadb-83b9-4c4a-baec-fc5a5f91f98b"
   roleUuid: "777f0307-bf30-4f70-92a4-f0cf3bc3f436"
+
+odm:
+  productPlane:
+    policyService:
+      active: true
+      address: http://localhost:8005

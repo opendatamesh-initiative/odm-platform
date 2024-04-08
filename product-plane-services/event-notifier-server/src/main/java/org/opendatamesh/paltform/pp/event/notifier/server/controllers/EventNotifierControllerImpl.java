@@ -18,10 +18,10 @@ public class EventNotifierControllerImpl extends AbstractEventNotifierController
         return listenerService.createResource(listenerResource);
     }
 
-    @Override
+    /*@Override
     public ListenerResource updateListener(Long listenerId, ListenerResource listenerResource) {
         return listenerService.overwriteResource(listenerId, listenerResource);
-    }
+    }*/
 
     @Override
     public void removeListener(Long id) {
@@ -30,7 +30,7 @@ public class EventNotifierControllerImpl extends AbstractEventNotifierController
 
     @Override
     public void notifyEvent(EventResource eventResource) {
-        listenerService.notifyAll(eventResource);
+        //listenerService.notifyAll(eventResource);
     }
 
 }

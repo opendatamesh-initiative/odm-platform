@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class OpenApiConfiguration {
+public class PolicyOpenApiConfiguration {
 
     @Bean
     public OpenAPI customOpenAPI() {
@@ -21,9 +21,14 @@ public class OpenApiConfiguration {
                 .summary("This page describe tha API exposed by the Policy Service Server of the Product Plane " +
                         "of the Open Data Mesh Platform.")
                 .description(
-                    "# TODO"
+                        "This page describe tha API exposed by the Policy Service Server of the Product Plane of the Open Data Mesh Platform." +
+
+                        "\r\n# Overview" +
+                        "\r\nThe Policy Module of the Open Data Mesh platform manages the lifecycle of policies." +
+                        "Specifically, it handles the creation, update and deletion of a policy for a specific policy executor, " +
+                        "as well as managing the evaluation of the policies in different phases of the lifecycle of a Data Product object."
                 )
-                .version("v1.0.0")
+                .version("0.9.0")
                 .license(new License().name("Apache 2.0").url("http://springdoc.org"))
                 .contact(new Contact()
                     .name("ODM Platform Team")

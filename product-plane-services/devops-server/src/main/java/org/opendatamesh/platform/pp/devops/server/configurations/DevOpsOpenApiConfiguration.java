@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class OpenApiConfiguration {
+public class DevOpsOpenApiConfiguration {
     
     @Bean
     public OpenAPI customOpenAPI() {
@@ -58,7 +58,7 @@ public class OpenApiConfiguration {
                     ""
                     )
 
-                .version("v1.0.0")
+                .version("0.9.0")
                 .license(new License().name("Apache 2.0").url("https://github.com/opendatamesh-initiative/odm-platform/blob/main/LICENSE"))
                 .contact(new Contact()
                     .name("ODM Platform Team")

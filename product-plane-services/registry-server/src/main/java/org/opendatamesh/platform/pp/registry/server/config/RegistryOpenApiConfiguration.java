@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class OpenApiConfiguration {
+public class RegistryOpenApiConfiguration {
     /*
      * @Bean
      * public GroupedOpenApi publicApi() {
@@ -53,7 +53,7 @@ public class OpenApiConfiguration {
                     "\r\nAlthough it is good practice to check the status code, you may safely parse the response of any non-DELETE API calls and check for the presence of an `error_code` field to detect errors." +
                     ""
                     )
-                .version("v0.0.1")
+                .version("0.9.0")
                 .license(new License().name("Apache 2.0").url("http://springdoc.org"))
                 .contact(new Contact()
                     .name("ODM Platform Team")

@@ -44,4 +44,5 @@ public class EventResource {
         this.afterState = afterState;
         this.time = new Date();
     }
+
 }

@@ -4,7 +4,8 @@ import org.opendatamesh.platform.core.commons.clients.ODMApiRoutes;
 
 public enum EventNotifierAPIRoutes implements ODMApiRoutes {
 
-    EVENT_NOTIFIER("/notify");
+    OBSERVERS("/observers"),
+    DISPATCH("/dispatch");
 
     private final String path;
 

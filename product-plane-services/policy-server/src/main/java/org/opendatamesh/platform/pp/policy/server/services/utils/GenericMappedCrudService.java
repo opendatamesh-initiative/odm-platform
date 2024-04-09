@@ -9,21 +9,21 @@ import java.io.Serializable;
 public abstract class GenericMappedCrudService<R, T, ID extends Serializable> extends GenericCrudService<T, ID> {
 
     @Autowired
-    private TransactionHandler transactionHandler;
+    private PolicyTransactionHandler policyTransactionHandler;
 
     protected abstract R toRes(T entity);
 
     protected abstract T toEntity(R resource);
 
     public final Page<R> findAllResources(Pageable pageable) {
-        return transactionHandler.runInTransaction(() -> {
+        return policyTransactionHandler.runInTransaction(() -> {
             final Page<T> entitiesPage = findAll(pageable);
             return entitiesPage.map(this::toRes);
         });
     }
 
     public final R findOneResource(ID identifier) {
-        return transactionHandler.runInTransaction(() -> {
+        return policyTransactionHandler.runInTransaction(() -> {
             final T entity = findOne(identifier);
             return toRes(entity);
         });

@@ -1,10 +1,17 @@
 package org.opendatamesh.platform.pp.event.notifier.api.clients;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.opendatamesh.platform.core.commons.clients.ODMClient;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
-import org.opendatamesh.platform.pp.event.notifier.api.resources.ListenerResource;
+import org.opendatamesh.platform.pp.event.notifier.api.resources.ObserverResource;
+import org.opendatamesh.platform.pp.event.notifier.api.resources.ObserverSearchOptions;
 import org.opendatamesh.platform.up.notification.api.resources.EventResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 
 public class EventNotifierClientImpl extends ODMClient implements EventNotifierClient {
 
@@ -16,14 +23,83 @@ public class EventNotifierClientImpl extends ODMClient implements EventNotifierC
         super(serverAddress, mapper);
     }
 
-    public ListenerResource addListener(ListenerResource listenerResource) {
+    public ObserverResource addObserver(ObserverResource observerResource) {
         return null;
     }
 
-    public void removeListener(Long id) {
+    public ObserverResource updateObserver(Long id, ObserverResource observerResource) {
+        return null;
+    }
+
+    public Page<ObserverResource> getObservers(Pageable pageable, ObserverSearchOptions searchOptions) {
+        return null;
+    }
+
+    public ObserverResource getObserver(Long id) {
+        return null;
+    }
+
+    public void removeObserver(Long id) {
     }
 
     public void notifyEvent(EventResource eventResource) {
+    }
+
+    public ResponseEntity<ObjectNode> addObserverResponseEntity(ObserverResource observerResource) {
+        return rest.exchange(
+                apiUrl(EventNotifierAPIRoutes.OBSERVERS),
+                HttpMethod.POST,
+                new HttpEntity<>(observerResource),
+                ObjectNode.class
+        );
+    }
+
+    public ResponseEntity<ObjectNode> updateObserverResponseEntity(Long id, ObserverResource observerResource) {
+        return rest.exchange(
+                apiUrlOfItem(EventNotifierAPIRoutes.OBSERVERS),
+                HttpMethod.PUT,
+                new HttpEntity<>(observerResource),
+                ObjectNode.class,
+                id
+        );
+    }
+
+    public ResponseEntity<ObjectNode> getObserversResponseEntity() {
+        return rest.exchange(
+                apiUrl(EventNotifierAPIRoutes.OBSERVERS),
+                HttpMethod.GET,
+                null,
+                ObjectNode.class
+        );
+    }
+
+    public ResponseEntity<ObjectNode> getObserverResponseEntity(Long id) {
+        return rest.exchange(
+                apiUrlOfItem(EventNotifierAPIRoutes.OBSERVERS),
+                HttpMethod.GET,
+                null,
+                ObjectNode.class,
+                id
+        );
+    }
+
+    public ResponseEntity<ObjectNode> removeObserverResponseEntity(Long id) {
+        return rest.exchange(
+                apiUrlOfItem(EventNotifierAPIRoutes.OBSERVERS),
+                HttpMethod.DELETE,
+                null,
+                ObjectNode.class,
+                id
+        );
+    }
+
+    public ResponseEntity<ObjectNode> notifyEventResponseEntity(EventResource eventResource) {
+        return rest.exchange(
+                apiUrl(EventNotifierAPIRoutes.OBSERVERS),
+                HttpMethod.POST,
+                new HttpEntity<>(eventResource),
+                ObjectNode.class
+        );
     }
 
 }

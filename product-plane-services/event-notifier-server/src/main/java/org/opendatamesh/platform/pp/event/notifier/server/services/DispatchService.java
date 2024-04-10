@@ -17,6 +17,9 @@ public class DispatchService {
     @Autowired
     ObserverService observerService;
 
+    @Autowired
+    EventNotifierNotificationServiceProxy eventNotifierNotificationServiceProxy;
+
     public void notifyAll(EventResource eventToDispatch) {
         if(eventToDispatch == null) {
             throw new BadRequestException(
@@ -26,7 +29,7 @@ public class DispatchService {
         }
         List<Observer> observers = observerService.findAll(Pageable.unpaged()).getContent();
         for (Observer observer : observers) {
-            EventNotifierNotificationServiceProxy.postEventToNotificationService(
+            eventNotifierNotificationServiceProxy.postEventToNotificationService(
                     eventToDispatch,
                     observer.getObserverServerAddress()
             );

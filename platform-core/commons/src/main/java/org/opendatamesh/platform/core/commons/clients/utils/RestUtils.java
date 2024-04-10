@@ -161,6 +161,23 @@ public class RestUtils {
         }
     }
 
+    public <R> R genericGet(String url, Class<R> clazz) throws InternalServerException {
+        try {
+            ResponseEntity<ObjectNode> responseEntity = rest.exchange(
+                    url,
+                    HttpMethod.GET,
+                    HttpEntity.EMPTY,
+                    ObjectNode.class
+            );
+            if (!HttpStatus.OK.equals(responseEntity.getStatusCode())) {
+                throwServiceExceptionByResourceType(clazz, objectMapper, responseEntity);
+            }
+            return objectMapper.treeToValue(responseEntity.getBody(), clazz);
+        } catch (RestClientException | JsonProcessingException e) {
+            throw new InternalServerException(e);
+        }
+    }
+
     private String appendQueryStringFromPageable(String url, Pageable pageable) {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
                 .queryParam("page", pageable.getPageNumber())

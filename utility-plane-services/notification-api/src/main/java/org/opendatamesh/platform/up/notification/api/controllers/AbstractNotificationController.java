@@ -18,7 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/notifications")
 @Validated
-public abstract class AbstractNotificationController {
+public abstract class AbstractNotificationController implements NotificationController {
 
     @PostMapping(
         consumes = { "application/vnd.odmp.v1+json", 
@@ -76,16 +76,15 @@ public abstract class AbstractNotificationController {
     public abstract List<NotificationResource> searchNotifications(
         String eventType,
         String notificationStatus
-        
     );
 
     @DeleteMapping("/{notificationId}")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteDataProductEndpoint(
+    public void deleteNotificationEndpoint(
         @Valid @PathVariable(value = "notificationId", required = true) Long notificationId
     )  {
-        deleteDataProduct(notificationId);
+        deleteNotification(notificationId);
     } 
 
-    public abstract void deleteDataProduct(Long notificationId);
+    public abstract void deleteNotification(Long notificationId);
 }

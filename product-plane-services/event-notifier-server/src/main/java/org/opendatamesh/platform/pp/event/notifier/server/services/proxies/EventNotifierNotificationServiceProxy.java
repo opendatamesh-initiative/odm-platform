@@ -2,7 +2,7 @@ package org.opendatamesh.platform.pp.event.notifier.server.services.proxies;
 
 import org.opendatamesh.platform.core.commons.servers.exceptions.BadGatewayException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
-import org.opendatamesh.platform.up.notification.api.clients.NotificationClient;
+import org.opendatamesh.platform.up.notification.api.clients.NotificationClientImpl;
 import org.opendatamesh.platform.up.notification.api.resources.ErrorResource;
 import org.opendatamesh.platform.up.notification.api.resources.EventResource;
 import org.opendatamesh.platform.up.notification.api.resources.NotificationResource;
@@ -16,30 +16,19 @@ public final class EventNotifierNotificationServiceProxy {
 
     public static void postEventToNotificationService(EventResource event, String serverAddress) {
 
-        NotificationClient notificationClient = new NotificationClient(serverAddress);
+        NotificationClientImpl notificationClientImpl = new NotificationClientImpl(serverAddress);
 
         NotificationResource notification = new NotificationResource();
         notification.setEvent(event);
 
         try {
-
-            ResponseEntity responseEntity = notificationClient.createNotification(notification);
-
-            if(responseEntity.getStatusCode().is2xxSuccessful()){
-                notification = (NotificationResource) responseEntity.getBody();
-                logger.debug("Successfully loaded information to Meta service system: " + notification.toString());
-            } else {
-                ErrorResource error = (ErrorResource) responseEntity.getBody();
-                throw new BadGatewayException(
-                        ODMApiCommonErrors.SC502_70_NOTIFICATION_SERVICE_ERROR,
-                        error.getMessage()
-                );
-            }
-
+            NotificationResource notificationResource = notificationClientImpl.createNotification(notification);
+            logger.debug("Successfully loaded information to Meta service system: " + notificationResource.toString());
         } catch (Exception e) {
             throw new BadGatewayException(
                     ODMApiCommonErrors.SC502_70_NOTIFICATION_SERVICE_ERROR,
-                    e.getMessage()
+                    e.getMessage(),
+                    e
             );
         }
     }

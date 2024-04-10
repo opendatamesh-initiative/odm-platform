@@ -31,8 +31,6 @@ public class DispatchIT extends ODMEventNotifierIT {
         ResponseEntity<ObjectNode> postResponse = eventNotifierClient.notifyEventResponseEntity(eventToDispatch);
         verifyResponseEntity(postResponse, HttpStatus.OK, false);
 
-        List<NotificationResource> notificationResources = ev
-
     }
 
 }

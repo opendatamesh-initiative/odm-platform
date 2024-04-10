@@ -12,6 +12,8 @@ server:
 # Spring configurations
 ############################################
 spring:
+  # Profile
+  profile: test
   # JPA configuration
   jpa:
     #show-sql: true

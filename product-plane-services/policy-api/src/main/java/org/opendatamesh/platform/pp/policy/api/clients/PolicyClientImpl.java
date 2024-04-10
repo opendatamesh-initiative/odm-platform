@@ -4,7 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.platform.core.commons.clients.ODMClient;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
-import org.opendatamesh.platform.pp.policy.api.clients.utils.RestUtils;
+import org.opendatamesh.platform.core.commons.clients.utils.RestUtils;
+import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.policy.api.resources.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,12 +23,12 @@ public class PolicyClientImpl extends ODMClient implements PolicyClient, PolicyE
 
     public PolicyClientImpl(String serverAddress, ObjectMapper mapper) {
         super(serverAddress, mapper);
-        restUtils = new RestUtils(rest);
+        restUtils = new RestUtils(rest, ObjectMapperFactory.JSON_MAPPER);
     }
 
     public PolicyClientImpl(String serverAddress, RestTemplate restTemplate, ObjectMapper mapper) {
         super(serverAddress, restTemplate, mapper);
-        restUtils = new RestUtils(rest);
+        restUtils = new RestUtils(rest, ObjectMapperFactory.JSON_MAPPER);
     }
 
     public Page<PolicyResource> getPolicies(Pageable pageable, PolicySearchOptions searchOptions) {

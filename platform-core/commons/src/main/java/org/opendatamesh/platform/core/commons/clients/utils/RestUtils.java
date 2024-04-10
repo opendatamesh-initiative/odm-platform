@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.pp.policy.api.clients.utils;
+package org.opendatamesh.platform.core.commons.clients.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -25,9 +25,9 @@ public class RestUtils {
     private final TestRestTemplate rest;
     private final ObjectMapper objectMapper;
 
-    public RestUtils(TestRestTemplate restTemplate) {
+    public RestUtils(TestRestTemplate restTemplate, ObjectMapper mapper) {
         this.rest = restTemplate;
-        objectMapper = new ObjectMapper();
+        this.objectMapper = mapper;
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         SimpleModule simpleModule = new SimpleModule()
                 .addAbstractTypeMapping(Page.class, PageUtility.class);
@@ -193,4 +193,5 @@ public class RestUtils {
         ErrorRes errorRes = objectMapper.treeToValue(responseEntity.getBody(), ErrorRes.class);
         throw new InternalServerException(errorRes.getMessage());
     }
+
 }

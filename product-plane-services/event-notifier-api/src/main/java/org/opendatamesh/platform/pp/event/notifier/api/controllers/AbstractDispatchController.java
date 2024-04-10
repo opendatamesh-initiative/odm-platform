@@ -19,21 +19,16 @@ import org.springframework.web.bind.annotation.*;
 public abstract class AbstractDispatchController {
 
     // ===============================================================================
-    // POST /event-notifier/dispatch
+    // POST /dispatch
     // ===============================================================================
 
     @Operation(
             summary = "Dispatch an Event",
             description = "Dispatch an Event to all registered Observers"
     )
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     @PostMapping(
             consumes = {
-                    "application/vnd.odmp.v1+json",
-                    "application/vnd.odmp+json",
-                    "application/json"
-            },
-            produces = {
                     "application/vnd.odmp.v1+json",
                     "application/vnd.odmp+json",
                     "application/json"

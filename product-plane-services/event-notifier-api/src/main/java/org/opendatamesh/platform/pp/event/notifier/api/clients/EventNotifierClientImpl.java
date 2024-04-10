@@ -3,6 +3,7 @@ package org.opendatamesh.platform.pp.event.notifier.api.clients;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.opendatamesh.platform.core.commons.clients.ODMClient;
+import org.opendatamesh.platform.core.commons.clients.utils.RestUtils;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.event.notifier.api.resources.ObserverResource;
 import org.opendatamesh.platform.pp.event.notifier.api.resources.ObserverSearchOptions;
@@ -15,34 +16,40 @@ import org.springframework.http.ResponseEntity;
 
 public class EventNotifierClientImpl extends ODMClient implements EventNotifierClient {
 
+    private final RestUtils restUtils;
+
     public EventNotifierClientImpl(String serverAddress) {
         super(serverAddress, ObjectMapperFactory.JSON_MAPPER);
+        restUtils = new RestUtils(rest, ObjectMapperFactory.JSON_MAPPER);
     }
 
     public EventNotifierClientImpl(String serverAddress, ObjectMapper mapper) {
         super(serverAddress, mapper);
+        restUtils = new RestUtils(rest, ObjectMapperFactory.JSON_MAPPER);
     }
 
     public ObserverResource addObserver(ObserverResource observerResource) {
-        return null;
+        return restUtils.create(apiUrl(EventNotifierAPIRoutes.OBSERVERS), observerResource, ObserverResource.class);
     }
 
     public ObserverResource updateObserver(Long id, ObserverResource observerResource) {
-        return null;
+        return restUtils.put(apiUrlOfItem(EventNotifierAPIRoutes.OBSERVERS), id, observerResource, ObserverResource.class);
     }
 
     public Page<ObserverResource> getObservers(Pageable pageable, ObserverSearchOptions searchOptions) {
-        return null;
+        return restUtils.getPage(apiUrl(EventNotifierAPIRoutes.OBSERVERS), pageable, searchOptions, ObserverResource.class);
     }
 
     public ObserverResource getObserver(Long id) {
-        return null;
+        return restUtils.get(apiUrlOfItem(EventNotifierAPIRoutes.OBSERVERS), id, ObserverResource.class);
     }
 
     public void removeObserver(Long id) {
+        restUtils.delete(apiUrlOfItem(EventNotifierAPIRoutes.OBSERVERS), id);
     }
 
     public void notifyEvent(EventResource eventResource) {
+        restUtils.genericPost(apiUrl(EventNotifierAPIRoutes.OBSERVERS), eventResource, EventResource.class);
     }
 
     public ResponseEntity<ObjectNode> addObserverResponseEntity(ObserverResource observerResource) {

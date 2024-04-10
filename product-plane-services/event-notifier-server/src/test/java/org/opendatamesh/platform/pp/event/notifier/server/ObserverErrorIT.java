@@ -39,7 +39,7 @@ public class ObserverErrorIT extends ODMEventNotifierIT {
         String observerServerAddress = observerResource.getObserverServerAddress();
         ResponseEntity<ObjectNode> postResponse;
 
-        // 42201 - Observer is invalid - Observer adapterURL cannot be null
+        // 42201 - Observer is invalid - Observer server address cannot be null
         observerResource.setObserverServerAddress(null);
         postResponse = eventNotifierClient.addObserverResponseEntity(observerResource);
         verifyResponseErrorObjectNode(
@@ -103,8 +103,8 @@ public class ObserverErrorIT extends ODMEventNotifierIT {
         ObserverResource observerResource = createObserverResource(ODMEventNotifierResources.RESOURCE_OBSERVER_1);
 
         // 40401 - Observer not found
-        ResponseEntity putResponse = eventNotifierClient.updateObserverResponseEntity(2L, observerResource);
-        verifyResponseError(
+        ResponseEntity<ObjectNode> putResponse = eventNotifierClient.updateObserverResponseEntity(2L, observerResource);
+        verifyResponseErrorObjectNode(
                 putResponse,
                 HttpStatus.NOT_FOUND,
                 EventNotifierApiStandardErrors.SC404_01_OBSERVER_NOT_FOUND,
@@ -115,21 +115,21 @@ public class ObserverErrorIT extends ODMEventNotifierIT {
 
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-    public void testUpdateObserverError422xx() throws JsonProcessingException {
+    public void testUpdateObserverError422xx() {
 
         // Resources
         ObserverResource observerResource = createObserver(ODMEventNotifierResources.RESOURCE_OBSERVER_1);
         String observerServerAddress = observerResource.getObserverServerAddress();
         ResponseEntity<ObjectNode> putResponse;
 
-        // 42201 - Observer is invalid - Observer adapterURL cannot be null
+        // 42201 - Observer is invalid - Observer server address cannot be null
         observerResource.setObserverServerAddress(null);
         putResponse = eventNotifierClient.updateObserverResponseEntity(observerResource.getId(), observerResource);
         verifyResponseErrorObjectNode(
                 putResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
                 EventNotifierApiStandardErrors.SC422_01_OBSERVER_IS_INVALID,
-                "Observer adapterUrl cannot be null"
+                "Observer server address cannot be null"
         );
 
         // 42201 - Observer is invalid - Observer name cannot be null
@@ -158,11 +158,11 @@ public class ObserverErrorIT extends ODMEventNotifierIT {
 
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-    public void testReadOneObserverError404xx() throws JsonProcessingException {
+    public void testReadOneObserverError404xx() {
 
         // 40401 - Resource not found
-        ResponseEntity getResponse = eventNotifierClient.getObserverResponseEntity(2L);
-        verifyResponseError(
+        ResponseEntity<ObjectNode> getResponse = eventNotifierClient.getObserverResponseEntity(2L);
+        verifyResponseErrorObjectNode(
                 getResponse,
                 HttpStatus.NOT_FOUND,
                 EventNotifierApiStandardErrors.SC404_01_OBSERVER_NOT_FOUND,
@@ -177,7 +177,7 @@ public class ObserverErrorIT extends ODMEventNotifierIT {
 
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-    public void testDeleteOneObserverError404xx() throws JsonProcessingException {
+    public void testDeleteOneObserverError404xx() {
 
         // 40401 - Resource not found
         ResponseEntity<ObjectNode> deleteResponse = eventNotifierClient.removeObserverResponseEntity(2L);

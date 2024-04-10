@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.pp.policy.api.clients.utils;
+package org.opendatamesh.platform.core.commons.clients.utils;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

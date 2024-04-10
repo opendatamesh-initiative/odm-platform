@@ -14,12 +14,11 @@ import java.io.Serializable;
 import java.util.function.Function;
 
 public abstract class GenericCrudService<T, ID extends Serializable> {
+
     @Autowired
     private TransactionTemplate transactionTemplate;
 
-    protected GenericCrudService() {
-
-    }
+    protected GenericCrudService() { }
 
     //READ METHODS
 

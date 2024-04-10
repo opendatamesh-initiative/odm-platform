@@ -95,7 +95,7 @@ public class EventNotifierClientImpl extends ODMClient implements EventNotifierC
 
     public ResponseEntity<ObjectNode> notifyEventResponseEntity(EventResource eventResource) {
         return rest.exchange(
-                apiUrl(EventNotifierAPIRoutes.OBSERVERS),
+                apiUrl(EventNotifierAPIRoutes.DISPATCH),
                 HttpMethod.POST,
                 new HttpEntity<>(eventResource),
                 ObjectNode.class

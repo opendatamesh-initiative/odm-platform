@@ -1,5 +1,7 @@
 package org.opendatamesh.platform.pp.event.notifier.server.services;
 
+import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
+import org.opendatamesh.platform.pp.event.notifier.api.resources.exceptions.EventNotifierApiStandardErrors;
 import org.opendatamesh.platform.pp.event.notifier.server.database.entities.Observer;
 import org.opendatamesh.platform.pp.event.notifier.server.services.proxies.EventNotifierNotificationServiceProxy;
 import org.opendatamesh.platform.up.notification.api.resources.EventResource;
@@ -16,6 +18,12 @@ public class DispatchService {
     ObserverService observerService;
 
     public void notifyAll(EventResource eventToDispatch) {
+        if(eventToDispatch == null) {
+            throw new BadRequestException(
+                    EventNotifierApiStandardErrors.SC400_02_EVENT_IS_EMPTY,
+                    "Event object cannot be null"
+            );
+        }
         List<Observer> observers = observerService.findAll(Pageable.unpaged()).getContent();
         for (Observer observer : observers) {
             EventNotifierNotificationServiceProxy.postEventToNotificationService(

@@ -13,6 +13,7 @@ import java.io.Serializable;
 
 @Service
 public abstract class GenericMappedAndFilteredCrudService<F, R, T, ID extends Serializable> extends GenericMappedCrudService<R, T, ID> {
+
     @Autowired
     private EventNotifierTransactionHandler eventNotifierTransactionHandler;
 

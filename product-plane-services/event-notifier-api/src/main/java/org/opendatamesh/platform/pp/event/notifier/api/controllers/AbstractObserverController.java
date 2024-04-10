@@ -77,6 +77,7 @@ public abstract class AbstractObserverController implements ObserverController {
     )
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(
+            value = "/{id}",
             consumes = {
                     "application/vnd.odmp.v1+json",
                     "application/vnd.odmp+json",
@@ -89,7 +90,8 @@ public abstract class AbstractObserverController implements ObserverController {
             }
     )
     public ObserverResource updateObserverEndpoint(
-            @RequestParam Long id,
+            @Parameter(description = "ID of the Observer to update", required = true)
+            @PathVariable(value = "id") Long id,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "An Observer JSON object"/*,
                     content = @Content(examples = {@ExampleObject(
@@ -150,7 +152,7 @@ public abstract class AbstractObserverController implements ObserverController {
             }
     )
     public ObserverResource getObserverEndpoint(
-            @Parameter(description = "", required = true)
+            @Parameter(description = "ID of the desired Observer", required = true)
             @PathVariable(value = "id") Long id
     ) {
         return getObserver(id);
@@ -167,7 +169,7 @@ public abstract class AbstractObserverController implements ObserverController {
             summary = "Remove an Observer",
             description = "Remove a single listening Notification Adapter given its ID"
     )
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(value = "/{id}")
     public void removeObserverEndpoint(
             @Parameter(description = "ID of the Observer to delete")

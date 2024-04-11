@@ -153,6 +153,7 @@ public class PolicyEvaluationResultErrorsIT extends ODMPolicyIT {
 
         // 40403 - PolicyEvaluationResult not found (parent policy evaluation result)
         policyEvaluationResultResource.setPolicyId(parentPolicyResource.getId());
+        policyEvaluationResultResource.setPolicy(null);
         ResponseEntity<ErrorRes> putResponse = policyClient.updatePolicyEvaluationResultResponseEntity(
                 7L, policyEvaluationResultResource
         );
@@ -165,6 +166,7 @@ public class PolicyEvaluationResultErrorsIT extends ODMPolicyIT {
 
         // 40402 - Resource not found (parent policy not found)
         policyEvaluationResultResource.setPolicyId(3L);
+        policyEvaluationResultResource.setPolicy(null);
         putResponse = policyClient.updatePolicyEvaluationResultResponseEntity(
                 policyEvaluationResultResource.getId(), policyEvaluationResultResource
         );
@@ -194,6 +196,7 @@ public class PolicyEvaluationResultErrorsIT extends ODMPolicyIT {
 
         // 42203 - PolicyEvaluationResult is invalid - PolicyEvaluationResult policyID cannot be null
         policyEvaluationResultResource.setPolicyId(null);
+        policyEvaluationResultResource.setPolicy(null);
         putResponse = policyClient.updatePolicyEvaluationResultResponseEntity(
                 policyEvaluationResultResource.getId(), policyEvaluationResultResource
         );
@@ -206,6 +209,7 @@ public class PolicyEvaluationResultErrorsIT extends ODMPolicyIT {
 
         // 42203 - PolicyEngine is invalid - PolicyEngine name cannot be null
         policyEvaluationResultResource.setPolicyId(policyEvaluationResultPolicyId);
+        policyEvaluationResultResource.setPolicy(null);
         policyEvaluationResultResource.setResult(null);
         putResponse = policyClient.updatePolicyEvaluationResultResponseEntity(
                 policyEvaluationResultResource.getId(), policyEvaluationResultResource
@@ -226,6 +230,7 @@ public class PolicyEvaluationResultErrorsIT extends ODMPolicyIT {
         updatedParentPolicyResource.setCreatedAt(parentPolicyResource.getCreatedAt());
         policyClient.updatePolicyResponseEntity(parentPolicyResource.getRootId(), updatedParentPolicyResource);
         policyEvaluationResultResource.setPolicyId(parentPolicyResource.getId());
+        policyEvaluationResultResource.setPolicy(null);
         policyEvaluationResultResource.setResult(policyEvaluationResultResult);
         putResponse = policyClient.updatePolicyEvaluationResultResponseEntity(
                 policyEvaluationResultResource.getId(), policyEvaluationResultResource

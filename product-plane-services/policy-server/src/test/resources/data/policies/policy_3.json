@@ -3,7 +3,8 @@
   "displayName": "Schema Compatibility Checker",
   "description": "Check whether the updated schema is retro-compatible with the previous schema or not",
   "blockingFlag": true,
-  "suite": "DATA_PRODUCT_UPDATE",
+  "evaluationEvent": "DATA_PRODUCT_UPDATE",
+  "suite": "Suite Name",
   "filteringExpression": "afterState.dataProductVersion.info.domain == 'sampleDomain' && afterState.dataProductVersion.info.domain != 'sampleDomainTwo'",
   "policyEngineId": 1
 }

@@ -129,11 +129,11 @@ public class DevOpsEventNotifierProxy {
     private void notifyEvent(EventResource eventResource, String errorMessage) {
         try {
             eventNotifierClient.notifyEvent(eventResource);
-        } catch (Throwable t) {
+        } catch (Exception e) {
             throw new BadGatewayException(
                     ODMApiCommonErrors.SC502_70_NOTIFICATION_SERVICE_ERROR,
-                    errorMessage + t.getMessage(),
-                    t
+                    errorMessage + e.getMessage(),
+                    e
             );
         }
     }

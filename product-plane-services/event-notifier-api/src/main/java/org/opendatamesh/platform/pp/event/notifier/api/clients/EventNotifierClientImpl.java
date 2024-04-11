@@ -49,7 +49,7 @@ public class EventNotifierClientImpl extends ODMClient implements EventNotifierC
     }
 
     public void notifyEvent(EventResource eventResource) {
-        restUtils.genericPost(apiUrl(EventNotifierAPIRoutes.OBSERVERS), eventResource, EventResource.class);
+        restUtils.genericPost(apiUrl(EventNotifierAPIRoutes.DISPATCH), eventResource, EventResource.class);
     }
 
     public ResponseEntity<ObjectNode> addObserverResponseEntity(ObserverResource observerResource) {

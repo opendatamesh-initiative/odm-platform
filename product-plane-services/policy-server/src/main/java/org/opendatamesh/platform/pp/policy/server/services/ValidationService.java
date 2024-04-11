@@ -91,20 +91,20 @@ public class ValidationService {
     // ======================================================================================
 
     private List<Policy> selectPolicies(
-            PolicyEvaluationRequestResource.EventType suite,
+            PolicyEvaluationRequestResource.EventType evaluationEvent,
             JsonNode inputObject
     ) {
         // Default Policy Selection strategy: filter by EVENT
-        List<Policy> policySubset = selectPoliciesBySuite(suite);
+        List<Policy> policySubset = selectPoliciesByEvaluationEvent(evaluationEvent);
         // Custom Policy Selection strategy: evaluate CONDITION of policies on input object
-        policySubset = selectPoliciesBySpELExpression(policySubset, inputObject, suite);
+        policySubset = selectPoliciesBySpELExpression(policySubset, inputObject, evaluationEvent);
         return policySubset;
     }
 
-    private List<Policy> selectPoliciesBySuite(PolicyEvaluationRequestResource.EventType suite) {
+    private List<Policy> selectPoliciesByEvaluationEvent(PolicyEvaluationRequestResource.EventType evaluationEvent) {
 
         PolicySearchOptions policySearchOptions = new PolicySearchOptions();
-        policySearchOptions.setSuite(suite.toString());
+        policySearchOptions.setEvaluationEvent(evaluationEvent.toString());
 
         return policyService.findAllFiltered(Pageable.unpaged(), policySearchOptions).getContent();
 

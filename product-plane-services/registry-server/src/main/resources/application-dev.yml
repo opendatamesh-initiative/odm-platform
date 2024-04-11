@@ -61,10 +61,10 @@ odm:
         max: null
   productPlane:
     policyService:
-      active: false
+      active: true
       address: http://localhost:8005
   utilityPlane:
     notificationServices:
       blindata:
-        active: false
+        active: true
         address: http://localhost:9002

@@ -12,7 +12,7 @@ Such kind of events are encapsulated in the body of an evaluation request throug
 `PolicyEvaluationRequestResource`.
 
 When an evaluation request occurs, the Policy Service select all the registered policies with the
-`suite` attribute matching the event type and forward them to the right Policy Engine Adapter for the evaluation.
+`evaluationEvent` attribute matching the event type and forward them to the right Policy Engine Adapter for the evaluation.
 It then collects the results, aggregate them, and forward a response to the original request.
 
 Each event has a default input object, which will be the subject of the policy evaluations request.

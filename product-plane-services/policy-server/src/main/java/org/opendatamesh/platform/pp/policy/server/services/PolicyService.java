@@ -135,8 +135,8 @@ public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySea
         List<Specification<Policy>> specifications = new ArrayList<>();
         specifications.add(PolicyRepository.Specs.hasLastVersion(Boolean.TRUE));
 
-        if(StringUtils.hasText(filters.getSuite())) {
-            specifications.add(PolicyRepository.Specs.hasSuite(filters.getSuite()));
+        if(StringUtils.hasText(filters.getEvaluationEvent())) {
+            specifications.add(PolicyRepository.Specs.hasEvaluationEvent(filters.getEvaluationEvent()));
         }
 
         return SpecsUtils.combineWithAnd(specifications);

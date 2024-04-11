@@ -30,6 +30,9 @@ public class Policy extends TimestampedEntity {
     @Column(name = "SUITE")
     private String suite;
 
+    @Column(name = "EVALUATION_EVENT")
+    private String evaluationEvent;
+
     @Column(name = "FILTERING_EXPRESSION")
     private String filteringExpression;
 
@@ -146,6 +149,14 @@ public class Policy extends TimestampedEntity {
         PolicyEngine pg = new PolicyEngine();
         pg.setId(policyEngineId);
         this.policyEngine = pg;
+    }
+
+    public String getEvaluationEvent() {
+        return evaluationEvent;
+    }
+
+    public void setEvaluationEvent(String evaluationEvent) {
+        this.evaluationEvent = evaluationEvent;
     }
 
 }

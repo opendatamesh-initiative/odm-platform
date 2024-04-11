@@ -36,11 +36,11 @@ public class ObserverErrorIT extends ODMEventNotifierIT {
 
         // Resources
         ObserverResource observerResource = createObserverResource(ODMEventNotifierResources.RESOURCE_OBSERVER_1);
-        String observerServerAddress = observerResource.getObserverServerAddress();
+        String observerServerAddress = observerResource.getObserverServerBaseUrl();
         ResponseEntity<ObjectNode> postResponse;
 
         // 42201 - Observer is invalid - Observer server address cannot be null
-        observerResource.setObserverServerAddress(null);
+        observerResource.setObserverServerBaseUrl(null);
         postResponse = eventNotifierClient.addObserverResponseEntity(observerResource);
         verifyResponseErrorObjectNode(
                 postResponse,
@@ -50,7 +50,7 @@ public class ObserverErrorIT extends ODMEventNotifierIT {
         );
 
         // 42201 - Observer is invalid - Observer name cannot be null
-        observerResource.setObserverServerAddress(observerServerAddress);
+        observerResource.setObserverServerBaseUrl(observerServerAddress);
         observerResource.setName(null);
         postResponse = eventNotifierClient.addObserverResponseEntity(observerResource);
         verifyResponseErrorObjectNode(
@@ -119,11 +119,11 @@ public class ObserverErrorIT extends ODMEventNotifierIT {
 
         // Resources
         ObserverResource observerResource = createObserver(ODMEventNotifierResources.RESOURCE_OBSERVER_1);
-        String observerServerAddress = observerResource.getObserverServerAddress();
+        String observerServerAddress = observerResource.getObserverServerBaseUrl();
         ResponseEntity<ObjectNode> putResponse;
 
         // 42201 - Observer is invalid - Observer server address cannot be null
-        observerResource.setObserverServerAddress(null);
+        observerResource.setObserverServerBaseUrl(null);
         putResponse = eventNotifierClient.updateObserverResponseEntity(observerResource.getId(), observerResource);
         verifyResponseErrorObjectNode(
                 putResponse,
@@ -133,7 +133,7 @@ public class ObserverErrorIT extends ODMEventNotifierIT {
         );
 
         // 42201 - Observer is invalid - Observer name cannot be null
-        observerResource.setObserverServerAddress(observerServerAddress);
+        observerResource.setObserverServerBaseUrl(observerServerAddress);
         observerResource.setName(null);
         putResponse = eventNotifierClient.updateObserverResponseEntity(observerResource.getId(), observerResource);
         verifyResponseErrorObjectNode(

@@ -20,9 +20,9 @@ public class ObserverResource extends TimestampedResource {
     @Schema(description = "Human readable display name of the listening Notification Adapter")
     private String displayName;
 
-    @JsonProperty("observerServerAddress")
-    @Schema(description = "Server Address to reach the listening Notification Adapter")
-    private String observerServerAddress;
+    @JsonProperty("observerServerBaseUrl")
+    @Schema(description = "Observer server base URL (i.e., protocol, hostname and port) to reach the listening Notification Adapter")
+    private String observerServerBaseUrl;
 
     public Long getId() {
         return id;
@@ -48,12 +48,12 @@ public class ObserverResource extends TimestampedResource {
         this.displayName = displayName;
     }
 
-    public String getObserverServerAddress() {
-        return observerServerAddress;
+    public String getObserverServerBaseUrl() {
+        return observerServerBaseUrl;
     }
 
-    public void setObserverServerAddress(String observerUrl) {
-        this.observerServerAddress = observerUrl;
+    public void setObserverServerBaseUrl(String observerUrl) {
+        this.observerServerBaseUrl = observerUrl;
     }
 
 }

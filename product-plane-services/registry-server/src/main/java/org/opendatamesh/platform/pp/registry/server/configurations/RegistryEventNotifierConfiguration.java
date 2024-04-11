@@ -50,7 +50,7 @@ public class RegistryEventNotifierConfiguration {
                 ObserverResource observerResource = new ObserverResource();
                 observerResource.setName("blindata-observer");
                 observerResource.setDisplayName("Blindata Observer");
-                observerResource.setObserverServerAddress(notificationServiceServerAddress);
+                observerResource.setObserverServerBaseUrl(notificationServiceServerAddress);
                 eventNotifierClient.addObserver(observerResource);
             }
         }

@@ -31,7 +31,7 @@ public class DispatchService {
         for (Observer observer : observers) {
             eventNotifierNotificationServiceProxy.postEventToNotificationService(
                     eventToDispatch,
-                    observer.getObserverServerAddress()
+                    observer.getObserverServerBaseUrl()
             );
         }
     }

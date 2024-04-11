@@ -5,7 +5,7 @@ import org.opendatamesh.platform.up.notification.api.clients.NotificationClientI
 import org.springframework.stereotype.Service;
 
 @Service
-public class EventNotifierNotificationClientGetterImpl implements EventNotifierNotificationClientGetter {
+public class EventNotifierNotificationClientFactoryImpl implements EventNotifierNotificationClientFactory {
     @Override
     public NotificationClient getNotificationClient(String serverAddress) {
         return new NotificationClientImpl(serverAddress);

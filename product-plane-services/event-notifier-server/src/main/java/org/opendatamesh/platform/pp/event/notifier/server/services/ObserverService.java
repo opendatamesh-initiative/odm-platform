@@ -35,10 +35,10 @@ public class ObserverService extends GenericMappedAndFilteredCrudService<Observe
             );
         }
 
-        if (!StringUtils.hasText(objectToValidate.getObserverServerAddress())) {
+        if (!StringUtils.hasText(objectToValidate.getObserverServerBaseUrl())) {
             throw new UnprocessableEntityException(
                     EventNotifierApiStandardErrors.SC422_01_OBSERVER_IS_INVALID,
-                    "Observer server address cannot be null"
+                    "Observer server base URL cannot be null"
             );
         }
         if (!StringUtils.hasText(objectToValidate.getName())) {

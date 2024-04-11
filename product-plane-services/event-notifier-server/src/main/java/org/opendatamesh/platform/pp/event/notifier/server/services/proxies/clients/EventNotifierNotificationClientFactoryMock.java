@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Profile({"test", "testpostgresql", "testmysql"})
 @Primary
-public class EventNotifierNotificationClientGetterMock implements EventNotifierNotificationClientGetter{
+public class EventNotifierNotificationClientFactoryMock implements EventNotifierNotificationClientFactory {
 
     @Override
     public NotificationClient getNotificationClient(String serverAddress) {

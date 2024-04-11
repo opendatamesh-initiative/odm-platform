@@ -20,7 +20,7 @@ public class Observer extends TimestampedEntity {
     private String displayName;
 
     @Column(name = "OBSERVER_URL")
-    private String observerServerAddress;
+    private String observerServerBaseUrl;
 
     public Long getId() {
         return id;
@@ -38,12 +38,12 @@ public class Observer extends TimestampedEntity {
         this.displayName = displayName;
     }
 
-    public String getObserverServerAddress() {
-        return observerServerAddress;
+    public String getObserverServerBaseUrl() {
+        return observerServerBaseUrl;
     }
 
-    public void setObserverServerAddress(String observerServerAddress) {
-        this.observerServerAddress = observerServerAddress;
+    public void setObserverServerBaseUrl(String observerServerBaseUrl) {
+        this.observerServerBaseUrl = observerServerBaseUrl;
     }
 
     public String getName() {

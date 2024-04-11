@@ -144,7 +144,7 @@ public class ObserverIT extends ODMEventNotifierIT {
         assertThat(observerResource.getId()).isNotNull();
         assertThat(observerResource.getName()).isEqualTo("opa-policy-checker");
         assertThat(observerResource.getDisplayName()).isEqualTo("OPA Policy Checker");
-        assertThat(observerResource.getObserverServerAddress()).isEqualTo("http://localhost:9001/api/v1/up/policy-engine-adapter");
+        assertThat(observerResource.getObserverServerBaseUrl()).isEqualTo("http://localhost:9001/api/v1/up/policy-engine-adapter");
         assertThat(observerResource.getCreatedAt()).isNotNull();
         assertThat(observerResource.getUpdatedAt()).isEqualTo(observerResource.getCreatedAt());
 
@@ -155,7 +155,7 @@ public class ObserverIT extends ODMEventNotifierIT {
         assertThat(observerResource.getId()).isNotNull();
         assertThat(observerResource.getName()).isEqualTo("opa-policy-checker");
         assertThat(observerResource.getDisplayName()).isEqualTo("OPA Policy Checker V2");
-        assertThat(observerResource.getObserverServerAddress()).isEqualTo("http://localhost:9001/api/v1/up/policy-engine-adapter-2");
+        assertThat(observerResource.getObserverServerBaseUrl()).isEqualTo("http://localhost:9001/api/v1/up/policy-engine-adapter-2");
         assertThat(observerResource.getCreatedAt()).isNotNull();
         assertThat(observerResource.getUpdatedAt()).isAfter(observerResource.getCreatedAt());
 
@@ -166,7 +166,7 @@ public class ObserverIT extends ODMEventNotifierIT {
         assertThat(observerResource.getId()).isNotNull();
         assertThat(observerResource.getName()).isEqualTo("lambda-policy-checker");
         assertThat(observerResource.getDisplayName()).isEqualTo("Custom Lambda Policy Checker");
-        assertThat(observerResource.getObserverServerAddress()).isEqualTo("https://abcdefg.lambda-url.us-east-1.on.aws");
+        assertThat(observerResource.getObserverServerBaseUrl()).isEqualTo("https://abcdefg.lambda-url.us-east-1.on.aws");
         assertThat(observerResource.getCreatedAt()).isNotNull();
         assertThat(observerResource.getUpdatedAt()).isEqualTo(observerResource.getCreatedAt());
 

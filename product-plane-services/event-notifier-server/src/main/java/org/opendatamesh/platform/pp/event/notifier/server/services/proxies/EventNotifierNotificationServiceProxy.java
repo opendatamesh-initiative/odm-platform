@@ -2,7 +2,7 @@ package org.opendatamesh.platform.pp.event.notifier.server.services.proxies;
 
 import org.opendatamesh.platform.core.commons.servers.exceptions.BadGatewayException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
-import org.opendatamesh.platform.pp.event.notifier.server.services.proxies.clients.EventNotifierNotificationClientGetter;
+import org.opendatamesh.platform.pp.event.notifier.server.services.proxies.clients.EventNotifierNotificationClientFactory;
 import org.opendatamesh.platform.up.notification.api.clients.NotificationClient;
 import org.opendatamesh.platform.up.notification.api.resources.EventResource;
 import org.opendatamesh.platform.up.notification.api.resources.NotificationResource;
@@ -15,13 +15,13 @@ import org.springframework.stereotype.Service;
 public class EventNotifierNotificationServiceProxy {
 
     @Autowired
-    EventNotifierNotificationClientGetter eventNotifierNotificationClientGetter;
+    EventNotifierNotificationClientFactory eventNotifierNotificationClientFactory;
 
     private static final Logger logger = LoggerFactory.getLogger(EventNotifierNotificationServiceProxy.class);
 
     public void postEventToNotificationService(EventResource event, String serverAddress) {
 
-        NotificationClient notificationClient = eventNotifierNotificationClientGetter.getNotificationClient(serverAddress);
+        NotificationClient notificationClient = eventNotifierNotificationClientFactory.getNotificationClient(serverAddress);
 
         NotificationResource notification = new NotificationResource();
         notification.setEvent(event);

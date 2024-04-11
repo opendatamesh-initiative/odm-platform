@@ -2,7 +2,7 @@ package org.opendatamesh.platform.pp.event.notifier.server.services.proxies.clie
 
 import org.opendatamesh.platform.up.notification.api.clients.NotificationClient;
 
-public interface EventNotifierNotificationClientGetter {
+public interface EventNotifierNotificationClientFactory {
 
     NotificationClient getNotificationClient(String serverAddress);
 

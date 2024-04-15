@@ -105,7 +105,7 @@ public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySea
                     "Policy name cannot be null"
             );
         }
-        if (policy.getPolicyEngineId() == null || policy.getPolicyEngine() == null) {
+        if (policy.getPolicyEngine() == null) {
             throw new UnprocessableEntityException(
                     PolicyApiStandardErrors.SC422_02_POLICY_IS_INVALID,
                     "Policy policyEngineId or PolicyEngine object cannot be null"
@@ -125,7 +125,7 @@ public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySea
             PolicyEngine policyEngine = policyEngineService.findOne(objectToReconcile.getPolicyEngineId());
             objectToReconcile.setPolicyEngine(policyEngine);
         }
-        if (StringUtils.hasText(objectToReconcile.getPolicyEngine().getName()) && objectToReconcile.getPolicyEngine().getId() == null) {
+        else if (StringUtils.hasText(objectToReconcile.getPolicyEngine().getName()) && objectToReconcile.getPolicyEngine().getId() == null) {
             objectToReconcile.setPolicyEngine(policyEngineService.findByName(objectToReconcile.getPolicyEngine().getName()));
         }
     }

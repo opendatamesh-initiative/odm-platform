@@ -7,4 +7,5 @@ import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
 
 @Mapper(componentModel = "spring")
 public interface PolicyMapper extends BaseMapper<PolicyResource, Policy> {
+
 }

@@ -48,7 +48,7 @@ public class PolicyIT extends ODMPolicyIT {
         PolicyEngineResource parentEngineResource = createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);
         PolicyResource policyResource = createPolicy(ODMPolicyResources.RESOURCE_POLICY_1, parentEngineResource.getId());
         PolicyResource updatedPolicyResource = createPolicyResource(ODMPolicyResources.RESOURCE_POLICY_1_UPDATED);
-        updatedPolicyResource.setPolicyEngineId(parentEngineResource.getId());
+        updatedPolicyResource.setPolicyEngine(parentEngineResource);
         updatedPolicyResource.setRootId(policyResource.getRootId());
         updatedPolicyResource.setCreatedAt(policyResource.getCreatedAt());
 
@@ -128,7 +128,7 @@ public class PolicyIT extends ODMPolicyIT {
         PolicyEngineResource parentEngineResource = createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);
         PolicyResource policyResource = createPolicy(ODMPolicyResources.RESOURCE_POLICY_1, parentEngineResource.getId());
         PolicyResource updatedPolicyResource = createPolicyResource(ODMPolicyResources.RESOURCE_POLICY_1_UPDATED);
-        updatedPolicyResource.setPolicyEngineId(parentEngineResource.getId());
+        updatedPolicyResource.setPolicyEngine(parentEngineResource);
         updatedPolicyResource.setRootId(policyResource.getRootId());
         updatedPolicyResource.setCreatedAt(policyResource.getCreatedAt());
         ResponseEntity<PolicyResource> putResponse = policyClient.updatePolicyResponseEntity(
@@ -155,7 +155,7 @@ public class PolicyIT extends ODMPolicyIT {
         PolicyEngineResource parentEngineResource = createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);
         PolicyResource policyResource = createPolicy(ODMPolicyResources.RESOURCE_POLICY_1, parentEngineResource.getId());
         PolicyResource updatedPolicyResource = createPolicyResource(ODMPolicyResources.RESOURCE_POLICY_1_UPDATED);
-        updatedPolicyResource.setPolicyEngineId(parentEngineResource.getId());
+        updatedPolicyResource.setPolicyEngine(parentEngineResource);
         updatedPolicyResource.setRootId(policyResource.getRootId());
         updatedPolicyResource.setCreatedAt(policyResource.getCreatedAt());
         policyClient.updatePolicyResponseEntity(policyResource.getRootId(), updatedPolicyResource);

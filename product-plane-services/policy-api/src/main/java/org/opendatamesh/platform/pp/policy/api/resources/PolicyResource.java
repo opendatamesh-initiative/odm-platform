@@ -55,7 +55,8 @@ public class PolicyResource extends TimestampedResource {
 
     @JsonProperty("policyEngine")
     @Schema(description = "The PolicyEngine that will evaluate the Policy")
-    private Long policyEngine;
+    private PolicyEngineResource policyEngine;
+
 
     public Long getId() {
         return id;
@@ -137,11 +138,11 @@ public class PolicyResource extends TimestampedResource {
         isLastVersion = lastVersion;
     }
 
-    public Long getPolicyEngine() {
+    public PolicyEngineResource getPolicyEngine() {
         return policyEngine;
     }
 
-    public void setPolicyEngine(Long policyEngine) {
+    public void setPolicyEngine(PolicyEngineResource policyEngine) {
         this.policyEngine = policyEngine;
     }
 
@@ -152,4 +153,5 @@ public class PolicyResource extends TimestampedResource {
     public void setEvaluationEvent(String evaluationEvent) {
         this.evaluationEvent = evaluationEvent;
     }
+
 }

@@ -193,4 +193,5 @@ public class RestUtils {
         ErrorRes errorRes = objectMapper.treeToValue(responseEntity.getBody(), ErrorRes.class);
         throw new InternalServerException(errorRes.getMessage());
     }
+
 }

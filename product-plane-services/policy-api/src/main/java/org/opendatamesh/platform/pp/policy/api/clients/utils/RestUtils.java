@@ -191,6 +191,6 @@ public class RestUtils {
     private <R> void throwServiceExceptionByResourceType(Class<R> clazz, ObjectMapper objectMapper, ResponseEntity<ObjectNode> responseEntity) throws JsonProcessingException, InternalServerException {
         //TODO add mapping here?
         ErrorRes errorRes = objectMapper.treeToValue(responseEntity.getBody(), ErrorRes.class);
-        //throw new InternalServerException(errorRes.getMessage());
+        throw new InternalServerException(errorRes.getMessage());
     }
 }

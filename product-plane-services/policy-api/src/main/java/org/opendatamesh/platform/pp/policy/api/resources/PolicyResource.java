@@ -37,8 +37,13 @@ public class PolicyResource extends TimestampedResource {
     private String rawContent;
 
     @JsonProperty("suite")
-    @Schema(description = "A tag, a phase, something that identify in which stages of the lifecycle the Policy must be evaluated")
+    @Schema(description = "The name of the suite which the policy belongs")
     private String suite;
+
+    @JsonProperty("evaluationEvent")
+    @Schema(description = "A tag, a phase, something that identify in which stages of the lifecycle the Policy must be evaluated")
+    private String evaluationEvent;
+
 
     @JsonProperty("filteringExpression")
     @Schema(description = "A SpEL expression to be evaluated on the input object of a validation request to exclude or include the Policy in the set of policies to be evaluated")
@@ -138,5 +143,13 @@ public class PolicyResource extends TimestampedResource {
 
     public void setPolicyEngine(Long policyEngine) {
         this.policyEngine = policyEngine;
+    }
+
+    public String getEvaluationEvent() {
+        return evaluationEvent;
+    }
+
+    public void setEvaluationEvent(String evaluationEvent) {
+        this.evaluationEvent = evaluationEvent;
     }
 }

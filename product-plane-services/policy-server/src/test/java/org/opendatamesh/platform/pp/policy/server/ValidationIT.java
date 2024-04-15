@@ -44,9 +44,9 @@ public class ValidationIT extends ODMPolicyIT {
 
         // Verify single policies (verify that they match the event type)
         PolicyResource policyResource = policyClient.getPolicyVersion(evaluatedPolicies.get(0).getPolicyId());
-        assertThat(policyResource.getSuite()).isEqualTo(evaluationRequestResource.getEvent().toString());
+        assertThat(policyResource.getEvaluationEvent()).isEqualTo(evaluationRequestResource.getEvent().toString());
         policyResource = policyClient.getPolicyVersion(evaluatedPolicies.get(1).getPolicyId());
-        assertThat(policyResource.getSuite()).isEqualTo(evaluationRequestResource.getEvent().toString());
+        assertThat(policyResource.getEvaluationEvent()).isEqualTo(evaluationRequestResource.getEvent().toString());
 
         // Verify PolicyEvaluationResults in DB
         ResponseEntity<PagedPolicyEvaluationResultResource> getResponse = policyClient.readAllPolicyEvaluationResultsResponseEntity();

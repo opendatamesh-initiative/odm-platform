@@ -2,14 +2,13 @@ package org.opendatamesh.platform.pp.policy.api.resources;
 
 public class PolicySearchOptions {
 
-    private String suite;
+    private String evaluationEvent;
 
-    public String getSuite() {
-        return suite;
+    public String getEvaluationEvent() {
+        return evaluationEvent;
     }
 
-    public void setSuite(String suite) {
-        this.suite = suite;
+    public void setEvaluationEvent(String evaluationEvent) {
+        this.evaluationEvent = evaluationEvent;
     }
-
 }

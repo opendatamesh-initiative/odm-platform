@@ -42,7 +42,8 @@ public abstract class AbstractPolicyController implements PolicyClient {
             "   \"description\": \"Check whether the name of the input Data Product is compliant with global naming convention or not\",\n" + //
             "   \"blocking_flag\": true,\n" + //
             "   \"rawContent\": \"package dataproduct-name-checker\n\ndefault allow := false\n\nallow := true {                                     \n    startswith(input.name, \"dp-\")\n}\",\n" + //
-            "   \"suite\": \"CREATION\",\n" + //
+            "   \"evaluationEvent\": \"CREATION\",\n" + //
+            "   \"suite\": \"Suite Name\",\n" + //
             "   \"policyEngineId\": 1,\n" + //
             "   \"createdAt\": \"a\",\n" + //
             "   \"updatedAt\": \"a\"\n" + //
@@ -54,7 +55,8 @@ public abstract class AbstractPolicyController implements PolicyClient {
             "   \"description\": \"Check whether the name of the input Data Product is compliant with global naming convention or not\",\n" + //
             "   \"blocking_flag\": true,\n" + //
             "   \"rawContent\": \"package dataproduct-name-checker\n\ndefault allow := false\n\nallow := true {                                     \n    startswith(input.name, \"dp-\")\n}\",\n" + //
-            "   \"suite\": \"CREATION\",\n" + //
+            "   \"evaluationEvent\": \"CREATION\",\n" + //
+            "   \"suite\": \"Suite Name\",\n" + //
             "   \"policyEngineId\": 1\n" + //
             "}";
 
@@ -65,7 +67,8 @@ public abstract class AbstractPolicyController implements PolicyClient {
             "   \"description\": \"Check whether the name of the input Data Product is compliant with global naming convention or not\",\n" + //
             "   \"blocking_flag\": true,\n" + //
             "   \"rawContent\": \"package dataproduct-name-checker\n\ndefault allow := false\n\nallow := true {                                     \n    startswith(input.name, \"dp-\")\n}\",\n" + //
-            "   \"suite\": \"CREATION\",\n" + //
+            "   \"evaluationEvent\": \"CREATION\",\n" + //
+            "   \"suite\": \"Suite Name\",\n" + //
             "   \"policyEngineId\": 1,\n" + //
             "   \"createdAt\": \"a\"\n" + //
             "}";

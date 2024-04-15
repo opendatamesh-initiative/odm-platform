@@ -21,9 +21,9 @@ public interface PolicyRepository extends PagingAndSortingAndSpecificationExecut
                     criteriaBuilder.equal(root.get(Policy_.isLastVersion), lastVersion)
             );
         }
-        public static Specification<Policy> hasSuite(String suite) {
+        public static Specification<Policy> hasEvaluationEvent(String evaluationEvent) {
             return ((root, query, criteriaBuilder) ->
-                    criteriaBuilder.equal(root.get(Policy_.suite), suite)
+                    criteriaBuilder.equal(root.get(Policy_.evaluationEvent), evaluationEvent)
             );
         }
 

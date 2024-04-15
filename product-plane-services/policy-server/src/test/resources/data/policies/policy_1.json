@@ -6,5 +6,8 @@
   "rawContent": "package dataproduct-name-checker\n\ndefault allow := false\n\nallow := true {                                     \n    startswith(input.name, \"dp-\")\n}",
   "suite": "DATA_PRODUCT_CREATION",
   "filteringExpression": "afterState.dataProductVersion.info.domain == 'sampleDomain' && afterState.dataProductVersion.info.domain != 'sampleDomainTwo'",
-  "policyEngineId": 1
+  "policyEngine":{
+    "id": 1,
+    "name": "opa-policy-checker"
+  }
 }

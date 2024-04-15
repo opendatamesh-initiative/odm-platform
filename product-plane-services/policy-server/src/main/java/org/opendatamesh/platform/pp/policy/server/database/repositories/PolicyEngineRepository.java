@@ -5,4 +5,8 @@ import org.opendatamesh.platform.pp.policy.server.database.utils.PagingAndSortin
 
 public interface PolicyEngineRepository extends PagingAndSortingAndSpecificationExecutorRepository<PolicyEngine, Long> {
     boolean existsByName(String name);
+
+    boolean existsByNameAndIdIsNot(String name, Long id);
+
+    PolicyEngine findByName(String name);
 }

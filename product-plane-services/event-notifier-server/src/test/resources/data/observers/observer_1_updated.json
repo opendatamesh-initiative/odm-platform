@@ -1,5 +1,5 @@
 {
   "name": "opa-policy-checker",
   "displayName": "OPA Policy Checker V2",
-  "observerServerAddress": "http://localhost:9001/api/v1/up/policy-engine-adapter-2"
+  "observerServerBaseUrl": "http://localhost:9011"
 }

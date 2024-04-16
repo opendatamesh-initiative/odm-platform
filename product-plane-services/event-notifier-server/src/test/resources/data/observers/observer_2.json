@@ -1,5 +1,5 @@
 {
   "name": "lambda-policy-checker",
   "displayName": "Custom Lambda Policy Checker",
-  "observerServerAddress": "https://abcdefg.lambda-url.us-east-1.on.aws"
+  "observerServerBaseUrl": "https://abcdefg.lambda-url.us-east-1.on.aws"
 }

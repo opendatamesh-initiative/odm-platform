@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.pp.event.notifier.api.resources.ObserverResource;
-import org.opendatamesh.platform.pp.event.notifier.api.resources.PagedObserverResource;
 import org.opendatamesh.platform.pp.event.notifier.api.resources.exceptions.EventNotifierApiStandardErrors;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
@@ -76,7 +76,8 @@ public class ObserverIT extends ODMEventNotifierIT {
         // GET request
         ResponseEntity<ObjectNode> getResponse = eventNotifierClient.getObserversResponseEntity();
         verifyResponseEntity(getResponse, HttpStatus.OK, true);
-        List<ObserverResource> observers = mapper.convertValue(getResponse.getBody(), PagedObserverResource.class).getContent();
+        Page<ObserverResource> observersPage = mapper.convertValue(getResponse.getBody(), Page.class);
+        List<ObserverResource> observers = observersPage.getContent();
 
         // Verification
         assertThat(observers).size().isEqualTo(2);
@@ -144,7 +145,7 @@ public class ObserverIT extends ODMEventNotifierIT {
         assertThat(observerResource.getId()).isNotNull();
         assertThat(observerResource.getName()).isEqualTo("opa-policy-checker");
         assertThat(observerResource.getDisplayName()).isEqualTo("OPA Policy Checker");
-        assertThat(observerResource.getObserverServerBaseUrl()).isEqualTo("http://localhost:9001/api/v1/up/policy-engine-adapter");
+        assertThat(observerResource.getObserverServerBaseUrl()).isEqualTo("http://localhost:9001");
         assertThat(observerResource.getCreatedAt()).isNotNull();
         assertThat(observerResource.getUpdatedAt()).isEqualTo(observerResource.getCreatedAt());
 
@@ -155,7 +156,7 @@ public class ObserverIT extends ODMEventNotifierIT {
         assertThat(observerResource.getId()).isNotNull();
         assertThat(observerResource.getName()).isEqualTo("opa-policy-checker");
         assertThat(observerResource.getDisplayName()).isEqualTo("OPA Policy Checker V2");
-        assertThat(observerResource.getObserverServerBaseUrl()).isEqualTo("http://localhost:9001/api/v1/up/policy-engine-adapter-2");
+        assertThat(observerResource.getObserverServerBaseUrl()).isEqualTo("http://localhost:9011");
         assertThat(observerResource.getCreatedAt()).isNotNull();
         assertThat(observerResource.getUpdatedAt()).isAfter(observerResource.getCreatedAt());
 

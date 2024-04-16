@@ -39,9 +39,9 @@ public class PolicyErrorsIT extends ODMPolicyIT {
         // Resources
         PolicyEngineResource parentEngineResource = createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);
         PolicyResource policyResource = createPolicyResource(ODMPolicyResources.RESOURCE_POLICY_1);
-        policyResource.setPolicyEngineId(parentEngineResource.getId());
+        policyResource.setPolicyEngine(parentEngineResource);
         String policyName = policyResource.getName();
-        Long policyPolicyEngineId = policyResource.getPolicyEngineId();
+        Long policyPolicyEngineId = policyResource.getPolicyEngine().getId();
         ResponseEntity<ErrorRes> postResponse;
 
         // 42201 - Policy is invalid - Impossible to create a Policy with an explicit an ID
@@ -76,9 +76,9 @@ public class PolicyErrorsIT extends ODMPolicyIT {
                 "Policy name cannot be null"
         );
 
-        // 42201 - Policy is invalid - Policy policyEngineId cannot be null
+        // 42201 - Policy is invalid - Policy policyEngine cannot be null
         policyResource.setName(policyName);
-        policyResource.setPolicyEngineId(null);
+        policyResource.setPolicyEngine(null);
         postResponse = policyClient.createPolicyResponseEntity(policyResource);
         verifyResponseError(
                 postResponse,
@@ -147,7 +147,8 @@ public class PolicyErrorsIT extends ODMPolicyIT {
 
         // 40401 - Resource not found (parent policy engine not found)
         updatedPolicyResource.setRootId(parentPolicyResource.getRootId());
-        updatedPolicyResource.setPolicyEngineId(3L);
+        parentEngineResource.setId(3l);
+        updatedPolicyResource.setPolicyEngine(parentEngineResource);
         putResponse = policyClient.updatePolicyResponseEntity(parentPolicyResource.getId(), updatedPolicyResource);
         verifyResponseError(
                 putResponse,
@@ -166,9 +167,9 @@ public class PolicyErrorsIT extends ODMPolicyIT {
         PolicyEngineResource parentEngineResource = createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);
         PolicyResource parentPolicyResource = createPolicy(ODMPolicyResources.RESOURCE_POLICY_1, parentEngineResource.getId());
         PolicyResource policyResource = createPolicyResource(ODMPolicyResources.RESOURCE_POLICY_1_UPDATED);
-        policyResource.setPolicyEngineId(parentEngineResource.getId());
+        policyResource.setPolicyEngine(parentEngineResource);
         String policyName = policyResource.getName();
-        Long policyPolicyEngineId = policyResource.getPolicyEngineId();
+        Long policyPolicyEngineId = policyResource.getPolicyEngine().getId();
         ResponseEntity<ErrorRes> putResponse;
 
         // 42201 - Policy is invalid - Policy name cannot be null
@@ -185,7 +186,7 @@ public class PolicyErrorsIT extends ODMPolicyIT {
 
         // 42201 - Policy is invalid - Policy policyEngineId cannot be null
         policyResource.setName(policyName);
-        policyResource.setPolicyEngineId(null);
+        policyResource.setPolicyEngine(null);
         putResponse = policyClient.updatePolicyResponseEntity(
                 parentPolicyResource.getId(), policyResource
         );
@@ -197,7 +198,7 @@ public class PolicyErrorsIT extends ODMPolicyIT {
         );
 
         // 42205 - Policy is invalid - Policy with name [" + policy.getName() + "] already exists with a differet rootID
-        policyResource.setPolicyEngineId(policyPolicyEngineId);
+        policyResource.setPolicyEngine(parentEngineResource);
         policyResource.setRootId(7L);
         policyResource.setCreatedAt(parentPolicyResource.getCreatedAt());
         putResponse = policyClient.updatePolicyResponseEntity(

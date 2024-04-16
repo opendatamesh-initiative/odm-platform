@@ -83,8 +83,9 @@ public class ODMPolicyIT extends ODMIntegrationTest {
     protected PolicyResource createPolicy(String filePath, Long engineId) {
 
         PolicyResource policyResource = createPolicyResource(filePath);
-        policyResource.setPolicyEngineId(engineId);
-
+        PolicyEngineResource policyEngineResource = new PolicyEngineResource();
+        policyEngineResource.setId(engineId);
+        policyResource.setPolicyEngine(policyEngineResource);
         ResponseEntity<PolicyResource> postPolicyResponse = null;
 
         try {

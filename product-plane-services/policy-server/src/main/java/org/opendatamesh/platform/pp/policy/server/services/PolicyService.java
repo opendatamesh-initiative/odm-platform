@@ -1,6 +1,8 @@
 package org.opendatamesh.platform.pp.policy.server.services;
 
-import org.opendatamesh.platform.core.commons.servers.exceptions.*;
+import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.NotFoundException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.UnprocessableEntityException;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicySearchOptions;
 import org.opendatamesh.platform.pp.policy.api.resources.exceptions.PolicyApiStandardErrors;
@@ -103,7 +105,7 @@ public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySea
                     "Policy name cannot be null"
             );
         }
-        if (policy.getPolicyEngineId() == null || policy.getPolicyEngine() == null) {
+        if (policy.getPolicyEngine() == null) {
             throw new UnprocessableEntityException(
                     PolicyApiStandardErrors.SC422_02_POLICY_IS_INVALID,
                     "Policy policyEngineId or PolicyEngine object cannot be null"
@@ -119,9 +121,12 @@ public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySea
 
     @Override
     protected void reconcile(Policy objectToReconcile) {
-        if (objectToReconcile.getPolicyEngineId() != null) {
+        if (objectToReconcile.getPolicyEngine().getId() != null) {
             PolicyEngine policyEngine = policyEngineService.findOne(objectToReconcile.getPolicyEngineId());
             objectToReconcile.setPolicyEngine(policyEngine);
+        }
+        else if (StringUtils.hasText(objectToReconcile.getPolicyEngine().getName()) && objectToReconcile.getPolicyEngine().getId() == null) {
+            objectToReconcile.setPolicyEngine(policyEngineService.findByName(objectToReconcile.getPolicyEngine().getName()));
         }
     }
 

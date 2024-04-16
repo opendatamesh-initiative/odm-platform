@@ -67,6 +67,9 @@ odm:
     policyService:
       active: ${POLICYSERVICE_ACTIVE}
       address: http://${POLICYSERVICE_HOSTNAME}:${POLICYSERVICE_PORT}
+    eventNotifierService:
+      active: ${EVENTNOTIFIERSERVICE_ACTIVE}
+      address: http://${EVENTNOTIFIERSERVICE_HOSTNAME}:${EVENTNOTIFIERSERVICE_PORT}
   utilityPlane:
     notificationServices:
       blindata:

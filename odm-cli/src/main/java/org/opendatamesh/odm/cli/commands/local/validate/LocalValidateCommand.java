@@ -11,7 +11,7 @@ import picocli.CommandLine.Command;
                 ValidateDpvCommand.class
         }
 )
-public class ValidateCommand implements Runnable {
+public class LocalValidateCommand implements Runnable {
 
     @Override
     public void run() { }

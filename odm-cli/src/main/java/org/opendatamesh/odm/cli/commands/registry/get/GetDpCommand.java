@@ -16,7 +16,7 @@ import picocli.CommandLine.ParentCommand;
 public class GetDpCommand implements Runnable {
 
     @ParentCommand
-    private GetCommand getCommand;
+    private RegistryGetCommand registryGetCommand;
 
     @Option(
             names = "--id",
@@ -31,7 +31,7 @@ public class GetDpCommand implements Runnable {
         try {
 
             ResponseEntity<DataProductResource> dataProductResponseEntity =
-                    getCommand.registryCommands.getRegistryClient().getDataProduct(dataProductId);
+                    registryGetCommand.registryCommands.getRegistryClient().getDataProduct(dataProductId);
 
             if(dataProductResponseEntity.getStatusCode().equals(HttpStatus.OK)) {
                 DataProductResource dataProduct = dataProductResponseEntity.getBody();

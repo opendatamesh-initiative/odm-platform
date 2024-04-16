@@ -1,14 +1,9 @@
 package org.opendatamesh.odm.cli.commands.policy;
 
-import org.opendatamesh.odm.cli.commands.policy.get.GetCommand;
-import org.opendatamesh.odm.cli.commands.policy.list.ListCommand;
-import org.opendatamesh.odm.cli.commands.policy.publish.PublishCommand;
-import org.opendatamesh.odm.cli.commands.policy.update.UpdateCommand;
-import org.opendatamesh.odm.cli.commands.policy.validate.ValidateCommand;
+import org.opendatamesh.odm.cli.commands.policy.get.PolicyGetCommand;
 import org.opendatamesh.odm.cli.utils.FileReaderUtils;
 import org.opendatamesh.odm.cli.utils.InputManagerUtils;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
-import org.opendatamesh.platform.pp.policy.api.clients.PolicyClient;
 import org.opendatamesh.platform.pp.policy.api.clients.PolicyClientImpl;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -24,7 +19,7 @@ import java.util.Properties;
         mixinStandardHelpOptions = true,
         subcommands = {
                 //ListCommand.class,
-                GetCommand.class//,
+                PolicyGetCommand.class//,
                 //PublishCommand.class,
                 //UpdateCommand.class,
                 //ValidateCommand.class

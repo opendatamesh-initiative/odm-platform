@@ -20,7 +20,7 @@ import java.io.IOException;
 public class PublishDpvCommand implements Runnable {
 
     @ParentCommand
-    private PublishCommand publishCommand;
+    private RegistryPublishCommand registryPublishCommand;
 
     @Option(
             names = "--dpv-file",
@@ -54,7 +54,7 @@ public class PublishDpvCommand implements Runnable {
         try {
 
             ResponseEntity<DataProductVersionDPDS> dataProductResponseEntity =
-                    publishCommand.registryCommands.getRegistryClient().postDataProductVersion(dataProductId, dpv);
+                    registryPublishCommand.registryCommands.getRegistryClient().postDataProductVersion(dataProductId, dpv);
 
             if(dataProductResponseEntity.getStatusCode().equals(HttpStatus.CREATED)) {
                 DataProductVersionDPDS dataProductVersion = dataProductResponseEntity.getBody();

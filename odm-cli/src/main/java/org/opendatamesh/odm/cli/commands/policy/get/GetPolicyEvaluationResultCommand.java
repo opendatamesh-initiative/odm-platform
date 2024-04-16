@@ -18,7 +18,7 @@ import picocli.CommandLine.ParentCommand;
 public class GetPolicyEvaluationResultCommand implements Runnable {
     
     @ParentCommand
-    private GetCommand getCommand;
+    private PolicyGetCommand policyGetCommand;
 
     @Option(
             names = "--id",
@@ -35,7 +35,7 @@ public class GetPolicyEvaluationResultCommand implements Runnable {
         try {
             // Remove ResponseEntity and change the methods used by the client after refactoring RestUtils in policy service
             ResponseEntity<PolicyEvaluationResultResource> resultResponseEntity =
-                    getCommand.policyCommands.getPolicyClient().readOnePolicyEvaluationResultResponseEntity(resultId);
+                    policyGetCommand.policyCommands.getPolicyClient().readOnePolicyEvaluationResultResponseEntity(resultId);
 
             if(resultResponseEntity.getStatusCode().equals(HttpStatus.OK)) {
                 PolicyEvaluationResultResource resultResource = resultResponseEntity.getBody();

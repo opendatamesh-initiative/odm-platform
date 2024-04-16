@@ -16,7 +16,7 @@ import picocli.CommandLine.ParentCommand;
                 GetPolicyEvaluationResultCommand.class
         }
 )
-public class GetCommand implements Runnable {
+public class PolicyGetCommand implements Runnable {
 
     @ParentCommand
     protected PolicyCommands policyCommands;

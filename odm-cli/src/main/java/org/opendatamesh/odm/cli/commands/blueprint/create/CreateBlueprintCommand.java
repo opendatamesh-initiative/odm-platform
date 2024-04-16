@@ -20,7 +20,7 @@ import java.io.IOException;
         version = "odm-cli blueprint create 1.0.0",
         mixinStandardHelpOptions = true
 )
-public class CreateCommand implements Runnable {
+public class CreateBlueprintCommand implements Runnable {
 
     @ParentCommand
     BlueprintCommands blueprintCommands;

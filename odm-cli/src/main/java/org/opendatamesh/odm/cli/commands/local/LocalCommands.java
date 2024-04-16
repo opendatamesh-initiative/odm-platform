@@ -1,6 +1,6 @@
 package org.opendatamesh.odm.cli.commands.local;
 
-import org.opendatamesh.odm.cli.commands.local.validate.ValidateCommand;
+import org.opendatamesh.odm.cli.commands.local.validate.LocalValidateCommand;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -10,7 +10,7 @@ import picocli.CommandLine.Command;
         version = "odm-cli local 1.0.0",
         mixinStandardHelpOptions = true,
         subcommands = {
-                ValidateCommand.class
+                LocalValidateCommand.class
         }
 )
 public class LocalCommands implements Runnable {

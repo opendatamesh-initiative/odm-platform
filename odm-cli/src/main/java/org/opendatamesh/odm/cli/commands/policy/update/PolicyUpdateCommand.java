@@ -1,4 +1,4 @@
 package org.opendatamesh.odm.cli.commands.policy.update;
 
-public class UpdateCommand {
+public class PolicyUpdateCommand {
 }

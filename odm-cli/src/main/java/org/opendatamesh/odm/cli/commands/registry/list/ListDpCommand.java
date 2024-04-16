@@ -1,7 +1,6 @@
 package org.opendatamesh.odm.cli.commands.registry.list;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.opendatamesh.odm.cli.commands.registry.RegistryCommands;
 import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,14 +17,14 @@ import picocli.CommandLine.ParentCommand;
 public class ListDpCommand implements Runnable {
 
     @ParentCommand
-    private ListCommand listCommand;
+    private RegistryListCommand registryListCommand;
 
     @Override
     public void run() {
         try {
 
             ResponseEntity<DataProductResource[]> dataProductResourceResponseEntity =
-                    listCommand.registryCommands.getRegistryClient().getDataProducts();
+                    registryListCommand.registryCommands.getRegistryClient().getDataProducts();
 
             if(dataProductResourceResponseEntity.getStatusCode().equals(HttpStatus.OK)) {
                 DataProductResource[] dataProducts = dataProductResourceResponseEntity.getBody();

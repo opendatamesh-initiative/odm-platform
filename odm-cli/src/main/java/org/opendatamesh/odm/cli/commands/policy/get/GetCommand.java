@@ -11,9 +11,9 @@ import picocli.CommandLine.ParentCommand;
         mixinStandardHelpOptions = true,
         version = "odm-cli policy get 1.0.0",
         subcommands = {
-                //GetPolicyEngineCommand.class,
+                GetPolicyEngineCommand.class,
                 GetPolicyCommand.class,
-                //GetPolicyEvaluationResultCommand.class
+                GetPolicyEvaluationResultCommand.class
         }
 )
 public class GetCommand implements Runnable {

@@ -1,9 +1,8 @@
 package org.opendatamesh.platform.pp.policy.api.clients;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.opendatamesh.platform.core.commons.clients.ODMClient;
-import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.core.commons.clients.utils.RestUtils;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.policy.api.resources.*;
@@ -11,12 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
-
-
-import java.util.List;
 
 public class PolicyClientImpl extends ODMClient implements PolicyClient, PolicyEngineClient, PolicyEvaluationResultClient, PolicyValidationClient {
 
@@ -107,233 +102,113 @@ public class PolicyClientImpl extends ODMClient implements PolicyClient, PolicyE
 
     //REST METHODS
 
-    public ResponseEntity createPolicyResponseEntity(PolicyResource policyResource) throws JsonProcessingException {
-
-        ResponseEntity postPolicyResponse = rest.postForEntity(
+    public ResponseEntity<ObjectNode> createPolicyResponseEntity(PolicyResource policyResource) {
+        return rest.postForEntity(
                 apiUrl(PolicyAPIRoutes.POLICIES),
                 policyResource,
-                Object.class
+                ObjectNode.class
         );
-
-        ResponseEntity response = mapResponseEntity(
-                postPolicyResponse,
-                HttpStatus.CREATED,
-                PolicyResource.class
-        );
-
-        return response;
-
     }
 
-    public ResponseEntity updatePolicyResponseEntity(Long policyId, PolicyResource policyResource) throws JsonProcessingException {
-
-        ResponseEntity putPolicyResponse = rest.exchange(
+    public ResponseEntity<ObjectNode> updatePolicyResponseEntity(Long policyId, PolicyResource policyResource) {
+        return rest.exchange(
                 apiUrlOfItem(PolicyAPIRoutes.POLICIES),
                 HttpMethod.PUT,
                 new HttpEntity<>(policyResource),
-                Object.class,
+                ObjectNode.class,
                 policyId
         );
-
-        ResponseEntity response = mapResponseEntity(
-                putPolicyResponse,
-                HttpStatus.OK,
-                PolicyResource.class
-        );
-
-        return response;
-
     }
 
-    public ResponseEntity readAllPoliciesResponseEntity() throws JsonProcessingException {
-
-        ResponseEntity getPoliciesResponse = rest.getForEntity(
+    public ResponseEntity<ObjectNode> readAllPoliciesResponseEntity() {
+        return rest.getForEntity(
                 apiUrl(PolicyAPIRoutes.POLICIES),
-                Object.class
+                ObjectNode.class
         );
-
-        ResponseEntity response = mapResponseEntity(
-                getPoliciesResponse,
-                HttpStatus.OK,
-                PagedPolicyResource.class
-        );
-
-        return response;
-
     }
 
-    public ResponseEntity readOnePolicyResponseEntity(Long policyRootId) throws JsonProcessingException {
-
-        ResponseEntity getPolicyResponse = rest.getForEntity(
+    public ResponseEntity<ObjectNode> readOnePolicyResponseEntity(Long policyRootId) {
+        return rest.getForEntity(
                 apiUrlOfItem(PolicyAPIRoutes.POLICIES),
-                Object.class,
+                ObjectNode.class,
                 policyRootId
         );
-
-        ResponseEntity response = mapResponseEntity(
-                getPolicyResponse,
-                HttpStatus.OK,
-                PolicyResource.class
-        );
-
-        return response;
-
     }
 
-    public ResponseEntity readOnePolicyVersionResponseEntity(Long policyVersionId) throws JsonProcessingException {
-
-        ResponseEntity getPolicyResponse = rest.getForEntity(
+    public ResponseEntity<ObjectNode> readOnePolicyVersionResponseEntity(Long policyVersionId) {
+        return rest.getForEntity(
                 apiUrl(PolicyAPIRoutes.POLICIES, "/versions/" + policyVersionId),
-                Object.class
+                ObjectNode.class
         );
-
-        ResponseEntity response = mapResponseEntity(
-                getPolicyResponse,
-                HttpStatus.OK,
-                PolicyResource.class
-        );
-
-        return response;
-
     }
 
-    public ResponseEntity deletePolicyResponseEntity(Long policyId) throws JsonProcessingException {
-
-        ResponseEntity deletePolicyResponse = rest.exchange(
+    public ResponseEntity<ObjectNode> deletePolicyResponseEntity(Long policyId) {
+        return rest.exchange(
                 apiUrlOfItem(PolicyAPIRoutes.POLICIES),
                 HttpMethod.DELETE,
                 null,
-                Object.class,
+                ObjectNode.class,
                 policyId
         );
-
-        ResponseEntity response = mapResponseEntity(
-                deletePolicyResponse,
-                HttpStatus.OK,
-                PolicyResource.class
-        );
-
-        return response;
-
     }
 
-    public ResponseEntity validateInputObjectResponseEntity(
+    public ResponseEntity<ObjectNode> validateInputObjectResponseEntity(
             PolicyEvaluationRequestResource evaluationRequestResource
-    ) throws JsonProcessingException {
-
-        ResponseEntity validateInputObjectResponse = rest.postForEntity(
+    ) {
+        return rest.postForEntity(
                 apiUrl(PolicyAPIRoutes.VALIDATION),
                 evaluationRequestResource,
-                Object.class
+                ObjectNode.class
         );
-
-        ResponseEntity response = mapResponseEntity(
-                validateInputObjectResponse,
-                HttpStatus.OK,
-                ValidationResponseResource.class
-        );
-
-        return response;
-
     }
 
     // ----------------------------------------
     // Engine
     // ----------------------------------------
 
-    public ResponseEntity createPolicyEngineResponseEntity(PolicyEngineResource policyEngineResource) throws JsonProcessingException {
-
-        ResponseEntity postPolicyEngineResponse = rest.postForEntity(
+    public ResponseEntity<ObjectNode> createPolicyEngineResponseEntity(PolicyEngineResource policyEngineResource) {
+        return  rest.postForEntity(
                 apiUrl(PolicyAPIRoutes.ENGINES),
                 policyEngineResource,
-                Object.class
+                ObjectNode.class
         );
-
-        ResponseEntity response = mapResponseEntity(
-                postPolicyEngineResponse,
-                HttpStatus.CREATED,
-                PolicyEngineResource.class
-        );
-
-        return response;
-
     }
 
-    public ResponseEntity updatePolicyEngineResponseEntity(
+    public ResponseEntity<ObjectNode> updatePolicyEngineResponseEntity(
             Long policyEngineId, PolicyEngineResource policyEngineResource
-    ) throws JsonProcessingException {
-
-        ResponseEntity putPolicyEngineResponse = rest.exchange(
+    ) {
+        return rest.exchange(
                 apiUrlOfItem(PolicyAPIRoutes.ENGINES),
                 HttpMethod.PUT,
                 new HttpEntity<>(policyEngineResource),
-                Object.class,
+                ObjectNode.class,
                 policyEngineId
         );
-
-        ResponseEntity response = mapResponseEntity(
-                putPolicyEngineResponse,
-                HttpStatus.OK,
-                PolicyEngineResource.class
-        );
-
-        return response;
-
     }
 
-    public ResponseEntity readAllPolicyEnginesResponseEntity() throws JsonProcessingException {
-
-        ResponseEntity getPolicyEnginesResponse = rest.getForEntity(
+    public ResponseEntity<ObjectNode> readAllPolicyEnginesResponseEntity() {
+        return rest.getForEntity(
                 apiUrl(PolicyAPIRoutes.ENGINES),
-                Object.class
+                ObjectNode.class
         );
-
-        ResponseEntity response = mapResponseEntity(
-                getPolicyEnginesResponse,
-                HttpStatus.OK,
-                PagedPolicyEngineResource.class
-        );
-
-        return response;
-
     }
 
-    public ResponseEntity readOnePolicyEngineResponseEntity(Long policyEngineId) throws JsonProcessingException {
-
-        ResponseEntity getPolicyEngineResponse = rest.getForEntity(
+    public ResponseEntity<ObjectNode> readOnePolicyEngineResponseEntity(Long policyEngineId) {
+        return rest.getForEntity(
                 apiUrlOfItem(PolicyAPIRoutes.ENGINES),
-                Object.class,
+                ObjectNode.class,
                 policyEngineId
         );
-
-        ResponseEntity response = mapResponseEntity(
-                getPolicyEngineResponse,
-                HttpStatus.OK,
-                PolicyEngineResource.class
-        );
-
-        return response;
-
     }
 
-    public ResponseEntity deletePolicyEngineResponseEntity(Long policyEngineId) throws JsonProcessingException {
-
-        ResponseEntity deletePolicyEngineResponse = rest.exchange(
+    public ResponseEntity<ObjectNode> deletePolicyEngineResponseEntity(Long policyEngineId) {
+        return rest.exchange(
                 apiUrlOfItem(PolicyAPIRoutes.ENGINES),
                 HttpMethod.DELETE,
                 null,
-                Object.class,
+                ObjectNode.class,
                 policyEngineId
         );
-
-        ResponseEntity response = mapResponseEntity(
-                deletePolicyEngineResponse,
-                HttpStatus.OK,
-                PolicyEngineResource.class
-        );
-
-        return response;
-
     }
 
 
@@ -341,120 +216,53 @@ public class PolicyClientImpl extends ODMClient implements PolicyClient, PolicyE
     // Policy result
     // ----------------------------------------
 
-    public ResponseEntity createPolicyEvaluationResultResponseEntity(
+    public ResponseEntity<ObjectNode> createPolicyEvaluationResultResponseEntity(
             PolicyEvaluationResultResource policyEvaluationResultResource
-    ) throws JsonProcessingException {
-
-        ResponseEntity postPolicyEvaluationResultResponse = rest.postForEntity(
+    ) {
+        return rest.postForEntity(
                 apiUrl(PolicyAPIRoutes.RESULTS),
                 policyEvaluationResultResource,
-                Object.class
+                ObjectNode.class
         );
-
-        ResponseEntity response = mapResponseEntity(
-                postPolicyEvaluationResultResponse,
-                HttpStatus.CREATED,
-                PolicyEvaluationResultResource.class
-        );
-
-        return response;
-
     }
 
 
 
-    public ResponseEntity updatePolicyEvaluationResultResponseEntity(
+    public ResponseEntity<ObjectNode> updatePolicyEvaluationResultResponseEntity(
             Long policyEvaluationResultId, PolicyEvaluationResultResource policyEvaluationResultResource
-    ) throws JsonProcessingException {
-
-        ResponseEntity putPolicyEvaluationResultResponse = rest.exchange(
+    ) {
+        return rest.exchange(
                 apiUrlOfItem(PolicyAPIRoutes.RESULTS),
                 HttpMethod.PUT,
                 new HttpEntity<>(policyEvaluationResultResource),
-                Object.class,
+                ObjectNode.class,
                 policyEvaluationResultId
         );
-
-        ResponseEntity response = mapResponseEntity(
-                putPolicyEvaluationResultResponse,
-                HttpStatus.OK,
-                PolicyEvaluationResultResource.class
-        );
-
-        return response;
-
     }
 
-    public ResponseEntity readAllPolicyEvaluationResultsResponseEntity() throws JsonProcessingException {
-
-        ResponseEntity getPolicyEvaluationResultsResponse = rest.getForEntity(
+    public ResponseEntity<ObjectNode> readAllPolicyEvaluationResultsResponseEntity() {
+        return rest.getForEntity(
                 apiUrl(PolicyAPIRoutes.RESULTS),
-                Object.class
+                ObjectNode.class
         );
-
-        ResponseEntity response = mapResponseEntity(
-                getPolicyEvaluationResultsResponse,
-                HttpStatus.OK,
-                PagedPolicyEvaluationResultResource.class
-        );
-
-        return response;
-
     }
 
-    public ResponseEntity readOnePolicyEvaluationResultResponseEntity(Long policyEvaluationResultId) throws JsonProcessingException {
-
-        ResponseEntity getPolicyEvaluationResultResponse = rest.getForEntity(
+    public ResponseEntity<ObjectNode> readOnePolicyEvaluationResultResponseEntity(Long policyEvaluationResultId) {
+        return rest.getForEntity(
                 apiUrlOfItem(PolicyAPIRoutes.RESULTS),
-                Object.class,
+                ObjectNode.class,
                 policyEvaluationResultId
         );
-
-        ResponseEntity response = mapResponseEntity(
-                getPolicyEvaluationResultResponse,
-                HttpStatus.OK,
-                PolicyEvaluationResultResource.class
-        );
-
-        return response;
-
     }
 
-    public ResponseEntity deletePolicyEvaluationResultResponseEntity(Long policyEvaluationResultId) throws JsonProcessingException {
-
-        ResponseEntity deletePolicyEvaluationResultResponse = rest.exchange(
+    public ResponseEntity<ObjectNode> deletePolicyEvaluationResultResponseEntity(Long policyEvaluationResultId) {
+        return rest.exchange(
                 apiUrlOfItem(PolicyAPIRoutes.RESULTS),
                 HttpMethod.DELETE,
                 null,
-                Object.class,
+                ObjectNode.class,
                 policyEvaluationResultId
         );
-
-        ResponseEntity response = mapResponseEntity(
-                deletePolicyEvaluationResultResponse,
-                HttpStatus.OK,
-                PolicyEvaluationResultResource.class
-        );
-
-        return response;
-
     }
 
-
-    // ======================================================================================
-    // Utils
-    // ======================================================================================
-
-    private ResponseEntity mapResponseEntity(
-            ResponseEntity response,
-            HttpStatus acceptedStatusCode,
-            Class acceptedClass
-    ) throws JsonProcessingException {
-        return mapResponseEntity(
-                response,
-                List.of(acceptedStatusCode),
-                acceptedClass,
-                ErrorRes.class
-        );
-    }
 }

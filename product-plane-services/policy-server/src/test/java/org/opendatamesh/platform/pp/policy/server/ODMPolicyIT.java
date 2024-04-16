@@ -1,5 +1,6 @@
 package org.opendatamesh.platform.pp.policy.server;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.BeforeEach;
 import org.opendatamesh.platform.core.commons.test.ODMIntegrationTest;
 import org.opendatamesh.platform.core.commons.test.ODMResourceBuilder;
@@ -27,7 +28,7 @@ import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.fail;
 
-//@ActiveProfiles("test")
+@ActiveProfiles("test")
 //@ActiveProfiles("testpostgresql")
 //@ActiveProfiles("testmysql")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = {ODMPolicyApp.class})
@@ -86,7 +87,7 @@ public class ODMPolicyIT extends ODMIntegrationTest {
         PolicyEngineResource policyEngineResource = new PolicyEngineResource();
         policyEngineResource.setId(engineId);
         policyResource.setPolicyEngine(policyEngineResource);
-        ResponseEntity<PolicyResource> postPolicyResponse = null;
+        ResponseEntity<ObjectNode> postPolicyResponse = null;
 
         try {
             postPolicyResponse = policyClient.createPolicyResponseEntity(policyResource);
@@ -97,7 +98,7 @@ public class ODMPolicyIT extends ODMIntegrationTest {
         }
 
         verifyResponseEntity(postPolicyResponse, HttpStatus.CREATED, true);
-        policyResource = postPolicyResponse.getBody();
+        policyResource = mapper.convertValue(postPolicyResponse.getBody(), PolicyResource.class);
 
         return policyResource;
 
@@ -116,8 +117,7 @@ public class ODMPolicyIT extends ODMIntegrationTest {
     protected PolicyEngineResource createPolicyEngine(String filePath) {
 
         PolicyEngineResource policyEngineResource = createPolicyEngineResource(filePath);
-
-        ResponseEntity<PolicyEngineResource> postPolicyEngineResponse = null;
+        ResponseEntity<ObjectNode> postPolicyEngineResponse = null;
 
         try {
             postPolicyEngineResponse = policyClient.createPolicyEngineResponseEntity(policyEngineResource);
@@ -128,7 +128,7 @@ public class ODMPolicyIT extends ODMIntegrationTest {
         }
 
         verifyResponseEntity(postPolicyEngineResponse, HttpStatus.CREATED, true);
-        policyEngineResource = postPolicyEngineResponse.getBody();
+        policyEngineResource = mapper.convertValue(postPolicyEngineResponse.getBody(), PolicyEngineResource.class);
 
         return policyEngineResource;
 
@@ -148,8 +148,7 @@ public class ODMPolicyIT extends ODMIntegrationTest {
 
         PolicyEvaluationResultResource policyEvaluationResultResource = createPolicyEvaluationResultResource(filePath);
         policyEvaluationResultResource.setPolicyId(policyId);
-
-        ResponseEntity<PolicyEvaluationResultResource> postPolicyEvaluationResultResponse = null;
+        ResponseEntity<ObjectNode> postPolicyEvaluationResultResponse;
 
         try {
             postPolicyEvaluationResultResponse = policyClient.createPolicyEvaluationResultResponseEntity(policyEvaluationResultResource);
@@ -160,7 +159,9 @@ public class ODMPolicyIT extends ODMIntegrationTest {
         }
 
         verifyResponseEntity(postPolicyEvaluationResultResponse, HttpStatus.CREATED, true);
-        policyEvaluationResultResource = postPolicyEvaluationResultResponse.getBody();
+        policyEvaluationResultResource = mapper.convertValue(
+                postPolicyEvaluationResultResponse.getBody(), PolicyEvaluationResultResource.class
+        );
 
         return policyEvaluationResultResource;
 

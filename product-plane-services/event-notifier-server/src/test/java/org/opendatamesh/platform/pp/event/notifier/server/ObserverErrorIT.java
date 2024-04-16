@@ -46,7 +46,7 @@ public class ObserverErrorIT extends ODMEventNotifierIT {
                 postResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
                 EventNotifierApiStandardErrors.SC422_01_OBSERVER_IS_INVALID,
-                "Observer server address cannot be null"
+                "Observer server base URL cannot be null"
         );
 
         // 42201 - Observer is invalid - Observer name cannot be null
@@ -129,7 +129,7 @@ public class ObserverErrorIT extends ODMEventNotifierIT {
                 putResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
                 EventNotifierApiStandardErrors.SC422_01_OBSERVER_IS_INVALID,
-                "Observer server address cannot be null"
+                "Observer server base URL cannot be null"
         );
 
         // 42201 - Observer is invalid - Observer name cannot be null

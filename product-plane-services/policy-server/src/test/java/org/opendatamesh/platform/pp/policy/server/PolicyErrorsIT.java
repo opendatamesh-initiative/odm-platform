@@ -1,8 +1,8 @@
 package org.opendatamesh.platform.pp.policy.server;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
-import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
 import org.opendatamesh.platform.pp.policy.api.resources.exceptions.PolicyApiStandardErrors;
@@ -22,8 +22,8 @@ public class PolicyErrorsIT extends ODMPolicyIT {
     public void testCreatePolicyError400xx() throws JsonProcessingException {
 
         // 40001 - Empty Policy
-        ResponseEntity<ErrorRes> postResponse = policyClient.createPolicyResponseEntity(null);
-        verifyResponseError(
+        ResponseEntity<ObjectNode> postResponse = policyClient.createPolicyResponseEntity(null);
+        verifyResponseErrorObjectNode(
                 postResponse,
                 HttpStatus.BAD_REQUEST,
                 PolicyApiStandardErrors.SC400_02_POLICY_IS_EMPTY,
@@ -42,12 +42,12 @@ public class PolicyErrorsIT extends ODMPolicyIT {
         policyResource.setPolicyEngine(parentEngineResource);
         String policyName = policyResource.getName();
         Long policyPolicyEngineId = policyResource.getPolicyEngine().getId();
-        ResponseEntity<ErrorRes> postResponse;
+        ResponseEntity<ObjectNode> postResponse;
 
         // 42201 - Policy is invalid - Impossible to create a Policy with an explicit an ID
         policyResource.setId(1L);
         postResponse = policyClient.createPolicyResponseEntity(policyResource);
-        verifyResponseError(
+        verifyResponseErrorObjectNode(
                 postResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
                 PolicyApiStandardErrors.SC422_02_POLICY_IS_INVALID,
@@ -58,7 +58,7 @@ public class PolicyErrorsIT extends ODMPolicyIT {
         policyResource.setId(null);
         policyResource.setRootId(1L);
         postResponse = policyClient.createPolicyResponseEntity(policyResource);
-        verifyResponseError(
+        verifyResponseErrorObjectNode(
                 postResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
                 PolicyApiStandardErrors.SC422_02_POLICY_IS_INVALID,
@@ -69,7 +69,7 @@ public class PolicyErrorsIT extends ODMPolicyIT {
         policyResource.setRootId(null);
         policyResource.setName(null);
         postResponse = policyClient.createPolicyResponseEntity(policyResource);
-        verifyResponseError(
+        verifyResponseErrorObjectNode(
                 postResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
                 PolicyApiStandardErrors.SC422_02_POLICY_IS_INVALID,
@@ -80,7 +80,7 @@ public class PolicyErrorsIT extends ODMPolicyIT {
         policyResource.setName(policyName);
         policyResource.setPolicyEngine(null);
         postResponse = policyClient.createPolicyResponseEntity(policyResource);
-        verifyResponseError(
+        verifyResponseErrorObjectNode(
                 postResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
                 PolicyApiStandardErrors.SC422_02_POLICY_IS_INVALID,
@@ -91,7 +91,7 @@ public class PolicyErrorsIT extends ODMPolicyIT {
         policyResource = createPolicy(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1, policyPolicyEngineId);
         policyResource.setId(null);
         postResponse = policyClient.createPolicyResponseEntity(policyResource);
-        verifyResponseError(
+        verifyResponseErrorObjectNode(
                 postResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
                 PolicyApiStandardErrors.SC422_04_POLICY_ALREADY_EXISTS,
@@ -113,10 +113,10 @@ public class PolicyErrorsIT extends ODMPolicyIT {
         PolicyResource parentPolicyResource = createPolicy(ODMPolicyResources.RESOURCE_POLICY_1, parentEngineResource.getId());
 
         // 40001 - Empty Policy
-        ResponseEntity<ErrorRes> putResponse = policyClient.updatePolicyResponseEntity(
+        ResponseEntity<ObjectNode> putResponse = policyClient.updatePolicyResponseEntity(
                 parentPolicyResource.getId(), null
         );
-        verifyResponseError(
+        verifyResponseErrorObjectNode(
                 putResponse,
                 HttpStatus.BAD_REQUEST,
                 PolicyApiStandardErrors.SC400_02_POLICY_IS_EMPTY,
@@ -135,10 +135,10 @@ public class PolicyErrorsIT extends ODMPolicyIT {
         PolicyResource updatedPolicyResource = createPolicyResource(ODMPolicyResources.RESOURCE_POLICY_1_UPDATED);
 
         // 40401 - Resource not found (parent policy)
-        ResponseEntity<ErrorRes> putResponse = policyClient.updatePolicyResponseEntity(
+        ResponseEntity<ObjectNode> putResponse = policyClient.updatePolicyResponseEntity(
                 7L, updatedPolicyResource
         );
-        verifyResponseError(
+        verifyResponseErrorObjectNode(
                 putResponse,
                 HttpStatus.NOT_FOUND,
                 PolicyApiStandardErrors.SC404_02_POLICY_NOT_FOUND,
@@ -150,7 +150,7 @@ public class PolicyErrorsIT extends ODMPolicyIT {
         parentEngineResource.setId(3l);
         updatedPolicyResource.setPolicyEngine(parentEngineResource);
         putResponse = policyClient.updatePolicyResponseEntity(parentPolicyResource.getId(), updatedPolicyResource);
-        verifyResponseError(
+        verifyResponseErrorObjectNode(
                 putResponse,
                 HttpStatus.NOT_FOUND,
                 PolicyApiStandardErrors.SC404_01_POLICY_ENGINE_NOT_FOUND,
@@ -170,14 +170,14 @@ public class PolicyErrorsIT extends ODMPolicyIT {
         policyResource.setPolicyEngine(parentEngineResource);
         String policyName = policyResource.getName();
         Long policyPolicyEngineId = policyResource.getPolicyEngine().getId();
-        ResponseEntity<ErrorRes> putResponse;
+        ResponseEntity<ObjectNode> putResponse;
 
         // 42201 - Policy is invalid - Policy name cannot be null
         policyResource.setName(null);
         putResponse = policyClient.updatePolicyResponseEntity(
                 parentPolicyResource.getId(), policyResource
         );
-        verifyResponseError(
+        verifyResponseErrorObjectNode(
                 putResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
                 PolicyApiStandardErrors.SC422_02_POLICY_IS_INVALID,
@@ -190,7 +190,7 @@ public class PolicyErrorsIT extends ODMPolicyIT {
         putResponse = policyClient.updatePolicyResponseEntity(
                 parentPolicyResource.getId(), policyResource
         );
-        verifyResponseError(
+        verifyResponseErrorObjectNode(
                 putResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
                 PolicyApiStandardErrors.SC422_02_POLICY_IS_INVALID,
@@ -204,7 +204,7 @@ public class PolicyErrorsIT extends ODMPolicyIT {
         putResponse = policyClient.updatePolicyResponseEntity(
                 parentPolicyResource.getRootId(), policyResource
         );
-        verifyResponseError(
+        verifyResponseErrorObjectNode(
                 putResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
                 PolicyApiStandardErrors.SC422_04_POLICY_ALREADY_EXISTS,
@@ -229,7 +229,7 @@ public class PolicyErrorsIT extends ODMPolicyIT {
 
         // 40401 - Policy not found
         ResponseEntity getResponse = policyClient.readOnePolicyResponseEntity(2L);
-        verifyResponseError(
+        verifyResponseErrorObjectNode(
                 getResponse,
                 HttpStatus.NOT_FOUND,
                 PolicyApiStandardErrors.SC404_02_POLICY_NOT_FOUND,
@@ -247,7 +247,7 @@ public class PolicyErrorsIT extends ODMPolicyIT {
 
         // 40401 - Resource not found
         ResponseEntity deleteResponse = policyClient.deletePolicyResponseEntity(2L);
-        verifyResponseError(
+        verifyResponseErrorObjectNode(
                 deleteResponse,
                 HttpStatus.NOT_FOUND,
                 PolicyApiStandardErrors.SC404_02_POLICY_NOT_FOUND,

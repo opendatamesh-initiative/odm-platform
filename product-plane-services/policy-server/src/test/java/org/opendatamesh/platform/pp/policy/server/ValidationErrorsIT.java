@@ -1,6 +1,7 @@
 package org.opendatamesh.platform.pp.policy.server;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineResource;
@@ -22,9 +23,9 @@ public class ValidationErrorsIT extends ODMPolicyIT {
         PolicyEvaluationRequestResource evaluationRequestResource = createPolicyEvaluationRequestResource(
                 ODMPolicyResources.RESOURCE_POLICY_EVALUATION_REQUEST_WRONG_INPUT
         );
-        ResponseEntity<ErrorRes> postResponse =
+        ResponseEntity<ObjectNode> postResponse =
                 policyClient.validateInputObjectResponseEntity(evaluationRequestResource);
-        verifyResponseError(
+        verifyResponseErrorObjectNode(
                 postResponse,
                 HttpStatus.BAD_REQUEST,
                 PolicyApiStandardErrors.SC400_05_MALFORMED_INPUT_OBJECT

@@ -1,8 +1,8 @@
 package org.opendatamesh.platform.pp.policy.server;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
-import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineResource;
 import org.opendatamesh.platform.pp.policy.api.resources.exceptions.PolicyApiStandardErrors;
 import org.springframework.http.HttpStatus;
@@ -21,8 +21,8 @@ public class PolicyEngineErrorsIT extends ODMPolicyIT {
     public void testCreatePolicyEngineError400xx() throws JsonProcessingException {
 
         // 40001 - Empty PolicyEngine
-        ResponseEntity<ErrorRes> postResponse = policyClient.createPolicyEngineResponseEntity(null);
-        verifyResponseError(
+        ResponseEntity<ObjectNode> postResponse = policyClient.createPolicyEngineResponseEntity(null);
+        verifyResponseErrorObjectNode(
                 postResponse,
                 HttpStatus.BAD_REQUEST,
                 PolicyApiStandardErrors.SC400_01_POLICY_ENGINE_IS_EMPTY,
@@ -38,12 +38,12 @@ public class PolicyEngineErrorsIT extends ODMPolicyIT {
         // Resources
         PolicyEngineResource policyEngineResource = createPolicyEngineResource(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);
         String policyEngineAdapterUrl = policyEngineResource.getAdapterUrl();
-        ResponseEntity<ErrorRes> postResponse;
+        ResponseEntity<ObjectNode> postResponse;
 
         // 42201 - PolicyEngine is invalid - PolicyEngine adapterURL cannot be null
         policyEngineResource.setAdapterUrl(null);
         postResponse = policyClient.createPolicyEngineResponseEntity(policyEngineResource);
-        verifyResponseError(
+        verifyResponseErrorObjectNode(
                 postResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
                 PolicyApiStandardErrors.SC422_01_POLICY_ENGINE_IS_INVALID,
@@ -54,7 +54,7 @@ public class PolicyEngineErrorsIT extends ODMPolicyIT {
         policyEngineResource.setAdapterUrl(policyEngineAdapterUrl);
         policyEngineResource.setName(null);
         postResponse = policyClient.createPolicyEngineResponseEntity(policyEngineResource);
-        verifyResponseError(
+        verifyResponseErrorObjectNode(
                 postResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
                 PolicyApiStandardErrors.SC422_01_POLICY_ENGINE_IS_INVALID,
@@ -65,7 +65,7 @@ public class PolicyEngineErrorsIT extends ODMPolicyIT {
         policyEngineResource = createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);
         policyEngineResource.setId(null);
         postResponse = policyClient.createPolicyEngineResponseEntity(policyEngineResource);
-        verifyResponseError(
+        verifyResponseErrorObjectNode(
                 postResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
                 PolicyApiStandardErrors.SC422_05_POLICY_ENGINE_ALREADY_EXISTS,
@@ -86,8 +86,8 @@ public class PolicyEngineErrorsIT extends ODMPolicyIT {
         PolicyEngineResource policyEngineResource = createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);
 
         // 40001 - Empty PolicyEngine
-        ResponseEntity<ErrorRes> putResponse = policyClient.updatePolicyEngineResponseEntity(policyEngineResource.getId(), null);
-        verifyResponseError(
+        ResponseEntity<ObjectNode> putResponse = policyClient.updatePolicyEngineResponseEntity(policyEngineResource.getId(), null);
+        verifyResponseErrorObjectNode(
                 putResponse,
                 HttpStatus.BAD_REQUEST,
                 PolicyApiStandardErrors.SC400_01_POLICY_ENGINE_IS_EMPTY,
@@ -105,7 +105,7 @@ public class PolicyEngineErrorsIT extends ODMPolicyIT {
 
         // 40401 - PolicyEngine not found
         ResponseEntity putResponse = policyClient.updatePolicyEngineResponseEntity(2L, policyEngineResource);
-        verifyResponseError(
+        verifyResponseErrorObjectNode(
                 putResponse,
                 HttpStatus.NOT_FOUND,
                 PolicyApiStandardErrors.SC404_01_POLICY_ENGINE_NOT_FOUND,
@@ -121,12 +121,12 @@ public class PolicyEngineErrorsIT extends ODMPolicyIT {
         // Resources
         PolicyEngineResource policyEngineResource = createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);
         String policyEngineAdapterUrl = policyEngineResource.getAdapterUrl();
-        ResponseEntity<ErrorRes> putResponse;
+        ResponseEntity<ObjectNode> putResponse;
 
         // 42201 - PolicyEngine is invalid - PolicyEngine adapterURL cannot be null
         policyEngineResource.setAdapterUrl(null);
         putResponse = policyClient.updatePolicyEngineResponseEntity(policyEngineResource.getId(), policyEngineResource);
-        verifyResponseError(
+        verifyResponseErrorObjectNode(
                 putResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
                 PolicyApiStandardErrors.SC422_01_POLICY_ENGINE_IS_INVALID,
@@ -137,7 +137,7 @@ public class PolicyEngineErrorsIT extends ODMPolicyIT {
         policyEngineResource.setAdapterUrl(policyEngineAdapterUrl);
         policyEngineResource.setName(null);
         putResponse = policyClient.updatePolicyEngineResponseEntity(policyEngineResource.getId(), policyEngineResource);
-        verifyResponseError(
+        verifyResponseErrorObjectNode(
                 putResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
                 PolicyApiStandardErrors.SC422_01_POLICY_ENGINE_IS_INVALID,
@@ -163,7 +163,7 @@ public class PolicyEngineErrorsIT extends ODMPolicyIT {
 
         // 40401 - Resource not found
         ResponseEntity getResponse = policyClient.readOnePolicyEngineResponseEntity(2L);
-        verifyResponseError(
+        verifyResponseErrorObjectNode(
                 getResponse,
                 HttpStatus.NOT_FOUND,
                 PolicyApiStandardErrors.SC404_01_POLICY_ENGINE_NOT_FOUND,
@@ -182,7 +182,7 @@ public class PolicyEngineErrorsIT extends ODMPolicyIT {
 
         // 40401 - Resource not found
         ResponseEntity deleteResponse = policyClient.deletePolicyEngineResponseEntity(2L);
-        verifyResponseError(
+        verifyResponseErrorObjectNode(
                 deleteResponse,
                 HttpStatus.NOT_FOUND,
                 PolicyApiStandardErrors.SC404_01_POLICY_ENGINE_NOT_FOUND,

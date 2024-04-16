@@ -1,6 +1,7 @@
 package org.opendatamesh.platform.pp.event.notifier.server;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.pp.event.notifier.api.resources.ObserverResource;
@@ -76,10 +77,11 @@ public class ObserverIT extends ODMEventNotifierIT {
         // GET request
         ResponseEntity<ObjectNode> getResponse = eventNotifierClient.getObserversResponseEntity();
         verifyResponseEntity(getResponse, HttpStatus.OK, true);
-        Page<ObserverResource> observersPage = mapper.convertValue(getResponse.getBody(), Page.class);
-        List<ObserverResource> observers = observersPage.getContent();
 
         // Verification
+        List<ObserverResource> observers = extractListFromPageFromObjectNode(
+                getResponse.getBody(), ObserverResource.class
+        );
         assertThat(observers).size().isEqualTo(2);
         verifyResourceObserverOne(observers.get(0));
         verifyResourceObserverTwo(observers.get(1));

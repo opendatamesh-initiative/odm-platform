@@ -1,0 +1,25 @@
+{
+  "resourceType": "DATA_PRODUCT",
+  "event": "DATA_PRODUCT_CREATION",
+  "currentState": {
+    "dataProductVersion": null
+  },
+  "afterState": {
+    "dataProductVersion": {
+      "dataProductDescriptor": "1.0.0",
+      "info": {
+        "fullyQualifiedName":"urn:org.opendatamesh:dataproducts:tripExecution",
+        "name": "tripExecution",
+        "version": "1.0.0",
+        "description":"Thisisprod-1",
+        "domain":"sampleDomain",
+        "owner": {
+          "id": "john.doe@company-xyz.com"
+        }
+      },
+      "interfaceComponents": {
+        "outputPorts": []
+      }
+    }
+  }
+}

@@ -14,7 +14,7 @@ import picocli.CommandLine.ParentCommand;
         version = "odm-cli blueprint list 1.0.0",
         mixinStandardHelpOptions = true
 )
-public class ListCommand implements Runnable {
+public class ListBlueprintCommand implements Runnable {
 
     @ParentCommand
     BlueprintCommands blueprintCommands;

@@ -24,7 +24,7 @@ import java.util.Map;
         version = "odm-cli blueprint init 1.0.0",
         mixinStandardHelpOptions = true
 )
-public class InitCommand implements Runnable {
+public class InitBlueprintCommand implements Runnable {
 
     @ParentCommand
     BlueprintCommands blueprintCommands;

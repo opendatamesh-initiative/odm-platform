@@ -17,7 +17,7 @@ import picocli.CommandLine.ParentCommand;
 public class UploadDpvCommand implements Runnable {
 
     @ParentCommand
-    private UploadCommand uploadCommand;
+    private RegistryUploadCommand registryUploadCommand;
 
     @Override
     public void run() {
@@ -44,7 +44,7 @@ public class UploadDpvCommand implements Runnable {
         try {
 
             ResponseEntity<String> dataProductResponseEntity =
-                    uploadCommand.registryCommands.getRegistryClient().uploadDataProductVersion(
+                    registryUploadCommand.registryCommands.getRegistryClient().uploadDataProductVersion(
                             dpLocation, String.class
                     );
 

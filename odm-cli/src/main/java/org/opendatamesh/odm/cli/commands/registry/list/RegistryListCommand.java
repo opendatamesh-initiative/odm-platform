@@ -14,7 +14,7 @@ import picocli.CommandLine.ParentCommand;
                 ListDpvCommand.class
         }
 )
-public class ListCommand implements Runnable {
+public class RegistryListCommand implements Runnable {
 
     @ParentCommand
     protected RegistryCommands registryCommands;

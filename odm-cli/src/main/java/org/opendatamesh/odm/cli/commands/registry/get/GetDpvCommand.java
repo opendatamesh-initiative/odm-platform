@@ -16,7 +16,7 @@ import picocli.CommandLine.ParentCommand;
 public class GetDpvCommand implements Runnable {
 
     @ParentCommand
-    private GetCommand getCommand;
+    private RegistryGetCommand registryGetCommand;
 
     @Option(
             names = "--id",
@@ -37,7 +37,7 @@ public class GetDpvCommand implements Runnable {
         try {
 
             ResponseEntity<DataProductVersionDPDS> dataProductVersionsResponseEntity =
-                    getCommand.registryCommands.getRegistryClient().getDataProductVersion(
+                    registryGetCommand.registryCommands.getRegistryClient().getDataProductVersion(
                             dataProductId, dataProductVersion
                     );
 

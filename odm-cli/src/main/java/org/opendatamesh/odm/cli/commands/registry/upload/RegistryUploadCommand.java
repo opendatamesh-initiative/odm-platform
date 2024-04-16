@@ -1,20 +1,19 @@
-package org.opendatamesh.odm.cli.commands.registry.get;
+package org.opendatamesh.odm.cli.commands.registry.upload;
 
 import org.opendatamesh.odm.cli.commands.registry.RegistryCommands;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.ParentCommand;
 
 @Command(
-        name = "get",
-        description = "Commands to get data products and versions",
+        name = "upload",
+        description = "Commands to upload objects",
         mixinStandardHelpOptions = true,
-        version = "odm-cli registry get 1.0.0",
+        version = "odm-cli registry upload 1.0.0",
         subcommands = {
-                GetDpCommand.class,
-                GetDpvCommand.class
+                UploadDpvCommand.class
         }
 )
-public class GetCommand implements Runnable {
+public class RegistryUploadCommand implements Runnable {
 
     @ParentCommand
     protected RegistryCommands registryCommands;

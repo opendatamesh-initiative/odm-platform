@@ -20,7 +20,7 @@ import java.io.IOException;
 public class PublishDpCommand implements Runnable {
 
     @ParentCommand
-    private PublishCommand publishCommand;
+    private RegistryPublishCommand registryPublishCommand;
 
     @Option(
             names = "--dp-file",
@@ -46,7 +46,7 @@ public class PublishDpCommand implements Runnable {
         try {
 
             ResponseEntity<DataProductResource> dataProductResponseEntity =
-                    publishCommand.registryCommands.getRegistryClient().postDataProduct(dp);
+                    registryPublishCommand.registryCommands.getRegistryClient().postDataProduct(dp);
 
             if(dataProductResponseEntity.getStatusCode().equals(HttpStatus.CREATED)) {
                 DataProductResource dataProduct = dataProductResponseEntity.getBody();

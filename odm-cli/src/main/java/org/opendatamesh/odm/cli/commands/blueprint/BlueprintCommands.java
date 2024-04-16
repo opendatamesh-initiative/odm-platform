@@ -1,8 +1,8 @@
 package org.opendatamesh.odm.cli.commands.blueprint;
 
-import org.opendatamesh.odm.cli.commands.blueprint.create.CreateCommand;
-import org.opendatamesh.odm.cli.commands.blueprint.init.InitCommand;
-import org.opendatamesh.odm.cli.commands.blueprint.list.ListCommand;
+import org.opendatamesh.odm.cli.commands.blueprint.create.CreateBlueprintCommand;
+import org.opendatamesh.odm.cli.commands.blueprint.init.InitBlueprintCommand;
+import org.opendatamesh.odm.cli.commands.blueprint.list.ListBlueprintCommand;
 import org.opendatamesh.odm.cli.utils.FileReaderUtils;
 import org.opendatamesh.odm.cli.utils.InputManagerUtils;
 import org.opendatamesh.platform.pp.blueprint.api.clients.BlueprintClient;
@@ -20,9 +20,9 @@ import java.util.Properties;
         version = "odm-cli blueprint 1.0.0",
         mixinStandardHelpOptions = true,
         subcommands = {
-                CreateCommand.class,
-                InitCommand.class,
-                ListCommand.class
+                CreateBlueprintCommand.class,
+                InitBlueprintCommand.class,
+                ListBlueprintCommand.class
         }
 )
 public class BlueprintCommands implements Runnable {

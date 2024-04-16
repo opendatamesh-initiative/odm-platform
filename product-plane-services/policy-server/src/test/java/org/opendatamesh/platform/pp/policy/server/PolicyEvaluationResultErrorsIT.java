@@ -93,7 +93,7 @@ public class PolicyEvaluationResultErrorsIT extends ODMPolicyIT {
         PolicyEngineResource parentPolicyEngine = createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);
         PolicyResource parentPolicyResource = createPolicy(ODMPolicyResources.RESOURCE_POLICY_1, parentPolicyEngine.getId());
         PolicyResource updatedParentPolicyResource = createPolicyResource(ODMPolicyResources.RESOURCE_POLICY_1_UPDATED);
-        updatedParentPolicyResource.setPolicyEngineId(parentPolicyEngine.getId());
+        updatedParentPolicyResource.setPolicyEngine(parentPolicyEngine);
         updatedParentPolicyResource.setRootId(parentPolicyResource.getRootId());
         updatedParentPolicyResource.setCreatedAt(parentPolicyResource.getCreatedAt());
         policyClient.updatePolicyResponseEntity(parentPolicyResource.getRootId(), updatedParentPolicyResource);
@@ -225,7 +225,7 @@ public class PolicyEvaluationResultErrorsIT extends ODMPolicyIT {
         // - The policy with policy ID [evaluationResult.getPolicyId()] is inactive. Cannot add a result to a inactive policy
         // Create 2 version of a parent policy
         PolicyResource updatedParentPolicyResource = createPolicyResource(ODMPolicyResources.RESOURCE_POLICY_1_UPDATED);
-        updatedParentPolicyResource.setPolicyEngineId(parentEngineResource.getId());
+        updatedParentPolicyResource.setPolicyEngine(parentEngineResource);
         updatedParentPolicyResource.setRootId(parentPolicyResource.getRootId());
         updatedParentPolicyResource.setCreatedAt(parentPolicyResource.getCreatedAt());
         policyClient.updatePolicyResponseEntity(parentPolicyResource.getRootId(), updatedParentPolicyResource);

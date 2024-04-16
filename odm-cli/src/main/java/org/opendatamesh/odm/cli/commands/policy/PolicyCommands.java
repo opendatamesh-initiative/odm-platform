@@ -1,6 +1,10 @@
 package org.opendatamesh.odm.cli.commands.policy;
 
 import org.opendatamesh.odm.cli.commands.policy.get.PolicyGetCommand;
+import org.opendatamesh.odm.cli.commands.policy.list.PolicyListCommand;
+import org.opendatamesh.odm.cli.commands.policy.publish.PolicyPublishCommand;
+import org.opendatamesh.odm.cli.commands.policy.update.PolicyUpdateCommand;
+import org.opendatamesh.odm.cli.commands.policy.validate.PolicyValidateCommand;
 import org.opendatamesh.odm.cli.utils.FileReaderUtils;
 import org.opendatamesh.odm.cli.utils.InputManagerUtils;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
@@ -18,11 +22,11 @@ import java.util.Properties;
         version = "odm-cli policy 1.0.0",
         mixinStandardHelpOptions = true,
         subcommands = {
-                //ListCommand.class,
-                PolicyGetCommand.class//,
-                //PublishCommand.class,
-                //UpdateCommand.class,
-                //ValidateCommand.class
+                PolicyListCommand.class,
+                PolicyGetCommand.class,
+                PolicyPublishCommand.class,
+                PolicyUpdateCommand.class,
+                PolicyValidateCommand.class
         }
 )
 public class PolicyCommands implements Runnable{

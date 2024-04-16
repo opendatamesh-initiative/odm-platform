@@ -23,5 +23,4 @@ public class PolicyPublishCommand implements Runnable {
     @Override
     public void run() { }
 
-
 }

@@ -6,7 +6,9 @@ import org.opendatamesh.platform.pp.event.notifier.server.database.entities.Obse
 import org.opendatamesh.platform.pp.event.notifier.server.services.proxies.EventNotifierNotificationServiceProxy;
 import org.opendatamesh.platform.up.notification.api.resources.EventResource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,13 +29,20 @@ public class DispatchService {
                     "Event object cannot be null"
             );
         }
-        List<Observer> observers = observerService.findAll(Pageable.unpaged()).getContent();
-        for (Observer observer : observers) {
-            eventNotifierNotificationServiceProxy.postEventToNotificationService(
-                    eventToDispatch,
-                    observer.getObserverServerBaseUrl()
-            );
+        Slice<Observer> observerSlice = observerService.findAll(PageRequest.of(0, 20));
+        notifyAllSlice(observerSlice, eventToDispatch);
+        while(observerSlice.hasNext()) {
+            observerSlice = observerService.findAll(observerSlice.nextPageable());
+            notifyAllSlice(observerSlice, eventToDispatch);
         }
+    }
+
+    private void notifyAllSlice(Slice<Observer> observerSlice, EventResource eventToDispatch) {
+        observerSlice.getContent().forEach(observer -> notifyOne(observer.getObserverServerBaseUrl(), eventToDispatch));
+    }
+
+    private void notifyOne(String observerBaseUrl, EventResource eventToDispatch) {
+        eventNotifierNotificationServiceProxy.postEventToNotificationService(eventToDispatch, observerBaseUrl);
     }
 
 }

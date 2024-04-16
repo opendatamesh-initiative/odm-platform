@@ -45,9 +45,10 @@ public class NotificationClientImpl extends ODMClient implements NotificationCli
         List<String> params = new ArrayList<>();
         if(eventType != null) params.add("eventType=" + eventType);
         if(notificationStatus != null) params.add("notificationStatus=" + notificationStatus);
-        NotificationResource[] responseArray = restUtils.genericGet(
+        NotificationResource[] responseArray = restUtils.get(
                 apiUrlOfItem(NotificationAPIRoutes.METASERVICE_NOTIFICATION),
-                NotificationResource[].class
+                NotificationResource[].class,
+                null
         );
         return List.of(responseArray);
     }

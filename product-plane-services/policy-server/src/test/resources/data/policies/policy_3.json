@@ -6,5 +6,7 @@
   "evaluationEvent": "DATA_PRODUCT_UPDATE",
   "suite": "Suite Name",
   "filteringExpression": "afterState.dataProductVersion.info.domain == 'sampleDomain' && afterState.dataProductVersion.info.domain != 'sampleDomainTwo'",
-  "policyEngineId": 1
-}
+  "policyEngine":{
+    "id": 2,
+    "name": "opa-policy-checker"
+  }}

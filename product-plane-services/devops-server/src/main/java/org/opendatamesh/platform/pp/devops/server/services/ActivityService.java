@@ -8,17 +8,18 @@ import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.dpds.model.internals.LifecycleInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.internals.LifecycleTaskInfoDPDS;
-import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatus;
-import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskStatus;
-import org.opendatamesh.platform.pp.devops.api.resources.DevOpsApiStandardErrors;
-import org.opendatamesh.platform.pp.devops.api.resources.TaskResultResource;
+import org.opendatamesh.platform.pp.devops.api.resources.*;
 import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsClients;
 import org.opendatamesh.platform.pp.devops.server.database.entities.Activity;
 import org.opendatamesh.platform.pp.devops.server.database.entities.Task;
+import org.opendatamesh.platform.pp.devops.server.database.mappers.ActivityMapper;
+import org.opendatamesh.platform.pp.devops.server.database.mappers.TaskMapper;
 import org.opendatamesh.platform.pp.devops.server.database.repositories.ActivityRepository;
 import org.opendatamesh.platform.pp.devops.server.resources.context.ActivityContext;
 import org.opendatamesh.platform.pp.devops.server.resources.context.ActivityResultStatus;
 import org.opendatamesh.platform.pp.devops.server.resources.context.Context;
+import org.opendatamesh.platform.pp.devops.server.services.proxies.DevOpsEventNotifierProxy;
+import org.opendatamesh.platform.pp.devops.server.services.proxies.DevopsPolicyServiceProxy;
 import org.opendatamesh.platform.pp.devops.server.utils.ObjectNodeUtils;
 import org.opendatamesh.platform.pp.registry.api.resources.VariableResource;
 import org.slf4j.Logger;
@@ -39,6 +40,9 @@ import java.util.stream.Collectors;
 public class ActivityService {
 
     @Autowired
+    DevopsPolicyServiceProxy policyServiceProxy;
+
+    @Autowired
     ActivityRepository activityRepository;
 
     @Autowired
@@ -49,6 +53,15 @@ public class ActivityService {
 
     @Autowired
     LifecycleService lifecycleService;
+
+    @Autowired
+    TaskMapper taskMapper;
+
+    @Autowired
+    DevOpsEventNotifierProxy devOpsEventNotifierProxy;
+
+    @Autowired
+    private ActivityMapper mapper;
 
     private static final Logger logger = LoggerFactory.getLogger(ActivityService.class);
 
@@ -107,6 +120,8 @@ public class ActivityService {
 
         // create tasks associated with the given activity
         List<Task> tasks = taskService.createTasks(activity.getId(), activitiesInfo);
+
+        devOpsEventNotifierProxy.notifyActivityCreation(mapper.toResource(activity));
     
         if (startAfterCreation) {
             activity = startActivity(activity, tasks);
@@ -118,6 +133,7 @@ public class ActivityService {
     private Activity saveActivity(Activity activity) {
         return activityRepository.saveAndFlush(activity);
     }
+
 
     // ======================================================================================
     // START/STOP
@@ -158,7 +174,7 @@ public class ActivityService {
                 "Activity object cannot be null");
         }
 
-        // verify if there is an alredy running activity
+        // verify if there is an already running activity
         List<Activity> activities = searchActivities(
                 activity.getDataProductId(),
                 activity.getDataProductVersion(),
@@ -171,7 +187,18 @@ public class ActivityService {
                             + "] of data product [" + activity.getDataProductVersion() + "]");
         }
 
-        // TODO validate stage transition with policy engine (FROM stage TO stage)
+        LifecycleResource lifecycleResource = lifecycleService.getDataProductVersionCurrentLifecycleResource(
+                activity.getDataProductId(),
+                activity.getDataProductVersion()
+        );
+        if (!policyServiceProxy.isStageTransitionValid(
+                lifecycleResource, mapper.toResource(activity), taskMapper.toResources(plannedTasks))
+        ) {
+            throw new InternalServerException(
+                    ODMApiCommonErrors.SC500_73_POLICY_SERVICE_EVALUATION_ERROR,
+                    "Some blocking policy on Activity start has not passed evaluation"
+            );
+        }
 
         // update activity's status
         try {
@@ -183,7 +210,9 @@ public class ActivityService {
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                    "An error occured in the backend database while updating activity [" + activity.getId() + "]",
                  t);
-        }       
+        }
+
+        devOpsEventNotifierProxy.notifyActivityStart(mapper.toResource(activity));
         
         // start next planned task if any
         startNextPlannedTaskAndUpdateParentActivity(activity.getId());
@@ -216,6 +245,17 @@ public class ActivityService {
         if (success) {
             activity.setStatus(ActivityStatus.PROCESSED);
             lifecycleService.createLifecycle(activity);
+            activity = saveActivity(activity);
+
+            DataProductVersionDPDS dataProductVersion = readDataProductVersion(activity);
+            if (!policyServiceProxy.isContextuallyCoherent(mapper.toResource(activity), dataProductVersion)) {
+                // TODO: replace this exception with something else
+                throw new InternalServerException(
+                        ODMApiCommonErrors.SC500_73_POLICY_SERVICE_EVALUATION_ERROR,
+                        "Some blocking policy on Activity results has not passed evaluation"
+                );
+            }
+
         } else {
             for(Task task: tasks) {
                 if(task.getStatus().equals(ActivityTaskStatus.FAILED)) {
@@ -228,10 +268,11 @@ public class ActivityService {
             } catch (JsonProcessingException e) {
 				logger.warn("Impossible to serialize errors aggregate", e);
 			}
-
             activity.setStatus(ActivityStatus.FAILED);
+            activity = saveActivity(activity);
         }
-        activity = saveActivity(activity);
+
+        devOpsEventNotifierProxy.notifyActivityCompletion(mapper.toResource(activity));
 
         return activity;
     }

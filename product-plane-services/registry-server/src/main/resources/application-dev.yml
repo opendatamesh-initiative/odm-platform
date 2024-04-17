@@ -59,13 +59,15 @@ odm:
       supportedVersions:
         min: "1.0.0"
         max: null
+  productPlane:
+    policyService:
+      active: false
+      address: http://localhost:8005
+    eventNotifierService:
+      active: false
+      address: http://localhost:8006
   utilityPlane:
-    policyServices:
-      open-policy-agent:
-        active: false
-        address: http://localhost:9001
     notificationServices:
       blindata:
         active: false
         address: http://localhost:9002
-

@@ -9,10 +9,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import org.opendatamesh.platform.core.commons.clients.utils.PageUtility;
 import org.opendatamesh.platform.core.dpds.model.internals.LifecycleInfoDPDS;
 import org.opendatamesh.platform.core.dpds.model.internals.LifecycleTaskInfoDPDS;
 import org.opendatamesh.platform.core.dpds.serde.LifecycleInfoDeserializer;
 import org.opendatamesh.platform.core.dpds.serde.LifecycleTaskInfoDeserializer;
+import org.springframework.data.domain.Page;
 
 public class ObjectMapperFactory  {
 
@@ -50,6 +52,7 @@ public class ObjectMapperFactory  {
         SimpleModule module = new SimpleModule();
         module.addDeserializer(LifecycleTaskInfoDPDS.class, new LifecycleTaskInfoDeserializer());
         module.addDeserializer(LifecycleInfoDPDS.class, new LifecycleInfoDeserializer());
+        module.addAbstractTypeMapping(Page.class, PageUtility.class);
 
         mapper.registerModule(module);
 

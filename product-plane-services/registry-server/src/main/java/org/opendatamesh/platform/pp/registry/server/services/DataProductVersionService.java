@@ -3,7 +3,11 @@ package org.opendatamesh.platform.pp.registry.server.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.opendatamesh.platform.core.commons.servers.exceptions.*;
+import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.NotFoundException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
+import org.opendatamesh.platform.core.commons.servers.exceptions.UnprocessableEntityException;
+import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
 import org.opendatamesh.platform.pp.registry.server.database.entities.Api;
 import org.opendatamesh.platform.pp.registry.server.database.entities.ApiToSchemaRelationship;
@@ -24,20 +28,15 @@ import org.opendatamesh.platform.pp.registry.server.database.entities.dataproduc
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.variables.Variable;
 import org.opendatamesh.platform.pp.registry.server.database.mappers.DataProductVersionMapper;
 import org.opendatamesh.platform.pp.registry.server.database.repositories.DataProductVersionRepository;
-import org.opendatamesh.platform.pp.registry.server.resources.v1.observers.EventNotifier;
-import org.opendatamesh.platform.pp.registry.server.resources.v1.policyservice.PolicyName;
-import org.opendatamesh.platform.up.notification.api.resources.EventResource;
-import org.opendatamesh.platform.up.notification.api.resources.EventType;
+import org.opendatamesh.platform.pp.registry.server.services.proxies.RegistryEventNotifierProxy;
+import org.opendatamesh.platform.pp.registry.server.services.proxies.RegistryPolicyServiceProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class DataProductVersionService {
@@ -64,10 +63,10 @@ public class DataProductVersionService {
     private DataProductVersionMapper dataProductVersionMapper;
 
     @Autowired
-    EventNotifier eventNotifier;
+    RegistryEventNotifierProxy registryEventNotifierProxy;
 
     @Autowired
-    private PolicyServiceProxy policyServiceProxy;
+    private RegistryPolicyServiceProxy policyServiceProxy;
 
     private static final Logger logger = LoggerFactory.getLogger(DataProductVersionService.class);
 
@@ -79,15 +78,15 @@ public class DataProductVersionService {
     // ======================================================================================
 
     protected DataProductVersion createDataProductVersion(DataProductVersion dataProductVersion, String serverUrl) {
-        return createDataProductVersion(dataProductVersion, true,serverUrl);
+        return createDataProductVersion(dataProductVersion, true, serverUrl);
     }
 
     protected DataProductVersion createDataProductVersion(
-        DataProductVersion dataProductVersion,
+            DataProductVersion dataProductVersion,
             boolean checkGlobalPolicies, String serverUrl) {
         if (dataProductVersion == null) {
             throw new InternalServerException(
-                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
+                    ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "Data product version object cannot be null");
         }
 
@@ -95,7 +94,7 @@ public class DataProductVersionService {
             dataProductVersion.getInfo().getVersionNumber();
             dataProductVersion.getInfo().getFullyQualifiedName();
             throw new UnprocessableEntityException(
-                RegistryApiStandardErrors.SC422_06_VERSION_ALREADY_EXISTS,
+                    RegistryApiStandardErrors.SC422_06_VERSION_ALREADY_EXISTS,
                     "Version [" + dataProductVersion.getInfo().getVersionNumber() + "] of data product ["
                             + dataProductVersion.getInfo().getFullyQualifiedName() + "] already exists");
         }
@@ -103,7 +102,7 @@ public class DataProductVersionService {
         // TODO check schemas evolution rules
         if (checkGlobalPolicies && !isCompliantWithGlobalPolicies(dataProductVersion)) {
             throw new UnprocessableEntityException(
-                RegistryApiStandardErrors.SC422_03_DESCRIPTOR_NOT_COMPLIANT,
+                    RegistryApiStandardErrors.SC422_03_DESCRIPTOR_NOT_COMPLIANT,
                     "The data product descriptor is not compliant to one or more global policies");
         }
 
@@ -111,7 +110,7 @@ public class DataProductVersionService {
             saveApis(dataProductVersion, serverUrl);
         } catch (Throwable t) {
             throw new InternalServerException(
-                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
+                    ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "An internal processing error occured while saving API", t);
         }
 
@@ -119,7 +118,7 @@ public class DataProductVersionService {
             saveTemplates(dataProductVersion, serverUrl);
         } catch (Throwable t) {
             throw new InternalServerException(
-                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
+                    ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "An internal processing error occured while saving templates", t);
         }
 
@@ -127,27 +126,14 @@ public class DataProductVersionService {
             dataProductVersion = saveDataProductVersion(dataProductVersion);
         } catch (Throwable t) {
             throw new InternalServerException(
-                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
+                    ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while saving version ["
                             + dataProductVersion.getInfo().getVersionNumber() + "] of data product ["
                             + dataProductVersion.getDataProduct().getId() + "]",
                     t);
         }
 
-        try {
-            EventResource eventResource = new EventResource(
-                    EventType.DATA_PRODUCT_VERSION_CREATED,
-                    dataProductVersion.getDataProductId(),
-                    null,
-                    dataProductVersionMapper.toResource(dataProductVersion).toEventString());
-            eventNotifier.notifyEvent(eventResource);
-        } catch (Throwable t) {
-            throw new BadGatewayException(
-                ODMApiCommonErrors.SC502_70_NOTIFICATION_SERVICE_ERROR,
-                    "Impossible to upload data product version to metaService: " + t.getMessage()
-                    , t
-            );
-        }
+        registryEventNotifierProxy.notifyDataProductVersionCreation(dataProductVersionMapper.toResource(dataProductVersion));
 
         return dataProductVersion;
     }
@@ -232,7 +218,7 @@ public class DataProductVersionService {
             }
         } catch (Throwable t) {
             throw new InternalServerException(
-                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
+                    ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while schema of endpoint [" + endpoint
                             + "]",
                     t);
@@ -264,7 +250,7 @@ public class DataProductVersionService {
         newApi.setDefinitionMediaType(apiStdDef.getDefinition().getMediaType());
         newApi.setDefinition(apiStdDef.getDefinition().getRawContent());
 
-        
+
         try {
             api = apiService.searchDefinition(newApi);
             if (api == null) {
@@ -274,7 +260,7 @@ public class DataProductVersionService {
             apiStdDef.getDefinition().setRef(serverUrl + "/apis/" + api.getId());
         } catch (Throwable t) {
             throw new InternalServerException(
-                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
+                    ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while saving api of port [" + port.getFullyQualifiedName()
                             + "]",
                     t);
@@ -284,25 +270,25 @@ public class DataProductVersionService {
     }
 
     private void saveTemplates(DataProductVersion dataProductVersion, String serverUrl) throws JsonProcessingException {
-        
+
         if (dataProductVersion.hasLifecycleInfo()) {
             saveLifecycleInfoTemplates(
                     dataProductVersion.getInternalComponents().getLifecycleInfo(), serverUrl);
         }
     }
 
-      private void saveLifecycleInfoTemplates(LifecycleInfo lifecycleInfo, String serverUrl)
+    private void saveLifecycleInfoTemplates(LifecycleInfo lifecycleInfo, String serverUrl)
             throws JsonProcessingException {
-    
+
         for (LifecycleTaskInfo activity : lifecycleInfo.getTasksInfo()) {
-            if(activity.getTemplate() != null && activity.getTemplate().getDefinition() != null) {
-                saveTemplate(activity.getTemplate(), serverUrl); 
+            if (activity.getTemplate() != null && activity.getTemplate().getDefinition() != null) {
+                saveTemplate(activity.getTemplate(), serverUrl);
             }
         }
     }
 
     private Template saveTemplate(
-        TemplateStandardDefinition templateStdDef, String serverUrl) {
+            TemplateStandardDefinition templateStdDef, String serverUrl) {
 
         Template template = new Template(); // why not a mapper?
         template.setId(templateStdDef.getId());
@@ -329,16 +315,13 @@ public class DataProductVersionService {
             templateStdDef.getDefinition().setRef(serverUrl + "/templates/" + template.getId());
         } catch (Throwable t) {
             throw new InternalServerException(
-                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while saving template [" +  templateStdDef.getName() + "]", t);
+                    ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
+                    "An error occured in the backend database while saving template [" + templateStdDef.getName() + "]", t);
         }
-        
+
         return template;
     }
 
-    
-
-    
 
     // ======================================================================================
     // READ
@@ -352,13 +335,13 @@ public class DataProductVersionService {
     private DataProductVersion readDataProductVersion(DataProductVersion dataProductVersion) {
         if (dataProductVersion == null) {
             throw new InternalServerException(
-                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
+                    ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "Data product version object cannot be null");
         }
 
         if (dataProductVersion.getDataProduct() == null) {
             throw new InternalServerException(
-                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
+                    ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "Data product object cannot be null");
         }
         return readDataProductVersion(dataProductVersion.getDataProduct().getId(),
@@ -371,7 +354,7 @@ public class DataProductVersionService {
 
         if (!StringUtils.hasText(dataProductId)) {
             throw new InternalServerException(
-                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
+                    ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "Data product id cannot be empty");
         }
 
@@ -379,7 +362,7 @@ public class DataProductVersionService {
             dataProductVersion = getDataProductVersion(dataProductId, version);
         } catch (Throwable t) {
             throw new InternalServerException(
-                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
+                    ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while loading version [" + version + "] of data product ["
                             + dataProductId + "]",
                     t);
@@ -387,7 +370,7 @@ public class DataProductVersionService {
 
         if (dataProductVersion == null) {
             throw new NotFoundException(
-                RegistryApiStandardErrors.SC404_01_PRODUCT_NOT_FOUND,
+                    RegistryApiStandardErrors.SC404_01_PRODUCT_NOT_FOUND,
                     "Data product [" + dataProductId + "] does not exist");
         }
 
@@ -411,13 +394,13 @@ public class DataProductVersionService {
     private boolean dataProductVersionExists(DataProductVersion dataProductVersion) {
         if (dataProductVersion == null) {
             throw new InternalServerException(
-                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
+                    ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "Data product version object cannot be null");
         }
 
         if (dataProductVersion.getDataProduct() == null) {
             throw new InternalServerException(
-                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
+                    ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "Data product object cannot be null");
         }
 
@@ -441,7 +424,7 @@ public class DataProductVersionService {
             dataProductVersionSearchResult = findDataProductVersions(dataProductId);
         } catch (Throwable t) {
             throw new InternalServerException(
-                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
+                    ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while searching data product versions",
                     t);
         }
@@ -498,7 +481,7 @@ public class DataProductVersionService {
     public void deleteDataProductVersion(DataProductVersion dataProductVersion) {
         if (dataProductVersion == null) {
             throw new InternalServerException(
-                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
+                    ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "Data product version object cannot be null");
         }
         deleteDataProductVersion(
@@ -526,27 +509,13 @@ public class DataProductVersionService {
                     + "] succesfully deleted");
         } catch (Throwable t) {
             throw new InternalServerException(
-                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
+                    ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occured in the backend database while deleting data product version",
                     t
             );
         }
 
-        try {
-            // metaServiceProxy.uploadDataProductVersion(dataProductVersion);
-            EventResource eventResource = new EventResource(
-                    EventType.DATA_PRODUCT_VERSION_DELETED,
-                    dataProductVersion.getDataProductId(),
-                    dataProductVersionMapper.toResource(dataProductVersion).toEventString(),
-                    null);
-            eventNotifier.notifyEvent(eventResource);
-        } catch (Throwable t) {
-            throw new BadGatewayException(
-                ODMApiCommonErrors.SC502_70_NOTIFICATION_SERVICE_ERROR,
-                    "Impossible to upload data product version to metaService: " + t.getMessage(),
-                    t
-            );
-        }
+        registryEventNotifierProxy.notifyDataProductVersionDeletion(dataProductVersionMapper.toResource(dataProductVersion));
 
     }
 
@@ -557,7 +526,7 @@ public class DataProductVersionService {
 
     public List<Variable> readDataProductVersionVariables(String dataProductId, String versionNumber) {
 
-        if(!dataProductVersionExists(dataProductId, versionNumber)) {
+        if (!dataProductVersionExists(dataProductId, versionNumber)) {
             throw new NotFoundException(
                     RegistryApiStandardErrors.SC404_02_VERSION_NOT_FOUND,
                     "Data product Version [" + dataProductId + " - " + versionNumber + "] does not exist");
@@ -570,13 +539,13 @@ public class DataProductVersionService {
     public Variable updateDataProductVersionVariable(
             String dataProductId, String versionNumber, Long variableId, String variableValue
     ) {
-        if(!dataProductVersionExists(dataProductId, versionNumber)) {
+        if (!dataProductVersionExists(dataProductId, versionNumber)) {
             throw new NotFoundException(
                     RegistryApiStandardErrors.SC404_02_VERSION_NOT_FOUND,
                     "Data product Version [" + dataProductId + " - " + versionNumber + "] does not exist");
         }
 
-        if(!variableService.variableExists(variableId)) {
+        if (!variableService.variableExists(variableId)) {
             throw new NotFoundException(
                     RegistryApiStandardErrors.SC404_08_VARIABLE_NOT_FOUND,
                     "Variable [" + variableId + "] of Data Product Version ["
@@ -609,20 +578,16 @@ public class DataProductVersionService {
     // ======================================================================================
 
     public boolean isCompliantWithGlobalPolicies(DataProductVersion dataProductVersion) {
-        Boolean isValid = false;
+        DataProductVersionDPDS newDataProductVersionDPDS = dataProductVersionMapper.toResource(dataProductVersion);
+        DataProductVersionDPDS mostRecentDataProduct = getMostRecentDataProductVersion(dataProductVersion);
+        return policyServiceProxy.validateDataProductVersionCreation(mostRecentDataProduct, newDataProductVersionDPDS);
+    }
 
-        try {
-            isValid = policyServiceProxy.validateDataProductVersion(
-                    dataProductVersion, PolicyName.dataproduct);
-        } catch (Throwable t) {
-            throw new BadGatewayException(
-                ODMApiCommonErrors.SC502_71_POLICY_SERVICE_ERROR,
-                    "An error occured while invoking policy service to validate data product version: " + t.getMessage(),
-                    t
-            );
-        }
-
-        return isValid;
+    private DataProductVersionDPDS getMostRecentDataProductVersion(DataProductVersion dataProductVersion) {
+        List<DataProductVersion> dataProducts = findDataProductVersions(dataProductVersion.getDataProductId());
+        //TODO this should be a query and not application logic
+        dataProducts.sort(Comparator.comparing(DataProductVersion::getCreatedAt).reversed());
+        return dataProducts.isEmpty() ? null : dataProductVersionMapper.toResource(dataProducts.get(0));
     }
 
 }

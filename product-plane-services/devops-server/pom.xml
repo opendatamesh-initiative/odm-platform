@@ -261,6 +261,18 @@ License.
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.opendatamesh</groupId>
+            <artifactId>odm-platform-pp-policy-api</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.opendatamesh</groupId>
+            <artifactId>odm-platform-pp-event-notifier-api</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
 
     </dependencies>
 

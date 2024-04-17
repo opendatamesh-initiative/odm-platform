@@ -59,7 +59,22 @@ spring:
 ##########################
 blindata:
   url: http://localhost:3000
-  user: "owner"
+  user: "owner@default.blindata.io"
   password: "owner123"
-  tenantUUID: "fc8dbadb-83b9-4c4a-baec-fc5a5f91f98b"
-  roleUuid: "777f0307-bf30-4f70-92a4-f0cf3bc3f436"
+  tenantUUID: "83471577-3921-48ed-bd8f-fde278aa0449"
+  roleUuid: ""
+  systemNameRegex: "^([^:]+)"
+  systemTechnologyRegex: "(?!::)([^:]+)$"
+
+#############################
+# ODM projects configurations
+#############################
+odm:
+  productPlane:
+    policyService:
+      active: true
+      address: http://localhost:8005
+    registryService:
+      active: true
+      address: http://localhost:8001
+

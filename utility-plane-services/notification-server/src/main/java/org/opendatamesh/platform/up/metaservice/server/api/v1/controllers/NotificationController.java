@@ -60,19 +60,10 @@ public class NotificationController extends AbstractNotificationController {
         return notificationResources;
     }
 
-    public void deleteDataProduct(
+    public void deleteNotification(
         Long notificationId
     )  {
         notificationService.deleteNotification(notificationId);
-    } 
-
-    /* 
-    @DeleteMapping("/{notificationId}")
-    @ResponseStatus(HttpStatus.OK)
-    public void deleteDataProduct(
-        @Valid @PathVariable(value = "notificationId", required = true) Long notificationId
-    )  {
-        notificationService.deleteNotification(notificationId);
     }
-    */
+
 }

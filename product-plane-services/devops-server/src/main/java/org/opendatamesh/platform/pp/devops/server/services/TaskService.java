@@ -7,15 +7,14 @@ import org.opendatamesh.platform.core.dpds.model.core.StandardDefinitionDPDS;
 import org.opendatamesh.platform.core.dpds.model.internals.LifecycleTaskInfoDPDS;
 import org.opendatamesh.platform.core.dpds.parser.IdentifierStrategy;
 import org.opendatamesh.platform.pp.devops.api.clients.DevOpsAPIRoutes;
-import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskStatus;
-import org.opendatamesh.platform.pp.devops.api.resources.DevOpsApiStandardErrors;
-import org.opendatamesh.platform.pp.devops.api.resources.TaskResultResource;
-import org.opendatamesh.platform.pp.devops.api.resources.TaskResultStatus;
+import org.opendatamesh.platform.pp.devops.api.resources.*;
 import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsClients;
 import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsConfigurations;
 import org.opendatamesh.platform.pp.devops.server.database.entities.Task;
 import org.opendatamesh.platform.pp.devops.server.database.mappers.TaskMapper;
 import org.opendatamesh.platform.pp.devops.server.database.repositories.TaskRepository;
+import org.opendatamesh.platform.pp.devops.server.services.proxies.DevOpsEventNotifierProxy;
+import org.opendatamesh.platform.pp.devops.server.services.proxies.DevopsPolicyServiceProxy;
 import org.opendatamesh.platform.pp.registry.api.resources.ExternalComponentResource;
 import org.opendatamesh.platform.up.executor.api.clients.ExecutorClient;
 import org.opendatamesh.platform.up.executor.api.resources.TaskResource;
@@ -23,7 +22,6 @@ import org.opendatamesh.platform.up.executor.api.resources.TaskStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -31,6 +29,9 @@ import java.util.*;
 
 @Service
 public class TaskService {
+
+    @Autowired
+    DevopsPolicyServiceProxy policyServiceProxy;
 
     @Autowired
     TaskRepository taskRepository;
@@ -43,6 +44,9 @@ public class TaskService {
 
     @Autowired
     DevOpsClients clients;
+
+    @Autowired
+    DevOpsEventNotifierProxy devOpsEventNotifierProxy;
 
     private ExecutorClient odmExecutor;
 
@@ -88,6 +92,8 @@ public class TaskService {
                     t);
         }
 
+        devOpsEventNotifierProxy.notifyTaskCreation(taskMapper.toResource(task));
+
         return task;
     }
 
@@ -105,17 +111,19 @@ public class TaskService {
     }
     
     public Task startTask(Task task) {
-
         try {
 
             task.setStatus(ActivityTaskStatus.PROCESSING);
             task.setStartedAt(now());
             saveTask(task);
 
+            devOpsEventNotifierProxy.notifyTaskStart(taskMapper.toResource(task));
+
             if(task.getExecutorRef() != null) {
                 task = submitTask(task);
                 if (task.getStatus().equals(ActivityTaskStatus.FAILED)) {
-                    saveTask(task);
+                    task = saveTask(task);
+                    devOpsEventNotifierProxy.notifyTaskCompletion(taskMapper.toResource(task));
                 }
             } else {
                 TaskResultResource taskResultResource = new TaskResultResource();
@@ -125,6 +133,7 @@ public class TaskService {
                 task.setResults(taskResultResource.toJsonString());
                 task.setStatus(ActivityTaskStatus.PROCESSED);
                 task.setFinishedAt(now());
+                devOpsEventNotifierProxy.notifyTaskCompletion(taskMapper.toResource(task));
             }
             
         } catch(Throwable t) {
@@ -154,6 +163,7 @@ public class TaskService {
                 taskRes.setStatus(TaskStatus.FAILED);
                 taskRes.setErrors("Executor [" + task.getExecutorRef() + "] supported"); // CHECK
                 taskRes.setFinishedAt(new Date());
+                devOpsEventNotifierProxy.notifyTaskCompletion(taskRes);
             }
 
             task = taskMapper.toEntity(taskRes);
@@ -161,6 +171,7 @@ public class TaskService {
             task.setStatus(ActivityTaskStatus.FAILED);
             task.setErrors(t.getMessage());
             task.setFinishedAt(now());
+            devOpsEventNotifierProxy.notifyTaskCompletion(taskMapper.toResource(task));
         }
        
         return task;
@@ -213,6 +224,15 @@ public class TaskService {
                         task.setErrors(taskResultResource.getErrors());
                     }
                 }
+
+                // Interactions with PolicyService
+                if(!policyServiceProxy.isCallbackResultValid(taskMapper.toResource(task))){
+                    throw new InternalServerException(
+                            ODMApiCommonErrors.SC500_73_POLICY_SERVICE_EVALUATION_ERROR,
+                            "Some blocking policy has not passed evaluation"
+                    );
+                }
+
             } else {
                 if (taskRealStatus != null && taskRealStatus.equals(TaskStatus.FAILED)) {
                     task.setStatus(ActivityTaskStatus.FAILED);
@@ -235,6 +255,8 @@ public class TaskService {
 
             task.setFinishedAt(now());
             task = saveTask(task);
+
+            devOpsEventNotifierProxy.notifyTaskCompletion(taskMapper.toResource(task));
 
         } catch(Throwable t) {
              throw new InternalServerException(
@@ -444,6 +466,5 @@ public class TaskService {
         now.getHour(), now.getMinute(), now.getSecond(), 0);
         return now;
     }
-
 	
 }

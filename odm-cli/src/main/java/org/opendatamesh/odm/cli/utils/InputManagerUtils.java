@@ -40,7 +40,9 @@ public final class InputManagerUtils {
         } while (!valueChecked);
         return input;
     }
+
     public static String getValueFromUser(String message){
         return getValueFromUser(message, null);
     }
+    
 }

@@ -1,0 +1,12 @@
+{
+  "name": "dataproduct-schema-checker",
+  "displayName": "Schema Compatibility Checker",
+  "description": "Check whether the updated schema is retro-compatible with the previous schema or not",
+  "blockingFlag": true,
+  "evaluationEvent": "DATA_PRODUCT_UPDATE",
+  "suite": "Suite Name",
+  "filteringExpression": "afterState.dataProductVersion.info.domain == 'sampleDomain' && afterState.dataProductVersion.info.domain != 'sampleDomainTwo'",
+  "policyEngine":{
+    "id": 2,
+    "name": "opa-policy-checker"
+  }}

@@ -12,7 +12,7 @@
     </parent>
 
     <groupId>org.opendatamesh</groupId>
-    <artifactId>odm-cli</artifactId>
+    <artifactId>odm-platform-cli</artifactId>
     <description>Open Data Mesh Platform's CLI</description>
     <name>ODM CLI MODULE</name>
     <version>1.0.0</version>
@@ -89,6 +89,12 @@
         <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-pp-registry-api</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.opendatamesh</groupId>
+            <artifactId>odm-platform-pp-policy-api</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>

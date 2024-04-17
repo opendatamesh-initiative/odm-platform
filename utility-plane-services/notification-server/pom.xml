@@ -186,7 +186,7 @@
             <artifactId>odm-platform-pp-registry-api</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>
-        </dependency>
+        </dependency> <!-- TO REMOVE (but check it before) -->
         <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-up-notification-api</artifactId>

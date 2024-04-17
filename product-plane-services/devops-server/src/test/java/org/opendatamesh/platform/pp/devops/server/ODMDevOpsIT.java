@@ -5,7 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
-import org.opendatamesh.platform.core.commons.clients.ODMIntegrationTest;
+import org.opendatamesh.platform.core.commons.test.ODMIntegrationTest;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.devops.api.clients.DevOpsClient;
@@ -29,6 +29,7 @@ import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.lang.Nullable;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.RequestMatcher;
@@ -49,7 +50,7 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
-//@ActiveProfiles("dev")
+//@ActiveProfiles("test")
 //@ActiveProfiles("testpostgresql")
 //@ActiveProfiles("testmysql")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = { ODMDevOpsApp.class })
@@ -320,7 +321,7 @@ public abstract class ODMDevOpsIT extends ODMIntegrationTest{
         // requestTo(apiUrl)
         try {
             clients.getRegistryClient().getMockServer()
-                    .expect(ExpectedCount.once(), new MyRequestMatcher(apiUrl))
+                    .expect(ExpectedCount.twice(), new MyRequestMatcher(apiUrl))
                     // .andExpect(content().contentType(responseType))
                     .andExpect(method(HttpMethod.GET))
                     .andRespond(

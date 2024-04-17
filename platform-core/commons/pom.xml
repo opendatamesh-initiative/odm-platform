@@ -88,6 +88,22 @@ License.
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-oauth2-client</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-commons</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-jpa</artifactId>
+        </dependency>
+
+        <!-- Hibernate -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-jpamodelgen</artifactId>
+            <version>5.4.3.Final</version>
+            <optional>true</optional>
+        </dependency>
 
         <!-- Lombok -->
         <dependency>
@@ -171,7 +187,6 @@ License.
             <version>6.6.0.202305301015-r</version>
         </dependency>
 
-
     </dependencies>
 
     <build>
@@ -194,6 +209,11 @@ License.
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok-mapstruct-binding</artifactId>
                             <version>0.2.0</version>
+                        </path>
+                        <path>
+                            <groupId>org.hibernate</groupId>
+                            <artifactId>hibernate-jpamodelgen</artifactId>
+                            <version>5.4.3.Final</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>

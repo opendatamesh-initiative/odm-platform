@@ -1,5 +1,6 @@
 package org.opendatamesh.odm.cli.commands.registry.get;
 
+import org.opendatamesh.odm.cli.utils.ObjectMapperUtils;
 import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,7 @@ import picocli.CommandLine.ParentCommand;
 public class GetDpCommand implements Runnable {
 
     @ParentCommand
-    private GetCommand getCommand;
+    private RegistryGetCommand registryGetCommand;
 
     @Option(
             names = "--id",
@@ -27,15 +28,12 @@ public class GetDpCommand implements Runnable {
 
     @Override
     public void run() {
-
         try {
-
             ResponseEntity<DataProductResource> dataProductResponseEntity =
-                    getCommand.registryCommands.getRegistryClient().getDataProduct(dataProductId);
-
+                    registryGetCommand.registryCommands.getRegistryClient().getDataProduct(dataProductId);
             if(dataProductResponseEntity.getStatusCode().equals(HttpStatus.OK)) {
                 DataProductResource dataProduct = dataProductResponseEntity.getBody();
-                System.out.println(dataProduct.toEventString());
+                System.out.println(ObjectMapperUtils.formatAsString(dataProduct));
             }
             else if(dataProductResponseEntity.getStatusCode().equals(HttpStatus.NOT_FOUND))
                 System.out.println("Data product with ID [" + dataProductId + "] not found");
@@ -43,11 +41,9 @@ public class GetDpCommand implements Runnable {
                 System.out.println(
                         "Got an unexpected response. Error code: " + dataProductResponseEntity.getStatusCode()
                 );
-
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
     }
 
 }

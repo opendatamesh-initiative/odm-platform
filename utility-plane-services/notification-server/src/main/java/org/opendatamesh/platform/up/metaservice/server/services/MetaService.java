@@ -6,10 +6,10 @@ import org.springframework.stereotype.Service;
 @Service
 public interface MetaService {
 
-    public NotificationResource handleDataProductCreated(NotificationResource notificationRes) throws MetaServiceException;
+    NotificationResource handleDataProductCreated(NotificationResource notificationRes) throws MetaServiceException;
 
-    public NotificationResource handleDataProductUpdate(NotificationResource notificationResource) throws MetaServiceException;
+    NotificationResource handleDataProductUpdate(NotificationResource notificationResource) throws MetaServiceException;
 
-    public NotificationResource handleDataProductDelete(NotificationResource notificationRes) throws MetaServiceException;
-    
+    NotificationResource handleDataProductDelete(NotificationResource notificationRes) throws MetaServiceException;
+
 }

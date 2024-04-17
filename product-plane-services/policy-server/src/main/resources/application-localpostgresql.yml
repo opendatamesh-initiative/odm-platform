@@ -1,0 +1,64 @@
+##########################
+# Server configuration
+##########################
+app:
+  workdir:
+
+server:
+  error:
+    include-message: always
+
+############################################
+# Spring configurations
+############################################
+spring:
+  # Profile
+  profile: localpostgresql
+  # JPA configuration
+  jpa:
+    #show-sql: true
+    hibernate:
+      ddl-auto: validate
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        #format_sql: true
+        jdbc:
+          lob:
+            non_contextual_creation: true
+        dialect: org.hibernate.dialect.PostgreSQL95Dialect # Or PostgreSQLDialect
+        globally_quoted_identifiers: true
+        default_schema: ODMPOLICY
+  # DB
+  datasource:
+    url: jdbc:postgresql://localhost:5432/odmpdb
+    username: postgres
+    password: postgres
+  h2:
+    console:
+      enabled: false
+  # FlyWay configuration
+  # More: https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html#appendix.application-properties.data-migration
+  flyway:
+    #enabled: false # To disable
+    url: jdbc:postgresql://localhost:5432/odmpdb
+    user: postgres
+    password: postgres
+    #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
+    schemas: ODMPOLICY
+    locations: classpath:db/migration/postgresql
+    clean-on-validation-error: true
+
+
+#############################
+# ODM projects configurations
+#############################
+odm:
+  productPlane:
+    registryService:
+      active: false
+      address: http://localhost:8001
+    devopsService:
+      active: false
+      address: http://localhost:8002

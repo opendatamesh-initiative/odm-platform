@@ -12,11 +12,6 @@ public enum NotificationAPIRoutes implements ODMApiRoutes {
         this.path = path;
     }
 
-    @Override
-    public String toString() {
-        return this.path;
-    }
-
     public String getPath() {
         return path;
     }

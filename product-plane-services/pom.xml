@@ -68,6 +68,10 @@ License.
         <module>params-server</module>
         <module>registry-api</module>
         <module>registry-server</module>
+        <module>policy-api</module>
+        <module>policy-server</module>
+        <module>event-notifier-api</module>
+        <module>event-notifier-server</module>
     </modules>
 
 </project>

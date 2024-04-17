@@ -28,10 +28,6 @@ public class RestUtils {
     public RestUtils(TestRestTemplate restTemplate, ObjectMapper mapper) {
         this.rest = restTemplate;
         this.objectMapper = mapper;
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        SimpleModule simpleModule = new SimpleModule()
-                .addAbstractTypeMapping(Page.class, PageUtility.class);
-        objectMapper.registerModule(simpleModule);
     }
 
     public <R, F> Page<R> getPage(String url, Pageable pageable, F filters, Class<R> clazz) throws InternalServerException {

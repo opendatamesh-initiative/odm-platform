@@ -1,6 +1,7 @@
 package org.opendatamesh.odm.cli.commands.registry.publish;
 
 import org.opendatamesh.odm.cli.utils.FileReaderUtils;
+import org.opendatamesh.odm.cli.utils.ObjectMapperUtils;
 import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,9 +32,7 @@ public class PublishDpCommand implements Runnable {
 
     @Override
     public void run() {
-
-        String dp = null;
-
+        String dp;
         try {
             dp = FileReaderUtils.readFileFromPath(dataProductDescriptorPath);
         } catch (IOException e) {
@@ -42,26 +41,22 @@ public class PublishDpCommand implements Runnable {
             );
             return;
         }
-
         try {
-
             ResponseEntity<DataProductResource> dataProductResponseEntity =
                     registryPublishCommand.registryCommands.getRegistryClient().postDataProduct(dp);
-
             if(dataProductResponseEntity.getStatusCode().equals(HttpStatus.CREATED)) {
                 DataProductResource dataProduct = dataProductResponseEntity.getBody();
-                System.out.println("Data product CREATED:\n" + dataProduct.toEventString());
+                System.out.println("Data product CREATED:\n" + ObjectMapperUtils.formatAsString(dataProduct));
             }
             else
                 System.out.println(
                         "Got an unexpected response. Error code: " + dataProductResponseEntity.getStatusCode()
                 );
-
         } catch (ResourceAccessException e) {
             System.out.println("Impossible to connect with Registry server. Verify the URL and retry");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
     }
+
 }

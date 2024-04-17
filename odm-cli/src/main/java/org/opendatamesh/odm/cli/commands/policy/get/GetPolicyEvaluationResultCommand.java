@@ -1,7 +1,7 @@
 package org.opendatamesh.odm.cli.commands.policy.get;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.opendatamesh.odm.cli.utils.ObjectMapperUtils;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,19 +27,19 @@ public class GetPolicyEvaluationResultCommand implements Runnable {
     )
     Long resultId;
 
-    ObjectMapper objectMapper = ObjectMapperFactory.JSON_MAPPER;
-
     @Override
     public void run() {
 
         try {
             // Remove ResponseEntity and change the methods used by the client after refactoring RestUtils in policy service
-            ResponseEntity<PolicyEvaluationResultResource> resultResponseEntity =
+            ResponseEntity<ObjectNode> resultResponseEntity =
                     policyGetCommand.policyCommands.getPolicyClient().readOnePolicyEvaluationResultResponseEntity(resultId);
 
             if(resultResponseEntity.getStatusCode().equals(HttpStatus.OK)) {
-                PolicyEvaluationResultResource resultResource = resultResponseEntity.getBody();
-                System.out.println(objectMapper.writeValueAsString(resultResource));
+                PolicyEvaluationResultResource resultResource = ObjectMapperUtils.convertObjectNode(
+                        resultResponseEntity.getBody(), PolicyEvaluationResultResource.class
+                );
+                System.out.println(ObjectMapperUtils.formatAsString(resultResource));
             }
             else if(resultResponseEntity.getStatusCode().equals(HttpStatus.NOT_FOUND))
                 System.out.println("Policy Evaluation Result with ID [" + resultId + "] not found");

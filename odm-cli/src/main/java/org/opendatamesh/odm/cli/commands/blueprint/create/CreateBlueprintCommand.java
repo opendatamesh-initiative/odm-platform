@@ -1,8 +1,8 @@
 package org.opendatamesh.odm.cli.commands.blueprint.create;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.odm.cli.commands.blueprint.BlueprintCommands;
 import org.opendatamesh.odm.cli.utils.FileReaderUtils;
+import org.opendatamesh.odm.cli.utils.ObjectMapperUtils;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintResource;
 import org.springframework.http.HttpStatus;
@@ -40,13 +40,12 @@ public class CreateBlueprintCommand implements Runnable {
 
     @Override
     public void run() {
-
         BlueprintResource blueprintResource;
-        ObjectMapper objectMapper = new ObjectMapper();
-
         try {
-            String blueprint = FileReaderUtils.readFileFromPath(blueprintPath);
-            blueprintResource = objectMapper.readValue(blueprint, BlueprintResource.class);
+            blueprintResource = ObjectMapperUtils.stringToResource(
+                    FileReaderUtils.readFileFromPath(blueprintPath),
+                    BlueprintResource.class
+            );
         } catch (IOException e) {
             System.out.println(
                     "Impossible to parse file [" + blueprintPath + "] as a BlueprintResource."
@@ -54,22 +53,20 @@ public class CreateBlueprintCommand implements Runnable {
             );
             return;
         }
-
         try {
-
             ResponseEntity<Object> blueprintResponseEntity =
                     blueprintCommands.getBlueprintClient().createBlueprint(blueprintResource, checkContent);
-
-            if (blueprintResponseEntity.getStatusCode().equals(HttpStatus.CREATED))
-                System.out.println("Blueprint correctly created: \n" + blueprintResponseEntity.getBody().toString());
+            if (blueprintResponseEntity.getStatusCode().equals(HttpStatus.CREATED)) {
+                blueprintResource = ObjectMapperUtils.convertObject(blueprintResponseEntity.getBody(), BlueprintResource.class);
+                System.out.println("Blueprint correctly created: \n" + ObjectMapperUtils.formatAsString(blueprintResource));
+            }
             else {
-                ErrorRes error = (ErrorRes) blueprintResponseEntity.getBody();
+                ErrorRes error = ObjectMapperUtils.convertObject(blueprintResponseEntity.getBody(), ErrorRes.class);
                 System.out.println(
                         "Got an unexpected response. Error code  [" + error.getCode() + "]. "
                                 + "Error message: " + error.getMessage()
                 );
             }
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (ResourceAccessException e){

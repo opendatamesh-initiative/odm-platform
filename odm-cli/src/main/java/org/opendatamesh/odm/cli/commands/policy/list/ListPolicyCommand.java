@@ -1,9 +1,7 @@
 package org.opendatamesh.odm.cli.commands.policy.list;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.opendatamesh.odm.cli.utils.JsonUtils;
-import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
+import org.opendatamesh.odm.cli.utils.ObjectMapperUtils;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,21 +22,19 @@ public class ListPolicyCommand implements Runnable {
     @ParentCommand
     private PolicyListCommand policyListCommand;
 
-    private static final ObjectMapper objectMapper = ObjectMapperFactory.JSON_MAPPER;
-
     @Override
     public void run() {
         try {
             ResponseEntity<ObjectNode> policyResourceResponseEntity =
                     policyListCommand.policyCommands.getPolicyClient().readAllPoliciesResponseEntity();
             if(policyResourceResponseEntity.getStatusCode().equals(HttpStatus.OK)) {
-                List<PolicyResource> policies = JsonUtils.extractListFromPageFromObjectNode(
+                List<PolicyResource> policies = ObjectMapperUtils.extractListFromPageFromObjectNode(
                         policyResourceResponseEntity.getBody(), PolicyResource.class
                 );
                 if (policies.size() == 0)
                     System.out.println("[]");
                 for (PolicyResource policy : policies)
-                    System.out.println(objectMapper.writeValueAsString(policy));
+                    System.out.println(ObjectMapperUtils.formatAsString(policy));
             }
             else
                 System.out.println("Error in response from Policy Server");

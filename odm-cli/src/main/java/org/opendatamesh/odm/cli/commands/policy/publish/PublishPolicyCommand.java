@@ -1,15 +1,15 @@
 package org.opendatamesh.odm.cli.commands.policy.publish;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.opendatamesh.odm.cli.utils.FileReaderUtils;
-import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
+import org.opendatamesh.odm.cli.utils.ObjectMapperUtils;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.ResourceAccessException;
 import picocli.CommandLine.Command;
-import picocli.CommandLine.ParentCommand;
 import picocli.CommandLine.Option;
+import picocli.CommandLine.ParentCommand;
 
 import java.io.IOException;
 
@@ -24,8 +24,6 @@ public class PublishPolicyCommand implements Runnable {
     @ParentCommand
     private PolicyPublishCommand policyPublishCommand;
 
-    private static final ObjectMapper objectMapper = ObjectMapperFactory.JSON_MAPPER;
-
     @Option(
             names = "--policy-file",
             description = "Path of the JSON descriptor of the Policy object",
@@ -37,7 +35,7 @@ public class PublishPolicyCommand implements Runnable {
     public void run() {
         PolicyResource policy;
         try {
-            policy = objectMapper.convertValue(
+            policy = ObjectMapperUtils.stringToResource(
                     FileReaderUtils.readFileFromPath(policyDescriptorPath),
                     PolicyResource.class
             );
@@ -48,11 +46,11 @@ public class PublishPolicyCommand implements Runnable {
             return;
         }
         try {
-            ResponseEntity<PolicyResource> policyResponseEntity =
+            ResponseEntity<ObjectNode> policyResponseEntity =
                     policyPublishCommand.policyCommands.getPolicyClient().createPolicyResponseEntity(policy);
             if(policyResponseEntity.getStatusCode().equals(HttpStatus.CREATED)) {
-                policy = policyResponseEntity.getBody();
-                System.out.println("Policy CREATED:\n" + objectMapper.writeValueAsString(policy));
+                policy = ObjectMapperUtils.convertObjectNode(policyResponseEntity.getBody(), PolicyResource.class);
+                System.out.println("Policy CREATED:\n" + ObjectMapperUtils.formatAsString(policy));
             }
             else
                 System.out.println("Got an unexpected response. Error code: " + policyResponseEntity.getStatusCode());

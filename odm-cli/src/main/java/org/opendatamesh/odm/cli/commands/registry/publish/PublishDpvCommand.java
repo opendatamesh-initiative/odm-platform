@@ -1,6 +1,7 @@
 package org.opendatamesh.odm.cli.commands.registry.publish;
 
 import org.opendatamesh.odm.cli.utils.FileReaderUtils;
+import org.opendatamesh.odm.cli.utils.ObjectMapperUtils;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,9 +39,7 @@ public class PublishDpvCommand implements Runnable {
 
     @Override
     public void run() {
-
-        String dpv = null;
-
+        String dpv;
         try {
             dpv = FileReaderUtils.readFileFromPath(dataProductVersionDescriptorPath);
         } catch (IOException e) {
@@ -50,21 +49,17 @@ public class PublishDpvCommand implements Runnable {
             );
             return;
         }
-
         try {
-
             ResponseEntity<DataProductVersionDPDS> dataProductResponseEntity =
                     registryPublishCommand.registryCommands.getRegistryClient().postDataProductVersion(dataProductId, dpv);
-
             if(dataProductResponseEntity.getStatusCode().equals(HttpStatus.CREATED)) {
                 DataProductVersionDPDS dataProductVersion = dataProductResponseEntity.getBody();
-                System.out.println("Data Product Version CREATED:\n" + dataProductVersion.toEventString());
+                System.out.println("Data Product Version CREATED:\n" + ObjectMapperUtils.formatAsString(dataProductVersion));
             }
             else
                 System.out.println(
                         "Got an unexpected response. Error code: " + dataProductResponseEntity.getStatusCode()
                 );
-
         } catch (ResourceAccessException e) {
             System.out.println("Impossible to connect with Registry server. Verify the URL and retry");
         } catch (Exception e) {

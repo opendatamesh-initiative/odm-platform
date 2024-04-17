@@ -1,7 +1,7 @@
 package org.opendatamesh.odm.cli.commands.policy.get;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.opendatamesh.odm.cli.utils.ObjectMapperUtils;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,27 +34,26 @@ public class GetPolicyCommand implements Runnable {
     )
     Boolean rootIdFlag;
 
-    ObjectMapper objectMapper = ObjectMapperFactory.JSON_MAPPER;
-
     @Override
     public void run() {
 
         try {
             // Remove ResponseEntity and change the methods used by the client after refactoring RestUtils in policy service
-            ResponseEntity<PolicyResource> policyResponseEntity;
+            ResponseEntity<ObjectNode> policyObjectNodeResponseEntity;
             if(!rootIdFlag)
-                policyResponseEntity = policyGetCommand.policyCommands.getPolicyClient().readOnePolicyVersionResponseEntity(policyId);
+                policyObjectNodeResponseEntity = policyGetCommand.policyCommands.getPolicyClient().readOnePolicyVersionResponseEntity(policyId);
             else
-                policyResponseEntity = policyGetCommand.policyCommands.getPolicyClient().readOnePolicyResponseEntity(policyId);
-
-            if(policyResponseEntity.getStatusCode().equals(HttpStatus.OK)) {
-                PolicyResource policyResource = policyResponseEntity.getBody();
-                System.out.println(objectMapper.writeValueAsString(policyResource));
+                policyObjectNodeResponseEntity = policyGetCommand.policyCommands.getPolicyClient().readOnePolicyResponseEntity(policyId);
+            if(policyObjectNodeResponseEntity.getStatusCode().equals(HttpStatus.OK)) {
+                PolicyResource policyResource = ObjectMapperUtils.convertObjectNode(
+                        policyObjectNodeResponseEntity.getBody(), PolicyResource.class
+                );
+                System.out.println(ObjectMapperUtils.formatAsString(policyResource));
             }
-            else if(policyResponseEntity.getStatusCode().equals(HttpStatus.NOT_FOUND))
+            else if(policyObjectNodeResponseEntity.getStatusCode().equals(HttpStatus.NOT_FOUND))
                 System.out.println("Policy with " + (rootIdFlag ? "root" : "") + "ID [" + policyId + "] not found");
             else
-                System.out.println("Got an unexpected response. Error code: " + policyResponseEntity.getStatusCode());
+                System.out.println("Got an unexpected response. Error code: " + policyObjectNodeResponseEntity.getStatusCode());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

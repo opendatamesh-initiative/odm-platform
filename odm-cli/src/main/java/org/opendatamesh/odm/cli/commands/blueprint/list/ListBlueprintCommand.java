@@ -2,6 +2,7 @@ package org.opendatamesh.odm.cli.commands.blueprint.list;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.opendatamesh.odm.cli.commands.blueprint.BlueprintCommands;
+import org.opendatamesh.odm.cli.utils.ObjectMapperUtils;
 import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.ResourceAccessException;
@@ -21,23 +22,18 @@ public class ListBlueprintCommand implements Runnable {
 
     @Override
     public void run() {
-
         try {
-
             ResponseEntity<BlueprintResource[]> blueprintResponseEntity =
                     blueprintCommands.getBlueprintClient().readBlueprints();
             BlueprintResource[] blueprintList = blueprintResponseEntity.getBody();
-
             for(BlueprintResource blueprintResource: blueprintList){
-                System.out.println(blueprintResource);
+                System.out.println(ObjectMapperUtils.formatAsString(blueprintResource));
             }
-
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         } catch (ResourceAccessException e){
             System.out.println("Impossible to connect with blueprint server. Verify the URL and retry");
         }
-
     }
 
 }

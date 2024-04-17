@@ -1,10 +1,9 @@
 package org.opendatamesh.odm.cli.commands.blueprint.init;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.odm.cli.commands.blueprint.BlueprintCommands;
 import org.opendatamesh.odm.cli.utils.InputManagerUtils;
+import org.opendatamesh.odm.cli.utils.ObjectMapperUtils;
 import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintResource;
 import org.opendatamesh.platform.pp.blueprint.api.resources.ConfigResource;
 import org.springframework.http.HttpStatus;
@@ -38,25 +37,17 @@ public class InitBlueprintCommand implements Runnable {
 
     @Override
     public void run() {
-
-        ObjectMapper objectMapper = new ObjectMapper();
         ResponseEntity<BlueprintResource> blueprintResourceResponseEntity;
-
         try {
-
             blueprintResourceResponseEntity = blueprintCommands.getBlueprintClient().readOneBlueprint(blueprintId);
-
             if (blueprintResourceResponseEntity.getStatusCode().equals(HttpStatus.OK)){
-
                 BlueprintResource blueprintResource = blueprintResourceResponseEntity.getBody();
-                List<Map<String,String>> blueprintParams = objectMapper.readValue(
+                List<Map<String,String>> blueprintParams = ObjectMapperUtils.convertString(
                         blueprintResource.getBlueprintParams(), new TypeReference<>() {}
                 );
-
                 ConfigResource configResource = new ConfigResource();
                 String targetRepo = InputManagerUtils.getValueFromUser("Insert target repo: ");
                 configResource.setTargetRepo(targetRepo);
-
                 String createRepo = InputManagerUtils.getValueFromUser("Create repo [T/F]: ");
                 switch (createRepo){
                     case "T":
@@ -69,22 +60,17 @@ public class InitBlueprintCommand implements Runnable {
                         System.out.println("Invalid input");
                         return;
                 }
-
                 Map<String, String> configMap = new HashMap<>();
-
                 for(Map<String,String> param : blueprintParams) {
-
                     String message = "Insert a value (blank for default) for param: \n{ \n\tName: "
                             + param.get("name") + ", \n\tDescription: " + param.get("description") +
                             ", \n\tDefault value: " + param.get("defaultValue")  +  "\n}";
-
                     String paramInput = InputManagerUtils.getValueFromUser(message, param.get("defaultValue"));
                     configMap.put(param.get("name"), paramInput);
                 }
                 configResource.setConfig(configMap);
                 ResponseEntity<Void> blueprintResponseEntity =
                         blueprintCommands.getBlueprintClient().instanceBlueprint(blueprintId, configResource);
-
                 if(blueprintResponseEntity.getStatusCode().equals(HttpStatus.OK))
                     System.out.println("Blueprint instanced correctly");
                 else
@@ -92,11 +78,10 @@ public class InitBlueprintCommand implements Runnable {
             }
             else
                 System.out.println("Something went wrong when communicating with Blueprint Server");
-
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }catch (ResourceAccessException e){
+        } catch (ResourceAccessException e){
             System.out.println("Impossible to connect with blueprint server. Verify the URL and retry");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 

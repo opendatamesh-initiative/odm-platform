@@ -1,8 +1,8 @@
 package org.opendatamesh.odm.cli.commands.policy.publish;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.opendatamesh.odm.cli.utils.FileReaderUtils;
-import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
+import org.opendatamesh.odm.cli.utils.ObjectMapperUtils;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +24,6 @@ public class PublishPolicyEngineCommand implements Runnable {
     @ParentCommand
     private PolicyPublishCommand policyPublishCommand;
 
-    private static final ObjectMapper objectMapper = ObjectMapperFactory.JSON_MAPPER;
-
     @Option(
             names = "--engine-file",
             description = "Path of the JSON descriptor of the Policy Engine object",
@@ -37,7 +35,7 @@ public class PublishPolicyEngineCommand implements Runnable {
     public void run() {
         PolicyEngineResource policyEngine;
         try {
-            policyEngine = objectMapper.convertValue(
+            policyEngine = ObjectMapperUtils.stringToResource(
                     FileReaderUtils.readFileFromPath(policyEngineDescriptorPath),
                     PolicyEngineResource.class
             );
@@ -48,11 +46,11 @@ public class PublishPolicyEngineCommand implements Runnable {
             return;
         }
         try {
-            ResponseEntity<PolicyEngineResource> engineResponseEntity =
+            ResponseEntity<ObjectNode> engineResponseEntity =
                     policyPublishCommand.policyCommands.getPolicyClient().createPolicyEngineResponseEntity(policyEngine);
             if(engineResponseEntity.getStatusCode().equals(HttpStatus.CREATED)) {
-                policyEngine = engineResponseEntity.getBody();
-                System.out.println("Policy Engine CREATED:\n" + objectMapper.writeValueAsString(policyEngine));
+                policyEngine = ObjectMapperUtils.convertObjectNode(engineResponseEntity.getBody(), PolicyEngineResource.class);
+                System.out.println("Policy Engine CREATED:\n" + ObjectMapperUtils.formatAsString(policyEngine));
             }
             else
                 System.out.println("Got an unexpected response. Error code: " + engineResponseEntity.getStatusCode());

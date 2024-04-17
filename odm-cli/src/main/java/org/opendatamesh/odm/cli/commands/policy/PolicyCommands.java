@@ -7,7 +7,7 @@ import org.opendatamesh.odm.cli.commands.policy.update.PolicyUpdateCommand;
 import org.opendatamesh.odm.cli.commands.policy.validate.PolicyValidateCommand;
 import org.opendatamesh.odm.cli.utils.FileReaderUtils;
 import org.opendatamesh.odm.cli.utils.InputManagerUtils;
-import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
+import org.opendatamesh.odm.cli.utils.ObjectMapperUtils;
 import org.opendatamesh.platform.pp.policy.api.clients.PolicyClientImpl;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -70,7 +70,7 @@ public class PolicyCommands implements Runnable{
             throw new RuntimeException("The policy server URL wasn't specified");
         }
 
-        return new PolicyClientImpl(serverUrl, ObjectMapperFactory.JSON_MAPPER);
+        return new PolicyClientImpl(serverUrl, ObjectMapperUtils.getObjectMapper());
     }
 
     public static void main(String[] args) {

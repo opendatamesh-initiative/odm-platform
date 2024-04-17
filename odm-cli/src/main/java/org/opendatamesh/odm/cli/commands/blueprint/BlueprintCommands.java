@@ -13,7 +13,6 @@ import picocli.CommandLine.Option;
 import java.io.IOException;
 import java.util.Properties;
 
-
 @Command(
         name = "blueprint",
         description = "allows to communicate with blueprint module",

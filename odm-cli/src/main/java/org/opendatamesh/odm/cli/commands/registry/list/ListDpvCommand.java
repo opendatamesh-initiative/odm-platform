@@ -28,17 +28,14 @@ public class ListDpvCommand implements Runnable {
     @Override
     public void run() {
         try {
-
             ResponseEntity<DataProductResource> dataProductResourceResponseEntity =
                     registryListCommand.registryCommands.getRegistryClient().getDataProduct(dataProductId);
             if(!dataProductResourceResponseEntity.getStatusCode().is2xxSuccessful()) {
                 System.out.println("Data Product [" + dataProductId +"] not found.");
                 return;
             }
-
             ResponseEntity<String[]> dataProductVersionsResponseEntity =
                     registryListCommand.registryCommands.getRegistryClient().getDataProductVersions(dataProductId);
-
             if(dataProductVersionsResponseEntity.getStatusCode().equals(HttpStatus.OK)) {
                 String[] dataProductVersions = dataProductVersionsResponseEntity.getBody();
                 if (dataProductVersions.length == 0)
@@ -48,7 +45,6 @@ public class ListDpvCommand implements Runnable {
             }
             else
                 System.out.println("Error in response from Registry Server");
-
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

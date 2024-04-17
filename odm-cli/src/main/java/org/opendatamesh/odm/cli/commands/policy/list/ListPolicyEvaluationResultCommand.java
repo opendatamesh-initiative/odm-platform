@@ -1,8 +1,9 @@
 package org.opendatamesh.odm.cli.commands.policy.list;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.opendatamesh.odm.cli.utils.JsonUtils;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
-import org.opendatamesh.platform.pp.policy.api.resources.PagedPolicyEvaluationResultResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,10 +29,12 @@ public class ListPolicyEvaluationResultCommand implements Runnable {
     @Override
     public void run() {
         try {
-            ResponseEntity<PagedPolicyEvaluationResultResource> resultResourceResponseEntity =
+            ResponseEntity<ObjectNode> resultResourceResponseEntity =
                     policyListCommand.policyCommands.getPolicyClient().readAllPolicyEvaluationResultsResponseEntity();
             if(resultResourceResponseEntity.getStatusCode().equals(HttpStatus.OK)) {
-                List<PolicyEvaluationResultResource> results = resultResourceResponseEntity.getBody().getContent();
+                List<PolicyEvaluationResultResource> results = JsonUtils.extractListFromPageFromObjectNode(
+                        resultResourceResponseEntity.getBody(), PolicyEvaluationResultResource.class
+                );
                 if (results.size() == 0)
                     System.out.println("[]");
                 for (PolicyEvaluationResultResource result : results)

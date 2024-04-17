@@ -48,7 +48,7 @@ git commit -m "Override or create subdirectory $DIRECTORY and add docs inside it
 # Push changes
 git push origin main
 git checkout pre-deploy
-git merge main
+git merge main --no-edit
 git push
 
 # Clean up

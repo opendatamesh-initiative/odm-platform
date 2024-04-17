@@ -1,17 +1,15 @@
 package org.opendatamesh.platform.pp.policy.server;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.assertj.core.api.AssertionsForClassTypes;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.BeforeEach;
-import org.opendatamesh.platform.core.commons.clients.ODMIntegrationTest;
-import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
+import org.opendatamesh.platform.core.commons.test.ODMIntegrationTest;
+import org.opendatamesh.platform.core.commons.test.ODMResourceBuilder;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.policy.api.clients.PolicyClientImpl;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationRequestResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
-import org.opendatamesh.platform.pp.policy.api.resources.exceptions.PolicyApiStandardErrors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,17 +20,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.jdbc.JdbcTestUtils;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
 import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.fail;
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 //@ActiveProfiles("test")
 //@ActiveProfiles("testpostgresql")
@@ -45,10 +39,6 @@ public class ODMPolicyIT extends ODMIntegrationTest {
 
     protected PolicyClientImpl policyClient;
 
-    protected ODMPolicyResourceBuilder resourceBuilder;
-
-    protected ObjectMapper mapper;
-
     protected Logger logger = LoggerFactory.getLogger(ODMPolicyIT.class);
 
     protected final String DB_TABLES_POSTGRESQL = "src/test/resources/db/tables_postgresql.txt";
@@ -57,34 +47,25 @@ public class ODMPolicyIT extends ODMIntegrationTest {
 
     @PostConstruct
     public void init() {
-
         mapper = ObjectMapperFactory.JSON_MAPPER;
-        resourceBuilder = new ODMPolicyResourceBuilder();
+        resourceBuilder = new ODMResourceBuilder(mapper);
         policyClient = new PolicyClientImpl("http://localhost:" + port, mapper);
-
     }
 
     @BeforeEach
-    public void cleanDbState(@Autowired JdbcTemplate jdbcTemplate, @Autowired Environment environment)
-            throws IOException {
+    public void cleanDbState(
+            @Autowired JdbcTemplate jdbcTemplate, @Autowired Environment environment
+    ) throws IOException {
         String activeProfile = Arrays.stream(environment.getActiveProfiles()).findFirst().get();
-        String[] tableSet;
         if (activeProfile.equals("testpostgresql")) {
-            tableSet = Files.readAllLines(new File(DB_TABLES_POSTGRESQL).toPath(), Charset.defaultCharset())
-                    .toArray(new String[0]);
-            JdbcTestUtils.deleteFromTables(
-                    jdbcTemplate,
-                    tableSet);
+            String[] tableSet = truncateAllTablesFromDb(jdbcTemplate, new File(DB_TABLES_POSTGRESQL));
             logger.debug("Postgres tables [" + tableSet + "] sucesfully truncated");
         } else if (activeProfile.equals("testmysql") || activeProfile.equals("localmysql")) {
-            tableSet = Files.readAllLines(new File(DB_TABLES_MYSQL).toPath(), Charset.defaultCharset())
-                    .toArray(new String[0]);
-            JdbcTestUtils.deleteFromTables(
-                    jdbcTemplate,
-                    tableSet);
+            String[] tableSet = truncateAllTablesFromDb(jdbcTemplate, new File(DB_TABLES_MYSQL));
             logger.debug("Mysql tables [" + tableSet + "] sucesfully truncated");
         }
     }
+
 
     // ======================================================================================
     // Create test basic resources
@@ -106,7 +87,7 @@ public class ODMPolicyIT extends ODMIntegrationTest {
         PolicyEngineResource policyEngineResource = new PolicyEngineResource();
         policyEngineResource.setId(engineId);
         policyResource.setPolicyEngine(policyEngineResource);
-        ResponseEntity<PolicyResource> postPolicyResponse = null;
+        ResponseEntity<ObjectNode> postPolicyResponse = null;
 
         try {
             postPolicyResponse = policyClient.createPolicyResponseEntity(policyResource);
@@ -117,7 +98,7 @@ public class ODMPolicyIT extends ODMIntegrationTest {
         }
 
         verifyResponseEntity(postPolicyResponse, HttpStatus.CREATED, true);
-        policyResource = postPolicyResponse.getBody();
+        policyResource = mapper.convertValue(postPolicyResponse.getBody(), PolicyResource.class);
 
         return policyResource;
 
@@ -136,8 +117,7 @@ public class ODMPolicyIT extends ODMIntegrationTest {
     protected PolicyEngineResource createPolicyEngine(String filePath) {
 
         PolicyEngineResource policyEngineResource = createPolicyEngineResource(filePath);
-
-        ResponseEntity<PolicyEngineResource> postPolicyEngineResponse = null;
+        ResponseEntity<ObjectNode> postPolicyEngineResponse = null;
 
         try {
             postPolicyEngineResponse = policyClient.createPolicyEngineResponseEntity(policyEngineResource);
@@ -148,7 +128,7 @@ public class ODMPolicyIT extends ODMIntegrationTest {
         }
 
         verifyResponseEntity(postPolicyEngineResponse, HttpStatus.CREATED, true);
-        policyEngineResource = postPolicyEngineResponse.getBody();
+        policyEngineResource = mapper.convertValue(postPolicyEngineResponse.getBody(), PolicyEngineResource.class);
 
         return policyEngineResource;
 
@@ -168,8 +148,7 @@ public class ODMPolicyIT extends ODMIntegrationTest {
 
         PolicyEvaluationResultResource policyEvaluationResultResource = createPolicyEvaluationResultResource(filePath);
         policyEvaluationResultResource.setPolicyId(policyId);
-
-        ResponseEntity<PolicyEvaluationResultResource> postPolicyEvaluationResultResponse = null;
+        ResponseEntity<ObjectNode> postPolicyEvaluationResultResponse;
 
         try {
             postPolicyEvaluationResultResponse = policyClient.createPolicyEvaluationResultResponseEntity(policyEvaluationResultResource);
@@ -180,7 +159,9 @@ public class ODMPolicyIT extends ODMIntegrationTest {
         }
 
         verifyResponseEntity(postPolicyEvaluationResultResponse, HttpStatus.CREATED, true);
-        policyEvaluationResultResource = postPolicyEvaluationResultResponse.getBody();
+        policyEvaluationResultResource = mapper.convertValue(
+                postPolicyEvaluationResultResponse.getBody(), PolicyEvaluationResultResource.class
+        );
 
         return policyEvaluationResultResource;
 
@@ -194,41 +175,6 @@ public class ODMPolicyIT extends ODMIntegrationTest {
             fail("Impossible to read policy evaluation request from file: " + t.getMessage());
             return null;
         }
-    }
-
-    // ======================================================================================
-    // Verify test basic resources
-    // ======================================================================================
-
-    protected ResponseEntity verifyResponseEntity(ResponseEntity responseEntity, HttpStatus statusCode,
-                                                  boolean checkBody) {
-        assertThat(responseEntity.getStatusCode()).isEqualByComparingTo(statusCode);
-        if (checkBody) {
-            AssertionsForClassTypes.assertThat(responseEntity.getBody()).isNotNull();
-        }
-        return responseEntity;
-    }
-
-    protected void verifyResponseError(
-            ResponseEntity<ErrorRes> errorResponse,
-            HttpStatus status,
-            PolicyApiStandardErrors error
-    ) {
-        assertThat(errorResponse.getStatusCode()).isEqualByComparingTo(status);
-        AssertionsForClassTypes.assertThat(errorResponse.getBody().getCode()).isEqualTo(error.code());
-        AssertionsForClassTypes.assertThat(errorResponse.getBody().getDescription()).isEqualTo(error.description());
-    }
-
-    protected void verifyResponseError(
-            ResponseEntity<ErrorRes> errorResponse,
-            HttpStatus status,
-            PolicyApiStandardErrors error,
-            String message
-    ) {
-        assertThat(errorResponse.getStatusCode()).isEqualByComparingTo(status);
-        AssertionsForClassTypes.assertThat(errorResponse.getBody().getCode()).isEqualTo(error.code());
-        AssertionsForClassTypes.assertThat(errorResponse.getBody().getDescription()).isEqualTo(error.description());
-        AssertionsForClassTypes.assertThat(errorResponse.getBody().getMessage()).isEqualTo(message);
     }
 
 }

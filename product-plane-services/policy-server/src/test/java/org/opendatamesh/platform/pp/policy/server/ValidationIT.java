@@ -1,6 +1,7 @@
 package org.opendatamesh.platform.pp.policy.server;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.pp.policy.api.resources.*;
 import org.springframework.http.HttpStatus;
@@ -30,10 +31,12 @@ public class ValidationIT extends ODMPolicyIT {
         PolicyEvaluationRequestResource evaluationRequestResource = createPolicyEvaluationRequestResource(
                 ODMPolicyResources.RESOURCE_POLICY_EVALUATION_REQUEST
         );
-        ResponseEntity<ValidationResponseResource> postResponse =
+        ResponseEntity<ObjectNode> postResponse =
                 policyClient.validateInputObjectResponseEntity(evaluationRequestResource);
         verifyResponseEntity(postResponse, HttpStatus.OK, true);
-        ValidationResponseResource validationResponseResource = postResponse.getBody();
+        ValidationResponseResource validationResponseResource = mapper.convertValue(
+                postResponse.getBody(), ValidationResponseResource.class
+        );
         List<PolicyEvaluationResultResource> evaluatedPolicies = validationResponseResource.getPolicyResults();
 
         // Verification
@@ -49,8 +52,10 @@ public class ValidationIT extends ODMPolicyIT {
         assertThat(policyResource.getEvaluationEvent()).isEqualTo(evaluationRequestResource.getEvent().toString());
 
         // Verify PolicyEvaluationResults in DB
-        ResponseEntity<PagedPolicyEvaluationResultResource> getResponse = policyClient.readAllPolicyEvaluationResultsResponseEntity();
-        List<PolicyEvaluationResultResource> policyEvaluationResults = getResponse.getBody().getContent();
+        ResponseEntity<ObjectNode> getResponse = policyClient.readAllPolicyEvaluationResultsResponseEntity();
+        List<PolicyEvaluationResultResource> policyEvaluationResults = extractListFromPageFromObjectNode(
+                getResponse.getBody(), PolicyEvaluationResultResource.class
+        );
         assertThat(policyEvaluationResults.size()).isEqualTo(2);
         assertThat(policyEvaluationResults.get(0).getPolicyId()).isEqualTo(evaluatedPolicies.get(0).getPolicyId());
         assertThat(policyEvaluationResults.get(0).getResult()).isEqualTo(evaluatedPolicies.get(0).getResult());
@@ -80,10 +85,12 @@ public class ValidationIT extends ODMPolicyIT {
         PolicyEvaluationRequestResource evaluationRequestResource = createPolicyEvaluationRequestResource(
                 ODMPolicyResources.RESOURCE_POLICY_EVALUATION_REQUEST_2
         );
-        ResponseEntity<ValidationResponseResource> postResponse =
+        ResponseEntity<ObjectNode> postResponse =
                 policyClient.validateInputObjectResponseEntity(evaluationRequestResource);
         verifyResponseEntity(postResponse, HttpStatus.OK, true);
-        ValidationResponseResource validationResponseResource = postResponse.getBody();
+        ValidationResponseResource validationResponseResource = mapper.convertValue(
+                postResponse.getBody(), ValidationResponseResource.class
+        );
         List<PolicyEvaluationResultResource> evaluatedPolicies = validationResponseResource.getPolicyResults();
 
         // Verification

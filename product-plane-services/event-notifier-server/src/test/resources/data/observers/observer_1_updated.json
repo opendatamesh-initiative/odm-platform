@@ -1,0 +1,5 @@
+{
+  "name": "opa-policy-checker",
+  "displayName": "OPA Policy Checker V2",
+  "observerServerBaseUrl": "http://localhost:9011"
+}

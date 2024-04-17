@@ -1,6 +1,6 @@
 package org.opendatamesh.platform.pp.policy.server.database.entities;
 
-import org.opendatamesh.platform.pp.policy.server.database.utils.TimestampedEntity;
+import org.opendatamesh.platform.core.commons.database.utils.TimestampedEntity;
 
 import javax.persistence.*;
 
@@ -158,4 +158,5 @@ public class Policy extends TimestampedEntity {
     public void setEvaluationEvent(String evaluationEvent) {
         this.evaluationEvent = evaluationEvent;
     }
+
 }

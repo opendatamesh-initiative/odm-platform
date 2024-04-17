@@ -1,9 +1,9 @@
 package org.opendatamesh.platform.pp.policy.server;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
-import org.opendatamesh.platform.pp.policy.api.resources.PagedPolicyEvaluationResultResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
@@ -63,12 +63,12 @@ public class PolicyEvaluationResultIT extends ODMPolicyIT {
         policyEvaluationResultResourceUpdated.setCreatedAt(policyEvaluationResultResource.getCreatedAt());
 
         // PUT request
-        ResponseEntity<PolicyEvaluationResultResource> putResponse = policyClient.updatePolicyEvaluationResultResponseEntity(
+        ResponseEntity<ObjectNode> putResponse = policyClient.updatePolicyEvaluationResultResponseEntity(
                 policyEvaluationResultResource.getId(),
                 policyEvaluationResultResourceUpdated
         );
         verifyResponseEntity(putResponse, HttpStatus.OK, true);
-        policyEvaluationResultResourceUpdated = putResponse.getBody();
+        policyEvaluationResultResourceUpdated = mapper.convertValue(putResponse.getBody(), PolicyEvaluationResultResource.class);
 
         // Verification
         verifyResourcePolicyEvaluationResultOneUpdated(policyEvaluationResultResourceUpdated);
@@ -91,9 +91,11 @@ public class PolicyEvaluationResultIT extends ODMPolicyIT {
         createPolicyEvaluationResult(ODMPolicyResources.RESOURCE_POLICY_EVALUATION_RESULT_2, parentPolicyResource.getId());
 
         // GET request
-        ResponseEntity<PagedPolicyEvaluationResultResource> getResponse = policyClient.readAllPolicyEvaluationResultsResponseEntity();
+        ResponseEntity<ObjectNode> getResponse = policyClient.readAllPolicyEvaluationResultsResponseEntity();
         verifyResponseEntity(getResponse, HttpStatus.OK, true);
-        List<PolicyEvaluationResultResource> policyEvaluationResults = getResponse.getBody().getContent();
+        List<PolicyEvaluationResultResource> policyEvaluationResults = extractListFromPageFromObjectNode(
+                getResponse.getBody(), PolicyEvaluationResultResource.class
+        );
 
         // Verification
         assertThat(policyEvaluationResults).size().isEqualTo(2);
@@ -120,9 +122,9 @@ public class PolicyEvaluationResultIT extends ODMPolicyIT {
         );
 
         // GET request
-        ResponseEntity<PolicyEvaluationResultResource> getResponse = policyClient.readOnePolicyEvaluationResultResponseEntity(policyEvaluationResultResource.getId());
+        ResponseEntity<ObjectNode> getResponse = policyClient.readOnePolicyEvaluationResultResponseEntity(policyEvaluationResultResource.getId());
         verifyResponseEntity(getResponse, HttpStatus.OK, true);
-        policyEvaluationResultResource = getResponse.getBody();
+        policyEvaluationResultResource = mapper.convertValue(getResponse.getBody(), PolicyEvaluationResultResource.class);
 
         // Verification
         verifyResourcePolicyEvaluationResultOne(policyEvaluationResultResource);
@@ -147,12 +149,12 @@ public class PolicyEvaluationResultIT extends ODMPolicyIT {
         );
 
         // DELETE request
-        ResponseEntity<Void> deleteResponse = policyClient.deletePolicyEvaluationResultResponseEntity(policyEvaluationResultResource.getId());
+        ResponseEntity<ObjectNode> deleteResponse = policyClient.deletePolicyEvaluationResultResponseEntity(policyEvaluationResultResource.getId());
         verifyResponseEntity(deleteResponse, HttpStatus.OK, false);
 
         // GET request to check that the entity is not on the DB anymore
-        ResponseEntity<ErrorRes> getResponse = policyClient.readOnePolicyEvaluationResultResponseEntity(policyEvaluationResultResource.getId());
-        verifyResponseError(
+        ResponseEntity<ObjectNode> getResponse = policyClient.readOnePolicyEvaluationResultResponseEntity(policyEvaluationResultResource.getId());
+        verifyResponseErrorObjectNode(
                 getResponse,
                 HttpStatus.NOT_FOUND,
                 PolicyApiStandardErrors.SC404_03_POLICY_EVALUATION_RESULT_NOT_FOUND,

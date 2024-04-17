@@ -1,0 +1,14 @@
+{
+  "name": "dataproduct-name-checker",
+  "displayName": "Data Product Name Checker",
+  "description": "Check whether the name of the input Data Product is compliant with global naming convention or not",
+  "blockingFlag": true,
+  "rawContent": "package dataproduct-name-checker\n\ndefault allow := false\n\nallow := true {                                     \n    startswith(input.name, \"dp-\")\n}",
+  "evaluationEvent": "DATA_PRODUCT_CREATION",
+  "suite": "Suite Name",
+  "filteringExpression": "afterState.dataProductVersion.info.domain == 'sampleDomain' && afterState.dataProductVersion.info.domain != 'sampleDomainTwo'",
+  "policyEngine":{
+    "id": 1,
+    "name": "opa-policy-checker"
+  }
+}

@@ -1,7 +1,6 @@
 package org.opendatamesh.odm.cli.commands.registry.list;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import org.opendatamesh.odm.cli.commands.registry.RegistryCommands;
+import org.opendatamesh.odm.cli.utils.ObjectMapperUtils;
 import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,31 +17,27 @@ import picocli.CommandLine.ParentCommand;
 public class ListDpCommand implements Runnable {
 
     @ParentCommand
-    private ListCommand listCommand;
+    private RegistryListCommand registryListCommand;
 
     @Override
     public void run() {
         try {
-
             ResponseEntity<DataProductResource[]> dataProductResourceResponseEntity =
-                    listCommand.registryCommands.getRegistryClient().getDataProducts();
-
+                    registryListCommand.registryCommands.getRegistryClient().getDataProducts();
             if(dataProductResourceResponseEntity.getStatusCode().equals(HttpStatus.OK)) {
                 DataProductResource[] dataProducts = dataProductResourceResponseEntity.getBody();
                 if (dataProducts.length == 0)
                     System.out.println("[]");
                 for (DataProductResource dataProduct : dataProducts)
-                    System.out.println(dataProduct.toEventString());
+                    System.out.println(ObjectMapperUtils.formatAsString(dataProduct));
             }
             else
                 System.out.println("Error in response from Registry Server");
-
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
         } catch (ResourceAccessException e) {
             System.out.println("Impossible to connect with Registry server. Verify the URL and retry");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-
     }
 
 }

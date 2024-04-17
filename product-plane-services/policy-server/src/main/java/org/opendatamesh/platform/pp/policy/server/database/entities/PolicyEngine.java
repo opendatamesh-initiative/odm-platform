@@ -3,7 +3,7 @@ package org.opendatamesh.platform.pp.policy.server.database.entities;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.opendatamesh.platform.pp.policy.server.database.utils.TimestampedEntity;
+import org.opendatamesh.platform.core.commons.database.utils.TimestampedEntity;
 
 import javax.persistence.*;
 import java.util.List;

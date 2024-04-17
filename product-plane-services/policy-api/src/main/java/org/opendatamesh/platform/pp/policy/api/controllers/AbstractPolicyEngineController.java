@@ -40,8 +40,8 @@ public abstract class AbstractPolicyEngineController implements PolicyEngineClie
             "   \"name\": \"opa-policy-checker\",\n" + //
             "   \"displayName\": \"OPA Policy Checker\",\n" + //
             "   \"adapterUrl\": \"http://localhost:9001/api/v1/up/policy-engine-adapter\",\n" + //
-            "   \"createdAt\": \"a\",\n" + //
-            "   \"updatedAt\": \"a\"\n" + //
+            "   \"createdAt\": \"2024-03-21T12:04:11.000+00:00\",\n" + //
+            "   \"updatedAt\": \"2024-03-21T12:06:31.000+00:00\"\n" + //
             "}";
 
     private static final String EXAMPLE_POLICY_ENGINE_CREATE = "{\n" + //
@@ -55,7 +55,7 @@ public abstract class AbstractPolicyEngineController implements PolicyEngineClie
             "   \"name\": \"opa-policy-checker\",\n" + //
             "   \"displayName\": \"OPA Policy Checker\",\n" + //
             "   \"adapterUrl\": \"http://localhost:9001/api/v1/up/policy-engine-adapter\",\n" + //
-            "   \"createdAt\": \"a\"\n" + //
+            "   \"createdAt\": \"2024-03-21T12:04:11.000+00:00\"\n" + //
             "}";
 
 

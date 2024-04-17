@@ -64,6 +64,9 @@ odm:
     policyService:
       active: false
       address: http://localhost:8005
+    eventNotifierService:
+      active: true
+      address: http://localhost:8006
   utilityPlane:
     notificationServices:
       blindata:

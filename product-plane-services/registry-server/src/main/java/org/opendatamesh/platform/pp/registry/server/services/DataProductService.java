@@ -17,8 +17,7 @@ import org.opendatamesh.platform.pp.registry.server.database.entities.dataproduc
 import org.opendatamesh.platform.pp.registry.server.database.mappers.DataProductMapper;
 import org.opendatamesh.platform.pp.registry.server.database.mappers.DataProductVersionMapper;
 import org.opendatamesh.platform.pp.registry.server.database.repositories.DataProductRepository;
-import org.opendatamesh.platform.up.notification.api.resources.EventResource;
-import org.opendatamesh.platform.up.notification.api.resources.EventType;
+import org.opendatamesh.platform.pp.registry.server.services.proxies.RegistryEventNotifierProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +50,7 @@ public class DataProductService {
     private DataProductVersionMapper dataProductVersionMapper;
 
     @Autowired
-    EventNotifierProxy eventNotifierProxy;
+    RegistryEventNotifierProxy registryEventNotifierProxy;
 
     @Value("${odm.schemas.validation.baseUrl}")
     private String schemaValidationBaseUrl;
@@ -107,7 +106,7 @@ public class DataProductService {
                 t);
         }
 
-        eventNotifierProxy.notifyDataProductCreation(dataProductMapper.toResource(dataProduct));
+        registryEventNotifierProxy.notifyDataProductCreation(dataProductMapper.toResource(dataProduct));
        
         return dataProduct;
     }
@@ -279,7 +278,7 @@ public class DataProductService {
                 t);
         }
 
-        eventNotifierProxy.notifyDataProductUpdate(
+        registryEventNotifierProxy.notifyDataProductUpdate(
                 dataProductMapper.toResource(oldDataProduct),
                 dataProductMapper.toResource(dataProduct)
         );
@@ -307,7 +306,7 @@ public class DataProductService {
                 t);
         }
 
-        eventNotifierProxy.notifyDataProductDeletion(dataProductMapper.toResource(dataProduct));
+        registryEventNotifierProxy.notifyDataProductDeletion(dataProductMapper.toResource(dataProduct));
 
         return dataProduct;
     }

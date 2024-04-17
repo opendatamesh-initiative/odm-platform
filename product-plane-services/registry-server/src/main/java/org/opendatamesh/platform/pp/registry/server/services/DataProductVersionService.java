@@ -28,6 +28,8 @@ import org.opendatamesh.platform.pp.registry.server.database.entities.dataproduc
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.variables.Variable;
 import org.opendatamesh.platform.pp.registry.server.database.mappers.DataProductVersionMapper;
 import org.opendatamesh.platform.pp.registry.server.database.repositories.DataProductVersionRepository;
+import org.opendatamesh.platform.pp.registry.server.services.proxies.RegistryEventNotifierProxy;
+import org.opendatamesh.platform.pp.registry.server.services.proxies.RegistryPolicyServiceProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,7 +63,7 @@ public class DataProductVersionService {
     private DataProductVersionMapper dataProductVersionMapper;
 
     @Autowired
-    EventNotifierProxy eventNotifierProxy;
+    RegistryEventNotifierProxy registryEventNotifierProxy;
 
     @Autowired
     private RegistryPolicyServiceProxy policyServiceProxy;
@@ -131,7 +133,7 @@ public class DataProductVersionService {
                     t);
         }
 
-        eventNotifierProxy.notifyDataProductVersionCreation(dataProductVersionMapper.toResource(dataProductVersion));
+        registryEventNotifierProxy.notifyDataProductVersionCreation(dataProductVersionMapper.toResource(dataProductVersion));
 
         return dataProductVersion;
     }
@@ -513,7 +515,7 @@ public class DataProductVersionService {
             );
         }
 
-        eventNotifierProxy.notifyDataProductVersionDeletion(dataProductVersionMapper.toResource(dataProductVersion));
+        registryEventNotifierProxy.notifyDataProductVersionDeletion(dataProductVersionMapper.toResource(dataProductVersion));
 
     }
 

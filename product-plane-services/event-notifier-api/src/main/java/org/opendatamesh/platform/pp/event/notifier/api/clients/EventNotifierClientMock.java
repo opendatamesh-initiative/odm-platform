@@ -1,33 +1,44 @@
 package org.opendatamesh.platform.pp.event.notifier.api.clients;
 
-import org.opendatamesh.platform.pp.event.notifier.api.mock.server.EventNotifier;
-import org.opendatamesh.platform.pp.event.notifier.api.mock.server.EventNotifierMockServer;
-import org.opendatamesh.platform.pp.event.notifier.api.resources.ListenerResource;
+import org.opendatamesh.platform.pp.event.notifier.api.resources.ObserverResource;
+import org.opendatamesh.platform.pp.event.notifier.api.resources.ObserverSearchOptions;
 import org.opendatamesh.platform.up.notification.api.resources.EventResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-public class EventNotifierClientMock implements EventNotifierClient{
+import java.util.Random;
 
-    private EventNotifierMockServer eventNotifierMockServer;
+public class EventNotifierClientMock implements EventNotifierClient {
+
+    private Random random = new Random();
 
     public EventNotifierClientMock() {
-        EventNotifier eventNotifier = new EventNotifier();
-        this.eventNotifierMockServer = new EventNotifierMockServer(eventNotifier);
+
     }
 
-    @Override
-    public ListenerResource addListener(ListenerResource listenerResource) {
-        eventNotifierMockServer.addListener(listenerResource);
+    public ObserverResource addObserver(ObserverResource observerResource) {
+        observerResource.setId(random.nextLong());
+        return observerResource;
+    }
+
+    public ObserverResource updateObserver(Long id, ObserverResource observerResource) {
+        return observerResource;
+    }
+
+    public Page<ObserverResource> getObservers(Pageable pageable, ObserverSearchOptions searchOptions) {
         return null;
     }
 
-    @Override
-    public void removeListener(Long id) {
-        eventNotifierMockServer.removeListener(id);
+    public ObserverResource getObserver(Long id) {
+        return null;
     }
 
-    @Override
+    public void removeObserver(Long id) {
+
+    }
+
     public void notifyEvent(EventResource eventResource) {
-        eventNotifierMockServer.notifyEvent(eventResource);
+
     }
 
 }

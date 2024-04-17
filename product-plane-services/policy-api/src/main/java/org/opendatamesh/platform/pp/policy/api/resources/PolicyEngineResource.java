@@ -3,7 +3,7 @@ package org.opendatamesh.platform.pp.policy.api.resources;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.opendatamesh.platform.pp.policy.api.resources.utils.TimestampedResource;
+import org.opendatamesh.platform.core.commons.resources.utils.TimestampedResource;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PolicyEngineResource extends TimestampedResource {

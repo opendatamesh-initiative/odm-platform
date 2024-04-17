@@ -1,9 +1,9 @@
 package org.opendatamesh.platform.pp.policy.server.database.repositories;
 
+import org.opendatamesh.platform.core.commons.database.utils.SpecsUtils;
 import org.opendatamesh.platform.pp.policy.server.database.entities.PolicyEvaluationResult;
+import org.opendatamesh.platform.core.commons.database.utils.PagingAndSortingAndSpecificationExecutorRepository;
 import org.opendatamesh.platform.pp.policy.server.database.entities.PolicyEvaluationResult_;
-import org.opendatamesh.platform.pp.policy.server.database.utils.PagingAndSortingAndSpecificationExecutorRepository;
-import org.opendatamesh.platform.pp.policy.server.database.utils.SpecsUtils;
 import org.springframework.data.jpa.domain.Specification;
 
 public interface PolicyEvaluationResultRepository extends PagingAndSortingAndSpecificationExecutorRepository<PolicyEvaluationResult, Long> {

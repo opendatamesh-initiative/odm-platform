@@ -6,7 +6,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.opendatamesh.platform.pp.policy.api.mappers.utils.JsonNodeUtils;
 import org.opendatamesh.platform.pp.policy.server.database.entities.PolicyEvaluationResult;
-import org.opendatamesh.platform.pp.policy.server.database.mappers.utils.BaseMapper;
+import org.opendatamesh.platform.core.commons.database.mappers.BaseMapper;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
 
 @Mapper(componentModel = "spring")

@@ -1,9 +1,9 @@
 package org.opendatamesh.platform.pp.policy.server;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
-import org.opendatamesh.platform.pp.policy.api.resources.PagedPolicyResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
 import org.opendatamesh.platform.pp.policy.api.resources.exceptions.PolicyApiStandardErrors;
@@ -53,17 +53,17 @@ public class PolicyIT extends ODMPolicyIT {
         updatedPolicyResource.setCreatedAt(policyResource.getCreatedAt());
 
         // PUT request
-        ResponseEntity<PolicyResource> putResponse = policyClient.updatePolicyResponseEntity(
+        ResponseEntity<ObjectNode> putResponse = policyClient.updatePolicyResponseEntity(
                 policyResource.getRootId(),
                 updatedPolicyResource
         );
         verifyResponseEntity(putResponse, HttpStatus.OK, true);
-        updatedPolicyResource = putResponse.getBody();
+        updatedPolicyResource = mapper.convertValue(putResponse.getBody(), PolicyResource.class);
 
         // GET request to check the previous version too
-        ResponseEntity<PolicyResource> getResponse = policyClient.readOnePolicyVersionResponseEntity(policyResource.getId());
+        ResponseEntity<ObjectNode> getResponse = policyClient.readOnePolicyVersionResponseEntity(policyResource.getId());
         verifyResponseEntity(putResponse, HttpStatus.OK, true);
-        policyResource = getResponse.getBody();
+        policyResource = mapper.convertValue(getResponse.getBody(), PolicyResource.class);
 
         // Verification
         verifyResourcePolicyOneUpdated(policyResource, updatedPolicyResource);
@@ -86,9 +86,9 @@ public class PolicyIT extends ODMPolicyIT {
         createPolicy(ODMPolicyResources.RESOURCE_POLICY_2, parentEngineResource.getId());
 
         // GET request
-        ResponseEntity<PagedPolicyResource> readResponse = policyClient.readAllPoliciesResponseEntity();
+        ResponseEntity<ObjectNode> readResponse = policyClient.readAllPoliciesResponseEntity();
         verifyResponseEntity(readResponse, HttpStatus.OK, true);
-        List<PolicyResource> policies = readResponse.getBody().getContent();
+        List<PolicyResource> policies = extractListFromPageFromObjectNode(readResponse.getBody(), PolicyResource.class);
 
         // Verification
         assertThat(policies).size().isEqualTo(2);
@@ -111,9 +111,9 @@ public class PolicyIT extends ODMPolicyIT {
         PolicyResource policyResource = createPolicy(ODMPolicyResources.RESOURCE_POLICY_1, parentEngineResource.getId());
 
         // GET request
-        ResponseEntity<PolicyResource> readResponse = policyClient.readOnePolicyResponseEntity(policyResource.getRootId());
+        ResponseEntity<ObjectNode> readResponse = policyClient.readOnePolicyResponseEntity(policyResource.getRootId());
         verifyResponseEntity(readResponse, HttpStatus.OK, true);
-        policyResource = readResponse.getBody();
+        policyResource = mapper.convertValue(readResponse.getBody(), PolicyResource.class);
 
         // Verification
         verifyResourcePolicyOne(policyResource, true);
@@ -131,16 +131,16 @@ public class PolicyIT extends ODMPolicyIT {
         updatedPolicyResource.setPolicyEngine(parentEngineResource);
         updatedPolicyResource.setRootId(policyResource.getRootId());
         updatedPolicyResource.setCreatedAt(policyResource.getCreatedAt());
-        ResponseEntity<PolicyResource> putResponse = policyClient.updatePolicyResponseEntity(
+        ResponseEntity<ObjectNode> putResponse = policyClient.updatePolicyResponseEntity(
                 policyResource.getRootId(),
                 updatedPolicyResource
         );
-        updatedPolicyResource = putResponse.getBody();
+        updatedPolicyResource = mapper.convertValue(putResponse.getBody(), PolicyResource.class);
 
         // GET request with RootID
-        ResponseEntity<PolicyResource> getResponse = policyClient.readOnePolicyResponseEntity(updatedPolicyResource.getRootId());
+        ResponseEntity<ObjectNode> getResponse = policyClient.readOnePolicyResponseEntity(updatedPolicyResource.getRootId());
         verifyResponseEntity(getResponse, HttpStatus.OK, true);
-        updatedPolicyResource = getResponse.getBody();
+        updatedPolicyResource = mapper.convertValue(getResponse.getBody(), PolicyResource.class);
 
         // Verification
         verifyResourcePolicyOneUpdated(updatedPolicyResource, policyResource.getRootId());
@@ -161,9 +161,9 @@ public class PolicyIT extends ODMPolicyIT {
         policyClient.updatePolicyResponseEntity(policyResource.getRootId(), updatedPolicyResource);
 
         // GET request with ID of the previous policy (before update)
-        ResponseEntity<PolicyResource> getResponse = policyClient.readOnePolicyVersionResponseEntity(policyResource.getId());
+        ResponseEntity<ObjectNode> getResponse = policyClient.readOnePolicyVersionResponseEntity(policyResource.getId());
         verifyResponseEntity(getResponse, HttpStatus.OK, true);
-        policyResource = getResponse.getBody();
+        policyResource = mapper.convertValue(getResponse.getBody(), PolicyResource.class);
 
         // Verification
         verifyResourcePolicyOne(policyResource, false);
@@ -184,12 +184,12 @@ public class PolicyIT extends ODMPolicyIT {
         PolicyResource policyResource = createPolicy(ODMPolicyResources.RESOURCE_POLICY_1, parentEngineResource.getId());
 
         // DELETE request
-        ResponseEntity<Void> deleteResponse = policyClient.deletePolicyResponseEntity(policyResource.getId());
+        ResponseEntity<ObjectNode> deleteResponse = policyClient.deletePolicyResponseEntity(policyResource.getId());
         verifyResponseEntity(deleteResponse, HttpStatus.OK, false);
 
         // GET request to check that the entity is not on the DB anymore
-        ResponseEntity<ErrorRes> getResponse = policyClient.readOnePolicyResponseEntity(policyResource.getId());
-        verifyResponseError(
+        ResponseEntity<ObjectNode> getResponse = policyClient.readOnePolicyResponseEntity(policyResource.getId());
+        verifyResponseErrorObjectNode(
                 getResponse,
                 HttpStatus.NOT_FOUND,
                 PolicyApiStandardErrors.SC404_02_POLICY_NOT_FOUND,

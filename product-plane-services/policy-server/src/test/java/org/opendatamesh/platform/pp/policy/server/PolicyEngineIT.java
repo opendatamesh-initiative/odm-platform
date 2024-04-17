@@ -1,9 +1,9 @@
 package org.opendatamesh.platform.pp.policy.server;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
-import org.opendatamesh.platform.pp.policy.api.resources.PagedPolicyEngineResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineResource;
 import org.opendatamesh.platform.pp.policy.api.resources.exceptions.PolicyApiStandardErrors;
 import org.springframework.http.HttpStatus;
@@ -49,12 +49,12 @@ public class PolicyEngineIT extends ODMPolicyIT {
         policyEngineResourceUpdated.setCreatedAt(policyEngineResource.getCreatedAt());
 
         // PUT request
-        ResponseEntity<PolicyEngineResource> putResponse = policyClient.updatePolicyEngineResponseEntity(
+        ResponseEntity<ObjectNode> putResponse = policyClient.updatePolicyEngineResponseEntity(
                 policyEngineResource.getId(),
                 policyEngineResourceUpdated
         );
         verifyResponseEntity(putResponse, HttpStatus.OK, true);
-        policyEngineResourceUpdated = putResponse.getBody();
+        policyEngineResourceUpdated = mapper.convertValue(putResponse.getBody(), PolicyEngineResource.class);
 
         // Verification
         verifyResourcePolicyEngineOneUpdated(policyEngineResourceUpdated);
@@ -75,9 +75,11 @@ public class PolicyEngineIT extends ODMPolicyIT {
         createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_2);
 
         // GET request
-        ResponseEntity<PagedPolicyEngineResource> getResponse = policyClient.readAllPolicyEnginesResponseEntity();
+        ResponseEntity<ObjectNode> getResponse = policyClient.readAllPolicyEnginesResponseEntity();
         verifyResponseEntity(getResponse, HttpStatus.OK, true);
-        List<PolicyEngineResource> policyEngines = getResponse.getBody().getContent();
+        List<PolicyEngineResource> policyEngines = extractListFromPageFromObjectNode(
+                getResponse.getBody(), PolicyEngineResource.class
+        );
 
         // Verification
         assertThat(policyEngines).size().isEqualTo(2);
@@ -99,9 +101,9 @@ public class PolicyEngineIT extends ODMPolicyIT {
         PolicyEngineResource policyEngineResource = createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);
 
         // GET request
-        ResponseEntity<PolicyEngineResource> getResponse = policyClient.readOnePolicyEngineResponseEntity(policyEngineResource.getId());
+        ResponseEntity<ObjectNode> getResponse = policyClient.readOnePolicyEngineResponseEntity(policyEngineResource.getId());
         verifyResponseEntity(getResponse, HttpStatus.OK, true);
-        policyEngineResource = getResponse.getBody();
+        policyEngineResource = mapper.convertValue(getResponse.getBody(), PolicyEngineResource.class);
 
         // Verification
         verifyResourcePolicyEngineOne(policyEngineResource);
@@ -121,12 +123,12 @@ public class PolicyEngineIT extends ODMPolicyIT {
         PolicyEngineResource policyEngineResource = createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);
 
         // DELETE request
-        ResponseEntity<Void> deleteResponse = policyClient.deletePolicyEngineResponseEntity(policyEngineResource.getId());
+        ResponseEntity<ObjectNode> deleteResponse = policyClient.deletePolicyEngineResponseEntity(policyEngineResource.getId());
         verifyResponseEntity(deleteResponse, HttpStatus.OK, false);
 
         // GET request to check that the entity is not on the DB anymore
-        ResponseEntity<ErrorRes> getResponse = policyClient.readOnePolicyEngineResponseEntity(policyEngineResource.getId());
-        verifyResponseError(
+        ResponseEntity<ObjectNode> getResponse = policyClient.readOnePolicyEngineResponseEntity(policyEngineResource.getId());
+        verifyResponseErrorObjectNode(
                 getResponse,
                 HttpStatus.NOT_FOUND,
                 PolicyApiStandardErrors.SC404_01_POLICY_ENGINE_NOT_FOUND,

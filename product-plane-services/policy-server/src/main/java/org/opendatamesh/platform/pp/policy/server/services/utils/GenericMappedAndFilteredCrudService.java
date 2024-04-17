@@ -2,7 +2,7 @@ package org.opendatamesh.platform.pp.policy.server.services.utils;
 
 import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
-import org.opendatamesh.platform.pp.policy.server.database.utils.PagingAndSortingAndSpecificationExecutorRepository;
+import org.opendatamesh.platform.core.commons.database.utils.PagingAndSortingAndSpecificationExecutorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,10 +14,10 @@ import java.io.Serializable;
 @Service
 public abstract class GenericMappedAndFilteredCrudService<F, R, T, ID extends Serializable> extends GenericMappedCrudService<R, T, ID> {
     @Autowired
-    private TransactionHandler transactionHandler;
+    private PolicyTransactionHandler policyTransactionHandler;
 
     public final Page<R> findAllResourcesFiltered(Pageable pageable, F filters) {
-        return transactionHandler.runInTransaction(() ->
+        return policyTransactionHandler.runInTransaction(() ->
                 findAllFiltered(pageable, filters).map(this::toRes)
         );
     }

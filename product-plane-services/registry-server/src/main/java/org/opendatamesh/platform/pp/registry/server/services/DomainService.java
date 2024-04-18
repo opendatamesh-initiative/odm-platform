@@ -2,7 +2,7 @@ package org.opendatamesh.platform.pp.registry.server.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.platform.core.commons.servers.exceptions.*;
-import org.opendatamesh.platform.pp.event.notifier.api.clients.EventNotifierClient;
+import org.opendatamesh.platform.pp.notification.api.clients.EventNotifierClient;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
 import org.opendatamesh.platform.pp.registry.server.database.entities.DataProduct;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproduct.Domain;

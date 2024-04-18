@@ -1,16 +1,13 @@
 package org.opendatamesh.platform.pp.devops.server.configurations;
 
-import org.opendatamesh.platform.pp.event.notifier.api.clients.EventNotifierClient;
-import org.opendatamesh.platform.pp.event.notifier.api.clients.EventNotifierClientImpl;
-import org.opendatamesh.platform.pp.event.notifier.api.clients.EventNotifierClientMock;
-import org.opendatamesh.platform.pp.event.notifier.api.resources.ObserverResource;
+import org.opendatamesh.platform.pp.notification.api.clients.EventNotifierClient;
+import org.opendatamesh.platform.pp.notification.api.clients.EventNotifierClientImpl;
+import org.opendatamesh.platform.pp.notification.api.resources.ObserverResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.Profile;
 
 @Configuration
 public class DevOpsEventNotifierConfiguration {

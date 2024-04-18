@@ -11,4 +11,5 @@ public class PolicySearchOptions {
     public void setEvaluationEvent(String evaluationEvent) {
         this.evaluationEvent = evaluationEvent;
     }
+
 }

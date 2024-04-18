@@ -1,8 +1,8 @@
 package org.opendatamesh.platform.pp.registry.server.configurations;
 
-import org.opendatamesh.platform.pp.event.notifier.api.clients.EventNotifierClient;
-import org.opendatamesh.platform.pp.event.notifier.api.clients.EventNotifierClientImpl;
-import org.opendatamesh.platform.pp.event.notifier.api.resources.ObserverResource;
+import org.opendatamesh.platform.pp.notification.api.clients.EventNotifierClient;
+import org.opendatamesh.platform.pp.notification.api.clients.EventNotifierClientImpl;
+import org.opendatamesh.platform.pp.notification.api.resources.ObserverResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

@@ -6,6 +6,7 @@ CREATE TABLE hibernate_sequence (
 );
 INSERT INTO hibernate_sequence VALUES (0);
 
+
 -- ENTITIES ============================================================================================================
 
 -- OBSERVERS -----------------------------------------------------------------------------------------------------------
@@ -19,10 +20,10 @@ CREATE TABLE OBSERVERS(
     PRIMARY KEY (ID)
 ) ENGINE=InnoDB;
 
-
 -- NOTIFICATION --------------------------------------------------------------------------------------------------------
 CREATE TABLE NOTIFICATIONS(
     ID BIGINT NOT NULL AUTO_INCREMENT,
+    OBSERVER_ID BIGINT,
     EVENT_ID BIGINT,
     EVENT_TYPE VARCHAR(255),
     EVENT_ENTITY_ID VARCHAR(255),
@@ -35,3 +36,9 @@ CREATE TABLE NOTIFICATIONS(
     PROCESSED_AT TIMESTAMP,
     PRIMARY KEY (ID)
 ) ENGINE=InnoDB;
+
+
+-- FOREING KEYS ========================================================================================================
+
+-- NOTIFICATIONS FKs
+ALTER TABLE NOTIFICATIONS ADD CONSTRAINT C_FK1__NOTIFICATIONS FOREIGN KEY(OBSERVER_ID) REFERENCES OBSERVERS(ID) ON DELETE NO ACTION;

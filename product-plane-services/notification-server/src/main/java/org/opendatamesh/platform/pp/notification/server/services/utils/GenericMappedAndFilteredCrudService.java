@@ -15,10 +15,10 @@ import java.io.Serializable;
 public abstract class GenericMappedAndFilteredCrudService<F, R, T, ID extends Serializable> extends GenericMappedCrudService<R, T, ID> {
 
     @Autowired
-    private EventNotifierTransactionHandler eventNotifierTransactionHandler;
+    private NotificationTransactionHandler notificationTransactionHandler;
 
     public final Page<R> findAllResourcesFiltered(Pageable pageable, F filters) {
-        return eventNotifierTransactionHandler.runInTransaction(() ->
+        return notificationTransactionHandler.runInTransaction(() ->
                 findAllFiltered(pageable, filters).map(this::toRes)
         );
     }

@@ -280,7 +280,7 @@ License.
         </dependency>
         <dependency>
             <groupId>org.opendatamesh</groupId>
-            <artifactId>odm-platform-up-notification-api</artifactId>
+            <artifactId>odm-platform-up-observer-api</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>
@@ -292,7 +292,7 @@ License.
         </dependency>
         <dependency>
             <groupId>org.opendatamesh</groupId>
-            <artifactId>odm-platform-pp-notification-api</artifactId>
+            <artifactId>odm-platform-pp-eventNotification-api</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>

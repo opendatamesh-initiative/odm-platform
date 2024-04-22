@@ -1,7 +1,7 @@
 package org.opendatamesh.platform.pp.registry.server.configurations;
 
-import org.opendatamesh.platform.pp.notification.api.clients.EventNotifierClient;
-import org.opendatamesh.platform.pp.notification.api.clients.EventNotifierClientImpl;
+import org.opendatamesh.platform.pp.notification.api.clients.NotificationClient;
+import org.opendatamesh.platform.pp.notification.api.clients.NotificationClientImpl;
 import org.opendatamesh.platform.pp.notification.api.resources.ObserverResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,12 +27,12 @@ public class RegistryEventNotifierConfiguration {
     private static final Logger logger = LoggerFactory.getLogger(RegistryEventNotifierConfiguration.class);
 
     @Bean
-    public EventNotifierClient eventNotifierClient() {
-        EventNotifierClient eventNotifierClient = null;
+    public NotificationClient eventNotifierClient() {
+        NotificationClient eventNotifierClient = null;
         if(!eventNotifierServiceActive) {
             logger.debug("Skipping notification service");
         } else {
-            eventNotifierClient = new EventNotifierClientImpl(eventNotifierServiceServerAddress);
+            eventNotifierClient = new NotificationClientImpl(eventNotifierServiceServerAddress);
             if(notificationServiceActive) {
                 ObserverResource observerResource = new ObserverResource();
                 observerResource.setName("blindata-observer");

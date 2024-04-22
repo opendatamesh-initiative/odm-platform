@@ -5,7 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.opendatamesh.platform.core.commons.test.ODMIntegrationTest;
 import org.opendatamesh.platform.core.commons.test.ODMResourceBuilder;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
-import org.opendatamesh.platform.pp.notification.api.clients.EventNotifierClientImpl;
+import org.opendatamesh.platform.pp.notification.api.clients.NotificationClientImpl;
 import org.opendatamesh.platform.pp.notification.api.resources.ObserverResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,13 +27,13 @@ import static org.assertj.core.api.Assertions.fail;
 //@ActiveProfiles("test")
 //@ActiveProfiles("testpostgresql")
 //@ActiveProfiles("testmysql")
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = {ODMEventNotifierApp.class})
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = {ODMNotificationApp.class})
 public class ODMEventNotifierIT extends ODMIntegrationTest {
 
     @LocalServerPort
     protected String port;
 
-    protected EventNotifierClientImpl eventNotifierClient;
+    protected NotificationClientImpl eventNotifierClient;
 
     protected Logger logger = LoggerFactory.getLogger(ODMEventNotifierIT.class);
 
@@ -45,7 +45,7 @@ public class ODMEventNotifierIT extends ODMIntegrationTest {
     public void init() {
         mapper = ObjectMapperFactory.JSON_MAPPER;
         resourceBuilder = new ODMResourceBuilder(mapper);
-        eventNotifierClient = new EventNotifierClientImpl("http://localhost:" + port, mapper);
+        eventNotifierClient = new NotificationClientImpl("http://localhost:" + port, mapper);
     }
 
     @BeforeEach

@@ -13,7 +13,7 @@ import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsConfigura
 import org.opendatamesh.platform.pp.devops.server.database.entities.Task;
 import org.opendatamesh.platform.pp.devops.server.database.mappers.TaskMapper;
 import org.opendatamesh.platform.pp.devops.server.database.repositories.TaskRepository;
-import org.opendatamesh.platform.pp.devops.server.services.proxies.DevOpsEventNotifierProxy;
+import org.opendatamesh.platform.pp.devops.server.services.proxies.DevOpsNotificationServiceProxy;
 import org.opendatamesh.platform.pp.devops.server.services.proxies.DevopsPolicyServiceProxy;
 import org.opendatamesh.platform.pp.registry.api.resources.ExternalComponentResource;
 import org.opendatamesh.platform.up.executor.api.clients.ExecutorClient;
@@ -46,7 +46,7 @@ public class TaskService {
     DevOpsClients clients;
 
     @Autowired
-    DevOpsEventNotifierProxy devOpsEventNotifierProxy;
+    DevOpsNotificationServiceProxy devOpsNotificationServiceProxy;
 
     private ExecutorClient odmExecutor;
 
@@ -92,7 +92,7 @@ public class TaskService {
                     t);
         }
 
-        devOpsEventNotifierProxy.notifyTaskCreation(taskMapper.toResource(task));
+        devOpsNotificationServiceProxy.notifyTaskCreation(taskMapper.toResource(task));
 
         return task;
     }
@@ -117,13 +117,13 @@ public class TaskService {
             task.setStartedAt(now());
             saveTask(task);
 
-            devOpsEventNotifierProxy.notifyTaskStart(taskMapper.toResource(task));
+            devOpsNotificationServiceProxy.notifyTaskStart(taskMapper.toResource(task));
 
             if(task.getExecutorRef() != null) {
                 task = submitTask(task);
                 if (task.getStatus().equals(ActivityTaskStatus.FAILED)) {
                     task = saveTask(task);
-                    devOpsEventNotifierProxy.notifyTaskCompletion(taskMapper.toResource(task));
+                    devOpsNotificationServiceProxy.notifyTaskCompletion(taskMapper.toResource(task));
                 }
             } else {
                 TaskResultResource taskResultResource = new TaskResultResource();
@@ -133,7 +133,7 @@ public class TaskService {
                 task.setResults(taskResultResource.toJsonString());
                 task.setStatus(ActivityTaskStatus.PROCESSED);
                 task.setFinishedAt(now());
-                devOpsEventNotifierProxy.notifyTaskCompletion(taskMapper.toResource(task));
+                devOpsNotificationServiceProxy.notifyTaskCompletion(taskMapper.toResource(task));
             }
             
         } catch(Throwable t) {
@@ -163,7 +163,7 @@ public class TaskService {
                 taskRes.setStatus(TaskStatus.FAILED);
                 taskRes.setErrors("Executor [" + task.getExecutorRef() + "] supported"); // CHECK
                 taskRes.setFinishedAt(new Date());
-                devOpsEventNotifierProxy.notifyTaskCompletion(taskRes);
+                devOpsNotificationServiceProxy.notifyTaskCompletion(taskRes);
             }
 
             task = taskMapper.toEntity(taskRes);
@@ -171,7 +171,7 @@ public class TaskService {
             task.setStatus(ActivityTaskStatus.FAILED);
             task.setErrors(t.getMessage());
             task.setFinishedAt(now());
-            devOpsEventNotifierProxy.notifyTaskCompletion(taskMapper.toResource(task));
+            devOpsNotificationServiceProxy.notifyTaskCompletion(taskMapper.toResource(task));
         }
        
         return task;
@@ -256,7 +256,7 @@ public class TaskService {
             task.setFinishedAt(now());
             task = saveTask(task);
 
-            devOpsEventNotifierProxy.notifyTaskCompletion(taskMapper.toResource(task));
+            devOpsNotificationServiceProxy.notifyTaskCompletion(taskMapper.toResource(task));
 
         } catch(Throwable t) {
              throw new InternalServerException(

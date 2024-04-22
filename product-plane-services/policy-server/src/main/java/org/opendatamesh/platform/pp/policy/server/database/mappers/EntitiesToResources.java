@@ -13,8 +13,8 @@ import java.util.Map;
 import java.util.Optional;
 
 public class EntitiesToResources {
-    private EntitiesToResources() {
-    }
+
+    private EntitiesToResources() { }
 
     private static final Map<String, String> entityToResourceMap = ImmutableMap
             .<String, String>builder()
@@ -28,4 +28,5 @@ public class EntitiesToResources {
         return Optional.ofNullable(entityToResourceMap.get(entityClass.getName()))
                 .orElseThrow(() -> new InternalServerException("Entity " + entityClass.getName() + " not mapped to a corresponding resource."));
     }
+
 }

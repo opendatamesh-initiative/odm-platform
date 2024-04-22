@@ -2,7 +2,7 @@ package org.opendatamesh.platform.pp.notification.server;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
-import org.opendatamesh.platform.up.notification.api.resources.EventResource;
+import org.opendatamesh.platform.pp.notification.api.resources.EventResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;

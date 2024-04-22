@@ -3,7 +3,8 @@ package org.opendatamesh.platform.pp.notification.server.services.utils;
 import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.NotFoundException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
-import org.opendatamesh.platform.pp.notification.api.resources.exceptions.EventNotifierApiStandardErrors;
+import org.opendatamesh.platform.pp.notification.api.resources.exceptions.NotificationApiStandardErrors;
+import org.opendatamesh.platform.pp.notification.server.database.mappers.EntitiesToResources;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -45,8 +46,8 @@ public abstract class GenericCrudService<T, ID extends Serializable> {
         }
         if (result == null) {
             throw new NotFoundException(
-                    EventNotifierApiStandardErrors.SC404_01_OBSERVER_NOT_FOUND,
-                    "Observer with ID [" + identifier + "] not found"
+                    NotificationApiStandardErrors.getNotFoundError(EntitiesToResources.getResourceClassName(getEntityClass())),
+                    "Resource with ID [" + identifier + "] not found"
             );
         }
         afterFindOne(result, identifier);
@@ -71,8 +72,8 @@ public abstract class GenericCrudService<T, ID extends Serializable> {
     public final void checkExistenceOrThrow(ID identifier) {
         if (!exists(identifier)) {
             throw new NotFoundException(
-                    EventNotifierApiStandardErrors.SC404_01_OBSERVER_NOT_FOUND,
-                    "Observer with ID [" + identifier + "] not found"
+                    NotificationApiStandardErrors.getNotFoundError(EntitiesToResources.getResourceClassName(getEntityClass())),
+                    "Resource with ID [" + identifier + "] not found"
             );
         }
     }
@@ -204,5 +205,7 @@ public abstract class GenericCrudService<T, ID extends Serializable> {
     protected abstract void validate(T objectToValidate);
 
     protected abstract void reconcile(T objectToReconcile);
+
+    protected abstract Class<T> getEntityClass();
 
 }

@@ -3,7 +3,7 @@ package org.opendatamesh.platform.pp.notification.server;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.pp.notification.api.resources.ObserverResource;
-import org.opendatamesh.platform.pp.notification.api.resources.exceptions.EventNotifierApiStandardErrors;
+import org.opendatamesh.platform.pp.notification.api.resources.exceptions.NotificationApiStandardErrors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
@@ -23,7 +23,7 @@ public class ObserverErrorIT extends ODMEventNotifierIT {
         verifyResponseErrorObjectNode(
                 postResponse,
                 HttpStatus.BAD_REQUEST,
-                EventNotifierApiStandardErrors.SC400_01_OBSERVER_IS_EMPTY,
+                NotificationApiStandardErrors.SC400_01_OBSERVER_IS_EMPTY,
                 "Observer object cannot be null"
         );
 
@@ -44,7 +44,7 @@ public class ObserverErrorIT extends ODMEventNotifierIT {
         verifyResponseErrorObjectNode(
                 postResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                EventNotifierApiStandardErrors.SC422_01_OBSERVER_IS_INVALID,
+                NotificationApiStandardErrors.SC422_01_OBSERVER_IS_INVALID,
                 "Observer server base URL cannot be null"
         );
 
@@ -55,7 +55,7 @@ public class ObserverErrorIT extends ODMEventNotifierIT {
         verifyResponseErrorObjectNode(
                 postResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                EventNotifierApiStandardErrors.SC422_01_OBSERVER_IS_INVALID,
+                NotificationApiStandardErrors.SC422_01_OBSERVER_IS_INVALID,
                 "Observer name cannot be null"
         );
 
@@ -66,7 +66,7 @@ public class ObserverErrorIT extends ODMEventNotifierIT {
         verifyResponseErrorObjectNode(
                 postResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                EventNotifierApiStandardErrors.SC422_02_OBSERVER_ALREADY_EXISTS,
+                NotificationApiStandardErrors.SC422_02_OBSERVER_ALREADY_EXISTS,
                 "Observer with name [" + observerResource.getName() + "] already exists"
         );
 
@@ -88,7 +88,7 @@ public class ObserverErrorIT extends ODMEventNotifierIT {
         verifyResponseErrorObjectNode(
                 putResponse,
                 HttpStatus.BAD_REQUEST,
-                EventNotifierApiStandardErrors.SC400_01_OBSERVER_IS_EMPTY,
+                NotificationApiStandardErrors.SC400_01_OBSERVER_IS_EMPTY,
                 "Observer object cannot be null"
         );
 
@@ -106,7 +106,7 @@ public class ObserverErrorIT extends ODMEventNotifierIT {
         verifyResponseErrorObjectNode(
                 putResponse,
                 HttpStatus.NOT_FOUND,
-                EventNotifierApiStandardErrors.SC404_01_OBSERVER_NOT_FOUND,
+                NotificationApiStandardErrors.SC404_01_OBSERVER_NOT_FOUND,
                 "Observer with ID [2] not found"
         );
 
@@ -127,7 +127,7 @@ public class ObserverErrorIT extends ODMEventNotifierIT {
         verifyResponseErrorObjectNode(
                 putResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                EventNotifierApiStandardErrors.SC422_01_OBSERVER_IS_INVALID,
+                NotificationApiStandardErrors.SC422_01_OBSERVER_IS_INVALID,
                 "Observer server base URL cannot be null"
         );
 
@@ -138,7 +138,7 @@ public class ObserverErrorIT extends ODMEventNotifierIT {
         verifyResponseErrorObjectNode(
                 putResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                EventNotifierApiStandardErrors.SC422_01_OBSERVER_IS_INVALID,
+                NotificationApiStandardErrors.SC422_01_OBSERVER_IS_INVALID,
                 "Observer name cannot be null"
         );
 
@@ -164,7 +164,7 @@ public class ObserverErrorIT extends ODMEventNotifierIT {
         verifyResponseErrorObjectNode(
                 getResponse,
                 HttpStatus.NOT_FOUND,
-                EventNotifierApiStandardErrors.SC404_01_OBSERVER_NOT_FOUND,
+                NotificationApiStandardErrors.SC404_01_OBSERVER_NOT_FOUND,
                 "Observer with ID [2] not found"
         );
 
@@ -183,7 +183,7 @@ public class ObserverErrorIT extends ODMEventNotifierIT {
         verifyResponseErrorObjectNode(
                 deleteResponse,
                 HttpStatus.NOT_FOUND,
-                EventNotifierApiStandardErrors.SC404_01_OBSERVER_NOT_FOUND,
+                NotificationApiStandardErrors.SC404_01_OBSERVER_NOT_FOUND,
                 "Observer with ID [2] not found"
         );
 

@@ -4,7 +4,7 @@ VOLUME /tmp
 
 ADD platform-core/dpds-parser/target/odm-platform-core-dpds-parser-*.jar ./
 ADD product-plane-services/registry-api/target/odm-platform-pp-registry-api-*.jar ./
-ADD utility-plane-services/notification-api/target/odm-platform-up-notification-api-*.jar ./
+ADD utility-plane-services/eventNotification-api/target/odm-platform-up-eventNotification-api-*.jar ./
 COPY product-plane-services/registry-server/target/odm-platform-pp-registry-server-*.jar ./application.jar
 
 ARG SPRING_PROFILES_ACTIVE=docker

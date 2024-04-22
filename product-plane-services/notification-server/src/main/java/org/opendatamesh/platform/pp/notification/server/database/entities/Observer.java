@@ -5,7 +5,7 @@ import org.opendatamesh.platform.core.commons.database.utils.TimestampedEntity;
 import javax.persistence.*;
 
 @Entity(name = "Observer")
-@Table(name = "OBSERVERS", schema = "ODMEVENTNOTIFIER")
+@Table(name = "OBSERVERS", schema = "ODMNOTIFICATION")
 public class Observer extends TimestampedEntity {
 
     @Id

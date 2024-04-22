@@ -75,6 +75,14 @@ License.
 
     <dependencies>
 
+        <!-- Others -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>31.0.1-jre</version>
+            <scope>compile</scope>
+        </dependency>
+
         <!-- Internals -->
         <dependency>
             <groupId>org.opendatamesh</groupId>
@@ -83,8 +91,12 @@ License.
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.opendatamesh</groupId>
-            <artifactId>odm-platform-up-notification-api</artifactId>
+            <artifactId>odm-platform-core-dpds-parser</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>

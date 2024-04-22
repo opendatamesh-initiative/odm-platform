@@ -28,7 +28,7 @@ import org.opendatamesh.platform.pp.registry.server.database.entities.dataproduc
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.variables.Variable;
 import org.opendatamesh.platform.pp.registry.server.database.mappers.DataProductVersionMapper;
 import org.opendatamesh.platform.pp.registry.server.database.repositories.DataProductVersionRepository;
-import org.opendatamesh.platform.pp.registry.server.services.proxies.RegistryEventNotifierProxy;
+import org.opendatamesh.platform.pp.registry.server.services.proxies.RegistryNotificationServiceProxy;
 import org.opendatamesh.platform.pp.registry.server.services.proxies.RegistryPolicyServiceProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +63,7 @@ public class DataProductVersionService {
     private DataProductVersionMapper dataProductVersionMapper;
 
     @Autowired
-    RegistryEventNotifierProxy registryEventNotifierProxy;
+    RegistryNotificationServiceProxy registryNotificationServiceProxy;
 
     @Autowired
     private RegistryPolicyServiceProxy policyServiceProxy;
@@ -133,7 +133,7 @@ public class DataProductVersionService {
                     t);
         }
 
-        registryEventNotifierProxy.notifyDataProductVersionCreation(dataProductVersionMapper.toResource(dataProductVersion));
+        registryNotificationServiceProxy.notifyDataProductVersionCreation(dataProductVersionMapper.toResource(dataProductVersion));
 
         return dataProductVersion;
     }
@@ -515,7 +515,7 @@ public class DataProductVersionService {
             );
         }
 
-        registryEventNotifierProxy.notifyDataProductVersionDeletion(dataProductVersionMapper.toResource(dataProductVersion));
+        registryNotificationServiceProxy.notifyDataProductVersionDeletion(dataProductVersionMapper.toResource(dataProductVersion));
 
     }
 

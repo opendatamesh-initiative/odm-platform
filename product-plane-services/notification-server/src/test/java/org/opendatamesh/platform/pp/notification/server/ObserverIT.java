@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.pp.notification.api.resources.ObserverResource;
-import org.opendatamesh.platform.pp.notification.api.resources.exceptions.EventNotifierApiStandardErrors;
+import org.opendatamesh.platform.pp.notification.api.resources.exceptions.NotificationApiStandardErrors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
@@ -129,7 +129,7 @@ public class ObserverIT extends ODMEventNotifierIT {
         verifyResponseErrorObjectNode(
                 getResponse,
                 HttpStatus.NOT_FOUND,
-                EventNotifierApiStandardErrors.SC404_01_OBSERVER_NOT_FOUND,
+                NotificationApiStandardErrors.SC404_01_OBSERVER_NOT_FOUND,
                 "Observer with ID [" + observerResource.getId() + "] not found"
         );
 

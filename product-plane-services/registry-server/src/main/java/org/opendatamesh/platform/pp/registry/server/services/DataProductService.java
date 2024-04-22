@@ -17,7 +17,7 @@ import org.opendatamesh.platform.pp.registry.server.database.entities.dataproduc
 import org.opendatamesh.platform.pp.registry.server.database.mappers.DataProductMapper;
 import org.opendatamesh.platform.pp.registry.server.database.mappers.DataProductVersionMapper;
 import org.opendatamesh.platform.pp.registry.server.database.repositories.DataProductRepository;
-import org.opendatamesh.platform.pp.registry.server.services.proxies.RegistryEventNotifierProxy;
+import org.opendatamesh.platform.pp.registry.server.services.proxies.RegistryNotificationServiceProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +50,7 @@ public class DataProductService {
     private DataProductVersionMapper dataProductVersionMapper;
 
     @Autowired
-    RegistryEventNotifierProxy registryEventNotifierProxy;
+    RegistryNotificationServiceProxy registryNotificationServiceProxy;
 
     @Value("${odm.schemas.validation.baseUrl}")
     private String schemaValidationBaseUrl;
@@ -106,7 +106,7 @@ public class DataProductService {
                 t);
         }
 
-        registryEventNotifierProxy.notifyDataProductCreation(dataProductMapper.toResource(dataProduct));
+        registryNotificationServiceProxy.notifyDataProductCreation(dataProductMapper.toResource(dataProduct));
        
         return dataProduct;
     }
@@ -278,7 +278,7 @@ public class DataProductService {
                 t);
         }
 
-        registryEventNotifierProxy.notifyDataProductUpdate(
+        registryNotificationServiceProxy.notifyDataProductUpdate(
                 dataProductMapper.toResource(oldDataProduct),
                 dataProductMapper.toResource(dataProduct)
         );
@@ -306,7 +306,7 @@ public class DataProductService {
                 t);
         }
 
-        registryEventNotifierProxy.notifyDataProductDeletion(dataProductMapper.toResource(dataProduct));
+        registryNotificationServiceProxy.notifyDataProductDeletion(dataProductMapper.toResource(dataProduct));
 
         return dataProduct;
     }

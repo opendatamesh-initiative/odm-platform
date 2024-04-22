@@ -9,7 +9,7 @@ import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestExcep
 import org.opendatamesh.platform.core.commons.servers.exceptions.UnprocessableEntityException;
 import org.opendatamesh.platform.pp.notification.api.resources.ObserverResource;
 import org.opendatamesh.platform.pp.notification.api.resources.ObserverSearchOptions;
-import org.opendatamesh.platform.pp.notification.api.resources.exceptions.EventNotifierApiStandardErrors;
+import org.opendatamesh.platform.pp.notification.api.resources.exceptions.NotificationApiStandardErrors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -30,20 +30,19 @@ public class ObserverService extends GenericMappedAndFilteredCrudService<Observe
     protected void validate(Observer objectToValidate) {
         if (objectToValidate == null) {
             throw new BadRequestException(
-                    EventNotifierApiStandardErrors.SC400_01_OBSERVER_IS_EMPTY,
+                    NotificationApiStandardErrors.SC400_01_OBSERVER_IS_EMPTY,
                     "Observer object cannot be null"
             );
         }
-
         if (!StringUtils.hasText(objectToValidate.getObserverServerBaseUrl())) {
             throw new UnprocessableEntityException(
-                    EventNotifierApiStandardErrors.SC422_01_OBSERVER_IS_INVALID,
+                    NotificationApiStandardErrors.SC422_01_OBSERVER_IS_INVALID,
                     "Observer server base URL cannot be null"
             );
         }
         if (!StringUtils.hasText(objectToValidate.getName())) {
             throw new UnprocessableEntityException(
-                    EventNotifierApiStandardErrors.SC422_01_OBSERVER_IS_INVALID,
+                    NotificationApiStandardErrors.SC422_01_OBSERVER_IS_INVALID,
                     "Observer name cannot be null"
             );
         }
@@ -53,7 +52,7 @@ public class ObserverService extends GenericMappedAndFilteredCrudService<Observe
     protected void beforeCreation(Observer observer) {
         if (repository.existsByName(observer.getName())) {
             throw new UnprocessableEntityException(
-                    EventNotifierApiStandardErrors.SC422_02_OBSERVER_ALREADY_EXISTS,
+                    NotificationApiStandardErrors.SC422_02_OBSERVER_ALREADY_EXISTS,
                     "Observer with name [" + observer.getName() + "] already exists"
             );
         }
@@ -82,6 +81,11 @@ public class ObserverService extends GenericMappedAndFilteredCrudService<Observe
     @Override
     protected Observer toEntity(ObserverResource resource) {
         return mapper.toEntity(resource);
+    }
+
+    @Override
+    protected Class<Observer> getEntityClass() {
+        return Observer.class;
     }
 
 }

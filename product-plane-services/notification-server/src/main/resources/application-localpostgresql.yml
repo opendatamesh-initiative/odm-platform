@@ -29,7 +29,7 @@ spring:
             non_contextual_creation: true
         dialect: org.hibernate.dialect.PostgreSQL95Dialect # Or PostgreSQLDialect
         globally_quoted_identifiers: true
-        default_schema: ODMEVENTNOTIFIER
+        default_schema: ODMNOTIFICATION
   # DB
   datasource:
     url: jdbc:postgresql://localhost:5432/odmpdb
@@ -46,6 +46,6 @@ spring:
     user: postgres
     password: postgres
     #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
-    schemas: ODMEVENTNOTIFIER
+    schemas: ODMNOTIFICATION
     locations: classpath:db/migration/postgresql
     clean-on-validation-error: true

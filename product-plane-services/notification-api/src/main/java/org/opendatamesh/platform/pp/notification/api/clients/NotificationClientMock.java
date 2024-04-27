@@ -32,34 +32,28 @@ public class NotificationClientMock implements NotificationClient {
         return null;
     }
 
-    public void removeObserver(Long id) {
+    public void removeObserver(Long id) { }
 
-    }
+    public void notifyEvent(EventResource eventResource) { }
 
-    public void notifyEvent(EventResource eventResource) {
-
-    }
-
-    public EventNotificationResource createNotification(EventNotificationResource eventNotificationResource) {
-        eventNotificationResource.setId(random.nextLong());
-        return eventNotificationResource;
-    }
-
-    public EventNotificationResource updateNotification(Long notificationId, EventNotificationResource eventNotificationResource) {
-        return eventNotificationResource;
-    }
-
-    public EventNotificationResource readOneNotification(Long notificationId) {
+    public EventResource readOneEvent(Long eventId) {
         return null;
     }
 
-    @Override
-    public Page<EventNotificationResource> searchNotifications(Pageable pageable, EventNotificationSearchOptions searchOption) {
+    public Page<EventResource> searchEvents(Pageable pageable, EventSearchOptions searchOption) {
         return null;
     }
 
-    @Override
-    public void deleteNotification(Long notificationId) {
-
+    public EventNotificationResource updateEventNotification(Long notificationId, EventNotificationResource eventNotificationResource) {
+        return eventNotificationResource;
     }
+
+    public EventNotificationResource readOneEventNotification(Long notificationId) {
+        return null;
+    }
+
+    public Page<EventNotificationResource> searchEventNotifications(Pageable pageable, EventNotificationSearchOptions searchOption) {
+        return null;
+    }
+
 }

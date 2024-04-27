@@ -6,6 +6,7 @@ import org.opendatamesh.platform.core.commons.test.ODMIntegrationTest;
 import org.opendatamesh.platform.core.commons.test.ODMResourceBuilder;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.notification.api.clients.NotificationClientImpl;
+import org.opendatamesh.platform.pp.notification.api.resources.EventNotificationResource;
 import org.opendatamesh.platform.pp.notification.api.resources.ObserverResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,5 +98,38 @@ public class ODMEventNotifierIT extends ODMIntegrationTest {
         return observerResource;
 
     }
+
+    protected EventNotificationResource createEventNotificationResource(String filePath) {
+        try {
+            return resourceBuilder.readResourceFromFile(filePath, EventNotificationResource.class);
+        } catch (Throwable t) {
+            t.printStackTrace();
+            fail("Impossible to read event notification from file: " + t.getMessage());
+            return null;
+        }
+    }
+
+    /*protected EventNotificationResource createEventNotification(String filePath) {
+
+        EventNotificationResource eventNotificationResource = createEventNotificationResource(filePath);
+
+        ResponseEntity<ObjectNode> postEventNotificationResponse;
+
+        try {
+            postEventNotificationResponse = eventNotifierClient.createNotificationResponseEntity(eventNotificationResource);
+        } catch (Throwable t) {
+            t.printStackTrace();
+            fail("Impossible to create event notification: " + t.getMessage());
+            return null;
+        }
+
+        verifyResponseEntity(postEventNotificationResponse, HttpStatus.CREATED, true);
+        eventNotificationResource = mapper.convertValue(
+                postEventNotificationResponse.getBody(), EventNotificationResource.class
+        );
+
+        return eventNotificationResource;
+
+    }*/
 
 }

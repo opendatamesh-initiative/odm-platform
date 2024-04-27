@@ -32,7 +32,7 @@ spring:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQL95Dialect # Or PostgreSQLDialect
         globally_quoted_identifiers: true
-        default_schema: ODMEVENTNOTIFIER
+        default_schema: ODMNOTIFICATION
   # DB
   datasource:
     # TestContainer URL for auto-creation of Docker PostgreSQL DB on app start-up
@@ -56,6 +56,6 @@ spring:
     #user: postgres
     #password: postgres
     #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
-    schemas: ODMEVENTNOTIFIER
+    schemas: ODMNOTIFICATION
     locations: classpath:db/migration/postgresql
     clean-on-validation-error: true

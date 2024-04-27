@@ -40,7 +40,7 @@ public class EventNotificationService extends GenericMappedAndFilteredCrudServic
         }
         if (objectToValidate.getEvent() == null) {
             throw new UnprocessableEntityException(
-                    NotificationApiStandardErrors.SC422_03_NOTIFICATION_IS_INVALID,
+                    NotificationApiStandardErrors.SC422_04_NOTIFICATION_IS_INVALID,
                     "Notification's Event object cannot be null"
             );
         }

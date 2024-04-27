@@ -11,8 +11,8 @@ import java.util.Date;
 public class EventResource {
 
     @JsonProperty("id")
-    @Schema(description = "Auto generated Event ID")
-    Long id;
+    @Schema(description = "Auto generated ID of the Event")
+    private Long id;
 
     @JsonProperty("type")
     @Schema(description = "Event type", required = true)
@@ -42,14 +42,6 @@ public class EventResource {
         this.beforeState = beforeState;
         this.afterState = afterState;
         this.time = new Date();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getType() {

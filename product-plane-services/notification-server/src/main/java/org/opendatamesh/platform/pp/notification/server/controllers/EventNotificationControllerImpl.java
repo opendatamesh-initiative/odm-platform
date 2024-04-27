@@ -15,29 +15,29 @@ public class EventNotificationControllerImpl extends AbstractEventNotificationCo
     @Autowired
     EventNotificationService eventNotificationService;
 
-    @Override
+    /*@Override
     public EventNotificationResource createNotification(EventNotificationResource notificationRes) {
         return eventNotificationService.createResource(notificationRes);
-    }
+    }*/
 
     @Override
-    public EventNotificationResource updateNotification(Long id, EventNotificationResource eventNotificationResource) {
+    public EventNotificationResource updateEventNotification(Long id, EventNotificationResource eventNotificationResource) {
         return eventNotificationService.overwriteResource(id, eventNotificationResource);
     }
 
     @Override
-    public EventNotificationResource readOneNotification(Long notificationId) {
+    public EventNotificationResource readOneEventNotification(Long notificationId) {
         return eventNotificationService.findOneResource(notificationId);
     }
 
     @Override
-    public Page<EventNotificationResource> searchNotifications(Pageable pageable, EventNotificationSearchOptions searchOptions) {
+    public Page<EventNotificationResource> searchEventNotifications(Pageable pageable, EventNotificationSearchOptions searchOptions) {
         return eventNotificationService.findAllResourcesFiltered(pageable, searchOptions);
     }
 
-    @Override
+    /*@Override
     public void deleteNotification(Long notificationId) {
         eventNotificationService.delete(notificationId);
-    }
+    }*/
 
 }

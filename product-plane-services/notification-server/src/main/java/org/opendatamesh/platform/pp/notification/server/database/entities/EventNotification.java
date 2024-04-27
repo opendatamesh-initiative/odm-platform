@@ -1,12 +1,11 @@
 package org.opendatamesh.platform.pp.notification.server.database.entities;
 
 import org.opendatamesh.platform.pp.notification.api.resources.enums.EventNotificationStatus;
-import org.opendatamesh.platform.pp.notification.server.database.entities.embedded.Event;
 
 import javax.persistence.*;
 import java.util.Date;
 
-@Entity(name = "Notification")
+@Entity(name = "EventNotification")
 @Table(name = "NOTIFICATIONS", schema = "ODMNOTIFICATION")
 public class EventNotification {
 
@@ -15,15 +14,26 @@ public class EventNotification {
     @Column(name = "ID")
     private Long id;
 
-    @Embedded
-    private Event event;
-
     @Column(name = "STATUS")
     @Enumerated(EnumType.STRING)
     private EventNotificationStatus status;
 
     @Column(name = "PROCESSING_OUTPUT")
     private String processingOutput;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "EVENT_ID")
+    private Event event;
+
+    @Column(name = "EVENT_ID", insertable = false, updatable = false)
+    private Long eventId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "OBSERVER_ID")
+    private Observer observer;
+
+    @Column(name = "OBSERVER_ID", insertable = false, updatable = false)
+    private Long observerId;
 
     @Column(name = "RECEIVED_AT")
     private Date receivedAt;
@@ -82,5 +92,35 @@ public class EventNotification {
 
     public void setProcessedAt(Date processedAt) {
         this.processedAt = processedAt;
+    }
+
+    public Observer getObserver() {
+        return observer;
+    }
+
+    public void setObserver(Observer observer) {
+        this.observer = observer;
+        if (observer != null) {
+            this.observerId = observer.getId();
+        }
+    }
+
+    public Long getObserverId() {
+        return observerId;
+    }
+
+    public void setObserverId(Long observerId) {
+        this.observerId = observerId;
+        Observer observer = new Observer();
+        observer.setId(observerId);
+        this.observer = observer;
+    }
+
+    public Long getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(Long eventId) {
+        this.eventId = eventId;
     }
 }

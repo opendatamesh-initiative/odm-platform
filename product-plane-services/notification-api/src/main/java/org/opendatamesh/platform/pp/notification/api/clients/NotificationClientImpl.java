@@ -57,20 +57,32 @@ public class NotificationClientImpl extends ODMClient implements NotificationCli
 
 
     // ===============================================================================
-    // Notifications
+    // Events
     // ===============================================================================
 
-    @Override
+    public EventResource readOneEvent(Long id) {
+        return restUtils.get(apiUrlOfItem(NotificationAPIRoutes.EVENTS), id, EventResource.class);
+    }
+
+    public Page<EventResource> searchEvents(Pageable pageable, EventSearchOptions searchOptions) {
+        return restUtils.getPage(apiUrl(NotificationAPIRoutes.EVENTS), pageable, searchOptions, EventResource.class);
+    }
+
+
+    // ===============================================================================
+    // EventNotifications
+    // ===============================================================================
+
+    /*@Override
     public EventNotificationResource createNotification(EventNotificationResource eventNotificationResource) {
         return restUtils.create(
                 apiUrl(NotificationAPIRoutes.NOTIFICATIONS),
                 eventNotificationResource,
                 EventNotificationResource.class
         );
-    }
+    }*/
 
-    @Override
-    public EventNotificationResource updateNotification(Long notificationId, EventNotificationResource eventNotificationResource) {
+    public EventNotificationResource updateEventNotification(Long notificationId, EventNotificationResource eventNotificationResource) {
         return restUtils.put(
                 apiUrlOfItem(NotificationAPIRoutes.NOTIFICATIONS),
                 notificationId,
@@ -79,8 +91,7 @@ public class NotificationClientImpl extends ODMClient implements NotificationCli
         );
     }
 
-    @Override
-    public EventNotificationResource readOneNotification(Long notificationId) {
+    public EventNotificationResource readOneEventNotification(Long notificationId) {
         return restUtils.get(
                 apiUrlOfItem(NotificationAPIRoutes.NOTIFICATIONS),
                 notificationId,
@@ -88,8 +99,7 @@ public class NotificationClientImpl extends ODMClient implements NotificationCli
         );
     }
 
-    @Override
-    public Page<EventNotificationResource> searchNotifications(Pageable pageable, EventNotificationSearchOptions searchOption) {
+    public Page<EventNotificationResource> searchEventNotifications(Pageable pageable, EventNotificationSearchOptions searchOption) {
         return restUtils.getPage(
                 apiUrl(NotificationAPIRoutes.NOTIFICATIONS),
                 pageable,
@@ -98,10 +108,10 @@ public class NotificationClientImpl extends ODMClient implements NotificationCli
         );
     }
 
-    @Override
+    /*
     public void deleteNotification(Long notificationId) {
         restUtils.delete(apiUrlOfItem(NotificationAPIRoutes.NOTIFICATIONS), notificationId);
-    }
+    }*/
 
 
     // ===============================================================================
@@ -114,7 +124,7 @@ public class NotificationClientImpl extends ODMClient implements NotificationCli
 
 
     // ===============================================================================
-    // Response Entity version
+    // Response Entity versions
     // ===============================================================================
 
     public ResponseEntity<ObjectNode> addObserverResponseEntity(ObserverResource observerResource) {
@@ -174,16 +184,35 @@ public class NotificationClientImpl extends ODMClient implements NotificationCli
         );
     }
 
-    public ResponseEntity<ObjectNode> createNotificationResponseEntity(EventNotificationResource eventNotificationResource) {
+    public ResponseEntity<ObjectNode> readOneEventResponseEntity(Long id) {
+        return rest.exchange(
+                apiUrlOfItem(NotificationAPIRoutes.EVENTS),
+                HttpMethod.GET,
+                null,
+                ObjectNode.class,
+                id
+        );
+    }
+
+    public ResponseEntity<ObjectNode> searchEventsResponseEntity() {
+        return rest.exchange(
+                apiUrl(NotificationAPIRoutes.EVENTS),
+                HttpMethod.GET,
+                null,
+                ObjectNode.class
+        );
+    }
+
+    /*public ResponseEntity<ObjectNode> createNotificationResponseEntity(EventNotificationResource eventNotificationResource) {
         return rest.exchange(
                 apiUrl(NotificationAPIRoutes.NOTIFICATIONS),
                 HttpMethod.POST,
                 new HttpEntity<>(eventNotificationResource),
                 ObjectNode.class
         );
-    }
+    }*/
 
-    public ResponseEntity<ObjectNode> updateNotificationResponseEntity(Long notificationId, EventNotificationResource eventNotificationResource) {
+    public ResponseEntity<ObjectNode> updateEventNotificationResponseEntity(Long notificationId, EventNotificationResource eventNotificationResource) {
         return rest.exchange(
                 apiUrlOfItem(NotificationAPIRoutes.NOTIFICATIONS),
                 HttpMethod.PUT,
@@ -193,7 +222,7 @@ public class NotificationClientImpl extends ODMClient implements NotificationCli
         );
     }
 
-    public ResponseEntity<ObjectNode> readOneNotificationResponseEntity(Long notificationId) {
+    public ResponseEntity<ObjectNode> readOneEventNotificationResponseEntity(Long notificationId) {
         return rest.exchange(
                 apiUrlOfItem(NotificationAPIRoutes.NOTIFICATIONS),
                 HttpMethod.GET,
@@ -203,7 +232,7 @@ public class NotificationClientImpl extends ODMClient implements NotificationCli
         );
     }
 
-    public ResponseEntity<ObjectNode> searchNotificationsResponseEntity(Pageable pageable, EventNotificationSearchOptions searchOption) {
+    public ResponseEntity<ObjectNode> searchEventNotificationsResponseEntity(EventNotificationSearchOptions searchOption) {
         Map<String, Object> queryParams = new HashMap<>();
         if(searchOption.getEventType() != null)
             queryParams.put("eventType", searchOption.getEventType());
@@ -225,7 +254,7 @@ public class NotificationClientImpl extends ODMClient implements NotificationCli
             );
     }
 
-    public ResponseEntity<ObjectNode> deleteNotificationResponseEntity(Long notificationId) {
+    /*public ResponseEntity<ObjectNode> deleteNotificationResponseEntity(Long notificationId) {
         return rest.exchange(
                 apiUrlOfItem(NotificationAPIRoutes.NOTIFICATIONS),
                 HttpMethod.DELETE,
@@ -233,6 +262,6 @@ public class NotificationClientImpl extends ODMClient implements NotificationCli
                 ObjectNode.class,
                 notificationId
         );
-    }
+    }*/
 
 }

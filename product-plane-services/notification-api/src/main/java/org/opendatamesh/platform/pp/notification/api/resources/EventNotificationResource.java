@@ -12,11 +12,11 @@ public class EventNotificationResource implements Cloneable{
 
     @JsonProperty("id")
     @Schema(description = "Auto generated ID of the Notification")
-    Long id;
+    private Long id;
 
     @JsonProperty("event")
     @Schema(description = "Event object of the Notification", required = true)
-    EventResource event;
+    private EventResource event;
 
     @JsonProperty("status")
     @Schema(description = "Status of the Notification")
@@ -25,6 +25,10 @@ public class EventNotificationResource implements Cloneable{
     @JsonProperty("processingOutput")
     @Schema(description = "Output of the Notification processing phase")
     private String processingOutput;
+
+    @JsonProperty("observer")
+    @Schema(description = "Observer that handle this specific notification")
+    private ObserverResource observer;
 
     @JsonProperty("receivedAt")
     @Schema(description = "Timpestamp of the Notification reception")
@@ -81,4 +85,13 @@ public class EventNotificationResource implements Cloneable{
     public void setProcessedAt(Date processedAt) {
         this.processedAt = processedAt;
     }
+
+    public ObserverResource getObserver() {
+        return observer;
+    }
+
+    public void setObserver(ObserverResource observer) {
+        this.observer = observer;
+    }
+
 }

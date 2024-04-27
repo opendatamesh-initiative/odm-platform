@@ -39,9 +39,6 @@ public abstract class AbstractEventNotificationController implements EventNotifi
     private static final String EXAMPLE_NOTIFICATION = "{\n" + //
             "}";
 
-    private static final String EXAMPLE_NOTIFICATION_CREATE = "{\n" + //
-            "}";
-
     private static final String EXAMPLE_NOTIFICATION_UPDATE = "{\n" + //
             "}";
 
@@ -49,6 +46,7 @@ public abstract class AbstractEventNotificationController implements EventNotifi
     // POST /notifications
     // ===============================================================================
 
+    /*
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(
         summary = "Create the notification",
@@ -111,6 +109,7 @@ public abstract class AbstractEventNotificationController implements EventNotifi
     }
 
     public abstract EventNotificationResource createNotification(EventNotificationResource notificationRes);
+    */
 
 
     // ===============================================================================
@@ -141,14 +140,13 @@ public abstract class AbstractEventNotificationController implements EventNotifi
             @ApiResponse(
                     responseCode = "404",
                     description = "[Not Found](https://www.rfc-editor.org/rfc/rfc9110.html#name-404-not-found)"
-                            + "\r\n - Error Code 40402 - Notification not found",
+                            + "\r\n - Error Code 40403 - Notification not found",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
             ),
             @ApiResponse(
                     responseCode = "422",
                     description = "[Unprocessable Content](https://www.rfc-editor.org/rfc/rfc9110.html#name-422-unprocessable-content)"
-                            + "\r\n - Error Code 42203 - Notification is invalid"
-                            + "\r\n - Error Code 42204 - Notification already exists",
+                            + "\r\n - Error Code 42203 - Notification is invalid",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
             ),
             @ApiResponse(
@@ -172,7 +170,7 @@ public abstract class AbstractEventNotificationController implements EventNotifi
                     "application/json"
             }
     )
-    public EventNotificationResource updateNotificationEndpoint(
+    public EventNotificationResource updateEventNotificationEndpoint(
             @Parameter(description = "ID of the Notification to update", required = true)
             @PathVariable(value = "id") Long id,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -184,10 +182,10 @@ public abstract class AbstractEventNotificationController implements EventNotifi
                     )}))
             @RequestBody(required = false) EventNotificationResource notification
     ) {
-        return updateNotification(id, notification);
+        return updateEventNotification(id, notification);
     }
 
-    public abstract EventNotificationResource updateNotification(Long id, EventNotificationResource eventNotificationResource);
+    public abstract EventNotificationResource updateEventNotification(Long id, EventNotificationResource eventNotificationResource);
     
 
     // ===============================================================================
@@ -195,7 +193,7 @@ public abstract class AbstractEventNotificationController implements EventNotifi
     // ===============================================================================
 
     @Operation(
-            summary = "Get an Notification",
+            summary = "Get a Notification",
             description = "Get the Notification identified by the given ID"
     )
     @ResponseStatus(HttpStatus.OK)
@@ -215,7 +213,7 @@ public abstract class AbstractEventNotificationController implements EventNotifi
             @ApiResponse(
                     responseCode = "404",
                     description = "[Not Found](https://www.rfc-editor.org/rfc/rfc9110.html#name-404-not-found)"
-                            + "\r\n - Error Code 40402 - Notification not found",
+                            + "\r\n - Error Code 40403 - Notification not found",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
             ),
             @ApiResponse(
@@ -234,14 +232,14 @@ public abstract class AbstractEventNotificationController implements EventNotifi
                     "application/json"
             }
     )
-    public EventNotificationResource readOneNotificationEndpoint(
+    public EventNotificationResource readOneEventNotificationEndpoint(
             @Parameter(description = "ID of the desired Notification", required = true)
             @Valid @PathVariable(value = "notificationId") Long notificationId
     ) {
-        return readOneNotification(notificationId);
+        return readOneEventNotification(notificationId);
     }
 
-    public abstract EventNotificationResource readOneNotification(
+    public abstract EventNotificationResource readOneEventNotification(
         Long notificationId
     );
 
@@ -252,7 +250,7 @@ public abstract class AbstractEventNotificationController implements EventNotifi
 
     @Operation(
             summary = "Get all Notifications",
-            description = "Get all the registered Notifications paginated"
+            description = "Get all the registered Notifications paginated and, eventually, filtered"
     )
     @ResponseStatus(HttpStatus.OK)
     @ApiResponses(value = {
@@ -283,15 +281,15 @@ public abstract class AbstractEventNotificationController implements EventNotifi
                     "application/json"
             }
     )
-    public Page<EventNotificationResource> searchNotificationsEndpoint(
+    public Page<EventNotificationResource> searchEventNotificationsEndpoint(
             @PageableDefault(size = 20, page = 0)
             Pageable pageable,
             EventNotificationSearchOptions searchOptions
     ) {
-        return searchNotifications(pageable, searchOptions);
+        return searchEventNotifications(pageable, searchOptions);
     }
 
-    public abstract Page<EventNotificationResource> searchNotifications(
+    public abstract Page<EventNotificationResource> searchEventNotifications(
         Pageable pageable, EventNotificationSearchOptions searchOptions
     );
 
@@ -300,6 +298,7 @@ public abstract class AbstractEventNotificationController implements EventNotifi
     // DELETE /notifications/{notificationId}
     // ===============================================================================
 
+    /*
     @Operation(
             summary = "Delete an Notification",
             description = "Delete a single Notification given its ID"
@@ -333,5 +332,6 @@ public abstract class AbstractEventNotificationController implements EventNotifi
     } 
 
     public abstract void deleteNotification(Long notificationId);
+    */
     
 }

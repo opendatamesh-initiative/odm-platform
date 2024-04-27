@@ -30,7 +30,7 @@ spring:
     database-platform: org.hibernate.dialect.MySQL8Dialect
   # DB
   datasource:
-    url: jdbc:mysql://localhost:3306/ODMEVENTNOTIFIER?useSSL=false
+    url: jdbc:mysql://localhost:3306/ODMNOTIFICATION?useSSL=false
     driverClassName: com.mysql.cj.jdbc.Driver
     #username: db
     #password: admin
@@ -43,7 +43,7 @@ spring:
   # More: https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html#appendix.application-properties.data-migration
   flyway:
     #enabled: false # To disable
-    url: jdbc:mysql://localhost:3306/ODMEVENTNOTIFIER
+    url: jdbc:mysql://localhost:3306/ODMNOTIFICATION
     #user: "db"
     #password: "admin"
     user: "root"

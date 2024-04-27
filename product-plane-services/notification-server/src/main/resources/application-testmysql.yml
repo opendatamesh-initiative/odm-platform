@@ -33,7 +33,7 @@ spring:
     # TestContainer URL for auto-creation of Docker PostgreSQL DB on app start-up
     # https://java.testcontainers.org/modules/databases/jdbc/
     # Create a Docker container from mysql:8.0.24 image
-    url: jdbc:tc:mysql:8.0.24://localhost/ODMEVENTNOTIFIER?user=root&password=root&currentSchema=ODMEVENTNOTIFIER&TC_REUSABLE=true
+    url: jdbc:tc:mysql:8.0.24://localhost/ODMNOTIFICATION?user=root&password=root&currentSchema=ODMNOTIFICATION&TC_REUSABLE=true
     # OBS: without localhost/ it fails to create PUBLIC DB/Schema (it use default db-schema "test"
     # and without user and password it use "test" "test"
     # TestContainers driverClassName for JDBC url generated DBs

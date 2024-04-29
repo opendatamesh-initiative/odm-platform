@@ -68,7 +68,7 @@ public abstract class AbstractEventController implements EventController {
             )
     })
     @GetMapping(
-            value = "/{notificationId}",
+            value = "/{eventId}",
             produces = {
                     "application/vnd.odmp.v1+json",
                     "application/vnd.odmp+json",
@@ -77,13 +77,13 @@ public abstract class AbstractEventController implements EventController {
     )
     public EventResource readOneEventEndpoint(
             @Parameter(description = "ID of the desired Event", required = true)
-            @Valid @PathVariable(value = "notificationId") Long notificationId
+            @Valid @PathVariable(value = "eventId") Long eventId
     ) {
-        return readOneEvent(notificationId);
+        return readOneEvent(eventId);
     }
 
     public abstract EventResource readOneEvent(
-            Long notificationId
+            Long eventId
     );
 
 

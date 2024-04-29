@@ -1,5 +1,4 @@
 {
-  "id": 1,
   "type": "DATA_PRODUCT_CREATED",
   "entityId": "abc123",
   "beforeState": null,

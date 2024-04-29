@@ -1,5 +1,7 @@
 package org.opendatamesh.platform.pp.notification.server.database.entities;
 
+import org.opendatamesh.platform.pp.notification.api.resources.enums.EventType;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -13,7 +15,8 @@ public class Event {
     private Long id;
 
     @Column(name = "TYPE")
-    private String type;
+    @Enumerated(EnumType.STRING)
+    private EventType type;
 
     @Column(name = "ENTITY_ID")
     private String entityId;
@@ -35,11 +38,11 @@ public class Event {
         this.id = id;
     }
 
-    public String getType() {
+    public EventType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(EventType type) {
         this.type = type;
     }
 

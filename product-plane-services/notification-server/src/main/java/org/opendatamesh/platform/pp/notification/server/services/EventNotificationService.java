@@ -59,10 +59,10 @@ public class EventNotificationService extends GenericMappedAndFilteredCrudServic
     @Override
     protected Specification<EventNotification> getSpecFromFilters(EventNotificationSearchOptions filters) {
         List<Specification<EventNotification>> specifications = new ArrayList<>();
-        if (StringUtils.hasText(filters.getEventType())) {
+        if (filters.getEventType() != null) {
             specifications.add(EventNotificationRepository.Specs.hasEventType(filters.getEventType()));
         }
-        if (StringUtils.hasText(filters.getNotificationStatus())) {
+        if (filters.getNotificationStatus() != null) {
             specifications.add(EventNotificationRepository.Specs.hasNotificationStatus(filters.getNotificationStatus()));
         }
         return SpecsUtils.combineWithAnd(specifications);

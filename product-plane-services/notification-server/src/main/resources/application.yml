@@ -15,7 +15,7 @@ server:
   error:
     include-message: always
   servlet:
-    context-path: /api/v1/pp/event-notifier/
+    context-path: /api/v1/pp/notification/
 
 ##########################
 # Logging configuration

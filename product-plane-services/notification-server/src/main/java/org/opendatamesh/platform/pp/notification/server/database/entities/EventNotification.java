@@ -41,11 +41,6 @@ public class EventNotification {
     @Column(name = "PROCESSED_AT")
     private Date processedAt;
 
-    @PrePersist
-    protected void onCreate() {
-        receivedAt = new Date();
-    }
-
     public Long getId() {
         return id;
     }

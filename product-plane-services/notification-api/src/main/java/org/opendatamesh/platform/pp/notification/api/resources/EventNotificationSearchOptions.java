@@ -2,30 +2,32 @@ package org.opendatamesh.platform.pp.notification.api.resources;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.opendatamesh.platform.pp.notification.api.resources.enums.EventNotificationStatus;
+import org.opendatamesh.platform.pp.notification.api.resources.enums.EventType;
 
 public class EventNotificationSearchOptions {
 
     @JsonProperty("eventType")
     @Schema(description = "The type of the event encapsulated in the notification")
-    private String eventType;
+    private EventType eventType;
 
     @JsonProperty("notificationStatus")
     @Schema(description = "The status of the notification")
-    private String notificationStatus;
+    private EventNotificationStatus notificationStatus;
 
-    public String getEventType() {
+    public EventType getEventType() {
         return eventType;
     }
 
-    public void setEventType(String eventType) {
+    public void setEventType(EventType eventType) {
         this.eventType = eventType;
     }
 
-    public String getNotificationStatus() {
+    public EventNotificationStatus getNotificationStatus() {
         return notificationStatus;
     }
 
-    public void setNotificationStatus(String notificationStatus) {
+    public void setNotificationStatus(EventNotificationStatus notificationStatus) {
         this.notificationStatus = notificationStatus;
     }
 

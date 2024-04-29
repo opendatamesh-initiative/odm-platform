@@ -1,0 +1,7 @@
+{
+  "type": "DATA_PRODUCT_DELETED",
+  "entityId": "abc123",
+  "beforeState": "{\"name\": \"DP abc 123\"}",
+  "afterState": null,
+  "time": "2024-03-21T12:17:11.000+00:00"
+}

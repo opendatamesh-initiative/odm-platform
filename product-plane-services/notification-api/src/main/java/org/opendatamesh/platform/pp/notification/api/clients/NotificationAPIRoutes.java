@@ -11,7 +11,7 @@ public enum NotificationAPIRoutes implements ODMApiRoutes {
 
     private final String path;
 
-    private static final String CONTEXT_PATH = "/api/v1/pp/event-notifier";
+    private static final String CONTEXT_PATH = "/api/v1/pp/notification";
 
     NotificationAPIRoutes(String path) {
         this.path = CONTEXT_PATH + path;

@@ -211,18 +211,36 @@ public class NotificationClientImpl extends ODMClient implements NotificationCli
 
     public ResponseEntity<ObjectNode> searchEventNotificationsResponseEntity(EventNotificationSearchOptions searchOption) {
         Map<String, Object> queryParams = new HashMap<>();
-        if(searchOption.getEventType() != null)
+        if(searchOption.getEventType() != null && searchOption.getNotificationStatus() != null) {
             queryParams.put("eventType", searchOption.getEventType());
-        if(searchOption.getNotificationStatus() != null)
             queryParams.put("notificationStatus", searchOption.getNotificationStatus());
-        if(queryParams.size() >= 0)
             return rest.exchange(
                     apiUrl(NotificationAPIRoutes.NOTIFICATIONS, queryParams),
                     HttpMethod.GET,
                     null,
-                    ObjectNode.class
+                    ObjectNode.class,
+                    searchOption.getEventType(),
+                    searchOption.getNotificationStatus()
             );
-        else
+        } else if (searchOption.getEventType() != null && searchOption.getNotificationStatus() == null) {
+            queryParams.put("eventType", searchOption.getEventType());
+            return rest.exchange(
+                    apiUrl(NotificationAPIRoutes.NOTIFICATIONS, queryParams),
+                    HttpMethod.GET,
+                    null,
+                    ObjectNode.class,
+                    searchOption.getEventType()
+            );
+        } else if (searchOption.getEventType() == null && searchOption.getNotificationStatus() != null) {
+            queryParams.put("notificationStatus", searchOption.getNotificationStatus());
+            return rest.exchange(
+                    apiUrl(NotificationAPIRoutes.NOTIFICATIONS, queryParams),
+                    HttpMethod.GET,
+                    null,
+                    ObjectNode.class,
+                    searchOption.getNotificationStatus()
+            );
+        } else
             return rest.exchange(
                     apiUrl(NotificationAPIRoutes.NOTIFICATIONS),
                     HttpMethod.GET,

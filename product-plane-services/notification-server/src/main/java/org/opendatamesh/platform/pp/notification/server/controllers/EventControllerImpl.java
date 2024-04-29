@@ -1,5 +1,6 @@
 package org.opendatamesh.platform.pp.notification.server.controllers;
 
+import org.opendatamesh.platform.pp.notification.api.controllers.AbstractEventController;
 import org.opendatamesh.platform.pp.notification.api.controllers.EventController;
 import org.opendatamesh.platform.pp.notification.api.resources.EventResource;
 import org.opendatamesh.platform.pp.notification.api.resources.EventSearchOptions;
@@ -10,7 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class EventControllerImpl implements EventController {
+public class EventControllerImpl extends AbstractEventController {
 
     @Autowired
     private EventService eventService;

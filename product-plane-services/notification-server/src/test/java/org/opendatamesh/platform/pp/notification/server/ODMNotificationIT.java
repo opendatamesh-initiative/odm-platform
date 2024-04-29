@@ -7,6 +7,7 @@ import org.opendatamesh.platform.core.commons.test.ODMResourceBuilder;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.notification.api.clients.NotificationClientImpl;
 import org.opendatamesh.platform.pp.notification.api.resources.EventNotificationResource;
+import org.opendatamesh.platform.pp.notification.api.resources.EventResource;
 import org.opendatamesh.platform.pp.notification.api.resources.ObserverResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,14 +30,14 @@ import static org.assertj.core.api.Assertions.fail;
 //@ActiveProfiles("testpostgresql")
 //@ActiveProfiles("testmysql")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = {ODMNotificationApp.class})
-public class ODMEventNotifierIT extends ODMIntegrationTest {
+public class ODMNotificationIT extends ODMIntegrationTest {
 
     @LocalServerPort
     protected String port;
 
-    protected NotificationClientImpl eventNotifierClient;
+    protected NotificationClientImpl notificationClient;
 
-    protected Logger logger = LoggerFactory.getLogger(ODMEventNotifierIT.class);
+    protected Logger logger = LoggerFactory.getLogger(ODMNotificationIT.class);
 
     protected final String DB_TABLES_POSTGRESQL = "src/test/resources/db/tables_postgresql.txt";
 
@@ -46,7 +47,7 @@ public class ODMEventNotifierIT extends ODMIntegrationTest {
     public void init() {
         mapper = ObjectMapperFactory.JSON_MAPPER;
         resourceBuilder = new ODMResourceBuilder(mapper);
-        eventNotifierClient = new NotificationClientImpl("http://localhost:" + port, mapper);
+        notificationClient = new NotificationClientImpl("http://localhost:" + port, mapper);
     }
 
     @BeforeEach
@@ -85,7 +86,7 @@ public class ODMEventNotifierIT extends ODMIntegrationTest {
         ResponseEntity<ObjectNode> postObserverResponse = null;
 
         try {
-            postObserverResponse = eventNotifierClient.addObserverResponseEntity(observerResource);
+            postObserverResponse = notificationClient.addObserverResponseEntity(observerResource);
         } catch (Throwable t) {
             t.printStackTrace();
             fail("Impossible to create observer: " + t.getMessage());
@@ -99,6 +100,16 @@ public class ODMEventNotifierIT extends ODMIntegrationTest {
 
     }
 
+    protected EventResource createEventResource(String filePath) {
+        try {
+            return resourceBuilder.readResourceFromFile(filePath, EventResource.class);
+        } catch (Throwable t) {
+            t.printStackTrace();
+            fail("Impossible to read event from file: " + t.getMessage());
+            return null;
+        }
+    }
+
     protected EventNotificationResource createEventNotificationResource(String filePath) {
         try {
             return resourceBuilder.readResourceFromFile(filePath, EventNotificationResource.class);
@@ -108,28 +119,5 @@ public class ODMEventNotifierIT extends ODMIntegrationTest {
             return null;
         }
     }
-
-    /*protected EventNotificationResource createEventNotification(String filePath) {
-
-        EventNotificationResource eventNotificationResource = createEventNotificationResource(filePath);
-
-        ResponseEntity<ObjectNode> postEventNotificationResponse;
-
-        try {
-            postEventNotificationResponse = eventNotifierClient.createNotificationResponseEntity(eventNotificationResource);
-        } catch (Throwable t) {
-            t.printStackTrace();
-            fail("Impossible to create event notification: " + t.getMessage());
-            return null;
-        }
-
-        verifyResponseEntity(postEventNotificationResponse, HttpStatus.CREATED, true);
-        eventNotificationResource = mapper.convertValue(
-                postEventNotificationResponse.getBody(), EventNotificationResource.class
-        );
-
-        return eventNotificationResource;
-
-    }*/
 
 }

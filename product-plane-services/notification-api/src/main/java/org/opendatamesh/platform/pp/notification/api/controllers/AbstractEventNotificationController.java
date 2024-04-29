@@ -42,75 +42,6 @@ public abstract class AbstractEventNotificationController implements EventNotifi
     private static final String EXAMPLE_NOTIFICATION_UPDATE = "{\n" + //
             "}";
 
-    // ===============================================================================
-    // POST /notifications
-    // ===============================================================================
-
-    /*
-    @ResponseStatus(HttpStatus.CREATED)
-    @Operation(
-        summary = "Create the notification",
-        description = "Create the notification and start the handling process. The `id` of the created notification can be used to query asynchronously its handling status" 
-    )
-    @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "201", 
-            description = "Notification created",
-                content = @Content(
-                        mediaType = "application/json",
-                        schema = @Schema(implementation = EventNotificationResource.class),
-                        examples = {@ExampleObject(name = "notification", value = EXAMPLE_NOTIFICATION)}
-                )
-        ),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "[Bad Request](https://www.rfc-editor.org/rfc/rfc9110.html#name-400-bad-request)"
-                            + "\r\n - Error Code 40003 - Notification is empty",
-                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
-            ),
-            @ApiResponse(
-                    responseCode = "422",
-                    description = "[Unprocessable Content](https://www.rfc-editor.org/rfc/rfc9110.html#name-422-unprocessable-content)"
-                            + "\r\n - Error Code 42203 - Notification is invalid"
-                            + "\r\n - Error Code 42204 - Notification already exists",
-                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
-            ),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "[Internal Server Error](https://www.rfc-editor.org/rfc/rfc9110.html#name-500-internal-server-error)"
-                            + "\r\n - Error Code 50000 - Error in the backend database"
-                            + "\r\n - Error Code 50001 - Error in in the backend service",
-                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
-            )
-    })
-    @PostMapping(
-            consumes = {
-                    "application/vnd.odmp.v1+json",
-                    "application/vnd.odmp+json",
-                    "application/json"
-            },
-            produces = {
-                    "application/vnd.odmp.v1+json",
-                    "application/vnd.odmp+json",
-                    "application/json"
-            }
-    )
-    public EventNotificationResource createNotificationEndpoint(
-        @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                description = "A Notification JSON object",
-                content = @Content(examples = {@ExampleObject(
-                        name = "notification-creation-example",
-                        description = "Example of a Notification for the create API",
-                        value = EXAMPLE_NOTIFICATION_CREATE
-                )}))
-        @Valid @RequestBody(required = false) EventNotificationResource notificationRes
-    ) {
-        return createNotification(notificationRes);
-    }
-
-    public abstract EventNotificationResource createNotification(EventNotificationResource notificationRes);
-    */
-
 
     // ===============================================================================
     // PUT /notifications/{notificationId}
@@ -292,46 +223,5 @@ public abstract class AbstractEventNotificationController implements EventNotifi
     public abstract Page<EventNotificationResource> searchEventNotifications(
         Pageable pageable, EventNotificationSearchOptions searchOptions
     );
-
-
-    // ===============================================================================
-    // DELETE /notifications/{notificationId}
-    // ===============================================================================
-
-    /*
-    @Operation(
-            summary = "Delete an Notification",
-            description = "Delete a single Notification given its ID"
-    )
-    @ResponseStatus(HttpStatus.OK)
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "The requested Notification was deleted successfully"
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "[Not Found](https://www.rfc-editor.org/rfc/rfc9110.html#name-404-not-found)"
-                            + "\r\n - Error Code 40402 - Notification not found",
-                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
-            ),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "[Internal Server Error](https://www.rfc-editor.org/rfc/rfc9110.html#name-500-internal-server-error)"
-                            + "\r\n - Error Code 50000 - Error in the backend database"
-                            + "\r\n - Error Code 50001 - Error in in the backend service",
-                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
-            )
-    })
-    @DeleteMapping("/{notificationId}")
-    public void deleteNotificationEndpoint(
-            @Parameter(description = "ID of the Notification to delete", required = true)
-            @Valid @PathVariable(value = "notificationId") Long notificationId
-    )  {
-        deleteNotification(notificationId);
-    } 
-
-    public abstract void deleteNotification(Long notificationId);
-    */
     
 }

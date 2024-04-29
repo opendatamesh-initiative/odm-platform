@@ -4,18 +4,14 @@ import org.opendatamesh.platform.core.commons.servers.exceptions.BadGatewayExcep
 import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
 import org.opendatamesh.platform.pp.notification.api.resources.EventNotificationResource;
 import org.opendatamesh.platform.pp.notification.api.resources.ObserverResource;
-import org.opendatamesh.platform.pp.notification.server.services.proxies.clients.NotificationObserverClientFactory;
 import org.opendatamesh.platform.up.observer.api.clients.ConsumeClient;
+import org.opendatamesh.platform.up.observer.api.clients.ConsumeClientImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class NotificationObserverServiceProxy {
-
-    @Autowired
-    NotificationObserverClientFactory notificationObserverClientFactory;
 
     private static final Logger logger = LoggerFactory.getLogger(NotificationObserverServiceProxy.class);
 
@@ -24,12 +20,10 @@ public class NotificationObserverServiceProxy {
             ObserverResource observer
     ) {
 
-        ConsumeClient observerClient = notificationObserverClientFactory.getNotificationClient(
-                observer.getObserverServerBaseUrl()
-        );
+        ConsumeClient observerClient = new ConsumeClientImpl(observer.getObserverServerBaseUrl());
 
         try {
-            observerClient.consumeEventNotification(notificationToDispatch);
+            notificationToDispatch = observerClient.consumeEventNotification(notificationToDispatch);
             logger.debug(
                     "Successfully dispatched Event Notification to Observer ["
                             + observer.getName() + "]: " + notificationToDispatch

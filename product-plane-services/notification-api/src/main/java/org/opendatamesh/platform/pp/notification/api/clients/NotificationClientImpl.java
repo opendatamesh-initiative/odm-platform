@@ -73,15 +73,6 @@ public class NotificationClientImpl extends ODMClient implements NotificationCli
     // EventNotifications
     // ===============================================================================
 
-    /*@Override
-    public EventNotificationResource createNotification(EventNotificationResource eventNotificationResource) {
-        return restUtils.create(
-                apiUrl(NotificationAPIRoutes.NOTIFICATIONS),
-                eventNotificationResource,
-                EventNotificationResource.class
-        );
-    }*/
-
     public EventNotificationResource updateEventNotification(Long notificationId, EventNotificationResource eventNotificationResource) {
         return restUtils.put(
                 apiUrlOfItem(NotificationAPIRoutes.NOTIFICATIONS),
@@ -107,11 +98,6 @@ public class NotificationClientImpl extends ODMClient implements NotificationCli
                 EventNotificationResource.class
         );
     }
-
-    /*
-    public void deleteNotification(Long notificationId) {
-        restUtils.delete(apiUrlOfItem(NotificationAPIRoutes.NOTIFICATIONS), notificationId);
-    }*/
 
 
     // ===============================================================================
@@ -203,15 +189,6 @@ public class NotificationClientImpl extends ODMClient implements NotificationCli
         );
     }
 
-    /*public ResponseEntity<ObjectNode> createNotificationResponseEntity(EventNotificationResource eventNotificationResource) {
-        return rest.exchange(
-                apiUrl(NotificationAPIRoutes.NOTIFICATIONS),
-                HttpMethod.POST,
-                new HttpEntity<>(eventNotificationResource),
-                ObjectNode.class
-        );
-    }*/
-
     public ResponseEntity<ObjectNode> updateEventNotificationResponseEntity(Long notificationId, EventNotificationResource eventNotificationResource) {
         return rest.exchange(
                 apiUrlOfItem(NotificationAPIRoutes.NOTIFICATIONS),
@@ -253,15 +230,5 @@ public class NotificationClientImpl extends ODMClient implements NotificationCli
                     ObjectNode.class
             );
     }
-
-    /*public ResponseEntity<ObjectNode> deleteNotificationResponseEntity(Long notificationId) {
-        return rest.exchange(
-                apiUrlOfItem(NotificationAPIRoutes.NOTIFICATIONS),
-                HttpMethod.DELETE,
-                null,
-                ObjectNode.class,
-                notificationId
-        );
-    }*/
 
 }

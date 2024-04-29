@@ -8,14 +8,10 @@ import org.springframework.data.domain.Pageable;
 
 public interface EventNotificationController {
 
-    //EventNotificationResource createNotification(EventNotificationResource eventNotificationResource);
-
     EventNotificationResource updateEventNotification(Long notificationId, EventNotificationResource eventNotificationResource);
 
     EventNotificationResource readOneEventNotification(Long notificationId);
 
     Page<EventNotificationResource> searchEventNotifications(Pageable pageable, EventNotificationSearchOptions searchOption);
-
-    //void deleteNotification(Long notificationId);
 
 }

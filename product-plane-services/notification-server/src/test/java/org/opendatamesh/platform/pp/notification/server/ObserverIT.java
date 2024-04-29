@@ -13,7 +13,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ObserverIT extends ODMEventNotifierIT {
+public class ObserverIT extends ODMNotificationIT {
 
     // ======================================================================================
     // CREATE Observer
@@ -24,7 +24,7 @@ public class ObserverIT extends ODMEventNotifierIT {
     public void testCreateObserver() {
 
         // Resources + Creation
-        ObserverResource observerResource = createObserver(ODMEventNotifierResources.RESOURCE_OBSERVER_1);
+        ObserverResource observerResource = createObserver(ODMNotificationResources.RESOURCE_OBSERVER_1);
 
         // Verification
         verifyResourceObserverOne(observerResource);
@@ -40,14 +40,14 @@ public class ObserverIT extends ODMEventNotifierIT {
     public void testUpdateObserver() {
 
         // Resources + Creation
-        ObserverResource observerResource = createObserver(ODMEventNotifierResources.RESOURCE_OBSERVER_1);
-        ObserverResource observerResourceUpdated = createObserverResource(ODMEventNotifierResources.RESOURCE_OBSERVER_1_UPDATED);
+        ObserverResource observerResource = createObserver(ODMNotificationResources.RESOURCE_OBSERVER_1);
+        ObserverResource observerResourceUpdated = createObserverResource(ODMNotificationResources.RESOURCE_OBSERVER_1_UPDATED);
         // TODO: discuss update strategies (ID and CreationTime actually MUST be in the updated object)
         observerResourceUpdated.setId(observerResource.getId());
         observerResourceUpdated.setCreatedAt(observerResource.getCreatedAt());
 
         // PUT request
-        ResponseEntity<ObjectNode> putResponse = eventNotifierClient.updateObserverResponseEntity(
+        ResponseEntity<ObjectNode> putResponse = notificationClient.updateObserverResponseEntity(
                 observerResource.getId(),
                 observerResourceUpdated
         );
@@ -69,11 +69,11 @@ public class ObserverIT extends ODMEventNotifierIT {
     public void testReadAllObservers() {
 
         // Resources + Creation
-        createObserver(ODMEventNotifierResources.RESOURCE_OBSERVER_1);
-        createObserver(ODMEventNotifierResources.RESOURCE_OBSERVER_2);
+        createObserver(ODMNotificationResources.RESOURCE_OBSERVER_1);
+        createObserver(ODMNotificationResources.RESOURCE_OBSERVER_2);
 
         // GET request
-        ResponseEntity<ObjectNode> getResponse = eventNotifierClient.getObserversResponseEntity();
+        ResponseEntity<ObjectNode> getResponse = notificationClient.getObserversResponseEntity();
         verifyResponseEntity(getResponse, HttpStatus.OK, true);
 
         // Verification
@@ -96,10 +96,10 @@ public class ObserverIT extends ODMEventNotifierIT {
     public void testReadOneObserver() throws JsonProcessingException {
 
         // Resources + Creation
-        ObserverResource observerResource = createObserver(ODMEventNotifierResources.RESOURCE_OBSERVER_1);
+        ObserverResource observerResource = createObserver(ODMNotificationResources.RESOURCE_OBSERVER_1);
 
         // GET request
-        ResponseEntity<ObjectNode> getResponse = eventNotifierClient.getObserverResponseEntity(observerResource.getId());
+        ResponseEntity<ObjectNode> getResponse = notificationClient.getObserverResponseEntity(observerResource.getId());
         verifyResponseEntity(getResponse, HttpStatus.OK, true);
         observerResource = mapper.convertValue(getResponse.getBody(), ObserverResource.class);
 
@@ -118,14 +118,14 @@ public class ObserverIT extends ODMEventNotifierIT {
     public void testDeleteObserver() throws JsonProcessingException {
 
         // Resources + Creation
-        ObserverResource observerResource = createObserver(ODMEventNotifierResources.RESOURCE_OBSERVER_1);
+        ObserverResource observerResource = createObserver(ODMNotificationResources.RESOURCE_OBSERVER_1);
 
         // DELETE request
-        ResponseEntity deleteResponse = eventNotifierClient.removeObserverResponseEntity(observerResource.getId());
+        ResponseEntity deleteResponse = notificationClient.removeObserverResponseEntity(observerResource.getId());
         verifyResponseEntity(deleteResponse, HttpStatus.OK, false);
 
         // GET request to check that the entity is not on the DB anymore
-        ResponseEntity<ObjectNode> getResponse = eventNotifierClient.getObserverResponseEntity(observerResource.getId());
+        ResponseEntity<ObjectNode> getResponse = notificationClient.getObserverResponseEntity(observerResource.getId());
         verifyResponseErrorObjectNode(
                 getResponse,
                 HttpStatus.NOT_FOUND,

@@ -4,6 +4,6 @@ import org.opendatamesh.platform.pp.notification.api.resources.EventNotification
 
 public interface ConsumeController {
 
-    void consumeEventNotification(EventNotificationResource notificationRes);
+    EventNotificationResource consumeEventNotification(EventNotificationResource notificationRes);
 
 }

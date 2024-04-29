@@ -1,6 +1,6 @@
 package org.opendatamesh.platform.pp.notification.server;
 
-public class EventNotificationErrorIT extends ODMEventNotifierIT {
+public class EventNotificationErrorIT extends ODMNotificationIT {
 
 
 

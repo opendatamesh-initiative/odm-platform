@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 
-public class ObserverErrorIT extends ODMEventNotifierIT {
+public class ObserverErrorIT extends ODMNotificationIT {
 
     // ======================================================================================
     // CREATE Observer
@@ -19,7 +19,7 @@ public class ObserverErrorIT extends ODMEventNotifierIT {
     public void testCreateObserverError400xx() {
 
         // 40001 - Empty Observer
-        ResponseEntity<ObjectNode> postResponse = eventNotifierClient.addObserverResponseEntity(null);
+        ResponseEntity<ObjectNode> postResponse = notificationClient.addObserverResponseEntity(null);
         verifyResponseErrorObjectNode(
                 postResponse,
                 HttpStatus.BAD_REQUEST,
@@ -34,13 +34,13 @@ public class ObserverErrorIT extends ODMEventNotifierIT {
     public void testCreateObserverError422xx() {
 
         // Resources
-        ObserverResource observerResource = createObserverResource(ODMEventNotifierResources.RESOURCE_OBSERVER_1);
+        ObserverResource observerResource = createObserverResource(ODMNotificationResources.RESOURCE_OBSERVER_1);
         String observerServerAddress = observerResource.getObserverServerBaseUrl();
         ResponseEntity<ObjectNode> postResponse;
 
         // 42201 - Observer is invalid - Observer server address cannot be null
         observerResource.setObserverServerBaseUrl(null);
-        postResponse = eventNotifierClient.addObserverResponseEntity(observerResource);
+        postResponse = notificationClient.addObserverResponseEntity(observerResource);
         verifyResponseErrorObjectNode(
                 postResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
@@ -51,7 +51,7 @@ public class ObserverErrorIT extends ODMEventNotifierIT {
         // 42201 - Observer is invalid - Observer name cannot be null
         observerResource.setObserverServerBaseUrl(observerServerAddress);
         observerResource.setName(null);
-        postResponse = eventNotifierClient.addObserverResponseEntity(observerResource);
+        postResponse = notificationClient.addObserverResponseEntity(observerResource);
         verifyResponseErrorObjectNode(
                 postResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
@@ -60,9 +60,9 @@ public class ObserverErrorIT extends ODMEventNotifierIT {
         );
 
         // 42205 - Observer is invalid - Observer with name [" + observerResource.getName() + "] already exists
-        observerResource = createObserver(ODMEventNotifierResources.RESOURCE_OBSERVER_1);
+        observerResource = createObserver(ODMNotificationResources.RESOURCE_OBSERVER_1);
         observerResource.setId(null);
-        postResponse = eventNotifierClient.addObserverResponseEntity(observerResource);
+        postResponse = notificationClient.addObserverResponseEntity(observerResource);
         verifyResponseErrorObjectNode(
                 postResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
@@ -81,10 +81,10 @@ public class ObserverErrorIT extends ODMEventNotifierIT {
     public void testUpdateObserverError400xx() {
 
         // Resources
-        ObserverResource observerResource = createObserver(ODMEventNotifierResources.RESOURCE_OBSERVER_1);
+        ObserverResource observerResource = createObserver(ODMNotificationResources.RESOURCE_OBSERVER_1);
 
         // 40001 - Empty Observer
-        ResponseEntity<ObjectNode> putResponse = eventNotifierClient.updateObserverResponseEntity(observerResource.getId(), null);
+        ResponseEntity<ObjectNode> putResponse = notificationClient.updateObserverResponseEntity(observerResource.getId(), null);
         verifyResponseErrorObjectNode(
                 putResponse,
                 HttpStatus.BAD_REQUEST,
@@ -99,10 +99,10 @@ public class ObserverErrorIT extends ODMEventNotifierIT {
     public void testUpdateObserverError404xx() {
 
         // Resources
-        ObserverResource observerResource = createObserverResource(ODMEventNotifierResources.RESOURCE_OBSERVER_1);
+        ObserverResource observerResource = createObserverResource(ODMNotificationResources.RESOURCE_OBSERVER_1);
 
         // 40401 - Observer not found
-        ResponseEntity<ObjectNode> putResponse = eventNotifierClient.updateObserverResponseEntity(2L, observerResource);
+        ResponseEntity<ObjectNode> putResponse = notificationClient.updateObserverResponseEntity(2L, observerResource);
         verifyResponseErrorObjectNode(
                 putResponse,
                 HttpStatus.NOT_FOUND,
@@ -117,13 +117,13 @@ public class ObserverErrorIT extends ODMEventNotifierIT {
     public void testUpdateObserverError422xx() {
 
         // Resources
-        ObserverResource observerResource = createObserver(ODMEventNotifierResources.RESOURCE_OBSERVER_1);
+        ObserverResource observerResource = createObserver(ODMNotificationResources.RESOURCE_OBSERVER_1);
         String observerServerAddress = observerResource.getObserverServerBaseUrl();
         ResponseEntity<ObjectNode> putResponse;
 
         // 42201 - Observer is invalid - Observer server address cannot be null
         observerResource.setObserverServerBaseUrl(null);
-        putResponse = eventNotifierClient.updateObserverResponseEntity(observerResource.getId(), observerResource);
+        putResponse = notificationClient.updateObserverResponseEntity(observerResource.getId(), observerResource);
         verifyResponseErrorObjectNode(
                 putResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
@@ -134,7 +134,7 @@ public class ObserverErrorIT extends ODMEventNotifierIT {
         // 42201 - Observer is invalid - Observer name cannot be null
         observerResource.setObserverServerBaseUrl(observerServerAddress);
         observerResource.setName(null);
-        putResponse = eventNotifierClient.updateObserverResponseEntity(observerResource.getId(), observerResource);
+        putResponse = notificationClient.updateObserverResponseEntity(observerResource.getId(), observerResource);
         verifyResponseErrorObjectNode(
                 putResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
@@ -160,7 +160,7 @@ public class ObserverErrorIT extends ODMEventNotifierIT {
     public void testReadOneObserverError404xx() {
 
         // 40401 - Resource not found
-        ResponseEntity<ObjectNode> getResponse = eventNotifierClient.getObserverResponseEntity(2L);
+        ResponseEntity<ObjectNode> getResponse = notificationClient.getObserverResponseEntity(2L);
         verifyResponseErrorObjectNode(
                 getResponse,
                 HttpStatus.NOT_FOUND,
@@ -179,7 +179,7 @@ public class ObserverErrorIT extends ODMEventNotifierIT {
     public void testDeleteOneObserverError404xx() {
 
         // 40401 - Resource not found
-        ResponseEntity<ObjectNode> deleteResponse = eventNotifierClient.removeObserverResponseEntity(2L);
+        ResponseEntity<ObjectNode> deleteResponse = notificationClient.removeObserverResponseEntity(2L);
         verifyResponseErrorObjectNode(
                 deleteResponse,
                 HttpStatus.NOT_FOUND,

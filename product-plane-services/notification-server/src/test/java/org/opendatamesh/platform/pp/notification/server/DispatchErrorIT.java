@@ -9,7 +9,7 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import java.io.IOException;
 
-public class DispatchErrorIT extends ODMEventNotifierIT {
+public class DispatchErrorIT extends ODMNotificationIT {
 
     // ======================================================================================
     // DISPATCH Event (POST)
@@ -20,7 +20,7 @@ public class DispatchErrorIT extends ODMEventNotifierIT {
     public void testDispatchEventError400xx() throws IOException {
 
         // 40001 - Empty Observer
-        ResponseEntity<ObjectNode> postResponse = eventNotifierClient.notifyEventResponseEntity(null);
+        ResponseEntity<ObjectNode> postResponse = notificationClient.notifyEventResponseEntity(null);
         verifyResponseErrorObjectNode(
                 postResponse,
                 HttpStatus.BAD_REQUEST,

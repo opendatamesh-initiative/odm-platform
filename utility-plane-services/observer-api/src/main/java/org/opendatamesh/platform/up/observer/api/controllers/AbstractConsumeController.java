@@ -38,15 +38,15 @@ public abstract class AbstractConsumeController implements ConsumeController {
             )
         )
     })
-    public void consumeEventNotificationEndpoint(
+    public EventNotificationResource consumeEventNotificationEndpoint(
         @Parameter( 
             description = "A EventNotification object",
             required = true)
         @Valid @RequestBody EventNotificationResource notificationRes
     ) {
-        consumeEventNotification(notificationRes);
+        return consumeEventNotification(notificationRes);
     }
 
-    public abstract void consumeEventNotification(EventNotificationResource notificationRes);
+    public abstract EventNotificationResource consumeEventNotification(EventNotificationResource notificationRes);
 
 }

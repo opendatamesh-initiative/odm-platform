@@ -1,9 +1,7 @@
-package org.opendatamesh.platform.pp.devops.server.configurations;
+package org.opendatamesh.platform.pp.registry.server.configurations;
 
 import org.opendatamesh.platform.pp.notification.api.clients.DispatchClient;
-import org.opendatamesh.platform.pp.notification.api.clients.NotificationClient;
 import org.opendatamesh.platform.pp.notification.api.clients.NotificationClientImpl;
-import org.opendatamesh.platform.pp.notification.api.resources.ObserverResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,23 +9,23 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class DevOpsNotificationConfiguration {
+public class RegistryNotificationConfiguration {
 
     @Value("${odm.productPlane.notificationService.active}")
-    private Boolean notificationActive;
+    private Boolean notificationServiceActive;
 
     @Value("${odm.productPlane.notificationService.address}")
-    private String notificationServerAddress;
+    private String notificationServiceServerAddress;
 
-    private static final Logger logger = LoggerFactory.getLogger(DevOpsNotificationConfiguration.class);
+    private static final Logger logger = LoggerFactory.getLogger(RegistryNotificationConfiguration.class);
 
     @Bean
     public DispatchClient notificationClient() {
         DispatchClient notificationClient = null;
-        if(!notificationActive) {
+        if(!notificationServiceActive) {
             logger.debug("Skipping notification service");
         } else {
-            notificationClient = new NotificationClientImpl(notificationServerAddress);
+            notificationClient = new NotificationClientImpl(notificationServiceServerAddress);
         }
         return notificationClient;
     }

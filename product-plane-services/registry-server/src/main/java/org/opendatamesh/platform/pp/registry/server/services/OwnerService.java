@@ -3,7 +3,6 @@ package org.opendatamesh.platform.pp.registry.server.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.platform.core.commons.servers.exceptions.*;
-import org.opendatamesh.platform.pp.notification.api.clients.NotificationClient;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.DataProductVersion;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.info.Owner;
@@ -33,9 +32,6 @@ public class OwnerService {
 
     @Autowired
     private OwnerMapper ownerMapper;
-
-    @Autowired
-    NotificationClient eventNotifier;
 
 
     private static final Logger logger = LoggerFactory.getLogger(OwnerService.class);
@@ -209,4 +205,5 @@ public class OwnerService {
                     "Owner [" + owner.getId() + "] has at least one Data Product associated, therefore can't be deleted");
         }
     }
+
 }

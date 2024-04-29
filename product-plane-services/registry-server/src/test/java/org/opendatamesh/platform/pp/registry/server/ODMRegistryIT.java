@@ -4,11 +4,14 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
 import org.opendatamesh.platform.core.commons.test.ODMIntegrationTest;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
+import org.opendatamesh.platform.pp.notification.api.clients.DispatchClient;
 import org.opendatamesh.platform.pp.registry.api.clients.RegistryClient;
 import org.opendatamesh.platform.pp.registry.api.resources.*;
 import org.opendatamesh.platform.pp.registry.server.utils.ODMRegistryResourceBuilder;
@@ -17,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -54,9 +58,11 @@ public abstract class ODMRegistryIT extends ODMIntegrationTest {
     @Autowired
     protected ObjectMapper mapper;
 
+    @MockBean
+    protected DispatchClient notificationClient;
+
     protected final String DB_TABLES_POSTGRESQL = "src/test/resources/db/tables_postgresql.txt";
     protected final String DB_TABLES_MYSQL = "src/test/resources/db/tables_mysql.txt";
-
 
     protected Logger logger = LoggerFactory.getLogger(ODMRegistryIT.class);
 
@@ -67,6 +73,11 @@ public abstract class ODMRegistryIT extends ODMIntegrationTest {
         registryClient = new RegistryClient("http://localhost:" + port);
     }
 
+    @Before
+    public void mockSetUp() {
+        // Mock notifications
+        Mockito.doNothing().when(notificationClient).notifyEvent(Mockito.any());
+    }
 
     @BeforeEach
     public void cleanDbState(@Autowired JdbcTemplate jdbcTemplate, @Autowired Environment environment) throws IOException {

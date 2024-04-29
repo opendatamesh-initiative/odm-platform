@@ -7,6 +7,7 @@ import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerE
 import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
+import org.opendatamesh.platform.pp.notification.api.clients.DispatchClient;
 import org.opendatamesh.platform.pp.notification.api.clients.NotificationClient;
 import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
 import org.opendatamesh.platform.pp.notification.api.resources.EventResource;
@@ -19,10 +20,10 @@ import org.springframework.stereotype.Service;
 public class RegistryNotificationServiceProxy {
 
     @Autowired(required = false)
-    NotificationClient eventNotifierClient;
+    DispatchClient notificationClient;
 
-    @Value("${odm.productPlane.eventNotifierService.active}")
-    private Boolean eventNotifierServiceActive;
+    @Value("${odm.productPlane.notificationService.active}")
+    private Boolean notificationServiceActive;
 
     private final ObjectMapper mapper = ObjectMapperFactory.JSON_MAPPER;
 
@@ -32,7 +33,7 @@ public class RegistryNotificationServiceProxy {
     // ======================================================================================
 
     public void notifyDataProductCreation(DataProductResource dataProduct) {
-        if(eventNotifierServiceActive) {
+        if(notificationServiceActive) {
             EventResource eventResource = buildDataProductEvent(
                     EventType.DATA_PRODUCT_CREATED,
                     dataProduct.getId(),
@@ -46,7 +47,7 @@ public class RegistryNotificationServiceProxy {
     public void notifyDataProductUpdate(
             DataProductResource previousDataProduct, DataProductResource currentDataProduct
     ) {
-        if(eventNotifierServiceActive) {
+        if(notificationServiceActive) {
             EventResource eventResource = buildDataProductEvent(
                     EventType.DATA_PRODUCT_UPDATED,
                     currentDataProduct.getId(),
@@ -58,7 +59,7 @@ public class RegistryNotificationServiceProxy {
     }
 
     public void notifyDataProductDeletion(DataProductResource dataProduct) {
-        if(eventNotifierServiceActive) {
+        if(notificationServiceActive) {
             EventResource eventResource = buildDataProductEvent(
                     EventType.DATA_PRODUCT_DELETED,
                     dataProduct.getId(),
@@ -75,7 +76,7 @@ public class RegistryNotificationServiceProxy {
     // ======================================================================================
 
     public void notifyDataProductVersionCreation(DataProductVersionDPDS dataProductVersion) {
-        if(eventNotifierServiceActive) {
+        if(notificationServiceActive) {
             EventResource eventResource = buildDataProductVersionEvent(
                     EventType.DATA_PRODUCT_VERSION_CREATED,
                     dataProductVersion.getInfo().getDataProductId(),
@@ -87,7 +88,7 @@ public class RegistryNotificationServiceProxy {
     }
 
     public void notifyDataProductVersionDeletion(DataProductVersionDPDS dataProductVersion) {
-        if(eventNotifierServiceActive) {
+        if(notificationServiceActive) {
             EventResource eventResource = buildDataProductVersionEvent(
                     EventType.DATA_PRODUCT_DELETED,
                     dataProductVersion.getInfo().getDataProductId(),
@@ -119,7 +120,7 @@ public class RegistryNotificationServiceProxy {
 
     private void notifyEvent(EventResource eventResource, String errorMessage) {
         try {
-            eventNotifierClient.notifyEvent(eventResource);
+            notificationClient.notifyEvent(eventResource);
         } catch (Exception e) {
             throw new BadGatewayException(
                     ODMApiCommonErrors.SC502_70_NOTIFICATION_SERVICE_ERROR,
@@ -169,6 +170,5 @@ public class RegistryNotificationServiceProxy {
             );
         }
     }
-
 
 }

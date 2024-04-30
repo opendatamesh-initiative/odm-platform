@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.opendatamesh.platform.pp.notification.api.resources.EventNotificationResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -13,10 +14,13 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-
 @RestController
-@RequestMapping("/notifications")
+@RequestMapping(value = "/notifications")
 @Validated
+@Tag(
+        name = "Consume Notification",
+        description = "Endpoints associated to consuming Event's Notifications"
+)
 public abstract class AbstractConsumeController implements ConsumeController {
 
     @PostMapping(

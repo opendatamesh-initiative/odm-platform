@@ -8,7 +8,6 @@ import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErr
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.pp.notification.api.clients.DispatchClient;
-import org.opendatamesh.platform.pp.notification.api.clients.NotificationClient;
 import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
 import org.opendatamesh.platform.pp.notification.api.resources.EventResource;
 import org.opendatamesh.platform.pp.notification.api.resources.enums.EventType;

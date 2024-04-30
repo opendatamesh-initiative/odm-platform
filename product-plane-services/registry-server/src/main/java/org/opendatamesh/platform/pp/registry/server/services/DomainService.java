@@ -186,7 +186,7 @@ public class DomainService {
 
         try {
             domain = saveDomain(domain);
-            logger.info("Domain [" + domain.getFullyQualifiedName() + "] succesfully updated");
+            logger.info("Domain [" + domain.getFullyQualifiedName() + "] successfully updated");
         } catch(Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,

@@ -116,12 +116,12 @@ public class BlueprintService {
                     "Blueprint [" + blueprint.getName() + "] "
                     + "of version [" + blueprint.getVersion() + "] "
                     + "of repository [" + blueprint.getRepositoryUrl() + "/" + blueprint.getBlueprintDirectory() + "] "
-                    + "succesfully registered"
+                    + "successfully registered"
             );
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while saving blueprint [" + blueprint.getName() + "] "
+                    "An error occurred in the backend database while saving blueprint [" + blueprint.getName() + "] "
                             + "of repository [" + blueprint.getRepositoryUrl() + "]",
                     t
             );
@@ -145,7 +145,7 @@ public class BlueprintService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while loading blueprints",
+                    "An error occurred in the backend database while loading blueprints",
                     t
             );
         }
@@ -165,7 +165,7 @@ public class BlueprintService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while loading activity with id [" + blueprintId + "]",
+                    "An error occurred in the backend database while loading activity with id [" + blueprintId + "]",
                     t
             );
         }
@@ -181,10 +181,7 @@ public class BlueprintService {
 
     private Blueprint loadBlueprint(Long blueprintId) {
         Optional<Blueprint> blueprintLookUpResult = blueprintRepository.findById(blueprintId);
-        if (blueprintLookUpResult.isPresent())
-            return blueprintLookUpResult.get();
-        else
-            return null;
+        return blueprintLookUpResult.orElse(null);
     }
 
 
@@ -224,11 +221,11 @@ public class BlueprintService {
 
         try {
             blueprint = saveBlueprint(blueprint);
-            logger.info("Blueprint with id [" + blueprint.getId() + "] succesfully updated");
+            logger.info("Blueprint with id [" + blueprint.getId() + "] successfully updated");
         } catch(Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while updating blueprint with id [" + blueprint.getId() + "]",
+                    "An error occurred in the backend database while updating blueprint with id [" + blueprint.getId() + "]",
                     t
             );
         }
@@ -251,11 +248,11 @@ public class BlueprintService {
 
         try {
             blueprintRepository.deleteById(blueprintId);
-            logger.info("Blueprint with id [" + blueprintId + "] succesfully deleted");
+            logger.info("Blueprint with id [" + blueprintId + "] successfully deleted");
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while deleting blueprint with id [" + blueprintId + "]",
+                    "An error occurred in the backend database while deleting blueprint with id [" + blueprintId + "]",
                     t
             );
         }
@@ -274,7 +271,7 @@ public class BlueprintService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while searching blueprints",
+                    "An error occurred in the backend database while searching blueprints",
                     t
             );
         }

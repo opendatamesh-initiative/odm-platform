@@ -36,7 +36,7 @@ public class TaskIT extends ODMDevOpsIT {
         try {
             devOpsClient.startActivity(activityRes.getId());
         } catch (Throwable t) {
-            fail("An unexpected exception occured while starting activity: " + t.getMessage());
+            fail("An unexpected exception occurred while starting activity: " + t.getMessage());
             t.printStackTrace();
             return;
         }
@@ -77,7 +77,7 @@ public class TaskIT extends ODMDevOpsIT {
         try {
             taskStatusRes = devOpsClient.stopTask(targetTaskRes.getId());
         } catch (Throwable t) {
-            fail("An unexpected exception occured while stopping task: " + t.getMessage());
+            fail("An unexpected exception occurred while stopping task: " + t.getMessage());
             t.printStackTrace();
             return;
         }
@@ -88,7 +88,7 @@ public class TaskIT extends ODMDevOpsIT {
         try {
             stoppedTaskRes = devOpsClient.readTask(targetTaskRes.getId());
         } catch (Throwable t) {
-            fail("An unexpected exception occured while stopping task: " + t.getMessage());
+            fail("An unexpected exception occurred while stopping task: " + t.getMessage());
             t.printStackTrace();
             return;
         }
@@ -161,7 +161,7 @@ public class TaskIT extends ODMDevOpsIT {
         try {
             startedActivityRes = devOpsClient.startActivity(activityRes.getId());
         } catch (Throwable t) {
-            fail("An unexpected exception occured while starting activity: " + t.getMessage());
+            fail("An unexpected exception occurred while starting activity: " + t.getMessage());
             t.printStackTrace();
             return;
         }
@@ -192,7 +192,7 @@ public class TaskIT extends ODMDevOpsIT {
         try {
             devOpsClient.stopTask(targetTaskRes.getId());
         } catch (Throwable t) {
-            fail("An unexpected exception occured while stopping task: " + t.getMessage());
+            fail("An unexpected exception occurred while stopping task: " + t.getMessage());
             t.printStackTrace();
             return;
         }
@@ -303,7 +303,7 @@ public class TaskIT extends ODMDevOpsIT {
         try {
             devOpsClient.startActivity(activityRes.getId());
         } catch (Throwable t) {
-            fail("An unexpected exception occured while starting activity: " + t.getMessage());
+            fail("An unexpected exception occurred while starting activity: " + t.getMessage());
             t.printStackTrace();
             return;
         }
@@ -343,7 +343,7 @@ public class TaskIT extends ODMDevOpsIT {
         try {
             devOpsClient.stopTask(targetTaskRes.getId());
         } catch (Throwable t) {
-            fail("An unexpected exception occured while stopping task: " + t.getMessage());
+            fail("An unexpected exception occurred while stopping task: " + t.getMessage());
             t.printStackTrace();
             return;
         }

@@ -49,7 +49,7 @@ public class ODMPolicyIT extends ODMIntegrationTest {
     @MockBean
     protected PolicyEngineProxy policyEngineProxy;
 
-    protected Logger logger = LoggerFactory.getLogger(ODMPolicyIT.class);
+    protected static final Logger logger = LoggerFactory.getLogger(ODMPolicyIT.class);
 
     protected final String DB_TABLES_POSTGRESQL = "src/test/resources/db/tables_postgresql.txt";
 

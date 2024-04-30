@@ -88,7 +88,7 @@ public class PolicyEvaluationResultErrorsIT extends ODMPolicyIT {
         );
 
         // 42203 - PolicyEvaluationResult is invalid
-        // - The policy with policy ID [evaluationResult.getPolicyId()] is inactive. Cannot add a result to a inactive policy
+        // - The policy with policy ID [evaluationResult.getPolicyId()] is inactive. Cannot add a result to an inactive policy
         // Create 2 version of a parent policy
         PolicyEngineResource parentPolicyEngine = createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);
         PolicyResource parentPolicyResource = createPolicy(ODMPolicyResources.RESOURCE_POLICY_1, parentPolicyEngine.getId());
@@ -222,7 +222,7 @@ public class PolicyEvaluationResultErrorsIT extends ODMPolicyIT {
         );
 
         // 42203 - PolicyEvaluationResult is invalid
-        // - The policy with policy ID [evaluationResult.getPolicyId()] is inactive. Cannot add a result to a inactive policy
+        // - The policy with policy ID [evaluationResult.getPolicyId()] is inactive. Cannot add a result to an inactive policy
         // Create 2 version of a parent policy
         PolicyResource updatedParentPolicyResource = createPolicyResource(ODMPolicyResources.RESOURCE_POLICY_1_UPDATED);
         updatedParentPolicyResource.setPolicyEngine(parentEngineResource);

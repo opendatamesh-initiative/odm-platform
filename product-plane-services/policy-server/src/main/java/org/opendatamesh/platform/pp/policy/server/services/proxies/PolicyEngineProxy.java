@@ -26,8 +26,7 @@ public class PolicyEngineProxy {
     }
 
     protected PolicyEngineClient getPolicyEngineClient(PolicyEngine policyEngine) {
-        PolicyEngineClient policyEngineClient = new PolicyEngineClientImpl(policyEngine.getAdapterUrl());
-        return policyEngineClient;
+        return new PolicyEngineClientImpl(policyEngine.getAdapterUrl());
     }
 
 }

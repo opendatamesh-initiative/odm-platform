@@ -32,7 +32,7 @@ public abstract class AbstractUploadsController {
     private static final Logger logger = LoggerFactory.getLogger(AbstractUploadsController.class);
 
     public AbstractUploadsController() { 
-        logger.debug("Data product uploads controller succesfully started");
+        logger.debug("Data product uploads controller successfully started");
     }
 
     // ======================================================================================

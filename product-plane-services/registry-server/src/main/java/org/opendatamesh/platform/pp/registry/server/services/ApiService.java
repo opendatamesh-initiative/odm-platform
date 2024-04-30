@@ -88,7 +88,7 @@ public class ApiService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while saving api",
+                    "An error occurred in the backend database while saving api",
                     t);
         }
 
@@ -184,7 +184,7 @@ public class ApiService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while loading definition [" + definitionId + "]",
+                    "An error occurred in the backend database while loading definition [" + definitionId + "]",
                     t);
         }
 
@@ -212,7 +212,7 @@ public class ApiService {
         } else {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while searching definitions");
+                    "An error occurred in the backend database while searching definitions");
         }
 
         return definition;
@@ -229,7 +229,7 @@ public class ApiService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while searching definitions",
+                    "An error occurred in the backend database while searching definitions",
                     t);
         }
         return definitionSearchResults;
@@ -269,7 +269,7 @@ public class ApiService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while updating definition [" + definition.getId() + "]",
+                    "An error occurred in the backend database while updating definition [" + definition.getId() + "]",
                     t);
         }
 
@@ -294,7 +294,7 @@ public class ApiService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while deleting definition [" + definitionId + "]",
+                    "An error occurred in the backend database while deleting definition [" + definitionId + "]",
                     t);
         }
 

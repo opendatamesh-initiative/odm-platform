@@ -147,7 +147,7 @@ public class PolicyErrorsIT extends ODMPolicyIT {
 
         // 40401 - Resource not found (parent policy engine not found)
         updatedPolicyResource.setRootId(parentPolicyResource.getRootId());
-        parentEngineResource.setId(3l);
+        parentEngineResource.setId(3L);
         updatedPolicyResource.setPolicyEngine(parentEngineResource);
         putResponse = policyClient.updatePolicyResponseEntity(parentPolicyResource.getId(), updatedPolicyResource);
         verifyResponseErrorObjectNode(

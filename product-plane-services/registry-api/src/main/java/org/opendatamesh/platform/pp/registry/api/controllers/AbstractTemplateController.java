@@ -138,7 +138,7 @@ public abstract class AbstractTemplateController {
     // UPDATE /templates/{id}
     // ===============================================================================
 
-    // Templates are immutable ojects, the cannot be updated after creations
+    // Templates are immutable objects, they cannot be updated after creations
 
     // ===============================================================================
     // DELETE /templates/{id}

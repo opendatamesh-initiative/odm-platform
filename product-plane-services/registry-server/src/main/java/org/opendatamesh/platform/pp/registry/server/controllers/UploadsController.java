@@ -43,7 +43,7 @@ public class UploadsController extends AbstractUploadsController {
     private static final Logger logger = LoggerFactory.getLogger(UploadsController.class);
 
     public UploadsController() { 
-        logger.debug("Data product uploads controller succesfully started");
+        logger.debug("Data product uploads controller successfully started");
     }
    
     @Override

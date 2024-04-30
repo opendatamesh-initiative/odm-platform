@@ -98,11 +98,11 @@ public class DataProductService {
        
         try {
             dataProduct = saveDataProduct(dataProduct);
-            logger.info("Data product [" + dataProduct.getFullyQualifiedName() + "] succesfully created");
+            logger.info("Data product [" + dataProduct.getFullyQualifiedName() + "] successfully created");
         } catch(Throwable t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                "An error occured in the backend database while saving data product [" + dataProduct.getFullyQualifiedName() + "]",
+                "An error occurred in the backend database while saving data product [" + dataProduct.getFullyQualifiedName() + "]",
                 t);
         }
 
@@ -126,7 +126,7 @@ public class DataProductService {
         } catch(Throwable t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                "An error occured in the backend database while loading data products",
+                "An error occurred in the backend database while loading data products",
                 t);
         }
         return dataProducts;
@@ -160,7 +160,7 @@ public class DataProductService {
         } catch(Throwable t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                "An error occured in the backend database while loading data product with id [" + dataProductId + "]",
+                "An error occurred in the backend database while loading data product with id [" + dataProductId + "]",
                 t);
         }
        
@@ -213,7 +213,7 @@ public class DataProductService {
         } catch(Throwable t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                "An error occured in the backend database while searching data products",
+                "An error occurred in the backend database while searching data products",
                 t);
         }
         return dataProductSearchResults;
@@ -270,11 +270,11 @@ public class DataProductService {
 
         try {
             dataProduct = saveDataProduct(dataProduct);
-            logger.info("Data product [" + dataProduct.getFullyQualifiedName() + "] with id [" + dataProduct.getId() + "] succesfully updated");
+            logger.info("Data product [" + dataProduct.getFullyQualifiedName() + "] with id [" + dataProduct.getId() + "] successfully updated");
         } catch(Throwable t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                "An error occured in the backend database while updating data product [" + dataProduct.getFullyQualifiedName() + "] with id [" + dataProduct.getId() + "]",
+                "An error occurred in the backend database while updating data product [" + dataProduct.getFullyQualifiedName() + "] with id [" + dataProduct.getId() + "]",
                 t);
         }
 
@@ -302,7 +302,7 @@ public class DataProductService {
         } catch(Throwable t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                "An error occured in the backend database while deleting data product",
+                "An error occurred in the backend database while deleting data product",
                 t);
         }
 
@@ -466,11 +466,11 @@ public class DataProductService {
             case RESOLVE_READ_ONLY_PROPERTIES:
                 throw new InternalServerException(
                     ODMApiCommonErrors.SC500_02_DESCRIPTOR_ERROR,
-            "An error occured in the backend descriptor processor while adding read only properties", e);
+            "An error occurred in the backend descriptor processor while adding read only properties", e);
             case RESOLVE_STANDARD_DEFINITIONS:
                 throw new InternalServerException(
                     ODMApiCommonErrors.SC500_02_DESCRIPTOR_ERROR,
-            "An error occured in the backend descriptor processor while resolving standard definitions", e);
+            "An error occurred in the backend descriptor processor while resolving standard definitions", e);
             case VALIDATE:
                 throw new UnprocessableEntityException(
                 RegistryApiStandardErrors.SC422_02_DESCRIPTOR_NOT_VALID,
@@ -478,7 +478,7 @@ public class DataProductService {
             default:
               throw new InternalServerException(
                 ODMApiCommonErrors.SC500_02_DESCRIPTOR_ERROR,
-                    "An error occured in the backend descriptor processor while adding read only properties", e);
+                    "An error occurred in the backend descriptor processor while adding read only properties", e);
           }
     }
 
@@ -495,7 +495,7 @@ public class DataProductService {
         }  else {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_02_DESCRIPTOR_ERROR,
-                "An unexpected exception occured while loading root document", e);
+                "An unexpected exception occurred while loading root document", e);
         }  
     }
 
@@ -512,7 +512,7 @@ public class DataProductService {
         }  else {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_02_DESCRIPTOR_ERROR,
-                "An unexpected exception occured while resolving external references", e);
+                "An unexpected exception occurred while resolving external references", e);
         }  
     }
 
@@ -529,7 +529,7 @@ public class DataProductService {
         } else {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_02_DESCRIPTOR_ERROR,
-                "An unexpected exception occured while resolving internal references", e);
+                "An unexpected exception occurred while resolving internal references", e);
         }  
     }
    

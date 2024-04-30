@@ -34,7 +34,7 @@ public abstract class AbstractDataProductVersionController
     private static final Logger logger = LoggerFactory.getLogger(AbstractDataProductVersionController.class);
 
     public AbstractDataProductVersionController() { 
-        logger.debug("Data product version controller succesfully started");
+        logger.debug("Data product version controller successfully started");
     }
 
 

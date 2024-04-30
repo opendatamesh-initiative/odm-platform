@@ -108,11 +108,11 @@ public class ActivityService {
             activity = saveActivity(activity);
             logger.info("Activity [" + activity.getStage() + "] "
                     + "on version [" + activity.getDataProductVersion() + "] "
-                    + "of product [" + activity.getDataProductId() + "] succesfully created");
+                    + "of product [" + activity.getDataProductId() + "] successfully created");
         } catch (Throwable t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while saving activity [" + activity.getStage() + "] "
+                    "An error occurred in the backend database while saving activity [" + activity.getStage() + "] "
                             + "on version [" + activity.getDataProductVersion() + "] "
                             + "of product [" + activity.getDataProductId() + "]",
                     t);
@@ -208,7 +208,7 @@ public class ActivityService {
         } catch (Throwable t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                   "An error occured in the backend database while updating activity [" + activity.getId() + "]",
+                   "An error occurred in the backend database while updating activity [" + activity.getId() + "]",
                  t);
         }
 
@@ -426,7 +426,7 @@ public class ActivityService {
         } catch (Throwable t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while loading activity",
+                    "An error occurred in the backend database while loading activity",
                     t);
         }
         return activities;
@@ -460,7 +460,7 @@ public class ActivityService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while loading activity with id [" + activityId
+                    "An error occurred in the backend database while loading activity with id [" + activityId
                             + "]",
                     t);
         }
@@ -557,7 +557,7 @@ public class ActivityService {
         } catch (Throwable t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while searching activities",
+                    "An error occurred in the backend database while searching activities",
                     t);
         }
         return activitySearchResults;
@@ -573,7 +573,7 @@ public class ActivityService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while searching activities",
+                    "An error occurred in the backend database while searching activities",
                     t);
         }
         if(activitySearchResults != null) {
@@ -667,7 +667,7 @@ public class ActivityService {
         } catch (Throwable t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_50_REGISTRY_SERVICE_ERROR,
-                    "An errror occured while reading data product version from ODM Registry", t);
+                    "An errror occurred while reading data product version from ODM Registry", t);
         }
 
         return dataProductVersion;

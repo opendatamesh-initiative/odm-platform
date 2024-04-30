@@ -84,11 +84,11 @@ public class TaskService {
         
         try {
             task = saveTask(task);
-            logger.info("Task [" + task.getId() + "] succesfully created");
+            logger.info("Task [" + task.getId() + "] successfully created");
         } catch (Throwable t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while saving task",
+                    "An error occurred in the backend database while saving task",
                     t);
         }
 
@@ -139,7 +139,7 @@ public class TaskService {
         } catch(Throwable t) {
              throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                "An error occured in the backend database while saving task",
+                "An error occurred in the backend database while saving task",
                 t
              );
         }
@@ -261,7 +261,7 @@ public class TaskService {
         } catch(Throwable t) {
              throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                "An error occured in the backend database while saving task",
+                "An error occurred in the backend database while saving task",
                 t);
         }
         
@@ -280,7 +280,7 @@ public class TaskService {
         } catch (Throwable t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while loading tasks",
+                    "An error occurred in the backend database while loading tasks",
                     t);
         }
         return tasks;
@@ -314,7 +314,7 @@ public class TaskService {
         } catch (Throwable t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while loading task with id [" + taskId
+                    "An error occurred in the backend database while loading task with id [" + taskId
                             + "]",
                     t);
         }
@@ -372,7 +372,7 @@ public class TaskService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while searching tasks",
+                    "An error occurred in the backend database while searching tasks",
                     t);
         }
         return taskSearchResults;
@@ -427,11 +427,11 @@ public class TaskService {
 
         try {
             templateDefinition = clients.getRegistryClient().readTemplate(templateId);
-            logger.debug("Template definition [" + templateId + "] succesfully read from ODM Registry");
+            logger.debug("Template definition [" + templateId + "] successfully read from ODM Registry");
         } catch (Throwable t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
-                    "An error occured in the backend service while loading template [" + templateId + "]",
+                    "An error occurred in the backend service while loading template [" + templateId + "]",
                     t);
         }
         if (templateDefinition == null) {
@@ -453,7 +453,7 @@ public class TaskService {
         } catch (JsonProcessingException t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_02_DESCRIPTOR_ERROR,
-                    "An error occured in the backend service while parsing configurations [" + configurations + "]",
+                    "An error occurred in the backend service while parsing configurations [" + configurations + "]",
                     t);
         }
 

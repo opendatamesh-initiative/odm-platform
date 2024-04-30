@@ -74,7 +74,7 @@ public abstract class ODMDevOpsIT extends ODMIntegrationTest{
     @MockBean
     protected DispatchClient notificationClient;
 
-    protected Logger logger = LoggerFactory.getLogger(ODMDevOpsIT.class);
+    protected static final Logger logger = LoggerFactory.getLogger(ODMDevOpsIT.class);
 
     protected final String DB_TABLES_POSTGRESQL = "src/test/resources/db/tables_postgresql.txt";
     protected final String DB_TABLES_MYSQL = "src/test/resources/db/tables_mysql.txt";
@@ -306,7 +306,6 @@ public abstract class ODMDevOpsIT extends ODMIntegrationTest{
         } catch (IOException e) {
             fail("Impossible to create moks");
             e.printStackTrace();
-            return;
         }
 
     }

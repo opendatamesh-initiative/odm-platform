@@ -60,7 +60,7 @@ public class RegistryPolicyServiceProxy {
         } catch (Exception e) {
             throw new BadGatewayException(
                     ODMApiCommonErrors.SC502_71_POLICY_SERVICE_ERROR,
-                    "An error occured while invoking policy service to validate data product version: " + e.getMessage(),
+                    "An error occurred while invoking policy service to validate data product version: " + e.getMessage(),
                     e
             );
         }

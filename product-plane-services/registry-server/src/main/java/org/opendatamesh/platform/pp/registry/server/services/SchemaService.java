@@ -92,7 +92,7 @@ public class SchemaService {
         } catch (Throwable t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while saving schema",
+                    "An error occurred in the backend database while saving schema",
                     t);
         }
 
@@ -125,7 +125,7 @@ public class SchemaService {
         } catch (Throwable t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while saving relationship",
+                    "An error occurred in the backend database while saving relationship",
                     t);
         }
 
@@ -218,7 +218,7 @@ public class SchemaService {
         } catch (Throwable t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while loading schema [" + schemaId + "]",
+                    "An error occurred in the backend database while loading schema [" + schemaId + "]",
                     t);
         }
 
@@ -246,7 +246,7 @@ public class SchemaService {
         } else {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while searching schema");
+                    "An error occurred in the backend database while searching schema");
         }
 
         return schema;
@@ -262,7 +262,7 @@ public class SchemaService {
         } catch (Throwable t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while searching schema",
+                    "An error occurred in the backend database while searching schema",
                     t);
         }
         return schemaSearchResults;
@@ -339,7 +339,7 @@ public class SchemaService {
         } catch (Throwable t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while updating schema [" + schema.getId() + "]",
+                    "An error occurred in the backend database while updating schema [" + schema.getId() + "]",
                     t);
         }
 
@@ -369,7 +369,7 @@ public class SchemaService {
         } catch (Throwable t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while deleting schema [" + schemaId + "]",
+                    "An error occurred in the backend database while deleting schema [" + schemaId + "]",
                     t);
         }
 

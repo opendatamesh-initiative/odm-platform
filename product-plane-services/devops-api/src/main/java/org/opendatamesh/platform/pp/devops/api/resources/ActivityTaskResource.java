@@ -44,12 +44,12 @@ public class ActivityTaskResource  {
     ActivityTaskStatus status;
 
     @JsonProperty("results")
-    @JsonPropertyDescription("The output returned by the executor after task succesfully execution")
+    @JsonPropertyDescription("The output returned by the executor after task successfully execution")
     String results;
 
     @JsonProperty("errors")
-    @JsonPropertyDescription("The output returned by the executor after task unsucesfully execution")
-    @Schema(description = "The output returned by the executor after task unsucesfully execution")
+    @JsonPropertyDescription("The output returned by the executor after task unsuccessfully execution")
+    @Schema(description = "The output returned by the executor after task unsuccessfully execution")
     String errors;
 
     @JsonProperty("createdAt")

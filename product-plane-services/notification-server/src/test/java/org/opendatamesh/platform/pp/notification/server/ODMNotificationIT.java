@@ -76,10 +76,10 @@ public class ODMNotificationIT extends ODMIntegrationTest {
         String activeProfile = Arrays.stream(environment.getActiveProfiles()).findFirst().get();
         if (activeProfile.equals("testpostgresql")) {
             String[] tableSet = truncateAllTablesFromDb(jdbcTemplate, new File(DB_TABLES_POSTGRESQL));
-            logger.debug("Postgres tables [" + tableSet + "] sucesfully truncated");
+            logger.debug("Postgres tables [" + tableSet + "] successfully truncated");
         } else if (activeProfile.equals("testmysql") || activeProfile.equals("localmysql")) {
             String[] tableSet = truncateAllTablesFromDb(jdbcTemplate, new File(DB_TABLES_MYSQL));
-            logger.debug("Mysql tables [" + tableSet + "] sucesfully truncated");
+            logger.debug("Mysql tables [" + tableSet + "] successfully truncated");
         }
     }
 

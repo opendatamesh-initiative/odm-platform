@@ -22,13 +22,13 @@ services:
       retries: 5
 
   # Spring Boot app
-  odm-platform-event-notifier:
+  odm-platform-notification:
     depends_on:
       - PostgreSQL
     env_file: .env
     build:
       context: ../..
-      dockerfile: ./product-plane-services/policy-server/Dockerfile
+      dockerfile: ./product-plane-services/notification-server/Dockerfile
       args:
         SPRING_PROFILES_ACTIVE: "docker"
         SPRING_PORT: "${SPRING_PORT}"

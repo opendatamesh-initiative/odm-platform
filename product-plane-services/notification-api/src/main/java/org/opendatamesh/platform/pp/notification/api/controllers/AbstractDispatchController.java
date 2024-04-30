@@ -30,7 +30,6 @@ public abstract class AbstractDispatchController {
     // ===============================================================================
 
     private static final String EXAMPLE_EVENT_DISPATCH = "{\n" + //
-            "   \"id\": 1,\n" + //
             "   \"type\": \"DATA_PRODUCT_CREATED\",\n" + //
             "   \"entityId\": \"abc123\",\n" + //
             "   \"beforeState\": null,\n" + //

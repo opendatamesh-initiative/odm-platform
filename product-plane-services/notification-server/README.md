@@ -29,7 +29,7 @@ mvn clean install -DskipTests
 Run the application:
 
 ```bash
-java -jar product-plane-services/event-notifier-server/target/odm-platform-pp-event-notifier-server-1.0.0.jar
+java -jar product-plane-services/notification-server/target/odm-platform-pp-notification-server-1.0.0.jar
 ```
 *_version could be greater than 1.0.0, check on parent POM_
 
@@ -37,7 +37,7 @@ java -jar product-plane-services/event-notifier-server/target/odm-platform-pp-ev
 To stop the application type CTRL+C or just close the shell. To start it again re-execute the following command:
 
 ```bash
-java -jar product-plane-services/event-notifier-server/target/odm-platform-pp-event-notifier-server-1.0.0.jar
+java -jar product-plane-services/notification-server/target/odm-platform-pp-notification-server-1.0.0.jar
 ```
 *Note: The application run in this way uses an in-memory instance of the H2 database. For this reason, the data is lost every time the application is terminated. On the next restart, the database is recreated from scratch.*
 
@@ -63,7 +63,7 @@ The image generated from Dockerfile contains only the application. It requires a
 
 **MySql**
 ```bash
-docker run --name odmp-event-notifier-mysql-db -d -p 3306:3306  \
+docker run --name odmp-notification-mysql-db -d -p 3306:3306  \
    -e MYSQL_DATABASE=ODMPOLICY \
    -e MYSQL_ROOT_PASSWORD=root \
    mysql:8
@@ -71,7 +71,7 @@ docker run --name odmp-event-notifier-mysql-db -d -p 3306:3306  \
 
 **Postgres**
 ```bash
-docker run --name odmp-event-notifier-postgres-db -d -p 5432:5432  \
+docker run --name odmp-notification-postgres-db -d -p 5432:5432  \
    -e POSTGRES_DB=odmpdb \
    -e POSTGRES_USER=postgres \
    -e POSTGRES_PASSWORD=postgres \
@@ -82,12 +82,12 @@ Check that the database has started correctly:
 
 **MySql**
 ```bash
-docker logs odmp-event-notifier-mysql-db
+docker logs odmp-notification-mysql-db
 ```
 
 *Postgres*
 ```bash
-docker logs odmp-event-notifier-postgres-db
+docker logs odmp-notification-postgres-db
 ```
 
 ### Build image
@@ -97,7 +97,7 @@ Build the Docker image of the application and run it.
 
 **MySql**
 ```bash
-docker build -t odmp-event-notifier-mysql-app . -f ./product-plane-services/event-notifier-server/Dockerfile \
+docker build -t odmp-notification-mysql-app . -f ./product-plane-services/notification-server/Dockerfile \
    --build-arg DATABASE_URL=jdbc:mysql://localhost:3306/ODMPOLICY \
    --build-arg DATABASE_USERNAME=root \
    --build-arg DATABASE_PASSWORD=root \
@@ -106,7 +106,7 @@ docker build -t odmp-event-notifier-mysql-app . -f ./product-plane-services/even
 
 **Postgres**
 ```bash
-docker build -t odmp-event-notifier-postgres-app . -f ./product-plane-services/event-notifier-server/Dockerfile \
+docker build -t odmp-notification-postgres-app . -f ./product-plane-services/notification-server/Dockerfile \
    --build-arg DATABASE_URL=jdbc:postgresql://localhost:5432/odmpdb \
    --build-arg DATABASE_USERNAME=postgres \
    --build-arg DATABASE_PASSWORD=postgres \
@@ -120,36 +120,36 @@ Run the Docker image.
 
 **MySql**
 ```bash
-docker run --name odmp-event-notifier-mysql-app -p 8006:8006 --net host odmp-event-notifier-mysql-app
+docker run --name odmp-notification-mysql-app -p 8006:8006 --net host odmp-notification-mysql-app
 ```
 
 **Postgres**
 ```bash
-docker run --name odmp-event-notifier-postgres-app -p 8006:8006 --net host odmp-event-notifier-postgres-app
+docker run --name odmp-notification-postgres-app -p 8006:8006 --net host odmp-notification-postgres-app
 ```
 
 ### Stop application
 
 *Before executing the following commands:
-* change the DB name to `odmp-event-notifier-postgres-db` if you are using postgres and not mysql
-* change the instance name to `odmp-event-notifier-postgres-app` if you are using postgres and not mysql
+* change the DB name to `odmp-notification-postgres-db` if you are using postgres and not mysql
+* change the instance name to `odmp-notification-postgres-app` if you are using postgres and not mysql
 
 ```bash
-docker stop odmp-event-notifier-mysql-app
-docker stop odmp-event-notifier-mysql-db
+docker stop odmp-notification-mysql-app
+docker stop odmp-notification-mysql-db
 ```
 To restart a stopped application execute the following commands:
 
 ```bash
-docker start odmp-event-notifier-mysql-db
-docker start odmp-event-notifier-mysql-app
+docker start odmp-notification-mysql-db
+docker start odmp-notification-mysql-app
 ```
 
 To remove a stopped application to rebuild it from scratch execute the following commands :
 
 ```bash
-docker rm odmp-event-notifier-mysql-app
-docker rm odmp-event-notifier-mysql-db
+docker rm odmp-notification-mysql-app
+docker rm odmp-notification-mysql-db
 ```
 
 ## Run with Docker Compose
@@ -159,13 +159,13 @@ Clone the repository and move to the project root folder
 
 ```bash
 git clone git@github.com:opendatamesh-initiative/odm-platform.git
-cd odm-platform/product-plane-services/event-notifier-server
+cd odm-platform/product-plane-services/notification-server
 ```
 
 ### Build image
 Build the docker-compose images of the application and a default PostgreSQL DB (v11.0).
 
-Before building it, create a `.env` file in the event-notifier-server directory of the project similar to the following one:
+Before building it, create a `.env` file in the notification-server directory of the project similar to the following one:
 ```.dotenv
 DATABASE_NAME=odmpdb
 DATABASE_PASSWORD=pwd
@@ -207,12 +207,12 @@ docker-compose build --no-cache
 
 You can invoke REST endpoints through *OpenAPI UI* available at the following url:
 
-* [http://localhost:8006/api/v1/pp/event-notifier/swagger-ui/index.html](http://localhost:8006/api/v1/pp/event-notifier/swagger-ui/index.html)
+* [http://localhost:8006/api/v1/pp/notification/swagger-ui/index.html](http://localhost:8006/api/v1/pp/notification/swagger-ui/index.html)
 
 ## Database
 
 If the application is running using an in memory instance of H2 database you can check the database content through H2 Web Console available at the following url:
 
-* [http://localhost:8006/api/v1/pp/event-notifier/h2-console](http://localhost:8006/api/v1/pp/event-notifier/h2-console)
+* [http://localhost:8006/api/v1/pp/notification/h2-console](http://localhost:8006/api/v1/pp/notification/h2-console)
 
 In all cases you can also use your favourite sql client providing the proper connection parameters

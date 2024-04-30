@@ -2,7 +2,7 @@ FROM openjdk:17-alpine
 
 VOLUME /tmp
 
-COPY ./product-plane-services/event-notifier-server/target/odm-platform-pp-event-notifier-server-*.jar ./application.jar
+COPY ./product-plane-services/notification-server/target/odm-platform-pp-notification-server-*.jar ./application.jar
 
 ARG SPRING_PROFILES_ACTIVE=docker
 ARG SPRING_PORT=8006
@@ -11,7 +11,7 @@ ARG JAVA_OPTS
 ARG DATABASE_URL=jdbc:postgresql://localhost:5432/odmpdb
 ARG DATABASE_USERNAME=usr
 ARG DATABASE_PASSWORD=pwd
-ARG FLYWAY_SCHEMA=ODMEVENTNOTIFIER
+ARG FLYWAY_SCHEMA=ODMNOTIFICATION
 ARG FLYWAY_SCRIPTS_DIR=postgresql
 ARG H2_CONSOLE_ENABLED=false
 ARG H2_CONSOLE_PATH=h2-console

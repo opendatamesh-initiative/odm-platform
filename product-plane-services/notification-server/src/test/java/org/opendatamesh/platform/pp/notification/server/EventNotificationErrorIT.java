@@ -90,7 +90,7 @@ public class EventNotificationErrorIT extends ODMNotificationIT {
                 putResponse,
                 HttpStatus.NOT_FOUND,
                 NotificationApiStandardErrors.SC404_03_NOTIFICATION_NOT_FOUND,
-                "Resource with id [1] not found"
+                "Resource with ID [17] not found"
         );
     }
 
@@ -125,7 +125,7 @@ public class EventNotificationErrorIT extends ODMNotificationIT {
         );
         verifyResponseErrorObjectNode(
                 putResponse,
-                HttpStatus.BAD_REQUEST,
+                HttpStatus.UNPROCESSABLE_ENTITY,
                 NotificationApiStandardErrors.SC422_04_NOTIFICATION_IS_INVALID,
                 "Notification Event object cannot be null"
         );
@@ -135,11 +135,11 @@ public class EventNotificationErrorIT extends ODMNotificationIT {
         observerResource = notification.getObserver();
         notification.setObserver(null);
         putResponse = notificationClient.updateEventNotificationResponseEntity(
-                notification.getId(), null
+                notification.getId(), notification
         );
         verifyResponseErrorObjectNode(
                 putResponse,
-                HttpStatus.BAD_REQUEST,
+                HttpStatus.UNPROCESSABLE_ENTITY,
                 NotificationApiStandardErrors.SC422_04_NOTIFICATION_IS_INVALID,
                 "Notification Observer object cannot be null"
         );
@@ -148,11 +148,11 @@ public class EventNotificationErrorIT extends ODMNotificationIT {
         notification.setObserver(observerResource);
         notification.setStatus(null);
         putResponse = notificationClient.updateEventNotificationResponseEntity(
-                notification.getId(), null
+                notification.getId(), notification
         );
         verifyResponseErrorObjectNode(
                 putResponse,
-                HttpStatus.BAD_REQUEST,
+                HttpStatus.UNPROCESSABLE_ENTITY,
                 NotificationApiStandardErrors.SC422_04_NOTIFICATION_IS_INVALID,
                 "Notification Status cannot be null"
         );

@@ -17,7 +17,7 @@ public class DispatchErrorIT extends ODMNotificationIT {
 
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-    public void testDispatchEventError400xx() throws IOException {
+    public void testDispatchEventError400xx() {
 
         // 40001 - Empty Observer
         ResponseEntity<ObjectNode> postResponse = notificationClient.notifyEventResponseEntity(null);

@@ -8,7 +8,7 @@ import org.opendatamesh.platform.pp.notification.api.resources.enums.EventNotifi
 import java.sql.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EventNotificationResource implements Cloneable{
+public class EventNotificationResource implements Cloneable {
 
     @JsonProperty("id")
     @Schema(description = "Auto generated ID of the Notification")
@@ -31,11 +31,11 @@ public class EventNotificationResource implements Cloneable{
     private ObserverResource observer;
 
     @JsonProperty("receivedAt")
-    @Schema(description = "Timpestamp of the Notification reception")
+    @Schema(description = "Timestamp of the Notification reception")
     private Date receivedAt;
 
     @JsonProperty("processedAt")
-    @Schema(description = "Timpestamp of the Notification processing phase")
+    @Schema(description = "Timestamp of the Notification processing phase")
     private Date processedAt;
 
     public Long getId() {

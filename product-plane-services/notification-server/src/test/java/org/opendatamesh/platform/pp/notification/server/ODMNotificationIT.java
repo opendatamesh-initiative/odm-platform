@@ -31,7 +31,7 @@ import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.fail;
 
-@ActiveProfiles("test")
+//@ActiveProfiles("test")
 //@ActiveProfiles("testpostgresql")
 //@ActiveProfiles("testmysql")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = {ODMNotificationApp.class})
@@ -45,7 +45,7 @@ public class ODMNotificationIT extends ODMIntegrationTest {
     @MockBean
     protected NotificationObserverServiceProxy notificationObserverServiceProxyMock;
 
-    protected Logger logger = LoggerFactory.getLogger(ODMNotificationIT.class);
+    protected static final Logger logger = LoggerFactory.getLogger(ODMNotificationIT.class);
 
     protected final String DB_TABLES_POSTGRESQL = "src/test/resources/db/tables_postgresql.txt";
 
@@ -102,7 +102,7 @@ public class ODMNotificationIT extends ODMIntegrationTest {
 
         ObserverResource observerResource = createObserverResource(filePath);
 
-        ResponseEntity<ObjectNode> postObserverResponse = null;
+        ResponseEntity<ObjectNode> postObserverResponse;
 
         try {
             postObserverResponse = notificationClient.addObserverResponseEntity(observerResource);
@@ -132,16 +132,6 @@ public class ODMNotificationIT extends ODMIntegrationTest {
     protected void notifyEvent(EventResource eventResource) {
         ResponseEntity<ObjectNode> postResponse = notificationClient.notifyEventResponseEntity(eventResource);
         verifyResponseEntity(postResponse, HttpStatus.OK, false);
-    }
-
-    protected EventNotificationResource createEventNotificationResource(String filePath) {
-        try {
-            return resourceBuilder.readResourceFromFile(filePath, EventNotificationResource.class);
-        } catch (Throwable t) {
-            t.printStackTrace();
-            fail("Impossible to read event notification from file: " + t.getMessage());
-            return null;
-        }
     }
 
 }

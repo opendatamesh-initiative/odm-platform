@@ -14,7 +14,6 @@ import org.opendatamesh.platform.pp.notification.server.services.utils.GenericMa
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,6 +1,5 @@
 package org.opendatamesh.platform.pp.notification.server;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.pp.notification.api.resources.EventNotificationResource;

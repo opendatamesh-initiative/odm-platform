@@ -19,7 +19,7 @@ spring:
   # JPA
   jpa:
     hibernate:
-      ddl-auto: none # validate #right one is validate, but it doesn't work with mysql
+      ddl-auto: none # validate #right one is: validate, but it doesn't work with mysql
       #show-sql: true
       naming:
         implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl

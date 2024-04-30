@@ -1,7 +1,6 @@
 package org.opendatamesh.platform.pp.notification.server.controllers;
 
 import org.opendatamesh.platform.pp.notification.api.controllers.AbstractEventController;
-import org.opendatamesh.platform.pp.notification.api.controllers.EventController;
 import org.opendatamesh.platform.pp.notification.api.resources.EventResource;
 import org.opendatamesh.platform.pp.notification.api.resources.EventSearchOptions;
 import org.opendatamesh.platform.pp.notification.server.services.EventService;

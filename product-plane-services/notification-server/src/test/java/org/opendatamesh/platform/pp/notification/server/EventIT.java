@@ -36,7 +36,7 @@ public class EventIT extends ODMNotificationIT {
         List<EventResource> events = extractListFromPageFromObjectNode(
                 getResponse.getBody(), EventResource.class
         );
-        assertThat(events.size()).isEqualTo(2);;
+        assertThat(events.size()).isEqualTo(2);
         eventToDispatch.setId(1L);
         assertThat(events.get(0)).usingRecursiveComparison().isEqualTo(eventToDispatch);
         eventToDispatch2.setId(2L);

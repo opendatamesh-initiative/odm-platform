@@ -6,8 +6,6 @@ import org.mockito.Mockito;
 import org.opendatamesh.platform.pp.notification.api.resources.EventNotificationResource;
 import org.opendatamesh.platform.pp.notification.api.resources.EventNotificationSearchOptions;
 import org.opendatamesh.platform.pp.notification.api.resources.EventResource;
-import org.opendatamesh.platform.pp.notification.server.services.proxies.NotificationObserverServiceProxy;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
@@ -25,7 +23,7 @@ public class DispatchIT extends ODMNotificationIT {
 
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-    public void testDispatchEvent() throws IOException {
+    public void testDispatchEvent() {
 
         // Resources + Creation
         createObserver(ODMNotificationResources.RESOURCE_OBSERVER_1);

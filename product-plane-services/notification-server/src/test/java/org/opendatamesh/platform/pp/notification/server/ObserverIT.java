@@ -93,7 +93,7 @@ public class ObserverIT extends ODMNotificationIT {
 
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-    public void testReadOneObserver() throws JsonProcessingException {
+    public void testReadOneObserver() {
 
         // Resources + Creation
         ObserverResource observerResource = createObserver(ODMNotificationResources.RESOURCE_OBSERVER_1);
@@ -115,13 +115,13 @@ public class ObserverIT extends ODMNotificationIT {
 
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-    public void testDeleteObserver() throws JsonProcessingException {
+    public void testDeleteObserver() {
 
         // Resources + Creation
         ObserverResource observerResource = createObserver(ODMNotificationResources.RESOURCE_OBSERVER_1);
 
         // DELETE request
-        ResponseEntity deleteResponse = notificationClient.removeObserverResponseEntity(observerResource.getId());
+        ResponseEntity<ObjectNode> deleteResponse = notificationClient.removeObserverResponseEntity(observerResource.getId());
         verifyResponseEntity(deleteResponse, HttpStatus.OK, false);
 
         // GET request to check that the entity is not on the DB anymore

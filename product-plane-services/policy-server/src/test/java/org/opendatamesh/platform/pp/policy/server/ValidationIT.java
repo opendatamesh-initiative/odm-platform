@@ -1,6 +1,5 @@
 package org.opendatamesh.platform.pp.policy.server;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.pp.policy.api.resources.*;
@@ -20,7 +19,7 @@ public class ValidationIT extends ODMPolicyIT {
 
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-    public void testValidateObjectSpELFilteringPassed() throws JsonProcessingException {
+    public void testValidateObjectSpELFilteringPassed() {
 
         // Resources
         PolicyEngineResource parentEngineResource = createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);
@@ -74,7 +73,7 @@ public class ValidationIT extends ODMPolicyIT {
 
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-    public void testValidateObjectSpELFilteringNotPassed() throws JsonProcessingException {
+    public void testValidateObjectSpELFilteringNotPassed() {
 
         // Resources
         PolicyEngineResource parentEngineResource = createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);

@@ -1,6 +1,5 @@
 package org.opendatamesh.platform.pp.policy.server;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +12,6 @@ import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationRequestResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
-import org.opendatamesh.platform.pp.policy.server.database.entities.PolicyEngine;
 import org.opendatamesh.platform.pp.policy.server.services.proxies.PolicyEngineProxy;
 import org.opendatamesh.platform.up.policy.api.v1.resources.EvaluationResource;
 import org.slf4j.Logger;
@@ -35,7 +33,7 @@ import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.fail;
 
-//@ActiveProfiles("test")
+@ActiveProfiles("test")
 //@ActiveProfiles("testpostgresql")
 //@ActiveProfiles("testmysql")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = {ODMPolicyApp.class})
@@ -71,6 +69,7 @@ public class ODMPolicyIT extends ODMIntegrationTest {
         mockResponse.setOutputObject("{\"message\": \"OK\"}");
         Mockito.when(policyEngineProxy.validatePolicy(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
                 .thenReturn(mockResponse);
+        Mockito.doReturn(mockResponse).when(policyEngineProxy).validatePolicy(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
     }
 
     @BeforeEach

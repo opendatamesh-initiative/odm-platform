@@ -1,7 +1,10 @@
 package org.opendatamesh.platform.pp.policy.server;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
+import org.mockito.Mockito;
 import org.opendatamesh.platform.core.commons.test.ODMIntegrationTest;
 import org.opendatamesh.platform.core.commons.test.ODMResourceBuilder;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
@@ -10,10 +13,14 @@ import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationRequestResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
+import org.opendatamesh.platform.pp.policy.server.database.entities.PolicyEngine;
+import org.opendatamesh.platform.pp.policy.server.services.proxies.PolicyEngineProxy;
+import org.opendatamesh.platform.up.policy.api.v1.resources.EvaluationResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -39,6 +46,9 @@ public class ODMPolicyIT extends ODMIntegrationTest {
 
     protected PolicyClientImpl policyClient;
 
+    @MockBean
+    protected PolicyEngineProxy policyEngineProxy;
+
     protected Logger logger = LoggerFactory.getLogger(ODMPolicyIT.class);
 
     protected final String DB_TABLES_POSTGRESQL = "src/test/resources/db/tables_postgresql.txt";
@@ -50,6 +60,17 @@ public class ODMPolicyIT extends ODMIntegrationTest {
         mapper = ObjectMapperFactory.JSON_MAPPER;
         resourceBuilder = new ODMResourceBuilder(mapper);
         policyClient = new PolicyClientImpl("http://localhost:" + port, mapper);
+    }
+
+    @Before
+    public void mockSetUp() {
+        // Mock communication with Policy Engines
+        EvaluationResource mockResponse = new EvaluationResource();
+        mockResponse.setPolicyEvaluationId(1L);
+        mockResponse.setEvaluationResult(true);
+        mockResponse.setOutputObject("{\"message\": \"OK\"}");
+        Mockito.when(policyEngineProxy.validatePolicy(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+                .thenReturn(mockResponse);
     }
 
     @BeforeEach

@@ -12,7 +12,7 @@ public enum NotificationApiStandardErrors implements ODMApiStandardErrors {
 
     SC400_01_OBSERVER_IS_EMPTY("40001", "Observer is empty"),
     SC400_02_EVENT_IS_EMPTY("40002", "Event is empty"),
-    SC400_03_NOTIFICATION_IS_EMTPY("4003", "Notification is empty"),
+    SC400_03_NOTIFICATION_IS_EMTPY("40003", "Notification is empty"),
     SC404_01_OBSERVER_NOT_FOUND("40401", "Observer not found"),
     SC404_02_EVENT_NOT_FOUND("40402", "Event not found"),
     SC404_03_NOTIFICATION_NOT_FOUND("40403", "Notification not found"),

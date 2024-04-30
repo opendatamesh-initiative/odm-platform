@@ -132,7 +132,7 @@ public class EventNotificationIT extends ODMNotificationIT {
 
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-    public void testReadOneEventNotification() throws JsonProcessingException {
+    public void testReadOneEventNotification() {
 
         // Resources + Creation
         ObserverResource observerResource = createObserver(ODMNotificationResources.RESOURCE_OBSERVER_1);
@@ -151,5 +151,5 @@ public class EventNotificationIT extends ODMNotificationIT {
         assertThat(notification.getStatus()).isNotNull();
 
     }
-    
+
 }

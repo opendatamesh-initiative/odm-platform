@@ -38,10 +38,22 @@ public class EventNotificationService extends GenericMappedAndFilteredCrudServic
                     "Notification object cannot be null"
             );
         }
-        if (objectToValidate.getEvent() == null) {
+        if (objectToValidate.getEvent() == null || objectToValidate.getEventId() == null) {
             throw new UnprocessableEntityException(
                     NotificationApiStandardErrors.SC422_04_NOTIFICATION_IS_INVALID,
-                    "Notification's Event object cannot be null"
+                    "Notification Event object cannot be null"
+            );
+        }
+        if (objectToValidate.getObserver() == null || objectToValidate.getObserverId() == null) {
+            throw new UnprocessableEntityException(
+                    NotificationApiStandardErrors.SC422_04_NOTIFICATION_IS_INVALID,
+                    "Notification Observer object cannot be null"
+            );
+        }
+        if (objectToValidate.getStatus() == null) {
+            throw new UnprocessableEntityException(
+                    NotificationApiStandardErrors.SC422_04_NOTIFICATION_IS_INVALID,
+                    "Notification Status cannot be null"
             );
         }
     }

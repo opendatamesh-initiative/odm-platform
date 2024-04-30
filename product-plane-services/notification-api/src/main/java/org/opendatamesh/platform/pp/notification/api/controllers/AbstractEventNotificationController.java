@@ -30,19 +30,6 @@ import javax.validation.Valid;
 )
 public abstract class AbstractEventNotificationController implements EventNotificationController {
 
-    // TODO: add examples
-
-    // ===============================================================================
-    // Resource examples
-    // ===============================================================================
-
-    private static final String EXAMPLE_NOTIFICATION = "{\n" + //
-            "}";
-
-    private static final String EXAMPLE_NOTIFICATION_UPDATE = "{\n" + //
-            "}";
-
-
     // ===============================================================================
     // PUT /notifications/{notificationId}
     // ===============================================================================
@@ -58,8 +45,7 @@ public abstract class AbstractEventNotificationController implements EventNotifi
                     description = "Notification updated",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = EventNotificationResource.class),
-                            examples = {@ExampleObject(name = "engine1", value = EXAMPLE_NOTIFICATION)}
+                            schema = @Schema(implementation = EventNotificationResource.class)
                     )
             ),
             @ApiResponse(
@@ -104,13 +90,7 @@ public abstract class AbstractEventNotificationController implements EventNotifi
     public EventNotificationResource updateEventNotificationEndpoint(
             @Parameter(description = "ID of the Notification to update", required = true)
             @PathVariable(value = "id") Long id,
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "An Notification JSON object",
-                    content = @Content(examples = {@ExampleObject(
-                            name = "notification-update-example",
-                            description = "Example of a Notification for the update API",
-                            value = EXAMPLE_NOTIFICATION_UPDATE
-                    )}))
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "A Notification JSON object")
             @RequestBody(required = false) EventNotificationResource notification
     ) {
         return updateEventNotification(id, notification);

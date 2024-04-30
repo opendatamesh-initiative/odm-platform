@@ -55,6 +55,9 @@ public class EventNotification {
 
     public void setEvent(Event event) {
         this.event = event;
+        if (event != null) {
+            this.eventId = event.getId();
+        }
     }
 
     public EventNotificationStatus getStatus() {
@@ -117,5 +120,8 @@ public class EventNotification {
 
     public void setEventId(Long eventId) {
         this.eventId = eventId;
+        Event event = new Event();
+        event.setId(eventId);
+        this.event = event;
     }
 }

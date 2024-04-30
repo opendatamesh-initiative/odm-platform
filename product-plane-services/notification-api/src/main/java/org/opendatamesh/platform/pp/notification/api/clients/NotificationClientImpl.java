@@ -16,7 +16,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.HashMap;
 import java.util.Map;
 
-public class NotificationClientImpl extends ODMClient implements NotificationClient {
+public class NotificationClientImpl extends ODMClient implements ObserverClient, DispatchClient, EventNotificationClient, EventClient {
 
     private final RestUtils restUtils;
 

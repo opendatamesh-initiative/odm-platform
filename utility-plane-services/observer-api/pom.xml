@@ -159,8 +159,9 @@
         </dependency>
         <dependency>
             <groupId>org.opendatamesh</groupId>
-            <artifactId>odm-platform-pp-eventNotification-api</artifactId>
+            <artifactId>odm-platform-pp-notification-api</artifactId>
             <version>1.0.0</version>
+            <scope>compile</scope>
         </dependency>
 
     </dependencies>

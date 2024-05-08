@@ -35,7 +35,7 @@ public class LifecycleService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while updating lifecycle",
+                    "An error occurred in the backend database while updating lifecycle",
                     t
             );
         }
@@ -51,7 +51,7 @@ public class LifecycleService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while updating lifecycle",
+                    "An error occurred in the backend database while updating lifecycle",
                     t
             );
         }
@@ -61,12 +61,12 @@ public class LifecycleService {
         try {
             //return lifecycleRepository.findAll();
             List<Lifecycle> lifecycles = lifecycleRepository.findAll();
-            System.out.println(lifecycles.toString());
+            System.out.println(lifecycles);
             return lifecycles;
         } catch (Throwable t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                "An error occured in the backend database while loading lifecycles",
+                "An error occurred in the backend database while loading lifecycles",
                 t
             );
         }
@@ -83,7 +83,7 @@ public class LifecycleService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while loading lifecycles",
+                    "An error occurred in the backend database while loading lifecycles",
                     t
             );
         }
@@ -95,7 +95,7 @@ public class LifecycleService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while loading lifecycles",
+                    "An error occurred in the backend database while loading lifecycles",
                     t
             );
         }
@@ -107,7 +107,7 @@ public class LifecycleService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while loading lifecycles",
+                    "An error occurred in the backend database while loading lifecycles",
                     t
             );
         }

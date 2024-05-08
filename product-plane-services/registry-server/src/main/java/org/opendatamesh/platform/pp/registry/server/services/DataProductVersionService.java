@@ -28,7 +28,7 @@ import org.opendatamesh.platform.pp.registry.server.database.entities.dataproduc
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.variables.Variable;
 import org.opendatamesh.platform.pp.registry.server.database.mappers.DataProductVersionMapper;
 import org.opendatamesh.platform.pp.registry.server.database.repositories.DataProductVersionRepository;
-import org.opendatamesh.platform.pp.registry.server.services.proxies.RegistryEventNotifierProxy;
+import org.opendatamesh.platform.pp.registry.server.services.proxies.RegistryNotificationServiceProxy;
 import org.opendatamesh.platform.pp.registry.server.services.proxies.RegistryPolicyServiceProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +63,7 @@ public class DataProductVersionService {
     private DataProductVersionMapper dataProductVersionMapper;
 
     @Autowired
-    RegistryEventNotifierProxy registryEventNotifierProxy;
+    RegistryNotificationServiceProxy registryNotificationServiceProxy;
 
     @Autowired
     private RegistryPolicyServiceProxy policyServiceProxy;
@@ -111,7 +111,7 @@ public class DataProductVersionService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
-                    "An internal processing error occured while saving API", t);
+                    "An internal processing error occurred while saving API", t);
         }
 
         try {
@@ -119,7 +119,7 @@ public class DataProductVersionService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
-                    "An internal processing error occured while saving templates", t);
+                    "An internal processing error occurred while saving templates", t);
         }
 
         try {
@@ -127,13 +127,13 @@ public class DataProductVersionService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while saving version ["
+                    "An error occurred in the backend database while saving version ["
                             + dataProductVersion.getInfo().getVersionNumber() + "] of data product ["
                             + dataProductVersion.getDataProduct().getId() + "]",
                     t);
         }
 
-        registryEventNotifierProxy.notifyDataProductVersionCreation(dataProductVersionMapper.toResource(dataProductVersion));
+        registryNotificationServiceProxy.notifyDataProductVersionCreation(dataProductVersionMapper.toResource(dataProductVersion));
 
         return dataProductVersion;
     }
@@ -219,7 +219,7 @@ public class DataProductVersionService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while schema of endpoint [" + endpoint
+                    "An error occurred in the backend database while schema of endpoint [" + endpoint
                             + "]",
                     t);
         }
@@ -261,7 +261,7 @@ public class DataProductVersionService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while saving api of port [" + port.getFullyQualifiedName()
+                    "An error occurred in the backend database while saving api of port [" + port.getFullyQualifiedName()
                             + "]",
                     t);
         }
@@ -316,7 +316,7 @@ public class DataProductVersionService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while saving template [" + templateStdDef.getName() + "]", t);
+                    "An error occurred in the backend database while saving template [" + templateStdDef.getName() + "]", t);
         }
 
         return template;
@@ -328,8 +328,8 @@ public class DataProductVersionService {
     // ======================================================================================
 
     // readAllDataProductVersions()
-    // is not implemented beacuse it make
-    // non sense to read al versions across all possible data products.
+    // is not implemented because it make
+    // nonsense to read al versions across all possible data products.
     // @see searchDataProductVersions(dataProduct)
 
     private DataProductVersion readDataProductVersion(DataProductVersion dataProductVersion) {
@@ -363,7 +363,7 @@ public class DataProductVersionService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while loading version [" + version + "] of data product ["
+                    "An error occurred in the backend database while loading version [" + version + "] of data product ["
                             + dataProductId + "]",
                     t);
         }
@@ -425,7 +425,7 @@ public class DataProductVersionService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while searching data product versions",
+                    "An error occurred in the backend database while searching data product versions",
                     t);
         }
 
@@ -447,7 +447,7 @@ public class DataProductVersionService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while searching data product versions",
+                    "An error occurred in the backend database while searching data product versions",
                     t);
         }
 
@@ -461,7 +461,7 @@ public class DataProductVersionService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while searching data product versions",
+                    "An error occurred in the backend database while searching data product versions",
                     t);
         }
 
@@ -506,16 +506,16 @@ public class DataProductVersionService {
             dataProductVersionRepository.deleteById(dataProductVersionId);
             //dataProductVersionRepository.delete(dataProductVersion);
             logger.info("Data product version [" + versionNumber + "] of data product [" + dataProductId
-                    + "] succesfully deleted");
+                    + "] successfully deleted");
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while deleting data product version",
+                    "An error occurred in the backend database while deleting data product version",
                     t
             );
         }
 
-        registryEventNotifierProxy.notifyDataProductVersionDeletion(dataProductVersionMapper.toResource(dataProductVersion));
+        registryNotificationServiceProxy.notifyDataProductVersionDeletion(dataProductVersionMapper.toResource(dataProductVersion));
 
     }
 

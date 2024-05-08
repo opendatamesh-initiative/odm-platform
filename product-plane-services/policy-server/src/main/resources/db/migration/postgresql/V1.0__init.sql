@@ -3,6 +3,7 @@
 CREATE SCHEMA IF NOT EXISTS "ODMPOLICY";
 CREATE SEQUENCE IF NOT EXISTS "ODMPOLICY".HIBERNATE_SEQUENCE START WITH 1;
 
+
 -- ENTITIES ============================================================================================================
 
 -- POLICY_ENGINES ------------------------------------------------------------------------------------------------------

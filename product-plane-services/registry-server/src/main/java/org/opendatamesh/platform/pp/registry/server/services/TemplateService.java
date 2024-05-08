@@ -107,7 +107,7 @@ public class TemplateService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while saving template",
+                    "An error occurred in the backend database while saving template",
                     t);
         }
 
@@ -191,7 +191,7 @@ public class TemplateService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while loading definition [" + definitionId + "]",
+                    "An error occurred in the backend database while loading definition [" + definitionId + "]",
                     t);
         }
 
@@ -219,7 +219,7 @@ public class TemplateService {
         } else {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while searching definitions");
+                    "An error occurred in the backend database while searching definitions");
         }
 
         return definition;
@@ -236,7 +236,7 @@ public class TemplateService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while searching definitions",
+                    "An error occurred in the backend database while searching definitions",
                     t);
         }
         return definitionSearchResults;
@@ -276,7 +276,7 @@ public class TemplateService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while updating definition [" + definition.getId() + "]",
+                    "An error occurred in the backend database while updating definition [" + definition.getId() + "]",
                     t);
         }
 
@@ -301,7 +301,7 @@ public class TemplateService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while deleting definition [" + definitionId + "]",
+                    "An error occurred in the backend database while deleting definition [" + definitionId + "]",
                     t);
         }
 

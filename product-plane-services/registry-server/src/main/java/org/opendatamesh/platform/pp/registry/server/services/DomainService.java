@@ -2,7 +2,6 @@ package org.opendatamesh.platform.pp.registry.server.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.platform.core.commons.servers.exceptions.*;
-import org.opendatamesh.platform.pp.event.notifier.api.clients.EventNotifierClient;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
 import org.opendatamesh.platform.pp.registry.server.database.entities.DataProduct;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproduct.Domain;
@@ -33,9 +32,6 @@ public class DomainService {
 
     @Autowired
     private DomainMapper domainMapper;
-
-    @Autowired
-    EventNotifierClient eventNotifier;
 
 
     private static final Logger logger = LoggerFactory.getLogger(DomainService.class);
@@ -190,7 +186,7 @@ public class DomainService {
 
         try {
             domain = saveDomain(domain);
-            logger.info("Domain [" + domain.getFullyQualifiedName() + "] succesfully updated");
+            logger.info("Domain [" + domain.getFullyQualifiedName() + "] successfully updated");
         } catch(Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
@@ -229,4 +225,5 @@ public class DomainService {
                     "Domain [" + domain.getFullyQualifiedName() + "] has at least one Data Product associated, therefore can't be deleted");
         }
     }
+
 }

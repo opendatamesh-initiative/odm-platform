@@ -42,7 +42,7 @@ public class ODMBlueprintResourceBuilder {
         } else {
             fileContent = Files.readString(Paths.get(filePath));
             fileCache.put(filePath, fileContent);
-            logger.debug("File [" + filePath + "] succesfully read");
+            logger.debug("File [" + filePath + "] successfully read");
         }
 
         return fileContent;

@@ -35,7 +35,7 @@ public abstract class AbstractDataProductController
     private static final Logger logger = LoggerFactory.getLogger(AbstractDataProductController.class);
 
     public AbstractDataProductController() { 
-        logger.debug("Data product controller succesfully started");
+        logger.debug("Data product controller successfully started");
     }
 
     // @see https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Annotations#arrayschema

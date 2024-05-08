@@ -178,7 +178,7 @@ public class SchemaIT extends ODMRegistryIT {
     public void testSchemaReadOneError404()
             throws IOException {
 
-        ResponseEntity<ErrorRes> errorResponse = registryClient.getSchemaById(1701l);
+        ResponseEntity<ErrorRes> errorResponse = registryClient.getSchemaById(1701L);
         verifyResponseError(
                 errorResponse,
                 HttpStatus.NOT_FOUND,
@@ -192,7 +192,7 @@ public class SchemaIT extends ODMRegistryIT {
     @Disabled // NOT WORKING
     public void testSchemaReadOneContentError404() throws IOException {
 
-        ResponseEntity<ErrorRes> errorResponse = registryClient.getSchemaContentById(1701l);
+        ResponseEntity<ErrorRes> errorResponse = registryClient.getSchemaContentById(1701L);
         verifyResponseError(
                 errorResponse,
                 HttpStatus.NOT_FOUND,
@@ -214,7 +214,7 @@ public class SchemaIT extends ODMRegistryIT {
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testSchemaDeleteError404() throws IOException {
 
-        ResponseEntity<ErrorRes> deleteResponse = registryClient.deleteSchema(1701l);
+        ResponseEntity<ErrorRes> deleteResponse = registryClient.deleteSchema(1701L);
         verifyResponseError(
                 deleteResponse,
                 HttpStatus.NOT_FOUND,

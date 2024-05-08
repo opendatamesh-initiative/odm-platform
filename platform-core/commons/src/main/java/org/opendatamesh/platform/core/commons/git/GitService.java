@@ -107,7 +107,7 @@ public abstract class GitService {
                 } catch(Throwable t) {
                     throw new InternalServerException(
                             GitStandardErrors.SC500_01_GIT_ERROR,
-                            "createRepo=false, but an error occured cloning existing repository ["
+                            "createRepo=false, but an error occurred cloning existing repository ["
                                     + targetOrigin + "]. Error: " + t.getMessage()
                                     + ". Check if the repository exists.",
                             t

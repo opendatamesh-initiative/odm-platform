@@ -491,7 +491,7 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
         try {
             statusRes = devOpsClient.stopTask(targetTaskRes.getId());
         } catch (Throwable t) {
-            fail("An unexpected exception occured while stopping task: " + t.getMessage());
+            fail("An unexpected exception occurred while stopping task: " + t.getMessage());
             t.printStackTrace();
             return;
         }

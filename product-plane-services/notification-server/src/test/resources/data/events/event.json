@@ -1,0 +1,7 @@
+{
+  "type": "DATA_PRODUCT_CREATED",
+  "entityId": "abc123",
+  "beforeState": null,
+  "afterState": "{\"name\": \"DP abc 123\"}",
+  "time": "2024-03-21T12:17:11.000+00:00"
+}

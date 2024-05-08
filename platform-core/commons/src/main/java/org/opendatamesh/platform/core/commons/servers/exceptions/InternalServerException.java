@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
  * The 500 (Internal Server Error) status code indicates that the server encountered an 
  * unexpected condition that prevented it from fulfilling the request.
  * 
- * EXAMPLE: An error occured in the backend database
+ * EXAMPLE: An error occurred in the backend database
  * 
  * @see https://www.rfc-editor.org/rfc/rfc9110.html#name-500-internal-server-error
  * @see ODMDevOpsAPIStandardError

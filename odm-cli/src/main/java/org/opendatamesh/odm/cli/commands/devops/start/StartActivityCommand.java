@@ -1,6 +1,5 @@
 package org.opendatamesh.odm.cli.commands.devops.start;
 
-import org.opendatamesh.odm.cli.commands.devops.DevOpsCommands;
 import org.opendatamesh.odm.cli.utils.ObjectMapperUtils;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatusResource;
 import org.springframework.http.HttpStatus;
@@ -19,7 +18,7 @@ import picocli.CommandLine.ParentCommand;
 public class StartActivityCommand implements Runnable {
 
     @ParentCommand
-    private DevOpsCommands devOpsCommands;
+    private DevOpsStartActivityCommand devOpsStartActivityCommand;
 
     @Option(
             names = "--id",
@@ -31,7 +30,7 @@ public class StartActivityCommand implements Runnable {
     @Override
     public void run() {
         try {
-            final ResponseEntity<ActivityStatusResource> activityStatusResourceResponseEntity = devOpsCommands.getDevOpsClient().patchActivityStart(activityId);
+            final ResponseEntity<ActivityStatusResource> activityStatusResourceResponseEntity = devOpsStartActivityCommand.devOpsCommands.getDevOpsClient().patchActivityStart(activityId);
             if (activityStatusResourceResponseEntity.getStatusCode().equals(HttpStatus.OK)) {
                 final ActivityStatusResource activityStatusResourceResource = activityStatusResourceResponseEntity.getBody();
                 System.out.println(ObjectMapperUtils.formatAsString(activityStatusResourceResource));

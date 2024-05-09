@@ -10,20 +10,20 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.ParentCommand;
 
 @Command(
-        name = "list",
+        name = "task",
         description = "Lists all the Activity Tasks",
-        version = "odm-cli tasks list 1.0.0",
+        version = "odm-cli task list 1.0.0",
         mixinStandardHelpOptions = true
 )
 public class ListTasksCommand implements Runnable {
 
     @ParentCommand
-    DevOpsCommands devOpsCommands;
+    DevOpsListCommands devOpsListCommands;
 
     @Override
     public void run() {
         try {
-            final ResponseEntity<ActivityTaskResource[]> tasksResponse = devOpsCommands.getDevOpsClient().getTasks();
+            final ResponseEntity<ActivityTaskResource[]> tasksResponse = devOpsListCommands.devOpsCommands.getDevOpsClient().getTasks();
             final ActivityTaskResource[] taskResources = tasksResponse.getBody();
             for (ActivityTaskResource activityTaskResource : taskResources) {
                 System.out.println(ObjectMapperUtils.formatAsString(activityTaskResource));

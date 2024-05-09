@@ -1,6 +1,5 @@
 package org.opendatamesh.odm.cli.commands.devops.publish;
 
-import org.opendatamesh.odm.cli.commands.devops.DevOpsCommands;
 import org.opendatamesh.odm.cli.utils.FileReaderUtils;
 import org.opendatamesh.odm.cli.utils.ObjectMapperUtils;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
@@ -23,7 +22,7 @@ import java.io.IOException;
 public class PublishActivityCommand implements Runnable {
 
     @ParentCommand
-    DevOpsCreateCommands devopsCommands;
+    DevOpsPublishCommands devopsCommands;
 
     @Option(
             names = "--activity-file",

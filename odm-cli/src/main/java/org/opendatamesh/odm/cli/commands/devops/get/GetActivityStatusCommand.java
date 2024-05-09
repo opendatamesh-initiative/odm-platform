@@ -11,9 +11,9 @@ import picocli.CommandLine.Option;
 import picocli.CommandLine.ParentCommand;
 
 @Command(
-        name = "activitystatus",
-        description = "Get a specific Activity",
-        version = "odm-cli devops get activity status 1.0.0",
+        name = "activity-status",
+        description = "Get the status a specific Activity",
+        version = "odm-cli devops get activity-status 1.0.0",
         mixinStandardHelpOptions = true
 )
 public class GetActivityStatusCommand implements Runnable {

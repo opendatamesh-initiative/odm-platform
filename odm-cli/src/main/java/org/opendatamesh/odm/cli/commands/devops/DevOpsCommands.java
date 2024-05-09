@@ -1,12 +1,13 @@
 package org.opendatamesh.odm.cli.commands.devops;
 
 
-import org.opendatamesh.odm.cli.commands.devops.publish.PublishActivityCommand;
-import org.opendatamesh.odm.cli.commands.devops.get.GetActivityCommand;
-import org.opendatamesh.odm.cli.commands.devops.get.GetActivityStatusCommand;
+import org.opendatamesh.odm.cli.commands.devops.get.DevOpsGetCommands;
+import org.opendatamesh.odm.cli.commands.devops.list.DevOpsListCommands;
+import org.opendatamesh.odm.cli.commands.devops.publish.DevOpsPublishCommands;
 import org.opendatamesh.odm.cli.commands.devops.get.GetTaskCommand;
 import org.opendatamesh.odm.cli.commands.devops.list.ListActivitiesCommand;
 import org.opendatamesh.odm.cli.commands.devops.list.ListTasksCommand;
+import org.opendatamesh.odm.cli.commands.devops.start.DevOpsStartActivityCommand;
 import org.opendatamesh.odm.cli.commands.devops.start.StartActivityCommand;
 import org.opendatamesh.odm.cli.utils.FileReaderUtils;
 import org.opendatamesh.odm.cli.utils.InputManagerUtils;
@@ -24,14 +25,10 @@ import java.util.Properties;
         version = "odm-cli devops 1.0.0",
         mixinStandardHelpOptions = true,
         subcommands = {
-                PublishActivityCommand.class,
-                GetActivityCommand.class,
-                GetActivityStatusCommand.class,
-                GetTaskCommand.class,
-                StartActivityCommand.class,
-                ListActivitiesCommand.class,
-                ListTasksCommand.class
-        }
+                DevOpsPublishCommands.class,
+                DevOpsGetCommands.class,
+                DevOpsListCommands.class
+                        }
 )
 public class DevOpsCommands implements Runnable {
 

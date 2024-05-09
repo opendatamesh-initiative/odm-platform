@@ -5,10 +5,9 @@ import org.opendatamesh.odm.cli.utils.ObjectMapperUtils;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.ParentCommand;
-import picocli.CommandLine.Command;
-
 
 @Command(
         name = "task",

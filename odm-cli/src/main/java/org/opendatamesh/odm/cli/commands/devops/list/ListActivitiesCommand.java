@@ -10,20 +10,20 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.ParentCommand;
 
 @Command(
-        name = "list",
+        name = "activity",
         description = "Lists all the Activities",
-        version = "odm-cli activities list 1.0.0",
+        version = "odm-cli activity list 1.0.0",
         mixinStandardHelpOptions = true
 )
 public class ListActivitiesCommand implements Runnable {
 
     @ParentCommand
-    DevOpsCommands devOpsCommands;
+    DevOpsListCommands devOpsListCommands;
 
     @Override
     public void run() {
         try {
-            final ResponseEntity<ActivityResource[]> activities = devOpsCommands.getDevOpsClient().getActivities();
+            final ResponseEntity<ActivityResource[]> activities = devOpsListCommands.devOpsCommands.getDevOpsClient().getActivities();
             final ActivityResource[] activityResources = activities.getBody();
             for (ActivityResource blueprintResource : activityResources) {
                 System.out.println(ObjectMapperUtils.formatAsString(blueprintResource));

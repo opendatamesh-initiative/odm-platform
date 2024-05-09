@@ -1,9 +1,7 @@
 package org.opendatamesh.platform.pp.devops.server.configurations;
 
 import org.opendatamesh.platform.pp.notification.api.clients.DispatchClient;
-import org.opendatamesh.platform.pp.notification.api.clients.NotificationClient;
 import org.opendatamesh.platform.pp.notification.api.clients.NotificationClientImpl;
-import org.opendatamesh.platform.pp.notification.api.resources.ObserverResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

@@ -7,7 +7,7 @@ import picocli.CommandLine.ParentCommand;
 
 @Command(
         name = "list",
-        description = "Commands to get list of objects related to DevOps microservice",
+        description = "Commands to list objects related to DevOps microservice",
         mixinStandardHelpOptions = true,
         version = "odm-cli devops list 1.0.0",
         subcommands = {

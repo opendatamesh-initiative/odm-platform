@@ -1,6 +1,5 @@
 package org.opendatamesh.odm.cli.commands.devops.get;
 
-import org.opendatamesh.odm.cli.commands.devops.DevOpsCommands;
 import org.opendatamesh.odm.cli.utils.ObjectMapperUtils;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskResource;
 import org.springframework.http.HttpStatus;
@@ -11,14 +10,14 @@ import picocli.CommandLine.ParentCommand;
 
 @Command(
         name = "task",
-        description = "Get a task",
+        description = "Get a specific Task given its ID",
         version = "odm-cli devops get task 1.0.0",
         mixinStandardHelpOptions = true
 )
 public class GetTaskCommand implements Runnable {
 
     @ParentCommand
-    private DevOpsCommands devOpsCommands;
+    private DevOpsGetCommands devOpsGetCommands;
 
     @Option(
             names = "--id",
@@ -30,19 +29,18 @@ public class GetTaskCommand implements Runnable {
     @Override
     public void run() {
         try {
-
-            final ResponseEntity<ActivityTaskResource> task = devOpsCommands.getDevOpsClient().getTask(taskId);
-            if (task.getStatusCode().equals(HttpStatus.OK)) {
-                final ActivityTaskResource taskResource = task.getBody();
-                System.out.println(ObjectMapperUtils.formatAsString(taskResource));
-            } else if (task.getStatusCode().equals(HttpStatus.NOT_FOUND))
+            ResponseEntity<ActivityTaskResource> taskResponseEntity = devOpsGetCommands.devOpsCommands.getDevOpsClient().getTask(taskId);
+            if (taskResponseEntity.getStatusCode().equals(HttpStatus.OK))
+                System.out.println(ObjectMapperUtils.formatAsString(taskResponseEntity.getBody()));
+            else if (taskResponseEntity.getStatusCode().equals(HttpStatus.NOT_FOUND))
                 System.out.println("Task number: [" + taskId + "] not found");
             else
                 System.out.println(
-                        "Got an unexpected response. Error code: " + task.getStatusCode()
+                        "Got an unexpected response. Error code: " + taskResponseEntity.getStatusCode()
                 );
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
+
 }

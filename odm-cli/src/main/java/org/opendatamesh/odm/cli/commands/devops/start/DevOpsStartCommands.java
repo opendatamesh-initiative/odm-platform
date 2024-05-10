@@ -1,19 +1,19 @@
-package org.opendatamesh.odm.cli.commands.devops.stop;
+package org.opendatamesh.odm.cli.commands.devops.start;
 
 import org.opendatamesh.odm.cli.commands.devops.DevOpsCommands;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.ParentCommand;
 
 @Command(
-        name = "stop",
-        description = "Commands to stop a task",
-        version = "odm-cli devops start task 1.0.0",
+        name = "start",
+        description = "Commands to start the execution of objects stored in the DevOps microservice",
+        version = "odm-cli devops start 1.0.0",
         mixinStandardHelpOptions = true,
         subcommands = {
-                StopTaskCommand.class
+                StartActivityCommand.class
         }
 )
-public class DevOpsStopActivityCommands implements Runnable {
+public class DevOpsStartCommands implements Runnable {
 
 
     @ParentCommand

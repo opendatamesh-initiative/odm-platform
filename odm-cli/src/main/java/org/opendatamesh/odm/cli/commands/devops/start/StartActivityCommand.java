@@ -18,7 +18,7 @@ import picocli.CommandLine.ParentCommand;
 public class StartActivityCommand implements Runnable {
 
     @ParentCommand
-    private DevOpsStartActivityCommand devOpsStartActivityCommand;
+    private DevOpsStartCommands devOpsStartCommands;
 
     @Option(
             names = "--id",
@@ -30,12 +30,12 @@ public class StartActivityCommand implements Runnable {
     @Override
     public void run() {
         try {
-            final ResponseEntity<ActivityStatusResource> activityStatusResourceResponseEntity = devOpsStartActivityCommand.devOpsCommands.getDevOpsClient().patchActivityStart(activityId);
-            if (activityStatusResourceResponseEntity.getStatusCode().equals(HttpStatus.OK)) {
-                final ActivityStatusResource activityStatusResourceResource = activityStatusResourceResponseEntity.getBody();
-                System.out.println(ObjectMapperUtils.formatAsString(activityStatusResourceResource));
-            } else if (activityStatusResourceResponseEntity.getStatusCode().equals(HttpStatus.NOT_FOUND))
-                System.out.println("Activity number: [" + activityId + "] not found");
+            ResponseEntity<ActivityStatusResource> activityStatusResourceResponseEntity =
+                    devOpsStartCommands.devOpsCommands.getDevOpsClient().patchActivityStart(activityId);
+            if (activityStatusResourceResponseEntity.getStatusCode().equals(HttpStatus.OK))
+                System.out.println("Activity STARTED: \n" + ObjectMapperUtils.formatAsString(activityStatusResourceResponseEntity.getBody()));
+            else if (activityStatusResourceResponseEntity.getStatusCode().equals(HttpStatus.NOT_FOUND))
+                System.out.println("Activity with ID [" + activityId + "] not found");
             else
                 System.out.println(
                         "Got an unexpected response. Error code: " + activityStatusResourceResponseEntity.getStatusCode()
@@ -44,4 +44,5 @@ public class StartActivityCommand implements Runnable {
             throw new RuntimeException(e);
         }
     }
+
 }

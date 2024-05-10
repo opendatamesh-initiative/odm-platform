@@ -1,9 +1,9 @@
 package org.opendatamesh.odm.cli.commands.devops.get;
 
-
 import org.opendatamesh.odm.cli.commands.devops.DevOpsCommands;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.ParentCommand;
+
 @Command(
         name = "get",
         description = "Commands to get objects related to DevOps microservice",
@@ -11,7 +11,6 @@ import picocli.CommandLine.ParentCommand;
         version = "odm-cli devops get 1.0.0",
         subcommands = {
                 GetActivityCommand.class,
-                GetActivityStatusCommand.class,
                 GetTaskCommand.class
         }
 )

@@ -4,11 +4,6 @@ package org.opendatamesh.odm.cli.commands.devops;
 import org.opendatamesh.odm.cli.commands.devops.get.DevOpsGetCommands;
 import org.opendatamesh.odm.cli.commands.devops.list.DevOpsListCommands;
 import org.opendatamesh.odm.cli.commands.devops.publish.DevOpsPublishCommands;
-import org.opendatamesh.odm.cli.commands.devops.get.GetTaskCommand;
-import org.opendatamesh.odm.cli.commands.devops.list.ListActivitiesCommand;
-import org.opendatamesh.odm.cli.commands.devops.list.ListTasksCommand;
-import org.opendatamesh.odm.cli.commands.devops.start.DevOpsStartActivityCommand;
-import org.opendatamesh.odm.cli.commands.devops.start.StartActivityCommand;
 import org.opendatamesh.odm.cli.utils.FileReaderUtils;
 import org.opendatamesh.odm.cli.utils.InputManagerUtils;
 import org.opendatamesh.platform.pp.devops.api.clients.DevOpsClient;
@@ -21,14 +16,14 @@ import java.util.Properties;
 
 @Command(
         name = "devops",
-        description = "allows to communicate with devops module",
+        description = "commands to communicate with devops microservice",
         version = "odm-cli devops 1.0.0",
         mixinStandardHelpOptions = true,
         subcommands = {
                 DevOpsPublishCommands.class,
                 DevOpsGetCommands.class,
                 DevOpsListCommands.class
-                        }
+        }
 )
 public class DevOpsCommands implements Runnable {
 
@@ -77,4 +72,5 @@ public class DevOpsCommands implements Runnable {
     @Override
     public void run() {
     }
+
 }

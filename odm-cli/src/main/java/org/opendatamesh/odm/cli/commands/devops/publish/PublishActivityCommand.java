@@ -15,7 +15,7 @@ import java.io.IOException;
 
 @Command(
         name = "activity",
-        description = "Create an activity",
+        description = "Publish an Activity",
         version = "odm-cli devops publish activity 1.0.0",
         mixinStandardHelpOptions = true
 )
@@ -32,10 +32,10 @@ public class PublishActivityCommand implements Runnable {
     private String activityPath;
 
     @Option(
-            names = "--check",
-            description = "Whether to check or not the content of the repository (boolean)"
+            names = "--start",
+            description = "Whether to start or not the activity after the creation"
     )
-    private Boolean checkContent;
+    private Boolean startActivity;
 
     @Override
     public void run() {
@@ -54,10 +54,10 @@ public class PublishActivityCommand implements Runnable {
         }
         try {
             ResponseEntity<ActivityResource> activityResponseEntity =
-                    devopsCommands.devOpsCommands.getDevOpsClient().postActivity(activityResource, checkContent);
+                    devopsCommands.devOpsCommands.getDevOpsClient().postActivity(activityResource, startActivity);
             if (activityResponseEntity.getStatusCode().equals(HttpStatus.CREATED)) {
                 activityResource = ObjectMapperUtils.convertObject(activityResponseEntity.getBody(), ActivityResource.class);
-                System.out.println("Activity correctly created: \n" + ObjectMapperUtils.formatAsString(activityResource));
+                System.out.println("Activity CREATED: \n" + ObjectMapperUtils.formatAsString(activityResource));
             } else {
                 ErrorRes error = ObjectMapperUtils.convertObject(activityResponseEntity.getBody(), ErrorRes.class);
                 System.out.println(
@@ -68,7 +68,8 @@ public class PublishActivityCommand implements Runnable {
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (ResourceAccessException e) {
-            System.out.println("Impossible to connect with activity server. Verify the URL and retry");
+            System.out.println("Impossible to connect with devops server. Verify the URL and retry");
         }
     }
+
 }

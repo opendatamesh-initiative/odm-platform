@@ -6,7 +6,7 @@ import picocli.CommandLine.ParentCommand;
 
 @Command(
         name = "publish",
-        description = "Commands to publish activities",
+        description = "Commands to publish objects related to DevOps microservice",
         version = "odm-cli devops publish 1.0.0",
         mixinStandardHelpOptions = true,
         subcommands = {

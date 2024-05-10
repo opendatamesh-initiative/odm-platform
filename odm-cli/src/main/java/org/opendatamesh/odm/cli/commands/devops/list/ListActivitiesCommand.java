@@ -1,9 +1,9 @@
 package org.opendatamesh.odm.cli.commands.devops.list;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.opendatamesh.odm.cli.commands.devops.DevOpsCommands;
 import org.opendatamesh.odm.cli.utils.ObjectMapperUtils;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.ResourceAccessException;
 import picocli.CommandLine.Command;
@@ -23,17 +23,21 @@ public class ListActivitiesCommand implements Runnable {
     @Override
     public void run() {
         try {
-            final ResponseEntity<ActivityResource[]> activities = devOpsListCommands.devOpsCommands.getDevOpsClient().getActivities();
-            final ActivityResource[] activityResources = activities.getBody();
-            for (ActivityResource activityResource : activityResources) {
-                System.out.println(ObjectMapperUtils.formatAsString(activityResource));
-            }
-        } catch (
-                JsonProcessingException e) {
+            ResponseEntity<ActivityResource[]> activityResponseEntitity =
+                    devOpsListCommands.devOpsCommands.getDevOpsClient().getActivities();
+            if (activityResponseEntitity.getStatusCode().equals(HttpStatus.OK)) {
+                ActivityResource[] activities = activityResponseEntitity.getBody();
+                if (activities.length == 0)
+                    System.out.println("[]");
+                for (ActivityResource activityResource : activities)
+                    System.out.println(ObjectMapperUtils.formatAsString(activityResource));
+            } else
+                System.out.println("Error in response from DevOps Server");
+        } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
-        } catch (
-                ResourceAccessException e) {
-            System.out.println("Impossible to connect with activity server. Verify the URL and retry");
+        } catch (ResourceAccessException e) {
+            System.out.println("Impossible to connect with devops server. Verify the URL and retry");
         }
     }
+
 }

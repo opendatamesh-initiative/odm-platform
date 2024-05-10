@@ -68,7 +68,7 @@ public class PublishActivityCommand implements Runnable {
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (ResourceAccessException e) {
-            System.out.println("Impossible to connect with blueprint server. Verify the URL and retry");
+            System.out.println("Impossible to connect with activity server. Verify the URL and retry");
         }
     }
 }

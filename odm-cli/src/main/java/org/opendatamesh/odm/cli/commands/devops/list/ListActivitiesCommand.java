@@ -12,7 +12,7 @@ import picocli.CommandLine.ParentCommand;
 @Command(
         name = "activity",
         description = "Lists all the Activities",
-        version = "odm-cli activity list 1.0.0",
+        version = "odm-cli list activity 1.0.0",
         mixinStandardHelpOptions = true
 )
 public class ListActivitiesCommand implements Runnable {
@@ -25,8 +25,8 @@ public class ListActivitiesCommand implements Runnable {
         try {
             final ResponseEntity<ActivityResource[]> activities = devOpsListCommands.devOpsCommands.getDevOpsClient().getActivities();
             final ActivityResource[] activityResources = activities.getBody();
-            for (ActivityResource blueprintResource : activityResources) {
-                System.out.println(ObjectMapperUtils.formatAsString(blueprintResource));
+            for (ActivityResource activityResource : activityResources) {
+                System.out.println(ObjectMapperUtils.formatAsString(activityResource));
             }
         } catch (
                 JsonProcessingException e) {

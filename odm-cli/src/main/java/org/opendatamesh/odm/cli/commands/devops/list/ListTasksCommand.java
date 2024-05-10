@@ -12,7 +12,7 @@ import picocli.CommandLine.ParentCommand;
 @Command(
         name = "task",
         description = "Lists all the Activity Tasks",
-        version = "odm-cli task list 1.0.0",
+        version = "odm-cli list task 1.0.0",
         mixinStandardHelpOptions = true
 )
 public class ListTasksCommand implements Runnable {

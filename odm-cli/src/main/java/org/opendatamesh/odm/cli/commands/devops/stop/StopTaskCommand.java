@@ -35,7 +35,7 @@ public class StopTaskCommand implements Runnable {
                 final TaskStatusResource taskStatusResourceResponseEntityBody = taskStatusResourceResponseEntity.getBody();
                 System.out.println(ObjectMapperUtils.formatAsString(taskStatusResourceResponseEntityBody));
             } else if (taskStatusResourceResponseEntity.getStatusCode().equals(HttpStatus.NOT_FOUND))
-                System.out.println("Activity number: [" + taskId + "] not found");
+                System.out.println("Task number: [" + taskId + "] not found");
             else
                 System.out.println(
                         "Got an unexpected response. Error code: " + taskStatusResourceResponseEntity.getStatusCode()

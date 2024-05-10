@@ -8,10 +8,9 @@ import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErr
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityResource;
 import org.opendatamesh.platform.pp.notification.api.clients.DispatchClient;
-import org.opendatamesh.platform.pp.notification.api.clients.NotificationClient;
-import org.opendatamesh.platform.up.executor.api.resources.TaskResource;
 import org.opendatamesh.platform.pp.notification.api.resources.EventResource;
 import org.opendatamesh.platform.pp.notification.api.resources.enums.EventType;
+import org.opendatamesh.platform.up.executor.api.resources.TaskResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

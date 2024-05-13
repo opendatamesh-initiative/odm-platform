@@ -3,14 +3,14 @@ package org.opendatamesh.platform.pp.policy.server.services.proxies;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
 import org.opendatamesh.platform.pp.policy.server.database.entities.PolicyEngine;
-import org.opendatamesh.platform.up.policy.api.v1.clients.PolicyEngineClient;
-import org.opendatamesh.platform.up.policy.api.v1.clients.PolicyEngineClientImpl;
+import org.opendatamesh.platform.up.policy.api.v1.clients.ValidatorClient;
+import org.opendatamesh.platform.up.policy.api.v1.clients.ValidatorClientImpl;
 import org.opendatamesh.platform.up.policy.api.v1.resources.DocumentResource;
 import org.opendatamesh.platform.up.policy.api.v1.resources.EvaluationResource;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PolicyEngineProxy {
+public class ValidatorProxy {
 
     public EvaluationResource validatePolicy(
             Long policyEvaluationResultId,
@@ -22,11 +22,11 @@ public class PolicyEngineProxy {
         documentResource.setPolicy(policyToEvaluate);
         documentResource.setPolicyEvaluationId(policyEvaluationResultId);
         documentResource.setObjectToEvaluate(objectToEvaluate);
-        return getPolicyEngineClient(policyEngine).evaluateDocument(documentResource);
+        return getValidatorClient(policyEngine).evaluateDocument(documentResource);
     }
 
-    protected PolicyEngineClient getPolicyEngineClient(PolicyEngine policyEngine) {
-        return new PolicyEngineClientImpl(policyEngine.getAdapterUrl());
+    protected ValidatorClient getValidatorClient(PolicyEngine policyEngine) {
+        return new ValidatorClientImpl(policyEngine.getAdapterUrl());
     }
 
 }

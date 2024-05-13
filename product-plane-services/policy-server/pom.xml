@@ -263,7 +263,7 @@ License.
         </dependency>
         <dependency>
             <groupId>org.opendatamesh</groupId>
-            <artifactId>odm-platform-up-policy-engine-api</artifactId>
+            <artifactId>odm-platform-up-validator-api</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>

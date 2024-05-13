@@ -10,18 +10,18 @@ import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerE
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.up.policy.api.v1.resources.DocumentResource;
 import org.opendatamesh.platform.up.policy.api.v1.resources.EvaluationResource;
-import org.opendatamesh.platform.up.policy.api.v1.resources.errors.PolicyEngineApiStandardErrors;
+import org.opendatamesh.platform.up.policy.api.v1.resources.errors.ValidatorApiStandardErrors;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
-public class PolicyEngineClientImpl extends ODMClient implements PolicyEngineClient {
+public class ValidatorClientImpl extends ODMClient implements ValidatorClient {
 
-    public PolicyEngineClientImpl(String serverAddress, ObjectMapper mapper) {
+    public ValidatorClientImpl(String serverAddress, ObjectMapper mapper) {
         super(serverAddress, mapper);
     }
 
-    public PolicyEngineClientImpl(String serverAddress) {
+    public ValidatorClientImpl(String serverAddress) {
         super(serverAddress, ObjectMapperFactory.JSON_MAPPER);
     }
 
@@ -37,7 +37,7 @@ public class PolicyEngineClientImpl extends ODMClient implements PolicyEngineCli
 
     public ResponseEntity<ObjectNode> evaluateDocumentResponseEntity(DocumentResource document) {
         return rest.exchange(
-                apiUrl(PolicyEngineAPIRoutes.EVALUATE_POLICY),
+                apiUrl(ValidatorAPIRoutes.EVALUATE_POLICY),
                 HttpMethod.POST,
                 new HttpEntity<>(document),
                 ObjectNode.class
@@ -63,7 +63,7 @@ public class PolicyEngineClientImpl extends ODMClient implements PolicyEngineCli
     private void extractAndThrowError(ResponseEntity<ObjectNode> response) {
         try {
             ErrorRes errorRes = mapper.treeToValue(response.getBody(), ErrorRes.class);
-            PolicyEngineApiStandardErrors error = PolicyEngineApiStandardErrors.getByCode(errorRes.getCode());
+            ValidatorApiStandardErrors error = ValidatorApiStandardErrors.getByCode(errorRes.getCode());
             switch (response.getStatusCode()) {
                 case BAD_REQUEST:
                     throw new BadRequestException(

@@ -12,7 +12,6 @@ import org.opendatamesh.platform.up.policy.api.v1.resources.DocumentResource;
 import org.opendatamesh.platform.up.policy.api.v1.resources.EvaluationResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +27,7 @@ import javax.validation.Valid;
         name = "Policies evaluation API",
         description = "API to evaluate one policy for a given object"
 )
-public abstract class AbstractPolicyEngineController implements PolicyEngineController {
+public abstract class AbstractValidatorController implements ValidatorController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)

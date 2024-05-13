@@ -21,7 +21,7 @@ public class PolicyEngineResource extends TimestampedResource {
     private String displayName;
 
     @JsonProperty("adapterUrl")
-    @Schema(description = "URL to reach the PolicyEngine")
+    @Schema(description = "URL to reach the Validator Adapter working as PolicyEngine")
     private String adapterUrl;
 
     public Long getId() {

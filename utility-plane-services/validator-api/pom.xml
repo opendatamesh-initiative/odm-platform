@@ -12,9 +12,9 @@
     </parent>
 
     <groupId>org.opendatamesh</groupId>
-    <artifactId>odm-platform-up-policy-engine-api</artifactId>
-    <name>ODM Platform Policy Engine Service API</name>
-    <description>Open Data Mesh Platform Policy Engine Service API</description>
+    <artifactId>odm-platform-up-validator-api</artifactId>
+    <name>ODM Platform Validator Service API</name>
+    <description>Open Data Mesh Platform Validator Service API</description>
     <url>https://github.com/opendatamesh-initiative/odm-platform</url>
     <version>1.0.0</version>
 

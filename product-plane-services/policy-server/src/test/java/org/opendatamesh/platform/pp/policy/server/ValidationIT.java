@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.opendatamesh.platform.pp.policy.api.resources.*;
-import org.opendatamesh.platform.pp.policy.server.services.proxies.PolicyEngineProxy;
+import org.opendatamesh.platform.pp.policy.server.services.proxies.ValidatorProxy;
 import org.opendatamesh.platform.up.policy.api.v1.resources.EvaluationResource;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ValidationIT extends ODMPolicyIT {
 
     @MockBean
-    protected PolicyEngineProxy policyEngineProxy;
+    protected ValidatorProxy validatorProxy;
 
     // ======================================================================================
     // VALIDATE Object
@@ -33,7 +33,7 @@ public class ValidationIT extends ODMPolicyIT {
         mockResponse.setPolicyEvaluationId(1L);
         mockResponse.setEvaluationResult(true);
         mockResponse.setOutputObject("{\"message\": \"OK\"}");
-        Mockito.when(policyEngineProxy.validatePolicy(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+        Mockito.when(validatorProxy.validatePolicy(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
                 .thenReturn(mockResponse);
 
         // Resources

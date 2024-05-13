@@ -2,15 +2,15 @@ package org.opendatamesh.platform.up.policy.api.v1.clients;
 
 import org.opendatamesh.platform.core.commons.clients.ODMApiRoutes;
 
-public enum PolicyEngineAPIRoutes implements ODMApiRoutes {
+public enum ValidatorAPIRoutes implements ODMApiRoutes {
 
     EVALUATE_POLICY("/evaluate-policy");
 
     private final String path;
 
-    private static final String CONTEXT_PATH = "/api/v1/up/policy-engine";
+    private static final String CONTEXT_PATH = "/api/v1/up/validator";
 
-    PolicyEngineAPIRoutes(String path) {
+    ValidatorAPIRoutes(String path) {
         this.path = CONTEXT_PATH + path;
     }
 

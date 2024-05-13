@@ -66,7 +66,7 @@ License.
 
     <modules>
         <module>observer-api</module>
-        <module>policy-engine-api</module>
+        <module>validator-api</module>
         <module>executor-api</module>
     </modules>
 

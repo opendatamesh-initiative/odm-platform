@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.up.policy.api.v1.controllers;
+package org.opendatamesh.platform.up.validator.api.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -8,8 +8,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
-import org.opendatamesh.platform.up.policy.api.v1.resources.DocumentResource;
-import org.opendatamesh.platform.up.policy.api.v1.resources.EvaluationResource;
+import org.opendatamesh.platform.up.validator.api.resources.DocumentResource;
+import org.opendatamesh.platform.up.validator.api.resources.EvaluationResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;

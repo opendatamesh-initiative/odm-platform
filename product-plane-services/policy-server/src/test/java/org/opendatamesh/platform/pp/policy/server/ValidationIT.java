@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.opendatamesh.platform.pp.policy.api.resources.*;
 import org.opendatamesh.platform.pp.policy.server.services.proxies.ValidatorProxy;
-import org.opendatamesh.platform.up.policy.api.v1.resources.EvaluationResource;
+import org.opendatamesh.platform.up.validator.api.resources.EvaluationResource;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

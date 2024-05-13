@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.up.policy.api.v1.resources;
+package org.opendatamesh.platform.up.validator.api.resources;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;

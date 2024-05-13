@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.up.policy.api.v1.clients;
+package org.opendatamesh.platform.up.validator.api.clients;
 
 import org.opendatamesh.platform.core.commons.clients.ODMApiRoutes;
 

@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.up.policy.api.v1.clients;
+package org.opendatamesh.platform.up.validator.api.clients;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,9 +8,9 @@ import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
 import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
-import org.opendatamesh.platform.up.policy.api.v1.resources.DocumentResource;
-import org.opendatamesh.platform.up.policy.api.v1.resources.EvaluationResource;
-import org.opendatamesh.platform.up.policy.api.v1.resources.errors.ValidatorApiStandardErrors;
+import org.opendatamesh.platform.up.validator.api.resources.DocumentResource;
+import org.opendatamesh.platform.up.validator.api.resources.EvaluationResource;
+import org.opendatamesh.platform.up.validator.api.resources.errors.ValidatorApiStandardErrors;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;

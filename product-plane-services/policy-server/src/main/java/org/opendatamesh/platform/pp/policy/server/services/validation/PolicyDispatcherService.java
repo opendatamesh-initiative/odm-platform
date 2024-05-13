@@ -5,7 +5,7 @@ import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
 import org.opendatamesh.platform.pp.policy.server.database.entities.PolicyEngine;
 import org.opendatamesh.platform.pp.policy.server.services.PolicyEvaluationResultService;
 import org.opendatamesh.platform.pp.policy.server.services.proxies.ValidatorProxy;
-import org.opendatamesh.platform.up.policy.api.v1.resources.EvaluationResource;
+import org.opendatamesh.platform.up.validator.api.resources.EvaluationResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

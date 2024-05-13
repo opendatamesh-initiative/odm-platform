@@ -22,12 +22,12 @@ import java.io.IOException;
 public class PublishActivityCommand implements Runnable {
 
     @ParentCommand
-    DevOpsPublishCommands devopsCommands;
+    protected DevOpsPublishCommands devOpsPublishCommands;
 
     @Option(
             names = "--activity-file",
             required = true,
-            description = "Path of the activity file"
+            description = "Path of the JSON descriptor of the activity file"
     )
     private String activityPath;
 
@@ -54,7 +54,7 @@ public class PublishActivityCommand implements Runnable {
         }
         try {
             ResponseEntity<ActivityResource> activityResponseEntity =
-                    devopsCommands.devOpsCommands.getDevOpsClient().postActivity(activityResource, startActivity);
+                    devOpsPublishCommands.devOpsCommands.getDevOpsClient().postActivity(activityResource, startActivity);
             if (activityResponseEntity.getStatusCode().equals(HttpStatus.CREATED)) {
                 activityResource = ObjectMapperUtils.convertObject(activityResponseEntity.getBody(), ActivityResource.class);
                 System.out.println("Activity CREATED: \n" + ObjectMapperUtils.formatAsString(activityResource));

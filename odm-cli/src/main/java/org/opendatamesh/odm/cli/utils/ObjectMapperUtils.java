@@ -40,8 +40,8 @@ public final class ObjectMapperUtils {
         return objectMapper.writeValueAsString(resource);
     }
 
-    public static <T> T stringToResource(String resourceString, Class<T> targetClassType) {
-        return objectMapper.convertValue(
+    public static <T> T stringToResource(String resourceString, Class<T> targetClassType) throws JsonProcessingException {
+        return objectMapper.readValue(
                 resourceString,
                 targetClassType
         );

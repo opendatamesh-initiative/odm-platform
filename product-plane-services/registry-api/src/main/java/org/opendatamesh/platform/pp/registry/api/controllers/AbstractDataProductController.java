@@ -81,7 +81,7 @@ public abstract class AbstractDataProductController
             responseCode = "501", 
             description = "[Bad Gateway](https://www.rfc-editor.org/rfc/rfc9110.html#name-502-bad-gateway)"
             + "\r\n - Error Code 50201 - Invalid policyService's response" 
-            + "\r\n - Error Code 50204 - Invalid metaService's response",
+            + "\r\n - Error Code 50204 - Invalid notificationService's response",
             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
         )
     })

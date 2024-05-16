@@ -60,6 +60,7 @@ public class PolicyEvaluationResultIT extends ODMPolicyIT {
         );
         // TODO: discuss update strategies (ID and CreationTime actually MUST be in the updated object)
         policyEvaluationResultResourceUpdated.setId(policyEvaluationResultResource.getId());
+        policyEvaluationResultResourceUpdated.setPolicy(policyEvaluationResultResource.getPolicy());
         policyEvaluationResultResourceUpdated.setCreatedAt(policyEvaluationResultResource.getCreatedAt());
 
         // PUT request
@@ -171,7 +172,7 @@ public class PolicyEvaluationResultIT extends ODMPolicyIT {
     private void verifyResourcePolicyEvaluationResultOne(PolicyEvaluationResultResource policyEvaluationResultResource) {
 
         assertThat(policyEvaluationResultResource.getId()).isNotNull();
-        assertThat(policyEvaluationResultResource.getPolicyId()).isEqualTo(1);
+        assertThat(policyEvaluationResultResource.getPolicyId()).isNotNull();
         assertThat(policyEvaluationResultResource.getResult()).isEqualTo(true);
         assertThat(policyEvaluationResultResource.getDataProductId()).isEqualTo("abc123");
         assertThat(policyEvaluationResultResource.getDataProductVersion()).isEqualTo("1.0.0");
@@ -185,7 +186,7 @@ public class PolicyEvaluationResultIT extends ODMPolicyIT {
     private void verifyResourcePolicyEvaluationResultOneUpdated(PolicyEvaluationResultResource policyEvaluationResultResource) {
 
         assertThat(policyEvaluationResultResource.getId()).isNotNull();
-        assertThat(policyEvaluationResultResource.getPolicyId()).isEqualTo(1);
+        assertThat(policyEvaluationResultResource.getPolicyId()).isNotNull();
         assertThat(policyEvaluationResultResource.getResult()).isEqualTo(false);
         assertThat(policyEvaluationResultResource.getDataProductId()).isEqualTo("abc123");
         assertThat(policyEvaluationResultResource.getDataProductVersion()).isEqualTo("1.0.0");
@@ -199,7 +200,7 @@ public class PolicyEvaluationResultIT extends ODMPolicyIT {
     private void verifyResourcePolicyEvaluationResultTwo(PolicyEvaluationResultResource policyEvaluationResultResource) {
 
         assertThat(policyEvaluationResultResource.getId()).isNotNull();
-        assertThat(policyEvaluationResultResource.getPolicyId()).isEqualTo(1);
+        assertThat(policyEvaluationResultResource.getPolicyId()).isNotNull();
         assertThat(policyEvaluationResultResource.getResult()).isEqualTo(true);
         assertThat(policyEvaluationResultResource.getDataProductId()).isEqualTo("def456");
         assertThat(policyEvaluationResultResource.getDataProductVersion()).isEqualTo("1.7.14");

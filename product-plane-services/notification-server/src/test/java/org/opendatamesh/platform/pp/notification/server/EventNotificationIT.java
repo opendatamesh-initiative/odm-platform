@@ -57,6 +57,7 @@ public class EventNotificationIT extends ODMNotificationIT {
         verifyResponseEntity(putResponse, HttpStatus.OK, true);
         notification = mapper.convertValue(putResponse.getBody(), EventNotificationResource.class);
 
+        eventToDispatch.setId(notification.getEvent().getId());
         assertThat(notification.getEvent()).usingRecursiveComparison().isEqualTo(eventToDispatch);
         assertThat(notification.getObserver()).usingRecursiveComparison().isEqualTo(observerResource);
         assertThat(notification.getStatus()).isEqualTo(EventNotificationStatus.PROCESSED);

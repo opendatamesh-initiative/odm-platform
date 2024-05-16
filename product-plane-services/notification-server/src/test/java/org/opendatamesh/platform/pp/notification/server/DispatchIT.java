@@ -37,6 +37,7 @@ public class DispatchIT extends ODMNotificationIT {
         verifyResponseEntity(getResponse, HttpStatus.OK, true);
         List<EventResource> events = extractListFromPageFromObjectNode(getResponse.getBody(), EventResource.class);
         assertThat(events.size()).isEqualTo(1);
+        eventToDispatch.setId(events.get(0).getId());
         assertThat(events.get(0)).usingRecursiveComparison().isEqualTo(eventToDispatch);
 
         // Check notification

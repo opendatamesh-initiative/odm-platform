@@ -107,7 +107,7 @@ public class ObserverErrorIT extends ODMNotificationIT {
                 putResponse,
                 HttpStatus.NOT_FOUND,
                 NotificationApiStandardErrors.SC404_01_OBSERVER_NOT_FOUND,
-                "Observer with ID [2] not found"
+                "Resource with ID [2] not found"
         );
 
     }
@@ -165,7 +165,7 @@ public class ObserverErrorIT extends ODMNotificationIT {
                 getResponse,
                 HttpStatus.NOT_FOUND,
                 NotificationApiStandardErrors.SC404_01_OBSERVER_NOT_FOUND,
-                "Observer with ID [2] not found"
+                "Resource with ID [2] not found"
         );
 
     }
@@ -184,7 +184,7 @@ public class ObserverErrorIT extends ODMNotificationIT {
                 deleteResponse,
                 HttpStatus.NOT_FOUND,
                 NotificationApiStandardErrors.SC404_01_OBSERVER_NOT_FOUND,
-                "Observer with ID [2] not found"
+                "Resource with ID [2] not found"
         );
 
     }

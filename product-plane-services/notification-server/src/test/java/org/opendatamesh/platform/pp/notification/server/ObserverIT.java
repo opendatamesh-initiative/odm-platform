@@ -130,7 +130,7 @@ public class ObserverIT extends ODMNotificationIT {
                 getResponse,
                 HttpStatus.NOT_FOUND,
                 NotificationApiStandardErrors.SC404_01_OBSERVER_NOT_FOUND,
-                "Observer with ID [" + observerResource.getId() + "] not found"
+                "Resource with ID [" + observerResource.getId() + "] not found"
         );
 
     }

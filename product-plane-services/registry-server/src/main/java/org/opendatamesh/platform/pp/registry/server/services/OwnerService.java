@@ -9,7 +9,6 @@ import org.opendatamesh.platform.pp.registry.server.database.entities.dataproduc
 import org.opendatamesh.platform.pp.registry.server.database.mappers.OwnerMapper;
 import org.opendatamesh.platform.pp.registry.server.database.repositories.DataProductVersionRepository;
 import org.opendatamesh.platform.pp.registry.server.database.repositories.OwnerRepository;
-import org.opendatamesh.platform.pp.registry.server.resources.v1.observers.EventNotifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +32,6 @@ public class OwnerService {
 
     @Autowired
     private OwnerMapper ownerMapper;
-
-    @Autowired
-    EventNotifier eventNotifier;
 
 
     private static final Logger logger = LoggerFactory.getLogger(OwnerService.class);
@@ -209,4 +205,5 @@ public class OwnerService {
                     "Owner [" + owner.getId() + "] has at least one Data Product associated, therefore can't be deleted");
         }
     }
+
 }

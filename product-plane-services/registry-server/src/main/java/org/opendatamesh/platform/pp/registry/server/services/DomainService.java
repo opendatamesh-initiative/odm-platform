@@ -1,6 +1,5 @@
 package org.opendatamesh.platform.pp.registry.server.services;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.platform.core.commons.servers.exceptions.*;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
@@ -9,7 +8,6 @@ import org.opendatamesh.platform.pp.registry.server.database.entities.dataproduc
 import org.opendatamesh.platform.pp.registry.server.database.mappers.DomainMapper;
 import org.opendatamesh.platform.pp.registry.server.database.repositories.DataProductRepository;
 import org.opendatamesh.platform.pp.registry.server.database.repositories.DomainRepository;
-import org.opendatamesh.platform.pp.registry.server.resources.v1.observers.EventNotifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +32,6 @@ public class DomainService {
 
     @Autowired
     private DomainMapper domainMapper;
-
-    @Autowired
-    EventNotifier eventNotifier;
 
 
     private static final Logger logger = LoggerFactory.getLogger(DomainService.class);
@@ -191,7 +186,7 @@ public class DomainService {
 
         try {
             domain = saveDomain(domain);
-            logger.info("Domain [" + domain.getFullyQualifiedName() + "] succesfully updated");
+            logger.info("Domain [" + domain.getFullyQualifiedName() + "] successfully updated");
         } catch(Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
@@ -230,4 +225,5 @@ public class DomainService {
                     "Domain [" + domain.getFullyQualifiedName() + "] has at least one Data Product associated, therefore can't be deleted");
         }
     }
+
 }

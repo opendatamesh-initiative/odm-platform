@@ -64,15 +64,13 @@ odm:
     blueprintService:
       active: false
       address: http://${BLUEPRINT_HOSTNAME}:${BLUEPRINT_PORT}
+    policyService:
+      active: ${POLICYSERVICE_ACTIVE}
+      address: http://${POLICYSERVICE_HOSTNAME}:${POLICYSERVICE_PORT}
+    notificationService:
+      active: ${NOTIFICATIONSERVICE_ACTIVE}
+      address: http://${NOTIFICATIONSERVICE_HOSTNAME}:${NOTIFICATIONSERVICE_PORT}
   utilityPlane:
-    policyServices:
-      open-policy-agent:
-        active: ${POLICYSERVICE_ACTIVE}
-        address: http://${POLICYSERVICE_HOSTNAME}:${POLICYSERVICE_PORT}
-    notificationServices:
-      blindata:
-        active: ${METASERVICE_ACTIVE}
-        address: http://${METASERVICE_HOSTNAME}:${METASERVICE_PORT}
     executorServices:
       azure-devops:
         active: true

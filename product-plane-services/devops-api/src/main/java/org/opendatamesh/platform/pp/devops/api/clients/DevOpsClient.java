@@ -38,7 +38,7 @@ public class DevOpsClient extends ODMClient {
             Object payload, boolean startAfterCreation, Class<T> responseType) throws IOException {
 
         Map<String, Object> queryParams = new HashMap<String, Object>();
-        queryParams.put("startAfterCreation", Boolean.valueOf(startAfterCreation));
+        queryParams.put("startAfterCreation", startAfterCreation);
 
         return rest.postForEntity(
                 apiUrl(DevOpsAPIRoutes.ACTIVITIES, null, queryParams),

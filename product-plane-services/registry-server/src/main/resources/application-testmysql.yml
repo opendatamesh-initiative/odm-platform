@@ -34,7 +34,7 @@ spring:
     # Create a Docker container from mysql:8.0.24 image
     url: jdbc:tc:mysql:8.0.24://localhost/ODMREGISTRY?user=root&password=root&currentSchema=ODMREGISTRY&TC_REUSABLE=true
     # OBS: without localhost/ it fails to create PUBLIC DB/Schema (it use default db-schema "test"
-    # and without user and password it use "test" "test"
+    # and without user and password it uses "test" "test"
     # TestContainers driverClassName for JDBC url generated DBs
     driverClassName: org.testcontainers.jdbc.ContainerDatabaseDriver
     #driverClassName: com.mysql.cj.jdbc.Driver
@@ -67,12 +67,10 @@ odm:
       supportedVersions:
         min: "1.0.0"
         max: null
-  utilityPlane:
-    policyServices:
-      open-policy-agent:
-        active: false
-        address: http://localhost:9001
-    notificationServices:
-      blindata:
-        active: false
-        address: http://localhost:9002
+  productPlane:
+    policyService:
+      active: false
+      address: http://localhost:8005
+    notificationService:
+      active: false
+      address: http://localhost:8006

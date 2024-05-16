@@ -145,7 +145,7 @@ public class DPDSParser {
         if (!errors.isEmpty()) {
             throw new ValidationException(
                     "Descriptor document does not comply with DPDS. The following validation errors has been found during validation ["
-                            + errors.toString() + "]",
+                            + errors + "]",
                     errors);
         }
 

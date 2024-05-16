@@ -7,15 +7,14 @@ import org.opendatamesh.platform.core.dpds.model.core.StandardDefinitionDPDS;
 import org.opendatamesh.platform.core.dpds.model.internals.LifecycleTaskInfoDPDS;
 import org.opendatamesh.platform.core.dpds.parser.IdentifierStrategy;
 import org.opendatamesh.platform.pp.devops.api.clients.DevOpsAPIRoutes;
-import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskStatus;
-import org.opendatamesh.platform.pp.devops.api.resources.DevOpsApiStandardErrors;
-import org.opendatamesh.platform.pp.devops.api.resources.TaskResultResource;
-import org.opendatamesh.platform.pp.devops.api.resources.TaskResultStatus;
+import org.opendatamesh.platform.pp.devops.api.resources.*;
 import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsClients;
 import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsConfigurations;
 import org.opendatamesh.platform.pp.devops.server.database.entities.Task;
 import org.opendatamesh.platform.pp.devops.server.database.mappers.TaskMapper;
 import org.opendatamesh.platform.pp.devops.server.database.repositories.TaskRepository;
+import org.opendatamesh.platform.pp.devops.server.services.proxies.DevOpsNotificationServiceProxy;
+import org.opendatamesh.platform.pp.devops.server.services.proxies.DevopsPolicyServiceProxy;
 import org.opendatamesh.platform.pp.registry.api.resources.ExternalComponentResource;
 import org.opendatamesh.platform.up.executor.api.clients.ExecutorClient;
 import org.opendatamesh.platform.up.executor.api.resources.TaskResource;
@@ -23,7 +22,6 @@ import org.opendatamesh.platform.up.executor.api.resources.TaskStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -31,6 +29,9 @@ import java.util.*;
 
 @Service
 public class TaskService {
+
+    @Autowired
+    DevopsPolicyServiceProxy policyServiceProxy;
 
     @Autowired
     TaskRepository taskRepository;
@@ -43,6 +44,9 @@ public class TaskService {
 
     @Autowired
     DevOpsClients clients;
+
+    @Autowired
+    DevOpsNotificationServiceProxy devOpsNotificationServiceProxy;
 
     private ExecutorClient odmExecutor;
 
@@ -80,13 +84,15 @@ public class TaskService {
         
         try {
             task = saveTask(task);
-            logger.info("Task [" + task.getId() + "] succesfully created");
+            logger.info("Task [" + task.getId() + "] successfully created");
         } catch (Throwable t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while saving task",
+                    "An error occurred in the backend database while saving task",
                     t);
         }
+
+        devOpsNotificationServiceProxy.notifyTaskCreation(taskMapper.toResource(task));
 
         return task;
     }
@@ -105,17 +111,19 @@ public class TaskService {
     }
     
     public Task startTask(Task task) {
-
         try {
 
             task.setStatus(ActivityTaskStatus.PROCESSING);
             task.setStartedAt(now());
             saveTask(task);
 
+            devOpsNotificationServiceProxy.notifyTaskStart(taskMapper.toResource(task));
+
             if(task.getExecutorRef() != null) {
                 task = submitTask(task);
                 if (task.getStatus().equals(ActivityTaskStatus.FAILED)) {
-                    saveTask(task);
+                    task = saveTask(task);
+                    devOpsNotificationServiceProxy.notifyTaskCompletion(taskMapper.toResource(task));
                 }
             } else {
                 TaskResultResource taskResultResource = new TaskResultResource();
@@ -125,12 +133,13 @@ public class TaskService {
                 task.setResults(taskResultResource.toJsonString());
                 task.setStatus(ActivityTaskStatus.PROCESSED);
                 task.setFinishedAt(now());
+                devOpsNotificationServiceProxy.notifyTaskCompletion(taskMapper.toResource(task));
             }
             
         } catch(Throwable t) {
              throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                "An error occured in the backend database while saving task",
+                "An error occurred in the backend database while saving task",
                 t
              );
         }
@@ -154,6 +163,7 @@ public class TaskService {
                 taskRes.setStatus(TaskStatus.FAILED);
                 taskRes.setErrors("Executor [" + task.getExecutorRef() + "] supported"); // CHECK
                 taskRes.setFinishedAt(new Date());
+                devOpsNotificationServiceProxy.notifyTaskCompletion(taskRes);
             }
 
             task = taskMapper.toEntity(taskRes);
@@ -161,6 +171,7 @@ public class TaskService {
             task.setStatus(ActivityTaskStatus.FAILED);
             task.setErrors(t.getMessage());
             task.setFinishedAt(now());
+            devOpsNotificationServiceProxy.notifyTaskCompletion(taskMapper.toResource(task));
         }
        
         return task;
@@ -213,6 +224,15 @@ public class TaskService {
                         task.setErrors(taskResultResource.getErrors());
                     }
                 }
+
+                // Interactions with PolicyService
+                if(!policyServiceProxy.isCallbackResultValid(taskMapper.toResource(task))){
+                    throw new InternalServerException(
+                            ODMApiCommonErrors.SC500_73_POLICY_SERVICE_EVALUATION_ERROR,
+                            "Some blocking policy has not passed evaluation"
+                    );
+                }
+
             } else {
                 if (taskRealStatus != null && taskRealStatus.equals(TaskStatus.FAILED)) {
                     task.setStatus(ActivityTaskStatus.FAILED);
@@ -236,10 +256,12 @@ public class TaskService {
             task.setFinishedAt(now());
             task = saveTask(task);
 
+            devOpsNotificationServiceProxy.notifyTaskCompletion(taskMapper.toResource(task));
+
         } catch(Throwable t) {
              throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                "An error occured in the backend database while saving task",
+                "An error occurred in the backend database while saving task",
                 t);
         }
         
@@ -258,7 +280,7 @@ public class TaskService {
         } catch (Throwable t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while loading tasks",
+                    "An error occurred in the backend database while loading tasks",
                     t);
         }
         return tasks;
@@ -292,7 +314,7 @@ public class TaskService {
         } catch (Throwable t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while loading task with id [" + taskId
+                    "An error occurred in the backend database while loading task with id [" + taskId
                             + "]",
                     t);
         }
@@ -350,7 +372,7 @@ public class TaskService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while searching tasks",
+                    "An error occurred in the backend database while searching tasks",
                     t);
         }
         return taskSearchResults;
@@ -405,11 +427,11 @@ public class TaskService {
 
         try {
             templateDefinition = clients.getRegistryClient().readTemplate(templateId);
-            logger.debug("Template definition [" + templateId + "] succesfully read from ODM Registry");
+            logger.debug("Template definition [" + templateId + "] successfully read from ODM Registry");
         } catch (Throwable t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
-                    "An error occured in the backend service while loading template [" + templateId + "]",
+                    "An error occurred in the backend service while loading template [" + templateId + "]",
                     t);
         }
         if (templateDefinition == null) {
@@ -431,7 +453,7 @@ public class TaskService {
         } catch (JsonProcessingException t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_02_DESCRIPTOR_ERROR,
-                    "An error occured in the backend service while parsing configurations [" + configurations + "]",
+                    "An error occurred in the backend service while parsing configurations [" + configurations + "]",
                     t);
         }
 
@@ -444,6 +466,5 @@ public class TaskService {
         now.getHour(), now.getMinute(), now.getSecond(), 0);
         return now;
     }
-
 	
 }

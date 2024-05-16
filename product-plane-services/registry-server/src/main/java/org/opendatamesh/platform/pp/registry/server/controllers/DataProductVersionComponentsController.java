@@ -50,7 +50,7 @@ public class DataProductVersionComponentsController extends AbstractDataProductV
     private static final Logger logger = LoggerFactory.getLogger(DataProductVersionComponentsController.class);
 
     public DataProductVersionComponentsController() {
-        logger.debug("Data product version components controller succesfully started");
+        logger.debug("Data product version components controller successfully started");
     }
 
     @Override

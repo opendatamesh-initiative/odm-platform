@@ -257,7 +257,19 @@ License.
         </dependency>
         <dependency>
             <groupId>org.opendatamesh</groupId>
-            <artifactId>odm-platform-up-notification-api</artifactId>
+            <artifactId>odm-platform-up-observer-api</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.opendatamesh</groupId>
+            <artifactId>odm-platform-pp-policy-api</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.opendatamesh</groupId>
+            <artifactId>odm-platform-pp-notification-api</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>

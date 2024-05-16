@@ -34,7 +34,7 @@ public abstract class AbstractDataProductVersionController
     private static final Logger logger = LoggerFactory.getLogger(AbstractDataProductVersionController.class);
 
     public AbstractDataProductVersionController() { 
-        logger.debug("Data product version controller succesfully started");
+        logger.debug("Data product version controller successfully started");
     }
 
 
@@ -95,7 +95,7 @@ public abstract class AbstractDataProductVersionController
             responseCode = "501", 
             description = "[Bad Gateway](https://www.rfc-editor.org/rfc/rfc9110.html#name-502-bad-gateway)"
             + "\r\n - Error Code 50201 - Invalid policyService's response" 
-            + "\r\n - Error Code 50204 - Invalid metaService's response",
+            + "\r\n - Error Code 50204 - Invalid notificationService's response",
             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
         )
     })

@@ -1,2 +1,4 @@
 blueprint-server: http://localhost:8003
 registry-server: http://localhost:8001
+policy-server: http://localhost:8005
+devops-server: http://localhost:8002

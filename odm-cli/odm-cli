@@ -4,11 +4,11 @@ os_name="$(uname -s)"
 case "$os_name" in
     CYGWIN*|MINGW*|MSYS*)
         # Running on Windows
-        jar_file=$(find target -maxdepth 1 -name 'odm-cli-*.jar' -type f -print -quit)
+        jar_file=$(find target -maxdepth 1 -name 'odm-platform-cli-*.jar' -type f -print -quit)
         ;;
     *)
         # Running on Unix-based system
-        jar_file=$(find target -maxdepth 1 -name 'odm-cli-*.jar' -type f -exec basename {} \; | sort -V | tail -n 1)
+        jar_file=$(find target -maxdepth 1 -name 'odm-platform-cli-*.jar' -type f -exec basename {} \; | sort -V | tail -n 1)
         ;;
 esac
 

@@ -1,0 +1,8 @@
+{
+  "dataProductId": "abc123",
+  "dataProductVersion": "1.0.0",
+  "inputObject": "{\"name\":\"dp-1\",\"description\":\"DataProduct1Draft\",\"domain\":\"Marketing\"}",
+  "outputObject": "{\"allow\":true}",
+  "result":  true,
+  "policyId": 1
+}

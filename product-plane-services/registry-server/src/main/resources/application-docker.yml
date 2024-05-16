@@ -18,7 +18,7 @@ spring:
   # JPA
   jpa:
     hibernate:
-      ddl-auto: none # validate #right one is validate, but it doesn't work with mysql
+      ddl-auto: none # validate #right one is: validate, but it doesn't work with mysql
       naming:
         implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
@@ -63,12 +63,10 @@ odm:
       supportedVersions:
         min: "1.0.0"
         max: null
-  utilityPlane:
-    policyServices:
-      open-policy-agent:
-        active: ${POLICYSERVICE_ACTIVE}
-        address: http://${POLICYSERVICE_HOSTNAME}:${POLICYSERVICE_PORT}
-    notificationServices:
-      blindata:
-        active: ${METASERVICE_ACTIVE}
-        address: http://${METASERVICE_HOSTNAME}:${METASERVICE_PORT}
+  productPlane:
+    policyService:
+      active: ${POLICYSERVICE_ACTIVE}
+      address: http://${POLICYSERVICE_HOSTNAME}:${POLICYSERVICE_PORT} # Check if it's the real port
+    notificationService:
+      active: ${NOTIFICATIONSERVICE_ACTIVE}
+      address: http://${NOTIFICATIONSERVICE_HOSTNAME}:${NOTIFICATIONSERVICE_PORT}

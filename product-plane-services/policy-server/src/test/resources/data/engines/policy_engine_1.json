@@ -1,0 +1,5 @@
+{
+  "name": "opa-policy-checker",
+  "displayName": "OPA Policy Checker",
+  "adapterUrl": "http://localhost:9001/api/v1/up/validator"
+}

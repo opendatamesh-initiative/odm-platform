@@ -34,7 +34,7 @@ public class UriUtils {
                     resourceUri.getFragment());
         } catch (URISyntaxException e) {
             throw new RuntimeException(
-                    "An unexpected exception occured while creating base uri from uri [" + resourceUri.toString() + "]",
+                    "An unexpected exception occurred while creating base uri from uri [" + resourceUri + "]",
                     e);
         }
         return baseUri;

@@ -1,7 +1,9 @@
 package org.opendatamesh.odm.cli.commands;
 
 import org.opendatamesh.odm.cli.commands.blueprint.BlueprintCommands;
+import org.opendatamesh.odm.cli.commands.devops.DevOpsCommands;
 import org.opendatamesh.odm.cli.commands.local.LocalCommands;
+import org.opendatamesh.odm.cli.commands.policy.PolicyCommands;
 import org.opendatamesh.odm.cli.commands.registry.RegistryCommands;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -14,7 +16,9 @@ import picocli.CommandLine.Command;
         subcommands = {
                 LocalCommands.class,
                 RegistryCommands.class,
-                BlueprintCommands.class
+                BlueprintCommands.class,
+                PolicyCommands.class,
+                DevOpsCommands.class
         }
 )
 public class OdmCliInit implements Runnable {
@@ -24,8 +28,6 @@ public class OdmCliInit implements Runnable {
     }
 
     @Override
-    public void run() {
-
-    }
+    public void run() { }
 
 }

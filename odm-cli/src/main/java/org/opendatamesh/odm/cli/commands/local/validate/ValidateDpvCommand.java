@@ -67,11 +67,7 @@ public class ValidateDpvCommand implements Runnable {
         );
         ParseOptions options = new ParseOptions();
 
-        PrintUtils.silentExecution(
-                () -> {
-                    descriptorParser.parse(descriptorLocation, options);
-                }
-        );
+        PrintUtils.silentExecution(() -> descriptorParser.parse(descriptorLocation, options));
 
     }
 

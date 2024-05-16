@@ -16,12 +16,6 @@ public enum DevOpsAPIRoutes implements ODMApiRoutes {
         this.path = CONTEXT_PATH + path;
     }
 
-
-    @Override
-    public String toString() {
-        return this.path;
-    }
-
     @Override
     public String getPath() {
         return path;

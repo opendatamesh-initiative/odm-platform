@@ -12,9 +12,9 @@
     </parent>
 
     <groupId>org.opendatamesh</groupId>
-    <artifactId>odm-cli</artifactId>
+    <artifactId>odm-platform-cli</artifactId>
     <description>Open Data Mesh Platform's CLI</description>
-    <name>ODM CLI MODULE</name>
+    <name>ODM Platform CLI</name>
     <version>1.0.0</version>
     <url>https://github.com/opendatamesh-initiative/odm-platform</url>
     <properties>
@@ -92,6 +92,12 @@
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.opendatamesh</groupId>
+            <artifactId>odm-platform-pp-policy-api</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
 
     </dependencies>
 
@@ -119,6 +125,5 @@
             </plugin>
         </plugins>
     </build>
-
 
 </project>

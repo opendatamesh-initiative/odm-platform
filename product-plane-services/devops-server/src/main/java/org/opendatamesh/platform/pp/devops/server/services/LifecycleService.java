@@ -2,8 +2,10 @@ package org.opendatamesh.platform.pp.devops.server.services;
 
 import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
+import org.opendatamesh.platform.pp.devops.api.resources.LifecycleResource;
 import org.opendatamesh.platform.pp.devops.server.database.entities.Activity;
 import org.opendatamesh.platform.pp.devops.server.database.entities.Lifecycle;
+import org.opendatamesh.platform.pp.devops.server.database.mappers.LifecycleMapper;
 import org.opendatamesh.platform.pp.devops.server.database.repositories.LifecycleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,9 @@ public class LifecycleService {
 
     @Autowired
     LifecycleRepository lifecycleRepository;
+
+    @Autowired
+    LifecycleMapper lifecycleMapper;
 
     public void createLifecycle(Activity activity) {
         Lifecycle previousLifecycle = null;
@@ -30,7 +35,7 @@ public class LifecycleService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while updating lifecycle",
+                    "An error occurred in the backend database while updating lifecycle",
                     t
             );
         }
@@ -46,7 +51,7 @@ public class LifecycleService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while updating lifecycle",
+                    "An error occurred in the backend database while updating lifecycle",
                     t
             );
         }
@@ -56,12 +61,12 @@ public class LifecycleService {
         try {
             //return lifecycleRepository.findAll();
             List<Lifecycle> lifecycles = lifecycleRepository.findAll();
-            System.out.println(lifecycles.toString());
+            System.out.println(lifecycles);
             return lifecycles;
         } catch (Throwable t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                "An error occured in the backend database while loading lifecycles",
+                "An error occurred in the backend database while loading lifecycles",
                 t
             );
         }
@@ -78,7 +83,7 @@ public class LifecycleService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while loading lifecycles",
+                    "An error occurred in the backend database while loading lifecycles",
                     t
             );
         }
@@ -90,7 +95,7 @@ public class LifecycleService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while loading lifecycles",
+                    "An error occurred in the backend database while loading lifecycles",
                     t
             );
         }
@@ -102,10 +107,14 @@ public class LifecycleService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while loading lifecycles",
+                    "An error occurred in the backend database while loading lifecycles",
                     t
             );
         }
+    }
+
+    public LifecycleResource getDataProductVersionCurrentLifecycleResource(String dataProductId, String versionNumber) {
+        return lifecycleMapper.toResource(getDataProductVersionCurrentLifecycle(dataProductId, versionNumber));
     }
 
 }

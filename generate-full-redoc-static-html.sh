@@ -27,7 +27,7 @@ fi
 # Copy and rename all redoc-static.html files to the aggregated documentation directory
 for FILE in $REDOC_FILES; do
     MODULE_NAME=$(dirname "$(dirname "$FILE")")
-    NEW_NAME="${AGGREGATED_DOC_DIR}/${MODULE_NAME##*/}-redoc-static.html"
+    NEW_NAME="${AGGREGATED_DOC_DIR}/${MODULE_NAME##*/}.html"
     cp "$FILE" "$NEW_NAME"
     echo "Renamed and copied $FILE to $NEW_NAME"
 done

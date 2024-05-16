@@ -1,9 +1,9 @@
 package org.opendatamesh.odm.cli.commands.registry;
 
-import org.opendatamesh.odm.cli.commands.registry.get.GetCommand;
-import org.opendatamesh.odm.cli.commands.registry.list.ListCommand;
-import org.opendatamesh.odm.cli.commands.registry.publish.PublishCommand;
-import org.opendatamesh.odm.cli.commands.registry.upload.UploadCommand;
+import org.opendatamesh.odm.cli.commands.registry.get.RegistryGetCommand;
+import org.opendatamesh.odm.cli.commands.registry.list.RegistryListCommand;
+import org.opendatamesh.odm.cli.commands.registry.publish.RegistryPublishCommand;
+import org.opendatamesh.odm.cli.commands.registry.upload.RegistryUploadCommand;
 import org.opendatamesh.odm.cli.utils.FileReaderUtils;
 import org.opendatamesh.odm.cli.utils.InputManagerUtils;
 import org.opendatamesh.platform.pp.registry.api.clients.RegistryClient;
@@ -21,10 +21,10 @@ import java.util.Properties;
         version = "odm-cli registry 1.0.0",
         mixinStandardHelpOptions = true,
         subcommands = {
-                ListCommand.class,
-                GetCommand.class,
-                PublishCommand.class,
-                UploadCommand.class
+                RegistryListCommand.class,
+                RegistryGetCommand.class,
+                RegistryPublishCommand.class,
+                RegistryUploadCommand.class
         }
 )
 public class RegistryCommands implements Runnable {

@@ -45,7 +45,7 @@ public class DataProductVersionController extends AbstractDataProductVersionCont
     private static final Logger logger = LoggerFactory.getLogger(DataProductVersionController.class);
 
     public DataProductVersionController() { 
-        logger.debug("Data product version controller succesfully started");
+        logger.debug("Data product version controller successfully started");
     }
 
 

@@ -19,6 +19,7 @@ public enum ODMApiCommonErrors implements ODMApiStandardErrors {
     SC500_50_REGISTRY_SERVICE_ERROR ("50050", "Registry service is disabled or not reachable"),
     SC500_70_NOTIFICATION_SERVICE_ERROR ("50070", "Notification service is disabled or not reachable"),
     SC500_71_POLICY_SERVICE_ERROR ("50071", "Policy service is disabled or not reachable"),
+    SC500_73_POLICY_SERVICE_EVALUATION_ERROR ("50073", "Policy service failed evaluations"),
     SC500_72_EXECUTOR_SERVICE_ERROR ("50072", "Executor service is disabled or not reachable"),
 
     // Bad Gateway Exceptions

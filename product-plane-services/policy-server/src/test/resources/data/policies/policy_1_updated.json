@@ -1,0 +1,12 @@
+{
+  "name": "dataproduct-name-checker",
+  "displayName": "Data Product Name Checker",
+  "description": "Check the Data Product name",
+  "blockingFlag": false,
+  "rawContent": "package dataproduct-name-checker\n\ndefault allow := false\n\nallow := true {                                     \n    startswith(input.name, \"dp-\")\n}",
+  "evaluationEvent": "DATA_PRODUCT_CREATION",
+  "suite": "Suite Name",
+  "policyEngine":{
+    "id": 1,
+    "name": "opa-policy-checker"
+  }}

@@ -1,5 +1,6 @@
 package org.opendatamesh.odm.cli.commands.registry.get;
 
+import org.opendatamesh.odm.cli.utils.ObjectMapperUtils;
 import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,7 @@ import picocli.CommandLine.ParentCommand;
 public class GetDpvCommand implements Runnable {
 
     @ParentCommand
-    private GetCommand getCommand;
+    private RegistryGetCommand registryGetCommand;
 
     @Option(
             names = "--id",
@@ -35,15 +36,13 @@ public class GetDpvCommand implements Runnable {
     @Override
     public void run() {
         try {
-
             ResponseEntity<DataProductVersionDPDS> dataProductVersionsResponseEntity =
-                    getCommand.registryCommands.getRegistryClient().getDataProductVersion(
+                    registryGetCommand.registryCommands.getRegistryClient().getDataProductVersion(
                             dataProductId, dataProductVersion
                     );
-
             if(dataProductVersionsResponseEntity.getStatusCode().equals(HttpStatus.OK)) {
                 DataProductVersionDPDS dataProductVersion = dataProductVersionsResponseEntity.getBody();
-                System.out.println(dataProductVersion.toEventString());
+                System.out.println(ObjectMapperUtils.formatAsString(dataProductVersion));
             }
             else if(dataProductVersionsResponseEntity.getStatusCode().equals(HttpStatus.NOT_FOUND))
                 System.out.println(
@@ -53,7 +52,6 @@ public class GetDpvCommand implements Runnable {
                 System.out.println(
                         "Got an unexpected response. Error code: " + dataProductVersionsResponseEntity.getStatusCode()
                 );
-
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

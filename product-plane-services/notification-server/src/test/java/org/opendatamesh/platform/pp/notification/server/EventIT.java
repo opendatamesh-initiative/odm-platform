@@ -3,6 +3,8 @@ package org.opendatamesh.platform.pp.notification.server;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.pp.notification.api.resources.EventResource;
+import org.opendatamesh.platform.pp.notification.api.resources.ObserverResource;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
@@ -58,12 +60,20 @@ public class EventIT extends ODMNotificationIT {
         EventResource eventToDispatch = createEventResource(ODMNotificationResources.RESOURCE_EVENT);
         notifyEvent(eventToDispatch);
 
+        // GET ALL to find the ID for the single GET
+        ResponseEntity<ObjectNode> getAllResponse = notificationClient.searchEventsResponseEntity();
+        List<EventResource> events = extractListFromPageFromObjectNode(
+                getAllResponse.getBody(),
+                EventResource.class
+        );
+        assertThat(events.size()).isEqualTo(1);
+
         // GET request
-        ResponseEntity<ObjectNode> getResponse = notificationClient.readOneEventResponseEntity(1L);
+        ResponseEntity<ObjectNode> getResponse = notificationClient.readOneEventResponseEntity(events.get(0).getId());
         verifyResponseEntity(getResponse, HttpStatus.OK, true);
         EventResource event = mapper.convertValue(getResponse.getBody(), EventResource.class);
 
-        eventToDispatch.setId(1L);
+        eventToDispatch.setId(events.get(0).getId());
         assertThat(event).usingRecursiveComparison().isEqualTo(eventToDispatch);
 
     }

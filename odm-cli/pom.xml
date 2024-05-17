@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.opendatamesh</groupId>
         <artifactId>odm-platform</artifactId>
-        <version>0.9.0</version>
+        <version>0.8.9</version>
         <relativePath>../</relativePath>
     </parent>
 
@@ -15,7 +15,7 @@
     <artifactId>odm-platform-cli</artifactId>
     <description>Open Data Mesh Platform's CLI</description>
     <name>ODM Platform CLI</name>
-    <version>0.9.0</version>
+    <version>0.8.9</version>
     <url>https://github.com/opendatamesh-initiative/odm-platform</url>
     <properties>
         <java.version>11</java.version>
@@ -72,30 +72,30 @@
         <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-core-dpds-parser</artifactId>
-            <version>0.9.0</version>
+            <version>0.8.9</version>
         </dependency>
         <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-core-commons</artifactId>
-            <version>0.9.0</version>
+            <version>0.8.9</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-pp-blueprint-api</artifactId>
-            <version>0.9.0</version>
+            <version>0.8.9</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-pp-registry-api</artifactId>
-            <version>0.9.0</version>
+            <version>0.8.9</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-pp-policy-api</artifactId>
-            <version>0.9.0</version>
+            <version>0.8.9</version>
             <scope>compile</scope>
         </dependency>
 

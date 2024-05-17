@@ -32,7 +32,7 @@ import java.util.Arrays;
 import static org.assertj.core.api.Assertions.fail;
 
 //@ActiveProfiles("test")
-//@ActiveProfiles("testpostgresql")
+@ActiveProfiles("testpostgresql")
 //@ActiveProfiles("testmysql")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = {ODMNotificationApp.class})
 public class ODMNotificationIT extends ODMIntegrationTest {

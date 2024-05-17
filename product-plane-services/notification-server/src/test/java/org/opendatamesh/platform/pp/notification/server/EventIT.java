@@ -39,10 +39,8 @@ public class EventIT extends ODMNotificationIT {
                 getResponse.getBody(), EventResource.class
         );
         assertThat(events.size()).isEqualTo(2);
-        eventToDispatch.setId(1L);
-        assertThat(events.get(0)).usingRecursiveComparison().isEqualTo(eventToDispatch);
-        eventToDispatch2.setId(2L);
-        assertThat(events.get(1)).usingRecursiveComparison().isEqualTo(eventToDispatch2);
+        assertThat(events.get(0)).usingRecursiveComparison().ignoringFields("id").isEqualTo(eventToDispatch);
+        assertThat(events.get(1)).usingRecursiveComparison().ignoringFields("id").isEqualTo(eventToDispatch2);
 
     }
 

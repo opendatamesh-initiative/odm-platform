@@ -2,11 +2,6 @@ FROM openjdk:17-alpine
 
 VOLUME /tmp
 
-ADD ./platform-core/dpds-parser/target/odm-platform-core-dpds-parser-*.jar ./
-ADD ./product-plane-services/registry-api/target/odm-platform-pp-registry-api-*.jar ./
-ADD ./product-plane-services/devops-api/target/odm-platform-pp-devops-api-*.jar ./
-ADD ./utility-plane-services/eventNotification-api/target/odm-platform-up-eventNotification-api-*.jar ./
-ADD ./utility-plane-services/executor-api/target/odm-platform-up-executor-api-*.jar ./
 COPY ./product-plane-services/devops-server/target/odm-platform-pp-devops-server-*.jar ./application.jar
 
 ARG SPRING_PROFILES_ACTIVE=docker

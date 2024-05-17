@@ -222,4 +222,4 @@ If the application is running using an in memory instance of H2 database you can
 
 * [http://localhost:8001/api/v1/pp/registry/h2-console](http://localhost:8001/api/v1/pp/registry/h2-console)
 
-In all cases you can also use your favourite sql client providing the proper connection parameters
+In all cases you can also use your favourite sql client providing the proper connection parameters.

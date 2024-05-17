@@ -94,13 +94,10 @@ public class EventNotificationIT extends ODMNotificationIT {
                 getResponse.getBody(), EventNotificationResource.class
         );
         assertThat(notifications.size()).isEqualTo(2);
-        observerResource.setId(1L);
-        eventToDispatch.setId(1L);
-        assertThat(notifications.get(0).getEvent()).usingRecursiveComparison().isEqualTo(eventToDispatch);
-        assertThat(notifications.get(0).getObserver()).usingRecursiveComparison().isEqualTo(observerResource);
-        eventToDispatch2.setId(2L);
-        assertThat(notifications.get(1).getEvent()).usingRecursiveComparison().isEqualTo(eventToDispatch2);
-        assertThat(notifications.get(1).getObserver()).usingRecursiveComparison().isEqualTo(observerResource);
+        assertThat(notifications.get(0).getEvent()).usingRecursiveComparison().ignoringFields("id").isEqualTo(eventToDispatch);
+        assertThat(notifications.get(0).getObserver()).usingRecursiveComparison().ignoringFields("id").isEqualTo(observerResource);
+        assertThat(notifications.get(1).getEvent()).usingRecursiveComparison().ignoringFields("id").isEqualTo(eventToDispatch2);
+        assertThat(notifications.get(1).getObserver()).usingRecursiveComparison().ignoringFields("id").isEqualTo(observerResource);
 
         // Filtered GET requests - by event
         searchOptions.setEventType(EventType.DATA_PRODUCT_CREATED);
@@ -110,8 +107,8 @@ public class EventNotificationIT extends ODMNotificationIT {
                 getResponse.getBody(), EventNotificationResource.class
         );
         assertThat(notifications.size()).isEqualTo(1);
-        assertThat(notifications.get(0).getEvent()).usingRecursiveComparison().isEqualTo(eventToDispatch);
-        assertThat(notifications.get(0).getObserver()).usingRecursiveComparison().isEqualTo(observerResource);
+        assertThat(notifications.get(0).getEvent()).usingRecursiveComparison().ignoringFields("id").isEqualTo(eventToDispatch);
+        assertThat(notifications.get(0).getObserver()).usingRecursiveComparison().ignoringFields("id").isEqualTo(observerResource);
 
         // Filtered GET requests - by status
         searchOptions.setEventType(null);
@@ -139,15 +136,21 @@ public class EventNotificationIT extends ODMNotificationIT {
         EventResource eventToDispatch = createEventResource(ODMNotificationResources.RESOURCE_EVENT);
         notifyEvent(eventToDispatch);
 
+        // GET ALL to find the ID for the single GET
+        ResponseEntity<ObjectNode> getAllResponse = notificationClient.searchEventNotificationsResponseEntity(new EventNotificationSearchOptions());
+        List<EventNotificationResource> notifications = extractListFromPageFromObjectNode(
+                getAllResponse.getBody(),
+                EventNotificationResource.class
+        );
+        assertThat(notifications.size()).isEqualTo(1);
+
         // GET request
-        ResponseEntity<ObjectNode> getResponse = notificationClient.readOneEventNotificationResponseEntity(1L);
+        ResponseEntity<ObjectNode> getResponse = notificationClient.readOneEventNotificationResponseEntity(notifications.get(0).getId());
         verifyResponseEntity(getResponse, HttpStatus.OK, true);
         EventNotificationResource notification = mapper.convertValue(getResponse.getBody(), EventNotificationResource.class);
 
-        observerResource.setId(1L);
-        assertThat(notification.getObserver()).usingRecursiveComparison().isEqualTo(observerResource);
-        eventToDispatch.setId(1L);
-        assertThat(notification.getEvent()).usingRecursiveComparison().isEqualTo(eventToDispatch);
+        assertThat(notification.getObserver()).usingRecursiveComparison().ignoringFields("id").isEqualTo(observerResource);
+        assertThat(notification.getEvent()).usingRecursiveComparison().ignoringFields("id").isEqualTo(eventToDispatch);
         assertThat(notification.getStatus()).isNotNull();
 
     }

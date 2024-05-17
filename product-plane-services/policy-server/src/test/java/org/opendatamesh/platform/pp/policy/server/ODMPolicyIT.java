@@ -30,7 +30,7 @@ import static org.assertj.core.api.Assertions.fail;
 
 //@ActiveProfiles("test")
 //@ActiveProfiles("testpostgresql")
-//@ActiveProfiles("testmysql")
+@ActiveProfiles("testmysql")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = {ODMPolicyApp.class})
 public class ODMPolicyIT extends ODMIntegrationTest {
 

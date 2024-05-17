@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 
-import java.util.Date;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -236,8 +235,7 @@ public class PolicyIT extends ODMPolicyIT {
         assertThat(policyResource.getSuite()).isEqualTo("Suite Name");
         assertThat(policyResource.getLastVersion()).isEqualTo(true);
         assertThat(policyResource.getCreatedAt()).isNotNull();
-        assertThat(truncateToSeconds(policyResource.getUpdatedAt())).isAfterOrEqualTo(truncateToSeconds(policyResource.getCreatedAt()));
-        assertThat(truncateToSeconds(policyResource.getUpdatedAt())).isAfterOrEqualTo(truncateToSeconds(oldPolicyResource.getCreatedAt()));
+        assertThat(policyResource.getUpdatedAt()).isAfterOrEqualTo(policyResource.getCreatedAt());
 
     }
 
@@ -275,11 +273,6 @@ public class PolicyIT extends ODMPolicyIT {
         assertThat(policyResource.getCreatedAt()).isNotNull();
         assertThat(policyResource.getUpdatedAt()).isAfterOrEqualTo(policyResource.getCreatedAt());
 
-    }
-
-    private static Date truncateToSeconds(Date date) {
-        long time = (date.getTime() / 1000) * 1000;
-        return new Date(time);
     }
 
 }

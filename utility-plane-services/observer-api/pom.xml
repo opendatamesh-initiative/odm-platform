@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.opendatamesh</groupId>
         <artifactId>odm-platform-up-services</artifactId>
-        <version>1.0.0</version>
+        <version>0.9.0</version>
         <relativePath>../</relativePath>
     </parent>
 
@@ -15,7 +15,7 @@
     <artifactId>odm-platform-up-observer-api</artifactId>
     <name>ODM Platform Observer Service API</name>
     <description>Open Data Mesh Platform Observer Service API</description>
-    <version>1.0.0</version>
+    <version>0.9.0</version>
     <url>https://github.com/opendatamesh-initiative/odm-platform</url>
 
 
@@ -148,19 +148,19 @@
         <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-core-commons</artifactId>
-            <version>1.0.0</version>
+            <version>0.9.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-core-dpds-parser</artifactId>
-            <version>1.0.0</version>
+            <version>0.9.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-pp-notification-api</artifactId>
-            <version>1.0.0</version>
+            <version>0.9.0</version>
             <scope>compile</scope>
         </dependency>
 

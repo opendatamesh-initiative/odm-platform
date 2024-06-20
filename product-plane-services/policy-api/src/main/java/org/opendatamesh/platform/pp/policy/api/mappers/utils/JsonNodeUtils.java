@@ -3,9 +3,9 @@ package org.opendatamesh.platform.pp.policy.api.mappers.utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.opendatamesh.platform.core.commons.ObjectMapperFactory;;
 import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
-import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 
 public final class JsonNodeUtils {
 

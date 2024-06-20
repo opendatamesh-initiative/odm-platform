@@ -1,7 +1,7 @@
 package org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.internals;
 
 import lombok.Data;
-import org.opendatamesh.platform.core.dpds.utils.HashMapConverter;
+import org.opendatamesh.platform.core.commons.HashMapConverter;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.core.ExternalResource;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.core.TemplateStandardDefinition;
 

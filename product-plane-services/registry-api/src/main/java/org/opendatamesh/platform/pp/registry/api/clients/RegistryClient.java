@@ -1,12 +1,12 @@
 package org.opendatamesh.platform.pp.registry.api.clients;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.opendatamesh.dpds.model.DataProductVersionDPDS;
+import org.opendatamesh.dpds.model.internals.ApplicationComponentDPDS;
+import org.opendatamesh.dpds.model.internals.InfrastructuralComponentDPDS;
+import org.opendatamesh.platform.core.commons.ObjectMapperFactory;;
 import org.opendatamesh.platform.core.commons.clients.ODMClient;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
-import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
-import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
-import org.opendatamesh.platform.core.dpds.model.internals.ApplicationComponentDPDS;
-import org.opendatamesh.platform.core.dpds.model.internals.InfrastructuralComponentDPDS;
 import org.opendatamesh.platform.pp.registry.api.resources.*;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;

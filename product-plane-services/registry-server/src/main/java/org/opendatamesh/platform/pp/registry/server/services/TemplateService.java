@@ -1,8 +1,8 @@
 package org.opendatamesh.platform.pp.registry.server.services;
 
+import org.opendatamesh.dpds.model.core.EntityTypeDPDS;
+import org.opendatamesh.dpds.parser.IdentifierStrategy;
 import org.opendatamesh.platform.core.commons.servers.exceptions.*;
-import org.opendatamesh.platform.core.dpds.model.core.EntityTypeDPDS;
-import org.opendatamesh.platform.core.dpds.parser.IdentifierStrategy;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
 import org.opendatamesh.platform.pp.registry.server.database.entities.Template;
 import org.opendatamesh.platform.pp.registry.server.database.repositories.TemplateRepository;

@@ -9,7 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 import org.opendatamesh.platform.core.commons.test.ODMIntegrationTest;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
-import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
+import org.opendatamesh.platform.core.commons.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.devops.api.clients.DevOpsClient;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityResource;
 import org.opendatamesh.platform.pp.devops.api.resources.DevOpsApiStandardErrors;

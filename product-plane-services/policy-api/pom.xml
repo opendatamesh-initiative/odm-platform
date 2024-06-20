@@ -74,6 +74,11 @@ License.
     -->
 
     <dependencies>
+        <dependency>
+            <groupId>org.opendatamesh</groupId>
+            <artifactId>odm-specification-dpdescriptor-parser</artifactId>
+            <version>1.0.0</version>
+        </dependency>
         <!-- Spring Boot Starter -->
         <dependency>
             <groupId>org.springframework.data</groupId>
@@ -98,12 +103,6 @@ License.
         <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-core-commons</artifactId>
-            <version>1.0.0</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.opendatamesh</groupId>
-            <artifactId>odm-platform-core-dpds-parser</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>

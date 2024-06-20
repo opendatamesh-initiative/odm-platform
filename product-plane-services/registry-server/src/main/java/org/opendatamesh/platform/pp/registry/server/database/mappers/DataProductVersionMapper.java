@@ -2,15 +2,15 @@ package org.opendatamesh.platform.pp.registry.server.database.mappers;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.SubclassMapping;
-import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
-import org.opendatamesh.platform.core.dpds.model.core.ExternalResourceDPDS;
-import org.opendatamesh.platform.core.dpds.model.core.ReferenceObjectDPDS;
-import org.opendatamesh.platform.core.dpds.model.definitions.ApiDefinitionReferenceDPDS;
-import org.opendatamesh.platform.core.dpds.model.definitions.DefinitionReferenceDPDS;
-import org.opendatamesh.platform.core.dpds.model.info.InfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.interfaces.PortDPDS;
-import org.opendatamesh.platform.core.dpds.model.internals.ApplicationComponentDPDS;
-import org.opendatamesh.platform.core.dpds.model.internals.InfrastructuralComponentDPDS;
+import org.opendatamesh.dpds.model.DataProductVersionDPDS;
+import org.opendatamesh.dpds.model.core.ExternalResourceDPDS;
+import org.opendatamesh.dpds.model.core.ReferenceObjectDPDS;
+import org.opendatamesh.dpds.model.definitions.ApiDefinitionReferenceDPDS;
+import org.opendatamesh.dpds.model.definitions.DefinitionReferenceDPDS;
+import org.opendatamesh.dpds.model.info.InfoDPDS;
+import org.opendatamesh.dpds.model.interfaces.PortDPDS;
+import org.opendatamesh.dpds.model.internals.ApplicationComponentDPDS;
+import org.opendatamesh.dpds.model.internals.InfrastructuralComponentDPDS;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.DataProductVersion;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.core.DefinitionReference;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.core.ExternalResource;
@@ -35,7 +35,7 @@ public interface DataProductVersionMapper {
     InfoDPDS infoToInfoResource(Info entity);
     Info infoResourceToInfo(InfoDPDS entity);
    
-    Port portResourceToPort(PortDPDS portDPDS);    
+    Port portResourceToPort(PortDPDS portDPDS);
     ApplicationComponent applicationComponentResourceToApplicationComponent(ApplicationComponentDPDS applicationComponentDPDS);
     InfrastructuralComponent infrastructuralComponentResourceToInfrastructuralComponent(InfrastructuralComponentDPDS infrastructuralComponentDPDS);
 
@@ -50,7 +50,7 @@ public interface DataProductVersionMapper {
 
     @SubclassMapping (target = ApiDefinitionReference.class, source = ApiDefinitionReferenceDPDS.class)
     DefinitionReference toEntity(DefinitionReferenceDPDS resource);
-    DefinitionReferenceDPDS toResource(DefinitionReference entity);  
+    DefinitionReferenceDPDS toResource(DefinitionReference entity);
     
     ApiDefinitionReference toEntity(ApiDefinitionReferenceDPDS resource);
     ApiDefinitionReferenceDPDS toResource(ApiDefinitionReference entity);  

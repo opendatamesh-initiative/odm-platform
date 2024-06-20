@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.BeforeEach;
 import org.opendatamesh.platform.core.commons.test.ODMIntegrationTest;
 import org.opendatamesh.platform.core.commons.test.ODMResourceBuilder;
-import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
+import org.opendatamesh.platform.core.commons.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.policy.api.clients.PolicyClientImpl;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationRequestResource;

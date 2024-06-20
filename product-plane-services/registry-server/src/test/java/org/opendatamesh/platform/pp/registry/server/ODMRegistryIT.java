@@ -8,9 +8,9 @@ import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
-import org.opendatamesh.platform.core.commons.test.ODMIntegrationTest;
+import org.opendatamesh.platform.core.commons.ObjectMapperFactory;;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
-import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
+import org.opendatamesh.platform.core.commons.test.ODMIntegrationTest;
 import org.opendatamesh.platform.pp.notification.api.clients.DispatchClient;
 import org.opendatamesh.platform.pp.registry.api.clients.RegistryClient;
 import org.opendatamesh.platform.pp.registry.api.resources.*;
@@ -42,7 +42,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @ExtendWith(SpringExtension.class)
-//@ActiveProfiles("test")
+@ActiveProfiles("test")
 //@ActiveProfiles("testpostgresql")
 //@ActiveProfiles("testmysql")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = { ODMRegistryApp.class })

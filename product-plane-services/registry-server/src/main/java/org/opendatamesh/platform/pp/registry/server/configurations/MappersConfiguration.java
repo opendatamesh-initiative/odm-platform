@@ -1,7 +1,7 @@
 package org.opendatamesh.platform.pp.registry.server.configurations;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
+import org.opendatamesh.platform.core.commons.ObjectMapperFactory;;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;

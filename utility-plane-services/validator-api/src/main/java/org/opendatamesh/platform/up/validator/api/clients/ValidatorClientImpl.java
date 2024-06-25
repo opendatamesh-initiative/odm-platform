@@ -3,11 +3,11 @@ package org.opendatamesh.platform.up.validator.api.clients;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.opendatamesh.platform.core.commons.ObjectMapperFactory;;
 import org.opendatamesh.platform.core.commons.clients.ODMClient;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
-import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.up.validator.api.resources.DocumentResource;
 import org.opendatamesh.platform.up.validator.api.resources.EvaluationResource;
 import org.opendatamesh.platform.up.validator.api.resources.errors.ValidatorApiStandardErrors;
@@ -50,7 +50,7 @@ public class ValidatorClientImpl extends ODMClient implements ValidatorClient {
     // ======================================================================================
 
     private EvaluationResource mapResponseOrThrowError(ResponseEntity<ObjectNode> response) {
-        if(!response.getStatusCode().is2xxSuccessful()) {
+        if (!response.getStatusCode().is2xxSuccessful()) {
             extractAndThrowError(response);
         }
         try {

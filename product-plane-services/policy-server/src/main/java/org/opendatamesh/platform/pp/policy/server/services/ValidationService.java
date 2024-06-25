@@ -3,7 +3,7 @@ package org.opendatamesh.platform.pp.policy.server.services;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
+import org.opendatamesh.platform.core.commons.ObjectMapperFactory;;
 import org.opendatamesh.platform.pp.policy.api.resources.*;
 import org.opendatamesh.platform.pp.policy.server.database.entities.Policy;
 import org.opendatamesh.platform.pp.policy.server.database.entities.PolicyEngine;
@@ -66,7 +66,7 @@ public class ValidationService {
                     basePolicyResult
             );
             policyResults.add(policyResult);
-            if(!policyResult.getResult() && validationResult) {
+            if (!policyResult.getResult() && validationResult) {
                 validationResult = false;
             }
         }
@@ -118,7 +118,7 @@ public class ValidationService {
         List<Policy> filteredPolicies = new ArrayList<>();
         for (Policy policy : policies) {
             // Evaluate SpEL expression for each policy
-            if(policy.getFilteringExpression() != null) {
+            if (policy.getFilteringExpression() != null) {
                 boolean result = SpELUtils.eventObjectMatchesSpelExpression(
                         inputObject,
                         policy.getFilteringExpression(),

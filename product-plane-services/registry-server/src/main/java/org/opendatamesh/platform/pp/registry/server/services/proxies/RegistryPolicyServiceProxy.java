@@ -1,10 +1,10 @@
 package org.opendatamesh.platform.pp.registry.server.services.proxies;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.opendatamesh.dpds.model.DataProductVersionDPDS;
+import org.opendatamesh.platform.core.commons.ObjectMapperFactory;;
 import org.opendatamesh.platform.core.commons.servers.exceptions.BadGatewayException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
-import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
-import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.pp.policy.api.clients.PolicyClientImpl;
 import org.opendatamesh.platform.pp.policy.api.clients.PolicyValidationClient;
 import org.opendatamesh.platform.pp.policy.api.mappers.utils.JsonNodeUtils;

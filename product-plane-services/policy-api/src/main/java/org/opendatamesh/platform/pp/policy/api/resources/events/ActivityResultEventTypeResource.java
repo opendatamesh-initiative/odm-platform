@@ -1,7 +1,7 @@
 package org.opendatamesh.platform.pp.policy.api.resources.events;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
+import org.opendatamesh.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityResource;
 
 public class ActivityResultEventTypeResource {

@@ -3,7 +3,7 @@ package org.opendatamesh.platform.pp.registry.server;
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
-import org.opendatamesh.platform.core.dpds.model.core.EntityTypeDPDS;
+import org.opendatamesh.dpds.model.core.EntityTypeDPDS;
 import org.opendatamesh.platform.pp.registry.api.clients.RegistryAPIRoutes;
 import org.opendatamesh.platform.pp.registry.api.resources.ExternalComponentResource;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;

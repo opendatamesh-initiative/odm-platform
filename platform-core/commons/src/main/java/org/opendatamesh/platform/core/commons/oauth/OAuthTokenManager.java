@@ -37,7 +37,7 @@ public class OAuthTokenManager {
                     scope,
                     authorizationGrantType
             );
-        } catch (Throwable t) {
+        } catch (Exception t) {
             throw new InternalServerException(
                     OAuthStandardErrors.SC500_01_OAUTH_ERROR,
                     "Error configuring OAuth",

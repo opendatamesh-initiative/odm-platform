@@ -26,7 +26,7 @@ public class Port extends InternalComponent implements Cloneable{
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "CONTRACTS_ID", referencedColumnName = "ID")
-    private Contracts contracts;
+    private Contracts obligations;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "DPV_PORT_TAGS", schema="ODMREGISTRY", joinColumns = @JoinColumn(name = "ID"))

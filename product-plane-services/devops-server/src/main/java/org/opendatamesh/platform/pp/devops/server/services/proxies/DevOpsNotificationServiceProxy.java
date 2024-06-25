@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.platform.core.commons.servers.exceptions.BadGatewayException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
-import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
+import org.opendatamesh.platform.core.commons.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityResource;
 import org.opendatamesh.platform.pp.notification.api.clients.DispatchClient;
 import org.opendatamesh.platform.pp.notification.api.resources.EventResource;

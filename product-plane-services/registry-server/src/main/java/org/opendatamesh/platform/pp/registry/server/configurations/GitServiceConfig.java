@@ -1,4 +1,4 @@
-package org.opendatamesh.platform.pp.blueprint.server.configs;
+package org.opendatamesh.platform.pp.registry.server.configurations;
 
 import org.opendatamesh.dpds.location.GitService;
 import org.opendatamesh.platform.core.commons.git.GitServiceFactory;

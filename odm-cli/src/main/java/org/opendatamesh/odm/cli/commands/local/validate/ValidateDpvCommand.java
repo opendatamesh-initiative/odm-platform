@@ -1,11 +1,12 @@
 package org.opendatamesh.odm.cli.commands.local.validate;
 
+import org.opendatamesh.dpds.exceptions.ParseException;
+import org.opendatamesh.dpds.location.DescriptorLocation;
+import org.opendatamesh.dpds.location.UriLocation;
+import org.opendatamesh.dpds.parser.DPDSParser;
+import org.opendatamesh.dpds.parser.ParseOptions;
 import org.opendatamesh.odm.cli.utils.FileReaderUtils;
 import org.opendatamesh.odm.cli.utils.PrintUtils;
-import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
-import org.opendatamesh.platform.core.dpds.parser.DPDSParser;
-import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
-import org.opendatamesh.platform.core.dpds.parser.location.UriLocation;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -59,7 +60,7 @@ public class ValidateDpvCommand implements Runnable {
 
         System.out.println("Validating file ...");
 
-        UriLocation descriptorLocation = new UriLocation(descriptorContent);
+        DescriptorLocation descriptorLocation = new UriLocation(descriptorContent); //TODO
         DPDSParser descriptorParser = new DPDSParser(
                 "https://raw.githubusercontent.com/opendatamesh-initiative/odm-specification-dpdescriptor/main/schemas/",
                 "1.0.0",

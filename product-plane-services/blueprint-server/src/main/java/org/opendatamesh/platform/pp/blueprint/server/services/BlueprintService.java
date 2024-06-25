@@ -1,7 +1,7 @@
 package org.opendatamesh.platform.pp.blueprint.server.services;
 
 import org.eclipse.jgit.api.Git;
-import org.opendatamesh.platform.core.commons.git.GitService;
+import org.opendatamesh.dpds.location.GitService;
 import org.opendatamesh.platform.core.commons.servers.exceptions.*;
 import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintApiStandardErrors;
 import org.opendatamesh.platform.pp.blueprint.api.resources.ConfigResource;
@@ -114,9 +114,9 @@ public class BlueprintService {
             blueprint = saveBlueprint(blueprint);
             logger.info(
                     "Blueprint [" + blueprint.getName() + "] "
-                    + "of version [" + blueprint.getVersion() + "] "
-                    + "of repository [" + blueprint.getRepositoryUrl() + "/" + blueprint.getBlueprintDirectory() + "] "
-                    + "successfully registered"
+                            + "of version [" + blueprint.getVersion() + "] "
+                            + "of repository [" + blueprint.getRepositoryUrl() + "/" + blueprint.getBlueprintDirectory() + "] "
+                            + "successfully registered"
             );
         } catch (Throwable t) {
             throw new InternalServerException(
@@ -191,7 +191,7 @@ public class BlueprintService {
 
     public Blueprint updateBlueprint(Long blueprintId, Blueprint blueprint) {
 
-        if(blueprint == null) {
+        if (blueprint == null) {
             throw new BadRequestException(
                     BlueprintApiStandardErrors.SC400_01_BLUEPRINT_IS_EMPTY,
                     "Blueprint object cannot be null");
@@ -211,7 +211,7 @@ public class BlueprintService {
             );
         }
 
-        if(!blueprintRepository.existsById(blueprintId)) {
+        if (!blueprintRepository.existsById(blueprintId)) {
             throw new NotFoundException(
                     BlueprintApiStandardErrors.SC404_01_BLUEPRINT_NOT_FOUND,
                     "Blueprint with id [" + blueprintId + "] doesn't exists");
@@ -222,7 +222,7 @@ public class BlueprintService {
         try {
             blueprint = saveBlueprint(blueprint);
             logger.info("Blueprint with id [" + blueprint.getId() + "] successfully updated");
-        } catch(Throwable t) {
+        } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occurred in the backend database while updating blueprint with id [" + blueprint.getId() + "]",
@@ -240,7 +240,7 @@ public class BlueprintService {
 
     public void deleteBlueprint(Long blueprintId) {
 
-        if(!blueprintRepository.existsById(blueprintId)) {
+        if (!blueprintRepository.existsById(blueprintId)) {
             throw new NotFoundException(
                     BlueprintApiStandardErrors.SC404_01_BLUEPRINT_NOT_FOUND,
                     "Blueprint with id [" + blueprintId + "] doesn't exists");
@@ -284,19 +284,19 @@ public class BlueprintService {
 
     public void instanceBlueprint(Long blueprintId, ConfigResource configResource) {
 
-        if(configResource == null) {
+        if (configResource == null) {
             throw new BadRequestException(
                     BlueprintApiStandardErrors.SC400_02_CONFIG_IS_EMPTY,
                     "Config object cannot be null when performing INSTANCE of a blueprint");
         }
 
-        if(configResource.getTargetRepo() == null) {
+        if (configResource.getTargetRepo() == null) {
             throw new BadRequestException(
                     BlueprintApiStandardErrors.SC400_03_CONFIG_IS_INVALID,
                     "Target Repository of Config object cannot be null when performing INSTANCE of a blueprint");
         }
 
-        if(configResource.getConfig() == null) {
+        if (configResource.getConfig() == null) {
             throw new BadRequestException(
                     BlueprintApiStandardErrors.SC400_03_CONFIG_IS_INVALID,
                     "Config sections of Config object cannot be null when performing INSTANCE of a blueprint");
@@ -304,7 +304,7 @@ public class BlueprintService {
 
         Blueprint blueprint = loadBlueprint(blueprintId);
 
-        if(blueprint == null) {
+        if (blueprint == null) {
             throw new NotFoundException(
                     BlueprintApiStandardErrors.SC404_01_BLUEPRINT_NOT_FOUND,
                     "Blueprint with id [" + blueprintId + "] doesn't exists");
@@ -316,7 +316,8 @@ public class BlueprintService {
             logger.info("Cloning repository [" + blueprint.getRepositoryUrl() + "] ...");
             Git gitRepo = gitService.cloneRepo(
                     blueprint.getRepositoryUrl(),
-                    templatesPath + sourcePathSuffix
+                    templatesPath + sourcePathSuffix,
+                    false, null, null
             );
             logger.info("Repository [" + blueprint.getRepositoryUrl() + "] correctly cloned");
 

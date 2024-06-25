@@ -3,7 +3,7 @@ package org.opendatamesh.platform.pp.registry.server.database.entities.dataprodu
 import lombok.Data;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.opendatamesh.platform.core.dpds.parser.IdentifierStrategy;
+import org.opendatamesh.dpds.parser.IdentifierStrategy;
 import org.opendatamesh.platform.pp.registry.server.database.entities.DataProduct;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.core.ExternalResource;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.info.Info;

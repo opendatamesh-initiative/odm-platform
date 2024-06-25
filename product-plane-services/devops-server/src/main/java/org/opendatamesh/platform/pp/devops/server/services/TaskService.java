@@ -2,10 +2,10 @@ package org.opendatamesh.platform.pp.devops.server.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.*;
-import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
-import org.opendatamesh.platform.core.dpds.model.core.StandardDefinitionDPDS;
-import org.opendatamesh.platform.core.dpds.model.internals.LifecycleTaskInfoDPDS;
-import org.opendatamesh.platform.core.dpds.parser.IdentifierStrategy;
+import org.opendatamesh.platform.core.commons.ObjectMapperFactory;
+import org.opendatamesh.dpds.model.core.StandardDefinitionDPDS;
+import org.opendatamesh.dpds.model.internals.LifecycleTaskInfoDPDS;
+import org.opendatamesh.dpds.parser.IdentifierStrategy;
 import org.opendatamesh.platform.pp.devops.api.clients.DevOpsAPIRoutes;
 import org.opendatamesh.platform.pp.devops.api.resources.*;
 import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsClients;

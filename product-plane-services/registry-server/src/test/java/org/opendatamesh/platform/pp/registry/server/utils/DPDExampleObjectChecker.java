@@ -1,17 +1,17 @@
 package org.opendatamesh.platform.pp.registry.server.utils;
 
-import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
-import org.opendatamesh.platform.core.dpds.model.core.EntityTypeDPDS;
-import org.opendatamesh.platform.core.dpds.model.core.ExternalResourceDPDS;
-import org.opendatamesh.platform.core.dpds.model.core.StandardDefinitionDPDS;
-import org.opendatamesh.platform.core.dpds.model.definitions.DefinitionReferenceDPDS;
-import org.opendatamesh.platform.core.dpds.model.info.InfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.interfaces.InterfaceComponentsDPDS;
-import org.opendatamesh.platform.core.dpds.model.interfaces.PortDPDS;
-import org.opendatamesh.platform.core.dpds.model.interfaces.PromisesDPDS;
-import org.opendatamesh.platform.core.dpds.model.internals.InternalComponentsDPDS;
-import org.opendatamesh.platform.core.dpds.model.internals.LifecycleInfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.internals.LifecycleTaskInfoDPDS;
+import org.opendatamesh.dpds.model.DataProductVersionDPDS;
+import org.opendatamesh.dpds.model.core.EntityTypeDPDS;
+import org.opendatamesh.dpds.model.core.ExternalResourceDPDS;
+import org.opendatamesh.dpds.model.core.StandardDefinitionDPDS;
+import org.opendatamesh.dpds.model.definitions.DefinitionReferenceDPDS;
+import org.opendatamesh.dpds.model.info.InfoDPDS;
+import org.opendatamesh.dpds.model.interfaces.InterfaceComponentsDPDS;
+import org.opendatamesh.dpds.model.interfaces.PortDPDS;
+import org.opendatamesh.dpds.model.interfaces.PromisesDPDS;
+import org.opendatamesh.dpds.model.internals.InternalComponentsDPDS;
+import org.opendatamesh.dpds.model.internals.LifecycleInfoDPDS;
+import org.opendatamesh.dpds.model.internals.LifecycleTaskInfoDPDS;
 
 import java.util.Arrays;
 import java.util.List;

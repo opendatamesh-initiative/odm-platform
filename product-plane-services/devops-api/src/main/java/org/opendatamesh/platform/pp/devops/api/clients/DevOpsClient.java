@@ -1,7 +1,7 @@
 package org.opendatamesh.platform.pp.devops.api.clients;
 
 import org.opendatamesh.platform.core.commons.clients.ODMClient;
-import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
+import org.opendatamesh.platform.core.commons.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.devops.api.resources.*;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;

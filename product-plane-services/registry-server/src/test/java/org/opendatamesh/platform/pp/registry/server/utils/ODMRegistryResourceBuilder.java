@@ -1,6 +1,6 @@
 package org.opendatamesh.platform.pp.registry.server.utils;
 
-import org.opendatamesh.platform.core.dpds.model.core.EntityTypeDPDS;
+import org.opendatamesh.dpds.model.core.EntityTypeDPDS;
 import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
 import org.opendatamesh.platform.pp.registry.api.resources.DomainResource;
 import org.opendatamesh.platform.pp.registry.api.resources.ExternalComponentResource;

@@ -1,9 +1,8 @@
 package org.opendatamesh.platform.up.executor.api.clients;
 
 import lombok.Data;
-import org.apache.xpath.operations.Bool;
+import org.opendatamesh.platform.core.commons.ObjectMapperFactory;;
 import org.opendatamesh.platform.core.commons.clients.ODMClient;
-import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
 import org.opendatamesh.platform.up.executor.api.resources.TaskResource;
 import org.opendatamesh.platform.up.executor.api.resources.TaskStatus;
 import org.springframework.http.ResponseEntity;

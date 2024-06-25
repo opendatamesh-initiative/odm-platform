@@ -2,7 +2,7 @@ package org.opendatamesh.platform.pp.devops.server.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
+import org.opendatamesh.platform.core.commons.ObjectMapperFactory;
 
 public final class ObjectNodeUtils {
 

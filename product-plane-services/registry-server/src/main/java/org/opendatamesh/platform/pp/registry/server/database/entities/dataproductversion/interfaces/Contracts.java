@@ -6,6 +6,7 @@ import org.opendatamesh.platform.pp.registry.server.database.entities.dataproduc
 import javax.persistence.*;
 
 @Data
+//Now it is called obligations
 @Entity(name = "Contracts")
 @Table(name = "DPV_PORT_CONTRACTS", schema="ODMREGISTRY")
 public class Contracts {

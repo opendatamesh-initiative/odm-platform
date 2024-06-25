@@ -2,13 +2,14 @@ package org.opendatamesh.platform.pp.registry.server.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.opendatamesh.dpds.location.DescriptorLocation;
+import org.opendatamesh.dpds.location.UriLocation;
+import org.opendatamesh.dpds.model.DataProductVersionDPDS;
+import org.opendatamesh.dpds.parser.DPDSSerializer;
 import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.NotFoundException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
-import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
-import org.opendatamesh.platform.core.dpds.parser.DPDSSerializer;
-import org.opendatamesh.platform.core.dpds.parser.location.UriLocation;
 import org.opendatamesh.platform.pp.registry.api.controllers.AbstractDataProductVersionController;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.DataProductVersion;
@@ -41,10 +42,10 @@ public class DataProductVersionController extends AbstractDataProductVersionCont
     @Autowired
     ObjectMapper objectMapper;
 
-    
+
     private static final Logger logger = LoggerFactory.getLogger(DataProductVersionController.class);
 
-    public DataProductVersionController() { 
+    public DataProductVersionController() {
         logger.debug("Data product version controller successfully started");
     }
 
@@ -64,11 +65,11 @@ public class DataProductVersionController extends AbstractDataProductVersionCont
                 "Input descriptor document cannot be empty");
         }
 
-        UriLocation descriptorLocation = new UriLocation(descriptorContent);
+        DescriptorLocation descriptorLocation = new UriLocation(descriptorContent); //TODO
         String serverUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
         DataProductVersion dataProductVersion = dataProductService.addDataProductVersion(id, descriptorLocation, serverUrl);
         DataProductVersionDPDS dataProductVersionDPDS = dataProductVersionMapper.toResource(dataProductVersion);
-        
+
         String serializedContent = null;
         try {
             serializedContent = DPDSSerializer.DEFAULT_JSON_SERIALIZER.serialize(dataProductVersionDPDS, "canonical");
@@ -81,7 +82,7 @@ public class DataProductVersionController extends AbstractDataProductVersionCont
     }
 
    @Override
-    public List<String> getDataProductVersions(String id) 
+    public List<String> getDataProductVersions(String id)
     {
         if(!StringUtils.hasText(id)) {
             throw new BadRequestException(
@@ -114,14 +115,14 @@ public class DataProductVersionController extends AbstractDataProductVersionCont
                 RegistryApiStandardErrors.SC400_11_PRODUCT_VERSION_NUMBER_IS_EMPTY,
                 "Data product version number is empty");
         }
-        
-        
+
+
         if(StringUtils.hasText(format) && !(format.equalsIgnoreCase("normalized") || format.equalsIgnoreCase("canonical"))) {
             throw new BadRequestException(
                 RegistryApiStandardErrors.SC400_04_INVALID_FORMAT,
                 "Format [" + format + "] is not supported");
         }
-        
+
         DataProductVersion dataProductVersion = dataProductVersionService.readDataProductVersion(productId, version);
 
         DataProductVersionDPDS dataProductVersionDPDS = dataProductVersionMapper.toResource(dataProductVersion);

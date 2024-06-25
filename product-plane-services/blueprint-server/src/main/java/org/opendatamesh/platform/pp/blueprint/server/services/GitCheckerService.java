@@ -1,7 +1,7 @@
 package org.opendatamesh.platform.pp.blueprint.server.services;
 
 import org.eclipse.jgit.api.Git;
-import org.opendatamesh.platform.core.commons.git.GitService;
+import org.opendatamesh.dpds.location.GitService;
 import org.opendatamesh.platform.pp.blueprint.server.resources.internals.GitCheckResource;
 import org.opendatamesh.platform.pp.blueprint.server.utils.CustomFileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ public class GitCheckerService {
             String repositoryUrl, String blueprintDirectory, String destinationPath
     ) {
 
-        Git repoToCheck = gitService.cloneRepo(repositoryUrl, destinationPath);
+        Git repoToCheck = gitService.cloneRepo(repositoryUrl, destinationPath, false, null, null);
         File repoToCheckFile = repoToCheck.getRepository().getWorkTree();
 
         GitCheckResource gitCheckResource = new GitCheckResource();
@@ -38,7 +38,7 @@ public class GitCheckerService {
                 CustomFileUtils.existsAsFileInDirectory(repoToCheckFile, paramsFileJson)
         );
 
-        if(gitCheckResource.getParamsDescriptionCheck()) {
+        if (gitCheckResource.getParamsDescriptionCheck()) {
             String paramsFileContent = CustomFileUtils.readFileAsString(new File(repoToCheckFile, paramsFileJson));
             gitCheckResource.setParamsJsonFileContent(paramsFileContent);
         }

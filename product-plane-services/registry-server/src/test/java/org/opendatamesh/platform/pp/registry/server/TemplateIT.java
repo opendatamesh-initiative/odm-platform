@@ -1,15 +1,15 @@
 package org.opendatamesh.platform.pp.registry.server;
 
 import org.junit.jupiter.api.Test;
+import org.opendatamesh.dpds.location.DescriptorLocation;
+import org.opendatamesh.dpds.location.UriLocation;
+import org.opendatamesh.dpds.model.DataProductVersionDPDS;
+import org.opendatamesh.dpds.model.core.StandardDefinitionDPDS;
+import org.opendatamesh.dpds.model.internals.LifecycleInfoDPDS;
+import org.opendatamesh.dpds.model.internals.LifecycleTaskInfoDPDS;
+import org.opendatamesh.dpds.parser.DPDSParser;
+import org.opendatamesh.dpds.parser.ParseOptions;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
-import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
-import org.opendatamesh.platform.core.dpds.model.core.StandardDefinitionDPDS;
-import org.opendatamesh.platform.core.dpds.model.internals.LifecycleInfoDPDS;
-import org.opendatamesh.platform.core.dpds.model.internals.LifecycleTaskInfoDPDS;
-import org.opendatamesh.platform.core.dpds.parser.DPDSParser;
-import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
-import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
-import org.opendatamesh.platform.core.dpds.parser.location.UriLocation;
 import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
 import org.opendatamesh.platform.pp.registry.api.resources.ExternalComponentResource;
 import org.opendatamesh.platform.pp.registry.server.utils.ODMRegistryTestResources;

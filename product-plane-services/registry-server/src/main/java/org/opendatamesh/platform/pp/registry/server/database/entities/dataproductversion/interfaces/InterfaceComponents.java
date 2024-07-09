@@ -1,7 +1,7 @@
 package org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.interfaces;
 
 import lombok.Data;
-import org.opendatamesh.platform.core.dpds.model.core.EntityTypeDPDS;
+import org.opendatamesh.dpds.model.core.EntityTypeDPDS;
 
 import javax.persistence.*;
 import java.util.ArrayList;

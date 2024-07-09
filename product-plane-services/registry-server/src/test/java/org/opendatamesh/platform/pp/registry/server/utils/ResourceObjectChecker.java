@@ -1,6 +1,6 @@
 package org.opendatamesh.platform.pp.registry.server.utils;
 
-import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
+import org.opendatamesh.dpds.model.DataProductVersionDPDS;
 
 
 public interface ResourceObjectChecker {

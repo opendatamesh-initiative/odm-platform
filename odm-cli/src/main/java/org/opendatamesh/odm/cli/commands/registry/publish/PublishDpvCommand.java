@@ -2,7 +2,7 @@ package org.opendatamesh.odm.cli.commands.registry.publish;
 
 import org.opendatamesh.odm.cli.utils.FileReaderUtils;
 import org.opendatamesh.odm.cli.utils.ObjectMapperUtils;
-import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
+import org.opendatamesh.dpds.model.DataProductVersionDPDS;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.ResourceAccessException;

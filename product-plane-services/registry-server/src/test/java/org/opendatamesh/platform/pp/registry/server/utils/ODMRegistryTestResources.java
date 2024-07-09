@@ -1,25 +1,23 @@
 package org.opendatamesh.platform.pp.registry.server.utils;
 
 import lombok.Data;
-import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
-import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
-import org.opendatamesh.platform.core.dpds.parser.location.GitLocation;
-import org.opendatamesh.platform.core.dpds.parser.location.UriLocation;
+import org.opendatamesh.dpds.location.DescriptorLocation;
+import org.opendatamesh.dpds.location.UriLocation;
+import org.opendatamesh.platform.core.commons.ObjectMapperFactory;
 
 import java.io.IOException;
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.fail;
+;
 
 @Data
 public class ODMRegistryTestResources {
-    
-    public static final String TEST_REPO_SSH_URI = "git@github.com:opendatamesh-initiative/odm-demo.git";
+
+    public static final String TEST_REPO_SSH_URI = "https://github.com/opendatamesh-initiative/odm-demo.git"; //TODO ssh or https?
     public static final String TEST_REPO_RAW_URI = "https://raw.githubusercontent.com/opendatamesh-initiative/odm-demo/main";
 
     public static final ODMRegistryTestResources DPD_MINIMAL = new ODMRegistryTestResources(
@@ -61,15 +59,15 @@ public class ODMRegistryTestResources {
             "testcases/dpd/lifecycle/dpd-lifecycle-iref.json");
 
     public static final ODMRegistryTestResources RESOURCE_SCHEMA1 = new ODMRegistryTestResources(
-        "testcases/schema/schema1.json");
+            "testcases/schema/schema1.json");
     public static final ODMRegistryTestResources RESOURCE_DOMAIN1 = new ODMRegistryTestResources(
-        "testcases/domain/domain1.json");
+            "testcases/domain/domain1.json");
 
-    public static final ODMRegistryTestResources  RESOURCE_DPS_URI = new ODMRegistryTestResources(
-        null,
-        "https://raw.githubusercontent.com/opendatamesh-initiative/odm-specification-dpdescriptor/main/examples/tripexecution/data-product-descriptor.json",
-        "examples/tripexecution/data-product-descriptor.json",
-        "git@github.com:opendatamesh-initiative/odm-specification-dpdescriptor.git"
+    public static final ODMRegistryTestResources RESOURCE_DPS_URI = new ODMRegistryTestResources(
+            null,
+            "https://raw.githubusercontent.com/opendatamesh-initiative/odm-specification-dpdescriptor/main/examples/tripexecution/data-product-descriptor.json",
+            "examples/tripexecution/data-product-descriptor.json",
+            "git@github.com:opendatamesh-initiative/odm-specification-dpdescriptor.git"
     );
 
 
@@ -119,47 +117,6 @@ public class ODMRegistryTestResources {
         return Path.of(absoluteFilePath);
     }
 
-    public URI getLocalUri() throws IOException {
-        URI resourceUri = null;
-
-        try {
-            ClassLoader cl = getClass().getClassLoader();
-            resourceUri = cl.getResource(localPath).toURI();
-        } catch (Throwable t) {
-            throw new IOException("Impossible to get URI of resorurce", t);
-        }
-
-        return resourceUri;
-    }
-
-    public URI getRemoteUri() throws IOException {
-        URI resourceUri = null;
-
-        try {
-            resourceUri = new URI(remotePath);
-        } catch (Throwable t) {
-            throw new IOException("Impossible to get URI of resorurce", t);
-        }
-
-        return resourceUri;
-    }
-
-    public URI getRepoUri() throws IOException {
-        URI resourceUri = null;
-
-        try {
-            resourceUri = new URI(repoPath);
-        } catch (Throwable t) {
-            throw new IOException("Impossible to get URI of resorurce", t);
-        }
-
-        return resourceUri;
-    }
-
-    public DescriptorLocation getUriLocation() throws IOException {
-        URI resourceUri = getRemoteUri();
-        return new UriLocation(resourceUri);
-    }
 
     public String getContent() throws IOException {
         String fileContent = null;
@@ -173,22 +130,6 @@ public class ODMRegistryTestResources {
 
     public DescriptorLocation getContentLocation() throws IOException {
         return new UriLocation(getContent());
-    }
-
-    public GitLocation getGitLocation() {
-         URI descriptorUri = null;
-        try {
-            descriptorUri = getRepoUri();
-        } catch (Throwable t) {
-            fail("Impossible to parse uri [" + repoPath + "]");
-        }
-
-        return new GitLocation(
-            repo, 
-            descriptorUri,
-            null, 
-            null
-        );
     }
 
     public <T> T getObject(Class<T> resourceType) throws IOException {

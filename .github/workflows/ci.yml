@@ -8,6 +8,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       packages: read
     steps:
       - name: Check out repository code
@@ -30,5 +31,9 @@ jobs:
           mvn -B test -Dspring.profiles.active=test
           mvn -B test -Dspring.profiles.active=testpostgresql
           mvn -B test -Dspring.profiles.active=testmysql
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Build with Maven
         run: mvn -B clean install -DskipTests --file pom.xml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

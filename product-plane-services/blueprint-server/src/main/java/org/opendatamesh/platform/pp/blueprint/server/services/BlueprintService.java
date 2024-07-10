@@ -2,8 +2,10 @@ package org.opendatamesh.platform.pp.blueprint.server.services;
 
 import org.eclipse.jgit.api.Git;
 import org.opendatamesh.dpds.location.GitService;
+import org.opendatamesh.platform.core.commons.database.utils.SpecsUtils;
 import org.opendatamesh.platform.core.commons.servers.exceptions.*;
 import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintApiStandardErrors;
+import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintSearchOptions;
 import org.opendatamesh.platform.pp.blueprint.api.resources.ConfigResource;
 import org.opendatamesh.platform.pp.blueprint.server.database.entities.Blueprint;
 import org.opendatamesh.platform.pp.blueprint.server.database.repositories.BlueprintRepository;
@@ -12,10 +14,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -139,14 +144,18 @@ public class BlueprintService {
     // READ ALL
     // ======================================================================================
 
-    public List<Blueprint> readBlueprints() {
+    public List<Blueprint> readBlueprints(BlueprintSearchOptions blueprintSearchOptions) {
         try {
-            return blueprintRepository.findAll();
-        } catch (Throwable t) {
+            List<Specification<Blueprint>> specs = new ArrayList<>();
+            if (StringUtils.hasText(blueprintSearchOptions.getSearch())) {
+                specs.add(BlueprintRepository.Specs.search(blueprintSearchOptions.getSearch()));
+            }
+            return blueprintRepository.findAll(SpecsUtils.combineWithAnd(specs));
+        } catch (Exception e) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occurred in the backend database while loading blueprints",
-                    t
+                    e
             );
         }
     }

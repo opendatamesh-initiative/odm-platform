@@ -1,6 +1,7 @@
 package org.opendatamesh.platform.pp.devops.server.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.opendatamesh.dpds.parser.IdentifierStrategyFactory;
 import org.opendatamesh.platform.core.commons.servers.exceptions.*;
 import org.opendatamesh.platform.core.commons.ObjectMapperFactory;
 import org.opendatamesh.dpds.model.core.StandardDefinitionDPDS;
@@ -31,22 +32,25 @@ import java.util.*;
 public class TaskService {
 
     @Autowired
-    DevopsPolicyServiceProxy policyServiceProxy;
+    private DevopsPolicyServiceProxy policyServiceProxy;
 
     @Autowired
-    TaskRepository taskRepository;
+    private TaskRepository taskRepository;
 
     @Autowired
-    TaskMapper taskMapper;
+    private TaskMapper taskMapper;
 
     @Autowired
-    DevOpsConfigurations configurations;
+    private DevOpsConfigurations configurations;
 
     @Autowired
-    DevOpsClients clients;
+    private DevOpsClients clients;
 
     @Autowired
-    DevOpsNotificationServiceProxy devOpsNotificationServiceProxy;
+    private DevOpsNotificationServiceProxy devOpsNotificationServiceProxy;
+
+    @Autowired
+    private IdentifierStrategy identifierStrategy;
 
     private ExecutorClient odmExecutor;
 
@@ -421,8 +425,7 @@ public class TaskService {
         Objects.requireNonNull(template.getDefinition().getRef(),
                 "Property [$ref] in template definition object cannot be null");
 
-      
-        String templateId = IdentifierStrategy.DEFUALT.getId(
+        String templateId = identifierStrategy.getId(
              template.getFullyQualifiedName());
 
         try {

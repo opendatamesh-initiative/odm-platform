@@ -52,6 +52,8 @@ spring:
 # ODM projects configurations
 #############################
 odm:
+  organization:
+    name: "org.opendatamesh"
   productPlane:
     registryService:
       active: true

@@ -4,16 +4,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.dpds.model.DataProductVersionDPDS;
+import org.opendatamesh.dpds.parser.IdentifierStrategy;
 import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.NotFoundException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
 import org.opendatamesh.platform.core.commons.servers.exceptions.UnprocessableEntityException;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
-import org.opendatamesh.platform.pp.registry.server.database.entities.Api;
-import org.opendatamesh.platform.pp.registry.server.database.entities.ApiToSchemaRelationship;
+import org.opendatamesh.platform.pp.registry.server.database.entities.*;
 import org.opendatamesh.platform.pp.registry.server.database.entities.ApiToSchemaRelationship.ApiToSchemaRelationshipId;
-import org.opendatamesh.platform.pp.registry.server.database.entities.Schema;
-import org.opendatamesh.platform.pp.registry.server.database.entities.Template;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.DataProductVersion;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.DataProductVersionId;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.core.StandardDefinition;
@@ -67,6 +65,9 @@ public class DataProductVersionService {
 
     @Autowired
     private RegistryPolicyServiceProxy policyServiceProxy;
+
+    @Autowired
+    private IdentifierStrategy identifierStrategy;
 
     private static final Logger logger = LoggerFactory.getLogger(DataProductVersionService.class);
 
@@ -128,8 +129,8 @@ public class DataProductVersionService {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occurred in the backend database while saving version ["
-                            + dataProductVersion.getInfo().getVersionNumber() + "] of data product ["
-                            + dataProductVersion.getDataProduct().getId() + "]",
+                            + dataProductVersion.getInfo().getVersionNumber() + "] of data product ["+
+                            getDataProduct(dataProductVersion).getId() + "]",
                     t);
         }
 
@@ -339,12 +340,7 @@ public class DataProductVersionService {
                     "Data product version object cannot be null");
         }
 
-        if (dataProductVersion.getDataProduct() == null) {
-            throw new InternalServerException(
-                    ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
-                    "Data product object cannot be null");
-        }
-        return readDataProductVersion(dataProductVersion.getDataProduct().getId(),
+        return readDataProductVersion(getDataProduct(dataProductVersion).getId(),
                 dataProductVersion.getInfo().getVersionNumber());
     }
 
@@ -398,14 +394,8 @@ public class DataProductVersionService {
                     "Data product version object cannot be null");
         }
 
-        if (dataProductVersion.getDataProduct() == null) {
-            throw new InternalServerException(
-                    ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
-                    "Data product object cannot be null");
-        }
-
         return dataProductVersionExists(
-                dataProductVersion.getDataProduct().getId(),
+                getDataProduct(dataProductVersion).getId(),
                 dataProductVersion.getInfo().getVersionNumber());
     }
 
@@ -590,4 +580,18 @@ public class DataProductVersionService {
         return dataProducts.isEmpty() ? null : dataProductVersionMapper.toResource(dataProducts.get(0));
     }
 
+    private DataProduct getDataProduct(DataProductVersion dataProductVersion) {
+        DataProduct dataProduct = new DataProduct();
+        if(dataProductVersion.getInfo().getFullyQualifiedName() == null) {
+            throw new InternalServerException(
+                    ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
+                    "Data product object cannot be null");
+        } else {
+            dataProduct.setFullyQualifiedName(dataProductVersion.getInfo().getFullyQualifiedName());
+        }
+
+        dataProduct.setId( identifierStrategy.getId(dataProductVersion.getInfo().getFullyQualifiedName()) );
+        dataProduct.setDomain(dataProductVersion.getInfo().getDomain());
+        return dataProduct;
+    }
 }

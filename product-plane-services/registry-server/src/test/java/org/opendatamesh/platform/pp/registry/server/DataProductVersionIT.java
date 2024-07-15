@@ -12,6 +12,7 @@ import org.opendatamesh.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.dpds.model.internals.ApplicationComponentDPDS;
 import org.opendatamesh.dpds.model.internals.InfrastructuralComponentDPDS;
 import org.opendatamesh.dpds.parser.DPDSParser;
+import org.opendatamesh.dpds.parser.IdentifierStrategyFactory;
 import org.opendatamesh.dpds.parser.ParseOptions;
 import org.opendatamesh.platform.core.commons.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
@@ -57,8 +58,7 @@ public class DataProductVersionIT extends ODMRegistryIT {
         );
         DescriptorLocation location = new UriLocation(descriptorContent);
         ParseOptions options = new ParseOptions();
-        //options.setResoveExternalRef(false);
-        //options.setResoveInternalRef(false);
+        options.setIdentifierStrategy(IdentifierStrategyFactory.getDefault("org.opendatamesh"));
         options.setRewriteEntityType(false);
         options.setServerUrl("http://localhost");
         try {

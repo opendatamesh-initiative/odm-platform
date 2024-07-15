@@ -2,6 +2,7 @@ package org.opendatamesh.platform.pp.registry.server;
 
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.dpds.parser.IdentifierStrategy;
+import org.opendatamesh.dpds.parser.IdentifierStrategyFactory;
 import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
@@ -66,8 +67,7 @@ public class DataProductIT extends ODMRegistryIT {
         createdDataProductRes = createDataProduct(dataProductRes);
 
         assertThat(createdDataProductRes).isNotNull();
-        
-        dataProductRes.setId(IdentifierStrategy.DEFUALT.getId(dataProductRes.getFullyQualifiedName()));
+        dataProductRes.setId(IdentifierStrategyFactory.getDefault("org.opendatamesh").getId(dataProductRes.getFullyQualifiedName()));
         assertThat(createdDataProductRes.getId()).isEqualTo(dataProductRes.getId());
         assertThat(createdDataProductRes.getFullyQualifiedName()).isEqualTo(dataProductRes.getFullyQualifiedName());
         assertThat(createdDataProductRes.getDomain()).isNull();

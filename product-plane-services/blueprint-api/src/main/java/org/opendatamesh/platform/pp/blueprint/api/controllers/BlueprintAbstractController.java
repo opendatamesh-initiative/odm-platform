@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintResource;
+import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintSearchOptions;
 import org.opendatamesh.platform.pp.blueprint.api.resources.ConfigResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -31,7 +32,6 @@ import java.util.List;
 )
 public abstract class BlueprintAbstractController {
 
-    // TODO: add SEARCH endpoint
     // TODO: edit examples, add one for Azure, change urls to SSH
 
     private static final String EXAMPLE_BLUEPRINT_GITHUB = "{\n" + //
@@ -119,11 +119,13 @@ public abstract class BlueprintAbstractController {
                     "application/json"
             }
     )
-    public List<BlueprintResource> readBlueprintsEndpoint() {
-        return readBlueprints();
+    public List<BlueprintResource> readBlueprintsEndpoint(
+            BlueprintSearchOptions blueprintSearchOptions
+    ) {
+        return readBlueprints(blueprintSearchOptions);
     }
 
-    public abstract List<BlueprintResource> readBlueprints();
+    public abstract List<BlueprintResource> readBlueprints(BlueprintSearchOptions blueprintSearchOptions);
     
     
     // ===============================================================================

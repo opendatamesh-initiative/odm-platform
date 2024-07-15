@@ -1,14 +1,35 @@
 package org.opendatamesh.platform.pp.blueprint.server.resources.internals;
 
-import lombok.Data;
 
-@Data
 public class GitCheckResource {
 
-    private Boolean blueprintDirectoryCheck;
+    private boolean blueprintDirectoryCheck;
 
-    private Boolean paramsDescriptionCheck;
+    private boolean paramsDescriptionCheck;
 
     private String paramsJsonFileContent;
 
+    public boolean isBlueprintDirectoryCheck() {
+        return blueprintDirectoryCheck;
+    }
+
+    public void setBlueprintDirectoryCheck(boolean blueprintDirectoryCheck) {
+        this.blueprintDirectoryCheck = blueprintDirectoryCheck;
+    }
+
+    public boolean isParamsDescriptionCheck() {
+        return paramsDescriptionCheck;
+    }
+
+    public void setParamsDescriptionCheck(boolean paramsDescriptionCheck) {
+        this.paramsDescriptionCheck = paramsDescriptionCheck;
+    }
+
+    public String getParamsJsonFileContent() {
+        return paramsJsonFileContent;
+    }
+
+    public void setParamsJsonFileContent(String paramsJsonFileContent) {
+        this.paramsJsonFileContent = paramsJsonFileContent;
+    }
 }

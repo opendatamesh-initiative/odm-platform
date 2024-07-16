@@ -58,7 +58,7 @@ public class DataProductVersionIT extends ODMRegistryIT {
         );
         DescriptorLocation location = new UriLocation(descriptorContent);
         ParseOptions options = new ParseOptions();
-        options.setIdentifierStrategy(IdentifierStrategyFactory.getDefault("org.opendatamesh"));
+        options.setIdentifierStrategy(IdentifierStrategyFactory.getDefault());
         options.setRewriteEntityType(false);
         options.setServerUrl("http://localhost");
         try {

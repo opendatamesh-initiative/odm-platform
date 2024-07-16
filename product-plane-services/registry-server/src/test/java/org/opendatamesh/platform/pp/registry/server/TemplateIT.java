@@ -77,7 +77,7 @@ public class TemplateIT extends ODMRegistryIT {
         ParseOptions options = new ParseOptions();
         options.setServerUrl("http://localhost");
         options.setRewriteEntityType(false);
-        options.setIdentifierStrategy(IdentifierStrategyFactory.getDefault("org.opendatamesh"));
+        options.setIdentifierStrategy(IdentifierStrategyFactory.getDefault());
         try {
             dataProductVersion = parser.parse(location, options).getDescriptorDocument();
         } catch (Throwable t) {

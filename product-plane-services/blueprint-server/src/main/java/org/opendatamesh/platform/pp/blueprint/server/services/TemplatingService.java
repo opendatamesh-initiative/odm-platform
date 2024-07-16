@@ -2,8 +2,8 @@ package org.opendatamesh.platform.pp.blueprint.server.services;
 
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
+import org.opendatamesh.platform.core.commons.utils.CustomFileUtils;
 import org.opendatamesh.platform.pp.blueprint.api.resources.ConfigResource;
-import org.opendatamesh.platform.pp.blueprint.server.utils.CustomFileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

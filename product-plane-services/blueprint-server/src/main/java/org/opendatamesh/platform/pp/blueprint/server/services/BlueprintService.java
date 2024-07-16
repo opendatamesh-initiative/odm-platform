@@ -19,10 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class BlueprintService {
@@ -56,7 +54,7 @@ public class BlueprintService {
     // CREATE
     // ======================================================================================
 
-    public Blueprint createBlueprint(Blueprint blueprint, Boolean checkBlueprint) throws IOException {
+    public Blueprint createBlueprint(Blueprint blueprint, boolean checkBlueprint) {
 
         if (blueprint == null) {
             throw new BadRequestException(
@@ -83,7 +81,7 @@ public class BlueprintService {
                 blueprint.getBlueprintDirectory()
         );
 
-        if (blueprints != null && blueprints.isEmpty() == false) {
+        if (!blueprints.isEmpty()) {
             throw new UnprocessableEntityException(
                     BlueprintApiStandardErrors.SC422_02_BLUEPRINT_ALREADY_EXISTS,
                     "Blueprint [" + blueprint.getName() + "] of repo ["
@@ -91,21 +89,22 @@ public class BlueprintService {
             );
         }
 
+        String tmpDirectory = generateTemporaryDirectoryName();
         if (checkBlueprint) {
-            GitCheckResource gitCheckResource = gitCheckerService.checkGitRepository(
+            GitCheckResource gitCheckResource = gitCheckerService.checkGitRepositoryAndLoadParams(
                     blueprint.getRepositoryUrl(),
                     blueprint.getBlueprintDirectory(),
-                    templatesPath
+                    tmpDirectory
             );
 
-            if (!gitCheckResource.getBlueprintDirectoryCheck()) {
+            if (!gitCheckResource.isBlueprintDirectoryCheck()) {
                 throw new UnprocessableEntityException(
                         BlueprintApiStandardErrors.SC422_01_BLUEPRINT_IS_INVALID,
                         "Missing blueprintDirectory [" + blueprint.getBlueprintDirectory() + "] in the given repository"
                 );
             }
 
-            if (!gitCheckResource.getParamsDescriptionCheck()) {
+            if (!gitCheckResource.isParamsDescriptionCheck()) {
                 throw new UnprocessableEntityException(
                         BlueprintApiStandardErrors.SC422_01_BLUEPRINT_IS_INVALID,
                         "Missing file [params.json] in the given repository"
@@ -118,21 +117,17 @@ public class BlueprintService {
         try {
             blueprint = saveBlueprint(blueprint);
             logger.info(
-                    "Blueprint [" + blueprint.getName() + "] "
-                            + "of version [" + blueprint.getVersion() + "] "
-                            + "of repository [" + blueprint.getRepositoryUrl() + "/" + blueprint.getBlueprintDirectory() + "] "
-                            + "successfully registered"
-            );
-        } catch (Throwable t) {
+                    "Blueprint [{}] of version [{}] of repository [{}/{}] successfully registered"
+                    , blueprint.getName(), blueprint.getVersion(), blueprint.getRepositoryUrl(), blueprint.getBlueprintDirectory());
+            return blueprint;
+        } catch (Exception e) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occurred in the backend database while saving blueprint [" + blueprint.getName() + "] "
                             + "of repository [" + blueprint.getRepositoryUrl() + "]",
-                    t
+                    e
             );
         }
-
-        return blueprint;
     }
 
     private Blueprint saveBlueprint(Blueprint blueprint) {
@@ -143,7 +138,6 @@ public class BlueprintService {
     // ======================================================================================
     // READ ALL
     // ======================================================================================
-
     public List<Blueprint> readBlueprints(BlueprintSearchOptions blueprintSearchOptions) {
         try {
             List<Specification<Blueprint>> specs = new ArrayList<>();
@@ -164,7 +158,6 @@ public class BlueprintService {
     // ======================================================================================
     // READ ONE
     // ======================================================================================
-
     public Blueprint readOneBlueprint(Long blueprintId) {
 
         Blueprint blueprint = null;
@@ -197,7 +190,6 @@ public class BlueprintService {
     // ======================================================================================
     // UPDATE
     // ======================================================================================
-
     public Blueprint updateBlueprint(Long blueprintId, Blueprint blueprint) {
 
         if (blueprint == null) {
@@ -246,7 +238,6 @@ public class BlueprintService {
     // ======================================================================================
     // DELETE
     // ======================================================================================
-
     public void deleteBlueprint(Long blueprintId) {
 
         if (!blueprintRepository.existsById(blueprintId)) {
@@ -271,7 +262,6 @@ public class BlueprintService {
     // ======================================================================================
     // SEARCH
     // ======================================================================================
-
     private List<Blueprint> searchBlueprints(String repositoryUrl, String blueprintDirectory) {
         try {
             return blueprintRepository.findAll(
@@ -290,7 +280,6 @@ public class BlueprintService {
     // ======================================================================================
     // INSTANCE
     // ======================================================================================
-
     public void instanceBlueprint(Long blueprintId, ConfigResource configResource) {
 
         if (configResource == null) {
@@ -320,6 +309,9 @@ public class BlueprintService {
         }
 
         try {
+            //TODO refactor this
+            //1. Auto close the repository opened
+            //2. fix ide smell
 
             // Clone the BLUEPRINT repository
             logger.info("Cloning repository [" + blueprint.getRepositoryUrl() + "] ...");
@@ -370,11 +362,17 @@ public class BlueprintService {
             // Delete local repository
             gitService.deleteLocalRepository(templatesPath);
 
-        } catch (Throwable t) {
+        } catch (Exception e) {
             // Delete local repository
             gitService.deleteLocalRepository(templatesPath);
-            throw t;
+            throw e;
         }
     }
 
+
+    private String generateTemporaryDirectoryName() {
+        String uuid = UUID.randomUUID().toString();
+        String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+        return templatesPath + File.separator + timestamp + "_" + uuid;
+    }
 }

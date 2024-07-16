@@ -1,13 +1,16 @@
 package org.opendatamesh.platform.pp.devops.server.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.opendatamesh.platform.core.commons.servers.exceptions.*;
-import org.opendatamesh.platform.core.commons.ObjectMapperFactory;
 import org.opendatamesh.dpds.model.core.StandardDefinitionDPDS;
 import org.opendatamesh.dpds.model.internals.LifecycleTaskInfoDPDS;
 import org.opendatamesh.dpds.parser.IdentifierStrategy;
+import org.opendatamesh.platform.core.commons.ObjectMapperFactory;
+import org.opendatamesh.platform.core.commons.servers.exceptions.*;
 import org.opendatamesh.platform.pp.devops.api.clients.DevOpsAPIRoutes;
-import org.opendatamesh.platform.pp.devops.api.resources.*;
+import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskStatus;
+import org.opendatamesh.platform.pp.devops.api.resources.DevOpsApiStandardErrors;
+import org.opendatamesh.platform.pp.devops.api.resources.TaskResultResource;
+import org.opendatamesh.platform.pp.devops.api.resources.TaskResultStatus;
 import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsClients;
 import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsConfigurations;
 import org.opendatamesh.platform.pp.devops.server.database.entities.Task;
@@ -31,22 +34,25 @@ import java.util.*;
 public class TaskService {
 
     @Autowired
-    DevopsPolicyServiceProxy policyServiceProxy;
+    private DevopsPolicyServiceProxy policyServiceProxy;
 
     @Autowired
-    TaskRepository taskRepository;
+    private TaskRepository taskRepository;
 
     @Autowired
-    TaskMapper taskMapper;
+    private TaskMapper taskMapper;
 
     @Autowired
-    DevOpsConfigurations configurations;
+    private DevOpsConfigurations configurations;
 
     @Autowired
-    DevOpsClients clients;
+    private DevOpsClients clients;
 
     @Autowired
-    DevOpsNotificationServiceProxy devOpsNotificationServiceProxy;
+    private DevOpsNotificationServiceProxy devOpsNotificationServiceProxy;
+
+    @Autowired
+    private IdentifierStrategy identifierStrategy;
 
     private ExecutorClient odmExecutor;
 
@@ -421,8 +427,7 @@ public class TaskService {
         Objects.requireNonNull(template.getDefinition().getRef(),
                 "Property [$ref] in template definition object cannot be null");
 
-      
-        String templateId = IdentifierStrategy.DEFUALT.getId(
+        String templateId = identifierStrategy.getId(
              template.getFullyQualifiedName());
 
         try {

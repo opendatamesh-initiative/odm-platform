@@ -8,6 +8,7 @@ import org.opendatamesh.dpds.model.core.StandardDefinitionDPDS;
 import org.opendatamesh.dpds.model.internals.LifecycleInfoDPDS;
 import org.opendatamesh.dpds.model.internals.LifecycleTaskInfoDPDS;
 import org.opendatamesh.dpds.parser.DPDSParser;
+import org.opendatamesh.dpds.parser.IdentifierStrategyFactory;
 import org.opendatamesh.dpds.parser.ParseOptions;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
@@ -76,6 +77,7 @@ public class TemplateIT extends ODMRegistryIT {
         ParseOptions options = new ParseOptions();
         options.setServerUrl("http://localhost");
         options.setRewriteEntityType(false);
+        options.setIdentifierStrategy(IdentifierStrategyFactory.getDefault());
         try {
             dataProductVersion = parser.parse(location, options).getDescriptorDocument();
         } catch (Throwable t) {

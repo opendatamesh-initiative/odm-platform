@@ -25,7 +25,10 @@ public class ApiService {
     private ApiRepository apiRepository;
 
     @Autowired
-    ApiToSchemaRelationshipRepository apiToSchemaRelationshipRepository;
+    private ApiToSchemaRelationshipRepository apiToSchemaRelationshipRepository;
+
+    @Autowired
+    private IdentifierStrategy identifierStrategy;
 
     private static final Logger logger = LoggerFactory.getLogger(ApiService.class);
 
@@ -63,13 +66,12 @@ public class ApiService {
                     "Property [definition] cannot be empty");
         }
 
-        
-        String fqn = IdentifierStrategy.DEFUALT.getExternalComponentFqn(
+        String fqn = identifierStrategy.getExternalComponentFqn(
                 EntityTypeDPDS.API,
                 api.getName(),
                 api.getVersion());
 
-        String id = IdentifierStrategy.DEFUALT.getId(fqn);
+        String id = identifierStrategy.getId(fqn);
         
         api.setId(id);
         api.setFullyQualifiedName(fqn);

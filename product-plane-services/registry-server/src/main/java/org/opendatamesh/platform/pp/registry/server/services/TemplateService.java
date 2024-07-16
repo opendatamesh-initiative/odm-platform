@@ -2,6 +2,7 @@ package org.opendatamesh.platform.pp.registry.server.services;
 
 import org.opendatamesh.dpds.model.core.EntityTypeDPDS;
 import org.opendatamesh.dpds.parser.IdentifierStrategy;
+import org.opendatamesh.dpds.parser.IdentifierStrategyFactory;
 import org.opendatamesh.platform.core.commons.servers.exceptions.*;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
 import org.opendatamesh.platform.pp.registry.server.database.entities.Template;
@@ -21,6 +22,9 @@ public class TemplateService {
 
     @Autowired
     private TemplateRepository templateDefinitionRepository;
+
+    @Autowired
+    private IdentifierStrategy identifierStrategy;
 
     private static final Logger logger = LoggerFactory.getLogger(TemplateService.class);
 
@@ -84,13 +88,12 @@ public class TemplateService {
                     "Property [definition] cannot be empty");
         }
 
-         String fqn = IdentifierStrategy.DEFUALT.getExternalComponentFqn(
+         String fqn = identifierStrategy.getExternalComponentFqn(
                 EntityTypeDPDS.TEMPLATE,
                 template.getName(),
                 template.getVersion());
+        String id = identifierStrategy.getId(fqn);
 
-        String id = IdentifierStrategy.DEFUALT.getId(fqn);
-        
         template.setId(id);
         template.setFullyQualifiedName(fqn);
         template.setEntityType(EntityTypeDPDS.TEMPLATE.propertyValue());

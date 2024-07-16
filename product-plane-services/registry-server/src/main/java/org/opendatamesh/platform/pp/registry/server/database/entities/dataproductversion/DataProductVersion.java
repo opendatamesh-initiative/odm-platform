@@ -3,8 +3,6 @@ package org.opendatamesh.platform.pp.registry.server.database.entities.dataprodu
 import lombok.Data;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.opendatamesh.dpds.parser.IdentifierStrategy;
-import org.opendatamesh.platform.pp.registry.server.database.entities.DataProduct;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.core.ExternalResource;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.info.Info;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.interfaces.InterfaceComponents;
@@ -31,7 +29,6 @@ public class DataProductVersion implements Cloneable, Serializable {
     @Column(name = "VERSION_NUMBER")
     private String versionNumber;
 
-    
     @Embedded
     private Info info;
 
@@ -47,7 +44,7 @@ public class DataProductVersion implements Cloneable, Serializable {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "DPV_DATA_PRODUCT_TAGS", schema="ODMREGISTRY", joinColumns = {@JoinColumn(name = "DATAPRODUCT_ID"), @JoinColumn(name = "VERSION")})
-    @Column(name = "TAG_ID") 
+    @Column(name = "TAG_ID")
     @Fetch(value = FetchMode.SUBSELECT)
     protected List<String> tags = new ArrayList<String>();
 
@@ -64,48 +61,21 @@ public class DataProductVersion implements Cloneable, Serializable {
     @Column(name = "UPDATED_AT")
     private Date updatedAt;
 
-    /**
-     * 
-     * @return the reffered data product
-     */
-    public DataProduct getDataProduct() {
-        DataProduct dataProduct = new DataProduct();
-        if(getInfo().getFullyQualifiedName() == null) {
-            throw new RuntimeException("The fully qualified name of product is not specified in the data product version");
-        } else {
-            dataProduct.setFullyQualifiedName(getInfo().getFullyQualifiedName());
-        }
-
-        dataProduct.setId( IdentifierStrategy.DEFUALT.getId(getInfo().getFullyQualifiedName()) );
-        dataProduct.setDomain(this.getInfo().getDomain());
-        return dataProduct;
-    }
-
-    /**
-     * 
-     * @param dataProduct a data product
-     * @return true if the referred product match with the one passed as input, false otherwise
-     */
-    public boolean isVersionOf(DataProduct dataProduct) {
-        DataProduct referredDataProduct = this.getDataProduct();
-        return dataProduct.equals(referredDataProduct);
-    }
-
     public boolean hasInternalComponents() {
         return getInternalComponents() != null;
     }
 
     public boolean hasApplicationComponents() {
         return hasInternalComponents() && getInternalComponents().hasApplicationComponents();
-    } 
+    }
 
     public boolean hasInfrastructuralComponents() {
         return hasInternalComponents() && getInternalComponents().hasInfrastructuralComponents();
-    } 
+    }
 
     public boolean hasLifecycleInfo() {
         return hasInternalComponents() && getInternalComponents().hasLifecycleInfo();
-    } 
+    }
 
 
     @PrePersist

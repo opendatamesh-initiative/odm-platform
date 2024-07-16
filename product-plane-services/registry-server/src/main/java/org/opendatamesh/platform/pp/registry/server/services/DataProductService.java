@@ -38,10 +38,10 @@ public class DataProductService {
     private DataProductRepository dataProductRepository;
 
     @Autowired
-    VariableService variableService;
+    private VariableService variableService;
 
     @Autowired
-    ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
 
     @Autowired
     private DataProductMapper dataProductMapper;
@@ -50,7 +50,10 @@ public class DataProductService {
     private DataProductVersionMapper dataProductVersionMapper;
 
     @Autowired
-    RegistryNotificationServiceProxy registryNotificationServiceProxy;
+    private RegistryNotificationServiceProxy registryNotificationServiceProxy;
+
+    @Autowired
+    private IdentifierStrategy identifierStrategy;
 
     @Value("${odm.schemas.validation.baseUrl}")
     private String schemaValidationBaseUrl;
@@ -82,7 +85,7 @@ public class DataProductService {
                 "Data product fullyQualifiedName property cannot be empty");
         }
 
-        String uuid = IdentifierStrategy.DEFUALT.getId(dataProduct.getFullyQualifiedName());
+        String uuid = identifierStrategy.getId(dataProduct.getFullyQualifiedName());
         if(dataProduct.getId() != null && !dataProduct.getId().equals(uuid)) {
             throw new UnprocessableEntityException(
                 RegistryApiStandardErrors.SC422_05_PRODUCT_NOT_VALID,
@@ -239,7 +242,7 @@ public class DataProductService {
         }
 
         if(StringUtils.hasText(dataProduct.getId()) && StringUtils.hasText(dataProduct.getFullyQualifiedName())){
-            String generatedUuid = IdentifierStrategy.DEFUALT.getId(dataProduct.getFullyQualifiedName());
+            String generatedUuid = identifierStrategy.getId(dataProduct.getFullyQualifiedName());
             if(generatedUuid.equals(dataProduct.getId()) == false) {
                 throw new UnprocessableEntityException(
                     RegistryApiStandardErrors.SC422_05_PRODUCT_NOT_VALID,
@@ -251,7 +254,7 @@ public class DataProductService {
         if(StringUtils.hasText(dataProduct.getId())) {
             uuid = dataProduct.getId();
         } else if(StringUtils.hasText(dataProduct.getFullyQualifiedName())) {
-            uuid = IdentifierStrategy.DEFUALT.getId(dataProduct.getFullyQualifiedName());
+            uuid = identifierStrategy.getId(dataProduct.getFullyQualifiedName());
         } else {
             throw new UnprocessableEntityException(
                 RegistryApiStandardErrors.SC422_05_PRODUCT_NOT_VALID,
@@ -399,7 +402,7 @@ public class DataProductService {
             dataProduct = loadDataProduct(dataProductId);
         } else {
             if(createDataProductIfNotExists) {
-                dataProduct = dataProductVersion.getDataProduct();
+                dataProduct = getDataProduct(dataProductVersion);
                 dataProduct = createDataProduct(dataProduct);
             } else {
                 throw new NotFoundException(
@@ -436,6 +439,7 @@ public class DataProductService {
         );
         ParseOptions options = new ParseOptions();
         options.setServerUrl(serverUrl);
+        options.setIdentifierStrategy(identifierStrategy);
 
         DataProductVersionDPDS descriptor = null;
         try {
@@ -531,6 +535,22 @@ public class DataProductService {
                 ODMApiCommonErrors.SC500_02_DESCRIPTOR_ERROR,
                 "An unexpected exception occurred while resolving internal references", e);
         }
+    }
+
+    private DataProduct getDataProduct(DataProductVersion dataProductVersion) {
+        //TODO refactor --> this generates a detached entity!!! (the correct way should be by joining the DataProduct with the DataProductVersion)
+        DataProduct dataProduct = new DataProduct();
+        if(dataProductVersion.getInfo().getFullyQualifiedName() == null) {
+            throw new InternalServerException(
+                    ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
+                    "Data product object cannot be null");
+        } else {
+            dataProduct.setFullyQualifiedName(dataProductVersion.getInfo().getFullyQualifiedName());
+        }
+
+        dataProduct.setId( identifierStrategy.getId(dataProductVersion.getInfo().getFullyQualifiedName()) );
+        dataProduct.setDomain(dataProductVersion.getInfo().getDomain());
+        return dataProduct;
     }
 
 }

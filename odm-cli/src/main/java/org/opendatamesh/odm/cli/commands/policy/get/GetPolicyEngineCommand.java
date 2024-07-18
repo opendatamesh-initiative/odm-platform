@@ -22,7 +22,7 @@ public class GetPolicyEngineCommand implements Runnable {
 
     @Option(
             names = "--id",
-            description = "ID of the Policy",
+            description = "ID of the Policy Engine",
             required = true
     )
     Long engineId;

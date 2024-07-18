@@ -1,0 +1,44 @@
+##########################
+# Active profile
+##########################
+spring:
+  profiles:
+    active: dev
+    #testmysql
+    #testpostgresql
+
+##########################
+# Server configuration
+##########################
+server:
+  port: 8006
+  error:
+    include-message: always
+  servlet:
+    context-path: /api/v1/pp/notification/
+
+##########################
+# Logging configuration
+##########################
+logging:
+  level:
+    org:
+      apache:
+        http: INFO
+      opendatamesh:
+        platform.*: DEBUG
+    httpclient:
+      wire: INFO
+
+##########################
+# Doc configuration
+##########################
+springdoc:
+  swagger-ui:
+    operationsSorter: alpha
+
+
+
+
+
+

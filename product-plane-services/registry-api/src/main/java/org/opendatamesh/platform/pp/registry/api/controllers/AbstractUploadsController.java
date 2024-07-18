@@ -7,8 +7,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.opendatamesh.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
-import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.pp.registry.api.resources.DataProductDescriptorLocationResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +32,7 @@ public abstract class AbstractUploadsController {
     private static final Logger logger = LoggerFactory.getLogger(AbstractUploadsController.class);
 
     public AbstractUploadsController() { 
-        logger.debug("Data product uploads controller succesfully started");
+        logger.debug("Data product uploads controller successfully started");
     }
 
     // ======================================================================================
@@ -89,7 +89,7 @@ public abstract class AbstractUploadsController {
                 responseCode = "501", 
                 description = "[Bad Gateway](https://www.rfc-editor.org/rfc/rfc9110.html#name-502-bad-gateway)"
                 + "\r\n - Error Code 50201 - Invalid policyService's response" 
-                + "\r\n - Error Code 50204 - Invalid metaService's response",
+                + "\r\n - Error Code 50204 - Invalid notificationService's response",
                 content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
             )
     })

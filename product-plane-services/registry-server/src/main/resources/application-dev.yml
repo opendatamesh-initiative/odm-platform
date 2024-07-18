@@ -53,6 +53,8 @@ spring:
 # ODM projects configurations
 #############################
 odm:
+  organization:
+    name: "org.opendatamesh"
   schemas:
     validation:
       baseUrl: "https://raw.githubusercontent.com/opendatamesh-initiative/odm-specification-dpdescriptor/main/schemas/"
@@ -63,11 +65,25 @@ odm:
     policyService:
       active: false
       address: http://localhost:8005
-    eventNotifierService:
-      active: false
+    notificationService:
+      active: true
       address: http://localhost:8006
-  utilityPlane:
-    notificationServices:
-      blindata:
-        active: false
-        address: http://localhost:9002
+
+############################################
+# Git configurations
+############################################
+git:
+  provider: "GITHUB"
+  templates:
+    path: "templates"
+  auth:
+    oauth2:
+      client:
+        provider:
+          token-uri: "null"
+        registration:
+          client-id: "null"
+          client-secret: "null"
+          scope: "null"
+          authorization-grant-type: "null"
+    pat: "null"

@@ -22,7 +22,7 @@ public class GetPolicyEvaluationResultCommand implements Runnable {
 
     @Option(
             names = "--id",
-            description = "ID of the Policy",
+            description = "ID of the Policy Evaluation Result",
             required = true
     )
     Long resultId;

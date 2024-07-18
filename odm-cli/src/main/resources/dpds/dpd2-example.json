@@ -89,7 +89,7 @@
             }
           }
         },
-        "contracts": {
+        "obligations": {
           "termsAndConditions": {
             "description": "termsAndConditions for input port 1",
             "externalDocs": {
@@ -183,7 +183,7 @@
             }
           }
         },
-        "contracts": {
+        "obligations": {
           "termsAndConditions": {
             "description": "termsAndConditions for input port 2",
             "externalDocs": {
@@ -277,7 +277,7 @@
             }
           }
         },
-        "contracts": {
+        "obligations": {
           "termsAndConditions": {
             "description": "termsAndConditions for output port 1",
             "externalDocs": {

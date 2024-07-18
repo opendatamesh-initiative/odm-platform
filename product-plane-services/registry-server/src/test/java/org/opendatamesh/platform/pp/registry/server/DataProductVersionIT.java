@@ -5,15 +5,16 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
-import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
-import org.opendatamesh.platform.core.dpds.exceptions.ParseException;
-import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
-import org.opendatamesh.platform.core.dpds.model.internals.ApplicationComponentDPDS;
-import org.opendatamesh.platform.core.dpds.model.internals.InfrastructuralComponentDPDS;
-import org.opendatamesh.platform.core.dpds.parser.DPDSParser;
-import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
-import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
-import org.opendatamesh.platform.core.dpds.parser.location.UriLocation;
+import org.opendatamesh.dpds.exceptions.ParseException;
+import org.opendatamesh.dpds.location.DescriptorLocation;
+import org.opendatamesh.dpds.location.UriLocation;
+import org.opendatamesh.dpds.model.DataProductVersionDPDS;
+import org.opendatamesh.dpds.model.internals.ApplicationComponentDPDS;
+import org.opendatamesh.dpds.model.internals.InfrastructuralComponentDPDS;
+import org.opendatamesh.dpds.parser.DPDSParser;
+import org.opendatamesh.dpds.parser.IdentifierStrategyFactory;
+import org.opendatamesh.dpds.parser.ParseOptions;
+import org.opendatamesh.platform.core.commons.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
 import org.opendatamesh.platform.pp.registry.api.resources.ExternalComponentResource;
 import org.opendatamesh.platform.pp.registry.server.utils.ODMRegistryTestResources;
@@ -27,6 +28,8 @@ import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
+
+;
 
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 public class DataProductVersionIT extends ODMRegistryIT {
@@ -55,8 +58,7 @@ public class DataProductVersionIT extends ODMRegistryIT {
         );
         DescriptorLocation location = new UriLocation(descriptorContent);
         ParseOptions options = new ParseOptions();
-        //options.setResoveExternalRef(false);
-        //options.setResoveInternalRef(false);
+        options.setIdentifierStrategy(IdentifierStrategyFactory.getDefault());
         options.setRewriteEntityType(false);
         options.setServerUrl("http://localhost");
         try {

@@ -23,7 +23,7 @@ CREATE TABLE POLICY_ENGINES(
 -- POLICIES ------------------------------------------------------------------------------------------------------------
 CREATE TABLE POLICIES(
     ID BIGINT NOT NULL AUTO_INCREMENT,
-    ROOT_ID BIGINT NOT NULL,
+    ROOT_ID BIGINT,
     NAME VARCHAR(255),
     DISPLAY_NAME VARCHAR(255),
     DESCRIPTION TEXT,

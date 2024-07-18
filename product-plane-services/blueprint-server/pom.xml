@@ -119,6 +119,14 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- Hibernate -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-jpamodelgen</artifactId>
+            <version>5.4.3.Final</version>
+            <optional>true</optional>
+        </dependency>
+
         <!-- Auto Documentation -->
         <dependency>
             <groupId>org.springdoc</groupId>
@@ -205,7 +213,6 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
-            <!--<version>9.8.1</version>-->
         </dependency>
         <dependency>
             <groupId>org.flywaydb</groupId>
@@ -225,12 +232,6 @@
         </dependency>
 
         <!-- Internal -->
-        <dependency>
-            <groupId>org.opendatamesh</groupId>
-            <artifactId>odm-platform-core-dpds-parser</artifactId>
-            <version>1.0.0</version>
-            <scope>compile</scope>
-        </dependency>
         <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-pp-blueprint-api</artifactId>
@@ -271,6 +272,11 @@
                             <groupId>org.mapstruct</groupId>
                             <artifactId>mapstruct-processor</artifactId>
                             <version>1.5.3.Final</version>
+                        </path>
+                        <path>
+                            <groupId>org.hibernate</groupId>
+                            <artifactId>hibernate-jpamodelgen</artifactId>
+                            <version>5.4.3.Final</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>

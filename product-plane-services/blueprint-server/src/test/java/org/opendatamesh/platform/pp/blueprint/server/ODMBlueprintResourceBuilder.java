@@ -1,7 +1,7 @@
 package org.opendatamesh.platform.pp.blueprint.server;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
+import org.opendatamesh.platform.core.commons.ObjectMapperFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +42,7 @@ public class ODMBlueprintResourceBuilder {
         } else {
             fileContent = Files.readString(Paths.get(filePath));
             fileCache.put(filePath, fileContent);
-            logger.debug("File [" + filePath + "] succesfully read");
+            logger.debug("File [" + filePath + "] successfully read");
         }
 
         return fileContent;

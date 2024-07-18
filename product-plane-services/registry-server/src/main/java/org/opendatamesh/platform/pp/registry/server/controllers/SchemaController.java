@@ -27,7 +27,7 @@ public class SchemaController extends AbstractSchemaController {
     private static final Logger logger = LoggerFactory.getLogger(SchemaController.class);
 
     public SchemaController() {
-        logger.debug("Schemas controller succesfully started");
+        logger.debug("Schemas controller successfully started");
     }
 
     @Override

@@ -1,7 +1,7 @@
 package org.opendatamesh.platform.pp.devops.api.clients;
 
 import org.opendatamesh.platform.core.commons.clients.ODMClient;
-import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
+import org.opendatamesh.platform.core.commons.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.devops.api.resources.*;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +38,7 @@ public class DevOpsClient extends ODMClient {
             Object payload, boolean startAfterCreation, Class<T> responseType) throws IOException {
 
         Map<String, Object> queryParams = new HashMap<String, Object>();
-        queryParams.put("startAfterCreation", Boolean.valueOf(startAfterCreation));
+        queryParams.put("startAfterCreation", startAfterCreation);
 
         return rest.postForEntity(
                 apiUrl(DevOpsAPIRoutes.ACTIVITIES, null, queryParams),

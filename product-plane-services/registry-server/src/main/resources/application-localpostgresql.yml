@@ -66,8 +66,25 @@ odm:
     policyService:
       active: false
       address: http://localhost:8005
-  utilityPlane:
-    notificationServices:
-      blindata:
-        active: false
-        address: http://localhost:9002
+    notificationService:
+      active: false
+      address: http://localhost:8006
+
+############################################
+# Git configurations
+############################################
+git:
+  provider: ${GIT_PROVIDER}
+  templates:
+    path: "templates"
+  auth:
+    oauth2:
+      client:
+        provider:
+          token-uri: ${OAUTH_TOKEN_URI}
+        registration:
+          client-id: ${OAUTH_CLIENT_ID}
+          client-secret: ${OAUTH_CLIENT_SECRET}
+          scope: ${OAUTH_SCOPE}
+          authorization-grant-type: client_credentials
+    pat: ${PERSONAL_ACCESS_TOKEN}

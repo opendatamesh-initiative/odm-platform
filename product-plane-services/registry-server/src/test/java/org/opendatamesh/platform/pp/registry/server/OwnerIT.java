@@ -164,7 +164,7 @@ public class OwnerIT extends ODMRegistryIT {
                 RegistryApiStandardErrors.SC422_18_OWNER_ALREADY_EXISTS);
 
 
-        // TEST 2: try to register a owner without setting the id
+        // TEST 2: try to register an owner without setting the id
         ownerResource = resourceBuilder.buildOwner(null, null);
         errorResponse = registryClient.createOwner(ownerResource);
         verifyResponseError(errorResponse,

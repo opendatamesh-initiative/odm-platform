@@ -8,6 +8,7 @@ env:
   DEVOPS_IMAGE_NAME: odm-platform-devops
   BLUEPRINT_IMAGE_NAME: odm-platform-blueprint
   POLICY_IMAGE_NAME: odm-platform-policy
+  NOTIFICATION_IMAGE_NAME: odm-platform-notification
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -53,6 +54,7 @@ jobs:
           docker build . --file product-plane-services/devops-server/Dockerfile --tag $DEVOPS_IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}"
           docker build . --file product-plane-services/blueprint-server/Dockerfile --tag $BLUEPRINT_IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}"
           docker build . --file product-plane-services/policy-server/Dockerfile --tag $POLICY_IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}"
+          docker build . --file product-plane-services/notification-server/Dockerfile --tag $NOTIFICATION_IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}"
       - name: Login to Container Registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
       - name: Push images to Container Registry
@@ -72,6 +74,16 @@ jobs:
           echo IMAGE_ID=$IMAGE_ID
           docker tag $BLUEPRINT_IMAGE_NAME $IMAGE_ID:${{ env.TAG_VERSION }}
           docker push $IMAGE_ID:${{ env.TAG_VERSION }}
+          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/odm-platform-policy
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+          echo IMAGE_ID=$IMAGE_ID
+          docker tag $POLICY_IMAGE_NAME $IMAGE_ID:${{ env.TAG_VERSION }}
+          docker push $IMAGE_ID:${{ env.TAG_VERSION }}
+          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/odm-platform-notification
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+          echo IMAGE_ID=$IMAGE_ID
+          docker tag $NOTIFICATION_IMAGE_NAME $IMAGE_ID:${{ env.TAG_VERSION }}
+          docker push $IMAGE_ID:${{ env.TAG_VERSION }}
       - name: Docker login
         env:
           DOCKER_USER: ${{secrets.DOCKER_USERNAME}}
@@ -83,12 +95,14 @@ jobs:
           docker build . --file product-plane-services/devops-server/Dockerfile --tag opendatamesh/odm-platform-devops:${{ env.TAG_VERSION }}
           docker build . --file product-plane-services/blueprint-server/Dockerfile --tag opendatamesh/odm-platform-blueprint:${{ env.TAG_VERSION }}
           docker build . --file product-plane-services/policy-server/Dockerfile --tag opendatamesh/odm-platform-policy:${{ env.TAG_VERSION }}
+          docker build . --file product-plane-services/notification-server/Dockerfile --tag opendatamesh/odm-platform-notification:${{ env.TAG_VERSION }}
       - name: Docker push
         run: |
           docker push opendatamesh/odm-platform-registry:${{ env.TAG_VERSION }}
           docker push opendatamesh/odm-platform-devops:${{ env.TAG_VERSION }}
           docker push opendatamesh/odm-platform-blueprint:${{ env.TAG_VERSION }}
           docker push opendatamesh/odm-platform-policy:${{ env.TAG_VERSION }}
+          docker push opendatamesh/odm-platform-notification:${{ env.TAG_VERSION }}
       - name: Publish API doc
         run: |
           ./generate-full-redoc-static-html.sh

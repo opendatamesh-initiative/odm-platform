@@ -1,8 +1,8 @@
 package org.opendatamesh.platform.pp.registry.server.services;
 
+import org.opendatamesh.dpds.model.core.EntityTypeDPDS;
+import org.opendatamesh.dpds.parser.IdentifierStrategy;
 import org.opendatamesh.platform.core.commons.servers.exceptions.*;
-import org.opendatamesh.platform.core.dpds.model.core.EntityTypeDPDS;
-import org.opendatamesh.platform.core.dpds.parser.IdentifierStrategy;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
 import org.opendatamesh.platform.pp.registry.server.database.entities.Api;
 import org.opendatamesh.platform.pp.registry.server.database.entities.ApiToSchemaRelationship;
@@ -25,7 +25,10 @@ public class ApiService {
     private ApiRepository apiRepository;
 
     @Autowired
-    ApiToSchemaRelationshipRepository apiToSchemaRelationshipRepository;
+    private ApiToSchemaRelationshipRepository apiToSchemaRelationshipRepository;
+
+    @Autowired
+    private IdentifierStrategy identifierStrategy;
 
     private static final Logger logger = LoggerFactory.getLogger(ApiService.class);
 
@@ -63,13 +66,12 @@ public class ApiService {
                     "Property [definition] cannot be empty");
         }
 
-        
-        String fqn = IdentifierStrategy.DEFUALT.getExternalComponentFqn(
+        String fqn = identifierStrategy.getExternalComponentFqn(
                 EntityTypeDPDS.API,
                 api.getName(),
                 api.getVersion());
 
-        String id = IdentifierStrategy.DEFUALT.getId(fqn);
+        String id = identifierStrategy.getId(fqn);
         
         api.setId(id);
         api.setFullyQualifiedName(fqn);
@@ -88,7 +90,7 @@ public class ApiService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while saving api",
+                    "An error occurred in the backend database while saving api",
                     t);
         }
 
@@ -184,7 +186,7 @@ public class ApiService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while loading definition [" + definitionId + "]",
+                    "An error occurred in the backend database while loading definition [" + definitionId + "]",
                     t);
         }
 
@@ -212,7 +214,7 @@ public class ApiService {
         } else {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while searching definitions");
+                    "An error occurred in the backend database while searching definitions");
         }
 
         return definition;
@@ -229,7 +231,7 @@ public class ApiService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while searching definitions",
+                    "An error occurred in the backend database while searching definitions",
                     t);
         }
         return definitionSearchResults;
@@ -269,7 +271,7 @@ public class ApiService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while updating definition [" + definition.getId() + "]",
+                    "An error occurred in the backend database while updating definition [" + definition.getId() + "]",
                     t);
         }
 
@@ -294,7 +296,7 @@ public class ApiService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while deleting definition [" + definitionId + "]",
+                    "An error occurred in the backend database while deleting definition [" + definitionId + "]",
                     t);
         }
 

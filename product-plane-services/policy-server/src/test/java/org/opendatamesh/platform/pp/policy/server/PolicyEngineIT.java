@@ -147,7 +147,7 @@ public class PolicyEngineIT extends ODMPolicyIT {
         assertThat(policyEngineResource.getId()).isNotNull();
         assertThat(policyEngineResource.getName()).isEqualTo("opa-policy-checker");
         assertThat(policyEngineResource.getDisplayName()).isEqualTo("OPA Policy Checker");
-        assertThat(policyEngineResource.getAdapterUrl()).isEqualTo("http://localhost:9001/api/v1/up/policy-engine-adapter");
+        assertThat(policyEngineResource.getAdapterUrl()).isEqualTo("http://localhost:9001/api/v1/up/validator");
         assertThat(policyEngineResource.getCreatedAt()).isNotNull();
         assertThat(policyEngineResource.getUpdatedAt()).isEqualTo(policyEngineResource.getCreatedAt());
 
@@ -158,7 +158,7 @@ public class PolicyEngineIT extends ODMPolicyIT {
         assertThat(policyEngineResource.getId()).isNotNull();
         assertThat(policyEngineResource.getName()).isEqualTo("opa-policy-checker");
         assertThat(policyEngineResource.getDisplayName()).isEqualTo("OPA Policy Checker V2");
-        assertThat(policyEngineResource.getAdapterUrl()).isEqualTo("http://localhost:9001/api/v1/up/policy-engine-adapter-2");
+        assertThat(policyEngineResource.getAdapterUrl()).isEqualTo("http://localhost:9001/api/v1/up/validator-2");
         assertThat(policyEngineResource.getCreatedAt()).isNotNull();
         assertThat(policyEngineResource.getUpdatedAt()).isAfter(policyEngineResource.getCreatedAt());
 

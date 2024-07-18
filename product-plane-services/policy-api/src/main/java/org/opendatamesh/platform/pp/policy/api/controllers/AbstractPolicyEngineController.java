@@ -39,7 +39,7 @@ public abstract class AbstractPolicyEngineController implements PolicyEngineClie
             "   \"id\": 1,\n" + //
             "   \"name\": \"opa-policy-checker\",\n" + //
             "   \"displayName\": \"OPA Policy Checker\",\n" + //
-            "   \"adapterUrl\": \"http://localhost:9001/api/v1/up/policy-engine-adapter\",\n" + //
+            "   \"adapterUrl\": \"http://localhost:9001/api/v1/up/validator\",\n" + //
             "   \"createdAt\": \"2024-03-21T12:04:11.000+00:00\",\n" + //
             "   \"updatedAt\": \"2024-03-21T12:06:31.000+00:00\"\n" + //
             "}";
@@ -47,14 +47,14 @@ public abstract class AbstractPolicyEngineController implements PolicyEngineClie
     private static final String EXAMPLE_POLICY_ENGINE_CREATE = "{\n" + //
             "   \"name\": \"opa-policy-checker\",\n" + //
             "   \"displayName\": \"OPA Policy Checker\",\n" + //
-            "   \"adapterUrl\": \"http://localhost:9001/api/v1/up/policy-engine-adapter\"\n" + //
+            "   \"adapterUrl\": \"http://localhost:9001/api/v1/up/validator\"\n" + //
             "}";
 
     private static final String EXAMPLE_POLICY_ENGINE_UPDATE = "{\n" + //
             "   \"id\": 1,\n" + //
             "   \"name\": \"opa-policy-checker\",\n" + //
             "   \"displayName\": \"OPA Policy Checker\",\n" + //
-            "   \"adapterUrl\": \"http://localhost:9001/api/v1/up/policy-engine-adapter\",\n" + //
+            "   \"adapterUrl\": \"http://localhost:9001/api/v1/up/validator\",\n" + //
             "   \"createdAt\": \"2024-03-21T12:04:11.000+00:00\"\n" + //
             "}";
 

@@ -24,9 +24,7 @@ public class BlueprintErrorsIT extends ODMBlueprintIT {
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     public void testCreateBlueprint400Errors() throws IOException {
 
-        BlueprintResource blueprintResource = null;
-
-        ResponseEntity<ErrorRes> errorResponse = blueprintClient.createBlueprintNoCheck(blueprintResource);
+        ResponseEntity<ErrorRes> errorResponse = blueprintClient.createBlueprintNoCheck(null);
         verifyResponseError(
                 errorResponse,
                 HttpStatus.BAD_REQUEST,

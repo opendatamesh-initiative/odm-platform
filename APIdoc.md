@@ -63,7 +63,7 @@ This is done modifying spring-boot-maven-plugin and adding springdoc-openapi-mav
 
 ## Redoc static HTML page
 The final step is to generate the static HTML page with Redoc.
-We do it with a script, located in the scripts folder, called at build time with the following plugin added to the pom:
+We do it with a script, located in the scripts' folder, called at build time with the following plugin added to the pom:
 ```xml
 <plugin>
 	<artifactId>exec-maven-plugin</artifactId>

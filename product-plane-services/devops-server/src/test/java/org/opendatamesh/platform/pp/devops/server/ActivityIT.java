@@ -130,7 +130,7 @@ public class ActivityIT extends ODMDevOpsIT {
         try {
             statusRes = devOpsClient.startActivity(activityRes.getId());
         } catch (Throwable t) {
-            fail("An unexpected exception occured while starting activity: " + t.getMessage());
+            fail("An unexpected exception occurred while starting activity: " + t.getMessage());
             t.printStackTrace();
             return;
         }
@@ -170,7 +170,7 @@ public class ActivityIT extends ODMDevOpsIT {
         try {
             createdActivityRes = devOpsClient.createActivity(activityRes, false);
         } catch (Throwable t) {
-            fail("An unexpected exception occured while creating activity: " + t.getMessage());
+            fail("An unexpected exception occurred while creating activity: " + t.getMessage());
             t.printStackTrace();
             return;
         }
@@ -179,7 +179,7 @@ public class ActivityIT extends ODMDevOpsIT {
         try {
             statusRes = devOpsClient.startActivity(createdActivityRes.getId());
         } catch (Throwable t) {
-            fail("An unexpected exception occured while starting activity: " + t.getMessage());
+            fail("An unexpected exception occurred while starting activity: " + t.getMessage());
             t.printStackTrace();
             return;
         }
@@ -219,7 +219,7 @@ public class ActivityIT extends ODMDevOpsIT {
         try {
             createdActivityRes = devOpsClient.createActivity(activityRes, false);
         } catch (Throwable t) {
-            fail("An unexpected exception occured while creating activity: " + t.getMessage());
+            fail("An unexpected exception occurred while creating activity: " + t.getMessage());
             t.printStackTrace();
             return;
         }
@@ -228,7 +228,7 @@ public class ActivityIT extends ODMDevOpsIT {
         try {
             statusRes = devOpsClient.startActivity(createdActivityRes.getId());
         } catch (Throwable t) {
-            fail("An unexpected exception occured while starting activity: " + t.getMessage());
+            fail("An unexpected exception occurred while starting activity: " + t.getMessage());
             t.printStackTrace();
             return;
         }
@@ -270,7 +270,7 @@ public class ActivityIT extends ODMDevOpsIT {
         try {
             createdActivityRes = devOpsClient.createActivity(activityRes, false);
         } catch (Throwable t) {
-            fail("An unexpected exception occured while creating activity: " + t.getMessage());
+            fail("An unexpected exception occurred while creating activity: " + t.getMessage());
             t.printStackTrace();
             return;
         }
@@ -279,7 +279,7 @@ public class ActivityIT extends ODMDevOpsIT {
         try {
             statusRes = devOpsClient.startActivity(createdActivityRes.getId());
         } catch (Throwable t) {
-            fail("An unexpected exception occured while starting activity: " + t.getMessage());
+            fail("An unexpected exception occurred while starting activity: " + t.getMessage());
             t.printStackTrace();
             return;
         }
@@ -335,7 +335,7 @@ public class ActivityIT extends ODMDevOpsIT {
         try {
             createdActivityRes = devOpsClient.createActivity(activityRes, false);
         } catch (Throwable t) {
-            fail("An unexpected exception occured while creating activity: " + t.getMessage());
+            fail("An unexpected exception occurred while creating activity: " + t.getMessage());
             t.printStackTrace();
             return;
         }
@@ -344,7 +344,7 @@ public class ActivityIT extends ODMDevOpsIT {
         try {
             statusRes = devOpsClient.startActivity(createdActivityRes.getId());
         } catch (Throwable t) {
-            fail("An unexpected exception occured while starting activity: " + t.getMessage());
+            fail("An unexpected exception occurred while starting activity: " + t.getMessage());
             t.printStackTrace();
             return;
         }
@@ -401,7 +401,7 @@ public class ActivityIT extends ODMDevOpsIT {
         try {
             createdActivityRes = devOpsClient.createActivity(activityRes, false);
         } catch (Throwable t) {
-            fail("An unexpected exception occured while creating activity: " + t.getMessage());
+            fail("An unexpected exception occurred while creating activity: " + t.getMessage());
             t.printStackTrace();
             return;
         }
@@ -410,7 +410,7 @@ public class ActivityIT extends ODMDevOpsIT {
         try {
             statusRes = devOpsClient.startActivity(createdActivityRes.getId());
         } catch (Throwable t) {
-            fail("An unexpected exception occured while starting activity: " + t.getMessage());
+            fail("An unexpected exception occurred while starting activity: " + t.getMessage());
             t.printStackTrace();
             return;
         }
@@ -468,7 +468,7 @@ public class ActivityIT extends ODMDevOpsIT {
         try {
             taskStatusRes = devOpsClient.stopTask(targetTaskRes.getId());
         } catch (Throwable t) {
-            fail("An unexpected exception occured while stopping task: " + t.getMessage());
+            fail("An unexpected exception occurred while stopping task: " + t.getMessage());
             t.printStackTrace();
             return;
         }
@@ -545,7 +545,7 @@ public class ActivityIT extends ODMDevOpsIT {
         try {
             statusRes = devOpsClient.startActivity(activityRes.getId());
         } catch (Throwable t) {
-            fail("An unexpected exception occured while starting activity: " + t.getMessage());
+            fail("An unexpected exception occurred while starting activity: " + t.getMessage());
             t.printStackTrace();
             return;
         }
@@ -571,7 +571,7 @@ public class ActivityIT extends ODMDevOpsIT {
         try {
             devOpsClient.stopTask(targetTaskRes.getId());
         } catch (Throwable t) {
-            fail("An unexpected exception occured while stopping task: " + t.getMessage());
+            fail("An unexpected exception occurred while stopping task: " + t.getMessage());
             t.printStackTrace();
             return;
         }
@@ -677,7 +677,7 @@ public class ActivityIT extends ODMDevOpsIT {
         try {
             statusRes = devOpsClient.startActivity(createdActivityRes.getId());
         } catch (Throwable t) {
-            fail("An unexpected exception occured while starting activity: " + t.getMessage());
+            fail("An unexpected exception occurred while starting activity: " + t.getMessage());
             t.printStackTrace();
             return;
         }
@@ -713,7 +713,7 @@ public class ActivityIT extends ODMDevOpsIT {
         try {
             stoppedTaskRes = devOpsClient.stopTask(targetTaskRes.getId());
         } catch (Throwable t) {
-            fail("An unexpected exception occured while stopping task: " + t.getMessage());
+            fail("An unexpected exception occurred while stopping task: " + t.getMessage());
             t.printStackTrace();
             return;
         }

@@ -4,14 +4,17 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
+import org.mockito.Mockito;
 import org.opendatamesh.platform.core.commons.test.ODMIntegrationTest;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
-import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
+import org.opendatamesh.platform.core.commons.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.devops.api.clients.DevOpsClient;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityResource;
 import org.opendatamesh.platform.pp.devops.api.resources.DevOpsApiStandardErrors;
 import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsClients;
+import org.opendatamesh.platform.pp.notification.api.clients.DispatchClient;
 import org.opendatamesh.platform.pp.registry.api.clients.RegistryAPIRoutes;
 import org.opendatamesh.platform.pp.registry.api.resources.ExternalComponentResource;
 import org.opendatamesh.platform.up.executor.api.clients.ExecutorAPIRoutes;
@@ -19,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
@@ -50,7 +54,7 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
-//@ActiveProfiles("test")
+@ActiveProfiles("test")
 //@ActiveProfiles("testpostgresql")
 //@ActiveProfiles("testmysql")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = { ODMDevOpsApp.class })
@@ -67,7 +71,10 @@ public abstract class ODMDevOpsIT extends ODMIntegrationTest{
 
     protected ObjectMapper mapper;
 
-    protected Logger logger = LoggerFactory.getLogger(ODMDevOpsIT.class);
+    @MockBean
+    protected DispatchClient notificationClient;
+
+    protected static final Logger logger = LoggerFactory.getLogger(ODMDevOpsIT.class);
 
     protected final String DB_TABLES_POSTGRESQL = "src/test/resources/db/tables_postgresql.txt";
     protected final String DB_TABLES_MYSQL = "src/test/resources/db/tables_mysql.txt";
@@ -82,6 +89,12 @@ public abstract class ODMDevOpsIT extends ODMIntegrationTest{
         bindMockServerToRegistryClient();
         bindMockServerToExecutorClient();
   
+    }
+
+    @Before
+    public void mockSetUp() {
+        // Mock notifications
+        Mockito.doNothing().when(notificationClient).notifyEvent(Mockito.any());
     }
 
     @BeforeEach
@@ -293,7 +306,6 @@ public abstract class ODMDevOpsIT extends ODMIntegrationTest{
         } catch (IOException e) {
             fail("Impossible to create moks");
             e.printStackTrace();
-            return;
         }
 
     }

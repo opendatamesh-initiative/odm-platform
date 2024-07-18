@@ -81,11 +81,11 @@ License.
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
-        </dependency>
+        </dependency>-->
 
         <!-- Hibernate -->
         <dependency>
@@ -240,12 +240,6 @@ License.
         <!-- Internals -->
         <dependency>
             <groupId>org.opendatamesh</groupId>
-            <artifactId>odm-platform-core-dpds-parser</artifactId>
-            <version>1.0.0</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-core-commons</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>
@@ -263,7 +257,7 @@ License.
         </dependency>
         <dependency>
             <groupId>org.opendatamesh</groupId>
-            <artifactId>odm-platform-up-policy-engine-api</artifactId>
+            <artifactId>odm-platform-up-validator-api</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>

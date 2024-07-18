@@ -4,8 +4,8 @@ import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultR
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
 import org.opendatamesh.platform.pp.policy.server.database.entities.PolicyEngine;
 import org.opendatamesh.platform.pp.policy.server.services.PolicyEvaluationResultService;
-import org.opendatamesh.platform.pp.policy.server.services.proxies.PolicyEngineProxy;
-import org.opendatamesh.platform.up.policy.api.v1.resources.EvaluationResource;
+import org.opendatamesh.platform.pp.policy.server.services.proxies.ValidatorProxy;
+import org.opendatamesh.platform.up.validator.api.resources.EvaluationResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +16,7 @@ public class PolicyDispatcherService {
     PolicyEvaluationResultService policyEvaluationResultService;
 
     @Autowired
-    PolicyEngineProxy policyEngineProxy;
+    ValidatorProxy validatorProxy;
 
     public PolicyEvaluationResultResource dispatchPolicy(
             PolicyResource policyToEvaluate,
@@ -32,7 +32,7 @@ public class PolicyDispatcherService {
         dispatchResponse.setDataProductVersion(basePolicyEvaluationResult.getDataProductVersion());
 
         // Dispatch validation request
-        EvaluationResource validationResponse = policyEngineProxy.validatePolicy(
+        EvaluationResource validationResponse = validatorProxy.validatePolicy(
                 basePolicyEvaluationResult.getId(),
                 policyToEvaluate,
                 policyEngine,

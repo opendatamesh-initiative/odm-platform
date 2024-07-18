@@ -18,8 +18,8 @@ See the License for the specific language governing permissions and
 License.
  -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -31,7 +31,7 @@ License.
     <groupId>org.opendatamesh</groupId>
     <artifactId>odm-platform-core</artifactId>
     <name>ODM Platform CORE MODULES</name>
-   
+
     <description>Open Data Mesh Core Modules</description>
     <version>1.0.0</version>
     <url>https://github.com/opendatamesh-initiative/odm-platform-pp-services</url>
@@ -60,7 +60,6 @@ License.
     </developers>
 
     <modules>
-        <module>dpds-parser</module>
         <module>commons</module>
     </modules>
 

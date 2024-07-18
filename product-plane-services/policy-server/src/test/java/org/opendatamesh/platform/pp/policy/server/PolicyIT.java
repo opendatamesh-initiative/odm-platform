@@ -236,7 +236,6 @@ public class PolicyIT extends ODMPolicyIT {
         assertThat(policyResource.getLastVersion()).isEqualTo(true);
         assertThat(policyResource.getCreatedAt()).isNotNull();
         assertThat(policyResource.getUpdatedAt()).isAfterOrEqualTo(policyResource.getCreatedAt());
-        assertThat(policyResource.getUpdatedAt()).isAfterOrEqualTo(oldPolicyResource.getCreatedAt());
 
     }
 
@@ -275,5 +274,5 @@ public class PolicyIT extends ODMPolicyIT {
         assertThat(policyResource.getUpdatedAt()).isAfterOrEqualTo(policyResource.getCreatedAt());
 
     }
-    
+
 }

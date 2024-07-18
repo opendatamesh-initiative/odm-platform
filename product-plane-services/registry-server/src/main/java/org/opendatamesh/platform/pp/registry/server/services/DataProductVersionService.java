@@ -3,17 +3,15 @@ package org.opendatamesh.platform.pp.registry.server.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.opendatamesh.dpds.model.DataProductVersionDPDS;
+import org.opendatamesh.dpds.parser.IdentifierStrategy;
 import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.NotFoundException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
 import org.opendatamesh.platform.core.commons.servers.exceptions.UnprocessableEntityException;
-import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
-import org.opendatamesh.platform.pp.registry.server.database.entities.Api;
-import org.opendatamesh.platform.pp.registry.server.database.entities.ApiToSchemaRelationship;
+import org.opendatamesh.platform.pp.registry.server.database.entities.*;
 import org.opendatamesh.platform.pp.registry.server.database.entities.ApiToSchemaRelationship.ApiToSchemaRelationshipId;
-import org.opendatamesh.platform.pp.registry.server.database.entities.Schema;
-import org.opendatamesh.platform.pp.registry.server.database.entities.Template;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.DataProductVersion;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.DataProductVersionId;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.core.StandardDefinition;
@@ -28,7 +26,7 @@ import org.opendatamesh.platform.pp.registry.server.database.entities.dataproduc
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.variables.Variable;
 import org.opendatamesh.platform.pp.registry.server.database.mappers.DataProductVersionMapper;
 import org.opendatamesh.platform.pp.registry.server.database.repositories.DataProductVersionRepository;
-import org.opendatamesh.platform.pp.registry.server.services.proxies.RegistryEventNotifierProxy;
+import org.opendatamesh.platform.pp.registry.server.services.proxies.RegistryNotificationServiceProxy;
 import org.opendatamesh.platform.pp.registry.server.services.proxies.RegistryPolicyServiceProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,10 +61,13 @@ public class DataProductVersionService {
     private DataProductVersionMapper dataProductVersionMapper;
 
     @Autowired
-    RegistryEventNotifierProxy registryEventNotifierProxy;
+    RegistryNotificationServiceProxy registryNotificationServiceProxy;
 
     @Autowired
     private RegistryPolicyServiceProxy policyServiceProxy;
+
+    @Autowired
+    private IdentifierStrategy identifierStrategy;
 
     private static final Logger logger = LoggerFactory.getLogger(DataProductVersionService.class);
 
@@ -111,7 +112,7 @@ public class DataProductVersionService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
-                    "An internal processing error occured while saving API", t);
+                    "An internal processing error occurred while saving API", t);
         }
 
         try {
@@ -119,7 +120,7 @@ public class DataProductVersionService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
-                    "An internal processing error occured while saving templates", t);
+                    "An internal processing error occurred while saving templates", t);
         }
 
         try {
@@ -127,13 +128,13 @@ public class DataProductVersionService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while saving version ["
-                            + dataProductVersion.getInfo().getVersionNumber() + "] of data product ["
-                            + dataProductVersion.getDataProduct().getId() + "]",
+                    "An error occurred in the backend database while saving version ["
+                            + dataProductVersion.getInfo().getVersionNumber() + "] of data product ["+
+                            getDataProduct(dataProductVersion).getId() + "]",
                     t);
         }
 
-        registryEventNotifierProxy.notifyDataProductVersionCreation(dataProductVersionMapper.toResource(dataProductVersion));
+        registryNotificationServiceProxy.notifyDataProductVersionCreation(dataProductVersionMapper.toResource(dataProductVersion));
 
         return dataProductVersion;
     }
@@ -219,7 +220,7 @@ public class DataProductVersionService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while schema of endpoint [" + endpoint
+                    "An error occurred in the backend database while schema of endpoint [" + endpoint
                             + "]",
                     t);
         }
@@ -261,7 +262,7 @@ public class DataProductVersionService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while saving api of port [" + port.getFullyQualifiedName()
+                    "An error occurred in the backend database while saving api of port [" + port.getFullyQualifiedName()
                             + "]",
                     t);
         }
@@ -316,7 +317,7 @@ public class DataProductVersionService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while saving template [" + templateStdDef.getName() + "]", t);
+                    "An error occurred in the backend database while saving template [" + templateStdDef.getName() + "]", t);
         }
 
         return template;
@@ -328,8 +329,8 @@ public class DataProductVersionService {
     // ======================================================================================
 
     // readAllDataProductVersions()
-    // is not implemented beacuse it make
-    // non sense to read al versions across all possible data products.
+    // is not implemented because it make
+    // nonsense to read al versions across all possible data products.
     // @see searchDataProductVersions(dataProduct)
 
     private DataProductVersion readDataProductVersion(DataProductVersion dataProductVersion) {
@@ -339,12 +340,7 @@ public class DataProductVersionService {
                     "Data product version object cannot be null");
         }
 
-        if (dataProductVersion.getDataProduct() == null) {
-            throw new InternalServerException(
-                    ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
-                    "Data product object cannot be null");
-        }
-        return readDataProductVersion(dataProductVersion.getDataProduct().getId(),
+        return readDataProductVersion(getDataProduct(dataProductVersion).getId(),
                 dataProductVersion.getInfo().getVersionNumber());
     }
 
@@ -363,7 +359,7 @@ public class DataProductVersionService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while loading version [" + version + "] of data product ["
+                    "An error occurred in the backend database while loading version [" + version + "] of data product ["
                             + dataProductId + "]",
                     t);
         }
@@ -398,14 +394,8 @@ public class DataProductVersionService {
                     "Data product version object cannot be null");
         }
 
-        if (dataProductVersion.getDataProduct() == null) {
-            throw new InternalServerException(
-                    ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
-                    "Data product object cannot be null");
-        }
-
         return dataProductVersionExists(
-                dataProductVersion.getDataProduct().getId(),
+                getDataProduct(dataProductVersion).getId(),
                 dataProductVersion.getInfo().getVersionNumber());
     }
 
@@ -425,7 +415,7 @@ public class DataProductVersionService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while searching data product versions",
+                    "An error occurred in the backend database while searching data product versions",
                     t);
         }
 
@@ -447,7 +437,7 @@ public class DataProductVersionService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while searching data product versions",
+                    "An error occurred in the backend database while searching data product versions",
                     t);
         }
 
@@ -461,7 +451,7 @@ public class DataProductVersionService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while searching data product versions",
+                    "An error occurred in the backend database while searching data product versions",
                     t);
         }
 
@@ -506,16 +496,16 @@ public class DataProductVersionService {
             dataProductVersionRepository.deleteById(dataProductVersionId);
             //dataProductVersionRepository.delete(dataProductVersion);
             logger.info("Data product version [" + versionNumber + "] of data product [" + dataProductId
-                    + "] succesfully deleted");
+                    + "] successfully deleted");
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while deleting data product version",
+                    "An error occurred in the backend database while deleting data product version",
                     t
             );
         }
 
-        registryEventNotifierProxy.notifyDataProductVersionDeletion(dataProductVersionMapper.toResource(dataProductVersion));
+        registryNotificationServiceProxy.notifyDataProductVersionDeletion(dataProductVersionMapper.toResource(dataProductVersion));
 
     }
 
@@ -590,4 +580,19 @@ public class DataProductVersionService {
         return dataProducts.isEmpty() ? null : dataProductVersionMapper.toResource(dataProducts.get(0));
     }
 
+    private DataProduct getDataProduct(DataProductVersion dataProductVersion) {
+        //TODO refactor --> this generates a detached entity!!! (the correct way should be by joining the DataProduct with the DataProductVersion)
+        DataProduct dataProduct = new DataProduct();
+        if(dataProductVersion.getInfo().getFullyQualifiedName() == null) {
+            throw new InternalServerException(
+                    ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
+                    "Data product object cannot be null");
+        } else {
+            dataProduct.setFullyQualifiedName(dataProductVersion.getInfo().getFullyQualifiedName());
+        }
+
+        dataProduct.setId( identifierStrategy.getId(dataProductVersion.getInfo().getFullyQualifiedName()) );
+        dataProduct.setDomain(dataProductVersion.getInfo().getDomain());
+        return dataProduct;
+    }
 }

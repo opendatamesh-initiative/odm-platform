@@ -75,7 +75,11 @@ License.
     -->
 
     <dependencies>
-
+        <dependency>
+            <groupId>org.opendatamesh</groupId>
+            <artifactId>odm-specification-dpdescriptor-parser</artifactId>
+            <version>1.0.1</version>
+        </dependency>
         <!-- Spring Boot Starter -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -262,12 +266,6 @@ License.
         <!-- Internal -->
         <dependency>
             <groupId>org.opendatamesh</groupId>
-            <artifactId>odm-platform-core-dpds-parser</artifactId>
-            <version>1.0.0</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-core-commons</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>
@@ -280,19 +278,13 @@ License.
         </dependency>
         <dependency>
             <groupId>org.opendatamesh</groupId>
-            <artifactId>odm-platform-up-notification-api</artifactId>
-            <version>1.0.0</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-pp-policy-api</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.opendatamesh</groupId>
-            <artifactId>odm-platform-pp-event-notifier-api</artifactId>
+            <artifactId>odm-platform-pp-notification-api</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>

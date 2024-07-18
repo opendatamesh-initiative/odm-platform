@@ -25,7 +25,7 @@ public class DataProductController extends AbstractDataProductController {
     private static final Logger logger = LoggerFactory.getLogger(DataProductController.class);
 
     public DataProductController() {
-        logger.debug("Data product controller succesfully started");
+        logger.debug("Data product controller successfully started");
     }
 
     @Override

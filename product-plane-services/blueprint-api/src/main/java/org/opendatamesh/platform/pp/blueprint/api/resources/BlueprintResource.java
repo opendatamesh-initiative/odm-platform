@@ -45,6 +45,15 @@ public class BlueprintResource {
 
     @JsonProperty("blueprintParams")
     @Schema(description = "The JSON description of the parameters of the blueprint saved as a String")
+    /* e.g.
+    [
+        {
+            "name": "parameterName",
+            "description": "Parameter description",
+            "defaultValue": "Parameter default value"
+        }
+    ]
+    */
     private String blueprintParams;
 
     @JsonProperty("organization")

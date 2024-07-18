@@ -65,9 +65,8 @@ License.
     </developers>
 
     <modules>
-        <module>notification-api</module>
-        <module>notification-server</module>
-        <module>policy-engine-api</module>
+        <module>observer-api</module>
+        <module>validator-api</module>
         <module>executor-api</module>
     </modules>
 

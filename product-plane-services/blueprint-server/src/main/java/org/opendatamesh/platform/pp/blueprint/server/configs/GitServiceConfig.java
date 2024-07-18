@@ -1,7 +1,7 @@
 package org.opendatamesh.platform.pp.blueprint.server.configs;
 
-import org.opendatamesh.platform.core.commons.git.GitConfigurer;
-import org.opendatamesh.platform.core.commons.git.GitService;
+import org.opendatamesh.dpds.location.GitService;
+import org.opendatamesh.platform.core.commons.git.GitServiceFactory;
 import org.opendatamesh.platform.core.commons.oauth.OAuthTokenManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -16,11 +16,6 @@ public class GitServiceConfig {
     @Value("${git.auth.oauth2.client.provider.token-uri}")
     private String tokenUri;
 
-    /*@Value("${git.auth.oauth2.client.provider.authorization-uri}")
-    private String authorizationUri;
-
-    @Value("${git.auth.oauth2.client.provider.user-info-uri}")
-    private String userInfoUri;*/
     @Value("${git.auth.oauth2.client.registration.client-id}")
     private String clientId;
 
@@ -50,7 +45,7 @@ public class GitServiceConfig {
                     authorizationGrantType
             );
         }
-        return GitConfigurer.configureGitClient(
+        return GitServiceFactory.configureGitClient(
                 serviceType,
                 oAuthTokenManager,
                 personalAccessToken

@@ -70,8 +70,8 @@ License.
         <module>registry-server</module>
         <module>policy-api</module>
         <module>policy-server</module>
-        <module>event-notifier-api</module>
-        <module>event-notifier-server</module>
+        <module>notification-api</module>
+        <module>notification-server</module>
     </modules>
 
 </project>

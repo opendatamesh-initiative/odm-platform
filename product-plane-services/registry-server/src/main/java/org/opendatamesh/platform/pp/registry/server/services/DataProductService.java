@@ -3,21 +3,21 @@ package org.opendatamesh.platform.pp.registry.server.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.opendatamesh.dpds.exceptions.*;
+import org.opendatamesh.dpds.location.DescriptorLocation;
+import org.opendatamesh.dpds.model.DataProductVersionDPDS;
+import org.opendatamesh.dpds.parser.DPDSParser;
+import org.opendatamesh.dpds.parser.IdentifierStrategy;
+import org.opendatamesh.dpds.parser.ParseOptions;
+import org.opendatamesh.dpds.parser.ParseResult;
 import org.opendatamesh.platform.core.commons.servers.exceptions.*;
-import org.opendatamesh.platform.core.dpds.exceptions.*;
-import org.opendatamesh.platform.core.dpds.model.DataProductVersionDPDS;
-import org.opendatamesh.platform.core.dpds.parser.DPDSParser;
-import org.opendatamesh.platform.core.dpds.parser.IdentifierStrategy;
-import org.opendatamesh.platform.core.dpds.parser.ParseOptions;
-import org.opendatamesh.platform.core.dpds.parser.ParseResult;
-import org.opendatamesh.platform.core.dpds.parser.location.DescriptorLocation;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
 import org.opendatamesh.platform.pp.registry.server.database.entities.DataProduct;
 import org.opendatamesh.platform.pp.registry.server.database.entities.dataproductversion.DataProductVersion;
 import org.opendatamesh.platform.pp.registry.server.database.mappers.DataProductMapper;
 import org.opendatamesh.platform.pp.registry.server.database.mappers.DataProductVersionMapper;
 import org.opendatamesh.platform.pp.registry.server.database.repositories.DataProductRepository;
-import org.opendatamesh.platform.pp.registry.server.services.proxies.RegistryEventNotifierProxy;
+import org.opendatamesh.platform.pp.registry.server.services.proxies.RegistryNotificationServiceProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,10 +38,10 @@ public class DataProductService {
     private DataProductRepository dataProductRepository;
 
     @Autowired
-    VariableService variableService;
-   
+    private VariableService variableService;
+
     @Autowired
-    ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
 
     @Autowired
     private DataProductMapper dataProductMapper;
@@ -50,7 +50,10 @@ public class DataProductService {
     private DataProductVersionMapper dataProductVersionMapper;
 
     @Autowired
-    RegistryEventNotifierProxy registryEventNotifierProxy;
+    private RegistryNotificationServiceProxy registryNotificationServiceProxy;
+
+    @Autowired
+    private IdentifierStrategy identifierStrategy;
 
     @Value("${odm.schemas.validation.baseUrl}")
     private String schemaValidationBaseUrl;
@@ -68,7 +71,7 @@ public class DataProductService {
     // ======================================================================================
     // CREATE
     // ======================================================================================
-    
+
     public DataProduct createDataProduct(DataProduct dataProduct) {
      if(dataProduct == null) {
             throw new InternalServerException(
@@ -82,32 +85,32 @@ public class DataProductService {
                 "Data product fullyQualifiedName property cannot be empty");
         }
 
-        String uuid = IdentifierStrategy.DEFUALT.getId(dataProduct.getFullyQualifiedName());
+        String uuid = identifierStrategy.getId(dataProduct.getFullyQualifiedName());
         if(dataProduct.getId() != null && !dataProduct.getId().equals(uuid)) {
             throw new UnprocessableEntityException(
                 RegistryApiStandardErrors.SC422_05_PRODUCT_NOT_VALID,
                 "Data product [" + dataProduct.getFullyQualifiedName() + "] with id [" + dataProduct.getId()+ "] is invalid. Expected [" + uuid + "]");
         }
         dataProduct.setId(uuid);
-        
+
         if(loadDataProduct(uuid) != null) {
             throw new UnprocessableEntityException(
                 RegistryApiStandardErrors.SC422_04_PRODUCT_ALREADY_EXISTS,
                 "Data product [" + dataProduct.getFullyQualifiedName() + "] already exists");
         }
-       
+
         try {
             dataProduct = saveDataProduct(dataProduct);
-            logger.info("Data product [" + dataProduct.getFullyQualifiedName() + "] succesfully created");
+            logger.info("Data product [" + dataProduct.getFullyQualifiedName() + "] successfully created");
         } catch(Throwable t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                "An error occured in the backend database while saving data product [" + dataProduct.getFullyQualifiedName() + "]",
+                "An error occurred in the backend database while saving data product [" + dataProduct.getFullyQualifiedName() + "]",
                 t);
         }
 
-        registryEventNotifierProxy.notifyDataProductCreation(dataProductMapper.toResource(dataProduct));
-       
+        registryNotificationServiceProxy.notifyDataProductCreation(dataProductMapper.toResource(dataProduct));
+
         return dataProduct;
     }
 
@@ -118,7 +121,7 @@ public class DataProductService {
     // ======================================================================================
     // READ
     // ======================================================================================
-    
+
     public List<DataProduct> readAllDataProducts() {
         List<DataProduct> dataProducts = null;
         try {
@@ -126,7 +129,7 @@ public class DataProductService {
         } catch(Throwable t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                "An error occured in the backend database while loading data products",
+                "An error occurred in the backend database while loading data products",
                 t);
         }
         return dataProducts;
@@ -148,7 +151,7 @@ public class DataProductService {
     public DataProduct readDataProduct(String dataProductId)  {
 
         DataProduct dataProduct = null;
-        
+
         if(!StringUtils.hasText(dataProductId)) {
             throw new BadRequestException(
                 RegistryApiStandardErrors.SC400_07_PRODUCT_ID_IS_EMPTY,
@@ -160,10 +163,10 @@ public class DataProductService {
         } catch(Throwable t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                "An error occured in the backend database while loading data product with id [" + dataProductId + "]",
+                "An error occurred in the backend database while loading data product with id [" + dataProductId + "]",
                 t);
         }
-       
+
         if(dataProduct == null){
             throw new NotFoundException(
                 RegistryApiStandardErrors.SC404_01_PRODUCT_NOT_FOUND,
@@ -172,16 +175,16 @@ public class DataProductService {
 
         return dataProduct;
     }
-    
+
     private DataProduct loadDataProduct(String dataProductId) {
         DataProduct dataProduct = null;
-        
+
         Optional<DataProduct> dataProductLookUpResults = dataProductRepository.findById(dataProductId);
-            
+
         if(dataProductLookUpResults.isPresent()){
             dataProduct = dataProductLookUpResults.get();
-        } 
-     
+        }
+
         return dataProduct;
     }
 
@@ -201,8 +204,8 @@ public class DataProductService {
     public boolean dataProductExists(String dataProductId)  {
         return dataProductRepository.existsById(dataProductId);
     }
-    
-    
+
+
     // -------------------------
     // search methods
     // -------------------------
@@ -213,7 +216,7 @@ public class DataProductService {
         } catch(Throwable t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                "An error occured in the backend database while searching data products",
+                "An error occurred in the backend database while searching data products",
                 t);
         }
         return dataProductSearchResults;
@@ -229,7 +232,7 @@ public class DataProductService {
     // ======================================================================================
     // UPDATE
     // ======================================================================================
-    
+
     public DataProduct updateDataProduct(DataProduct dataProduct) {
 
         if(dataProduct == null) {
@@ -239,7 +242,7 @@ public class DataProductService {
         }
 
         if(StringUtils.hasText(dataProduct.getId()) && StringUtils.hasText(dataProduct.getFullyQualifiedName())){
-            String generatedUuid = IdentifierStrategy.DEFUALT.getId(dataProduct.getFullyQualifiedName());
+            String generatedUuid = identifierStrategy.getId(dataProduct.getFullyQualifiedName());
             if(generatedUuid.equals(dataProduct.getId()) == false) {
                 throw new UnprocessableEntityException(
                     RegistryApiStandardErrors.SC422_05_PRODUCT_NOT_VALID,
@@ -251,15 +254,15 @@ public class DataProductService {
         if(StringUtils.hasText(dataProduct.getId())) {
             uuid = dataProduct.getId();
         } else if(StringUtils.hasText(dataProduct.getFullyQualifiedName())) {
-            uuid = IdentifierStrategy.DEFUALT.getId(dataProduct.getFullyQualifiedName());
+            uuid = identifierStrategy.getId(dataProduct.getFullyQualifiedName());
         } else {
             throw new UnprocessableEntityException(
                 RegistryApiStandardErrors.SC422_05_PRODUCT_NOT_VALID,
                     "Data product id and fullyQualifiedName properties cannot be both empty");
         }
         DataProduct oldDataProduct = loadDataProduct(uuid);
-       
-       
+
+
         if(oldDataProduct == null) {
             throw new NotFoundException(
                 RegistryApiStandardErrors.SC404_01_PRODUCT_NOT_FOUND,
@@ -270,15 +273,15 @@ public class DataProductService {
 
         try {
             dataProduct = saveDataProduct(dataProduct);
-            logger.info("Data product [" + dataProduct.getFullyQualifiedName() + "] with id [" + dataProduct.getId() + "] succesfully updated");
+            logger.info("Data product [" + dataProduct.getFullyQualifiedName() + "] with id [" + dataProduct.getId() + "] successfully updated");
         } catch(Throwable t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                "An error occured in the backend database while updating data product [" + dataProduct.getFullyQualifiedName() + "] with id [" + dataProduct.getId() + "]",
+                "An error occurred in the backend database while updating data product [" + dataProduct.getFullyQualifiedName() + "] with id [" + dataProduct.getId() + "]",
                 t);
         }
 
-        registryEventNotifierProxy.notifyDataProductUpdate(
+        registryNotificationServiceProxy.notifyDataProductUpdate(
                 dataProductMapper.toResource(oldDataProduct),
                 dataProductMapper.toResource(dataProduct)
         );
@@ -289,24 +292,24 @@ public class DataProductService {
     // ======================================================================================
     // DELETE
     // ======================================================================================
-    
+
     public DataProduct deleteDataProduct(String dataProductId)  {
 
         DataProduct dataProduct = readDataProduct(dataProductId);
-        
+
         dataProductVersionService.deleteAllDataProductVersions(dataProduct.getId());
-        
+
         try {
             dataProductRepository.delete(dataProduct);
             logger.info("Data product with id [" + dataProductId + "] successfully deleted");
         } catch(Throwable t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                "An error occured in the backend database while deleting data product",
+                "An error occurred in the backend database while deleting data product",
                 t);
         }
 
-        registryEventNotifierProxy.notifyDataProductDeletion(dataProductMapper.toResource(dataProduct));
+        registryNotificationServiceProxy.notifyDataProductDeletion(dataProductMapper.toResource(dataProduct));
 
         return dataProduct;
     }
@@ -318,28 +321,28 @@ public class DataProductService {
     // ======================================================================================
 
     /**
-     * 
+     *
      * @param descriptorLocation
      * @param createDataProductIfNotExists
      * @param serverUrl
      * @return
-     * 
-     * @throws NotFoundException 
+     *
+     * @throws NotFoundException
      *      SC404_01_PRODUCT_NOT_FOUND
-     * @throws UnprocessableEntityException 
+     * @throws UnprocessableEntityException
      *      SC422_02_DESCRIPTOR_DOC_SYNTAX_IS_INVALID
      *      SC422_03_DESCRIPTOR_DOC_SEMANTIC_IS_INVALID
      *      SC422_05_VERSION_ALREADY_EXISTS
-     * @throws InternalServerException 
+     * @throws InternalServerException
      *      SC500_SERVICE_ERROR
      *      SC500_DATABASE_ERROR
-     * @throws BadGatewayException 
+     * @throws BadGatewayException
      *      SC502_01_POLICY_SERVICE_ERROR
      *      SC502_05_META_SERVICE_ERROR
      */
      public DataProductVersion addDataProductVersion(
         String dataProductId,
-        DescriptorLocation descriptorLocation, 
+        DescriptorLocation descriptorLocation,
         String serverUrl // TODO remove form here !!!
     ) {
         if(!StringUtils.hasText(dataProductId)) {
@@ -356,14 +359,14 @@ public class DataProductService {
                 RegistryApiStandardErrors.SC422_03_DESCRIPTOR_NOT_COMPLIANT,
                 "Data product fqn [" + dataProduct.getFullyQualifiedName() + "] does not match with the fqn [" + dataProductVersion.getInfo().getFullyQualifiedName() + "] contained in data product descriptor");
         }
-        
+
         return addDataProductVersion(dataProductVersion, false, serverUrl);
     }
 
 
 
     public DataProductVersion addDataProductVersion(
-        DescriptorLocation descriptorLocation, 
+        DescriptorLocation descriptorLocation,
         boolean createDataProductIfNotExists,
         String serverUrl // TODO remove form here !!!
     ) {
@@ -373,14 +376,14 @@ public class DataProductService {
         return addDataProductVersion(dataProductVersion, createDataProductIfNotExists, serverUrl);
     }
 
-   
+
     // TODO execute compatibility check (version check and API check for the moment)
     //TODO check schemas evolution rules
     private DataProductVersion addDataProductVersion (
-        DataProductVersion dataProductVersion, 
-        boolean createDataProductIfNotExists, String serverUrl) 
+        DataProductVersion dataProductVersion,
+        boolean createDataProductIfNotExists, String serverUrl)
     {
-        
+
         if(dataProductVersion == null) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
@@ -392,20 +395,20 @@ public class DataProductService {
                 RegistryApiStandardErrors.SC422_03_DESCRIPTOR_NOT_COMPLIANT,
                 "Data product descriptor is not compliant with global policies");
         }
-        
+
         DataProduct dataProduct = null;
         String dataProductId = dataProductVersion.getInfo().getDataProductId();
         if(dataProductExists(dataProductId)) {
             dataProduct = loadDataProduct(dataProductId);
         } else {
             if(createDataProductIfNotExists) {
-                dataProduct = dataProductVersion.getDataProduct();
+                dataProduct = getDataProduct(dataProductVersion);
                 dataProduct = createDataProduct(dataProduct);
             } else {
                 throw new NotFoundException(
                     RegistryApiStandardErrors.SC404_01_PRODUCT_NOT_FOUND,
                 "Data product [" + dataProductId + "] not found");
-            } 
+            }
         }
 
         dataProductVersion = dataProductVersionService.createDataProductVersion(dataProductVersion, false, serverUrl);
@@ -436,7 +439,8 @@ public class DataProductService {
         );
         ParseOptions options = new ParseOptions();
         options.setServerUrl(serverUrl);
-               
+        options.setIdentifierStrategy(identifierStrategy);
+
         DataProductVersionDPDS descriptor = null;
         try {
             ParseResult result = descriptorParser.parse(descriptorLocation, options);
@@ -444,7 +448,7 @@ public class DataProductService {
         } catch (ParseException e) {
             handleBuildException(e);
         }
-     
+
         dataProductVersion = dataProductVersionMapper.toEntity(descriptor);
         dataProductVersion.setDataProductId(dataProductVersion.getInfo().getDataProductId());
         dataProductVersion.setVersionNumber(dataProductVersion.getInfo().getVersionNumber());
@@ -466,19 +470,19 @@ public class DataProductService {
             case RESOLVE_READ_ONLY_PROPERTIES:
                 throw new InternalServerException(
                     ODMApiCommonErrors.SC500_02_DESCRIPTOR_ERROR,
-            "An error occured in the backend descriptor processor while adding read only properties", e);
+            "An error occurred in the backend descriptor processor while adding read only properties", e);
             case RESOLVE_STANDARD_DEFINITIONS:
                 throw new InternalServerException(
                     ODMApiCommonErrors.SC500_02_DESCRIPTOR_ERROR,
-            "An error occured in the backend descriptor processor while resolving standard definitions", e);
+            "An error occurred in the backend descriptor processor while resolving standard definitions", e);
             case VALIDATE:
                 throw new UnprocessableEntityException(
                 RegistryApiStandardErrors.SC422_02_DESCRIPTOR_NOT_VALID,
-                "Descriptor document does not comply with DPDS. The following validation errors has been found during validation [" + ((ValidationException)e.getCause()).getErrors().toString() + "]", e);    
+                "Descriptor document does not comply with DPDS. The following validation errors has been found during validation [" + ((ValidationException)e.getCause()).getErrors().toString() + "]", e);
             default:
               throw new InternalServerException(
                 ODMApiCommonErrors.SC500_02_DESCRIPTOR_ERROR,
-                    "An error occured in the backend descriptor processor while adding read only properties", e);
+                    "An error occurred in the backend descriptor processor while adding read only properties", e);
           }
     }
 
@@ -491,12 +495,12 @@ public class DataProductService {
         } else if(e.getCause() instanceof DeserializationException) {
             throw new UnprocessableEntityException(
                 RegistryApiStandardErrors.SC422_02_DESCRIPTOR_NOT_VALID,
-                "Descriptor document is not a valid JSON document", e);    
+                "Descriptor document is not a valid JSON document", e);
         }  else {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_02_DESCRIPTOR_ERROR,
-                "An unexpected exception occured while loading root document", e);
-        }  
+                "An unexpected exception occurred while loading root document", e);
+        }
     }
 
     private void handleResolveExternalResourceException(ParseException e) {
@@ -512,8 +516,8 @@ public class DataProductService {
         }  else {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_02_DESCRIPTOR_ERROR,
-                "An unexpected exception occured while resolving external references", e);
-        }  
+                "An unexpected exception occurred while resolving external references", e);
+        }
     }
 
     private void handleResolveInternalResourceException(ParseException e) {
@@ -529,8 +533,24 @@ public class DataProductService {
         } else {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_02_DESCRIPTOR_ERROR,
-                "An unexpected exception occured while resolving internal references", e);
-        }  
+                "An unexpected exception occurred while resolving internal references", e);
+        }
     }
-   
+
+    private DataProduct getDataProduct(DataProductVersion dataProductVersion) {
+        //TODO refactor --> this generates a detached entity!!! (the correct way should be by joining the DataProduct with the DataProductVersion)
+        DataProduct dataProduct = new DataProduct();
+        if(dataProductVersion.getInfo().getFullyQualifiedName() == null) {
+            throw new InternalServerException(
+                    ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
+                    "Data product object cannot be null");
+        } else {
+            dataProduct.setFullyQualifiedName(dataProductVersion.getInfo().getFullyQualifiedName());
+        }
+
+        dataProduct.setId( identifierStrategy.getId(dataProductVersion.getInfo().getFullyQualifiedName()) );
+        dataProduct.setDomain(dataProductVersion.getInfo().getDomain());
+        return dataProduct;
+    }
+
 }

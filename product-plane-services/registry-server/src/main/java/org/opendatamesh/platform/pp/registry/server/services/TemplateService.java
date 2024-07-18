@@ -1,8 +1,9 @@
 package org.opendatamesh.platform.pp.registry.server.services;
 
+import org.opendatamesh.dpds.model.core.EntityTypeDPDS;
+import org.opendatamesh.dpds.parser.IdentifierStrategy;
+import org.opendatamesh.dpds.parser.IdentifierStrategyFactory;
 import org.opendatamesh.platform.core.commons.servers.exceptions.*;
-import org.opendatamesh.platform.core.dpds.model.core.EntityTypeDPDS;
-import org.opendatamesh.platform.core.dpds.parser.IdentifierStrategy;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
 import org.opendatamesh.platform.pp.registry.server.database.entities.Template;
 import org.opendatamesh.platform.pp.registry.server.database.repositories.TemplateRepository;
@@ -21,6 +22,9 @@ public class TemplateService {
 
     @Autowired
     private TemplateRepository templateDefinitionRepository;
+
+    @Autowired
+    private IdentifierStrategy identifierStrategy;
 
     private static final Logger logger = LoggerFactory.getLogger(TemplateService.class);
 
@@ -84,13 +88,12 @@ public class TemplateService {
                     "Property [definition] cannot be empty");
         }
 
-         String fqn = IdentifierStrategy.DEFUALT.getExternalComponentFqn(
+         String fqn = identifierStrategy.getExternalComponentFqn(
                 EntityTypeDPDS.TEMPLATE,
                 template.getName(),
                 template.getVersion());
+        String id = identifierStrategy.getId(fqn);
 
-        String id = IdentifierStrategy.DEFUALT.getId(fqn);
-        
         template.setId(id);
         template.setFullyQualifiedName(fqn);
         template.setEntityType(EntityTypeDPDS.TEMPLATE.propertyValue());
@@ -107,7 +110,7 @@ public class TemplateService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while saving template",
+                    "An error occurred in the backend database while saving template",
                     t);
         }
 
@@ -191,7 +194,7 @@ public class TemplateService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while loading definition [" + definitionId + "]",
+                    "An error occurred in the backend database while loading definition [" + definitionId + "]",
                     t);
         }
 
@@ -219,7 +222,7 @@ public class TemplateService {
         } else {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while searching definitions");
+                    "An error occurred in the backend database while searching definitions");
         }
 
         return definition;
@@ -236,7 +239,7 @@ public class TemplateService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while searching definitions",
+                    "An error occurred in the backend database while searching definitions",
                     t);
         }
         return definitionSearchResults;
@@ -276,7 +279,7 @@ public class TemplateService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while updating definition [" + definition.getId() + "]",
+                    "An error occurred in the backend database while updating definition [" + definition.getId() + "]",
                     t);
         }
 
@@ -301,7 +304,7 @@ public class TemplateService {
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                    "An error occured in the backend database while deleting definition [" + definitionId + "]",
+                    "An error occurred in the backend database while deleting definition [" + definitionId + "]",
                     t);
         }
 

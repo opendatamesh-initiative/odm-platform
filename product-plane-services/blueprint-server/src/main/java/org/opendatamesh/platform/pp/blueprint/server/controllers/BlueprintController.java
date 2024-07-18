@@ -2,6 +2,7 @@ package org.opendatamesh.platform.pp.blueprint.server.controllers;
 
 import org.opendatamesh.platform.pp.blueprint.api.controllers.BlueprintAbstractController;
 import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintResource;
+import org.opendatamesh.platform.pp.blueprint.api.resources.BlueprintSearchOptions;
 import org.opendatamesh.platform.pp.blueprint.api.resources.ConfigResource;
 import org.opendatamesh.platform.pp.blueprint.server.database.mappers.BlueprintMapper;
 import org.opendatamesh.platform.pp.blueprint.server.services.BlueprintService;
@@ -21,8 +22,8 @@ public class BlueprintController extends BlueprintAbstractController {
     BlueprintService blueprintService;
 
     @Override
-    public List<BlueprintResource> readBlueprints() {
-        return blueprintMapper.toResources(blueprintService.readBlueprints());
+    public List<BlueprintResource> readBlueprints(BlueprintSearchOptions blueprintSearchOptions) {
+        return blueprintMapper.toResources(blueprintService.readBlueprints(blueprintSearchOptions));
     }
 
     @Override

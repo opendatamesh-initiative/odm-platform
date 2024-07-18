@@ -7,12 +7,15 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3.5.2
         with:
           ssh-key: ${{secrets.SSH_KEY}}
-      - name: Install SSH key # Install SSH key to connect to github repos
+      - name: Install SSH key # Install SSH key to connect to GitHub repos
         uses: shimataro/ssh-key-action@v2
         with:
           key: ${{ secrets.SSH_KEY }}
@@ -28,5 +31,9 @@ jobs:
           mvn -B test -Dspring.profiles.active=test
           mvn -B test -Dspring.profiles.active=testpostgresql
           mvn -B test -Dspring.profiles.active=testmysql
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Build with Maven
         run: mvn -B clean install -DskipTests --file pom.xml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

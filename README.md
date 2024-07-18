@@ -57,7 +57,27 @@ cd odm-platform
 Here you can find the Dockerfile which creates an image containing the application by directly copying it from the build executed locally (i.e. from `target` folder).
 
 ### Compile project
-You need to first execute the build locally by running the following command: 
+First, in order to correctly download external Maven dependencies from GitHub Packages, you need to configure the Maven `settings.xml` file with your GitHub credentials. The GITHUB TOKEN must have `read:packages` permissions.
+
+```xml
+
+<settings>
+    <servers>
+        <server>
+            <id>github</id>
+            <username>GITHUB USERNAME</username>
+            <password>GITHUB TOKEN</password>
+        </server>
+    </servers>
+</settings>
+```
+
+The `settings.xml` file is in the `~/.m2` directory.
+
+For additional information,
+see ["How to install an Apache Maven package from GitHub Packages"](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-apache-maven-registry#installing-a-package).
+
+Then you need to first execute the build locally by running the following command: 
 
 ```bash
 mvn clean install -DskipTests

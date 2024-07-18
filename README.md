@@ -21,7 +21,27 @@ git clone git@github.com:opendatamesh-initiative/odm-platform.git
 cd odm-platform
 ```
 ### Compile project
-Compile the project:
+First, in order to correctly download external Maven dependencies from GitHub Packages, you need to configure the Maven `settings.xml` file with your GitHub credentials. The GITHUB TOKEN must have `read:packages` permissions.
+
+```xml
+
+<settings>
+    <servers>
+        <server>
+            <id>github</id>
+            <username>GITHUB USERNAME</username>
+            <password>GITHUB TOKEN</password>
+        </server>
+    </servers>
+</settings>
+```
+
+The `settings.xml` file is in the `~/.m2` directory.
+
+For additional information,
+see ["How to install an Apache Maven package from GitHub Packages"](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-apache-maven-registry#installing-a-package).
+
+Then run:
 
 ```bash
 mvn clean install -DskipTests

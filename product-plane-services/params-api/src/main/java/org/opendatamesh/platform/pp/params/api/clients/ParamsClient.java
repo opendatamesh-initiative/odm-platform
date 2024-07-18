@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.platform.core.commons.clients.ODMClient;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
-import org.opendatamesh.platform.core.dpds.ObjectMapperFactory;
+import org.opendatamesh.platform.core.commons.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.params.api.resources.ParamResource;
 import org.springframework.http.*;
 

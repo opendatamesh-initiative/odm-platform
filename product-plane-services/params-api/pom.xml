@@ -86,17 +86,7 @@ License.
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>org.opendatamesh</groupId>
-            <artifactId>odm-platform-core-dpds-parser</artifactId>
-            <version>1.0.0</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <version>5.3.29-SNAPSHOT</version>
-        </dependency>
+
         <!-- ... -->
 
     </dependencies>

@@ -1,0 +1,7 @@
+{
+  "paramName": "spring.port",
+  "paramValue": "8001",
+  "secret": false,
+  "displayName": "Registry Spring Port",
+  "description": "Port of the Registry Server application"
+}

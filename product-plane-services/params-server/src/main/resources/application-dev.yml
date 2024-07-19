@@ -26,7 +26,7 @@ spring:
         jdbc:
           lob:
             non_contextual_creation: true
-        default_schema: ODMBLUEPRINT
+        default_schema: ODMPARAM
     database-platform: org.hibernate.dialect.H2Dialect
   # DB
   datasource:
@@ -46,26 +46,10 @@ spring:
     user: sa
     password:
     #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
-    schemas: ODMBLUEPRINT
+    schemas: ODMPARAM
     locations: classpath:db/migration/h2
     clean-on-validation-error: true
 
-
-############################################
-# Git configurations
-############################################
-git:
-  provider: "GITHUB"
-  templates:
-    path: "templates"
-  auth:
-    oauth2:
-      client:
-        provider:
-          token-uri: "null"
-        registration:
-          client-id: "null"
-          client-secret: "null"
-          scope: "null"
-          authorization-grant-type: "null"
-    pat: "null"
+encryption:
+  enabled: true
+  acceptedClientUUID: paramclient123

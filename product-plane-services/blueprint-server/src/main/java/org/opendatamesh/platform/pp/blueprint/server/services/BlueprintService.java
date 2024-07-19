@@ -43,12 +43,7 @@ public class BlueprintService {
     @Value("${git.provider}")
     private String gitProvider; // Remove it when GitHub will support OAuth2
 
-    private String targetPathSuffix = "/projects";
-
-    private String sourcePathSuffix = "/blueprints";
-
     private static final Logger logger = LoggerFactory.getLogger(BlueprintService.class);
-
 
     // ======================================================================================
     // CREATE
@@ -308,64 +303,77 @@ public class BlueprintService {
                     "Blueprint with id [" + blueprintId + "] doesn't exists");
         }
 
-        try {
-            //TODO refactor this
-            //1. Auto close the repository opened
-            //2. fix ide smell
 
-            // Clone the BLUEPRINT repository
-            logger.info("Cloning repository [" + blueprint.getRepositoryUrl() + "] ...");
-            Git gitRepo = gitService.cloneRepo(
-                    blueprint.getRepositoryUrl(),
-                    templatesPath + sourcePathSuffix,
-                    false, null, null
-            );
-            logger.info("Repository [" + blueprint.getRepositoryUrl() + "] correctly cloned");
+        // Clone the BLUEPRINT repository
+        String sourceRepoTmpDirectory = generateTemporaryDirectoryName();
+        logger.info("Cloning repository [{}] ...", blueprint.getRepositoryUrl());
+
+        try (Git sourceGitRepo = gitService.cloneRepo(
+                blueprint.getRepositoryUrl(),
+                sourceRepoTmpDirectory,
+                false, null, null)
+        ) {
+            logger.info("Repository [{}] correctly cloned", blueprint.getRepositoryUrl());
 
             // Clean the repository to consider only the template
+            String targetRepoTmpDirectory = generateTemporaryDirectoryName();
             logger.info("Initializing new Git target repository ...");
-            gitRepo = gitService.initTargetRepository(
-                    gitRepo,
+
+            //TODO refactor !!!!
+            // AS IS :
+            // createRepo == true
+            // |---> the repository where the instantiation of the blueprint will be pushed must be inside the organization.
+            // |---> the repoBaseUrl is computed like this (very fragile!!!) :
+            //                                              String repositoryUrl = "https://github.com/opendatamesh-initiative/odm-demo";
+            //                                              int lastSlashIndex = repositoryUrl.lastIndexOf("/");
+            //                                              String repoBaseUrl = repositoryUrl.substring(0, lastSlashIndex + 1);
+            //                                              repoBaseUrl --> "https://github.com/opendatamesh-initiative/"
+            // |---> the targetRepo should contain only the name of another repository inside the organization.
+            // createRepo == false
+            // |---> the targetRepo should contain the full url of the repository where the instantiation of the blueprint will be pushed.
+            String targetRepo = Boolean.TRUE.equals(configResource.getCreateRepo()) ? blueprint.getRepoBaseUrl() + configResource.getTargetRepo() : configResource.getTargetRepo();
+            try (Git targetGitRepo = gitService.initTargetRepository(
+                    sourceGitRepo,
                     blueprint.getBlueprintDirectory(),
                     configResource.getCreateRepo(),
-                    templatesPath + targetPathSuffix,
-                    blueprint.getRepoBaseUrl() + configResource.getTargetRepo()
-            );
-            logger.info("Target repository initialized");
+                    targetRepoTmpDirectory,
+                    targetRepo
+            )) {
+                logger.info("Target repository initialized");
+                // Get the working directory of the repository and call the templatingService to instance the BLUEPRINT
+                logger.info("Templating the repository ...");
+                File workingDirectory = targetGitRepo.getRepository().getWorkTree();
+                templatingService.templating(workingDirectory, configResource);
+                logger.info("Repository correctly templated");
 
-            // Get the working directory of the repository and call the templatingService to instance the BLUEPRINT
-            logger.info("Templating the repository ...");
-            File workingDirectory = gitRepo.getRepository().getWorkTree();
-            templatingService.templating(workingDirectory, configResource);
-            logger.info("Repository correctly templated");
+                if (Boolean.TRUE.equals(configResource.getCreateRepo())) {
+                    logger.info("Creating the target repository  on the remote provider ...");
+                    // Create the targetRepo
+                    //TODO refactor !!!!
+                    // The parameter are Git Provider dependant and should not reside inside the Blueprint Resource
+                    gitService.createRepo(
+                            blueprint.getOrganization(),
+                            blueprint.getProjectId(),
+                            configResource.getTargetRepo()
+                    );
+                } else {
+                    logger.info("Repository creation skipped (createRepo=false)");
+                }
 
-            if (configResource.getCreateRepo()) {
-                logger.info("Creating the target repository  on the remote provider ...");
-                // Create the targetRepo
-                gitService.createRepo(
-                        blueprint.getOrganization(),
-                        blueprint.getProjectId(),
-                        configResource.getTargetRepo()
+                logger.info("Committing and pushing the repository ...");
+                // Commit and Push the project created from the BLUEPRINT
+                gitService.commitAndPushRepo(
+                        targetGitRepo,
+                        "Project initialization from blueprint [" + blueprint.getRepositoryUrl() + "]"
                 );
-            } else {
-                logger.info("Repository creation skipped (createRepo=false)");
+                logger.info("Repository correctly pushed");
+
+            } finally {
+                gitService.deleteLocalRepository(targetRepoTmpDirectory);
             }
 
-            logger.info("Committing and pushing the repository ...");
-            // Commit and Push the project created from the BLUEPRINT
-            gitService.commitAndPushRepo(
-                    gitRepo,
-                    "Project initialization from blueprint [" + blueprint.getRepositoryUrl() + "]"
-            );
-            logger.info("Repository correctly pushed");
-
-            // Delete local repository
-            gitService.deleteLocalRepository(templatesPath);
-
-        } catch (Exception e) {
-            // Delete local repository
-            gitService.deleteLocalRepository(templatesPath);
-            throw e;
+        } finally {
+            gitService.deleteLocalRepository(sourceRepoTmpDirectory);
         }
     }
 

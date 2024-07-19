@@ -28,8 +28,11 @@ public class GitServiceConfig {
     @Value("${git.auth.oauth2.client.registration.authorization-grant-type}")
     private String authorizationGrantType;
 
-    @Value("${git.auth.pat}")
+    @Value("${git.auth.pat.token}")
     private String personalAccessToken;
+
+    @Value("${git.auth.pat.username}")
+    private String username;
 
     @Bean
     public GitService gitService() {
@@ -47,7 +50,7 @@ public class GitServiceConfig {
         }
         return GitServiceFactory.configureGitClient(
                 serviceType,
-                oAuthTokenManager,
+                username,
                 personalAccessToken
         );
     }

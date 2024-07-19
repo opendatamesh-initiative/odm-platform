@@ -69,14 +69,3 @@ git:
           scope: "null"
           authorization-grant-type: "null"
     pat: "null"
-
-
-############################################
-# ODM configurations
-############################################
-odm:
-  productPlane:
-    paramsService:
-      active: true
-      address: http://localhost:8004
-      clientUUID: paramclient123

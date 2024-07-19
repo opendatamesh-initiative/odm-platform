@@ -63,5 +63,5 @@ spring:
 # Encryption settings
 ############################################
 encryption:
-  enabled: false
+  enabled: true
   acceptedClientUUID: paramclient123

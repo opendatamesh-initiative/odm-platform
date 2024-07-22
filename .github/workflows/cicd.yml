@@ -1,17 +1,20 @@
 name: odm-platform CI/CD
 on:
-  push:
-    tags:
-      - '*'
+  release:
+    types: [ created ]
 env:
   REGISTRY_IMAGE_NAME: odm-platform-registry
   DEVOPS_IMAGE_NAME: odm-platform-devops
   BLUEPRINT_IMAGE_NAME: odm-platform-blueprint
   POLICY_IMAGE_NAME: odm-platform-policy
   NOTIFICATION_IMAGE_NAME: odm-platform-notification
+  PARAMS_IMAGE_NAME: odm-platform-params
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3.5.2
@@ -28,26 +31,20 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
           cache: maven
-          server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
-          settings-path: ${{ github.workspace }} # location for the settings.xml file
-      - name: Set env # Extract version and branch from tag and save them as environment variables
+      - name: Get Git Tag
+        run: echo "TAG_VERSION=$( echo ${{github.ref_name}} | sed 's/[^0-9.]//g' )" >> $GITHUB_ENV
+      - name: Get Maven Version
+        run: echo "MAVEN_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+      - name: Check Tag and Version Match
+        if: ${{ env.TAG_VERSION }} != ${{ env.MAVEN_VERSION }}
         run: |
-          echo "TAG_VERSION=$( echo ${{github.ref_name}} | sed 's/[^0-9.]//g' )" >> $GITHUB_ENV
-          echo "BRANCH_NAME=$( echo ${{ github.event.base_ref }} | sed 's|refs/heads/||' )" >> $GITHUB_ENV
-      - name: Update versions
-        run: mvn versions:set -DgenerateBackupPoms=false -DnewVersion=${{ env.TAG_VERSION }}
-      - name: Push new version
-        run: |
-          git config user.name "github-workflows-version-updater"
-          git config user.email "<>"
-          git commit -am "Update pom versions to ${{ env.TAG_VERSION }}"
-          git push origin HEAD:${{ env.BRANCH_NAME }}
-      - name: Build with Maven
-        run: mvn -B clean package --file pom.xml
-      - name: Publish to GitHub Packages Apache Maven
-        run: mvn -DGitHubPackages=true -DskipTests deploy -s $GITHUB_WORKSPACE/settings.xml
+          echo "Git tag (${{ env.TAG_VERSION }}) does not match POM version (${{ env.MAVEN_VERSION }})"
+          exit 1
+      - name: Publish package
+        run: mvn --batch-mode deploy
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Build Docker images
         run: |
           docker build . --file Dockerfile --tag $REGISTRY_IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}"
@@ -55,54 +52,66 @@ jobs:
           docker build . --file product-plane-services/blueprint-server/Dockerfile --tag $BLUEPRINT_IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}"
           docker build . --file product-plane-services/policy-server/Dockerfile --tag $POLICY_IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}"
           docker build . --file product-plane-services/notification-server/Dockerfile --tag $NOTIFICATION_IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}"
-      - name: Login to Container Registry
+          docker build . --file product-plane-services/params-server/Dockerfile --tag $PARAMS_IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}"
+      - name: Login to GitHub Container Registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
-      - name: Push images to Container Registry
+      - name: Push images to GitHub Container Registry
         run: |
           IMAGE_ID=ghcr.io/${{ github.repository_owner }}/odm-platform-registry
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
           echo IMAGE_ID=$IMAGE_ID
           docker tag $REGISTRY_IMAGE_NAME $IMAGE_ID:${{ env.TAG_VERSION }}
           docker push $IMAGE_ID:${{ env.TAG_VERSION }}
+          
           IMAGE_ID=ghcr.io/${{ github.repository_owner }}/odm-platform-devops
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
           echo IMAGE_ID=$IMAGE_ID
           docker tag $DEVOPS_IMAGE_NAME $IMAGE_ID:${{ env.TAG_VERSION }}
           docker push $IMAGE_ID:${{ env.TAG_VERSION }}
+          
           IMAGE_ID=ghcr.io/${{ github.repository_owner }}/odm-platform-blueprint
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
           echo IMAGE_ID=$IMAGE_ID
           docker tag $BLUEPRINT_IMAGE_NAME $IMAGE_ID:${{ env.TAG_VERSION }}
           docker push $IMAGE_ID:${{ env.TAG_VERSION }}
+          
           IMAGE_ID=ghcr.io/${{ github.repository_owner }}/odm-platform-policy
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
           echo IMAGE_ID=$IMAGE_ID
           docker tag $POLICY_IMAGE_NAME $IMAGE_ID:${{ env.TAG_VERSION }}
           docker push $IMAGE_ID:${{ env.TAG_VERSION }}
+          
           IMAGE_ID=ghcr.io/${{ github.repository_owner }}/odm-platform-notification
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
           echo IMAGE_ID=$IMAGE_ID
           docker tag $NOTIFICATION_IMAGE_NAME $IMAGE_ID:${{ env.TAG_VERSION }}
           docker push $IMAGE_ID:${{ env.TAG_VERSION }}
-      - name: Docker login
+          
+          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/odm-platform-params
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+          echo IMAGE_ID=$IMAGE_ID
+          docker tag $PARAMS_IMAGE_NAME $IMAGE_ID:${{ env.TAG_VERSION }}
+          docker push $IMAGE_ID:${{ env.TAG_VERSION }}
+      - name: DockerHub login
         env:
           DOCKER_USER: ${{secrets.DOCKER_USERNAME}}
           DOCKER_PWD: ${{secrets.DOCKER_PASSWORD}}
         run: docker login -u $DOCKER_USER -p $DOCKER_PWD
-      - name: Docker build
+      - name: DockerHub images build
         run: |
           docker build . --file Dockerfile --tag opendatamesh/odm-platform-registry:${{ env.TAG_VERSION }}
           docker build . --file product-plane-services/devops-server/Dockerfile --tag opendatamesh/odm-platform-devops:${{ env.TAG_VERSION }}
           docker build . --file product-plane-services/blueprint-server/Dockerfile --tag opendatamesh/odm-platform-blueprint:${{ env.TAG_VERSION }}
           docker build . --file product-plane-services/policy-server/Dockerfile --tag opendatamesh/odm-platform-policy:${{ env.TAG_VERSION }}
           docker build . --file product-plane-services/notification-server/Dockerfile --tag opendatamesh/odm-platform-notification:${{ env.TAG_VERSION }}
-      - name: Docker push
+      - name: DockerHub images push
         run: |
           docker push opendatamesh/odm-platform-registry:${{ env.TAG_VERSION }}
           docker push opendatamesh/odm-platform-devops:${{ env.TAG_VERSION }}
           docker push opendatamesh/odm-platform-blueprint:${{ env.TAG_VERSION }}
           docker push opendatamesh/odm-platform-policy:${{ env.TAG_VERSION }}
           docker push opendatamesh/odm-platform-notification:${{ env.TAG_VERSION }}
+
       - name: Publish API doc
         run: |
           ./generate-full-redoc-static-html.sh

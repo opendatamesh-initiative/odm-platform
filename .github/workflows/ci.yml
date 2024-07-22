@@ -4,6 +4,11 @@ on:
     branches: # Execute on "main" branch and product branches, avoid others
       - 'main' # Main branch
       - '*.*' # Product branches (e.g., 0.7, 0.x, 1.x, ...)
+  pull_request:
+    branches:
+      - 'main' # Main branch
+      - '*.*' # Product branches (e.g., 0.7, 0.x, 1.x, ...)
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -21,7 +26,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
       - name: Set up JDK 11
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '11'
           distribution: 'temurin'
@@ -31,9 +36,5 @@ jobs:
           mvn -B test -Dspring.profiles.active=test
           mvn -B test -Dspring.profiles.active=testpostgresql
           mvn -B test -Dspring.profiles.active=testmysql
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build with Maven
-        run: mvn -B clean install -DskipTests --file pom.xml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -41,8 +41,8 @@ jobs:
             echo "Git tag (${{ env.TAG_VERSION }}) does not match POM version (${{ env.MAVEN_VERSION }})"
             exit 1
           fi
-      - name: Publish package
-        run: mvn --batch-mode deploy
+      - name: Publish Maven package
+        run: mvn -DGitHubPackages=true --batch-mode deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

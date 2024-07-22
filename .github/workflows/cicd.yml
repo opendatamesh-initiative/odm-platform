@@ -36,10 +36,11 @@ jobs:
       - name: Get Maven Version
         run: echo "MAVEN_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
       - name: Check Tag and Version Match
-        if: ${{ env.TAG_VERSION }} != ${{ env.MAVEN_VERSION }}
         run: |
-          echo "Git tag (${{ env.TAG_VERSION }}) does not match POM version (${{ env.MAVEN_VERSION }})"
-          exit 1
+          if [ "${{ env.TAG_VERSION }}" != "${{ env.MAVEN_VERSION }}" ]; then
+            echo "Git tag (${{ env.TAG_VERSION }}) does not match POM version (${{ env.MAVEN_VERSION }})"
+            exit 1
+          fi
       - name: Publish package
         run: mvn --batch-mode deploy
         env:

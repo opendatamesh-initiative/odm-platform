@@ -140,7 +140,7 @@ jobs:
           docker push opendatamesh/odm-platform-notification:${{ env.TAG_VERSION }}
   publish-api-doc:
     runs-on: ubuntu-latest
-    needs: [ deploy-maven-packages, deploy-docker-images ]
+    needs: verify-version
     permissions:
       contents: read
     steps:

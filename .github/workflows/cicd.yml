@@ -55,6 +55,8 @@ jobs:
     permissions:
       contents: read
     steps:
+      - name: Get Git Tag
+        run: echo "TAG_VERSION=$( echo ${{github.ref_name}} | sed 's/[^0-9.]//g' )" >> $GITHUB_ENV
       - name: Check out repository code
         uses: actions/checkout@v4
       - name: Install SSH key # Install SSH key to connect to github repos
@@ -144,6 +146,8 @@ jobs:
     permissions:
       contents: read
     steps:
+      - name: Get Git Tag
+        run: echo "TAG_VERSION=$( echo ${{github.ref_name}} | sed 's/[^0-9.]//g' )" >> $GITHUB_ENV
       - name: Check out repository code
         uses: actions/checkout@v4
       - name: Set up JDK 11

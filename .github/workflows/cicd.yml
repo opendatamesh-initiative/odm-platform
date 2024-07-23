@@ -84,37 +84,37 @@ jobs:
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
       - name: Push images to GitHub Container Registry
         run: |
-          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/odm-platform-registry
+          IMAGE_ID=ghcr.io/opendatamesh-initiative/odm-platform-registry
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
           echo IMAGE_ID=$IMAGE_ID
           docker tag $REGISTRY_IMAGE_NAME $IMAGE_ID:${{ env.TAG_VERSION }}
           docker push $IMAGE_ID:${{ env.TAG_VERSION }}
           
-          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/odm-platform-devops
+          IMAGE_ID=ghcr.io/opendatamesh-initiative/odm-platform-devops
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
           echo IMAGE_ID=$IMAGE_ID
           docker tag $DEVOPS_IMAGE_NAME $IMAGE_ID:${{ env.TAG_VERSION }}
           docker push $IMAGE_ID:${{ env.TAG_VERSION }}
           
-          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/odm-platform-blueprint
+          IMAGE_ID=ghcr.io/opendatamesh-initiative/odm-platform-blueprint
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
           echo IMAGE_ID=$IMAGE_ID
           docker tag $BLUEPRINT_IMAGE_NAME $IMAGE_ID:${{ env.TAG_VERSION }}
           docker push $IMAGE_ID:${{ env.TAG_VERSION }}
           
-          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/odm-platform-policy
+          IMAGE_ID=ghcr.io/opendatamesh-initiative/odm-platform-policy
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
           echo IMAGE_ID=$IMAGE_ID
           docker tag $POLICY_IMAGE_NAME $IMAGE_ID:${{ env.TAG_VERSION }}
           docker push $IMAGE_ID:${{ env.TAG_VERSION }}
           
-          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/odm-platform-notification
+          IMAGE_ID=ghcr.io/opendatamesh-initiative/odm-platform-notification
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
           echo IMAGE_ID=$IMAGE_ID
           docker tag $NOTIFICATION_IMAGE_NAME $IMAGE_ID:${{ env.TAG_VERSION }}
           docker push $IMAGE_ID:${{ env.TAG_VERSION }}
           
-          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/odm-platform-params
+          IMAGE_ID=ghcr.io/opendatamesh-initiative/odm-platform-params
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
           echo IMAGE_ID=$IMAGE_ID
           docker tag $PARAMS_IMAGE_NAME $IMAGE_ID:${{ env.TAG_VERSION }}
@@ -152,6 +152,10 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
           cache: maven
+      - name: Set up node
+        uses: actions/setup-node@v4
+      - name: Install Redocly CLI
+        run: npm install -g @redocly/cli@latest
       - name: Publish API doc
         run: |
           ./generate-full-redoc-static-html.sh

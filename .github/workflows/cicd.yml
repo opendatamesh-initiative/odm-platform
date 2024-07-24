@@ -171,10 +171,10 @@ jobs:
         uses: actions/setup-node@v4
       - name: Install Redocly CLI
         run: npm install -g @redocly/cli@latest
-      - name: Set Git user
+      - name: Set Git user #The git user.name should be ketp like this because it is associated to the SSH key
         run: |
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
+          git config user.name "github-workflows-version-updater"
+          git config user.email "<>"
       - name: Publish API doc
         run: |
           ./generate-full-redoc-static-html.sh

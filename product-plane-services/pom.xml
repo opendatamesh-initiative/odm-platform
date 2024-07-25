@@ -33,7 +33,7 @@ License.
     <name>ODM Platform PRODUCT PLANE SERVICES</name>
    
     <description>Open Data Mesh Platform Utility Plane Services</description>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <url>https://github.com/opendatamesh-initiative/odm-platform</url>
     <packaging>pom</packaging>
 

@@ -25,9 +25,13 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - name: Get Git Tag
-        run: echo "TAG_VERSION=$( echo ${{github.ref_name}} | sed 's/[^0-9.]//g' )" >> $GITHUB_ENV
+        run: |
+          TAG_VERSION=$( echo ${{github.ref_name}} | sed 's/[^0-9.]//g' )
+          echo "TAG_VERSION=${TAG_VERSION}" >> $GITHUB_ENV
       - name: Get Maven Version
-        run: echo "MAVEN_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+        run: |
+          MAVEN_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "MAVEN_VERSION=${MAVEN_VERSION}" >> $GITHUB_ENV
       - name: Check Tag and Version Match
         run: |
           if [ "${{ env.TAG_VERSION }}" != "${{ env.MAVEN_VERSION }}" ]; then

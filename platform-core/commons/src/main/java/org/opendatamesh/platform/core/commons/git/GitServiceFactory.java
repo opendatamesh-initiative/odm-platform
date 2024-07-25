@@ -12,16 +12,32 @@ public final class GitServiceFactory {
 
     public static GitService configureGitClient(
             String gitProvider,
-            OAuthTokenManager oAuthTokenManager,
+            OAuthTokenManager oAuthTokenManager
+    ) {
+        if (gitProvider.equals("AZURE_DEVOPS")) {
+            return new AzureService(oAuthTokenManager);
+        }
+        throw new InternalServerException(
+                GitStandardErrors.SC500_02_GIT_CLIENT_ERROR,
+                "Oauth not supported for this Git Provider [" + gitProvider + "]"
+        );
+    }
+
+    public static GitService configureGitClient(
+            String gitProvider,
+            String username,
             String personalAccessToken
     ) {
         switch (gitProvider) {
             case "AZURE_DEVOPS":
-                return new AzureService(oAuthTokenManager);
+                throw new InternalServerException(
+                        GitStandardErrors.SC500_02_GIT_CLIENT_ERROR,
+                        "Configuration not valid for AZURE_DEVOPS git client (only oauth is supported)."
+                );
             case "GITHUB":
-                return new GitHubService(personalAccessToken);
+                return new GitHubService(username, personalAccessToken);
             case "GENERIC":
-                return new GenericGitService(personalAccessToken);
+                return new GenericGitService(username, personalAccessToken);
             default:
                 throw new InternalServerException(
                         GitStandardErrors.SC500_02_GIT_CLIENT_ERROR,
@@ -29,5 +45,4 @@ public final class GitServiceFactory {
                 );
         }
     }
-
 }

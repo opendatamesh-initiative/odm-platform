@@ -6,6 +6,7 @@ import org.opendatamesh.platform.core.commons.git.resources.errors.GitStandardEr
 import org.opendatamesh.platform.core.commons.git.resources.github.GitRepoResource;
 import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
 import org.springframework.http.*;
+import org.springframework.util.StringUtils;
 
 public class GitHubClient extends ODMClient {
 
@@ -29,15 +30,16 @@ public class GitHubClient extends ODMClient {
         requestBody.setName(repositoryName);
 
         HttpEntity<GitRepoResource> requestEntity = new HttpEntity<>(requestBody, requestHeaders);
-
+        //TODO this must be safe
+        String url = StringUtils.hasText(organization) ? apiUrl(GitHubAPIRoutes.GITHUB_API_ORG_REPOS).replace("{org}", organization) : apiUrl(GitHubAPIRoutes.GITHUB_API_USER_REPOS);
         ResponseEntity<String> response = rest.exchange(
-                apiUrl(GitHubAPIRoutes.GITHUB_API_REPOS),
+                url,
                 HttpMethod.POST,
                 requestEntity,
                 String.class
         );
 
-        if(!response.getStatusCode().is2xxSuccessful()) {
+        if (!response.getStatusCode().is2xxSuccessful()) {
             switch (response.getStatusCode()) {
                 case UNAUTHORIZED:
                     throw new InternalServerException(

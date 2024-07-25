@@ -28,13 +28,16 @@ public class GitServiceConfig {
     @Value("${git.auth.oauth2.client.registration.authorization-grant-type}")
     private String authorizationGrantType;
 
-    @Value("${git.auth.pat}")
+    @Value("${git.auth.pat.token}")
     private String personalAccessToken;
+
+    @Value("${git.auth.pat.username}")
+    private String username;
 
     @Bean
     public GitService gitService() {
         OAuthTokenManager oAuthTokenManager = null;
-        if(serviceType.equals("AZURE_DEVOPS")) {
+        if (serviceType.equals("AZURE_DEVOPS")) {
             oAuthTokenManager = new OAuthTokenManager(
                     "azure-devops",
                     "odm-azure-devops-blueprint-principal",
@@ -44,10 +47,11 @@ public class GitServiceConfig {
                     scope,
                     authorizationGrantType
             );
+            return GitServiceFactory.configureGitClient(serviceType, oAuthTokenManager);
         }
         return GitServiceFactory.configureGitClient(
                 serviceType,
-                oAuthTokenManager,
+                username,
                 personalAccessToken
         );
     }

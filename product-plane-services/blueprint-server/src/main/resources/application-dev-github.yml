@@ -68,4 +68,6 @@ git:
           client-secret: "null"
           scope: "null"
           authorization-grant-type: "null"
-    pat: ${PERSONAL_ACCESS_TOKEN}
+    pat:
+      username: null
+      token: ${PERSONAL_ACCESS_TOKEN}

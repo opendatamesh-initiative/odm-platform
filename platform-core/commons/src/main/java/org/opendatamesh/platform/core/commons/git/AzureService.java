@@ -21,6 +21,7 @@ class AzureService implements GitService {
     private AzureDevOpsClient azureDevOpsClient;
     private OAuthTokenManager oAuthTokenManager;
 
+    //TODO refactor --> Generic, GitHub and Azure only differs for the createRepo method, while the other method are the same
     public AzureService(OAuthTokenManager oAuthTokenManager) {
         this.oAuthTokenManager = oAuthTokenManager;
         this.azureDevOpsClient = new AzureDevOpsClient(oAuthTokenManager);

@@ -94,4 +94,6 @@ git:
           client-secret: "null"
           scope: "null"
           authorization-grant-type: "null"
-    pat: "null"
+    pat:
+      username: null
+      token: null

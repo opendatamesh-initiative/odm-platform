@@ -18,10 +18,13 @@ import java.util.List;
 class GitHubService implements GitService {
 
     private GitHubClient gitHubClient;
-    private String personalAccessToken;
+    private final String personalAccessToken;
+    private final String username;
 
-    public GitHubService(String personalAccessToken) {
+    //TODO refactor --> Generic, GitHub and Azure only differs for the createRepo method, while the other method are the same
+    public GitHubService(String username, String personalAccessToken) {
         this.personalAccessToken = personalAccessToken;
+        this.username = username;
         this.gitHubClient = new GitHubClient(personalAccessToken);
     }
 
@@ -40,7 +43,7 @@ class GitHubService implements GitService {
             );
             if (isHttpsRemote(sourceUrl)) {
                 cloneCommand.setCredentialsProvider(
-                        new UsernamePasswordCredentialsProvider("", personalAccessToken)
+                        new UsernamePasswordCredentialsProvider(this.username, personalAccessToken)
                 );
             } else {
                 cloneCommand.setTransportConfigCallback(getSshTransportConfigCallback());
@@ -125,7 +128,7 @@ class GitHubService implements GitService {
             if (isHttpsRemote(gitRepo)) {
                 pushResults = gitRepo.push()
                         .setCredentialsProvider(
-                                new UsernamePasswordCredentialsProvider("", this.personalAccessToken)
+                                new UsernamePasswordCredentialsProvider(this.username, this.personalAccessToken)
                         )
                         .call();
             } else {

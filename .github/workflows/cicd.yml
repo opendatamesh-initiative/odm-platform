@@ -161,12 +161,13 @@ jobs:
         run: echo "TAG_VERSION=$( echo ${{github.ref_name}} | sed 's/[^0-9.]//g' )" >> $GITHUB_ENV
       - name: Check out repository code
         uses: actions/checkout@v4
-      - name: Set up JDK 11
-        uses: actions/setup-java@v4
         with:
-          java-version: '11'
-          distribution: 'temurin'
-          cache: maven
+          ssh-key: ${{secrets.SSH_KEY}}
+      - name: Install SSH key # Install SSH key to connect to GitHub repos
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_KEY }}
+          known_hosts: ${{ secrets.KNOWN_HOSTS }}
       - name: Set up node
         uses: actions/setup-node@v4
       - name: Install Redocly CLI

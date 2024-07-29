@@ -1,9 +1,6 @@
 #!/bin/bash
 set -e
 
-# Generate openapi1.json and redoc-static.html for each module
-mvn clean verify -DskipTests -Pgenerate-doc
-
 # Create a directory for aggregated documentation
 AGGREGATED_DOC_DIR="redocly-docs"
 

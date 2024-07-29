@@ -182,6 +182,7 @@ jobs:
           git config user.email "<>"
       - name: Publish API doc
         run: |
+          mvn clean verify -DskipTests -Pgenerate-doc
           ./generate-full-redoc-static-html.sh
           ./upload-redoc-static-html-to-github.sh ${{ env.TAG_VERSION }}
         env:

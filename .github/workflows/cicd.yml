@@ -176,13 +176,16 @@ jobs:
         uses: actions/setup-node@v4
       - name: Install Redocly CLI
         run: npm install -g @redocly/cli@latest
-      - name: Set Git user #The git user.name should be ketp like this because it is associated to the SSH key
+      - name: Publish API doc
+        run: mvn clean verify -DskipTests -Pgenerate-doc
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set Git user #The git user.name should be kept like this because it is associated to the SSH key
         run: |
           git config user.name "github-workflows-version-updater"
           git config user.email "<>"
       - name: Publish API doc
         run: |
-          mvn clean verify -DskipTests -Pgenerate-doc
           ./generate-full-redoc-static-html.sh
           ./upload-redoc-static-html-to-github.sh ${{ env.TAG_VERSION }}
         env:

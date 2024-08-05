@@ -179,7 +179,7 @@ jobs:
       - name: Install Redocly CLI
         run: npm install -g @redocly/cli@latest
       - name: Publish API doc
-        run: mvn clean verify -DskipTests -Pgenerate-doc
+        run: mvn clean install -DskipTests -Pgenerate-doc
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Set Git user #The git user.name should be kept like this because it is associated to the SSH key

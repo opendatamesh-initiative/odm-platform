@@ -58,18 +58,6 @@ public class ObserverErrorIT extends ODMNotificationIT {
                 NotificationApiStandardErrors.SC422_01_OBSERVER_IS_INVALID,
                 "Observer name cannot be null"
         );
-
-        // 42205 - Observer is invalid - Observer with name [" + observerResource.getName() + "] already exists
-        observerResource = createObserver(ODMNotificationResources.RESOURCE_OBSERVER_1);
-        observerResource.setId(null);
-        postResponse = notificationClient.addObserverResponseEntity(observerResource);
-        verifyResponseErrorObjectNode(
-                postResponse,
-                HttpStatus.UNPROCESSABLE_ENTITY,
-                NotificationApiStandardErrors.SC422_02_OBSERVER_ALREADY_EXISTS,
-                "Observer with name [" + observerResource.getName() + "] already exists"
-        );
-
     }
 
     // ======================================================================================

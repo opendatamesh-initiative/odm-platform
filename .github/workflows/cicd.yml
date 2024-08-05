@@ -146,6 +146,7 @@ jobs:
           docker build . --file product-plane-services/blueprint-server/Dockerfile --tag opendatamesh/odm-platform-blueprint:${{ env.TAG_VERSION }}
           docker build . --file product-plane-services/policy-server/Dockerfile --tag opendatamesh/odm-platform-policy:${{ env.TAG_VERSION }}
           docker build . --file product-plane-services/notification-server/Dockerfile --tag opendatamesh/odm-platform-notification:${{ env.TAG_VERSION }}
+          docker build . --file product-plane-services/params-server/Dockerfile --tag opendatamesh/odm-platform-params:${{ env.TAG_VERSION }}
       - name: DockerHub images push
         run: |
           docker push opendatamesh/odm-platform-registry:${{ env.TAG_VERSION }}
@@ -153,6 +154,7 @@ jobs:
           docker push opendatamesh/odm-platform-blueprint:${{ env.TAG_VERSION }}
           docker push opendatamesh/odm-platform-policy:${{ env.TAG_VERSION }}
           docker push opendatamesh/odm-platform-notification:${{ env.TAG_VERSION }}
+          docker push opendatamesh/odm-platform-params:${{ env.TAG_VERSION }}
 
   publish-api-doc:
     runs-on: ubuntu-latest

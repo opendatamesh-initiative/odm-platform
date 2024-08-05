@@ -233,7 +233,7 @@ public class PolicyErrorsIT extends ODMPolicyIT {
                 getResponse,
                 HttpStatus.NOT_FOUND,
                 PolicyApiStandardErrors.SC404_02_POLICY_NOT_FOUND,
-                "Resource with ID [2] not found"
+                "Resource with root ID [2] not found"
         );
 
     }
@@ -251,7 +251,7 @@ public class PolicyErrorsIT extends ODMPolicyIT {
                 deleteResponse,
                 HttpStatus.NOT_FOUND,
                 PolicyApiStandardErrors.SC404_02_POLICY_NOT_FOUND,
-                "Resource with ID [2] not found"
+                "Resource with root ID [2] not found"
         );
 
     }

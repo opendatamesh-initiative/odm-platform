@@ -19,7 +19,7 @@ public class PolicyControllerImpl extends AbstractPolicyController {
     }
 
     public PolicyResource getPolicy(Long rootId) {
-        return service.findOneResource(rootId);
+        return service.findOneResourceByRootIdAndIsLastVersion(rootId);
     }
 
     public PolicyResource createPolicy(PolicyResource policy) {
@@ -33,7 +33,7 @@ public class PolicyControllerImpl extends AbstractPolicyController {
     public void deletePolicy(Long rootId) {
         service.logicalDelete(rootId);
     }
-    
+
     public PolicyResource getPolicyVersion(Long versionId) {
         return service.findPolicyResourceVersion(versionId);
     }

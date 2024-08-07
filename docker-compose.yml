@@ -27,7 +27,7 @@ services:
       - PostgreSQL
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: product-plane-services/registry-server/Dockerfile
       args:
         SPRING_PROFILES_ACTIVE: "docker"
         SPRING_PORT: "${SPRING_PORT}"

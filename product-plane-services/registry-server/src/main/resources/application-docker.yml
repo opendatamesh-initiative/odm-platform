@@ -70,3 +70,24 @@ odm:
     notificationService:
       active: ${NOTIFICATIONSERVICE_ACTIVE}
       address: http://${NOTIFICATIONSERVICE_HOSTNAME}:${NOTIFICATIONSERVICE_PORT}
+
+############################################
+# Git configurations
+############################################
+git:
+  provider: ${GIT_PROVIDER}
+  templates:
+    path: "templates"
+  auth:
+    oauth2:
+      client:
+        provider:
+          token-uri: ${GIT_AUTH_OAUTH2_CLIENT_PROVIDER_TOKEN_URI}
+        registration:
+          client-id: ${GIT_AUTH_OAUTH2_CLIENT_REGISTRATION_CLIENT_ID}
+          client-secret: ${GIT_AUTH_OAUTH2_CLIENT_REGISTRATION_CLIENT_SECRET}
+          scope: ${GIT_AUTH_OAUTH2_CLIENT_REGISTRATION_SCOPE}
+          authorization-grant-type: ${GIT_AUTH_OAUTH2_CLIENT_REGISTRATION_AUTHORIZATION_GRANT_TYPE}
+    pat:
+      username: ${GIT_AUTH_PAT_USERNAME}
+      token: ${GIT_AUTH_PAT_TOKEN}

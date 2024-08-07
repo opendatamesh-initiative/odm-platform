@@ -66,12 +66,12 @@ git:
     oauth2:
       client:
         provider:
-          token-uri: ${OAUTH_TOKEN_URI}
+          token-uri: ${GIT_AUTH_OAUTH2_CLIENT_PROVIDER_TOKEN_URI}
         registration:
-          client-id: ${OAUTH_CLIENT_ID}
-          client-secret: ${OAUTH_CLIENT_SECRET}
-          scope: ${OAUTH_SCOPE}
-          authorization-grant-type: client_credentials
+          client-id: ${GIT_AUTH_OAUTH2_CLIENT_REGISTRATION_CLIENT_ID}
+          client-secret: ${GIT_AUTH_OAUTH2_CLIENT_REGISTRATION_CLIENT_SECRET}
+          scope: ${GIT_AUTH_OAUTH2_CLIENT_REGISTRATION_SCOPE}
+          authorization-grant-type: ${GIT_AUTH_OAUTH2_CLIENT_REGISTRATION_AUTHORIZATION_GRANT_TYPE}
     pat:
-      username: null
-      token: ${PERSONAL_ACCESS_TOKEN}
+      username: ${GIT_AUTH_PAT_USERNAME}
+      token: ${GIT_AUTH_PAT_TOKEN}

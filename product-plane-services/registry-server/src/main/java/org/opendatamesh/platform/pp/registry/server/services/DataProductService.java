@@ -353,7 +353,7 @@ public class DataProductService {
 
         DataProduct dataProduct = readDataProduct(dataProductId);
         DataProductVersion dataProductVersion = null;
-        dataProductVersion = descriptorToDataProductVersion(descriptorLocation, serverUrl);
+        dataProductVersion = descriptorToDataProductVersion(descriptorLocation, serverUrl, true);
         if(!dataProduct.getId().equals(dataProductVersion.getInfo().getDataProductId())) {
             throw new UnprocessableEntityException(
                 RegistryApiStandardErrors.SC422_03_DESCRIPTOR_NOT_COMPLIANT,
@@ -365,14 +365,14 @@ public class DataProductService {
 
 
 
-    public DataProductVersion addDataProductVersion(
+    public DataProductVersion uploadDataProductVersion(
         DescriptorLocation descriptorLocation,
         boolean createDataProductIfNotExists,
         String serverUrl // TODO remove form here !!!
     ) {
 
         DataProductVersion dataProductVersion = null;
-        dataProductVersion = descriptorToDataProductVersion(descriptorLocation, serverUrl);
+        dataProductVersion = descriptorToDataProductVersion(descriptorLocation, serverUrl, false);
         return addDataProductVersion(dataProductVersion, createDataProductIfNotExists, serverUrl);
     }
 
@@ -429,7 +429,11 @@ public class DataProductService {
         return dataProductVersion;
     }
 
-    private DataProductVersion descriptorToDataProductVersion(DescriptorLocation descriptorLocation, String serverUrl) {
+    private DataProductVersion descriptorToDataProductVersion(
+            DescriptorLocation descriptorLocation,
+            String serverUrl,
+            boolean rewriteFqn
+    ) {
         DataProductVersion dataProductVersion = null;
 
         DPDSParser descriptorParser = new DPDSParser(
@@ -440,6 +444,7 @@ public class DataProductService {
         ParseOptions options = new ParseOptions();
         options.setServerUrl(serverUrl);
         options.setIdentifierStrategy(identifierStrategy);
+        options.setRewriteFqn(rewriteFqn);
 
         DataProductVersionDPDS descriptor = null;
         try {

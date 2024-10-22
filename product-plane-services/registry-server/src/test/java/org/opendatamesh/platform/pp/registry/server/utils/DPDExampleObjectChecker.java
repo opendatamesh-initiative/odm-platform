@@ -39,8 +39,8 @@ public class DPDExampleObjectChecker implements ResourceObjectChecker {
 
         InfoDPDS info = descriptor.getInfo();
         assertThat(info).isNotNull();
-        assertThat(info.getDataProductId()).isEqualTo("cf21acef-662a-388b-8f74-7002bb001c5b");
-        assertThat(info.getFullyQualifiedName()).isEqualTo("urn:org.opendatamesh:dataproducts:flightFrequency");
+        assertThat(info.getDataProductId()).isEqualTo("e85ee0e5-87d1-334c-80a5-3d9407463ef5");
+        assertThat(info.getFullyQualifiedName()).isEqualTo("urn:org.opendatamesh:dataproducts:flightfrequency:1");
         assertThat(info.getEntityType()).isEqualTo(EntityTypeDPDS.DATAPRODUCT.propertyValue());
         assertThat(info.getName()).isEqualTo("flightFrequency");
         assertThat(info.getVersionNumber()).isEqualTo("1.0.0");
@@ -66,9 +66,9 @@ public class DPDExampleObjectChecker implements ResourceObjectChecker {
         assertThat(interfaces.getOutputPorts().size()).isEqualTo(2);
 
         port = interfaces.getOutputPorts().get(0);
-        assertThat(port.getId()).isEqualTo("d0325bb8-3937-38ec-abb2-ad1e26bc3248");
+        assertThat(port.getId()).isEqualTo("7ccdc04a-d96e-3d52-804a-05b6ae2cf46c");
         assertThat(port.getFullyQualifiedName()).isEqualTo(
-                "urn:org.opendatamesh:dataproducts:flightFrequency:1.0.0:outputports:flight_frequency_db:1.0.0"
+                "urn:org.opendatamesh:dataproducts:flightfrequency:1:1.0.0:outputports:flight_frequency_db:1.0.0"
         );
         assertThat(port.getEntityType()).isEqualTo(EntityTypeDPDS.OUTPUTPORT.propertyValue());
         assertThat(port.getName()).isEqualTo("flight_frequency_db");
@@ -89,9 +89,9 @@ public class DPDExampleObjectChecker implements ResourceObjectChecker {
         );
 
         port = interfaces.getOutputPorts().get(1);
-        assertThat(port.getId()).isEqualTo("e6d3cb5e-5a91-399b-98ef-240546e00602");
+        assertThat(port.getId()).isEqualTo("20d42877-c448-3733-b490-700fd333608b");
         assertThat(port.getFullyQualifiedName()).isEqualTo(
-                "urn:org.opendatamesh:dataproducts:flightFrequency:1.0.0:outputports:flight_frequency_api:1.0.0"
+                "urn:org.opendatamesh:dataproducts:flightfrequency:1:1.0.0:outputports:flight_frequency_api:1.0.0"
         );
         assertThat(port.getEntityType()).isEqualTo(EntityTypeDPDS.OUTPUTPORT.propertyValue());
         assertThat(port.getName()).isEqualTo("flight_frequency_api");

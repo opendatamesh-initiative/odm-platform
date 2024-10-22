@@ -73,7 +73,7 @@ public class UploadsController extends AbstractUploadsController {
                     "Provided URI is invalid [" + descriptorLocationRes.getRootDocumentUri() + "]", e);
         }
         String serverUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
-        DataProductVersion dataProductVersion = dataProductService.addDataProductVersion(descriptorLocation, true, serverUrl);
+        DataProductVersion dataProductVersion = dataProductService.uploadDataProductVersion(descriptorLocation, true, serverUrl);
         DataProductVersionDPDS dataProductVersionDPDS = dataProductVersionMapper.toResource(dataProductVersion);
 
         String serailizedContent = null;

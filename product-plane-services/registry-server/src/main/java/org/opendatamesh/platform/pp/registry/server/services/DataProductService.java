@@ -365,7 +365,7 @@ public class DataProductService {
 
 
 
-    public DataProductVersion addDataProductVersion(
+    public DataProductVersion uploadDataProductVersion(
         DescriptorLocation descriptorLocation,
         boolean createDataProductIfNotExists,
         String serverUrl // TODO remove form here !!!
@@ -429,7 +429,10 @@ public class DataProductService {
         return dataProductVersion;
     }
 
-    private DataProductVersion descriptorToDataProductVersion(DescriptorLocation descriptorLocation, String serverUrl) {
+    private DataProductVersion descriptorToDataProductVersion(
+            DescriptorLocation descriptorLocation,
+            String serverUrl
+    ) {
         DataProductVersion dataProductVersion = null;
 
         DPDSParser descriptorParser = new DPDSParser(

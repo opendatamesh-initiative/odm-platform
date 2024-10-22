@@ -353,7 +353,7 @@ public class DataProductService {
 
         DataProduct dataProduct = readDataProduct(dataProductId);
         DataProductVersion dataProductVersion = null;
-        dataProductVersion = descriptorToDataProductVersion(descriptorLocation, serverUrl, true);
+        dataProductVersion = descriptorToDataProductVersion(descriptorLocation, serverUrl);
         if(!dataProduct.getId().equals(dataProductVersion.getInfo().getDataProductId())) {
             throw new UnprocessableEntityException(
                 RegistryApiStandardErrors.SC422_03_DESCRIPTOR_NOT_COMPLIANT,
@@ -372,7 +372,7 @@ public class DataProductService {
     ) {
 
         DataProductVersion dataProductVersion = null;
-        dataProductVersion = descriptorToDataProductVersion(descriptorLocation, serverUrl, false);
+        dataProductVersion = descriptorToDataProductVersion(descriptorLocation, serverUrl);
         return addDataProductVersion(dataProductVersion, createDataProductIfNotExists, serverUrl);
     }
 
@@ -431,8 +431,7 @@ public class DataProductService {
 
     private DataProductVersion descriptorToDataProductVersion(
             DescriptorLocation descriptorLocation,
-            String serverUrl,
-            boolean rewriteFqn
+            String serverUrl
     ) {
         DataProductVersion dataProductVersion = null;
 
@@ -444,7 +443,6 @@ public class DataProductService {
         ParseOptions options = new ParseOptions();
         options.setServerUrl(serverUrl);
         options.setIdentifierStrategy(identifierStrategy);
-        options.setRewriteFqn(rewriteFqn);
 
         DataProductVersionDPDS descriptor = null;
         try {

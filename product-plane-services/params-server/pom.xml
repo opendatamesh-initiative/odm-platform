@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.opendatamesh</groupId>
         <artifactId>odm-platform-pp-services</artifactId>
-        <version>1.0.3</version>
+        <version>1.0.4</version>
         <relativePath>../</relativePath>
     </parent>
 
@@ -15,7 +15,7 @@
     <artifactId>odm-platform-pp-params-server</artifactId>
     <name>ODM Platform Params Server</name>
     <description>Open Data Mesh Platform's Params service server</description>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
     <url>https://github.com/opendatamesh-initiative/odm-platform</url>
 
     <licenses>
@@ -148,7 +148,7 @@
         <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-pp-params-api</artifactId>
-            <version>1.0.3</version>
+            <version>1.0.4</version>
             <scope>compile</scope>
         </dependency>
 

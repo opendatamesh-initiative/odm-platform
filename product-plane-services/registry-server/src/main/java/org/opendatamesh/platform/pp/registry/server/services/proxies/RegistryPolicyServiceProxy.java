@@ -1,8 +1,8 @@
 package org.opendatamesh.platform.pp.registry.server.services.proxies;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.opendatamesh.dpds.model.DataProductVersionDPDS;
-import org.opendatamesh.platform.core.commons.ObjectMapperFactory;;
+import org.opendatamesh.dpds.model.info.InfoDPDS;
+import org.opendatamesh.platform.core.commons.ObjectMapperFactory;
 import org.opendatamesh.platform.core.commons.servers.exceptions.BadGatewayException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
 import org.opendatamesh.platform.pp.policy.api.clients.PolicyClientImpl;
@@ -10,6 +10,7 @@ import org.opendatamesh.platform.pp.policy.api.clients.PolicyValidationClient;
 import org.opendatamesh.platform.pp.policy.api.mappers.utils.JsonNodeUtils;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationRequestResource;
 import org.opendatamesh.platform.pp.policy.api.resources.ValidationResponseResource;
+import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
 import org.opendatamesh.platform.pp.registry.server.database.mappers.EventTypeMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,13 +44,21 @@ public class RegistryPolicyServiceProxy {
         }
     }
 
-    public boolean validateDataProductVersionCreation(DataProductVersionDPDS mostRecentDataProduct, DataProductVersionDPDS newDataProductVersion) {
+    public boolean validateDataProductVersionCreation(DataProductVersionDPDS oldDpds, DataProductVersionDPDS newDpds) {
         if (!this.policyServiceActive) {
             logger.info("Policy Service is not active;");
             return true;
         }
         try {
-            PolicyEvaluationRequestResource evaluationRequest = buildEvaluationRequest(mostRecentDataProduct, newDataProductVersion);
+            PolicyEvaluationRequestResource evaluationRequest = new PolicyEvaluationRequestResource();
+            evaluationRequest.setResourceType(PolicyEvaluationRequestResource.ResourceType.DATA_PRODUCT_DESCRIPTOR);
+            evaluationRequest.setAfterState(JsonNodeUtils.toJsonNode(eventTypeMapper.toEventResource(newDpds)));
+            evaluationRequest.setDataProductId(newDpds.getInfo().getDataProductId());
+            evaluationRequest.setDataProductVersion(newDpds.getInfo().getVersionNumber());
+            evaluationRequest.setEvent(PolicyEvaluationRequestResource.EventType.DATA_PRODUCT_VERSION_CREATION);
+            if (oldDpds != null) {
+                evaluationRequest.setCurrentState(JsonNodeUtils.toJsonNode(eventTypeMapper.toEventResource(oldDpds)));
+            }
             ValidationResponseResource evaluationResult = policyValidationClient.validateInputObject(evaluationRequest);
 
             if (Boolean.FALSE.equals(evaluationResult.getResult())) {
@@ -66,20 +75,73 @@ public class RegistryPolicyServiceProxy {
         }
     }
 
-    private PolicyEvaluationRequestResource buildEvaluationRequest(DataProductVersionDPDS mostRecentDataProduct, DataProductVersionDPDS newDataProductVersion) throws JsonProcessingException {
-        PolicyEvaluationRequestResource evaluationRequest = new PolicyEvaluationRequestResource();
-        evaluationRequest.setResourceType(PolicyEvaluationRequestResource.ResourceType.DATA_PRODUCT);
-        evaluationRequest.setAfterState(JsonNodeUtils.toJsonNode(eventTypeMapper.toEventResource(newDataProductVersion)));
-        evaluationRequest.setDataProductId(newDataProductVersion.getInfo().getDataProductId());
-        evaluationRequest.setDataProductVersion(newDataProductVersion.getInfo().getVersionNumber());
-        if (mostRecentDataProduct == null) {
-            evaluationRequest.setEvent(PolicyEvaluationRequestResource.EventType.DATA_PRODUCT_CREATION);
-        } else {
-            evaluationRequest.setEvent(PolicyEvaluationRequestResource.EventType.DATA_PRODUCT_UPDATE);
-            evaluationRequest.setCurrentState(JsonNodeUtils.toJsonNode(eventTypeMapper.toEventResource(mostRecentDataProduct)));
+    public boolean isCompliantWithPolicies(DataProductResource dataProduct) {
+        if (!this.policyServiceActive) {
+            logger.info("Policy Service is not active;");
+            return true;
         }
-        return evaluationRequest;
+        try {
+            PolicyEvaluationRequestResource evaluationRequest = new PolicyEvaluationRequestResource();
+            evaluationRequest.setResourceType(PolicyEvaluationRequestResource.ResourceType.DATA_PRODUCT_DESCRIPTOR);
+            DataProductVersionDPDS dpdsHead = descriptorFromDataProduct(dataProduct);
 
+            evaluationRequest.setAfterState(JsonNodeUtils.toJsonNode(eventTypeMapper.toEventResource(dpdsHead)));
+            evaluationRequest.setDataProductId(dataProduct.getId());
+            evaluationRequest.setEvent(PolicyEvaluationRequestResource.EventType.DATA_PRODUCT_VERSION_CREATION);
+            ValidationResponseResource evaluationResult = policyValidationClient.validateInputObject(evaluationRequest);
+
+            if (Boolean.FALSE.equals(evaluationResult.getResult())) {
+                logger.warn("Policy evaluation failed during DataProduct creation");
+            }
+
+            return evaluationResult.getResult();
+        } catch (Exception e) {
+            throw new BadGatewayException(
+                    ODMApiCommonErrors.SC502_71_POLICY_SERVICE_ERROR,
+                    "An error occurred while invoking policy service to validate data product: " + e.getMessage(),
+                    e
+            );
+        }
     }
 
+    private DataProductVersionDPDS descriptorFromDataProduct(DataProductResource dataProduct) {
+        DataProductVersionDPDS dpdsHead = new DataProductVersionDPDS();
+        InfoDPDS dpdsHeadInfo = new InfoDPDS();
+        dpdsHeadInfo.setDomain(dataProduct.getDomain());
+        dpdsHeadInfo.setFullyQualifiedName(dataProduct.getFullyQualifiedName());
+        dpdsHeadInfo.setDescription(dataProduct.getDescription());
+        dpdsHead.setInfo(dpdsHeadInfo);
+        return dpdsHead;
+    }
+
+    public boolean isCompliantWithPolicies(DataProductResource oldDataProduct, DataProductResource newDataProduct) {
+        if (!this.policyServiceActive) {
+            logger.info("Policy Service is not active;");
+            return true;
+        }
+        try {
+            PolicyEvaluationRequestResource evaluationRequest = new PolicyEvaluationRequestResource();
+            evaluationRequest.setResourceType(PolicyEvaluationRequestResource.ResourceType.DATA_PRODUCT_DESCRIPTOR);
+            DataProductVersionDPDS oldDpdsHead = descriptorFromDataProduct(oldDataProduct);
+            DataProductVersionDPDS newDpdsHead = descriptorFromDataProduct(newDataProduct);
+
+            evaluationRequest.setCurrentState(JsonNodeUtils.toJsonNode(eventTypeMapper.toEventResource(oldDpdsHead)));
+            evaluationRequest.setAfterState(JsonNodeUtils.toJsonNode(eventTypeMapper.toEventResource(newDpdsHead)));
+            evaluationRequest.setDataProductId(oldDataProduct.getId());
+            evaluationRequest.setEvent(PolicyEvaluationRequestResource.EventType.DATA_PRODUCT_UPDATED);
+            ValidationResponseResource evaluationResult = policyValidationClient.validateInputObject(evaluationRequest);
+
+            if (Boolean.FALSE.equals(evaluationResult.getResult())) {
+                logger.warn("Policy evaluation failed during DataProduct update");
+            }
+
+            return evaluationResult.getResult();
+        } catch (Exception e) {
+            throw new BadGatewayException(
+                    ODMApiCommonErrors.SC502_71_POLICY_SERVICE_ERROR,
+                    "An error occurred while invoking policy service to validate data product: " + e.getMessage(),
+                    e
+            );
+        }
+    }
 }

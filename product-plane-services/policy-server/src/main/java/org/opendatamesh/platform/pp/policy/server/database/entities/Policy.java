@@ -1,15 +1,19 @@
 package org.opendatamesh.platform.pp.policy.server.database.entities;
 
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.opendatamesh.platform.core.commons.database.utils.TimestampedEntity;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "POLICIES", schema = "ODMPOLICY")
 public class Policy extends TimestampedEntity {
     @Id
     @Column(name = "ID")
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "ROOT_ID")
@@ -32,6 +36,11 @@ public class Policy extends TimestampedEntity {
 
     @Column(name = "EVALUATION_EVENT")
     private String evaluationEvent;
+
+    @OneToMany(mappedBy = "policy", orphanRemoval = true, cascade = CascadeType.ALL)
+    @Fetch(FetchMode.SELECT)
+    @BatchSize(size = 100)
+    private List<PolicyEvaluationEvent> evaluationEvents;
 
     @Column(name = "FILTERING_EXPRESSION")
     private String filteringExpression;
@@ -151,12 +160,24 @@ public class Policy extends TimestampedEntity {
         this.policyEngine = pg;
     }
 
+    @Deprecated(since = "7/11/2024", forRemoval = true)
     public String getEvaluationEvent() {
         return evaluationEvent;
     }
 
+    @Deprecated(since = "7/11/2024", forRemoval = true)
     public void setEvaluationEvent(String evaluationEvent) {
         this.evaluationEvent = evaluationEvent;
     }
 
+    public List<PolicyEvaluationEvent> getEvaluationEvents() {
+        return evaluationEvents;
+    }
+
+    public void setEvaluationEvents(List<PolicyEvaluationEvent> evaluationEvents) {
+        this.evaluationEvents = evaluationEvents;
+        if (evaluationEvents != null) {
+            evaluationEvents.forEach(ev -> ev.setPolicy(this));
+        }
+    }
 }

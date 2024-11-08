@@ -2,10 +2,10 @@ package org.opendatamesh.platform.pp.policy.server.database.repositories;
 
 import org.opendatamesh.platform.core.commons.database.utils.PagingAndSortingAndSpecificationExecutorRepository;
 import org.opendatamesh.platform.core.commons.database.utils.SpecsUtils;
-import org.opendatamesh.platform.pp.policy.server.database.entities.Policy;
-import org.opendatamesh.platform.pp.policy.server.database.entities.PolicyEngine_;
-import org.opendatamesh.platform.pp.policy.server.database.entities.Policy_;
+import org.opendatamesh.platform.pp.policy.server.database.entities.*;
 import org.springframework.data.jpa.domain.Specification;
+
+import javax.persistence.criteria.ListJoin;
 
 public interface PolicyRepository extends PagingAndSortingAndSpecificationExecutorRepository<Policy, Long> {
 
@@ -24,8 +24,13 @@ public interface PolicyRepository extends PagingAndSortingAndSpecificationExecut
         }
 
         public static Specification<Policy> hasEvaluationEvent(String evaluationEvent) {
-            return ((root, query, criteriaBuilder) ->
-                    criteriaBuilder.equal(root.get(Policy_.evaluationEvent), evaluationEvent)
+            return ((root, query, criteriaBuilder) -> {
+                final ListJoin<Policy, PolicyEvaluationEvent> evaluationEvents = root.join(Policy_.evaluationEvents);
+                return criteriaBuilder.or(
+                        criteriaBuilder.equal(root.get(Policy_.evaluationEvent), evaluationEvent),
+                        criteriaBuilder.equal(evaluationEvents.get(PolicyEvaluationEvent_.event), evaluationEvent)
+                );
+            }
             );
         }
 

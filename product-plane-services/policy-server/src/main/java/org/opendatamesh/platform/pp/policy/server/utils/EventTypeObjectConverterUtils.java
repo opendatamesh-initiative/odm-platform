@@ -4,13 +4,16 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
+import org.opendatamesh.platform.core.commons.ObjectMapperFactory;
 import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
-import org.opendatamesh.platform.core.commons.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationRequestResource.EventType;
 import org.opendatamesh.platform.pp.policy.api.resources.exceptions.PolicyApiStandardErrors;
-import org.opendatamesh.platform.pp.policy.server.resources.*;
+import org.opendatamesh.platform.pp.policy.server.resources.ActivityResultEvent;
+import org.opendatamesh.platform.pp.policy.server.resources.ActivityStageTransitionEvent;
+import org.opendatamesh.platform.pp.policy.server.resources.DataProductEvent;
+import org.opendatamesh.platform.pp.policy.server.resources.TaskResultEvent;
 
 public final class EventTypeObjectConverterUtils {
 
@@ -20,7 +23,8 @@ public final class EventTypeObjectConverterUtils {
 
     private static final ImmutableMap<EventType, Class<?>> eventTypeClassMap = ImmutableMap.of(
             EventType.DATA_PRODUCT_CREATION, DataProductEvent.class,
-            EventType.DATA_PRODUCT_UPDATE, DataProductEvent.class,
+            EventType.DATA_PRODUCT_UPDATED, DataProductEvent.class,
+            EventType.DATA_PRODUCT_VERSION_CREATION, DataProductEvent.class,
             EventType.ACTIVITY_STAGE_TRANSITION, ActivityStageTransitionEvent.class,
             EventType.TASK_EXECUTION_RESULT, TaskResultEvent.class,
             EventType.ACTIVITY_EXECUTION_RESULT, ActivityResultEvent.class
@@ -32,7 +36,7 @@ public final class EventTypeObjectConverterUtils {
 
     private static Class<?> getClassFromEventType(EventType eventType) {
         Class<?> jsonNodeClass = eventTypeClassMap.get(eventType);
-        if(jsonNodeClass == null) {
+        if (jsonNodeClass == null) {
             throw new BadRequestException(
                     PolicyApiStandardErrors.SC400_04_UNKNOWN_EVENT,
                     "Unknown event [" + eventType + "]"

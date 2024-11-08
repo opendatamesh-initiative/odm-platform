@@ -1,6 +1,6 @@
 {
-  "resourceType": "DATA_PRODUCT",
-  "event": "DATA_PRODUCT_CREATION",
+  "resourceType": "DATA_PRODUCT_DESCRIPTOR",
+  "event": "DATA_PRODUCT_VERSION_CREATION",
   "currentState": {
     "dataProductVersion": {}
   },

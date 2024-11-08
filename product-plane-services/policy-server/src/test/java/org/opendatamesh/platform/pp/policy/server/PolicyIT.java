@@ -3,8 +3,8 @@ package org.opendatamesh.platform.pp.policy.server;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
-import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineResource;
+import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationEventResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
 import org.opendatamesh.platform.pp.policy.api.resources.exceptions.PolicyApiStandardErrors;
 import org.springframework.http.HttpStatus;
@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -42,7 +43,7 @@ public class PolicyIT extends ODMPolicyIT {
 
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-    public void testUpdatePolicy() throws JsonProcessingException, InterruptedException {
+    public void testUpdatePolicy() {
 
         // Resources + Creation
         PolicyEngineResource parentEngineResource = createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);
@@ -122,7 +123,7 @@ public class PolicyIT extends ODMPolicyIT {
 
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-    public void testReadOnePolicyByRootIdWhenMultipleVersionsExists() throws JsonProcessingException {
+    public void testReadOnePolicyByRootIdWhenMultipleVersionsExists()  {
 
         // Resources + Creation
         PolicyEngineResource parentEngineResource = createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);
@@ -149,7 +150,7 @@ public class PolicyIT extends ODMPolicyIT {
 
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-    public void testReadOnePolicyByVersionIdWhenMultipleVersionsExists() throws JsonProcessingException {
+    public void testReadOnePolicyByVersionIdWhenMultipleVersionsExists()  {
 
         // Resources + Creation
         PolicyEngineResource parentEngineResource = createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);
@@ -212,7 +213,7 @@ public class PolicyIT extends ODMPolicyIT {
         assertThat(policyResource.getDescription()).isEqualTo("Check whether the name of the input Data Product is compliant with global naming convention or not");
         assertThat(policyResource.getBlockingFlag()).isEqualTo(true);
         assertThat(policyResource.getRawContent()).isEqualTo("package dataproduct-name-checker\n\ndefault allow := false\n\nallow := true {                                     \n    startswith(input.name, \"dp-\")\n}");
-        assertThat(policyResource.getEvaluationEvent()).isEqualTo("DATA_PRODUCT_CREATION");
+        assertThat(policyResource.getEvaluationEvents().stream().map(PolicyEvaluationEventResource::getEvent).collect(Collectors.toSet())).contains("DATA_PRODUCT_VERSION_CREATION");
         assertThat(policyResource.getSuite()).isEqualTo("Suite Name");
         assertThat(policyResource.getLastVersion()).isEqualTo(isLastVersion);
         assertThat(policyResource.getCreatedAt()).isNotNull();
@@ -231,7 +232,7 @@ public class PolicyIT extends ODMPolicyIT {
         assertThat(policyResource.getDescription()).isEqualTo("Check the Data Product name");
         assertThat(policyResource.getBlockingFlag()).isEqualTo(false);
         assertThat(policyResource.getRawContent()).isEqualTo("package dataproduct-name-checker\n\ndefault allow := false\n\nallow := true {                                     \n    startswith(input.name, \"dp-\")\n}");
-        assertThat(policyResource.getEvaluationEvent()).isEqualTo("DATA_PRODUCT_CREATION");
+        assertThat(policyResource.getEvaluationEvent()).isEqualTo("DATA_PRODUCT_VERSION_CREATION");
         assertThat(policyResource.getSuite()).isEqualTo("Suite Name");
         assertThat(policyResource.getLastVersion()).isEqualTo(true);
         assertThat(policyResource.getCreatedAt()).isNotNull();
@@ -253,7 +254,7 @@ public class PolicyIT extends ODMPolicyIT {
         assertThat(policyResource.getDescription()).isEqualTo("Check the Data Product name");
         assertThat(policyResource.getBlockingFlag()).isEqualTo(false);
         assertThat(policyResource.getRawContent()).isEqualTo("package dataproduct-name-checker\n\ndefault allow := false\n\nallow := true {                                     \n    startswith(input.name, \"dp-\")\n}");
-        assertThat(policyResource.getEvaluationEvent()).isEqualTo("DATA_PRODUCT_CREATION");
+        assertThat(policyResource.getEvaluationEvent()).isEqualTo("DATA_PRODUCT_VERSION_CREATION");
         assertThat(policyResource.getSuite()).isEqualTo("Suite Name");
         assertThat(policyResource.getLastVersion()).isEqualTo(true);
     }
@@ -267,7 +268,7 @@ public class PolicyIT extends ODMPolicyIT {
         assertThat(policyResource.getDescription()).isEqualTo("Check whether the name of the input Data Product is compliant with global naming convention or not");
         assertThat(policyResource.getBlockingFlag()).isEqualTo(false);
         assertThat(policyResource.getRawContent()).isNull();
-        assertThat(policyResource.getEvaluationEvent()).isEqualTo("DATA_PRODUCT_CREATION");
+        assertThat(policyResource.getEvaluationEvent()).isEqualTo("DATA_PRODUCT_VERSION_CREATION");
         assertThat(policyResource.getSuite()).isEqualTo("Suite Name");
         assertThat(policyResource.getLastVersion()).isEqualTo(true);
         assertThat(policyResource.getCreatedAt()).isNotNull();

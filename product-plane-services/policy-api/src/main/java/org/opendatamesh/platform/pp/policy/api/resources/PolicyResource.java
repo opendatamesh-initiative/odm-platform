@@ -1,11 +1,14 @@
 package org.opendatamesh.platform.pp.policy.api.resources;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.assertj.core.util.Lists;
 import org.opendatamesh.platform.core.commons.resources.utils.TimestampedResource;
+import org.springframework.util.CollectionUtils;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
+import java.util.List;
+
 public class PolicyResource extends TimestampedResource {
 
     @JsonProperty("id")
@@ -41,9 +44,12 @@ public class PolicyResource extends TimestampedResource {
     private String suite;
 
     @JsonProperty("evaluationEvent")
-    @Schema(description = "A tag, a phase, something that identify in which stages of the lifecycle the Policy must be evaluated")
+    @Hidden
     private String evaluationEvent;
 
+    @JsonProperty("evaluationEvents")
+    @Schema(description = "A list of events  of the Data Product lifecycle where the Policy must be evaluated")
+    private List<PolicyEvaluationEventResource> evaluationEvents;
 
     @JsonProperty("filteringExpression")
     @Schema(description = "A SpEL expression to be evaluated on the input object of a validation request to exclude or include the Policy in the set of policies to be evaluated")
@@ -146,12 +152,26 @@ public class PolicyResource extends TimestampedResource {
         this.policyEngine = policyEngine;
     }
 
+    @Deprecated(since = "7/11/2024", forRemoval = true)
     public String getEvaluationEvent() {
         return evaluationEvent;
     }
 
+    @Deprecated(since = "7/11/2024", forRemoval = true)
     public void setEvaluationEvent(String evaluationEvent) {
         this.evaluationEvent = evaluationEvent;
     }
 
+    public List<PolicyEvaluationEventResource> getEvaluationEvents() {
+        if (CollectionUtils.isEmpty(evaluationEvents) && evaluationEvent != null) {
+            PolicyEvaluationEventResource eventResource = new PolicyEvaluationEventResource();
+            eventResource.setEvent(evaluationEvent);
+            return Lists.newArrayList(eventResource);
+        }
+        return evaluationEvents;
+    }
+
+    public void setEvaluationEvents(List<PolicyEvaluationEventResource> evaluationEvents) {
+        this.evaluationEvents = evaluationEvents;
+    }
 }

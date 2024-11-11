@@ -70,4 +70,15 @@ public class PolicyEngine extends TimestampedEntity {
     public void setName(String name) {
         this.name = name;
     }
+
+    @Override
+    public String toString() {
+        return "PolicyEngine{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", displayName='" + displayName + '\'' +
+                ", adapterUrl='" + adapterUrl + '\'' +
+                ", policies=" + policies +
+                '}';
+    }
 }

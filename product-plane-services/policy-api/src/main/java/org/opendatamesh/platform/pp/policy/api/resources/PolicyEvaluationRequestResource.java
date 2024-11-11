@@ -36,7 +36,7 @@ public class PolicyEvaluationRequestResource {
         DATA_PRODUCT_VERSION_CREATION,
         ACTIVITY_STAGE_TRANSITION,
         TASK_EXECUTION_RESULT,
-        ACTIVITY_EXECUTION_RESULT
+        ACTIVITY_EXECUTION_RESULT,
     }
 
     public enum ResourceType {

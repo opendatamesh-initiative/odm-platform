@@ -2,6 +2,7 @@ package org.opendatamesh.platform.pp.policy.server;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationEventResource;
@@ -93,8 +94,14 @@ public class PolicyIT extends ODMPolicyIT {
 
         // Verification
         assertThat(policies).size().isEqualTo(2);
-        verifyResourcePolicyOne(policies.get(0), true);
-        verifyResourcePolicyTwo(policies.get(1));
+
+        policies.stream().filter(p -> p.getName().equals("dataproduct-name-checker"))
+                .findFirst()
+                .ifPresentOrElse(p -> verifyResourcePolicyOne(p, true), Assertions::fail);
+
+        policies.stream().filter(p -> p.getName().equals("lambda-name-checker"))
+                .findFirst()
+                .ifPresentOrElse(this::verifyResourcePolicyTwo, Assertions::fail);
 
     }
 
@@ -123,7 +130,7 @@ public class PolicyIT extends ODMPolicyIT {
 
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-    public void testReadOnePolicyByRootIdWhenMultipleVersionsExists()  {
+    public void testReadOnePolicyByRootIdWhenMultipleVersionsExists() {
 
         // Resources + Creation
         PolicyEngineResource parentEngineResource = createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);
@@ -150,7 +157,7 @@ public class PolicyIT extends ODMPolicyIT {
 
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-    public void testReadOnePolicyByVersionIdWhenMultipleVersionsExists()  {
+    public void testReadOnePolicyByVersionIdWhenMultipleVersionsExists() {
 
         // Resources + Creation
         PolicyEngineResource parentEngineResource = createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);

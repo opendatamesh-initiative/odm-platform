@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -33,7 +34,7 @@ public class ValidationIT extends ODMPolicyIT {
         mockResponse.setPolicyEvaluationId(1L);
         mockResponse.setEvaluationResult(true);
         mockResponse.setOutputObject("{\"message\": \"OK\"}");
-        Mockito.when(validatorProxy.validatePolicy(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+        Mockito.when(validatorProxy.validatePolicy(Mockito.any(), Mockito.any()))
                 .thenReturn(mockResponse);
 
         // Resources
@@ -57,20 +58,20 @@ public class ValidationIT extends ODMPolicyIT {
         verifyResponseEntity(postResponse, HttpStatus.OK,true);
         assertThat(validationResponseResource).isNotNull();
         // Assert that only 2 of the 3 policies are validated thanks to PolicySelector filtering the right one to use
-        assertThat(evaluatedPolicies.size()).isEqualTo(2);
+        assertThat(evaluatedPolicies.size()).isEqualTo(3);
 
         // Verify single policies (verify that they match the event type)
         PolicyResource policyResource = policyClient.getPolicyVersion(evaluatedPolicies.get(0).getPolicyId());
-        assertThat(policyResource.getEvaluationEvent()).isEqualTo(evaluationRequestResource.getEvent().toString());
+        assertThat(policyResource.getEvaluationEvents().stream().map(PolicyEvaluationEventResource::getEvent).collect(Collectors.toSet())).contains(evaluationRequestResource.getEvent().toString());
         policyResource = policyClient.getPolicyVersion(evaluatedPolicies.get(1).getPolicyId());
-        assertThat(policyResource.getEvaluationEvent()).isEqualTo(evaluationRequestResource.getEvent().toString());
+        assertThat(policyResource.getEvaluationEvents().stream().map(PolicyEvaluationEventResource::getEvent).collect(Collectors.toSet())).contains(evaluationRequestResource.getEvent().toString());
 
         // Verify PolicyEvaluationResults in DB
         ResponseEntity<ObjectNode> getResponse = policyClient.readAllPolicyEvaluationResultsResponseEntity();
         List<PolicyEvaluationResultResource> policyEvaluationResults = extractListFromPageFromObjectNode(
                 getResponse.getBody(), PolicyEvaluationResultResource.class
         );
-        assertThat(policyEvaluationResults.size()).isEqualTo(2);
+        assertThat(policyEvaluationResults.size()).isEqualTo(3);
         assertThat(policyEvaluationResults.get(0).getPolicyId()).isEqualTo(evaluatedPolicies.get(0).getPolicyId());
         assertThat(policyEvaluationResults.get(0).getResult()).isEqualTo(evaluatedPolicies.get(0).getResult());
         assertThat(policyEvaluationResults.get(0).getOutputObject()).isEqualTo(evaluatedPolicies.get(0).getOutputObject());

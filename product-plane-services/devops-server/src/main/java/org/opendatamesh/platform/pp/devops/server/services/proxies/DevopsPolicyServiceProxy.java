@@ -60,7 +60,7 @@ public class DevopsPolicyServiceProxy {
             evaluationRequest.setDataProductId(activityToBeExecuted.getDataProductId());
             evaluationRequest.setDataProductVersion(activityToBeExecuted.getDataProductVersion());
             evaluationRequest.setEvent(PolicyEvaluationRequestResource.EventType.ACTIVITY_STAGE_TRANSITION);
-            evaluationRequest.setResourceType(PolicyEvaluationRequestResource.ResourceType.ACTIVITY_TRANSITION);
+            evaluationRequest.setResourceType(PolicyEvaluationRequestResource.ResourceType.ACTIVITY_STAGE_TRANSITION);
             if (currentLifecycle != null) {
                 evaluationRequest.setCurrentState(JsonNodeUtils.toJsonNode(
                         eventTypeMapper.toEventResource(currentLifecycle, null, null)
@@ -92,7 +92,7 @@ public class DevopsPolicyServiceProxy {
         try {
             PolicyEvaluationRequestResource evaluationRequest = new PolicyEvaluationRequestResource();
             evaluationRequest.setEvent(PolicyEvaluationRequestResource.EventType.TASK_EXECUTION_RESULT);
-            evaluationRequest.setResourceType(PolicyEvaluationRequestResource.ResourceType.TASK_RESULT);
+            evaluationRequest.setResourceType(PolicyEvaluationRequestResource.ResourceType.TASK_EXECUTION_RESULT);
             evaluationRequest.setCurrentState(JsonNodeUtils.toJsonNode(
                     eventTypeMapper.toEventResource(null, taskResource)
             ));
@@ -120,7 +120,7 @@ public class DevopsPolicyServiceProxy {
             evaluationRequest.setDataProductId(activityResource.getDataProductId());
             evaluationRequest.setDataProductVersion(activityResource.getDataProductVersion());
             evaluationRequest.setEvent(PolicyEvaluationRequestResource.EventType.ACTIVITY_EXECUTION_RESULT);
-            evaluationRequest.setResourceType(PolicyEvaluationRequestResource.ResourceType.ACTIVITY_RESULT);
+            evaluationRequest.setResourceType(PolicyEvaluationRequestResource.ResourceType.ACTIVITY_EXECUTION_RESULT);
             evaluationRequest.setCurrentState(JsonNodeUtils.toJsonNode(
                     eventTypeMapper.toEventResource(activityResource, dataProductVersionDPDS)
             ));

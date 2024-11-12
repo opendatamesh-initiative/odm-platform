@@ -5,7 +5,6 @@ import org.opendatamesh.platform.pp.devops.api.resources.ActivityResource;
 import org.opendatamesh.platform.pp.devops.api.resources.LifecycleResource;
 import org.opendatamesh.platform.up.executor.api.resources.TaskResource;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ActivityStageTransitionEventTypeResource {

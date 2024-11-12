@@ -1,12 +1,10 @@
 package org.opendatamesh.platform.pp.policy.api.resources;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class PolicyEvaluationRequestResource {
     @JsonProperty("resourceType")
     @Schema(description = "Resource type")
@@ -35,16 +33,17 @@ public class PolicyEvaluationRequestResource {
     public enum EventType {
         DATA_PRODUCT_CREATION,
         DATA_PRODUCT_UPDATE,
+        DATA_PRODUCT_VERSION_CREATION,
         ACTIVITY_STAGE_TRANSITION,
         TASK_EXECUTION_RESULT,
-        ACTIVITY_EXECUTION_RESULT
+        ACTIVITY_EXECUTION_RESULT,
     }
 
     public enum ResourceType {
-        DATA_PRODUCT,
-        ACTIVITY_TRANSITION,
-        ACTIVITY_RESULT,
-        TASK_RESULT
+        DATA_PRODUCT_DESCRIPTOR,
+        ACTIVITY_STAGE_TRANSITION,
+        ACTIVITY_EXECUTION_RESULT,
+        TASK_EXECUTION_RESULT
     }
 
     public ResourceType getResourceType() {

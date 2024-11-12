@@ -3,7 +3,11 @@
   "displayName": "Custom Lambda Name Checker",
   "description": "Check whether the name of the input Data Product is compliant with global naming convention or not",
   "blockingFlag": false,
-  "evaluationEvent": "DATA_PRODUCT_CREATION",
+  "evaluationEvents": [
+    {
+      "event": "DATA_PRODUCT_VERSION_CREATION"
+    }
+  ],
   "suite": "Suite Name",
   "filteringExpression": "afterState.dataProductVersion.info.domain == 'sampleDomain' && afterState.dataProductVersion.info.domain != 'sampleDomainTwo'",
   "policyEngine":{

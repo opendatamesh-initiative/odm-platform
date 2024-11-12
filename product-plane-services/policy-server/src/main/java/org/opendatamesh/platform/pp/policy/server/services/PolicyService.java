@@ -132,12 +132,20 @@ public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySea
 
     @Override
     protected void reconcile(Policy objectToReconcile) {
+        PolicyEngine policyEngine = null;
         if (objectToReconcile.getPolicyEngine().getId() != null) {
-            PolicyEngine policyEngine = policyEngineService.findOne(objectToReconcile.getPolicyEngineId());
-            objectToReconcile.setPolicyEngine(policyEngine);
+            policyEngine = policyEngineService.findOne(objectToReconcile.getPolicyEngineId());
+
         } else if (StringUtils.hasText(objectToReconcile.getPolicyEngine().getName()) && objectToReconcile.getPolicyEngine().getId() == null) {
-            objectToReconcile.setPolicyEngine(policyEngineService.findByName(objectToReconcile.getPolicyEngine().getName()));
+            policyEngine = policyEngineService.findByName(objectToReconcile.getPolicyEngine().getName());
         }
+        if (policyEngine == null) {
+            throw new NotFoundException(
+                    PolicyApiStandardErrors.SC404_01_POLICY_ENGINE_NOT_FOUND,
+                    "Policy Engine: [ " + objectToReconcile.getPolicyEngine() + "] not found"
+            );
+        }
+        objectToReconcile.setPolicyEngine(policyEngine);
     }
 
     @Override

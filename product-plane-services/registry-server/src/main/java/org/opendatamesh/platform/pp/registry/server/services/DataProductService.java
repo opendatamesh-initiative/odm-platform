@@ -18,6 +18,7 @@ import org.opendatamesh.platform.pp.registry.server.database.mappers.DataProduct
 import org.opendatamesh.platform.pp.registry.server.database.mappers.DataProductVersionMapper;
 import org.opendatamesh.platform.pp.registry.server.database.repositories.DataProductRepository;
 import org.opendatamesh.platform.pp.registry.server.services.proxies.RegistryNotificationServiceProxy;
+import org.opendatamesh.platform.pp.registry.server.services.proxies.RegistryPolicyServiceProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +52,9 @@ public class DataProductService {
 
     @Autowired
     private RegistryNotificationServiceProxy registryNotificationServiceProxy;
+
+    @Autowired
+    private RegistryPolicyServiceProxy registryPolicyServiceProxy;
 
     @Autowired
     private IdentifierStrategy identifierStrategy;
@@ -93,7 +97,13 @@ public class DataProductService {
         }
         dataProduct.setId(uuid);
 
-        if(loadDataProduct(uuid) != null) {
+        if (!registryPolicyServiceProxy.isCompliantWithPolicies(dataProductMapper.toResource(dataProduct))) {
+            throw new UnprocessableEntityException(
+                    RegistryApiStandardErrors.SC422_03_DESCRIPTOR_NOT_COMPLIANT,
+                    "The data product  is not compliant to one or more global policies");
+        }
+
+        if (loadDataProduct(uuid) != null) {
             throw new UnprocessableEntityException(
                 RegistryApiStandardErrors.SC422_04_PRODUCT_ALREADY_EXISTS,
                 "Data product [" + dataProduct.getFullyQualifiedName() + "] already exists");
@@ -268,6 +278,13 @@ public class DataProductService {
                 RegistryApiStandardErrors.SC404_01_PRODUCT_NOT_FOUND,
                     "Data product [" + dataProduct.getFullyQualifiedName() + "] with id [" + dataProduct.getId() + "] doesn't exists");
         }
+
+        if (!registryPolicyServiceProxy.isCompliantWithPolicies(dataProductMapper.toResource(oldDataProduct), dataProductMapper.toResource(dataProduct))) {
+            throw new UnprocessableEntityException(
+                    RegistryApiStandardErrors.SC422_03_DESCRIPTOR_NOT_COMPLIANT,
+                    "The data product is not compliant to one or more global policies");
+        }
+
         dataProduct.setId(oldDataProduct.getId());
         dataProduct.setFullyQualifiedName(oldDataProduct.getFullyQualifiedName());
 

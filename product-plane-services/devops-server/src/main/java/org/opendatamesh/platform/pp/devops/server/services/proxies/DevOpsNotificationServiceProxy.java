@@ -1,7 +1,10 @@
 package org.opendatamesh.platform.pp.devops.server.services.proxies;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.opendatamesh.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.platform.core.commons.servers.exceptions.BadGatewayException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
@@ -54,13 +57,19 @@ public class DevOpsNotificationServiceProxy {
         }
     }
 
-    public void notifyActivityCompletion(ActivityResource activity) {
+    public void notifyActivityCompletion(ActivityResource activity, DataProductVersionDPDS dataProductVersion) {
+        ObjectNode afterState = mapper.createObjectNode();
+        JsonNode activityNode = mapper.valueToTree(activity);
+        JsonNode dataProductVersionNode = mapper.valueToTree(dataProductVersion);
+        afterState.set("activity", activityNode);
+        afterState.set("dataProductVersion", dataProductVersionNode);
+
         if(notificationServiceActive) {
             EventResource eventResource = buildActivityEvent(
                     EventType.DATA_PRODUCT_ACTIVITY_COMPLETED,
                     activity.getId().toString(),
                     null,
-                    activity
+                    afterState
             );
             notifyActivityEvent(eventResource);
         }

@@ -25,7 +25,7 @@ License.
     <parent>
         <groupId>org.opendatamesh</groupId>
         <artifactId>odm-platform-pp-services</artifactId>
-        <version>1.0.5</version>
+        <version>1.0.6</version>
         <relativePath>../</relativePath>
     </parent>
 
@@ -33,7 +33,7 @@ License.
     <artifactId>odm-platform-pp-notification-server</artifactId>
     <name>ODM Platform Notification Server</name>
     <description>Open Data Mesh Platform's Notification service server</description>
-    <version>1.0.5</version>
+    <version>1.0.6</version>
     <url>https://github.com/opendatamesh-initiative/odm-platform</url>
 
     <licenses>
@@ -226,17 +226,17 @@ License.
         <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-core-commons</artifactId>
-            <version>1.0.5</version>
+            <version>1.0.6</version>
         </dependency>
         <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-pp-notification-api</artifactId>
-            <version>1.0.5</version>
+            <version>1.0.6</version>
         </dependency>
         <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-up-observer-api</artifactId>
-            <version>1.0.5</version>
+            <version>1.0.6</version>
             <scope>compile</scope>
         </dependency>
 

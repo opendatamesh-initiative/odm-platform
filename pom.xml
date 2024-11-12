@@ -34,7 +34,7 @@ License.
     <name>ODM Platform</name>
    
     <description>Open Data Mesh Platform</description>
-    <version>1.0.5</version>
+    <version>1.0.6</version>
     <url>https://github.com/opendatamesh-initiative/odm-platform-pp-services</url>
     <packaging>pom</packaging>
 

@@ -26,10 +26,7 @@ public interface PolicyRepository extends PagingAndSortingAndSpecificationExecut
         public static Specification<Policy> hasEvaluationEvent(String evaluationEvent) {
             return ((root, query, criteriaBuilder) -> {
                 final ListJoin<Policy, PolicyEvaluationEvent> evaluationEvents = root.join(Policy_.evaluationEvents);
-                return criteriaBuilder.or(
-                        criteriaBuilder.equal(root.get(Policy_.evaluationEvent), evaluationEvent),
-                        criteriaBuilder.equal(evaluationEvents.get(PolicyEvaluationEvent_.event), evaluationEvent)
-                );
+                return criteriaBuilder.equal(evaluationEvents.get(PolicyEvaluationEvent_.event), evaluationEvent);
             }
             );
         }

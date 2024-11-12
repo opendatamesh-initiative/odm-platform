@@ -128,7 +128,7 @@ public class RegistryPolicyServiceProxy {
             evaluationRequest.setCurrentState(JsonNodeUtils.toJsonNode(eventTypeMapper.toEventResource(oldDpdsHead)));
             evaluationRequest.setAfterState(JsonNodeUtils.toJsonNode(eventTypeMapper.toEventResource(newDpdsHead)));
             evaluationRequest.setDataProductId(oldDataProduct.getId());
-            evaluationRequest.setEvent(PolicyEvaluationRequestResource.EventType.DATA_PRODUCT_UPDATED);
+            evaluationRequest.setEvent(PolicyEvaluationRequestResource.EventType.DATA_PRODUCT_UPDATE);
             ValidationResponseResource evaluationResult = policyValidationClient.validateInputObject(evaluationRequest);
 
             if (Boolean.FALSE.equals(evaluationResult.getResult())) {

@@ -43,10 +43,6 @@ public class PolicyResource extends TimestampedResource {
     @Schema(description = "The name of the suite which the policy belongs")
     private String suite;
 
-    @JsonProperty("evaluationEvent")
-    @Hidden
-    private String evaluationEvent;
-
     @JsonProperty("evaluationEvents")
     @Schema(description = "A list of events  of the Data Product lifecycle where the Policy must be evaluated")
     private List<PolicyEvaluationEventResource> evaluationEvents;
@@ -152,22 +148,7 @@ public class PolicyResource extends TimestampedResource {
         this.policyEngine = policyEngine;
     }
 
-    @Deprecated(since = "7/11/2024", forRemoval = true)
-    public String getEvaluationEvent() {
-        return evaluationEvent;
-    }
-
-    @Deprecated(since = "7/11/2024", forRemoval = true)
-    public void setEvaluationEvent(String evaluationEvent) {
-        this.evaluationEvent = evaluationEvent;
-    }
-
     public List<PolicyEvaluationEventResource> getEvaluationEvents() {
-        if (CollectionUtils.isEmpty(evaluationEvents) && evaluationEvent != null) {
-            PolicyEvaluationEventResource eventResource = new PolicyEvaluationEventResource();
-            eventResource.setEvent(evaluationEvent);
-            return Lists.newArrayList(eventResource);
-        }
         return evaluationEvents;
     }
 

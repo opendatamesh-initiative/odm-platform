@@ -239,7 +239,7 @@ public class PolicyIT extends ODMPolicyIT {
         assertThat(policyResource.getDescription()).isEqualTo("Check the Data Product name");
         assertThat(policyResource.getBlockingFlag()).isEqualTo(false);
         assertThat(policyResource.getRawContent()).isEqualTo("package dataproduct-name-checker\n\ndefault allow := false\n\nallow := true {                                     \n    startswith(input.name, \"dp-\")\n}");
-        assertThat(policyResource.getEvaluationEvent()).isEqualTo("DATA_PRODUCT_VERSION_CREATION");
+        assertThat(policyResource.getEvaluationEvents().stream().map(PolicyEvaluationEventResource::getEvent).collect(Collectors.toSet())).contains("DATA_PRODUCT_VERSION_CREATION");
         assertThat(policyResource.getSuite()).isEqualTo("Suite Name");
         assertThat(policyResource.getLastVersion()).isEqualTo(true);
         assertThat(policyResource.getCreatedAt()).isNotNull();
@@ -261,7 +261,7 @@ public class PolicyIT extends ODMPolicyIT {
         assertThat(policyResource.getDescription()).isEqualTo("Check the Data Product name");
         assertThat(policyResource.getBlockingFlag()).isEqualTo(false);
         assertThat(policyResource.getRawContent()).isEqualTo("package dataproduct-name-checker\n\ndefault allow := false\n\nallow := true {                                     \n    startswith(input.name, \"dp-\")\n}");
-        assertThat(policyResource.getEvaluationEvent()).isEqualTo("DATA_PRODUCT_VERSION_CREATION");
+        assertThat(policyResource.getEvaluationEvents().stream().map(PolicyEvaluationEventResource::getEvent).collect(Collectors.toSet())).contains("DATA_PRODUCT_VERSION_CREATION");
         assertThat(policyResource.getSuite()).isEqualTo("Suite Name");
         assertThat(policyResource.getLastVersion()).isEqualTo(true);
     }
@@ -275,7 +275,7 @@ public class PolicyIT extends ODMPolicyIT {
         assertThat(policyResource.getDescription()).isEqualTo("Check whether the name of the input Data Product is compliant with global naming convention or not");
         assertThat(policyResource.getBlockingFlag()).isEqualTo(false);
         assertThat(policyResource.getRawContent()).isNull();
-        assertThat(policyResource.getEvaluationEvent()).isEqualTo("DATA_PRODUCT_VERSION_CREATION");
+        assertThat(policyResource.getEvaluationEvents().stream().map(PolicyEvaluationEventResource::getEvent).collect(Collectors.toSet())).contains("DATA_PRODUCT_VERSION_CREATION");
         assertThat(policyResource.getSuite()).isEqualTo("Suite Name");
         assertThat(policyResource.getLastVersion()).isEqualTo(true);
         assertThat(policyResource.getCreatedAt()).isNotNull();

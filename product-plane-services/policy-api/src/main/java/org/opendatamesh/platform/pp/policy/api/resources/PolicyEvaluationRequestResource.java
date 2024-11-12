@@ -32,7 +32,7 @@ public class PolicyEvaluationRequestResource {
 
     public enum EventType {
         DATA_PRODUCT_CREATION,
-        DATA_PRODUCT_UPDATED,
+        DATA_PRODUCT_UPDATE,
         DATA_PRODUCT_VERSION_CREATION,
         ACTIVITY_STAGE_TRANSITION,
         TASK_EXECUTION_RESULT,

@@ -23,7 +23,7 @@ public final class EventTypeObjectConverterUtils {
 
     private static final ImmutableMap<EventType, Class<?>> eventTypeClassMap = ImmutableMap.of(
             EventType.DATA_PRODUCT_CREATION, DataProductEvent.class,
-            EventType.DATA_PRODUCT_UPDATED, DataProductEvent.class,
+            EventType.DATA_PRODUCT_UPDATE, DataProductEvent.class,
             EventType.DATA_PRODUCT_VERSION_CREATION, DataProductEvent.class,
             EventType.ACTIVITY_STAGE_TRANSITION, ActivityStageTransitionEvent.class,
             EventType.TASK_EXECUTION_RESULT, TaskResultEvent.class,

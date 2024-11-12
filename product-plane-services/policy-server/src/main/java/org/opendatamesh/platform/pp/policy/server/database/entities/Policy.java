@@ -34,9 +34,6 @@ public class Policy extends TimestampedEntity {
     @Column(name = "SUITE")
     private String suite;
 
-    @Column(name = "EVALUATION_EVENT")
-    private String evaluationEvent;
-
     @OneToMany(mappedBy = "policy", orphanRemoval = true, cascade = CascadeType.ALL)
     @Fetch(FetchMode.SELECT)
     @BatchSize(size = 100)
@@ -158,16 +155,6 @@ public class Policy extends TimestampedEntity {
         PolicyEngine pg = new PolicyEngine();
         pg.setId(policyEngineId);
         this.policyEngine = pg;
-    }
-
-    @Deprecated(since = "7/11/2024", forRemoval = true)
-    public String getEvaluationEvent() {
-        return evaluationEvent;
-    }
-
-    @Deprecated(since = "7/11/2024", forRemoval = true)
-    public void setEvaluationEvent(String evaluationEvent) {
-        this.evaluationEvent = evaluationEvent;
     }
 
     public List<PolicyEvaluationEvent> getEvaluationEvents() {

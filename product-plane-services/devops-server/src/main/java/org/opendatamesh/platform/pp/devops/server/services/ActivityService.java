@@ -242,12 +242,13 @@ public class ActivityService {
         }
 
         ObjectNode activityOutputNode = ObjectMapperFactory.JSON_MAPPER.createObjectNode();
+        DataProductVersionDPDS dataProductVersion = readDataProductVersion(activity);
+
         if (success) {
             activity.setStatus(ActivityStatus.PROCESSED);
             lifecycleService.createLifecycle(activity);
             activity = saveActivity(activity);
 
-            DataProductVersionDPDS dataProductVersion = readDataProductVersion(activity);
             if (!policyServiceProxy.isContextuallyCoherent(mapper.toResource(activity), dataProductVersion)) {
                 // TODO: replace this exception with something else
                 throw new InternalServerException(
@@ -272,7 +273,7 @@ public class ActivityService {
             activity = saveActivity(activity);
         }
 
-        devOpsNotificationServiceProxy.notifyActivityCompletion(mapper.toResource(activity));
+        devOpsNotificationServiceProxy.notifyActivityCompletion(mapper.toResource(activity), dataProductVersion);
 
         return activity;
     }

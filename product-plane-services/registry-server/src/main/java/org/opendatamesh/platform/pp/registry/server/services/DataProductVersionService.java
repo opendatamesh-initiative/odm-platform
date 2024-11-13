@@ -570,7 +570,7 @@ public class DataProductVersionService {
     public boolean isCompliantWithGlobalPolicies(DataProductVersion dataProductVersion) {
         DataProductVersionDPDS newDataProductVersionDPDS = dataProductVersionMapper.toResource(dataProductVersion);
         DataProductVersionDPDS mostRecentDataProduct = getMostRecentDataProductVersion(dataProductVersion);
-        return policyServiceProxy.validateDataProductVersionCreation(mostRecentDataProduct, newDataProductVersionDPDS);
+        return policyServiceProxy.validateDataProductVersion(mostRecentDataProduct, newDataProductVersionDPDS);
     }
 
     private DataProductVersionDPDS getMostRecentDataProductVersion(DataProductVersion dataProductVersion) {

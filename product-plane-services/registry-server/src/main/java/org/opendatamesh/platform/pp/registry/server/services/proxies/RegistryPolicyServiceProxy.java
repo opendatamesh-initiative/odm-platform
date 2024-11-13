@@ -44,7 +44,7 @@ public class RegistryPolicyServiceProxy {
         }
     }
 
-    public boolean validateDataProductVersionCreation(DataProductVersionDPDS oldDpds, DataProductVersionDPDS newDpds) {
+    public boolean validateDataProductVersion(DataProductVersionDPDS oldDpds, DataProductVersionDPDS newDpds) {
         if (!this.policyServiceActive) {
             logger.info("Policy Service is not active;");
             return true;
@@ -87,7 +87,7 @@ public class RegistryPolicyServiceProxy {
 
             evaluationRequest.setAfterState(JsonNodeUtils.toJsonNode(eventTypeMapper.toEventResource(dpdsHead)));
             evaluationRequest.setDataProductId(dataProduct.getId());
-            evaluationRequest.setEvent(PolicyEvaluationRequestResource.EventType.DATA_PRODUCT_VERSION_CREATION);
+            evaluationRequest.setEvent(PolicyEvaluationRequestResource.EventType.DATA_PRODUCT_CREATION);
             ValidationResponseResource evaluationResult = policyValidationClient.validateInputObject(evaluationRequest);
 
             if (Boolean.FALSE.equals(evaluationResult.getResult())) {
@@ -102,16 +102,6 @@ public class RegistryPolicyServiceProxy {
                     e
             );
         }
-    }
-
-    private DataProductVersionDPDS descriptorFromDataProduct(DataProductResource dataProduct) {
-        DataProductVersionDPDS dpdsHead = new DataProductVersionDPDS();
-        InfoDPDS dpdsHeadInfo = new InfoDPDS();
-        dpdsHeadInfo.setDomain(dataProduct.getDomain());
-        dpdsHeadInfo.setFullyQualifiedName(dataProduct.getFullyQualifiedName());
-        dpdsHeadInfo.setDescription(dataProduct.getDescription());
-        dpdsHead.setInfo(dpdsHeadInfo);
-        return dpdsHead;
     }
 
     public boolean isCompliantWithPolicies(DataProductResource oldDataProduct, DataProductResource newDataProduct) {
@@ -143,5 +133,15 @@ public class RegistryPolicyServiceProxy {
                     e
             );
         }
+    }
+
+    private DataProductVersionDPDS descriptorFromDataProduct(DataProductResource dataProduct) {
+        DataProductVersionDPDS dpdsHead = new DataProductVersionDPDS();
+        InfoDPDS dpdsHeadInfo = new InfoDPDS();
+        dpdsHeadInfo.setDomain(dataProduct.getDomain());
+        dpdsHeadInfo.setFullyQualifiedName(dataProduct.getFullyQualifiedName());
+        dpdsHeadInfo.setDescription(dataProduct.getDescription());
+        dpdsHead.setInfo(dpdsHeadInfo);
+        return dpdsHead;
     }
 }

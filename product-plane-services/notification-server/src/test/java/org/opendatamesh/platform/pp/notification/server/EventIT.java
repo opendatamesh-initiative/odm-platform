@@ -72,7 +72,10 @@ public class EventIT extends ODMNotificationIT {
         EventResource event = mapper.convertValue(getResponse.getBody(), EventResource.class);
 
         eventToDispatch.setId(events.get(0).getId());
-        assertThat(event).usingRecursiveComparison().isEqualTo(eventToDispatch);
+        assertThat(event)
+                .usingRecursiveComparison()
+                .ignoringExpectedNullFields()
+                .isEqualTo(eventToDispatch);
 
     }
 

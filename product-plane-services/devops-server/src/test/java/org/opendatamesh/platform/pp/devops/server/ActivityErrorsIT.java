@@ -83,7 +83,7 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
     public void testCreateAndStartActivityWhenExecutorIsUnavailable() {
 
         createMocksForCreateActivityCall(true, false);
-
+        createMocksForCreateActivityCall(true, false);
         // NOTE because the call to executor service fails the activity and relative
         // tasks are terminated with FAILED status
         ActivityResource activityRes = createTestActivity(true);
@@ -478,6 +478,7 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testStartAlreadyProcessedActivity() {
+        createMocksForCreateActivityCall();
         createMocksForCreateActivityCall();
 
         ActivityResource activityRes = createTestActivity(true);

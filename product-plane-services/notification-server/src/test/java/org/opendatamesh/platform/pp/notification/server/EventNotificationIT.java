@@ -58,7 +58,10 @@ public class EventNotificationIT extends ODMNotificationIT {
         notification = mapper.convertValue(putResponse.getBody(), EventNotificationResource.class);
 
         eventToDispatch.setId(notification.getEvent().getId());
-        assertThat(notification.getEvent()).usingRecursiveComparison().isEqualTo(eventToDispatch);
+        assertThat(notification.getEvent())
+                .usingRecursiveComparison()
+                .ignoringExpectedNullFields()
+                .isEqualTo(eventToDispatch);
         assertThat(notification.getObserver()).usingRecursiveComparison().ignoringFields("createdAt", "updatedAt").isEqualTo(observerResource);
         assertThat(notification.getStatus()).isEqualTo(EventNotificationStatus.PROCESSED);
         assertThat(notification.getProcessingOutput()).isEqualTo("OK");
@@ -150,7 +153,10 @@ public class EventNotificationIT extends ODMNotificationIT {
         EventNotificationResource notification = mapper.convertValue(getResponse.getBody(), EventNotificationResource.class);
 
         assertThat(notification.getObserver()).usingRecursiveComparison().ignoringFields("id", "createdAt", "updatedAt").isEqualTo(observerResource);
-        assertThat(notification.getEvent()).usingRecursiveComparison().ignoringFields("id").isEqualTo(eventToDispatch);
+        assertThat(notification.getEvent())
+                .usingRecursiveComparison()
+                .ignoringExpectedNullFields()
+                .ignoringFields("id").isEqualTo(eventToDispatch);
         assertThat(notification.getStatus()).isNotNull();
 
     }

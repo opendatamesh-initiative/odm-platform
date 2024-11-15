@@ -2,6 +2,7 @@ package org.opendatamesh.platform.pp.notification.api.resources;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.opendatamesh.platform.pp.notification.api.resources.enums.EventType;
 
@@ -24,11 +25,11 @@ public class EventResource {
 
     @JsonProperty("beforeState")
     @Schema(description = "Entity state before the Event")
-    private String beforeState;
+    private JsonNode beforeState;
 
     @JsonProperty("afterState")
     @Schema(description = "Entity state after the Event")
-    private String afterState;
+    private JsonNode afterState;
 
     @JsonProperty("time")
     @Schema(description = "Event timestamp", required = true)
@@ -36,7 +37,7 @@ public class EventResource {
 
     public EventResource () {}
 
-    public EventResource (EventType type, String entityId, String beforeState, String afterState) {
+    public EventResource (EventType type, String entityId, JsonNode beforeState, JsonNode afterState) {
         this.type = type.toString();
         this.entityId = entityId;
         this.beforeState = beforeState;
@@ -68,19 +69,19 @@ public class EventResource {
         this.entityId = entityId;
     }
 
-    public String getBeforeState() {
+    public JsonNode getBeforeState() {
         return beforeState;
     }
 
-    public void setBeforeState(String beforeState) {
+    public void setBeforeState(JsonNode beforeState) {
         this.beforeState = beforeState;
     }
 
-    public String getAfterState() {
+    public JsonNode getAfterState() {
         return afterState;
     }
 
-    public void setAfterState(String afterState) {
+    public void setAfterState(JsonNode afterState) {
         this.afterState = afterState;
     }
 

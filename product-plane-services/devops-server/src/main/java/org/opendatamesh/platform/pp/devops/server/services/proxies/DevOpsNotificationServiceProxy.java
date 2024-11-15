@@ -1,15 +1,14 @@
 package org.opendatamesh.platform.pp.devops.server.services.proxies;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import lombok.extern.slf4j.Slf4j;
 import org.opendatamesh.dpds.model.DataProductVersionDPDS;
-import org.opendatamesh.platform.core.commons.servers.exceptions.BadGatewayException;
-import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
-import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
 import org.opendatamesh.platform.core.commons.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityResource;
+import org.opendatamesh.platform.pp.devops.api.resources.events.DataProductActivityEventState;
+import org.opendatamesh.platform.pp.devops.api.resources.events.DataProductTaskEventState;
 import org.opendatamesh.platform.pp.notification.api.clients.DispatchClient;
 import org.opendatamesh.platform.pp.notification.api.resources.EventResource;
 import org.opendatamesh.platform.pp.notification.api.resources.enums.EventType;
@@ -19,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class DevOpsNotificationServiceProxy {
 
     @Autowired(required = false)
@@ -33,45 +33,54 @@ public class DevOpsNotificationServiceProxy {
     // Activity Events
     // ======================================================================================
 
-    public void notifyActivityCreation(ActivityResource activity) {
-        if(notificationServiceActive) {
-            EventResource eventResource = buildActivityEvent(
+    public void notifyActivityCreation(ActivityResource activity, DataProductVersionDPDS dataProductVersion) {
+        if (Boolean.TRUE.equals(notificationServiceActive)) {
+            JsonNode afterState = mapper.valueToTree(new DataProductActivityEventState(
+                    activity,
+                    dataProductVersion
+            ));
+            fixDpdsVersionFieldName(afterState);
+            EventResource eventResource = new EventResource(
                     EventType.DATA_PRODUCT_ACTIVITY_CREATED,
-                    activity.getId().toString(),
-                    null,
-                    activity
-            );
-            notifyActivityEvent(eventResource);
-        }
-    }
-
-    public void notifyActivityStart(ActivityResource activity) {
-        if(notificationServiceActive) {
-            EventResource eventResource = buildActivityEvent(
-                    EventType.DATA_PRODUCT_ACTIVITY_STARTED,
-                    activity.getId().toString(),
-                    null,
-                    activity
-            );
-            notifyActivityEvent(eventResource);
-        }
-    }
-
-    public void notifyActivityCompletion(ActivityResource activity, DataProductVersionDPDS dataProductVersion) {
-        ObjectNode afterState = mapper.createObjectNode();
-        JsonNode activityNode = mapper.valueToTree(activity);
-        JsonNode dataProductVersionNode = mapper.valueToTree(dataProductVersion);
-        afterState.set("activity", activityNode);
-        afterState.set("dataProductVersion", dataProductVersionNode);
-
-        if(notificationServiceActive) {
-            EventResource eventResource = buildActivityEvent(
-                    EventType.DATA_PRODUCT_ACTIVITY_COMPLETED,
                     activity.getId().toString(),
                     null,
                     afterState
             );
-            notifyActivityEvent(eventResource);
+            notifyEvent(eventResource);
+        }
+    }
+
+    public void notifyActivityStart(ActivityResource activity, DataProductVersionDPDS dataProductVersion) {
+        if (Boolean.TRUE.equals(notificationServiceActive)) {
+            JsonNode afterState = mapper.valueToTree(new DataProductActivityEventState(
+                    activity,
+                    dataProductVersion
+            ));
+            fixDpdsVersionFieldName(afterState);
+            EventResource eventResource = new EventResource(
+                    EventType.DATA_PRODUCT_ACTIVITY_STARTED,
+                    activity.getId().toString(),
+                    null,
+                    afterState
+            );
+            notifyEvent(eventResource);
+        }
+    }
+
+    public void notifyActivityCompletion(ActivityResource activity, DataProductVersionDPDS dataProductVersion) {
+        if (Boolean.TRUE.equals(notificationServiceActive)) {
+            JsonNode afterState = mapper.valueToTree(new DataProductActivityEventState(
+                    activity,
+                    dataProductVersion
+            ));
+            fixDpdsVersionFieldName(afterState);
+            EventResource eventResource = new EventResource(
+                    EventType.DATA_PRODUCT_ACTIVITY_COMPLETED,
+                    activity.getId().toString(),
+                    null, //TODO DATA_PRODUCT_ACTIVITY_COMPLETED must have beforeState!!!
+                    afterState
+            );
+            notifyEvent(eventResource);
         }
     }
 
@@ -81,38 +90,47 @@ public class DevOpsNotificationServiceProxy {
     // ======================================================================================
 
     public void notifyTaskCreation(TaskResource task) {
-        if(notificationServiceActive) {
-            EventResource eventResource = buildTaskEvent(
+        if (Boolean.TRUE.equals(notificationServiceActive)) {
+            JsonNode afterState = mapper.valueToTree(new DataProductTaskEventState(
+                    task
+            ));
+            EventResource eventResource = new EventResource(
                     EventType.DATA_PRODUCT_TASK_CREATED,
                     task.getId().toString(),
                     null,
-                    task
+                    afterState
             );
-            notifyTaskEvent(eventResource);
+            notifyEvent(eventResource);
         }
     }
 
     public void notifyTaskStart(TaskResource task) {
-        if(notificationServiceActive) {
-            EventResource eventResource = buildTaskEvent(
+        if (Boolean.TRUE.equals(notificationServiceActive)) {
+            JsonNode afterState = mapper.valueToTree(new DataProductTaskEventState(
+                    task
+            ));
+            EventResource eventResource = new EventResource(
                     EventType.DATA_PRODUCT_TASK_STARTED,
                     task.getId().toString(),
                     null,
-                    task
+                    afterState
             );
-            notifyTaskEvent(eventResource);
+            notifyEvent(eventResource);
         }
     }
 
     public void notifyTaskCompletion(TaskResource task) {
-        if(notificationServiceActive) {
-            EventResource eventResource = buildTaskEvent(
-                    EventType.DATA_PRODUCT_TASK_COMPLETED,
-                    task.getId().toString(),
-                    null,
+        if (Boolean.TRUE.equals(notificationServiceActive)) {
+            JsonNode afterState = mapper.valueToTree(new DataProductTaskEventState(
                     task
+            ));
+            EventResource eventResource = new EventResource(
+                    EventType.DATA_PRODUCT_TASK_CREATED,
+                    task.getId().toString(),
+                    null, //TODO DATA_PRODUCT_TASK_CREATED must have beforeState!!!
+                    afterState
             );
-            notifyTaskEvent(eventResource);
+            notifyEvent(eventResource);
         }
     }
 
@@ -121,77 +139,21 @@ public class DevOpsNotificationServiceProxy {
     // Dispatch events
     // ======================================================================================
 
-    private void notifyActivityEvent(EventResource eventResource) {
-        notifyEvent(
-                eventResource,
-                "Impossible to upload Activity to notificationServices: "
-        );
-    }
 
-    private void notifyTaskEvent(EventResource eventResource) {
-        notifyEvent(
-                eventResource,
-                "Impossible to upload Task to notificationServices: "
-        );
-    }
-
-    private void notifyEvent(EventResource eventResource, String errorMessage) {
+    private void notifyEvent(EventResource eventResource) {
         try {
             notificationClient.notifyEvent(eventResource);
         } catch (Exception e) {
-            throw new BadGatewayException(
-                    ODMApiCommonErrors.SC502_70_NOTIFICATION_SERVICE_ERROR,
-                    errorMessage + e.getMessage(),
-                    e
-            );
+            log.warn(e.getMessage(), e);
         }
     }
 
-
-    // ======================================================================================
-    // Event creation
-    // ======================================================================================
-
-    private EventResource buildActivityEvent(
-            EventType eventType, String eventSubjectId, Object beforeState, Object afterState
-    ) {
-        return buildEvent(
-                eventType,
-                eventSubjectId,
-                beforeState,
-                afterState,
-                "Error serializing Activity as JSON: "
-        );
-    }
-
-    private EventResource buildTaskEvent(
-            EventType eventType, String eventSubjectId, Object beforeState, Object afterState
-    ) {
-        return buildEvent(
-                eventType,
-                eventSubjectId,
-                beforeState,
-                afterState,
-                "Error serializing Task as JSON: "
-        );
-    }
-
-    private EventResource buildEvent(
-            EventType eventType, String eventSubjectId, Object beforeState, Object afterState, String errorMessage
-    ) {
-        try {
-            return new EventResource(
-                    eventType,
-                    eventSubjectId,
-                    beforeState == null ? null : mapper.writeValueAsString(beforeState),
-                    afterState == null ? null : mapper.writeValueAsString(afterState)
-            );
-        } catch (JsonProcessingException e) {
-            throw new InternalServerException(
-                    ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
-                    errorMessage + e.getMessage()
-            );
+    private void fixDpdsVersionFieldName(JsonNode eventStateTree) {
+        //TODO this must be fixed on the dpds model!!!!
+        if (eventStateTree != null && eventStateTree.has("dataProductVersion") && eventStateTree.get("dataProductVersion").has("info") && eventStateTree.get("dataProductVersion").get("info").has("versionNumber")) {
+            JsonNode versionNumberNode = eventStateTree.get("").get("info").get("versionNumber");
+            ((ObjectNode) versionNumberNode.get("dataProductVersion").get("info")).remove("versionNumber");
+            ((ObjectNode) versionNumberNode.get("dataProductVersion").get("info")).set("version", versionNumberNode);
         }
     }
-
 }

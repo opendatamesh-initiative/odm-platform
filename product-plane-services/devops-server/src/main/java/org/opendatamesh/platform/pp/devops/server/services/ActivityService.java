@@ -83,7 +83,22 @@ public class ActivityService {
                     "Activity object cannot be null");
         }
 
-        List<LifecycleTaskInfoDPDS> activitiesInfo = readTasksInfo(activity);
+        if (!StringUtils.hasText(activity.getStage())) {
+            throw new UnprocessableEntityException(
+                    DevOpsApiStandardErrors.SC422_01_ACTIVITY_IS_INVALID,
+                    "Activity type property cannot be empty");
+        }
+
+        DataProductVersionDPDS dataProductVersion = readDataProductVersion(activity);
+        if (dataProductVersion == null) {
+            throw new UnprocessableEntityException(
+                    DevOpsApiStandardErrors.SC422_01_ACTIVITY_IS_INVALID,
+                    "The version [" + activity.getDataProductVersion() + "] of data product ["
+                            + activity.getDataProductId() + "] pointed by activity does not exist");
+        }
+
+        List<LifecycleTaskInfoDPDS> activitiesInfo = readTasksInfo(activity, dataProductVersion);
+
         if (activitiesInfo == null || activitiesInfo.isEmpty()) {
             throw new UnprocessableEntityException(
                     DevOpsApiStandardErrors.SC422_01_ACTIVITY_IS_INVALID,
@@ -121,8 +136,8 @@ public class ActivityService {
         // create tasks associated with the given activity
         List<Task> tasks = taskService.createTasks(activity.getId(), activitiesInfo);
 
-        devOpsNotificationServiceProxy.notifyActivityCreation(mapper.toResource(activity));
-    
+        devOpsNotificationServiceProxy.notifyActivityCreation(mapper.toResource(activity), dataProductVersion);
+
         if (startAfterCreation) {
             activity = startActivity(activity, tasks);
         }
@@ -159,7 +174,7 @@ public class ActivityService {
                 DevOpsApiStandardErrors.SC422_01_ACTIVITY_IS_INVALID,
                 "Only activities in PLANNED state can be started. Activity with id [" + activity.getId() + "] is in state [" + activity.getStatus() + "]");
             }
-            
+
         }
 
         List<Task> plannedTasks = taskService.searchTasks(activity.getId(), null, ActivityTaskStatus.PLANNED);
@@ -212,11 +227,12 @@ public class ActivityService {
                  t);
         }
 
-        devOpsNotificationServiceProxy.notifyActivityStart(mapper.toResource(activity));
-        
+        DataProductVersionDPDS dataProductVersionDPDS = readDataProductVersion(activity);
+        devOpsNotificationServiceProxy.notifyActivityStart(mapper.toResource(activity), dataProductVersionDPDS);
+
         // start next planned task if any
         startNextPlannedTaskAndUpdateParentActivity(activity.getId());
-        
+
         return activity;
     }
 
@@ -227,13 +243,13 @@ public class ActivityService {
 
     // TODO set results or errors of activity while stopping it
     private Activity stopActivity(Activity activity, boolean success) {
-        
+
         LocalDateTime finishedAt = now();
         activity.setFinishedAt(finishedAt);
 
         List<Task> tasks = taskService.searchTasks(activity.getId(), null, null);
         for(Task task: tasks) {
-            if(task.getStatus().equals(ActivityTaskStatus.PLANNED) 
+            if(task.getStatus().equals(ActivityTaskStatus.PLANNED)
             || task.getStatus().equals(ActivityTaskStatus.PROCESSING)) {
                 task.setStatus(ActivityTaskStatus.ABORTED);
                 task.setFinishedAt(finishedAt);
@@ -605,23 +621,9 @@ public class ActivityService {
     // other methods
     // -------------------------
 
-    private List<LifecycleTaskInfoDPDS> readTasksInfo(Activity activity) {
+    private List<LifecycleTaskInfoDPDS> readTasksInfo(Activity activity, DataProductVersionDPDS dataProductVersion) {
 
         List<LifecycleTaskInfoDPDS> tasksInfoRes = new ArrayList<LifecycleTaskInfoDPDS>();
-
-        if (!StringUtils.hasText(activity.getStage())) {
-            throw new UnprocessableEntityException(
-                    DevOpsApiStandardErrors.SC422_01_ACTIVITY_IS_INVALID,
-                    "Activity type property cannot be empty");
-        }
-
-        DataProductVersionDPDS dataProductVersion = readDataProductVersion(activity);
-        if (dataProductVersion == null) {
-            throw new UnprocessableEntityException(
-                    DevOpsApiStandardErrors.SC422_01_ACTIVITY_IS_INVALID,
-                    "The version [" + activity.getDataProductVersion() + "] of data product ["
-                            + activity.getDataProductId() + "] pointed by activity does not exist");
-        }
 
         if (dataProductVersion.hasLifecycleInfo() == false) {
             throw new UnprocessableEntityException(
@@ -640,7 +642,7 @@ public class ActivityService {
                     DevOpsApiStandardErrors.SC422_01_ACTIVITY_IS_INVALID,
                     "Devops module is unable to prcess activities with more than one task associated");
         }
-        
+
 
         return tasksInfoRes;
     }
@@ -700,7 +702,7 @@ public class ActivityService {
 
     private LocalDateTime now() {
         LocalDateTime now = LocalDateTime.now();
-        now = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), 
+        now = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(),
         now.getHour(), now.getMinute(), now.getSecond(), 0);
         return now;
     }

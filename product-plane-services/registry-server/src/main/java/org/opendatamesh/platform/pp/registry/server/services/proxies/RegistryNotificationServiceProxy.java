@@ -1,21 +1,23 @@
 package org.opendatamesh.platform.pp.registry.server.services.proxies;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import lombok.extern.slf4j.Slf4j;
 import org.opendatamesh.dpds.model.DataProductVersionDPDS;
-import org.opendatamesh.platform.core.commons.ObjectMapperFactory;;
-import org.opendatamesh.platform.core.commons.servers.exceptions.BadGatewayException;
-import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
-import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
+import org.opendatamesh.platform.core.commons.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.notification.api.clients.DispatchClient;
 import org.opendatamesh.platform.pp.notification.api.resources.EventResource;
 import org.opendatamesh.platform.pp.notification.api.resources.enums.EventType;
 import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
+import org.opendatamesh.platform.pp.registry.api.resources.events.DataProductEventState;
+import org.opendatamesh.platform.pp.registry.api.resources.events.DataProductVersionEventState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class RegistryNotificationServiceProxy {
 
     @Autowired(required = false)
@@ -32,40 +34,40 @@ public class RegistryNotificationServiceProxy {
     // ======================================================================================
 
     public void notifyDataProductCreation(DataProductResource dataProduct) {
-        if(notificationServiceActive) {
+        if (Boolean.TRUE.equals(notificationServiceActive)) {
             EventResource eventResource = buildDataProductEvent(
                     EventType.DATA_PRODUCT_CREATED,
                     dataProduct.getId(),
                     null,
                     dataProduct
             );
-            notifyDataProductEvent(eventResource);
+            notifyEvent(eventResource);
         }
     }
 
     public void notifyDataProductUpdate(
             DataProductResource previousDataProduct, DataProductResource currentDataProduct
     ) {
-        if(notificationServiceActive) {
+        if (Boolean.TRUE.equals(notificationServiceActive)) {
             EventResource eventResource = buildDataProductEvent(
                     EventType.DATA_PRODUCT_UPDATED,
                     currentDataProduct.getId(),
                     previousDataProduct,
                     currentDataProduct
             );
-            notifyDataProductEvent(eventResource);
+            notifyEvent(eventResource);
         }
     }
 
     public void notifyDataProductDeletion(DataProductResource dataProduct) {
-        if(notificationServiceActive) {
+        if (Boolean.TRUE.equals(notificationServiceActive)) {
             EventResource eventResource = buildDataProductEvent(
                     EventType.DATA_PRODUCT_DELETED,
                     dataProduct.getId(),
                     dataProduct,
                     null
             );
-            notifyDataProductEvent(eventResource);
+            notifyEvent(eventResource);
         }
     }
 
@@ -75,57 +77,35 @@ public class RegistryNotificationServiceProxy {
     // ======================================================================================
 
     public void notifyDataProductVersionCreation(DataProductVersionDPDS dataProductVersion) {
-        if(notificationServiceActive) {
+        if (Boolean.TRUE.equals(notificationServiceActive)) {
             EventResource eventResource = buildDataProductVersionEvent(
                     EventType.DATA_PRODUCT_VERSION_CREATED,
                     dataProductVersion.getInfo().getDataProductId(),
                     null,
                     dataProductVersion
             );
-            notifyDataProductVersionEvent(eventResource);
+            notifyEvent(eventResource);
         }
     }
 
     public void notifyDataProductVersionDeletion(DataProductVersionDPDS dataProductVersion) {
-        if(notificationServiceActive) {
+        if (Boolean.TRUE.equals(notificationServiceActive)) {
             EventResource eventResource = buildDataProductVersionEvent(
                     EventType.DATA_PRODUCT_DELETED,
                     dataProductVersion.getInfo().getDataProductId(),
                     dataProductVersion,
                     null
             );
-            notifyDataProductVersionEvent(eventResource);
+            notifyEvent(eventResource);
         }
     }
 
 
-    // ======================================================================================
-    // Dispatch events
-    // ======================================================================================
-
-    private void notifyDataProductEvent(EventResource eventResource) {
-        notifyEvent(
-                eventResource,
-                "Impossible to upload Data Product to notificationServices: "
-        );
-    }
-
-    private void notifyDataProductVersionEvent(EventResource eventResource) {
-        notifyEvent(
-                eventResource,
-                "Impossible to upload Data Product Version to notificationServices: "
-        );
-    }
-
-    private void notifyEvent(EventResource eventResource, String errorMessage) {
+    private void notifyEvent(EventResource eventResource) {
         try {
             notificationClient.notifyEvent(eventResource);
         } catch (Exception e) {
-            throw new BadGatewayException(
-                    ODMApiCommonErrors.SC502_70_NOTIFICATION_SERVICE_ERROR,
-                    errorMessage + e.getMessage(),
-                    e
-            );
+            log.warn(e.getMessage(), e);
         }
     }
 
@@ -135,38 +115,41 @@ public class RegistryNotificationServiceProxy {
     // ======================================================================================
 
     private EventResource buildDataProductEvent(
-            EventType eventType, String eventSubjectId, Object beforeState, Object afterState
+            EventType eventType,
+            String dataProductId,
+            DataProductResource oldDataProduct,
+            DataProductResource newDataProduct
     ) {
-        try {
-            return new EventResource(
-                    eventType,
-                    eventSubjectId,
-                    beforeState == null ? null : mapper.writeValueAsString(beforeState),
-                    afterState == null ? null : mapper.writeValueAsString(afterState)
-            );
-        } catch (JsonProcessingException e) {
-            throw new InternalServerException(
-                    ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
-                    "Error serializing Data Product as JSON: " + e.getMessage()
-            );
-        }
+        return new EventResource(
+                eventType,
+                dataProductId,
+                mapper.valueToTree(new DataProductEventState(oldDataProduct)),
+                mapper.valueToTree(new DataProductEventState(newDataProduct))
+        );
     }
 
     private EventResource buildDataProductVersionEvent(
-            EventType eventType, String eventSubjectId, Object beforeState, Object afterState
+            EventType eventType, String dataProductVersionId, DataProductVersionDPDS oldDpds, DataProductVersionDPDS newDpds
     ) {
-        try {
-            return new EventResource(
-                    eventType,
-                    eventSubjectId,
-                    beforeState == null ? null : mapper.writeValueAsString(beforeState).replace("versionNumber", "version"),
-                    afterState == null ? null : mapper.writeValueAsString(afterState).replace("versionNumber", "version")
-            );
-        } catch (JsonProcessingException e) {
-            throw new InternalServerException(
-                    ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
-                    "Error serializing Data Product Version as JSON: " + e.getMessage()
-            );
+        JsonNode oldState = mapper.valueToTree(new DataProductVersionEventState(oldDpds));
+        JsonNode newState = mapper.valueToTree(new DataProductVersionEventState(newDpds));
+        fixDpdsVersionFieldName(oldState);
+        fixDpdsVersionFieldName(newState);
+
+        return new EventResource(
+                eventType,
+                dataProductVersionId,
+                oldState,
+                newState
+        );
+    }
+
+    private void fixDpdsVersionFieldName(JsonNode eventStateTree) {
+        //TODO this must be fixed on the dpds model!!!!
+        if (eventStateTree != null && eventStateTree.has("dataProductVersion") && eventStateTree.get("dataProductVersion").has("info") && eventStateTree.get("dataProductVersion").get("info").has("versionNumber")) {
+            JsonNode versionNumberNode = eventStateTree.get("").get("info").get("versionNumber");
+            ((ObjectNode) versionNumberNode.get("dataProductVersion").get("info")).remove("versionNumber");
+            ((ObjectNode) versionNumberNode.get("dataProductVersion").get("info")).set("version", versionNumberNode);
         }
     }
 

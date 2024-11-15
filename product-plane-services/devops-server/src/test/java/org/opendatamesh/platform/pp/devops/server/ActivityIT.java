@@ -262,6 +262,7 @@ public class ActivityIT extends ODMDevOpsIT {
     public void testStartActivityWithMissingExecutor() {
 
         createMocksForCreateActivityCall();
+        createMocksForCreateActivityCall();
 
         ActivityResource activityRes = buildTestActivity();
         activityRes.setStage("stage-noservice");
@@ -326,6 +327,7 @@ public class ActivityIT extends ODMDevOpsIT {
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testStartActivityEmpty() {
+        createMocksForCreateActivityCall();
         createMocksForCreateActivityCall();
 
         ActivityResource activityRes = buildTestActivity();
@@ -393,6 +395,7 @@ public class ActivityIT extends ODMDevOpsIT {
     public void testStartActivityWithUnknownExecutor() {
 
         createMocksForCreateActivityCall();
+        createMocksForCreateActivityCall();
 
         ActivityResource activityRes = buildTestActivity();
         activityRes.setStage("stage-wrong-executor");
@@ -455,6 +458,7 @@ public class ActivityIT extends ODMDevOpsIT {
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testStopActivity() {
 
+        createMocksForCreateActivityCall();
         createMocksForCreateActivityCall();
         ActivityResource activityRes = buildTestActivity();
         ActivityResource createdActivityRes = createActivity(activityRes, true);
@@ -559,6 +563,7 @@ public class ActivityIT extends ODMDevOpsIT {
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testReadActivityStatusAfterStop() throws IOException {
 
+        createMocksForCreateActivityCall();
         createMocksForCreateActivityCall();
 
         ActivityResource activityRes = createTestActivity(true);
@@ -698,6 +703,8 @@ public class ActivityIT extends ODMDevOpsIT {
     public void testReadActivityAfterStop() throws IOException {
 
         createMocksForCreateActivityCall();
+        createMocksForCreateActivityCall();
+
 
         ActivityResource activityRes = null, createdActivityRes = null;
 

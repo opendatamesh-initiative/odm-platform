@@ -65,6 +65,7 @@ public class TaskIT extends ODMDevOpsIT {
     public void testStopTask() {
 
         createMocksForCreateActivityCall();
+        createMocksForCreateActivityCall();
 
         ActivityResource activityRes = createTestActivity(true);
 
@@ -180,6 +181,7 @@ public class TaskIT extends ODMDevOpsIT {
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testReadTaskStatusAfterStop() {
 
+        createMocksForCreateActivityCall();
         createMocksForCreateActivityCall();
 
         ActivityResource activityRes = createTestActivity(true);
@@ -331,6 +333,7 @@ public class TaskIT extends ODMDevOpsIT {
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testReadTaskAfterStop() {
 
+        createMocksForCreateActivityCall();
         createMocksForCreateActivityCall();
 
         ActivityResource activityRes = createTestActivity(true);

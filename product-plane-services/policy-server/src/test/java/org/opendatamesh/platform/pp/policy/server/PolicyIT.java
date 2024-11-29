@@ -206,6 +206,32 @@ public class PolicyIT extends ODMPolicyIT {
 
     }
 
+    @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+    public void testDeleteAndRecreatePolicy() throws JsonProcessingException {
+
+        // Resources + Creation
+        PolicyEngineResource parentEngineResource = createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);
+        PolicyResource policyResource = createPolicy(ODMPolicyResources.RESOURCE_POLICY_1, parentEngineResource.getId());
+
+        // DELETE request
+        ResponseEntity<ObjectNode> deleteResponse = policyClient.deletePolicyResponseEntity(policyResource.getId());
+        verifyResponseEntity(deleteResponse, HttpStatus.OK, false);
+
+        // GET request to check that the entity is not on the DB anymore
+        ResponseEntity<ObjectNode> getResponse = policyClient.readOnePolicyResponseEntity(policyResource.getId());
+        verifyResponseErrorObjectNode(
+                getResponse,
+                HttpStatus.NOT_FOUND,
+                PolicyApiStandardErrors.SC404_02_POLICY_NOT_FOUND,
+                "Resource with root ID [" + policyResource.getId() + "] not found"
+        );
+
+        // Creation again
+        PolicyResource policyResource2 = createPolicy(ODMPolicyResources.RESOURCE_POLICY_1, parentEngineResource.getId());
+
+    }
+
 
     // ======================================================================================
     // UTILS

@@ -197,7 +197,7 @@ public class PolicyErrorsIT extends ODMPolicyIT {
                 "Policy policyEngineId or PolicyEngine object cannot be null"
         );
 
-        // 42205 - Policy is invalid - Policy with name [" + policy.getName() + "] already exists with a differet rootID
+        // 42205 - Policy is invalid - Policy with name [" + policy.getName() + "] already exists with a different rootID
         policyResource.setPolicyEngine(parentEngineResource);
         policyResource.setRootId(7L);
         policyResource.setCreatedAt(parentPolicyResource.getCreatedAt());
@@ -208,7 +208,7 @@ public class PolicyErrorsIT extends ODMPolicyIT {
                 putResponse,
                 HttpStatus.UNPROCESSABLE_ENTITY,
                 PolicyApiStandardErrors.SC422_04_POLICY_ALREADY_EXISTS,
-                "Policy with name [" + policyResource.getName() + "] already exists with a differet rootID"
+                "Policy with name [" + policyResource.getName() + "] already exists with a different rootID"
         );
 
     }

@@ -40,7 +40,7 @@ public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySea
 
     @Override
     protected void beforeCreation(Policy objectToCreate) {
-        if (repository.existsByName(objectToCreate.getName())) {
+        if (repository.existsByNameAndIsLastVersionTrue(objectToCreate.getName())) {
             throw new UnprocessableEntityException(
                     PolicyApiStandardErrors.SC422_04_POLICY_ALREADY_EXISTS,
                     "Policy with name [" + objectToCreate.getName() + "] already exists"
@@ -122,10 +122,10 @@ public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySea
                     "Policy policyEngineId or PolicyEngine object cannot be null"
             );
         }
-        if (repository.existsByNameAndRootIdNot(policy.getName(), policy.getRootId())) {
+        if (repository.existsByNameAndIsLastVersionTrueAndRootIdNot(policy.getName(), policy.getRootId())) {
             throw new UnprocessableEntityException(
                     PolicyApiStandardErrors.SC422_04_POLICY_ALREADY_EXISTS,
-                    "Policy with name [" + policy.getName() + "] already exists with a differet rootID"
+                    "Policy with name [" + policy.getName() + "] already exists with a different rootID"
             );
         }
     }

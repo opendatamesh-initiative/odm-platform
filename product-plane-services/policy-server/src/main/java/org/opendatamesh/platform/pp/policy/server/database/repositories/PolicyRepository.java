@@ -11,9 +11,9 @@ public interface PolicyRepository extends PagingAndSortingAndSpecificationExecut
 
     Policy findByRootIdAndIsLastVersionTrue(Long rootId);
 
-    boolean existsByNameAndRootIdNot(String name, Long rootId);
+    boolean existsByNameAndIsLastVersionTrueAndRootIdNot(String name, Long rootId);
 
-    boolean existsByName(String name);
+    boolean existsByNameAndIsLastVersionTrue(String name);
 
     class Specs extends SpecsUtils {
 

@@ -13,7 +13,7 @@ public class PolicySearchOptions {
     @Schema(description = "Retrieve all the policies with this name.")
     private String name;
 
-    @Schema(description = "Retrieve only the last version of the policies.")
+    @Schema(description = "Retrieve only the last version of the policies.", defaultValue = "true")
     private Boolean lastVersion = true;
 
     public String getEvaluationEvent() {

@@ -101,10 +101,8 @@ public class DataProductVersionService {
         }
 
         // TODO check schemas evolution rules
-        if (checkGlobalPolicies && !isCompliantWithGlobalPolicies(dataProductVersion)) {
-            throw new UnprocessableEntityException(
-                    RegistryApiStandardErrors.SC422_03_DESCRIPTOR_NOT_COMPLIANT,
-                    "The data product descriptor is not compliant to one or more global policies");
+        if (checkGlobalPolicies){
+            checkGlobalPoliciesCompliance(dataProductVersion);
         }
 
         try {
@@ -567,10 +565,10 @@ public class DataProductVersionService {
     // OTHER
     // ======================================================================================
 
-    public boolean isCompliantWithGlobalPolicies(DataProductVersion dataProductVersion) {
+    public void checkGlobalPoliciesCompliance(DataProductVersion dataProductVersion) {
         DataProductVersionDPDS newDataProductVersionDPDS = dataProductVersionMapper.toResource(dataProductVersion);
         DataProductVersionDPDS mostRecentDataProduct = getMostRecentDataProductVersion(dataProductVersion);
-        return policyServiceProxy.validateDataProductVersion(mostRecentDataProduct, newDataProductVersionDPDS);
+        policyServiceProxy.validateDataProductVersion(mostRecentDataProduct, newDataProductVersionDPDS);
     }
 
     private DataProductVersionDPDS getMostRecentDataProductVersion(DataProductVersion dataProductVersion) {

@@ -4,7 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.opendatamesh.dpds.exceptions.ParseException;
 import org.opendatamesh.dpds.location.DescriptorLocation;
 import org.opendatamesh.dpds.location.UriLocation;
@@ -15,9 +17,17 @@ import org.opendatamesh.dpds.parser.DPDSParser;
 import org.opendatamesh.dpds.parser.IdentifierStrategyFactory;
 import org.opendatamesh.dpds.parser.ParseOptions;
 import org.opendatamesh.platform.core.commons.ObjectMapperFactory;
+import org.opendatamesh.platform.pp.policy.api.clients.PolicyValidationClient;
+import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
+import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
+import org.opendatamesh.platform.pp.policy.api.resources.ValidationResponseResource;
 import org.opendatamesh.platform.pp.registry.api.resources.DataProductResource;
 import org.opendatamesh.platform.pp.registry.api.resources.ExternalComponentResource;
+import org.opendatamesh.platform.pp.registry.server.services.proxies.RegistryPolicyServiceProxy;
 import org.opendatamesh.platform.pp.registry.server.utils.ODMRegistryTestResources;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
@@ -25,14 +35,19 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.annotation.DirtiesContext.MethodMode;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.LinkedHashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.any;
 
-;
 
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 public class DataProductVersionIT extends ODMRegistryIT {
+
+    @Autowired
+    private ConfigurableApplicationContext context;
 
     // ======================================================================================
     // CREATE Data Product Version
@@ -50,7 +65,7 @@ public class DataProductVersionIT extends ODMRegistryIT {
         ODMRegistryTestResources.DPD_CORE.getContentChecker().verifyAll(descriptorContent);
 
         DataProductVersionDPDS dataProductVersion = null;
-        
+
         DPDSParser parser = new DPDSParser(
                 "https://raw.githubusercontent.com/opendatamesh-initiative/odm-specification-dpdescriptor/main/schemas/",
                 "1.0.0",
@@ -67,7 +82,7 @@ public class DataProductVersionIT extends ODMRegistryIT {
             fail("Impossible to parse descriptor content");
         }
         ODMRegistryTestResources.DPD_CORE.getObjectChecker().verifyAll(dataProductVersion);
-        
+
         try {
             ObjectMapper mapper = ObjectMapperFactory.getRightMapper(descriptorContent);
             dataProductVersion = mapper.readValue(descriptorContent,
@@ -95,6 +110,56 @@ public class DataProductVersionIT extends ODMRegistryIT {
 
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testCreateDPVersionWithFailingBlockingPolicy() throws NoSuchFieldException, IllegalAccessException, IOException {
+
+        PolicyEvaluationResultResource policyResult1 = new PolicyEvaluationResultResource();
+        policyResult1.setPolicyId(1L);
+        PolicyResource policyResult1PolicyResource = new PolicyResource();
+        policyResult1PolicyResource.setBlockingFlag(true);
+        policyResult1.setPolicy(policyResult1PolicyResource);
+
+        PolicyEvaluationResultResource policyResult2 = new PolicyEvaluationResultResource();
+        policyResult2.setPolicyId(2L);
+        PolicyResource policyResult2PolicyResource = new PolicyResource();
+        policyResult2PolicyResource.setBlockingFlag(false);
+        policyResult2.setPolicy(policyResult2PolicyResource);
+
+        ValidationResponseResource validationResponseResource = new ValidationResponseResource();
+        validationResponseResource.setPolicyResults(Lists.newArrayList(policyResult1, policyResult2));
+
+        PolicyValidationClient policyValidationClient = Mockito.mock(PolicyValidationClient.class);
+        Mockito.when(policyValidationClient.validateInputObject(any())).thenReturn(validationResponseResource);
+
+        Field policyServiceActiveField = RegistryPolicyServiceProxy.class.getDeclaredField("policyServiceActive");
+        policyServiceActiveField.setAccessible(true); // Allow access to the private field
+        policyServiceActiveField.set(context.getBean(RegistryPolicyServiceProxy.class), true);
+
+        Field policyValidationClientField = RegistryPolicyServiceProxy.class.getDeclaredField("policyValidationClient");
+        policyValidationClientField.setAccessible(true);
+        policyValidationClientField.set(context.getBean(RegistryPolicyServiceProxy.class), policyValidationClient);
+
+        //Test
+        ResponseEntity<Object> responseEntity = registryClient.postDataProduct(resourceBuilder.buildTestDataProduct(), Object.class);
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
+        if (responseEntity.getBody() instanceof LinkedHashMap) {
+            @SuppressWarnings("unchecked")
+            LinkedHashMap<String, String> bodyMap = (LinkedHashMap<String, String>) responseEntity.getBody();
+            assertThat(bodyMap)
+                    .as("Expected response body to contain the error message and details")
+                    .containsEntry("message",
+                            "The data product is not compliant to:  Blocking Policies IDs: [ 1 ] Non-Blocking Policies IDs: [ 2 ]");
+        } else {
+            fail("Expected response body to be of type LinkedHashMap");
+        }
+
+        //Remove mocked bean
+        ((DefaultListableBeanFactory) context.getBeanFactory()).destroySingleton("policyValidationClientMock");
+        policyServiceActiveField.set(context.getBean(RegistryPolicyServiceProxy.class), false);
+        policyValidationClientField.set(context.getBean(RegistryPolicyServiceProxy.class), null);
+    }
+
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testCreateMultipleDPVersions() {
 
         DataProductResource createdDataProductRes = null;
@@ -109,7 +174,7 @@ public class DataProductVersionIT extends ODMRegistryIT {
         String newVersionDescriptorContent = changeDescriptorVersion(descriptorContent, "2.0.0");
         String newCreatedVersionDescriptorContent = createDataProductVersion(createdDataProductRes.getId(), newVersionDescriptorContent);
 
-        
+
         String[] versions = null;
         try {
             versions = registryClient.readAllDataProductVersions(createdDataProductRes.getId());
@@ -122,7 +187,7 @@ public class DataProductVersionIT extends ODMRegistryIT {
 
         ExternalComponentResource[] apis = null;
         try {
-            apis =  registryClient.readAllApis();
+            apis = registryClient.readAllApis();
         } catch (Throwable t) {
             t.printStackTrace();
             fail("Impossible to read apis of data product [" + createdDataProductRes.getId() + "]: " + t.getMessage());
@@ -132,7 +197,7 @@ public class DataProductVersionIT extends ODMRegistryIT {
 
         ExternalComponentResource[] templates = null;
         try {
-            templates =  registryClient.getTemplates().getBody();
+            templates = registryClient.getTemplates().getBody();
         } catch (Throwable t) {
             t.printStackTrace();
             fail("Impossible to read templates of data product [" + createdDataProductRes.getId() + "]: " + t.getMessage());
@@ -156,8 +221,8 @@ public class DataProductVersionIT extends ODMRegistryIT {
         // Change version number
         String newVersionDescriptorContent = changeDescriptorVersion(createdDescriptorContent, "2.0.0");
         String newCreatedVersionDescriptorContent = createDataProductVersion(createdDataProductRes.getId(), newVersionDescriptorContent);
-        
-        
+
+
         assertThat(newCreatedVersionDescriptorContent).isNotNull();
 
         String[] versions = null;
@@ -172,7 +237,7 @@ public class DataProductVersionIT extends ODMRegistryIT {
 
         ExternalComponentResource[] apis = null;
         try {
-            apis =  registryClient.readAllApis();
+            apis = registryClient.readAllApis();
         } catch (Throwable t) {
             t.printStackTrace();
             fail("Impossible to read apis of data product [" + createdDataProductRes.getId() + "]: " + t.getMessage());
@@ -182,7 +247,7 @@ public class DataProductVersionIT extends ODMRegistryIT {
 
         ExternalComponentResource[] templates = null;
         try {
-            templates =  registryClient.getTemplates().getBody();
+            templates = registryClient.getTemplates().getBody();
         } catch (Throwable t) {
             t.printStackTrace();
             fail("Impossible to read templates of data product [" + createdDataProductRes.getId() + "]: " + t.getMessage());
@@ -248,7 +313,7 @@ public class DataProductVersionIT extends ODMRegistryIT {
 
         // test response
         verifyResponseEntity(getDataProductVersionResponse, HttpStatus.OK, true);
-        
+
         ODMRegistryTestResources.DPD_CORE.getContentChecker().verifyAll(createdDescriptorContent);
 
     }
@@ -352,7 +417,7 @@ public class DataProductVersionIT extends ODMRegistryIT {
         String readDescriptorContent = getDataProductVersionsResponse.getBody();
 
         ODMRegistryTestResources.DPD_CORE.getContentChecker().verifyAll(createdDescriptorContent);
-    }   
+    }
 
     // ======================================================================================
     // PRIVATE METHODS
@@ -364,5 +429,5 @@ public class DataProductVersionIT extends ODMRegistryIT {
 
     // TODO ...as needed
 
-    
+
 }

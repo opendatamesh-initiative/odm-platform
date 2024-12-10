@@ -97,11 +97,7 @@ public class DataProductService {
         }
         dataProduct.setId(uuid);
 
-        if (!registryPolicyServiceProxy.isCompliantWithPolicies(dataProductMapper.toResource(dataProduct))) {
-            throw new UnprocessableEntityException(
-                    RegistryApiStandardErrors.SC422_03_DESCRIPTOR_NOT_COMPLIANT,
-                    "The data product  is not compliant to one or more global policies");
-        }
+        registryPolicyServiceProxy.validateDataProduct(dataProductMapper.toResource(dataProduct));
 
         if (loadDataProduct(uuid) != null) {
             throw new UnprocessableEntityException(
@@ -279,11 +275,7 @@ public class DataProductService {
                     "Data product [" + dataProduct.getFullyQualifiedName() + "] with id [" + dataProduct.getId() + "] doesn't exists");
         }
 
-        if (!registryPolicyServiceProxy.isCompliantWithPolicies(dataProductMapper.toResource(oldDataProduct), dataProductMapper.toResource(dataProduct))) {
-            throw new UnprocessableEntityException(
-                    RegistryApiStandardErrors.SC422_03_DESCRIPTOR_NOT_COMPLIANT,
-                    "The data product is not compliant to one or more global policies");
-        }
+        registryPolicyServiceProxy.validateDataProduct(dataProductMapper.toResource(oldDataProduct), dataProductMapper.toResource(dataProduct));
 
         dataProduct.setId(oldDataProduct.getId());
         dataProduct.setFullyQualifiedName(oldDataProduct.getFullyQualifiedName());
@@ -406,13 +398,7 @@ public class DataProductService {
                 ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                 "Data product version object cannot be null");
         }
-
-        if(!dataProductVersionService.isCompliantWithGlobalPolicies(dataProductVersion)) {
-            throw new UnprocessableEntityException(
-                RegistryApiStandardErrors.SC422_03_DESCRIPTOR_NOT_COMPLIANT,
-                "Data product descriptor is not compliant with global policies");
-        }
-
+        dataProductVersionService.checkGlobalPoliciesCompliance(dataProductVersion);
         DataProduct dataProduct = null;
         String dataProductId = dataProductVersion.getInfo().getDataProductId();
         if(dataProductExists(dataProductId)) {

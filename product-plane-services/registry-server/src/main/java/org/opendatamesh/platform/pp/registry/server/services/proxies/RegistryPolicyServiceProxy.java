@@ -107,8 +107,7 @@ public class RegistryPolicyServiceProxy {
         String failedBlockingPolicies = validationResults.getPolicyResults()
                 .stream()
                 .filter(policyResult -> Boolean.TRUE.equals(policyResult.getPolicy().getBlockingFlag()))
-                .map(PolicyEvaluationResultResource::getPolicyId)
-                .map(Object::toString)
+                .map(this::getPolicyIdentifier)
                 .reduce("", (first, second) -> StringUtils.hasText(first) ? first + ", " + second : second);
         if (StringUtils.hasText(failedBlockingPolicies)) {
             allFailedPoliciesIds = allFailedPoliciesIds + " Blocking Policies IDs: [ " + failedBlockingPolicies + " ]";
@@ -116,8 +115,7 @@ public class RegistryPolicyServiceProxy {
         String failedNonBlockingPolicies = validationResults.getPolicyResults()
                 .stream()
                 .filter(policyResult -> Boolean.FALSE.equals(policyResult.getPolicy().getBlockingFlag()))
-                .map(PolicyEvaluationResultResource::getPolicyId)
-                .map(Object::toString)
+                .map(this::getPolicyIdentifier)
                 .reduce("", (first, second) -> StringUtils.hasText(first) ? first + ", " + second : second);
         if (StringUtils.hasText(failedNonBlockingPolicies)) {
             allFailedPoliciesIds = allFailedPoliciesIds + " Non-Blocking Policies IDs: [ " + failedNonBlockingPolicies + " ]";
@@ -151,5 +149,9 @@ public class RegistryPolicyServiceProxy {
                     e
             );
         }
+    }
+
+    private String getPolicyIdentifier(PolicyEvaluationResultResource policyEvaluationResultResource){
+        return String.format("{ rootId: %s, id: %s}", policyEvaluationResultResource.getPolicy().getRootId().toString(), policyEvaluationResultResource.getPolicy().getId().toString());
     }
 }

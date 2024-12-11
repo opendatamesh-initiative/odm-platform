@@ -113,15 +113,18 @@ public class DataProductVersionIT extends ODMRegistryIT {
     public void testCreateDPVersionWithFailingBlockingPolicy() throws NoSuchFieldException, IllegalAccessException, IOException {
 
         PolicyEvaluationResultResource policyResult1 = new PolicyEvaluationResultResource();
-        policyResult1.setPolicyId(1L);
         PolicyResource policyResult1PolicyResource = new PolicyResource();
         policyResult1PolicyResource.setBlockingFlag(true);
+        policyResult1PolicyResource.setId(1L);
+        policyResult1PolicyResource.setRootId(1L);
         policyResult1.setPolicy(policyResult1PolicyResource);
 
         PolicyEvaluationResultResource policyResult2 = new PolicyEvaluationResultResource();
         policyResult2.setPolicyId(2L);
         PolicyResource policyResult2PolicyResource = new PolicyResource();
         policyResult2PolicyResource.setBlockingFlag(false);
+        policyResult2PolicyResource.setId(3L);
+        policyResult2PolicyResource.setRootId(1L);
         policyResult2.setPolicy(policyResult2PolicyResource);
 
         ValidationResponseResource validationResponseResource = new ValidationResponseResource();
@@ -147,7 +150,7 @@ public class DataProductVersionIT extends ODMRegistryIT {
             assertThat(bodyMap)
                     .as("Expected response body to contain the error message and details")
                     .containsEntry("message",
-                            "The data product is not compliant to:  Blocking Policies IDs: [ 1 ] Non-Blocking Policies IDs: [ 2 ]");
+                            "The data product is not compliant to:  Blocking Policies IDs: [ { rootId: 1, id: 1} ] Non-Blocking Policies IDs: [ { rootId: 1, id: 3} ]");
         } else {
             fail("Expected response body to be of type LinkedHashMap");
         }

@@ -617,6 +617,16 @@ public class ActivityService {
                         dataProductId, dataProductVersion, stage, status));
     }
 
+    public ActivityResource deleteActivity(Long id) {
+        final Activity activity = activityRepository.findById(id)
+                .orElseThrow(() -> new BadRequestException(DevOpsApiStandardErrors.SC404_01_ACTIVITY_NOT_FOUND, "Activity not found"));
+        if (activity.getStatus() != ActivityStatus.PLANNED) {
+            throw new BadRequestException(DevOpsApiStandardErrors.SC400_55_ACTIVITY_STATUS_ACTION_IS_INVALID, "Cannot delete activities not planned");
+        }
+        activityRepository.deleteById(id);
+        return mapper.toResource(activity);
+    }
+
     // -------------------------
     // other methods
     // -------------------------

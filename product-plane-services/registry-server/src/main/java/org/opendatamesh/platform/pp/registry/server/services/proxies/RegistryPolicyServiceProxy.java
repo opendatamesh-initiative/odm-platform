@@ -106,6 +106,7 @@ public class RegistryPolicyServiceProxy {
         String allFailedPoliciesIds = "";
         String failedBlockingPolicies = validationResults.getPolicyResults()
                 .stream()
+                .filter(policyResult -> Boolean.FALSE.equals(policyResult.getResult()))
                 .filter(policyResult -> Boolean.TRUE.equals(policyResult.getPolicy().getBlockingFlag()))
                 .map(this::getPolicyIdentifier)
                 .reduce("", (first, second) -> StringUtils.hasText(first) ? first + ", " + second : second);
@@ -114,6 +115,7 @@ public class RegistryPolicyServiceProxy {
         }
         String failedNonBlockingPolicies = validationResults.getPolicyResults()
                 .stream()
+                .filter(policyResult -> Boolean.FALSE.equals(policyResult.getResult()))
                 .filter(policyResult -> Boolean.FALSE.equals(policyResult.getPolicy().getBlockingFlag()))
                 .map(this::getPolicyIdentifier)
                 .reduce("", (first, second) -> StringUtils.hasText(first) ? first + ", " + second : second);

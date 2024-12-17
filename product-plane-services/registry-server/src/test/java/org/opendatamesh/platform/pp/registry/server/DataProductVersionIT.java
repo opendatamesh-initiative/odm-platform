@@ -118,6 +118,7 @@ public class DataProductVersionIT extends ODMRegistryIT {
         policyResult1PolicyResource.setId(1L);
         policyResult1PolicyResource.setRootId(1L);
         policyResult1.setPolicy(policyResult1PolicyResource);
+        policyResult1.setResult(Boolean.FALSE);
 
         PolicyEvaluationResultResource policyResult2 = new PolicyEvaluationResultResource();
         policyResult2.setPolicyId(2L);
@@ -126,6 +127,7 @@ public class DataProductVersionIT extends ODMRegistryIT {
         policyResult2PolicyResource.setId(3L);
         policyResult2PolicyResource.setRootId(1L);
         policyResult2.setPolicy(policyResult2PolicyResource);
+        policyResult2.setResult(Boolean.FALSE);
 
         ValidationResponseResource validationResponseResource = new ValidationResponseResource();
         validationResponseResource.setPolicyResults(Lists.newArrayList(policyResult1, policyResult2));

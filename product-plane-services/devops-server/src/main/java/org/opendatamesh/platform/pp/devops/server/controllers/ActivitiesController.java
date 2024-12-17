@@ -71,4 +71,9 @@ public class ActivitiesController extends AbstractActivityController {
         return activityMapper.toResource(activity);
     }
 
+    @Override
+    public ActivityResource deleteActivity(Long id) {
+        return activityService.deleteActivity(id);
+    }
+
 }

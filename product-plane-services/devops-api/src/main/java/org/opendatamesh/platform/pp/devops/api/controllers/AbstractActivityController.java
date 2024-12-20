@@ -359,4 +359,26 @@ public abstract class AbstractActivityController {
 
     public abstract ActivityResource readActivitiy(Long id);
 
+    // ===============================================================================
+    // DELETE /activities/{id}
+    // ===============================================================================
+    @Operation(
+            summary = "Delete the specified activity",
+            description = "Delete the activity identified by the input `id`"
+    )
+    @DeleteMapping(
+            value = "/{id}",
+            produces = {
+                    "application/vnd.odmp.v1+json",
+                    "application/vnd.odmp+json",
+                    "application/json"
+            }
+    )
+    public ActivityResource deleteActivityEndpoint(
+            @Parameter(description = "Identifier of the activity")
+            @Valid @PathVariable(value = "id") Long id) {
+        return deleteActivity(id);
+    }
+
+    public abstract ActivityResource deleteActivity(Long id);
 }

@@ -6,7 +6,7 @@ COPY ./product-plane-services/params-server/target/odm-platform-pp-params-server
 
 ARG SPRING_PROFILES_ACTIVE=docker
 ARG SPRING_HOSTNAME=localhost
-ARG SPRING_PORT=8003
+ARG SPRING_PORT=8004
 ARG SPRING_PROPS
 ARG JAVA_OPTS
 ARG DATABASE_URL=jdbc:postgresql://localhost:5432/odmpdb

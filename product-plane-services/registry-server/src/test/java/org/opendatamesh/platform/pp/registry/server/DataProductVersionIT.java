@@ -152,7 +152,7 @@ public class DataProductVersionIT extends ODMRegistryIT {
             assertThat(bodyMap)
                     .as("Expected response body to contain the error message and details")
                     .containsEntry("message",
-                            "The data product is not compliant to:  Blocking Policies IDs: [ { rootId: 1, id: 1} ] Non-Blocking Policies IDs: [ { rootId: 1, id: 3} ]");
+                            "The data product is not compliant to:  Blocking Policies: [ {name: null, rootId: 1, id: 1} ] Non-Blocking Policies: [ {name: null, rootId: 1, id: 3} ]");
         } else {
             fail("Expected response body to be of type LinkedHashMap");
         }

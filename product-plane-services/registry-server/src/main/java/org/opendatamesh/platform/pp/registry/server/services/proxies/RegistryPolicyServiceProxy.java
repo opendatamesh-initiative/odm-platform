@@ -111,7 +111,7 @@ public class RegistryPolicyServiceProxy {
                 .map(this::getPolicyIdentifier)
                 .reduce("", (first, second) -> StringUtils.hasText(first) ? first + ", " + second : second);
         if (StringUtils.hasText(failedBlockingPolicies)) {
-            allFailedPoliciesIds = allFailedPoliciesIds + " Blocking Policies IDs: [ " + failedBlockingPolicies + " ]";
+            allFailedPoliciesIds = allFailedPoliciesIds + " Blocking Policies: [ " + failedBlockingPolicies + " ]";
         }
         String failedNonBlockingPolicies = validationResults.getPolicyResults()
                 .stream()
@@ -120,7 +120,7 @@ public class RegistryPolicyServiceProxy {
                 .map(this::getPolicyIdentifier)
                 .reduce("", (first, second) -> StringUtils.hasText(first) ? first + ", " + second : second);
         if (StringUtils.hasText(failedNonBlockingPolicies)) {
-            allFailedPoliciesIds = allFailedPoliciesIds + " Non-Blocking Policies IDs: [ " + failedNonBlockingPolicies + " ]";
+            allFailedPoliciesIds = allFailedPoliciesIds + " Non-Blocking Policies: [ " + failedNonBlockingPolicies + " ]";
         }
         logger.warn("The data product is not compliant to: {}", allFailedPoliciesIds);
         if (StringUtils.hasText(failedBlockingPolicies)) {
@@ -153,7 +153,7 @@ public class RegistryPolicyServiceProxy {
         }
     }
 
-    private String getPolicyIdentifier(PolicyEvaluationResultResource policyEvaluationResultResource){
-        return String.format("{ rootId: %s, id: %s}", policyEvaluationResultResource.getPolicy().getRootId().toString(), policyEvaluationResultResource.getPolicy().getId().toString());
+    private String getPolicyIdentifier(PolicyEvaluationResultResource policyEvaluationResultResource) {
+        return String.format("{name: %s, rootId: %s, id: %s}", policyEvaluationResultResource.getPolicy().getName(), policyEvaluationResultResource.getPolicy().getRootId().toString(), policyEvaluationResultResource.getPolicy().getId().toString());
     }
 }

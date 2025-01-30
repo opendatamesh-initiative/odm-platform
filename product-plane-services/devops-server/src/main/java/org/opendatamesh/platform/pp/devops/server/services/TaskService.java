@@ -158,7 +158,7 @@ public class TaskService {
         try {
             TaskResource taskRes = taskMapper.toResource(task);
             String callbackRef = configurations.getProductPlane().getDevopsService().getAddress();
-            callbackRef += DevOpsAPIRoutes.TASKS;
+            callbackRef += DevOpsAPIRoutes.TASKS.getPath();
             callbackRef += "/" + task.getId() + "/status?action=STOP";
             taskRes.setCallbackRef(callbackRef);
 

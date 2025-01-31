@@ -3,11 +3,11 @@ package org.opendatamesh.platform.pp.devops.server.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.opendatamesh.platform.core.commons.servers.exceptions.*;
-import org.opendatamesh.platform.core.commons.ObjectMapperFactory;
 import org.opendatamesh.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.dpds.model.internals.LifecycleInfoDPDS;
 import org.opendatamesh.dpds.model.internals.LifecycleTaskInfoDPDS;
+import org.opendatamesh.platform.core.commons.ObjectMapperFactory;
+import org.opendatamesh.platform.core.commons.servers.exceptions.*;
 import org.opendatamesh.platform.pp.devops.api.resources.*;
 import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsClients;
 import org.opendatamesh.platform.pp.devops.server.database.entities.Activity;
@@ -21,6 +21,7 @@ import org.opendatamesh.platform.pp.devops.server.resources.context.Context;
 import org.opendatamesh.platform.pp.devops.server.services.proxies.DevOpsNotificationServiceProxy;
 import org.opendatamesh.platform.pp.devops.server.services.proxies.DevopsPolicyServiceProxy;
 import org.opendatamesh.platform.pp.devops.server.utils.ObjectNodeUtils;
+import org.opendatamesh.platform.pp.registry.api.clients.RegistryAPIRoutes;
 import org.opendatamesh.platform.pp.registry.api.resources.VariableResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -674,9 +675,13 @@ public class ActivityService {
         }
 
         try {
-            dataProductVersion = clients.getRegistryClient().readOneDataProductVersion(
+            dataProductVersion = clients.getRegistryClient().getRest().getForEntity(
+                    clients.getRegistryClient().apiUrl(RegistryAPIRoutes.DATA_PRODUCTS, "/{id}/versions/{number}?format=normalized"),
+                    DataProductVersionDPDS.class,
                     activity.getDataProductId(),
-                    activity.getDataProductVersion());
+                    activity.getDataProductVersion()
+            ).getBody();
+
         } catch (Throwable t) {
             throw new InternalServerException(
                 ODMApiCommonErrors.SC500_50_REGISTRY_SERVICE_ERROR,

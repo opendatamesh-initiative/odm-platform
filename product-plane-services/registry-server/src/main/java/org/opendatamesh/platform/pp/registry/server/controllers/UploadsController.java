@@ -50,8 +50,25 @@ public class UploadsController extends AbstractUploadsController {
     }
 
     @Override
-    public String uploadDataProductVersion(DataProductDescriptorLocationResource descriptorLocationRes) {
-        DescriptorLocation descriptorLocation = null;
+    public String uploadDataProductVersion(String fqn, DataProductDescriptorLocationResource descriptorLocationRes) {
+        DescriptorLocation descriptorLocation = computeDescriptorLocation(descriptorLocationRes);
+        String serverUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+        DataProductVersion dataProductVersion = dataProductService.uploadDataProductVersion(descriptorLocation, fqn, true, serverUrl);
+        DataProductVersionDPDS dataProductVersionDPDS = dataProductVersionMapper.toResource(dataProductVersion);
+
+        String serializedContent;
+        try {
+            serializedContent = DPDSSerializer.DEFAULT_JSON_SERIALIZER.serialize(dataProductVersionDPDS, "canonical");
+        } catch (JsonProcessingException e) {
+            throw new InternalServerException(
+                    ODMApiCommonErrors.SC500_02_DESCRIPTOR_ERROR,
+                    "Impossible to serialize data product version raw content", e);
+        }
+        return serializedContent;
+    }
+
+    private DescriptorLocation computeDescriptorLocation(DataProductDescriptorLocationResource descriptorLocationRes) {
+        DescriptorLocation descriptorLocation;
         try {
             URI descriptorUri = new URI(descriptorLocationRes.getRootDocumentUri());
             if (descriptorLocationRes.getGit() != null
@@ -66,24 +83,11 @@ public class UploadsController extends AbstractUploadsController {
             } else {
                 descriptorLocation = new UriLocation(descriptorUri);
             }
-
         } catch (URISyntaxException e) {
             throw new BadRequestException(
                     RegistryApiStandardErrors.SC400_05_INVALID_URILIST,
                     "Provided URI is invalid [" + descriptorLocationRes.getRootDocumentUri() + "]", e);
         }
-        String serverUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
-        DataProductVersion dataProductVersion = dataProductService.uploadDataProductVersion(descriptorLocation, true, serverUrl);
-        DataProductVersionDPDS dataProductVersionDPDS = dataProductVersionMapper.toResource(dataProductVersion);
-
-        String serailizedContent = null;
-        try {
-            serailizedContent = DPDSSerializer.DEFAULT_JSON_SERIALIZER.serialize(dataProductVersionDPDS, "canonical");
-        } catch (JsonProcessingException e) {
-            throw new InternalServerException(
-                    ODMApiCommonErrors.SC500_02_DESCRIPTOR_ERROR,
-                    "Impossible to serialize data product version raw content", e);
-        }
-        return serailizedContent;
+        return descriptorLocation;
     }
 }

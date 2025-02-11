@@ -376,12 +376,16 @@ public class DataProductService {
 
     public DataProductVersion uploadDataProductVersion(
         DescriptorLocation descriptorLocation,
+        String fqn,
         boolean createDataProductIfNotExists,
         String serverUrl // TODO remove form here !!!
     ) {
-
-        DataProductVersion dataProductVersion = null;
-        dataProductVersion = descriptorToDataProductVersion(descriptorLocation, serverUrl);
+        DataProductVersion dataProductVersion = descriptorToDataProductVersion(descriptorLocation, serverUrl);
+        if(fqn != null && !fqn.equals(dataProductVersion.getInfo().getDataProductId())) {
+            throw new UnprocessableEntityException(
+                    RegistryApiStandardErrors.SC422_03_DESCRIPTOR_NOT_COMPLIANT,
+                    "Data product fqn [" + fqn + "] indicated as request param does not match with the fqn [" + dataProductVersion.getInfo().getFullyQualifiedName() + "] contained in data product descriptor");
+        }
         return addDataProductVersion(dataProductVersion, createDataProductIfNotExists, serverUrl);
     }
 

@@ -47,7 +47,7 @@ public abstract class AbstractUploadsController {
     @ResponseStatus(HttpStatus.CREATED) 
     @Operation(
         summary = "Upload a new data product version",
-        description = "Upload a new data product version using the input descriptor referenced by the rpovided uri."
+        description = "Upload a new data product version using the input descriptor referenced by the provided uri."
         + "Create also the data product specified in the descriptor document if it does not exist yet. "
         + "To create the new data product version only if the data product already exist use the endpoint `POST /products/{id}/versions`. "
         + "\r\n _Note: it is not possible to create a data product without any version associated. " 
@@ -94,14 +94,14 @@ public abstract class AbstractUploadsController {
             )
     })
     public String uploadDataProductVersionEndpoint(
-        @Parameter( 
-            description = "A data product descriptor source", 
-            required = true)
-        @RequestBody(required=false)  DataProductDescriptorLocationResource descriptorLocationRes
+            @Parameter(description = "The fully qualified name of the data product to be created or updated with a new version")
+            @RequestParam(value = "fqn", required = false) String fqn,
+            @Parameter(description = "A data product descriptor source", required = true)
+            @RequestBody(required=false) DataProductDescriptorLocationResource descriptorLocationRes
     ) {
-       return uploadDataProductVersion(descriptorLocationRes);
+       return uploadDataProductVersion(fqn, descriptorLocationRes);
     }
 
-    public abstract String uploadDataProductVersion(DataProductDescriptorLocationResource descriptorLocationRes);
+    public abstract String uploadDataProductVersion(String fqn, DataProductDescriptorLocationResource descriptorLocationRes);
 
 }

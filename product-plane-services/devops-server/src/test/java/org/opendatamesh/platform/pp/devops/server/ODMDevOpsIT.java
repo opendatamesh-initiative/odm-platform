@@ -283,11 +283,43 @@ public abstract class ODMDevOpsIT extends ODMIntegrationTest{
         createMocksForCreateActivityCall(true, true);
     }
 
+    public void createMocksForCreateActivityWithMultipleTaskCall() {
+        createMocksForCreateActivityWithMultipleTaskCall(true, true);
+    }
+
+
     public void createMocksForCreateActivityCall(
             boolean mockRegistry, boolean mockExecutor) {
         try {
             if (mockRegistry) {
                 String apiResponse = resourceBuilder.readResourceFromFile(ODMDevOpsResources.RESOURCE_DPV_1_CANONICAL);
+                mockReadOneDataProductVersion(apiResponse, "f350cab5-992b-32f7-9c90-79bca1bf10be", "1.0.0");
+
+                ExternalComponentResource templateRes = resourceBuilder.readResourceFromFile(
+                        ODMDevOpsResources.TEMPLATE_DEF_1_CANONICAL,
+                        ExternalComponentResource.class);
+                mockReadOneTemplateDefinition(templateRes, "65f81a2f-65d8-3f03-9dff-ba598ba0292c");
+            } else {
+                unbindMockServerFromRegistryClient();
+            }
+
+            if (mockExecutor) {
+                mockCreateTask();
+            } else {
+                unbindMockServerFromExecutorClient();
+            }
+        } catch (IOException e) {
+            fail("Impossible to create moks");
+            e.printStackTrace();
+        }
+
+    }
+
+    public void createMocksForCreateActivityWithMultipleTaskCall(
+            boolean mockRegistry, boolean mockExecutor) {
+        try {
+            if (mockRegistry) {
+                String apiResponse = resourceBuilder.readResourceFromFile(ODMDevOpsResources.RESOURCE_DPV_2_CANONICAL);
                 mockReadOneDataProductVersion(apiResponse, "f350cab5-992b-32f7-9c90-79bca1bf10be", "1.0.0");
 
                 ExternalComponentResource templateRes = resourceBuilder.readResourceFromFile(
@@ -333,7 +365,7 @@ public abstract class ODMDevOpsIT extends ODMIntegrationTest{
         // requestTo(apiUrl)
         try {
             clients.getRegistryClient().getMockServer()
-                    .expect(ExpectedCount.twice(), new MyRequestMatcher(apiUrl))
+                    .expect(ExpectedCount.manyTimes(), new MyRequestMatcher(apiUrl))
                     // .andExpect(content().contentType(responseType))
                     .andExpect(method(HttpMethod.GET))
                     .andRespond(

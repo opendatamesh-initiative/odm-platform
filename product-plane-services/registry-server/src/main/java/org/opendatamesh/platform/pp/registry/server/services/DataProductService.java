@@ -436,7 +436,7 @@ public class DataProductService {
         return dataProductVersion;
     }
 
-    private DataProductVersion descriptorToDataProductVersion(
+    public DataProductVersion descriptorToDataProductVersion(
             DescriptorLocation descriptorLocation,
             String serverUrl
     ) {

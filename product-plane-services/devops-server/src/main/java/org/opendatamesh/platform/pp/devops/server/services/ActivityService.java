@@ -320,7 +320,7 @@ public class ActivityService {
             startedTask = taskService.startTask(actualTask);
             if(startedTask.getStatus().equals(ActivityTaskStatus.FAILED)) {
                 stopActivity(activityId, false);
-            } else if(startedTask.getStatus().equals(ActivityTaskStatus.PROCESSED)) {
+            } else if(plannedTasks.size() == 1 && startedTask.getStatus().equals(ActivityTaskStatus.PROCESSED)) {
                 stopActivity(activityId, true);
             }
         } else { // nothing more to do...
@@ -647,13 +647,6 @@ public class ActivityService {
         if(stageTasksInfoRes != null) {
             tasksInfoRes.addAll(stageTasksInfoRes);
         }
-        if(tasksInfoRes.size() > 1) { // for the moment ...
-            throw new UnprocessableEntityException(
-                    DevOpsApiStandardErrors.SC422_01_ACTIVITY_IS_INVALID,
-                    "Devops module is unable to prcess activities with more than one task associated");
-        }
-
-
         return tasksInfoRes;
     }
 

@@ -331,6 +331,73 @@ public class TaskIT extends ODMDevOpsIT {
 
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testMultipleTasks() {
+
+        // Simulate the creation of an Activity with multiple Tasks
+        createMocksForCreateActivityWithMultipleTaskCall();
+        ActivityResource activityRes = createTestActivity(false);
+
+        // Start the Activity
+        try {
+            devOpsClient.startActivity(activityRes.getId());
+        } catch (Throwable t) {
+            fail("Unexpected exception while starting activity: " + t.getMessage());
+            t.printStackTrace();
+            return;
+        }
+
+        // Retrieve the Tasks associated with the Activity
+        ActivityTaskResource[] taskResources = devOpsClient.searchTasks(activityRes.getId(), null, null);
+        assertThat(taskResources).isNotNull();
+        assertThat(taskResources.length).isEqualTo(2); // It should have at least 2 Tasks
+
+        ActivityTaskResource firstTask = taskResources[0];
+        ActivityTaskResource secondTask = taskResources[1];
+
+        // Verify that the first Task is in PROCESSING state and the second one is in PLANNED state
+        assertThat(firstTask.getStatus()).isEqualTo(ActivityTaskStatus.PROCESSING);
+        assertThat(secondTask.getStatus()).isEqualTo(ActivityTaskStatus.PLANNED);
+
+        // Simulate the callback for the completion of the first Task
+        try {
+            devOpsClient.stopTask(firstTask.getId());
+        } catch (Throwable t) {
+            fail("Unexpected exception while stopping first task: " + t.getMessage());
+            t.printStackTrace();
+            return;
+        }
+
+        // Verify that the first Task has been completed
+        ActivityTaskResource stoppedFirstTask = devOpsClient.readTask(firstTask.getId());
+        assertThat(stoppedFirstTask.getStatus()).isEqualTo(ActivityTaskStatus.PROCESSED);
+        assertThat(stoppedFirstTask.getFinishedAt()).isNotNull();
+
+        // Verify that the second Task has been automatically started
+        ActivityTaskResource updatedSecondTask = devOpsClient.readTask(secondTask.getId());
+        assertThat(updatedSecondTask.getStatus()).isEqualTo(ActivityTaskStatus.PROCESSING);
+        assertThat(updatedSecondTask.getStartedAt()).isNotNull();
+
+        // Simulate the callback for the completion of the second Task
+        try {
+            devOpsClient.stopTask(secondTask.getId());
+        } catch (Throwable t) {
+            fail("Unexpected exception while stopping second task: " + t.getMessage());
+            t.printStackTrace();
+            return;
+        }
+
+        // Verify that the second Task has been completed
+        ActivityTaskResource stoppedSecondTask = devOpsClient.readTask(secondTask.getId());
+        assertThat(stoppedSecondTask.getStatus()).isEqualTo(ActivityTaskStatus.PROCESSED);
+        assertThat(stoppedSecondTask.getFinishedAt()).isNotNull();
+
+        // The Activity should be completed
+        ActivityResource completedActivity = devOpsClient.readActivity(activityRes.getId());
+        assertThat(completedActivity.getStatus()).isEqualTo(ActivityStatus.PROCESSED);
+    }
+
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testReadTaskAfterStop() {
 
         createMocksForCreateActivityCall();

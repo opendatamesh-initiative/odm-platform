@@ -16,4 +16,7 @@ public class DocumentResource {
     @Schema(description = "JSON representation of the object to be evaluated")
     private Object objectToEvaluate;
 
+    @Schema(description = "If true, enables verbose logging, providing detailed insights into policy evaluation")
+    private Boolean verbose;
+
 }

@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.opendatamesh.dpds.model.core.EntityTypeDPDS;
-import org.opendatamesh.platform.core.commons.ObjectMapperFactory;;
+import org.opendatamesh.platform.core.commons.ObjectMapperFactory;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(
-        value = "/products",
+        value = "/validate",
         produces = {
                 "application/vnd.odmp.v1+json",
                 "application/vnd.odmp+json",
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
         description = "Endpoints associated to products collection")
 public interface AbstractDataProductsValidationController {
 
-    @PostMapping("/*/validate")
+    @PostMapping("/report")
     @ResponseStatus(HttpStatus.OK)
     @Operation(
             summary = "Validate a data product descriptor",

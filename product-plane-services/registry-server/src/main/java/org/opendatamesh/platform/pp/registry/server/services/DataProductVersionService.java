@@ -578,7 +578,7 @@ public class DataProductVersionService {
         return dataProducts.isEmpty() ? null : dataProductVersionMapper.toResource(dataProducts.get(0));
     }
 
-    private DataProduct getDataProduct(DataProductVersion dataProductVersion) {
+    public DataProduct getDataProduct(DataProductVersion dataProductVersion) {
         //TODO refactor --> this generates a detached entity!!! (the correct way should be by joining the DataProduct with the DataProductVersion)
         DataProduct dataProduct = new DataProduct();
         if(dataProductVersion.getInfo().getFullyQualifiedName() == null) {

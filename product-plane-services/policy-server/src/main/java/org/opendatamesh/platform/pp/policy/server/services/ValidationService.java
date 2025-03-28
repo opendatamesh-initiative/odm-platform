@@ -42,7 +42,7 @@ public class ValidationService {
 
     private static final JsonNodeFactory jsonNodeFactory = ObjectMapperFactory.JSON_MAPPER.getNodeFactory();
 
-    public ValidationResponseResource validateInput(PolicyEvaluationRequestResource policyEvaluationRequestResource) {
+    public ValidationResponseResource validateInput(PolicyEvaluationRequestResource policyEvaluationRequestResource, boolean storeResults) {
         policyEnricherService.enrichRequest(policyEvaluationRequestResource);
         JsonNode inputObject = buildInputObject(policyEvaluationRequestResource);
 
@@ -60,6 +60,7 @@ public class ValidationService {
 
             PolicyEvaluationResultResource policyEvaluation = new PolicyEvaluationResultResource();
             policyEvaluation.setPolicyId(policyToEvaluate.getId());
+            policyEvaluation.setPolicy(policyMapper.toRes(policyToEvaluate));
             policyEvaluation.setDataProductId(policyEvaluationRequestResource.getDataProductId());
             policyEvaluation.setDataProductVersion(policyEvaluationRequestResource.getDataProductVersion());
             policyEvaluation.setInputObject(inputObject);
@@ -76,7 +77,11 @@ public class ValidationService {
             policyEvaluation.setResult(validationResponse.getEvaluationResult());
             policyEvaluation.setOutputObject(validationResponse.getOutputObject().toString());
 
-            policyResults.add(policyEvaluationResultService.createResource(policyEvaluation));
+            if (storeResults) {
+                policyResults.add(policyEvaluationResultService.createResource(policyEvaluation));
+            } else {
+                policyResults.add(policyEvaluation);
+            }
         }
 
         response.setPolicyResults(policyResults);

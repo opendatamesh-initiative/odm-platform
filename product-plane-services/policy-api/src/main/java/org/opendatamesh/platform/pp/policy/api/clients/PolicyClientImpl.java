@@ -2,7 +2,7 @@ package org.opendatamesh.platform.pp.policy.api.clients;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.opendatamesh.platform.core.commons.ObjectMapperFactory;;
+import org.opendatamesh.platform.core.commons.ObjectMapperFactory;
 import org.opendatamesh.platform.core.commons.clients.ODMClient;
 import org.opendatamesh.platform.core.commons.clients.utils.RestUtils;
 import org.opendatamesh.platform.pp.policy.api.resources.*;
@@ -12,6 +12,8 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+
+;
 
 public class PolicyClientImpl extends ODMClient implements PolicyClient, PolicyEngineClient, PolicyEvaluationResultClient, PolicyValidationClient {
 
@@ -100,6 +102,11 @@ public class PolicyClientImpl extends ODMClient implements PolicyClient, PolicyE
         return restUtils.genericPost(apiUrl(PolicyAPIRoutes.VALIDATION), evaluationRequest, ValidationResponseResource.class);
     }
 
+    @Override
+    public ValidationResponseResource testValidateInputObject(PolicyEvaluationRequestResource testRequest) {
+        return restUtils.genericPost(apiUrl(PolicyAPIRoutes.VALIDATION_TEST), testRequest, ValidationResponseResource.class);
+    }
+
     //REST METHODS
 
     public ResponseEntity<ObjectNode> createPolicyResponseEntity(PolicyResource policyResource) {
@@ -167,7 +174,7 @@ public class PolicyClientImpl extends ODMClient implements PolicyClient, PolicyE
     // ----------------------------------------
 
     public ResponseEntity<ObjectNode> createPolicyEngineResponseEntity(PolicyEngineResource policyEngineResource) {
-        return  rest.postForEntity(
+        return rest.postForEntity(
                 apiUrl(PolicyAPIRoutes.ENGINES),
                 policyEngineResource,
                 ObjectNode.class
@@ -225,7 +232,6 @@ public class PolicyClientImpl extends ODMClient implements PolicyClient, PolicyE
                 ObjectNode.class
         );
     }
-
 
 
     public ResponseEntity<ObjectNode> updatePolicyEvaluationResultResponseEntity(

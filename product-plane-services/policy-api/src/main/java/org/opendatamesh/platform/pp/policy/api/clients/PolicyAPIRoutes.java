@@ -7,6 +7,7 @@ public enum PolicyAPIRoutes implements ODMApiRoutes {
     POLICIES("/policies"),
     ENGINES("/policy-engines"),
     VALIDATION("/validation"),
+    VALIDATION_TEST("/validation-test"),
     RESULTS("/policy-evaluation-results");
 
     private final String path;

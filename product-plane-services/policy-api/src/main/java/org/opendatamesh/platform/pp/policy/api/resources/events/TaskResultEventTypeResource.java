@@ -10,7 +10,7 @@ public class TaskResultEventTypeResource {
     ActivityResource activity = null;
 
     @JsonProperty("task")
-    TaskResource task = new TaskResource();
+    TaskResource task =  null;
 
     public ActivityResource getActivity() {
         return activity;

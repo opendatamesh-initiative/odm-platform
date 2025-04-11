@@ -167,7 +167,7 @@ public class TaskService {
                 taskRes = odmExecutor.createTask(taskRes);
             } else {
                 taskRes.setStatus(TaskStatus.FAILED);
-                taskRes.setErrors("Executor [" + task.getExecutorRef() + "] supported"); // CHECK
+                taskRes.setErrors("Executor [" + task.getExecutorRef() + "] not supported"); // CHECK
                 taskRes.setFinishedAt(new Date());
                 devOpsNotificationServiceProxy.notifyTaskCompletion(taskRes);
             }

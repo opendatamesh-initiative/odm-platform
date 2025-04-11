@@ -33,8 +33,8 @@ public class PolicyEnricherService {
 
     private void enrichTaskExecutionResultEvent(PolicyEvaluationRequestResource request) {
         try {
-            TaskResultEventTypeResource taskResultEventTypeResource = mapper.readValue(
-                    request.getCurrentState().asText(), TaskResultEventTypeResource.class
+            TaskResultEventTypeResource taskResultEventTypeResource = mapper.treeToValue(
+                    request.getCurrentState(), TaskResultEventTypeResource.class
             );
             if (taskResultEventTypeResource != null) {
                 ActivityResource activityResource = devOpsProxy.getActivityById(
@@ -42,8 +42,10 @@ public class PolicyEnricherService {
                 );
                 taskResultEventTypeResource.setActivity(activityResource);
                 request.setCurrentState(JsonNodeUtils.toJsonNode(taskResultEventTypeResource));
-                request.setDataProductId(activityResource.getDataProductId());
-                request.setDataProductVersion(activityResource.getDataProductVersion());
+                if (activityResource != null) {
+                    request.setDataProductId(activityResource.getDataProductId());
+                    request.setDataProductVersion(activityResource.getDataProductVersion());
+                }
             }
         } catch (Exception e) {
             logger.warn("Error enriching TASK_EXECUTION_RESULT event", e);

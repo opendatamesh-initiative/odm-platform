@@ -1,9 +1,9 @@
 
-CREATE TEMPORARY TABLE temp_DPV_PORTS AS
+CREATE TABLE temp_DPV_PORTS AS
 SELECT *
 FROM "ODMREGISTRY"."DPV_PORTS";
 
-CREATE TEMPORARY TABLE temp_DPV_PORT_TAGS AS
+CREATE TABLE temp_DPV_PORT_TAGS AS
 SELECT *
 FROM "ODMREGISTRY"."DPV_PORT_TAGS";
 
@@ -61,8 +61,8 @@ ALTER TABLE "ODMREGISTRY"."DPV_PORTS" ADD CONSTRAINT  "C_FK5_DPV_PORTS" FOREIGN 
 ALTER TABLE "ODMREGISTRY"."DPV_PORT_TAGS" ADD CONSTRAINT  "FKSXD77OQ8WIO381WHOJWICLXLG" FOREIGN KEY("SEQUENCE_ID") REFERENCES "ODMREGISTRY"."DPV_PORTS"("SEQUENCE_ID")  ON DELETE CASCADE;
 
 
--- Create a temporary mapping table to capture the relationship between the old "ID" and the new "SEQUENCE_ID"
-CREATE TEMPORARY TABLE temp_DPV_PORTS_mapping (
+-- Create a mapping table to capture the relationship between the old "ID" and the new "SEQUENCE_ID"
+CREATE TABLE temp_DPV_PORTS_mapping (
     old_id CHARACTER VARYING(255),
     sequence_id BIGINT
 );
@@ -119,7 +119,7 @@ FROM temp_DPV_PORT_TAGS t
 JOIN temp_DPV_PORTS_mapping m
   ON t."ID" = m.old_id;
 
---Clean up temporary tables (optional cleanup)
+--Clean up tables (optional cleanup)
 DROP TABLE temp_DPV_PORTS;
 DROP TABLE temp_DPV_PORT_TAGS;
 DROP TABLE temp_DPV_PORTS_mapping;

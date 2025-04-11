@@ -1,9 +1,9 @@
--- Step 1: Back up the existing data into temporary tables.
-CREATE TEMPORARY TABLE temp_DPV_PORTS AS
+-- Step 1: Back up the existing data into  tables.
+CREATE TABLE temp_DPV_PORTS AS
 SELECT *
 FROM "ODMREGISTRY"."DPV_PORTS";
 
-CREATE TEMPORARY TABLE temp_DPV_PORT_TAGS AS
+CREATE TABLE temp_DPV_PORT_TAGS AS
 SELECT *
 FROM "ODMREGISTRY"."DPV_PORT_TAGS";
 
@@ -86,8 +86,8 @@ ALTER TABLE "ODMREGISTRY"."DPV_PORT_TAGS"
     REFERENCES "ODMREGISTRY"."DPV_PORTS"("SEQUENCE_ID")
     ON DELETE CASCADE;
 
--- Step 7: Create a temporary mapping table for the old ID to new SEQUENCE_ID mapping.
-CREATE TEMPORARY TABLE temp_DPV_PORTS_mapping (
+-- Step 7: Create a  mapping table for the old ID to new SEQUENCE_ID mapping.
+CREATE TABLE temp_DPV_PORTS_mapping (
     old_id VARCHAR(255),
     sequence_id BIGINT
 );
@@ -144,7 +144,7 @@ FROM temp_DPV_PORT_TAGS t
 JOIN temp_DPV_PORTS_mapping m
   ON t."ID" = m.old_id;
 
--- Step 11: Optional cleanup of temporary tables.
+-- Step 11: Optional cleanup of  tables.
 DROP TABLE temp_DPV_PORTS;
 DROP TABLE temp_DPV_PORT_TAGS;
 DROP TABLE temp_DPV_PORTS_mapping;

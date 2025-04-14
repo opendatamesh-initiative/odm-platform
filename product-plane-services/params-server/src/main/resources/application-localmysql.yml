@@ -45,8 +45,6 @@ spring:
     user: "root"
     password: "root"
     locations: classpath:db/migration/mysql
-    #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
-    #schemas: flyway # not working
     clean-on-validation-error: true
 
 

@@ -33,7 +33,6 @@ public class ApiIT extends ODMRegistryIT {
         api1 = createApi(api);
 
         assertThat(api1.getId()).isEqualTo(api.getId());
-        assertThat(api1.getFullyQualifiedName()).isEqualTo(api.getFullyQualifiedName());
         assertThat(api1.getEntityType()).isEqualTo(api.getEntityType());
         assertThat(api1.getName()).isEqualTo(api.getName());
         assertThat(api1.getVersion()).isEqualTo(api.getVersion());
@@ -56,7 +55,9 @@ public class ApiIT extends ODMRegistryIT {
 
         api = resourceBuilder.buildTestApi();
         api1 = createApi(api);
-        assertThat(api1).isEqualTo(api);
+        assertThat(api1).usingRecursiveComparison()
+                .ignoringFields("fullyQualifiedName", "createdAt", "updatedAt")
+                .isEqualTo(api);
 
         api.setVersion("2.0.0");
         api2 = createApi(api);

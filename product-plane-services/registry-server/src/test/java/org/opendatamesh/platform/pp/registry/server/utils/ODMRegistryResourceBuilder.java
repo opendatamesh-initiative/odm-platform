@@ -46,7 +46,7 @@ public class ODMRegistryResourceBuilder {
     public ExternalComponentResource buildTestApi() {
         return buildDefinition(
             "b461ea5e-de52-3509-a297-ebaac9c49e67", 
-            "urn:org.opendatamesh:apis:api-1:1.0.0", 
+            null,
             EntityTypeDPDS.API.propertyValue(), 
             "api-1", "1.0.0", 
             "Api 1", "Test Api", 

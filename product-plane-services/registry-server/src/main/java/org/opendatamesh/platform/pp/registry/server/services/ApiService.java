@@ -66,17 +66,19 @@ public class ApiService {
                     "Property [definition] cannot be empty");
         }
 
-        String fqn = identifierStrategy.getExternalComponentFqn(
+        //Keeps the logic like the one in the parser.
+        //The fullyQualifiedName can be empty only if this method is called from the ApiController
+        String fqn = StringUtils.hasText(api.getFullyQualifiedName()) ? api.getFullyQualifiedName() : identifierStrategy.getExternalComponentFqn(
                 EntityTypeDPDS.API,
                 api.getName(),
                 api.getVersion());
 
         String id = identifierStrategy.getId(fqn);
-        
+
         api.setId(id);
         api.setFullyQualifiedName(fqn);
         api.setEntityType(EntityTypeDPDS.API.propertyValue());
-        
+
 
         if (apiExists(id)) {
             throw new UnprocessableEntityException(

@@ -21,8 +21,9 @@ public class EventNotificationControllerImpl extends AbstractEventNotificationCo
 
     @Override
     public EventNotificationResource updateEventNotification(Long id, EventNotificationResource eventNotificationResource) {
-        log.info("Observer: {} notification on event: {} has status: {}", eventNotificationResource.getObserver().getName(), eventNotificationResource.getEvent().getType(), eventNotificationResource.getStatus());
-        return eventNotificationService.overwriteResource(id, eventNotificationResource);
+        EventNotificationResource result =  eventNotificationService.overwriteResource(id, eventNotificationResource);
+        log.info("Observer: {} notification on event: {} has status: {}", result.getObserver().getName(), result.getEvent().getType(), result.getStatus());
+        return result;
     }
 
     @Override

@@ -11,7 +11,7 @@ import org.opendatamesh.platform.pp.notification.api.clients.NotificationClientI
 import org.opendatamesh.platform.pp.notification.api.resources.EventNotificationResource;
 import org.opendatamesh.platform.pp.notification.api.resources.EventResource;
 import org.opendatamesh.platform.pp.notification.api.resources.ObserverResource;
-import org.opendatamesh.platform.pp.notification.server.services.proxies.NotificationObserverServiceProxy;
+import org.opendatamesh.platform.pp.notification.server.services.proxies.NotificationObserverClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.ActiveProfiles;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
@@ -43,7 +42,7 @@ public class ODMNotificationIT extends ODMIntegrationTest {
     protected NotificationClientImpl notificationClient;
 
     @MockBean
-    protected NotificationObserverServiceProxy notificationObserverServiceProxyMock;
+    protected NotificationObserverClient notificationObserverServiceProxyMock;
 
     protected static final Logger logger = LoggerFactory.getLogger(ODMNotificationIT.class);
 

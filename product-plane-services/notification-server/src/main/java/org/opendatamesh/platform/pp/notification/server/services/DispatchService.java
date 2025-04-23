@@ -6,7 +6,7 @@ import org.opendatamesh.platform.pp.notification.api.resources.EventResource;
 import org.opendatamesh.platform.pp.notification.api.resources.ObserverResource;
 import org.opendatamesh.platform.pp.notification.api.resources.enums.EventNotificationStatus;
 import org.opendatamesh.platform.pp.notification.api.resources.exceptions.NotificationApiStandardErrors;
-import org.opendatamesh.platform.pp.notification.server.services.proxies.NotificationObserverServiceProxy;
+import org.opendatamesh.platform.pp.notification.server.services.proxies.NotificationObserverClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
@@ -16,19 +16,16 @@ import org.springframework.stereotype.Service;
 public class DispatchService {
 
     @Autowired
-    ObserverService observerService;
-
+    private ObserverService observerService;
     @Autowired
-    EventNotificationService eventNotificationService;
-
+    private EventNotificationService eventNotificationService;
     @Autowired
-    EventService eventService;
-
+    private EventService eventService;
     @Autowired
-    NotificationObserverServiceProxy notificationObserverServiceProxy;
+    private NotificationObserverClient observerClient;
 
     public void notifyAll(EventResource eventToDispatch) {
-        if(eventToDispatch == null) {
+        if (eventToDispatch == null) {
             throw new BadRequestException(
                     NotificationApiStandardErrors.SC400_02_EVENT_IS_EMPTY,
                     "Event object cannot be null"
@@ -39,7 +36,7 @@ public class DispatchService {
         // Find all observers (page by page) and forward the event
         Slice<ObserverResource> observerSlice = observerService.findAllResources(PageRequest.of(0, 20));
         notifyAllSlice(observerSlice, eventToDispatch);
-        while(observerSlice.hasNext()) {
+        while (observerSlice.hasNext()) {
             observerSlice = observerService.findAllResources(observerSlice.nextPageable());
             notifyAllSlice(observerSlice, eventToDispatch);
         }
@@ -55,7 +52,7 @@ public class DispatchService {
         // Create EventNotification
         eventNotificationResource = eventNotificationService.createResource(eventNotificationResource);
         // Dispatch EventNotification to observer
-        notificationObserverServiceProxy.dispatchEventNotificationToObserver(eventNotificationResource, observer);
+        observerClient.dispatchEventNotificationToObserver(eventNotificationResource, observer);
     }
 
     private EventNotificationResource initEventNotification(ObserverResource observer, EventResource event) {

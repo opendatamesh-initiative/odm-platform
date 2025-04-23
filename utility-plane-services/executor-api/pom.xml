@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.opendatamesh</groupId>
         <artifactId>odm-platform-up-services</artifactId>
-        <version>1.0.16</version>
+        <version>1.0.17</version>
         <relativePath>../</relativePath>
     </parent>
 
@@ -15,7 +15,7 @@
     <artifactId>odm-platform-up-executor-api</artifactId>
     <name>ODM Platform Executor Service API</name>
     <description>Open Data Mesh Platform Executor Service API</description>
-    <version>1.0.16</version>
+    <version>1.0.17</version>
     <url>https://github.com/opendatamesh-initiative/odm-platform</url>
 
 
@@ -148,7 +148,7 @@
         <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-core-commons</artifactId>
-            <version>1.0.16</version>
+            <version>1.0.17</version>
             <scope>compile</scope>
         </dependency>
 

@@ -1,6 +1,6 @@
-package org.opendatamesh.platform.pp.notification.api.resources.enums;
+package org.opendatamesh.platform.pp.policy.server.resources.notificationservice;
 
-public enum EventType {
+public enum NotificationEventType {
     DATA_PRODUCT_CREATED,
     DATA_PRODUCT_UPDATED,
     DATA_PRODUCT_DELETED,

@@ -209,6 +209,7 @@ public class RegistryClient extends ODMClient {
         DataProductVersionDPDS dpv = null;
         try {
             dpv = ObjectMapperFactory.JSON_MAPPER.readValue(descriptorContent, DataProductVersionDPDS.class);
+            dpv.setRawContent(descriptorContent);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }

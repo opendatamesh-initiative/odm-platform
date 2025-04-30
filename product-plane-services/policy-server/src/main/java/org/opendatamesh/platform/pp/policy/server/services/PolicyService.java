@@ -13,10 +13,12 @@ import org.opendatamesh.platform.pp.policy.server.database.entities.PolicyEngine
 import org.opendatamesh.platform.pp.policy.server.database.mappers.EntitiesToResources;
 import org.opendatamesh.platform.pp.policy.server.database.mappers.PolicyMapper;
 import org.opendatamesh.platform.pp.policy.server.database.repositories.PolicyRepository;
+import org.opendatamesh.platform.pp.policy.server.services.proxies.NotificationProxy;
 import org.opendatamesh.platform.pp.policy.server.services.utils.GenericMappedAndFilteredCrudService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -27,12 +29,15 @@ public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySea
 
     @Autowired
     private PolicyRepository repository;
-
     @Autowired
     private PolicyMapper mapper;
-
     @Autowired
     private PolicyEngineService policyEngineService;
+    @Autowired
+    private NotificationProxy notificationProxy;
+    @Autowired
+    private TransactionTemplate transactionTemplate;
+
 
     protected PolicyService() {
 
@@ -98,8 +103,11 @@ public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySea
 
     public void logicalDelete(Long rootId) {
         Policy policyToDelete = findOneByRootIdAndIsLastVersion(rootId);
-        policyToDelete.setLastVersion(Boolean.FALSE);
-        repository.save(policyToDelete);
+        transactionTemplate.executeWithoutResult(status -> {
+            policyToDelete.setLastVersion(Boolean.FALSE);
+            repository.save(policyToDelete);
+        });
+        this.afterDeleteCommit(policyToDelete);
     }
 
     @Override
@@ -200,4 +208,21 @@ public class PolicyService extends GenericMappedAndFilteredCrudService<PolicySea
         return Policy.class;
     }
 
+    @Override
+    protected void afterCreationCommit(Policy createdEntity) {
+        super.afterCreationCommit(createdEntity);
+        notificationProxy.notifyPolicyCreated(mapper.toRes(createdEntity));
+    }
+
+    @Override
+    protected void afterDeleteCommit(Policy entity) {
+        super.afterDeleteCommit(entity);
+        notificationProxy.notifyPolicyDeleted(mapper.toRes(entity));
+    }
+
+    @Override
+    protected void afterOverwriteCommit(Policy overwrittenObject) {
+        super.afterOverwriteCommit(overwrittenObject);
+        notificationProxy.notifyPolicyUpdated(null, mapper.toRes(overwrittenObject));
+    }
 }

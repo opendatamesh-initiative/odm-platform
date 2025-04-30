@@ -55,6 +55,9 @@ public class Policy extends TimestampedEntity {
     @Column(name = "POLICY_ENGINE_ID", insertable = false, updatable = false)
     private Long policyEngineId;
 
+    @Column(name = "EXTERNAL_CONTEXT")
+    private String externalContext;
+
     public Long getId() {
         return id;
     }
@@ -166,5 +169,13 @@ public class Policy extends TimestampedEntity {
         if (evaluationEvents != null) {
             evaluationEvents.forEach(ev -> ev.setPolicy(this));
         }
+    }
+
+    public String getExternalContext() {
+        return externalContext;
+    }
+
+    public void setExternalContext(String externalContext) {
+        this.externalContext = externalContext;
     }
 }

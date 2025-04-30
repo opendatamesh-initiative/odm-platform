@@ -18,7 +18,7 @@ public class NotificationServiceClientConfigs {
     @Value("${odm.productPlane.notificationService.address:null}")
     private String address;
 
-    @Value("${odm.productPlane.notificationService.active}")
+    @Value("${odm.productPlane.notificationService.active:false}")
     private boolean active;
 
     @Autowired

@@ -21,7 +21,7 @@ public abstract class Component extends EntityObject {
     @Column(name="CONTENT", columnDefinition = "LONGTEXT")
     private String rawContent;
 
-    @Column(name="CREATED_AT")
+    @Column(name="CREATED_AT", updatable = false)
     protected Date createdAt;
    
     @Column(name="UPDATED_AT")

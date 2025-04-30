@@ -55,7 +55,7 @@ public class DataProductVersion implements Cloneable, Serializable {
     @Column(name="CONTENT", columnDefinition = "LONGTEXT")
     private String rawContent;
 
-    @Column(name = "CREATED_AT")
+    @Column(name = "CREATED_AT", updatable = false)
     private Date createdAt;
 
     @Column(name = "UPDATED_AT")

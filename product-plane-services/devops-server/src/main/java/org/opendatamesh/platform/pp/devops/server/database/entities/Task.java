@@ -40,7 +40,7 @@ public class Task  {
     @Column(name = "ERRORS")
     private String errors;
 
-    @Column(name = "CREATED_AT")
+    @Column(name = "CREATED_AT", updatable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "STARTED_AT")

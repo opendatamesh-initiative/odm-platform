@@ -35,7 +35,7 @@ public class Activity {
     @Column(name = "ERRORS")
     private String errors;
 
-    @Column(name = "CREATED_AT")
+    @Column(name = "CREATED_AT", updatable = false)
     //@Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime createdAt;
 

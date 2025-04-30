@@ -43,7 +43,7 @@ public class Api {
     @Column(name = "DEFINITION")
     private String definition;
 
-    @Column(name="CREATED_AT")
+    @Column(name="CREATED_AT", updatable = false)
     protected Date createdAt;
 
     @Column(name="UPDATED_AT")

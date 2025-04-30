@@ -15,7 +15,7 @@ public class NotificationServiceClientConfigs {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    @Value("${odm.productPlane.notificationService.address}")
+    @Value("${odm.productPlane.notificationService.address:null}")
     private String address;
 
     @Value("${odm.productPlane.notificationService.active}")

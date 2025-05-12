@@ -48,7 +48,7 @@ spring:
     url: ${DATABASE_URL}?allowPublicKeyRetrieval=true&useSSL=false
     user: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
-    #schemas: ${FLYWAY_SCHEMA} # - Not working with MySql
+    schemas: ${FLYWAY_SCHEMA} 
     #"flyway_schema_history" (i.e., default flyway table) on a different SCHEMA
     locations: classpath:db/migration/${FLYWAY_SCRIPTS_DIR}
     clean-on-validation-error: true

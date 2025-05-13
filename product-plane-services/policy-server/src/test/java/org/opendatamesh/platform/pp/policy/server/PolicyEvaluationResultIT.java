@@ -60,7 +60,7 @@ public class PolicyEvaluationResultIT extends ODMPolicyIT {
         );
         // TODO: discuss update strategies (ID and CreationTime actually MUST be in the updated object)
         policyEvaluationResultResourceUpdated.setId(policyEvaluationResultResource.getId());
-        policyEvaluationResultResourceUpdated.setPolicy(policyEvaluationResultResource.getPolicy());
+        policyEvaluationResultResourceUpdated.setPolicyId(policyEvaluationResultResource.getPolicyId());
         policyEvaluationResultResourceUpdated.setCreatedAt(policyEvaluationResultResource.getCreatedAt());
 
         // PUT request

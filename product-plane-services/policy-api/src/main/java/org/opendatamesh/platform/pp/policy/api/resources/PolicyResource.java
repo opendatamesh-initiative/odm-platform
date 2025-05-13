@@ -1,11 +1,9 @@
 package org.opendatamesh.platform.pp.policy.api.resources;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.v3.oas.annotations.Hidden;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.assertj.core.util.Lists;
 import org.opendatamesh.platform.core.commons.resources.utils.TimestampedResource;
-import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -59,6 +57,11 @@ public class PolicyResource extends TimestampedResource {
     @Schema(description = "The PolicyEngine that will evaluate the Policy")
     private PolicyEngineResource policyEngine;
 
+    @Schema(description = "Policy's additional information from outside the platform")
+    private ObjectNode externalContext;
+
+    public PolicyResource() {
+    }
 
     public Long getId() {
         return id;
@@ -154,5 +157,13 @@ public class PolicyResource extends TimestampedResource {
 
     public void setEvaluationEvents(List<PolicyEvaluationEventResource> evaluationEvents) {
         this.evaluationEvents = evaluationEvents;
+    }
+
+    public ObjectNode getExternalContext() {
+        return externalContext;
+    }
+
+    public void setExternalContext(ObjectNode externalContext) {
+        this.externalContext = externalContext;
     }
 }

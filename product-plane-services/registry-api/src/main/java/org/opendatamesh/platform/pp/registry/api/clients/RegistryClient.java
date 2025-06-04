@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.opendatamesh.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.dpds.model.internals.ApplicationComponentDPDS;
 import org.opendatamesh.dpds.model.internals.InfrastructuralComponentDPDS;
-import org.opendatamesh.platform.core.commons.ObjectMapperFactory;;
+import org.opendatamesh.platform.core.commons.ObjectMapperFactory;
 import org.opendatamesh.platform.core.commons.clients.ODMClient;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.pp.registry.api.resources.*;

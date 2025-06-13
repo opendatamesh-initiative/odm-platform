@@ -24,7 +24,7 @@ public class ActivitiesController extends AbstractActivityController {
     @Override
     public ActivityResource createActivity(
         ActivityResource activityRes,
-        boolean startAfterCreation) 
+        boolean startAfterCreation)
     {
         Activity activity = activityService.createActivity(activityMapper.toEntity(activityRes), startAfterCreation);
         return activityMapper.toResource(activity);
@@ -39,6 +39,11 @@ public class ActivitiesController extends AbstractActivityController {
     }
 
     @Override
+    public ActivityResource abortActivity(Long activityId) {
+        return activityMapper.toResource(activityService.abortActivity(activityId));
+    }
+
+    @Override
     public ActivityStatusResource readActivityStatus(Long id) {
        Activity activity = activityService.readActivity(id);
        activity.getStatus().toString();
@@ -49,10 +54,10 @@ public class ActivitiesController extends AbstractActivityController {
 
     @Override
     public List<ActivityResource> readActivities(
-        String dataProductId, 
-        String dataProductVersion, 
+        String dataProductId,
+        String dataProductVersion,
         String stage,
-        ActivityStatus status) 
+        ActivityStatus status)
     {
         List<Activity> activities = null;
 
@@ -61,7 +66,7 @@ public class ActivitiesController extends AbstractActivityController {
         } else {
             activities = activityService.readAllActivities();
         }
-         
+
         return activityMapper.toResources(activities);
     }
 
@@ -76,4 +81,6 @@ public class ActivitiesController extends AbstractActivityController {
         return activityService.deleteActivity(id);
     }
 
+
+    //TODO: Service di stop activity
 }

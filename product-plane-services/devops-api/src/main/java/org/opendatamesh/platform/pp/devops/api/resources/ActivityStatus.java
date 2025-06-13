@@ -4,5 +4,6 @@ public enum ActivityStatus {
     PLANNED,
     PROCESSING,
     PROCESSED,
-    FAILED
+    FAILED,
+    ABORTED
 }

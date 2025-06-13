@@ -50,41 +50,41 @@ public abstract class AbstractActivityController {
         + "By default the activity and all it's tasks after creation are in `PLANNED` state. To start the activity after "
         + "creation pass also the parameter `startAfterCreation` set to `true` or call the proper endpoint (see below)"
     )
-    @ResponseStatus(HttpStatus.CREATED) 
+    @ResponseStatus(HttpStatus.CREATED)
     @ApiResponses(value = {
         @ApiResponse(
             responseCode = "201",
-            description = "Activity created", 
+            description = "Activity created",
             content = @Content(
-                mediaType = "application/json", 
+                mediaType = "application/json",
                 schema = @Schema(implementation = ActivityResource.class),
                 examples = {
                     @ExampleObject(name = "one", value = EXAMPLE_ONE)}
             )
         ),
         @ApiResponse(
-            responseCode = "422", 
+            responseCode = "422",
             description = "[Unprocessable Content](https://www.rfc-editor.org/rfc/rfc9110.html#name-422-unprocessable-content)"
             + "\r\n - Error Code 42201 - Activity is invalid"
-            + "\r\n - Error Code 42202 - Activity already exists",  
+            + "\r\n - Error Code 42202 - Activity already exists",
             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
         ),
         @ApiResponse(
-            responseCode = "500", 
+            responseCode = "500",
             description = "[Internal Server Error](https://www.rfc-editor.org/rfc/rfc9110.html#name-500-internal-server-error)"
             + "\r\n - Error Code 50000 - Error in the backend database"
-            + "\r\n - Error Code 50001 - Error in in the backend service" 
+            + "\r\n - Error Code 50001 - Error in in the backend service"
             + "\r\n - Error Code 50002 - Error in the backend descriptor processor"
             + "\r\n - Error Code 50050 - Registry service is disabled or not reachable"
-            + "\r\n - Error Code 50070 - Notification service is disabled or not reachable" 
+            + "\r\n - Error Code 50070 - Notification service is disabled or not reachable"
             + "\r\n - Error Code 50071 - Policy service is disabled or not reachable"
-            + "\r\n - Error Code 50072 - Executor service is disabled or not reachable", 
+            + "\r\n - Error Code 50072 - Executor service is disabled or not reachable",
             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
-        ), 
+        ),
         @ApiResponse(
-            responseCode = "501", 
+            responseCode = "501",
             description = "[Bad Gateway](https://www.rfc-editor.org/rfc/rfc9110.html#name-502-bad-gateway)"
-            + "\r\n - Error Code 50250 - Registry service returns an error" 
+            + "\r\n - Error Code 50250 - Registry service returns an error"
             + "\r\n - Error Code 50270 - Notification service returns an error"
             + "\r\n - Error Code 50271 - Policy service returns an error"
             + "\r\n - Error Code 50272 - Executor service returns an error",
@@ -92,19 +92,19 @@ public abstract class AbstractActivityController {
         )
     })
     @PostMapping(
-        consumes = { 
-            "application/vnd.odmp.v1+json", 
-            "application/vnd.odmp+json", 
+        consumes = {
+            "application/vnd.odmp.v1+json",
+            "application/vnd.odmp+json",
             "application/json"},
-        produces = { 
-            "application/vnd.odmp.v1+json", 
-            "application/vnd.odmp+json", 
+        produces = {
+            "application/vnd.odmp.v1+json",
+            "application/vnd.odmp+json",
             "application/json"
         }
     )
     public ActivityResource createActivityEndpoint(
-        @io.swagger.v3.oas.annotations.parameters.RequestBody( 
-            description = "An activity object", 
+        @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "An activity object",
             required = true,
             content = @Content(
                 examples = {
@@ -114,13 +114,13 @@ public abstract class AbstractActivityController {
         @RequestBody ActivityResource activity,
         @Parameter(
             description="Pass true to start the activity after creation")
-        @RequestParam(required = false, name = "startAfterCreation") boolean startAfterCreation) 
+        @RequestParam(required = false, name = "startAfterCreation") boolean startAfterCreation)
     {
         return createActivity(activity, startAfterCreation);
     }
 
     public abstract ActivityResource createActivity(
-        ActivityResource activity, 
+        ActivityResource activity,
         boolean startAfterCreation
     );
 
@@ -133,47 +133,47 @@ public abstract class AbstractActivityController {
     )
     @ApiResponses(value = {
         @ApiResponse(
-            responseCode = "200", 
-            description = "The status of the activity after the action execution", 
+            responseCode = "200",
+            description = "The status of the activity after the action execution",
             content = @Content(
-                mediaType = "application/json", 
+                mediaType = "application/json",
                 schema = @Schema(implementation = ActivityStatusResource.class)
             )
         ),
         @ApiResponse(
-            responseCode = "400", 
+            responseCode = "400",
             description = "[Bad Request](https://www.rfc-editor.org/rfc/rfc9110.html#name-400-bad-request)"
             + "\r\n - Error Code 40055 - Activity status action is invalid",
             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
         ),
         @ApiResponse(
-            responseCode = "404", 
+            responseCode = "404",
             description = "[Not Found](https://www.rfc-editor.org/rfc/rfc9110.html#name-404-not-found)"
             + "\r\n - Error Code 40401 - Activity not found",
             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
         ),
         @ApiResponse(
-            responseCode = "409", 
+            responseCode = "409",
             description = "[Conflict](https://www.rfc-editor.org/rfc/rfc9110.html#name-409-conflict)"
             + "\r\n - Error Code 40901 - There is already a running activity on given product version",
             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
         ),
         @ApiResponse(
-            responseCode = "500", 
+            responseCode = "500",
             description = "[Internal Server Error](https://www.rfc-editor.org/rfc/rfc9110.html#name-500-internal-server-error)"
             + "\r\n - Error Code 50000 - Error in the backend database"
-            + "\r\n - Error Code 50001 - Error in in the backend service" 
+            + "\r\n - Error Code 50001 - Error in in the backend service"
             + "\r\n - Error Code 50002 - Error in the backend descriptor processor"
             + "\r\n - Error Code 50050 - Registry service is disabled or not reachable"
-            + "\r\n - Error Code 50070 - Notification service is disabled or not reachable" 
+            + "\r\n - Error Code 50070 - Notification service is disabled or not reachable"
             + "\r\n - Error Code 50071 - Policy service is disabled or not reachable"
-            + "\r\n - Error Code 50072 - Executor service is disabled or not reachable", 
+            + "\r\n - Error Code 50072 - Executor service is disabled or not reachable",
             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
-        ), 
+        ),
         @ApiResponse(
-            responseCode = "501", 
+            responseCode = "501",
             description = "[Bad Gateway](https://www.rfc-editor.org/rfc/rfc9110.html#name-502-bad-gateway)"
-            + "\r\n - Error Code 50250 - Registry service returns an error" 
+            + "\r\n - Error Code 50250 - Registry service returns an error"
             + "\r\n - Error Code 50270 - Notification service returns an error"
             + "\r\n - Error Code 50271 - Policy service returns an error"
             + "\r\n - Error Code 50272 - Executor service returns an error",
@@ -182,13 +182,13 @@ public abstract class AbstractActivityController {
     })
     @PatchMapping(
         value = "/{id}/status",
-        produces = { 
-            "application/vnd.odmp.v1+json", 
-            "application/vnd.odmp+json", 
+        produces = {
+            "application/vnd.odmp.v1+json",
+            "application/vnd.odmp+json",
             "application/json"
         }
     )
-    public ActivityStatusResource startActivityEndpoint( 
+    public ActivityStatusResource startActivityEndpoint(
         @Parameter(description = "Identifier of the activity")
         @Valid @PathVariable(value = "id") Long id,
 
@@ -197,13 +197,29 @@ public abstract class AbstractActivityController {
     {
         if("START".equalsIgnoreCase(action) == false) {
             throw new BadRequestException(
-                DevOpsApiStandardErrors.SC400_55_ACTIVITY_STATUS_ACTION_IS_INVALID, 
+                DevOpsApiStandardErrors.SC400_55_ACTIVITY_STATUS_ACTION_IS_INVALID,
                 "Action [" + action + "] cannot be performend on activity to change its status");
         }
         return startActivity(id);
     }
     public abstract ActivityStatusResource startActivity(Long id);
-    
+
+    @PatchMapping(
+            value = "/{id}/abort",
+            produces = {
+                    "application/vnd.odmp.v1+json",
+                    "application/vnd.odmp+json",
+                    "application/json"
+            }
+    )
+    public ActivityResource abortActivityEndpoint(
+            @Parameter(description = "Identifier of the activity")
+            @Valid @PathVariable(value = "id") Long id)
+    {
+        return abortActivity(id);
+    }
+
+    public abstract ActivityResource abortActivity(Long activityId);
 
     // ===============================================================================
     // GET /activities/{id}/status  
@@ -214,39 +230,39 @@ public abstract class AbstractActivityController {
     )
     @ApiResponses(value = {
         @ApiResponse(
-            responseCode = "200", 
-            description = "The status of the requested activity", 
+            responseCode = "200",
+            description = "The status of the requested activity",
             content = @Content(
-                mediaType = "application/json", 
+                mediaType = "application/json",
                 schema = @Schema(implementation = ActivityStatusResource.class)
             )
         ),
         @ApiResponse(
-            responseCode = "404", 
+            responseCode = "404",
             description = "[Not Found](https://www.rfc-editor.org/rfc/rfc9110.html#name-404-not-found)"
             + "\r\n - Error Code 40401 - Activity not found",
             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
         ),
         @ApiResponse(
-            responseCode = "500", 
+            responseCode = "500",
             description = "[Internal Server Error](https://www.rfc-editor.org/rfc/rfc9110.html#name-500-internal-server-error)"
             + "\r\n - Error Code 50000 - Error in the backend database"
-            + "\r\n - Error Code 50001 - Error in in the backend service" 
+            + "\r\n - Error Code 50001 - Error in in the backend service"
             + "\r\n - Error Code 50002 - Error in the backend descriptor processor",
             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
         )
     })
     @GetMapping(
         value = "/{id}/status",
-        produces = { 
-            "application/vnd.odmp.v1+json", 
-            "application/vnd.odmp+json", 
+        produces = {
+            "application/vnd.odmp.v1+json",
+            "application/vnd.odmp+json",
             "application/json"
         }
-    )    
-    public ActivityStatusResource readActivityStatusEndpoint( 
+    )
+    public ActivityStatusResource readActivityStatusEndpoint(
         @Parameter(description = "Identifier of the activity")
-        @Valid @PathVariable(value = "id") Long id) 
+        @Valid @PathVariable(value = "id") Long id)
     {
         return readActivityStatus(id);
     }
@@ -261,30 +277,30 @@ public abstract class AbstractActivityController {
     )
     @ApiResponses(value = {
         @ApiResponse(
-            responseCode = "200", 
-            description = "All created activities", 
+            responseCode = "200",
+            description = "All created activities",
             content = {
-                @Content(mediaType = "application/vnd.odmp.v1+json", 
+                @Content(mediaType = "application/vnd.odmp.v1+json",
                     array = @ArraySchema(schema = @Schema(implementation = ActivityResource.class))),
-                @Content(mediaType = "application/vnd.odmp+json", 
+                @Content(mediaType = "application/vnd.odmp+json",
                     array = @ArraySchema(schema = @Schema(implementation = ActivityResource.class))),
-                @Content(mediaType = "application/json", 
+                @Content(mediaType = "application/json",
                     array = @ArraySchema(schema = @Schema(implementation = ActivityResource.class)))
             }
         ),
         @ApiResponse(
-            responseCode = "500", 
+            responseCode = "500",
             description = "[Internal Server Error](https://www.rfc-editor.org/rfc/rfc9110.html#name-500-internal-server-error)"
             + "\r\n - Error Code 50000 - Error in the backend database"
-            + "\r\n - Error Code 50001 - Error in in the backend service" 
+            + "\r\n - Error Code 50001 - Error in in the backend service"
             + "\r\n - Error Code 50002 - Error in the backend descriptor processor",
             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
         )
     })
     @GetMapping(
-        produces = { 
-            "application/vnd.odmp.v1+json", 
-            "application/vnd.odmp+json", 
+        produces = {
+            "application/vnd.odmp.v1+json",
+            "application/vnd.odmp+json",
             "application/json"
         }
     )
@@ -297,7 +313,7 @@ public abstract class AbstractActivityController {
 
         @Parameter(description="Add `stage` parameter to the request to get only activities of the specific stage")
         @RequestParam(required = false, name = "stage") String stage,
-       
+
         @Parameter(description="Add `status` parameter to the request to get only activities in the specific state")
         @RequestParam(required = false, name = "status") ActivityStatus status
     ) {
@@ -316,43 +332,43 @@ public abstract class AbstractActivityController {
     )
     @ApiResponses(value = {
         @ApiResponse(
-            responseCode = "200", 
-            description = "The requested activity", 
+            responseCode = "200",
+            description = "The requested activity",
             content = {
-                @Content(mediaType = "application/vnd.odmp.v1+json", 
+                @Content(mediaType = "application/vnd.odmp.v1+json",
                     schema = @Schema(implementation = ActivityResource.class)),
-                @Content(mediaType = "application/vnd.odmp+json", 
+                @Content(mediaType = "application/vnd.odmp+json",
                     schema = @Schema(implementation = ActivityResource.class)),
-                @Content(mediaType = "application/json", 
+                @Content(mediaType = "application/json",
                     schema = @Schema(implementation = ActivityResource.class))
             }
         ),
         @ApiResponse(
-            responseCode = "404", 
+            responseCode = "404",
             description = "[Not Found](https://www.rfc-editor.org/rfc/rfc9110.html#name-404-not-found)"
             + "\r\n - Error Code 40401 - Activity not found",
             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
         ),
         @ApiResponse(
-            responseCode = "500", 
+            responseCode = "500",
             description = "[Internal Server Error](https://www.rfc-editor.org/rfc/rfc9110.html#name-500-internal-server-error)"
             + "\r\n - Error Code 50000 - Error in the backend database"
-            + "\r\n - Error Code 50001 - Error in in the backend service" 
+            + "\r\n - Error Code 50001 - Error in in the backend service"
             + "\r\n - Error Code 50002 - Error in the backend descriptor processor",
             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
         )
     })
     @GetMapping(
         value = "/{id}",
-        produces = { 
-            "application/vnd.odmp.v1+json", 
-            "application/vnd.odmp+json", 
+        produces = {
+            "application/vnd.odmp.v1+json",
+            "application/vnd.odmp+json",
             "application/json"
-        } 
+        }
     )
-    public ActivityResource readActivitiyEndpoint( 
+    public ActivityResource readActivitiyEndpoint(
         @Parameter(description = "Identifier of the activity")
-        @Valid @PathVariable(value = "id") Long id) 
+        @Valid @PathVariable(value = "id") Long id)
     {
         return readActivitiy(id);
     }

@@ -42,7 +42,7 @@ public abstract class AbstractActivityController {
     // @see https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Annotations#arrayschema
 
     // ===============================================================================
-    // POST /activities  
+    // POST /activities
     // ===============================================================================
     @Operation(
             summary = "Create a new activity",
@@ -204,22 +204,6 @@ public abstract class AbstractActivityController {
     }
     public abstract ActivityStatusResource startActivity(Long id);
 
-    @PatchMapping(
-            value = "/{id}/abort",
-            produces = {
-                    "application/vnd.odmp.v1+json",
-                    "application/vnd.odmp+json",
-                    "application/json"
-            }
-    )
-    public ActivityResource abortActivityEndpoint(
-            @Parameter(description = "Identifier of the activity")
-            @Valid @PathVariable(value = "id") Long id)
-    {
-        return abortActivity(id);
-    }
-
-    public abstract ActivityResource abortActivity(Long activityId);
 
     // ===============================================================================
     // GET /activities/{id}/status
@@ -397,4 +381,21 @@ public abstract class AbstractActivityController {
     }
 
     public abstract ActivityResource deleteActivity(Long id);
+
+    @PatchMapping(
+            value = "/{id}/abort",
+            produces = {
+                    "application/vnd.odmp.v1+json",
+                    "application/vnd.odmp+json",
+                    "application/json"
+            }
+    )
+    public ActivityResource abortActivityEndpoint(
+            @Parameter(description = "Identifier of the activity")
+            @Valid @PathVariable(value = "id") Long id)
+    {
+        return abortActivity(id);
+    }
+
+    public abstract ActivityResource abortActivity(Long activityId);
 }

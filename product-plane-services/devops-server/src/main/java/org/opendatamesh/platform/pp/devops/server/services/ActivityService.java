@@ -335,7 +335,9 @@ public class ActivityService {
     ) {
         Task task = taskService.stopTask(taskId, taskResultResource);
         updateActivityPartialResults(task, updateVariables);
-        startNextPlannedTaskAndUpdateParentActivity(task.getActivityId());
+        if (Boolean.TRUE.equals(task.getStartedByActivity())) {
+            startNextPlannedTaskAndUpdateParentActivity(task.getActivityId());
+        }
         return task;
     }
 
@@ -371,7 +373,6 @@ public class ActivityService {
 
             if(updateVariables)
                 updateDataProductVersionVariables(parentActivity);
-
         }
     }
 

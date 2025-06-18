@@ -45,7 +45,7 @@ public abstract class AbstractTaskController {
             "    \"errors\": \"Error messages from the executor\"\n" + //
             "}";
 
-   
+
     // ===============================================================================
     // POST /tasks  
     // ===============================================================================
@@ -61,48 +61,48 @@ public abstract class AbstractTaskController {
     // ===============================================================================
     // PATCH /tasks/{id}/status?action=stop 
     // ===============================================================================
-   
+
     @Operation(
         summary = "Stop the specified task",
         description = "Stop the task identified by the input `id` if it has not been stoped yet"
     )
     @ApiResponses(value = {
         @ApiResponse(
-            responseCode = "200", 
-            description = "The status of the task after the action execution", 
+            responseCode = "200",
+            description = "The status of the task after the action execution",
             content = @Content(
-                mediaType = "application/json", 
+                mediaType = "application/json",
                 schema = @Schema(implementation = TaskStatusResource.class)
             )
         ),
         @ApiResponse(
-            responseCode = "400", 
+            responseCode = "400",
             description = "[Bad Request](https://www.rfc-editor.org/rfc/rfc9110.html#name-400-bad-request)"
             + "\r\n - Error Code 40065 - Task status action is invalid",
             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
         ),
         @ApiResponse(
-            responseCode = "404", 
+            responseCode = "404",
             description = "[Not Found](https://www.rfc-editor.org/rfc/rfc9110.html#name-404-not-found)"
             + "\r\n - Error Code 40411 - Task not found",
             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
         ),
         @ApiResponse(
-            responseCode = "500", 
+            responseCode = "500",
             description = "[Internal Server Error](https://www.rfc-editor.org/rfc/rfc9110.html#name-500-internal-server-error)"
             + "\r\n - Error Code 50000 - Error in the backend database"
-            + "\r\n - Error Code 50001 - Error in in the backend service" 
+            + "\r\n - Error Code 50001 - Error in in the backend service"
             + "\r\n - Error Code 50002 - Error in the backend descriptor processor"
             + "\r\n - Error Code 50050 - Registry service is disabled or not reachable"
-            + "\r\n - Error Code 50070 - Notification service is disabled or not reachable" 
+            + "\r\n - Error Code 50070 - Notification service is disabled or not reachable"
             + "\r\n - Error Code 50071 - Policy service is disabled or not reachable"
-            + "\r\n - Error Code 50072 - Executor service is disabled or not reachable", 
+            + "\r\n - Error Code 50072 - Executor service is disabled or not reachable",
             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
-        ), 
+        ),
         @ApiResponse(
-            responseCode = "501", 
+            responseCode = "501",
             description = "[Bad Gateway](https://www.rfc-editor.org/rfc/rfc9110.html#name-502-bad-gateway)"
-            + "\r\n - Error Code 50250 - Registry service returns an error" 
+            + "\r\n - Error Code 50250 - Registry service returns an error"
             + "\r\n - Error Code 50270 - Notification service returns an error"
             + "\r\n - Error Code 50271 - Policy service returns an error"
             + "\r\n - Error Code 50272 - Executor service returns an error",
@@ -117,9 +117,9 @@ public abstract class AbstractTaskController {
                 "application/json",
                 "application/json;charset=UTF-8"
         },
-        produces = { 
-            "application/vnd.odmp.v1+json", 
-            "application/vnd.odmp+json", 
+        produces = {
+            "application/vnd.odmp.v1+json",
+            "application/vnd.odmp+json",
             "application/json"
         }
     )
@@ -155,13 +155,13 @@ public abstract class AbstractTaskController {
             updateVariables = true;
         if("STOP".equalsIgnoreCase(action) == false) {
             throw new BadRequestException(
-                DevOpsApiStandardErrors.SC400_65_TASK_STATUS_ACTION_IS_INVALID, 
+                DevOpsApiStandardErrors.SC400_65_TASK_STATUS_ACTION_IS_INVALID,
                 "Action [" + action + "] cannot be performend on task to change its status");
         }
         return stopTask(id, taskResult, updateVariables);
     }
     public abstract TaskStatusResource stopTask(Long id, TaskResultResource taskResultResource, Boolean updateVariables);
-    
+
     // ===============================================================================
     // GET /tasks/{id}/status  
     // ===============================================================================
@@ -171,37 +171,37 @@ public abstract class AbstractTaskController {
     )
     @ApiResponses(value = {
         @ApiResponse(
-            responseCode = "200", 
-            description = "The status of the requested task", 
+            responseCode = "200",
+            description = "The status of the requested task",
             content = @Content(
-                mediaType = "application/json", 
+                mediaType = "application/json",
                 schema = @Schema(implementation = TaskStatusResource.class)
             )
         ),
         @ApiResponse(
-            responseCode = "404", 
+            responseCode = "404",
             description = "[Not Found](https://www.rfc-editor.org/rfc/rfc9110.html#name-404-not-found)"
             + "\r\n - Error Code 40411 - Task not found",
             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
         ),
         @ApiResponse(
-            responseCode = "500", 
+            responseCode = "500",
             description = "[Internal Server Error](https://www.rfc-editor.org/rfc/rfc9110.html#name-500-internal-server-error)"
             + "\r\n - Error Code 50000 - Error in the backend database"
-            + "\r\n - Error Code 50001 - Error in in the backend service" 
+            + "\r\n - Error Code 50001 - Error in in the backend service"
             + "\r\n - Error Code 50002 - Error in the backend descriptor processor",
             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
         )
     })
     @GetMapping(
         value = "/{id}/status",
-        produces = { 
-            "application/vnd.odmp.v1+json", 
-            "application/vnd.odmp+json", 
+        produces = {
+            "application/vnd.odmp.v1+json",
+            "application/vnd.odmp+json",
             "application/json"
         }
     )
-    @ResponseStatus(HttpStatus.OK) 
+    @ResponseStatus(HttpStatus.OK)
 
     public TaskStatusResource readTaskStatusEndpoint(
             @Parameter(description = "Identifier of the task")
@@ -221,43 +221,43 @@ public abstract class AbstractTaskController {
     )
     @ApiResponses(value = {
         @ApiResponse(
-            responseCode = "200", 
-            description = "All created tasks", 
+            responseCode = "200",
+            description = "All created tasks",
             content = {
-                @Content(mediaType = "application/vnd.odmp.v1+json", 
+                @Content(mediaType = "application/vnd.odmp.v1+json",
                     array = @ArraySchema(schema = @Schema(implementation = ActivityTaskResource.class))),
-                @Content(mediaType = "application/vnd.odmp+json", 
+                @Content(mediaType = "application/vnd.odmp+json",
                     array = @ArraySchema(schema = @Schema(implementation = ActivityTaskResource.class))),
-                @Content(mediaType = "application/json", 
+                @Content(mediaType = "application/json",
                     array = @ArraySchema(schema = @Schema(implementation = ActivityTaskResource.class)))
             }
         ),
         @ApiResponse(
-            responseCode = "500", 
+            responseCode = "500",
             description = "[Internal Server Error](https://www.rfc-editor.org/rfc/rfc9110.html#name-500-internal-server-error)"
             + "\r\n - Error Code 50000 - Error in the backend database"
-            + "\r\n - Error Code 50001 - Error in in the backend service" 
+            + "\r\n - Error Code 50001 - Error in in the backend service"
             + "\r\n - Error Code 50002 - Error in the backend descriptor processor",
             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
         )
     })
     @GetMapping(
-        produces = { 
-            "application/vnd.odmp.v1+json", 
-            "application/vnd.odmp+json", 
+        produces = {
+            "application/vnd.odmp.v1+json",
+            "application/vnd.odmp+json",
             "application/json"
         }
     )
     public List<ActivityTaskResource> readTasksEndpoint(
         @Parameter(description="Add `activityId` parameter to the request to get only tasks associated to a specific activity")
         @RequestParam(required = false, name = "activityId") Long activityId,
-        
+
         @Parameter(description="Add `executor` parameter to the request to get only tasks associated to a specific executor service")
         @RequestParam(required = false, name = "executor") String executor,
-        
+
         @Parameter(description="Add `status` parameter to the request to get only tasks in a specific state")
         @RequestParam(required = false, name = "status") ActivityTaskStatus status
-    ) { 
+    ) {
         return readTasks(activityId, executor, status);
     }
 
@@ -270,49 +270,74 @@ public abstract class AbstractTaskController {
     @Operation(
         summary = "Get the specified task",
         description = "Get the task identified by the input `id`"
-    )    
+    )
     @ApiResponses(value = {
         @ApiResponse(
-            responseCode = "200", 
-            description = "The requested task", 
+            responseCode = "200",
+            description = "The requested task",
             content = {
-                @Content(mediaType = "application/vnd.odmp.v1+json", 
+                @Content(mediaType = "application/vnd.odmp.v1+json",
                     schema = @Schema(implementation = ActivityTaskResource.class)),
-                @Content(mediaType = "application/vnd.odmp+json", 
+                @Content(mediaType = "application/vnd.odmp+json",
                     schema = @Schema(implementation = ActivityTaskResource.class)),
-                @Content(mediaType = "application/json", 
+                @Content(mediaType = "application/json",
                     schema = @Schema(implementation = ActivityTaskResource.class))
             }
         ),
         @ApiResponse(
-            responseCode = "404", 
+            responseCode = "404",
             description = "[Not Found](https://www.rfc-editor.org/rfc/rfc9110.html#name-404-not-found)"
             + "\r\n - Error Code 40411 - Task not found",
             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
         ),
         @ApiResponse(
-            responseCode = "500", 
+            responseCode = "500",
             description = "[Internal Server Error](https://www.rfc-editor.org/rfc/rfc9110.html#name-500-internal-server-error)"
             + "\r\n - Error Code 50000 - Error in the backend database"
-            + "\r\n - Error Code 50001 - Error in in the backend service" 
+            + "\r\n - Error Code 50001 - Error in in the backend service"
             + "\r\n - Error Code 50002 - Error in the backend descriptor processor",
             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
         )
     })
     @GetMapping(
         value = "/{id}",
-        produces = { 
-            "application/vnd.odmp.v1+json", 
-            "application/vnd.odmp+json", 
+        produces = {
+            "application/vnd.odmp.v1+json",
+            "application/vnd.odmp+json",
             "application/json"
         }
     )
-    public ActivityTaskResource readActivitiyEndpoint( 
+    public ActivityTaskResource readActivitiyEndpoint(
         @Parameter(description = "Identifier of the task")
-        @Valid @PathVariable(value = "id") Long id) 
+        @Valid @PathVariable(value = "id") Long id)
     {
         return readTask(id);
     }
 
     public abstract ActivityTaskResource readTask(Long id);
+
+    @PostMapping(
+        value = "/{id}/start",
+        produces = { "application/json" }
+    )
+    public ActivityTaskResource startTaskEndpoint(
+            @Parameter(description = "Identifier of the task")
+            @PathVariable("id") Long id)
+    {
+        return startTask(id);
+    }
+
+    public abstract ActivityTaskResource startTask( Long id);
+
+
+    @PostMapping(
+        value = "/{id}/abort",
+        produces = { "application/json" }
+    )
+    public ActivityTaskResource abortTaskEndpoint(@PathVariable("id") Long id){
+        return abortTask(id);
+    }
+
+    public abstract ActivityTaskResource abortTask( Long id);
+
 }

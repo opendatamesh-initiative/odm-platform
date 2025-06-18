@@ -18,7 +18,11 @@ public class TaskResource  {
 
     @JsonProperty("activityId")
     @Schema(description = "ID of the parent Activity of the Task")
-    String activityId; 
+    String activityId;
+
+    @JsonProperty("name")
+    @Schema(description = "Name of the Task")
+    String name;
 
     @JsonIgnore
     @Schema(description = "Logical name of the target task executor service", example = "azure-devops")
@@ -59,4 +63,8 @@ public class TaskResource  {
     @JsonProperty("finishedAt")
     @Schema(description = "Timestamp of the end of the Task execution")
     private Date finishedAt;
+
+    @JsonProperty("startedByActivity")
+    @Schema(description = "True if the task was started orchestrated by an activity, false otherwise")
+    private Boolean startedByActivity;
 }

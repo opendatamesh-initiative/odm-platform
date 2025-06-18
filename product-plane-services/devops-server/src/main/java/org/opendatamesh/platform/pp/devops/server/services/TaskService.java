@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -116,11 +117,51 @@ public class TaskService {
         return startTask(task);
     }
     
+    public Task startSingleTask(Long taskId) {
+
+        Task task = readTask(taskId);
+        task.setStartedByActivity(false);
+        try {
+            task.setStatus(ActivityTaskStatus.PROCESSING);
+            task.setStartedAt(now());
+            saveTask(task);
+
+            devOpsNotificationServiceProxy.notifyTaskStart(taskMapper.toResource(task));
+
+            if(task.getExecutorRef() != null) {
+                task = submitTask(task);
+                if (task.getStatus().equals(ActivityTaskStatus.FAILED)) {
+                    task = saveTask(task);
+                    devOpsNotificationServiceProxy.notifyTaskCompletion(taskMapper.toResource(task));
+                }
+            } else {
+                TaskResultResource taskResultResource = new TaskResultResource();
+                taskResultResource.setStatus(TaskResultStatus.PROCESSED);
+                Map<String, Object> results = new HashMap<>();
+                results.put("message", "Nothing to do. Task succeded by default");
+                task.setResults(taskResultResource.toJsonString());
+                task.setStatus(ActivityTaskStatus.PROCESSED);
+                task.setFinishedAt(now());
+                devOpsNotificationServiceProxy.notifyTaskCompletion(taskMapper.toResource(task));
+            }
+            
+        } catch(Throwable t) {
+             throw new InternalServerException(
+                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
+                "An error occurred in the backend database while saving task",
+                t
+             );
+        }
+        
+        return task;
+    }
+
     public Task startTask(Task task) {
         try {
 
             task.setStatus(ActivityTaskStatus.PROCESSING);
             task.setStartedAt(now());
+            task.setStartedByActivity(true);
             saveTask(task);
 
             devOpsNotificationServiceProxy.notifyTaskStart(taskMapper.toResource(task));
@@ -274,6 +315,15 @@ public class TaskService {
         return task;
 	}
 
+    public Task abortTask(Long taskId) {
+        Task task = readTask(taskId);
+        if (!task.getStatus().equals(ActivityTaskStatus.PROCESSING)) return task;
+        task.setStatus(ActivityTaskStatus.ABORTED);
+        task.setFinishedAt(now());
+        task = saveTask(task);
+        devOpsNotificationServiceProxy.notifyTaskCompletion(taskMapper.toResource(task));
+        return task;
+    }
 
     // ======================================================================================
     // READ
@@ -410,6 +460,12 @@ public class TaskService {
         if (activityInfo.hasTemplate()) {
             ExternalComponentResource template = readTemplateDefinition(activityInfo.getTemplate());
             task.setTemplate(template.getDefinition());
+            if(StringUtils.hasText(template.getName())){
+                task.setName(template.getName());
+            }
+            if(StringUtils.hasText(template.getDescription())){
+                task.setDescription(template.getDescription());
+            }
         }
         if (activityInfo.hasConfigurations()) {
             String configurationsString = serializeCongigurations(activityInfo.getConfigurations());

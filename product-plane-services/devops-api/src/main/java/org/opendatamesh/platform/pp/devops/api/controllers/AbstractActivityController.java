@@ -193,14 +193,14 @@ public abstract class AbstractActivityController {
 
             @Parameter(description = "Add `action` parameter to the request to specify which action to perform to change the activity's status. `START` is the only possible action executable on activities")
             @RequestParam(required = true, name = "action") String action) {
-        if ("START".equalsIgnoreCase(action) == false || "ABORT".equalsIgnoreCase(action) == false) {
+        if (!"START".equalsIgnoreCase(action) && !"ABORT".equalsIgnoreCase(action)) {
             throw new BadRequestException(
                     DevOpsApiStandardErrors.SC400_55_ACTIVITY_STATUS_ACTION_IS_INVALID,
                     "Action [" + action + "] cannot be performend on activity to change its status");
         }
-        if ("START".equalsIgnoreCase(action) == true) {
+        if ("START".equalsIgnoreCase(action)) {
             return startActivity(id);
-        } else if ("ABORT".equalsIgnoreCase(action) == true) {
+        } else if ("ABORT".equalsIgnoreCase(action)) {
             return abortActivity(id);
         }
         return null;

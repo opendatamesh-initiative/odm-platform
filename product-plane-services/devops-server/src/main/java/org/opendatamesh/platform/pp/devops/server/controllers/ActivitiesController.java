@@ -39,8 +39,11 @@ public class ActivitiesController extends AbstractActivityController {
     }
 
     @Override
-    public ActivityResource abortActivity(Long activityId) {
-        return activityMapper.toResource(activityService.abortActivity(activityId));
+    public ActivityStatusResource abortActivity(Long activityId) {
+        Activity activity = activityService.abortActivity(activityId);
+        ActivityStatusResource statusResource = new ActivityStatusResource();
+        statusResource.setStatus(activity.getStatus());
+        return statusResource;
     }
 
     @Override

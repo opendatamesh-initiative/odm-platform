@@ -113,9 +113,8 @@ public abstract class AbstractActivityController {
             )
             @RequestBody ActivityResource activity,
             @Parameter(
-                    description="Pass true to start the activity after creation")
-            @RequestParam(required = false, name = "startAfterCreation") boolean startAfterCreation)
-    {
+                    description = "Pass true to start the activity after creation")
+            @RequestParam(required = false, name = "startAfterCreation") boolean startAfterCreation) {
         return createActivity(activity, startAfterCreation);
     }
 
@@ -192,17 +191,24 @@ public abstract class AbstractActivityController {
             @Parameter(description = "Identifier of the activity")
             @Valid @PathVariable(value = "id") Long id,
 
-            @Parameter(description="Add `action` parameter to the request to specify which action to perform to change the activity's status. `START` is the only possible action executable on activities")
-            @RequestParam(required = true, name = "action") String action)
-    {
-        if("START".equalsIgnoreCase(action) == false) {
+            @Parameter(description = "Add `action` parameter to the request to specify which action to perform to change the activity's status. `START` is the only possible action executable on activities")
+            @RequestParam(required = true, name = "action") String action) {
+        if ("START".equalsIgnoreCase(action) == false || "ABORT".equalsIgnoreCase(action) == false) {
             throw new BadRequestException(
                     DevOpsApiStandardErrors.SC400_55_ACTIVITY_STATUS_ACTION_IS_INVALID,
                     "Action [" + action + "] cannot be performend on activity to change its status");
         }
-        return startActivity(id);
+        if ("START".equalsIgnoreCase(action) == true) {
+            return startActivity(id);
+        } else if ("ABORT".equalsIgnoreCase(action) == true) {
+            return abortActivity(id);
+        }
+        return null;
     }
+
     public abstract ActivityStatusResource startActivity(Long id);
+
+    public abstract ActivityStatusResource abortActivity(Long activityId);
 
 
     // ===============================================================================
@@ -246,10 +252,10 @@ public abstract class AbstractActivityController {
     )
     public ActivityStatusResource readActivityStatusEndpoint(
             @Parameter(description = "Identifier of the activity")
-            @Valid @PathVariable(value = "id") Long id)
-    {
+            @Valid @PathVariable(value = "id") Long id) {
         return readActivityStatus(id);
     }
+
     public abstract ActivityStatusResource readActivityStatus(Long id);
 
     // ===============================================================================
@@ -289,16 +295,16 @@ public abstract class AbstractActivityController {
             }
     )
     public List<ActivityResource> readActivitiesEndpoint(
-            @Parameter(description="Add `dataProductId` parameter to the request to get only activities associated to a specific data product")
+            @Parameter(description = "Add `dataProductId` parameter to the request to get only activities associated to a specific data product")
             @RequestParam(required = false, name = "dataProductId") String dataProductId,
 
-            @Parameter(description="Add `dataProductVersion` parameter to the request to get only activities associated to a specific data product version")
+            @Parameter(description = "Add `dataProductVersion` parameter to the request to get only activities associated to a specific data product version")
             @RequestParam(required = false, name = "dataProductVersion") String dataProductVersion,
 
-            @Parameter(description="Add `stage` parameter to the request to get only activities of the specific stage")
+            @Parameter(description = "Add `stage` parameter to the request to get only activities of the specific stage")
             @RequestParam(required = false, name = "stage") String stage,
 
-            @Parameter(description="Add `status` parameter to the request to get only activities in the specific state")
+            @Parameter(description = "Add `status` parameter to the request to get only activities in the specific state")
             @RequestParam(required = false, name = "status") ActivityStatus status
     ) {
         return readActivities(dataProductId, dataProductVersion, stage, status);
@@ -352,8 +358,7 @@ public abstract class AbstractActivityController {
     )
     public ActivityResource readActivitiyEndpoint(
             @Parameter(description = "Identifier of the activity")
-            @Valid @PathVariable(value = "id") Long id)
-    {
+            @Valid @PathVariable(value = "id") Long id) {
         return readActivitiy(id);
     }
 
@@ -381,21 +386,4 @@ public abstract class AbstractActivityController {
     }
 
     public abstract ActivityResource deleteActivity(Long id);
-
-    @PatchMapping(
-            value = "/{id}/abort",
-            produces = {
-                    "application/vnd.odmp.v1+json",
-                    "application/vnd.odmp+json",
-                    "application/json"
-            }
-    )
-    public ActivityResource abortActivityEndpoint(
-            @Parameter(description = "Identifier of the activity")
-            @Valid @PathVariable(value = "id") Long id)
-    {
-        return abortActivity(id);
-    }
-
-    public abstract ActivityResource abortActivity(Long activityId);
 }

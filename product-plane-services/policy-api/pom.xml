@@ -25,7 +25,7 @@ License.
     <parent>
         <groupId>org.opendatamesh</groupId>
         <artifactId>odm-platform-pp-services</artifactId>
-        <version>1.0.20</version>
+        <version>1.0.21</version>
         <relativePath>../</relativePath>
     </parent>
 
@@ -33,7 +33,7 @@ License.
     <artifactId>odm-platform-pp-policy-api</artifactId>
     <name>ODM Platform Policy API</name>
     <description>Open Data Mesh Platform's Policy Service API</description>
-    <version>1.0.20</version>
+    <version>1.0.21</version>
 
     <licenses>
         <license>
@@ -103,19 +103,19 @@ License.
         <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-core-commons</artifactId>
-            <version>1.0.20</version>
+            <version>1.0.21</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-pp-devops-api</artifactId>
-            <version>1.0.20</version>
+            <version>1.0.21</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-up-executor-api</artifactId>
-            <version>1.0.20</version>
+            <version>1.0.21</version>
             <scope>compile</scope>
         </dependency>
 

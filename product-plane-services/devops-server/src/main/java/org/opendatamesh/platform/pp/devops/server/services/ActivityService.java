@@ -21,6 +21,7 @@ import org.opendatamesh.platform.pp.devops.server.resources.context.Context;
 import org.opendatamesh.platform.pp.devops.server.services.proxies.DevOpsNotificationServiceProxy;
 import org.opendatamesh.platform.pp.devops.server.services.proxies.DevopsPolicyServiceProxy;
 import org.opendatamesh.platform.pp.devops.server.utils.ObjectNodeUtils;
+import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
 import org.opendatamesh.platform.pp.registry.api.resources.VariableResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -241,6 +242,30 @@ public class ActivityService {
         return stopActivity(activity, success);
     }
 
+    public Activity abortActivity(Long activityId){
+        Activity activity = readActivity(activityId);
+        LocalDateTime finishedAt = now();
+        activity.setFinishedAt(finishedAt);
+
+        List<Task> tasks = taskService.searchTasks(activity.getId(), null, null);
+        for(Task task: tasks) {
+            if(task.getStatus().equals(ActivityTaskStatus.PLANNED)
+                    || task.getStatus().equals(ActivityTaskStatus.PROCESSING)) {
+                task.setStatus(ActivityTaskStatus.ABORTED);
+                task.setFinishedAt(finishedAt);
+                taskService.saveTask(task);
+            }
+        }
+        activity.setStatus(ActivityStatus.ABORTED);
+        activity = saveActivity(activity);
+
+        DataProductVersionDPDS dataProductVersion = readDataProductVersion(activity);
+        devOpsNotificationServiceProxy.notifyActivityCompletion(mapper.toResource(activity), dataProductVersion);
+
+        return activity;
+
+    }
+
     // TODO set results or errors of activity while stopping it
     private Activity stopActivity(Activity activity, boolean success) {
 
@@ -260,7 +285,11 @@ public class ActivityService {
         ObjectNode activityOutputNode = ObjectMapperFactory.JSON_MAPPER.createObjectNode();
         DataProductVersionDPDS dataProductVersion = readDataProductVersion(activity);
 
+
         if (success) {
+            if(ActivityStatus.ABORTED.equals(activity.getStatus())){
+                throw new UnprocessableEntityException(DevOpsApiStandardErrors.SC422_04_ACTIVITY_ALREADY_STOPPED, "Activity already stoped");
+            }
             activity.setStatus(ActivityStatus.PROCESSED);
             lifecycleService.createLifecycle(activity);
             activity = saveActivity(activity);
@@ -335,7 +364,9 @@ public class ActivityService {
     ) {
         Task task = taskService.stopTask(taskId, taskResultResource);
         updateActivityPartialResults(task, updateVariables);
-        startNextPlannedTaskAndUpdateParentActivity(task.getActivityId());
+        if (Boolean.TRUE.equals(task.getStartedByActivity())) {
+            startNextPlannedTaskAndUpdateParentActivity(task.getActivityId());
+        }
         return task;
     }
 
@@ -371,7 +402,6 @@ public class ActivityService {
 
             if(updateVariables)
                 updateDataProductVersionVariables(parentActivity);
-
         }
     }
 

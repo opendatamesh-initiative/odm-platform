@@ -49,7 +49,23 @@ public class TaskController extends AbstractTaskController {
         return activityTaskMapper.toResource(task);
 	}
 
-    @Override
+	@Override
+	public TaskStatusResource startTask(Long id) {
+		Task task = taskService.startSingleTask(id);
+		TaskStatusResource statusRes = new TaskStatusResource();
+		statusRes.setStatus(task.getStatus());
+		return statusRes;
+    }
+
+	@Override
+	public TaskStatusResource abortTask(Long id) {
+		Task task = taskService.abortTask(id);
+		TaskStatusResource statusRes = new TaskStatusResource();
+		statusRes.setStatus(task.getStatus());
+		return statusRes;
+    }
+
+	@Override
 	public TaskStatusResource readTaskStatus(Long id) {
 		Task task = taskService.readTask(id);
 		TaskStatusResource statusRes = new TaskStatusResource();
@@ -64,5 +80,4 @@ public class TaskController extends AbstractTaskController {
 		statusRes.setStatus(task.getStatus());
 		return statusRes;
 	}
-    
 }

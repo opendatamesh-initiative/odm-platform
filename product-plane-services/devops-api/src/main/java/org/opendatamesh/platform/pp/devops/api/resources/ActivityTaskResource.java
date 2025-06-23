@@ -21,7 +21,17 @@ public class ActivityTaskResource  {
     @JsonProperty("activityId")
     @JsonPropertyDescription("Identifier of the activity to which the task is associated")
     @Schema(description = "ID of the parent Activity", required = true)
-    String activityId; 
+    String activityId;
+
+    @JsonProperty("name")
+    @JsonPropertyDescription("Name of the task")
+    @Schema(description = "Name of the task")
+    String name;
+
+    @JsonProperty("description")
+    @JsonPropertyDescription("Description of the task")
+    @Schema(description = "Description of the task")
+    String description;
 
     @JsonProperty("executorRef")
     @JsonPropertyDescription("Logical name of the target task executor service (ex. `azure-devops`)")

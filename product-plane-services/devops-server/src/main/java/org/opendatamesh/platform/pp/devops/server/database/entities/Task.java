@@ -21,6 +21,12 @@ public class Task  {
     @Column(name = "ACTIVITY_ID")
     private Long activityId;
 
+    @Column(name = "TASK_NAME")
+    private String name;
+
+    @Column(name = "DESCRIPTION")
+    private String description;
+
     @Column(name = "EXECUTOR_REF")
     private String executorRef;
     
@@ -48,6 +54,9 @@ public class Task  {
 
     @Column(name = "FINISHED_AT")
     private LocalDateTime finishedAt;
+
+    @Column(name = "STARTED_BY_ACTIVITY")
+    private Boolean startedByActivity;
 
     @PrePersist
     protected void onCreate() {

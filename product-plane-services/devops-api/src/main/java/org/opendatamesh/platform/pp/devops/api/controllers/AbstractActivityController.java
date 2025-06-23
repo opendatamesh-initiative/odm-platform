@@ -198,6 +198,7 @@ public abstract class AbstractActivityController {
                     DevOpsApiStandardErrors.SC400_55_ACTIVITY_STATUS_ACTION_IS_INVALID,
                     "Action [" + action + "] cannot be performend on activity to change its status");
         }
+
         if ("START".equalsIgnoreCase(action)) {
             return startActivity(id);
         } else if ("ABORT".equalsIgnoreCase(action)) {

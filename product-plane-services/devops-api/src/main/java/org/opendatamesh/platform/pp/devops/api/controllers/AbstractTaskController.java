@@ -63,70 +63,75 @@ public abstract class AbstractTaskController {
     // ===============================================================================
 
     @Operation(
-        summary = "Stop the specified task",
-        description = "Stop the task identified by the input `id` if it has not been stoped yet"
+            summary = "Change the status of a task",
+            description = "Use this endpoint to change the status of a task. Supported actions via the `action` request parameter are:\n" +
+                    "- `START`: starts the task (no request body required).\n" +
+                    "- `STOP`: stops the task and optionally provides a TaskResult body.\n" +
+                    "- `ABORT`: aborts the task (no request body required).\n\n" +
+                    "Use `updateVariables=false` to skip result-based variable extraction (only applies to STOP)."
     )
     @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "200",
-            description = "The status of the task after the action execution",
-            content = @Content(
-                mediaType = "application/json",
-                schema = @Schema(implementation = TaskStatusResource.class)
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "The status of the task after the action execution",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = TaskStatusResource.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "[Bad Request](https://www.rfc-editor.org/rfc/rfc9110.html#name-400-bad-request)"
+                            + "\r\n - Error Code 40065 - Task status action is invalid",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "[Not Found](https://www.rfc-editor.org/rfc/rfc9110.html#name-404-not-found)"
+                            + "\r\n - Error Code 40411 - Task not found",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "[Internal Server Error](https://www.rfc-editor.org/rfc/rfc9110.html#name-500-internal-server-error)"
+                            + "\r\n - Error Code 50000 - Error in the backend database"
+                            + "\r\n - Error Code 50001 - Error in in the backend service"
+                            + "\r\n - Error Code 50002 - Error in the backend descriptor processor"
+                            + "\r\n - Error Code 50050 - Registry service is disabled or not reachable"
+                            + "\r\n - Error Code 50070 - Notification service is disabled or not reachable"
+                            + "\r\n - Error Code 50071 - Policy service is disabled or not reachable"
+                            + "\r\n - Error Code 50072 - Executor service is disabled or not reachable",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
+            ),
+            @ApiResponse(
+                    responseCode = "501",
+                    description = "[Bad Gateway](https://www.rfc-editor.org/rfc/rfc9110.html#name-502-bad-gateway)"
+                            + "\r\n - Error Code 50250 - Registry service returns an error"
+                            + "\r\n - Error Code 50270 - Notification service returns an error"
+                            + "\r\n - Error Code 50271 - Policy service returns an error"
+                            + "\r\n - Error Code 50272 - Executor service returns an error",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
             )
-        ),
-        @ApiResponse(
-            responseCode = "400",
-            description = "[Bad Request](https://www.rfc-editor.org/rfc/rfc9110.html#name-400-bad-request)"
-            + "\r\n - Error Code 40065 - Task status action is invalid",
-            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
-        ),
-        @ApiResponse(
-            responseCode = "404",
-            description = "[Not Found](https://www.rfc-editor.org/rfc/rfc9110.html#name-404-not-found)"
-            + "\r\n - Error Code 40411 - Task not found",
-            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
-        ),
-        @ApiResponse(
-            responseCode = "500",
-            description = "[Internal Server Error](https://www.rfc-editor.org/rfc/rfc9110.html#name-500-internal-server-error)"
-            + "\r\n - Error Code 50000 - Error in the backend database"
-            + "\r\n - Error Code 50001 - Error in in the backend service"
-            + "\r\n - Error Code 50002 - Error in the backend descriptor processor"
-            + "\r\n - Error Code 50050 - Registry service is disabled or not reachable"
-            + "\r\n - Error Code 50070 - Notification service is disabled or not reachable"
-            + "\r\n - Error Code 50071 - Policy service is disabled or not reachable"
-            + "\r\n - Error Code 50072 - Executor service is disabled or not reachable",
-            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
-        ),
-        @ApiResponse(
-            responseCode = "501",
-            description = "[Bad Gateway](https://www.rfc-editor.org/rfc/rfc9110.html#name-502-bad-gateway)"
-            + "\r\n - Error Code 50250 - Registry service returns an error"
-            + "\r\n - Error Code 50270 - Notification service returns an error"
-            + "\r\n - Error Code 50271 - Policy service returns an error"
-            + "\r\n - Error Code 50272 - Executor service returns an error",
-            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
-        )
     })
     @PatchMapping(
-        value = "/{id}/status",
-        consumes = {
-                "application/vnd.odmp.v1+json",
-                "application/vnd.odmp+json",
-                "application/json",
-                "application/json;charset=UTF-8"
-        },
-        produces = {
-            "application/vnd.odmp.v1+json",
-            "application/vnd.odmp+json",
-            "application/json"
-        }
+            value = "/{id}/status",
+            consumes = {
+                    "application/vnd.odmp.v1+json",
+                    "application/vnd.odmp+json",
+                    "application/json",
+                    "application/json;charset=UTF-8"
+            },
+            produces = {
+                    "application/vnd.odmp.v1+json",
+                    "application/vnd.odmp+json",
+                    "application/json"
+            }
     )
     public TaskStatusResource stopTaskEndpoint(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "A TaskResult object",
+                    description = "A TaskResult object (only required for STOP action)",
                     content = @Content(
+                            mediaType = "application/json",
                             examples = {
                                     @ExampleObject(
                                             name = "successful-example",
@@ -142,26 +147,35 @@ public abstract class AbstractTaskController {
                     )
             )
             @RequestBody(required = false) TaskResultResource taskResult,
+
             @Parameter(description = "Identifier of the task")
             @Valid @PathVariable(value = "id") Long id,
-            @Parameter(description="Add `action` parameter to the request to specify which action to perform to change the task's status. `STOP` is the only possible action executable on tasks")
+
+            @Parameter(description = "Action to perform on the task. Supported values: START, STOP, ABORT")
             @RequestParam(required = true, name = "action") String action,
-            @Parameter(description="Add `updateVariables=false` to the request to specify to disable variable extraction from results."
-                    + " `true` is the default value; Set the parameter only if you want to disable the feature.")
+
+            @Parameter(description = "Set `updateVariables=false` to prevent variable extraction from the result. Applies only to STOP. Default is `true`.")
             @RequestParam(required = false, name = "updateVariables") Boolean updateVariables
-        )
-    {
-        if(updateVariables == null)
+    ) {
+        if (updateVariables == null)
             updateVariables = true;
-        if("STOP".equalsIgnoreCase(action) == false) {
+        if ("START".equalsIgnoreCase(action)) {
+            return startTask(id);
+        } else if ("ABORT".equalsIgnoreCase(action)) {
+            return abortTask(id);
+        } else if ("STOP".equalsIgnoreCase(action)) {
+            return stopTask(id, taskResult, updateVariables);
+        } else {
             throw new BadRequestException(
-                DevOpsApiStandardErrors.SC400_65_TASK_STATUS_ACTION_IS_INVALID,
-                "Action [" + action + "] cannot be performend on task to change its status");
+                    DevOpsApiStandardErrors.SC400_65_TASK_STATUS_ACTION_IS_INVALID,
+                    "Action [" + action + "] cannot be performend on task to change its status");
         }
-        return stopTask(id, taskResult, updateVariables);
     }
     public abstract TaskStatusResource stopTask(Long id, TaskResultResource taskResultResource, Boolean updateVariables);
 
+    public abstract TaskStatusResource startTask( Long id);
+
+    public abstract TaskStatusResource abortTask( Long id);
     // ===============================================================================
     // GET /tasks/{id}/status  
     // ===============================================================================
@@ -315,29 +329,4 @@ public abstract class AbstractTaskController {
     }
 
     public abstract ActivityTaskResource readTask(Long id);
-
-    @PostMapping(
-        value = "/{id}/start",
-        produces = { "application/json" }
-    )
-    public ActivityTaskResource startTaskEndpoint(
-            @Parameter(description = "Identifier of the task")
-            @PathVariable("id") Long id)
-    {
-        return startTask(id);
-    }
-
-    public abstract ActivityTaskResource startTask( Long id);
-
-
-    @PostMapping(
-        value = "/{id}/abort",
-        produces = { "application/json" }
-    )
-    public ActivityTaskResource abortTaskEndpoint(@PathVariable("id") Long id){
-        return abortTask(id);
-    }
-
-    public abstract ActivityTaskResource abortTask( Long id);
-
 }

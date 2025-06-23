@@ -124,11 +124,11 @@ public abstract class AbstractActivityController {
     );
 
     // ===============================================================================
-    // PATCH /activities/{id}/status?action=start
-    // ===============================================================================
+// PATCH /activities/{id}/status?action=start/abort
+// ===============================================================================
     @Operation(
-            summary = "Start the specified activity",
-            description = "Start the activity identified by the input `id` if it has not been started yet"
+            summary = "Execute an action on the specified activity",
+            description = "Execute a specific action (`START` or `ABORT`) on the activity identified by the input `id`."
     )
     @ApiResponses(value = {
             @ApiResponse(
@@ -191,20 +191,18 @@ public abstract class AbstractActivityController {
             @Parameter(description = "Identifier of the activity")
             @Valid @PathVariable(value = "id") Long id,
 
-            @Parameter(description = "Add `action` parameter to the request to specify which action to perform to change the activity's status. `START` is the only possible action executable on activities")
+            @Parameter(description = "Action to perform on the activity. Supported values: START, ABORT")
             @RequestParam(required = true, name = "action") String action) {
-        if (!"START".equalsIgnoreCase(action) && !"ABORT".equalsIgnoreCase(action)) {
-            throw new BadRequestException(
-                    DevOpsApiStandardErrors.SC400_55_ACTIVITY_STATUS_ACTION_IS_INVALID,
-                    "Action [" + action + "] cannot be performend on activity to change its status");
-        }
 
         if ("START".equalsIgnoreCase(action)) {
             return startActivity(id);
         } else if ("ABORT".equalsIgnoreCase(action)) {
             return abortActivity(id);
+        } else {
+            throw new BadRequestException(
+                    DevOpsApiStandardErrors.SC400_55_ACTIVITY_STATUS_ACTION_IS_INVALID,
+                    "Action [" + action + "] cannot be performed on activity to change its status");
         }
-        return null;
     }
 
     public abstract ActivityStatusResource startActivity(Long id);

@@ -50,16 +50,20 @@ public class TaskController extends AbstractTaskController {
 	}
 
 	@Override
-	public ActivityTaskResource startTask(Long id) {
+	public TaskStatusResource startTask(Long id) {
 		Task task = taskService.startSingleTask(id);
-		return activityTaskMapper.toResource(task);
-	}
+		TaskStatusResource statusRes = new TaskStatusResource();
+		statusRes.setStatus(task.getStatus());
+		return statusRes;
+    }
 
 	@Override
-	public ActivityTaskResource abortTask(Long id) {
+	public TaskStatusResource abortTask(Long id) {
 		Task task = taskService.abortTask(id);
-		return activityTaskMapper.toResource(task);
-	}
+		TaskStatusResource statusRes = new TaskStatusResource();
+		statusRes.setStatus(task.getStatus());
+		return statusRes;
+    }
 
 	@Override
 	public TaskStatusResource readTaskStatus(Long id) {

@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.opendatamesh</groupId>
         <artifactId>odm-platform</artifactId>
-        <version>1.0.22</version>
+        <version>1.0.23</version>
         <relativePath>../</relativePath>
     </parent>
 
@@ -15,7 +15,7 @@
     <artifactId>odm-platform-cli</artifactId>
     <description>Open Data Mesh Platform's CLI</description>
     <name>ODM Platform CLI</name>
-    <version>1.0.22</version>
+    <version>1.0.23</version>
     <url>https://github.com/opendatamesh-initiative/odm-platform</url>
     <properties>
         <java.version>11</java.version>
@@ -72,25 +72,25 @@
         <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-core-commons</artifactId>
-            <version>1.0.22</version>
+            <version>1.0.23</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-pp-blueprint-api</artifactId>
-            <version>1.0.22</version>
+            <version>1.0.23</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-pp-registry-api</artifactId>
-            <version>1.0.22</version>
+            <version>1.0.23</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-pp-policy-api</artifactId>
-            <version>1.0.22</version>
+            <version>1.0.23</version>
             <scope>compile</scope>
         </dependency>
 

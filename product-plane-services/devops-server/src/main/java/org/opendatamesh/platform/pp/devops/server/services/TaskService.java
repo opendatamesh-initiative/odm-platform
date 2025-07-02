@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
@@ -269,6 +270,10 @@ public class TaskService {
                     } else {
                         task.setStatus(ActivityTaskStatus.FAILED);
                         task.setErrors(taskResultResource.getErrors());
+                        // Save results even for FAILED status
+                        if (!CollectionUtils.isEmpty(taskResultResource.getResults())) {
+                            task.setResults(ObjectMapperFactory.JSON_MAPPER.writeValueAsString(taskResultResource.getResults()));
+                        }
                     }
                 }
 

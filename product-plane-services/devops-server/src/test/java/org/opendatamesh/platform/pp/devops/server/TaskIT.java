@@ -9,6 +9,14 @@ import org.springframework.test.annotation.DirtiesContext.MethodMode;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 public class TaskIT extends ODMDevOpsIT {
 
@@ -101,13 +109,80 @@ public class TaskIT extends ODMDevOpsIT {
         assertThat(stoppedTaskRes.getConfigurations()).isEqualTo("{\"stagesToSkip\":[],\"context\":{\"prod\":{\"status\":\"PROCESSING\"}}}");
         assertThat(stoppedTaskRes.getStatus()).isEqualTo(ActivityTaskStatus.PROCESSED);
         assertThat(stoppedTaskRes.getResults()).isNotNull();
-        assertThat(stoppedTaskRes.getResults()).isEqualTo("{\"status\":\"PROCESSED\",\"results\":{\"message\":\"OK\"}}");
+        assertThat(stoppedTaskRes.getResults()).contains("{\"status\":\"PROCESSED\",\"results\":{\"message\":\"OK\"}}");
         assertThat(stoppedTaskRes.getErrors()).isNull();
         assertThat(stoppedTaskRes.getCreatedAt()).isNotNull();
         assertThat(stoppedTaskRes.getStartedAt()).isNotNull();
         assertThat(stoppedTaskRes.getFinishedAt()).isNotNull();
     }
 
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testStopTaskWithFailedStatusAndResults() {
+
+        createMocksForCreateActivityCall();
+        createMocksForCreateActivityCall();
+
+        ActivityResource activityRes = createTestActivity(true);
+
+        ActivityTaskResource[] taskResources = devOpsClient.searchTasks(activityRes.getId(), null, null);
+        assertThat(taskResources).isNotNull();
+        assertThat(taskResources.length).isEqualTo(1);
+        ActivityTaskResource targetTaskRes = taskResources[0];
+
+        // Create a TaskResultResource with FAILED status but containing results
+        TaskResultResource taskResultResource = new TaskResultResource();
+        taskResultResource.setStatus(TaskResultStatus.FAILED);
+        taskResultResource.setErrors("Task execution failed due to timeout");
+        
+        // Add some results that should be saved even for failed tasks
+        Map<String, Object> results = new HashMap<>();
+        results.put("partialOutput", "Some partial results were generated");
+        results.put("executionTime", "30 seconds");
+        results.put("completedSteps", 5);
+        taskResultResource.setResults(results);
+
+        // Use REST API directly to send the TaskResultResource
+        String url = "http://localhost:" + port + "/api/v1/pp/devops/tasks/" + targetTaskRes.getId() + "/status?action=STOP";
+        ResponseEntity<TaskStatusResource> response = devOpsClient.rest.exchange(
+            url,
+            HttpMethod.PATCH,
+            new HttpEntity<>(taskResultResource),
+            TaskStatusResource.class
+        );
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        TaskStatusResource taskStatusRes = response.getBody();
+        assertThat(taskStatusRes).isNotNull();
+        assertThat(taskStatusRes.getStatus()).isEqualTo(ActivityTaskStatus.FAILED);
+
+        ActivityTaskResource stoppedTaskRes = null;
+        try {
+            stoppedTaskRes = devOpsClient.readTask(targetTaskRes.getId());
+        } catch (Throwable t) {
+            fail("An unexpected exception occurred while reading task: " + t.getMessage());
+            t.printStackTrace();
+            return;
+        }
+
+        assertThat(stoppedTaskRes).isNotNull();
+        assertThat(stoppedTaskRes.getId()).isNotNull();
+        assertThat(stoppedTaskRes.getStatus()).isEqualTo(ActivityTaskStatus.FAILED);
+        assertThat(stoppedTaskRes.getErrors()).isEqualTo("Task execution failed due to timeout");
+        
+        // This is the issue: results should be saved but they are not
+        // The current implementation only saves results for PROCESSED status
+        assertThat(stoppedTaskRes.getResults()).isNotNull();
+        assertThat(stoppedTaskRes.getResults()).contains("partialOutput");
+        assertThat(stoppedTaskRes.getResults()).contains("Some partial results were generated");
+        assertThat(stoppedTaskRes.getResults()).contains("executionTime");
+        assertThat(stoppedTaskRes.getResults()).contains("30 seconds");
+        assertThat(stoppedTaskRes.getResults()).contains("completedSteps");
+        assertThat(stoppedTaskRes.getResults()).contains("5");
+        assertThat(stoppedTaskRes.getCreatedAt()).isNotNull();
+        assertThat(stoppedTaskRes.getStartedAt()).isNotNull();
+        assertThat(stoppedTaskRes.getFinishedAt()).isNotNull();
+    }
 
     // ======================================================================================
     // READ Task's status

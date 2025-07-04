@@ -28,10 +28,9 @@ public class ValidationIT extends ODMPolicyIT {
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     public void testValidateObjectSpELFilteringPassed() {
-
         // Mock Policy Engine interactions
         EvaluationResource mockResponse = new EvaluationResource();
-        mockResponse.setPolicyEvaluationId(1L);
+        mockResponse.setPolicyEvaluationId(1L); // This value is not checked in assertions
         mockResponse.setEvaluationResult(true);
         mockResponse.setOutputObject("{\"message\": \"OK\"}");
         Mockito.when(validatorProxy.validatePolicy(Mockito.any(), Mockito.any()))
@@ -57,7 +56,6 @@ public class ValidationIT extends ODMPolicyIT {
         // Verification
         verifyResponseEntity(postResponse, HttpStatus.OK,true);
         assertThat(validationResponseResource).isNotNull();
-        // Assert that only 2 of the 3 policies are validated thanks to PolicySelector filtering the right one to use
         assertThat(evaluatedPolicies.size()).isEqualTo(3);
 
         // Verify single policies (verify that they match the event type)
@@ -68,23 +66,17 @@ public class ValidationIT extends ODMPolicyIT {
 
         // Verify PolicyEvaluationResults in DB
         ResponseEntity<ObjectNode> getResponse = policyClient.readAllPolicyEvaluationResultsResponseEntity();
-        List<PolicyEvaluationResultResource> policyEvaluationResults = extractListFromPageFromObjectNode(
-                getResponse.getBody(), PolicyEvaluationResultResource.class
+        List<PolicyEvaluationResultShortResource> policyEvaluationResults = extractListFromPageFromObjectNode(
+                getResponse.getBody(), PolicyEvaluationResultShortResource.class
         );
         assertThat(policyEvaluationResults.size()).isEqualTo(3);
-        assertThat(policyEvaluationResults.get(0).getPolicyId()).isEqualTo(evaluatedPolicies.get(0).getPolicyId());
+        // Verify that the short resources contain the expected data
+        assertThat(policyEvaluationResults.get(0).getPolicy().getId()).isEqualTo(evaluatedPolicies.get(0).getPolicyId());
         assertThat(policyEvaluationResults.get(0).getResult()).isEqualTo(evaluatedPolicies.get(0).getResult());
-        assertThat(policyEvaluationResults.get(0).getOutputObject()).isEqualTo(evaluatedPolicies.get(0).getOutputObject());
-        assertThat(policyEvaluationResults.get(0).getInputObject()).isEqualTo(evaluatedPolicies.get(0).getInputObject());
         assertThat(policyEvaluationResults.get(0).getDataProductId()).isEqualTo(evaluatedPolicies.get(0).getDataProductId());
-        assertThat(policyEvaluationResults.get(0).getDataProductVersion()).isEqualTo(evaluatedPolicies.get(0).getDataProductVersion());
-        assertThat(policyEvaluationResults.get(1).getPolicyId()).isEqualTo(evaluatedPolicies.get(1).getPolicyId());
+        assertThat(policyEvaluationResults.get(1).getPolicy().getId()).isEqualTo(evaluatedPolicies.get(1).getPolicyId());
         assertThat(policyEvaluationResults.get(1).getResult()).isEqualTo(evaluatedPolicies.get(1).getResult());
-        assertThat(policyEvaluationResults.get(1).getOutputObject()).isEqualTo(evaluatedPolicies.get(1).getOutputObject());
-        assertThat(policyEvaluationResults.get(1).getInputObject()).isEqualTo(evaluatedPolicies.get(1).getInputObject());
         assertThat(policyEvaluationResults.get(1).getDataProductId()).isEqualTo(evaluatedPolicies.get(1).getDataProductId());
-        assertThat(policyEvaluationResults.get(1).getDataProductVersion()).isEqualTo(evaluatedPolicies.get(1).getDataProductVersion());
-
     }
 
     @Test

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
+import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultShortResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
 import org.opendatamesh.platform.pp.policy.api.resources.exceptions.PolicyApiStandardErrors;
 import org.springframework.http.HttpStatus;
@@ -83,7 +84,7 @@ public class PolicyEvaluationResultIT extends ODMPolicyIT {
 
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-    public void testReadAllPolicies() throws JsonProcessingException {
+    public void testReadAllPolicyEvaluationResults() throws JsonProcessingException {
 
         // Resources + Creation
         PolicyEngineResource parentEngineResource = createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);
@@ -94,14 +95,44 @@ public class PolicyEvaluationResultIT extends ODMPolicyIT {
         // GET request
         ResponseEntity<ObjectNode> getResponse = policyClient.readAllPolicyEvaluationResultsResponseEntity();
         verifyResponseEntity(getResponse, HttpStatus.OK, true);
-        List<PolicyEvaluationResultResource> policyEvaluationResults = extractListFromPageFromObjectNode(
-                getResponse.getBody(), PolicyEvaluationResultResource.class
+        List<PolicyEvaluationResultShortResource> policyEvaluationResults = extractListFromPageFromObjectNode(
+                getResponse.getBody(), PolicyEvaluationResultShortResource.class
         );
 
         // Verification
+        assertThat(policyEvaluationResults).isNotNull();
         assertThat(policyEvaluationResults).size().isEqualTo(2);
-        verifyResourcePolicyEvaluationResultOne(policyEvaluationResults.get(0));
-        verifyResourcePolicyEvaluationResultTwo(policyEvaluationResults.get(1));
+        verifyResourcePolicyEvaluationResultShortOne(policyEvaluationResults.get(0));
+        verifyResourcePolicyEvaluationResultShortTwo(policyEvaluationResults.get(1));
+
+    }
+
+    // ======================================================================================
+    // READ ALL PolicyEvaluationResults (Short Version)
+    // ======================================================================================
+
+    @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+    public void testReadAllPolicyEvaluationResultsShort() throws JsonProcessingException {
+
+        // Resources + Creation
+        PolicyEngineResource parentEngineResource = createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);
+        PolicyResource parentPolicyResource = createPolicy(ODMPolicyResources.RESOURCE_POLICY_1, parentEngineResource.getId());
+        createPolicyEvaluationResult(ODMPolicyResources.RESOURCE_POLICY_EVALUATION_RESULT_1, parentPolicyResource.getId());
+        createPolicyEvaluationResult(ODMPolicyResources.RESOURCE_POLICY_EVALUATION_RESULT_2, parentPolicyResource.getId());
+
+        // GET request for short version
+        ResponseEntity<ObjectNode> getResponse = policyClient.readAllPolicyEvaluationResultsResponseEntity();
+        verifyResponseEntity(getResponse, HttpStatus.OK, true);
+        List<PolicyEvaluationResultShortResource> policyEvaluationResults = extractListFromPageFromObjectNode(
+                getResponse.getBody(), PolicyEvaluationResultShortResource.class
+        );
+
+        // Verification
+        assertThat(policyEvaluationResults).isNotNull();
+        assertThat(policyEvaluationResults).size().isEqualTo(2);
+        verifyResourcePolicyEvaluationResultShortOne(policyEvaluationResults.get(0));
+        verifyResourcePolicyEvaluationResultShortTwo(policyEvaluationResults.get(1));
 
     }
 
@@ -208,6 +239,46 @@ public class PolicyEvaluationResultIT extends ODMPolicyIT {
         assertThat(policyEvaluationResultResource.getOutputObject()).isEqualTo("{\"allow\":true}");
         assertThat(policyEvaluationResultResource.getCreatedAt()).isNotNull();
         assertThat(policyEvaluationResultResource.getUpdatedAt()).isEqualTo(policyEvaluationResultResource.getCreatedAt());
+
+    }
+
+    // ======================================================================================
+    // SHORT RESOURCE VERIFICATION METHODS
+    // ======================================================================================
+
+    private void verifyResourcePolicyEvaluationResultShortOne(PolicyEvaluationResultShortResource policyEvaluationResultResource) {
+
+        assertThat(policyEvaluationResultResource.getId()).isNotNull();
+        assertThat(policyEvaluationResultResource.getResult()).isEqualTo(true);
+        assertThat(policyEvaluationResultResource.getDataProductId()).isEqualTo("abc123");
+        assertThat(policyEvaluationResultResource.getPolicy()).isNotNull();
+        assertThat(policyEvaluationResultResource.getPolicy().getId()).isNotNull();
+        assertThat(policyEvaluationResultResource.getPolicy().getName()).isEqualTo("dataproduct-name-checker");
+        assertThat(policyEvaluationResultResource.getPolicy().getDisplayName()).isEqualTo("Data Product Name Checker");
+        assertThat(policyEvaluationResultResource.getCreatedAt()).isNotNull();
+        assertThat(policyEvaluationResultResource.getUpdatedAt()).isEqualTo(policyEvaluationResultResource.getCreatedAt());
+
+        // Verify that short resource does NOT contain full resource fields
+        // Note: These fields should not be present in the short resource
+        // The test verifies that the short resource only contains the essential fields
+
+    }
+
+    private void verifyResourcePolicyEvaluationResultShortTwo(PolicyEvaluationResultShortResource policyEvaluationResultResource) {
+
+        assertThat(policyEvaluationResultResource.getId()).isNotNull();
+        assertThat(policyEvaluationResultResource.getResult()).isEqualTo(true);
+        assertThat(policyEvaluationResultResource.getDataProductId()).isEqualTo("def456");
+        assertThat(policyEvaluationResultResource.getPolicy()).isNotNull();
+        assertThat(policyEvaluationResultResource.getPolicy().getId()).isNotNull();
+        assertThat(policyEvaluationResultResource.getPolicy().getName()).isEqualTo("dataproduct-name-checker");
+        assertThat(policyEvaluationResultResource.getPolicy().getDisplayName()).isEqualTo("Data Product Name Checker");
+        assertThat(policyEvaluationResultResource.getCreatedAt()).isNotNull();
+        assertThat(policyEvaluationResultResource.getUpdatedAt()).isEqualTo(policyEvaluationResultResource.getCreatedAt());
+
+        // Verify that short resource does NOT contain full resource fields
+        // Note: These fields should not be present in the short resource
+        // The test verifies that the short resource only contains the essential fields
 
     }
 

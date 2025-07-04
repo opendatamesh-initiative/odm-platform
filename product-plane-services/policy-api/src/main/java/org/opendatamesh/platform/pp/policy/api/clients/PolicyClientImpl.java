@@ -13,8 +13,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-;
-
 public class PolicyClientImpl extends ODMClient implements PolicyClient, PolicyEngineClient, PolicyEvaluationResultClient, PolicyValidationClient {
 
     private final RestUtils restUtils;
@@ -78,8 +76,8 @@ public class PolicyClientImpl extends ODMClient implements PolicyClient, PolicyE
     }
 
 
-    public Page<PolicyEvaluationResultResource> getPolicyEvaluationResults(Pageable pageable, PolicyEvaluationResultSearchOptions searchOptions) {
-        return restUtils.getPage(apiUrl(PolicyAPIRoutes.RESULTS), pageable, searchOptions, PolicyEvaluationResultResource.class);
+    public Page<PolicyEvaluationResultShortResource> getPolicyEvaluationResults(Pageable pageable, PolicyEvaluationResultSearchOptions searchOptions) {
+        return restUtils.getPage(apiUrl(PolicyAPIRoutes.RESULTS), pageable, searchOptions, PolicyEvaluationResultShortResource.class);
     }
 
     public PolicyEvaluationResultResource getPolicyEvaluationResult(Long id) {

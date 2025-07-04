@@ -4,15 +4,21 @@ import org.opendatamesh.platform.core.commons.database.utils.SpecsUtils;
 import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.UnprocessableEntityException;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
+import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultShortResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultSearchOptions;
 import org.opendatamesh.platform.pp.policy.api.resources.exceptions.PolicyApiStandardErrors;
 import org.opendatamesh.platform.pp.policy.server.database.entities.Policy;
 import org.opendatamesh.platform.pp.policy.server.database.entities.PolicyEvaluationResult;
+import org.opendatamesh.platform.pp.policy.server.database.entities.PolicyEvaluationResultShort;
 import org.opendatamesh.platform.pp.policy.server.database.mappers.PolicyEvaluationResultMapper;
+import org.opendatamesh.platform.pp.policy.server.database.mappers.PolicyEvaluationResultShortMapper;
 import org.opendatamesh.platform.pp.policy.server.database.repositories.PolicyEvaluationResultRepository;
+import org.opendatamesh.platform.pp.policy.server.database.repositories.PolicyEvaluationResultShortRepository;
 import org.opendatamesh.platform.core.commons.database.utils.PagingAndSortingAndSpecificationExecutorRepository;
 import org.opendatamesh.platform.pp.policy.server.services.utils.GenericMappedAndFilteredCrudService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -27,7 +33,13 @@ public class PolicyEvaluationResultService extends GenericMappedAndFilteredCrudS
     private PolicyEvaluationResultRepository repository;
 
     @Autowired
+    private PolicyEvaluationResultShortRepository shortRepository;
+
+    @Autowired
     private PolicyEvaluationResultMapper mapper;
+
+    @Autowired
+    private PolicyEvaluationResultShortMapper shortMapper;
 
     @Autowired
     private PolicyService policyService;
@@ -95,6 +107,20 @@ public class PolicyEvaluationResultService extends GenericMappedAndFilteredCrudS
     @Override
     protected PolicyEvaluationResultResource toRes(PolicyEvaluationResult entity) {
         return mapper.toRes(entity);
+    }
+
+    public Page<PolicyEvaluationResultShortResource> findAllShortResourcesFiltered(Pageable pageable, PolicyEvaluationResultSearchOptions searchOptions) {
+        Specification<PolicyEvaluationResultShort> spec = getShortSpecFromFilters(searchOptions);
+        Page<PolicyEvaluationResultShort> entities = shortRepository.findAll(spec, pageable);
+        return entities.map(shortMapper::toRes);
+    }
+
+    private Specification<PolicyEvaluationResultShort> getShortSpecFromFilters(PolicyEvaluationResultSearchOptions filters) {
+        List<Specification<PolicyEvaluationResultShort>> specifications = new ArrayList<>();
+        if (StringUtils.hasText(filters.getDataProductId())) {
+            specifications.add(PolicyEvaluationResultShortRepository.Specs.hasDataProductId(filters.getDataProductId()));
+        }
+        return SpecsUtils.combineWithAnd(specifications);
     }
 
     @Override

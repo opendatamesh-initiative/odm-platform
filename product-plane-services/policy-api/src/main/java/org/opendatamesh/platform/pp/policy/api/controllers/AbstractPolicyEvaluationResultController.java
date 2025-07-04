@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
 import org.opendatamesh.platform.pp.policy.api.clients.PolicyEvaluationResultClient;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
+import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultShortResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultSearchOptions;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,13 +39,15 @@ public abstract class AbstractPolicyEvaluationResultController implements Policy
     private static final String EXAMPLE_POLICY_EVALUATION_RESULT = "{\n" + //
             "   \"id\": 1,\n" + //
             "   \"dataProductId\": \"abc123\",\n" + //
-            "   \"dataProductVersion\": \"1.0.1\",\n" + //
-            "   \"inputObject\": \"{\"name\":\"dp-1\",\"description\":\"DataProduct1Draft\",\"domain\":\"Marketing\"}\",\n" + //
-            "   \"outputObject\": \"{\"allow\":true}\",\n" + //
             "   \"result\": true,\n" + //
-            "   \"policyId\": 1,\n" + //
-            "   \"createdAt\": \"a\",\n" + //
-            "   \"updatedAt\": \"a\"\n" + //
+            "   \"policy\": {\n" + //
+            "     \"id\": 1,\n" + //
+            "     \"name\": \"dataproduct-name-checker\",\n" + //
+            "     \"displayName\": \"Data Product Name Checker\",\n" + //
+            "     \"description\": \"Check whether the name of the input Data Product is compliant with global naming convention or not\"\n" + //
+            "   },\n" + //
+            "   \"createdAt\": \"2023-01-01T00:00:00Z\",\n" + //
+            "   \"updatedAt\": \"2023-01-01T00:00:00Z\"\n" + //
             "}";
 
     private static final String EXAMPLE_POLICY_EVALUATION_RESULT_CREATE = "{\n" + //
@@ -82,11 +85,11 @@ public abstract class AbstractPolicyEvaluationResultController implements Policy
                     description = "All the PolicyEvaluationResults",
                     content = {
                             @Content(mediaType = "application/vnd.odmp.v1+json",
-                                    array = @ArraySchema(schema = @Schema(implementation = PolicyEvaluationResultResource.class))),
+                                    array = @ArraySchema(schema = @Schema(implementation = PolicyEvaluationResultShortResource.class))),
                             @Content(mediaType = "application/vnd.odmp+json",
-                                    array = @ArraySchema(schema = @Schema(implementation = PolicyEvaluationResultResource.class))),
+                                    array = @ArraySchema(schema = @Schema(implementation = PolicyEvaluationResultShortResource.class))),
                             @Content(mediaType = "application/json",
-                                    array = @ArraySchema(schema = @Schema(implementation = PolicyEvaluationResultResource.class)))
+                                    array = @ArraySchema(schema = @Schema(implementation = PolicyEvaluationResultShortResource.class)))
                     }
             ),
             @ApiResponse(
@@ -104,13 +107,15 @@ public abstract class AbstractPolicyEvaluationResultController implements Policy
                     "application/json"
             }
     )
-    public Page<PolicyEvaluationResultResource> getPolicyEvaluationResultsEndpoint(
+    public Page<PolicyEvaluationResultShortResource> getPolicyEvaluationResultsEndpoint(
             @PageableDefault(size = 20, page = 0)
             Pageable pageable,
             PolicyEvaluationResultSearchOptions searchOptions
     ) {
         return getPolicyEvaluationResults(pageable, searchOptions);
     }
+
+
 
     // ===============================================================================
     // GET /policy-evaluation-results/{id}

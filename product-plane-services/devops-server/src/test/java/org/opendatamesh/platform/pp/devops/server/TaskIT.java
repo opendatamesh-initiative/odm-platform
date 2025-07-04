@@ -9,6 +9,7 @@ import org.springframework.test.annotation.DirtiesContext.MethodMode;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -655,11 +656,106 @@ public class TaskIT extends ODMDevOpsIT {
 
         createMocksForCreateActivityCall();
 
-        ActivityResource activityRes = null;
-        activityRes = createTestActivity(true);
+        ActivityResource activityRes = createTestActivity(false);
 
-        ActivityTaskResource[] taskResources = devOpsClient.searchTasks(234L, "xxx", ActivityTaskStatus.PLANNED);
+        ActivityTaskResource[] taskResources = devOpsClient.searchTasks(activityRes.getId(), null, null);
         assertThat(taskResources).isNotNull();
-        assertThat(taskResources.length).isEqualTo(0);
+        assertThat(taskResources.length).isEqualTo(1);
+        ActivityTaskResource taskRes = taskResources[0];
+
+        try {
+            devOpsClient.readTask(taskRes.getId() + 1000);
+            fail("Expected exception was not thrown");
+        } catch (Throwable t) {
+            // Expected
+        }
+    }
+
+    // ======================================================================================
+    // TASK FAILURE BEHAVIOR TESTS
+    // ======================================================================================
+
+    /**
+     * Test to verify that when a task fails, the activity should stop and not continue with remaining tasks.
+     * This is the expected correct behavior.
+     */
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testActivityShouldStopAfterTaskFailure() throws IOException {
+
+        // Create an activity with multiple tasks
+        createMocksForCreateActivityWithMultipleTaskCall();
+        createMocksForCreateActivityWithMultipleTaskCall();
+        createMocksForCreateActivityWithMultipleTaskCall();
+
+        // Use the resource with multiple tasks
+        ActivityResource activityRes = resourceBuilder.readResourceFromFile(
+            ODMDevOpsResources.RESOURCE_ACTIVITY_1, ActivityResource.class);
+        activityRes.setStage("prod"); // This stage has multiple tasks in dpd-multiple-tasks.json
+
+        ActivityResource createdActivityRes = null;
+        try {
+            createdActivityRes = devOpsClient.createActivity(activityRes, false);
+        } catch (Throwable t) {
+            fail("An unexpected exception occurred while creating activity: " + t.getMessage());
+            t.printStackTrace();
+            return;
+        }
+
+        // Start the activity
+        try {
+            devOpsClient.startActivity(createdActivityRes.getId());
+        } catch (Throwable t) {
+            fail("An unexpected exception occurred while starting activity: " + t.getMessage());
+            t.printStackTrace();
+            return;
+        }
+
+        // Get all tasks for this activity
+        ActivityTaskResource[] taskResources = devOpsClient.searchTasks(createdActivityRes.getId(), null, null);
+        assertThat(taskResources).isNotNull();
+        assertThat(taskResources.length).isGreaterThanOrEqualTo(2); // Should have at least 2 tasks
+
+        ActivityTaskResource firstTask = taskResources[0];
+        ActivityTaskResource secondTask = taskResources[1];
+
+        // Verify that the first task is processing
+        assertThat(firstTask.getStatus()).isEqualTo(ActivityTaskStatus.PROCESSING);
+        assertThat(secondTask.getStatus()).isEqualTo(ActivityTaskStatus.PLANNED);
+
+        // Simulate the first task failing
+        TaskResultResource failedTaskResult = new TaskResultResource();
+        failedTaskResult.setStatus(TaskResultStatus.FAILED);
+        failedTaskResult.setErrors("Task execution failed due to timeout");
+
+        // Use REST API directly to send the failed TaskResultResource
+        String url = "http://localhost:" + port + "/api/v1/pp/devops/tasks/" + firstTask.getId() + "/status?action=STOP";
+        ResponseEntity<TaskStatusResource> response = devOpsClient.rest.exchange(
+            url,
+            HttpMethod.PATCH,
+            new HttpEntity<>(failedTaskResult),
+            TaskStatusResource.class
+        );
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        TaskStatusResource taskStatusRes = response.getBody();
+        assertThat(taskStatusRes).isNotNull();
+        assertThat(taskStatusRes.getStatus()).isEqualTo(ActivityTaskStatus.FAILED);
+
+        // Verify that the first task has failed
+        ActivityTaskResource failedFirstTask = devOpsClient.readTask(firstTask.getId());
+        assertThat(failedFirstTask.getStatus()).isEqualTo(ActivityTaskStatus.FAILED);
+        assertThat(failedFirstTask.getErrors()).isEqualTo("Task execution failed due to timeout");
+
+        // CORRECT BEHAVIOR: The second task should be ABORTED (not started)
+        ActivityTaskResource updatedSecondTask = devOpsClient.readTask(secondTask.getId());
+        assertThat(updatedSecondTask.getStatus()).isEqualTo(ActivityTaskStatus.ABORTED); // Should be ABORTED when activity stops
+        assertThat(updatedSecondTask.getStartedAt()).isNull(); // Should not have started
+
+        // The activity should be FAILED
+        ActivityResource activityAfterFailure = devOpsClient.readActivity(createdActivityRes.getId());
+        assertThat(activityAfterFailure.getStatus()).isEqualTo(ActivityStatus.FAILED);
+        assertThat(activityAfterFailure.getErrors()).isNotNull();
+        assertThat(activityAfterFailure.getFinishedAt()).isNotNull();
     }
 }

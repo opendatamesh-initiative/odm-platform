@@ -25,6 +25,7 @@ import org.opendatamesh.platform.up.executor.api.resources.TaskStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -446,7 +447,7 @@ public class TaskService {
     {
         return taskRepository
             .findAll(TaskRepository.Specs.hasMatch(
-                activityId, executorRef, status));
+                activityId, executorRef, status), Sort.by(Sort.Order.asc("id")));
     }
 
 

@@ -2,6 +2,7 @@ package org.opendatamesh.platform.pp.policy.server.controllers;
 
 import org.opendatamesh.platform.pp.policy.api.controllers.AbstractPolicyEvaluationResultController;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
+import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultShortResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultSearchOptions;
 import org.opendatamesh.platform.pp.policy.server.services.PolicyEvaluationResultService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,8 @@ public class PolicyEvaluationResultControllerImpl extends AbstractPolicyEvaluati
     @Autowired
     private PolicyEvaluationResultService service;
 
-    public Page<PolicyEvaluationResultResource> getPolicyEvaluationResults(Pageable pageable, PolicyEvaluationResultSearchOptions searchOptions) {
-        return service.findAllResourcesFiltered(pageable, searchOptions);
+    public Page<PolicyEvaluationResultShortResource> getPolicyEvaluationResults(Pageable pageable, PolicyEvaluationResultSearchOptions searchOptions) {
+        return service.findAllShortResourcesFiltered(pageable, searchOptions);
     }
 
     public PolicyEvaluationResultResource getPolicyEvaluationResult(Long id) {

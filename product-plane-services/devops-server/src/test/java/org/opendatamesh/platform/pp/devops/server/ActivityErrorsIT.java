@@ -16,6 +16,8 @@ import org.springframework.test.annotation.DirtiesContext.MethodMode;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
+
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 public class ActivityErrorsIT extends ODMDevOpsIT {
 
@@ -578,6 +580,54 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
         assertThat(taskResources.length).isEqualTo(1);
         ActivityTaskResource searchedTaskRes = taskResources[0];
         assertThat(searchedTaskRes.getStatus()).isEqualTo(ActivityTaskStatus.PLANNED);
+    }
+
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testActivityStatusFailedWhenAllTasksStartedIndividuallyAndFail() throws IOException {
+        // Simulate multiple tasks and executor unavailable
+        createMocksForCreateActivityWithMultipleTaskCall(true, false);
+        createMocksForCreateActivityWithMultipleTaskCall(true, false);
+        createMocksForCreateActivityWithMultipleTaskCall(true, false);
+
+        // Create the activity (do not start it)
+        ActivityResource activityRes = resourceBuilder.readResourceFromFile(
+            ODMDevOpsResources.RESOURCE_ACTIVITY_1, ActivityResource.class);
+        activityRes.setStage("prod");
+        ActivityResource createdActivity = devOpsClient.createActivity(activityRes, false);
+        assertThat(createdActivity.getStatus()).isEqualTo(ActivityStatus.PLANNED);
+
+        // Start each task individually (simulate executor connection failure)
+        ActivityTaskResource[] tasks = devOpsClient.searchTasks(createdActivity.getId(), null, null);
+        assertThat(tasks).isNotNull();
+        assertThat(tasks.length).isGreaterThanOrEqualTo(2);
+        for (ActivityTaskResource task : tasks) {
+            try {
+                String url = "http://localhost:" + port + "/api/v1/pp/devops/tasks/" + task.getId() + "/status?action=START";
+                devOpsClient.rest.exchange(
+                    url,
+                    org.springframework.http.HttpMethod.PATCH,
+                    org.springframework.http.HttpEntity.EMPTY,
+                    ActivityTaskResource.class
+                );
+            } catch (Throwable t) {
+                // Expected: connection refused, task should be set to FAILED
+            }
+        }
+
+        // After all tasks are failed, the activity should be FAILED
+        ActivityResource updatedActivity = devOpsClient.readActivity(createdActivity.getId());
+        assertThat(updatedActivity.getStatus()).isEqualTo(ActivityStatus.FAILED);
+        assertThat(updatedActivity.getFinishedAt()).isNotNull();
+        assertThat(updatedActivity.getErrors()).isNotNull();
+
+        // All tasks should be FAILED
+        ActivityTaskResource[] updatedTasks = devOpsClient.searchTasks(createdActivity.getId(), null, null);
+        for (ActivityTaskResource task : updatedTasks) {
+            assertThat(task.getStatus()).isEqualTo(ActivityTaskStatus.FAILED);
+            assertThat(task.getErrors()).isNotNull();
+            assertThat(task.getFinishedAt()).isNotNull();
+        }
     }
 
     // ======================================================================================

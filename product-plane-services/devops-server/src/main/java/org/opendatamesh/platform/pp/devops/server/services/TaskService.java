@@ -25,6 +25,7 @@ import org.opendatamesh.platform.up.executor.api.resources.TaskStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -56,6 +57,10 @@ public class TaskService {
 
     @Autowired
     private IdentifierStrategy identifierStrategy;
+
+    @Autowired
+    @Lazy
+    private ActivityService activityService;
 
     private ExecutorClient odmExecutor;
 
@@ -135,6 +140,8 @@ public class TaskService {
                 if (task.getStatus().equals(ActivityTaskStatus.FAILED)) {
                     task = saveTask(task);
                     devOpsNotificationServiceProxy.notifyTaskCompletion(taskMapper.toResource(task));
+                    // Update activity status when task fails
+                    activityService.updateActivityStatusBasedOnTaskStatuses(task.getActivityId());
                 }
             } else {
                 TaskResultResource taskResultResource = new TaskResultResource();
@@ -145,6 +152,8 @@ public class TaskService {
                 task.setStatus(ActivityTaskStatus.PROCESSED);
                 task.setFinishedAt(now());
                 devOpsNotificationServiceProxy.notifyTaskCompletion(taskMapper.toResource(task));
+                // Update activity status when task completes successfully
+                activityService.updateActivityStatusBasedOnTaskStatuses(task.getActivityId());
             }
             
         } catch(Throwable t) {
@@ -173,6 +182,8 @@ public class TaskService {
                 if (task.getStatus().equals(ActivityTaskStatus.FAILED)) {
                     task = saveTask(task);
                     devOpsNotificationServiceProxy.notifyTaskCompletion(taskMapper.toResource(task));
+                    // Update activity status when task fails
+                    activityService.updateActivityStatusBasedOnTaskStatuses(task.getActivityId());
                 }
             } else {
                 TaskResultResource taskResultResource = new TaskResultResource();
@@ -183,6 +194,8 @@ public class TaskService {
                 task.setStatus(ActivityTaskStatus.PROCESSED);
                 task.setFinishedAt(now());
                 devOpsNotificationServiceProxy.notifyTaskCompletion(taskMapper.toResource(task));
+                // Update activity status when task completes successfully
+                activityService.updateActivityStatusBasedOnTaskStatuses(task.getActivityId());
             }
             
         } catch(Throwable t) {
@@ -323,7 +336,8 @@ public class TaskService {
 
     public Task abortTask(Long taskId) {
         Task task = readTask(taskId);
-        if (!task.getStatus().equals(ActivityTaskStatus.PROCESSING)) return task;
+        if (!task.getStatus().equals(ActivityTaskStatus.PROCESSING) && 
+            !task.getStatus().equals(ActivityTaskStatus.PLANNED)) return task;
         task.setStatus(ActivityTaskStatus.ABORTED);
         task.setFinishedAt(now());
         task = saveTask(task);

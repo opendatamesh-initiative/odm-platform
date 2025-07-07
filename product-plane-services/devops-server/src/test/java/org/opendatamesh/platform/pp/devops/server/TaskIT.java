@@ -758,4 +758,136 @@ public class TaskIT extends ODMDevOpsIT {
         assertThat(activityAfterFailure.getErrors()).isNotNull();
         assertThat(activityAfterFailure.getFinishedAt()).isNotNull();
     }
+
+    // ======================================================================================
+    // ACTIVITY STATUS BASED ON TASK STATUSES TESTS
+    // ======================================================================================
+
+    /**
+     * Test: when all tasks are PROCESSED, the activity should be PROCESSED
+     */
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testActivityStatusAllTasksProcessed() throws IOException {
+        createMocksForCreateActivityWithMultipleTaskCall();
+        createMocksForCreateActivityWithMultipleTaskCall();
+        createMocksForCreateActivityWithMultipleTaskCall();
+
+        ActivityResource activityRes = resourceBuilder.readResourceFromFile(
+            ODMDevOpsResources.RESOURCE_ACTIVITY_1, ActivityResource.class);
+        activityRes.setStage("prod");
+
+        ActivityResource createdActivityRes = devOpsClient.createActivity(activityRes, false);
+
+        ActivityTaskResource[] taskResources = devOpsClient.searchTasks(createdActivityRes.getId(), null, null);
+        assertThat(taskResources).isNotNull();
+        assertThat(taskResources.length).isGreaterThanOrEqualTo(2);
+        ActivityTaskResource firstTask = taskResources[0];
+        ActivityTaskResource secondTask = taskResources[1];
+
+        // Verify initial status - all tasks should be PLANNED
+        assertThat(firstTask.getStatus()).isEqualTo(ActivityTaskStatus.PLANNED);
+        assertThat(secondTask.getStatus()).isEqualTo(ActivityTaskStatus.PLANNED);
+
+        // Complete both tasks successfully using task endpoints only
+        devOpsClient.stopTask(firstTask.getId());
+        devOpsClient.stopTask(secondTask.getId());
+
+        ActivityResource completedActivity = devOpsClient.readActivity(createdActivityRes.getId());
+        assertThat(completedActivity.getStatus()).isEqualTo(ActivityStatus.PROCESSED);
+        assertThat(completedActivity.getFinishedAt()).isNotNull();
+    }
+
+    /**
+     * Test: when at least one task is FAILED, the activity should be FAILED
+     */
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testActivityStatusAtLeastOneTaskFailed() throws IOException {
+        createMocksForCreateActivityWithMultipleTaskCall();
+        createMocksForCreateActivityWithMultipleTaskCall();
+        createMocksForCreateActivityWithMultipleTaskCall();
+
+        ActivityResource activityRes = resourceBuilder.readResourceFromFile(
+            ODMDevOpsResources.RESOURCE_ACTIVITY_1, ActivityResource.class);
+        activityRes.setStage("prod");
+
+        ActivityResource createdActivityRes = devOpsClient.createActivity(activityRes, false);
+
+        ActivityTaskResource[] taskResources = devOpsClient.searchTasks(createdActivityRes.getId(), null, null);
+        assertThat(taskResources).isNotNull();
+        assertThat(taskResources.length).isGreaterThanOrEqualTo(2);
+        ActivityTaskResource firstTask = taskResources[0];
+        ActivityTaskResource secondTask = taskResources[1];
+
+        // Verify initial status - all tasks should be PLANNED
+        assertThat(firstTask.getStatus()).isEqualTo(ActivityTaskStatus.PLANNED);
+        assertThat(secondTask.getStatus()).isEqualTo(ActivityTaskStatus.PLANNED);
+
+        // Complete the first task successfully
+        devOpsClient.stopTask(firstTask.getId());
+        // Fail the second task using task endpoint
+        TaskResultResource failedTaskResult = new TaskResultResource();
+        failedTaskResult.setStatus(TaskResultStatus.FAILED);
+        failedTaskResult.setErrors("Task execution failed due to timeout");
+        String url = "http://localhost:" + port + "/api/v1/pp/devops/tasks/" + secondTask.getId() + "/status?action=STOP";
+        ResponseEntity<TaskStatusResource> response = devOpsClient.rest.exchange(
+            url,
+            HttpMethod.PATCH,
+            new HttpEntity<>(failedTaskResult),
+            TaskStatusResource.class
+        );
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        ActivityResource failedActivity = devOpsClient.readActivity(createdActivityRes.getId());
+        assertThat(failedActivity.getStatus()).isEqualTo(ActivityStatus.FAILED);
+        assertThat(failedActivity.getErrors()).isNotNull();
+        assertThat(failedActivity.getFinishedAt()).isNotNull();
+    }
+
+    /**
+     * Test: when all tasks are ABORTED and none is FAILED, the activity should be ABORTED
+     */
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testActivityStatusAllTasksAborted() throws IOException {
+        createMocksForCreateActivityWithMultipleTaskCall();
+        createMocksForCreateActivityWithMultipleTaskCall();
+        createMocksForCreateActivityWithMultipleTaskCall();
+
+        ActivityResource activityRes = resourceBuilder.readResourceFromFile(
+            ODMDevOpsResources.RESOURCE_ACTIVITY_1, ActivityResource.class);
+        activityRes.setStage("prod");
+
+        ActivityResource createdActivityRes = devOpsClient.createActivity(activityRes, false);
+
+        ActivityTaskResource[] taskResources = devOpsClient.searchTasks(createdActivityRes.getId(), null, null);
+        assertThat(taskResources).isNotNull();
+        assertThat(taskResources.length).isGreaterThanOrEqualTo(2);
+        ActivityTaskResource firstTask = taskResources[0];
+        ActivityTaskResource secondTask = taskResources[1];
+
+        // Verify initial status - all tasks should be PLANNED
+        assertThat(firstTask.getStatus()).isEqualTo(ActivityTaskStatus.PLANNED);
+        assertThat(secondTask.getStatus()).isEqualTo(ActivityTaskStatus.PLANNED);
+
+        // Complete the first task successfully
+        devOpsClient.stopTask(firstTask.getId());
+        // Abort the second task using task endpoint
+        String abortTaskUrl = "http://localhost:" + port + "/api/v1/pp/devops/tasks/" + secondTask.getId() + "/status?action=ABORT";
+        ResponseEntity<TaskStatusResource> abortResponse = devOpsClient.rest.exchange(
+            abortTaskUrl,
+            HttpMethod.PATCH,
+            HttpEntity.EMPTY,
+            TaskStatusResource.class
+        );
+        assertThat(abortResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        ActivityResource abortedActivity = devOpsClient.readActivity(createdActivityRes.getId());
+        assertThat(abortedActivity.getStatus()).isEqualTo(ActivityStatus.ABORTED);
+        assertThat(abortedActivity.getFinishedAt()).isNotNull();
+        ActivityTaskResource abortedSecondTask = devOpsClient.readTask(secondTask.getId());
+        assertThat(abortedSecondTask.getStatus()).isEqualTo(ActivityTaskStatus.ABORTED);
+        assertThat(abortedSecondTask.getFinishedAt()).isNotNull();
+    }
 }

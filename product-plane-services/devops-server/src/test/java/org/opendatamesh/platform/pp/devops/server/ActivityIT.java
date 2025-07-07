@@ -933,4 +933,31 @@ public class ActivityIT extends ODMDevOpsIT {
         assertThat(activitiesResources).isNotNull();
         assertThat(activitiesResources.length).isEqualTo(0);
     }
+
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testPatchUpdateActivityStatusAndErrors() {
+        createMocksForCreateActivityCall();
+        ActivityResource activity = buildTestActivity();
+        ActivityResource createdActivity = createActivity(activity, false);
+
+        // Force status to FAILED and set errors
+        ActivityResource patch = new ActivityResource();
+        patch.setStatus(ActivityStatus.FAILED);
+        patch.setErrors("Forced failure for testing");
+
+        String url = "http://localhost:" + port + "/api/v1/pp/devops/activities/" + createdActivity.getId();
+        ResponseEntity<ActivityResource> response = devOpsClient.rest.exchange(
+            url,
+            org.springframework.http.HttpMethod.PATCH,
+            new org.springframework.http.HttpEntity<>(patch),
+            ActivityResource.class
+        );
+        assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
+        ActivityResource updated = response.getBody();
+        assertThat(updated).isNotNull();
+        assertThat(updated.getStatus()).isEqualTo(ActivityStatus.FAILED);
+        assertThat(updated.getErrors()).isEqualTo("Forced failure for testing");
+        assertThat(updated.getFinishedAt()).isNotNull();
+    }
 }

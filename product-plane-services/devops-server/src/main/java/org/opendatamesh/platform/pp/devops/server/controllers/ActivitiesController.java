@@ -84,6 +84,9 @@ public class ActivitiesController extends AbstractActivityController {
         return activityService.deleteActivity(id);
     }
 
-
-    //TODO: Service di stop activity
+    @Override
+    public ActivityResource updateActivity(Long id, ActivityResource activityRes) {
+        Activity activity = activityService.updateActivity(id, activityMapper.toEntity(activityRes));
+        return activityMapper.toResource(activity);
+    }
 }

@@ -72,8 +72,8 @@ License.
     <dependencies>
         <dependency>
             <groupId>org.opendatamesh</groupId>
-            <artifactId>odm-specification-dpdescriptor-parser</artifactId>
-            <version>1.0.5</version>
+            <artifactId>odm-specification-dpdescriptor-parser-1x</artifactId>
+            <version>1.0.9</version>
         </dependency>
         <!-- Spring Boot Starter -->
         <dependency>

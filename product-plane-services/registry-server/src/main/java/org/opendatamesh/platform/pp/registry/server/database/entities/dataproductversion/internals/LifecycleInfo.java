@@ -18,5 +18,6 @@ public class LifecycleInfo {
             @JoinColumn(name = "DATA_PRODUCT_ID"),
             @JoinColumn(name = "DATA_PRODUCT_VERSION")
     })
+    @OrderBy(value = "id ASC")
     private List<LifecycleTaskInfo> tasksInfo = new ArrayList<LifecycleTaskInfo>();
 }

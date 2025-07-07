@@ -323,7 +323,8 @@ public class TaskService {
 
     public Task abortTask(Long taskId) {
         Task task = readTask(taskId);
-        if (!task.getStatus().equals(ActivityTaskStatus.PROCESSING)) return task;
+        if (!task.getStatus().equals(ActivityTaskStatus.PROCESSING) && 
+            !task.getStatus().equals(ActivityTaskStatus.PLANNED)) return task;
         task.setStatus(ActivityTaskStatus.ABORTED);
         task.setFinishedAt(now());
         task = saveTask(task);

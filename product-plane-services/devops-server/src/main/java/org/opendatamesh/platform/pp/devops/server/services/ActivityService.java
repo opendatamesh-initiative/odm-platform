@@ -363,6 +363,10 @@ public class ActivityService {
     ) {
         Task task = taskService.stopTask(taskId, taskResultResource);
         updateActivityPartialResults(task, updateVariables);
+        
+        // Always check and update activity status based on all task statuses
+        updateActivityStatusBasedOnTaskStatuses(task.getActivityId());
+        
         if (Boolean.TRUE.equals(task.getStartedByActivity())) {
             // Check if the task failed - if so, stop the activity instead of continuing
             if (ActivityTaskStatus.FAILED.equals(task.getStatus())) {
@@ -372,6 +376,55 @@ public class ActivityService {
             }
         }
         return task;
+    }
+
+    /**
+     * Updates the activity status based on all task statuses according to the rules:
+     * - PROCESSED, if all tasks are PROCESSED,
+     * - FAILED, if at least one task is FAILED,
+     * - ABORTED, if there are ABORTED tasks and none is FAILED
+     */
+    public void updateActivityStatusBasedOnTaskStatuses(Long activityId) {
+        Activity activity = readActivity(activityId);
+        List<Task> allTasks = taskService.searchTasks(activityId, null, null);
+        
+        // If activity is already in a final state, don't change it
+        if (activity.getStatus().equals(ActivityStatus.PROCESSED) || 
+            activity.getStatus().equals(ActivityStatus.FAILED) || 
+            activity.getStatus().equals(ActivityStatus.ABORTED)) {
+            return;
+        }
+        
+        // Check if all tasks have a status different from PLANNED
+        boolean allTasksHaveNonPlannedStatus = allTasks.stream()
+            .allMatch(task -> !task.getStatus().equals(ActivityTaskStatus.PLANNED));
+        
+        if (!allTasksHaveNonPlannedStatus) {
+            return; // Not all tasks have been processed yet
+        }
+        
+        // Count task statuses
+        long processedCount = allTasks.stream()
+            .filter(task -> task.getStatus().equals(ActivityTaskStatus.PROCESSED))
+            .count();
+        long failedCount = allTasks.stream()
+            .filter(task -> task.getStatus().equals(ActivityTaskStatus.FAILED))
+            .count();
+        long abortedCount = allTasks.stream()
+            .filter(task -> task.getStatus().equals(ActivityTaskStatus.ABORTED))
+            .count();
+        
+        // Apply the rules
+        if (failedCount > 0) {
+            // At least one task is FAILED -> activity should be FAILED
+            stopActivity(activityId, false);
+        } else if (processedCount == allTasks.size()) {
+            // All tasks are PROCESSED -> activity should be PROCESSED
+            stopActivity(activityId, true);
+        } else if (abortedCount > 0) {
+            // There are ABORTED tasks and none is FAILED -> activity should be ABORTED
+            abortActivity(activityId);
+        }
     }
 
     public void updateActivityPartialResults(Task task, Boolean updateVariables) {
@@ -659,6 +712,45 @@ public class ActivityService {
         }
         activityRepository.deleteById(id);
         return mapper.toResource(activity);
+    }
+
+    public Activity updateActivity(Long id, Activity activityUpdate) {
+        Activity existingActivity = readActivity(id);
+        
+        // Update allowed fields
+        if (activityUpdate.getStatus() != null) {
+            existingActivity.setStatus(activityUpdate.getStatus());
+        }
+        if (activityUpdate.getErrors() != null) {
+            existingActivity.setErrors(activityUpdate.getErrors());
+        }
+        if (activityUpdate.getResults() != null) {
+            existingActivity.setResults(activityUpdate.getResults());
+        }
+        if (activityUpdate.getFinishedAt() != null) {
+            existingActivity.setFinishedAt(activityUpdate.getFinishedAt());
+        }
+        
+        // If status is being set to a final state and finishedAt is not set, set it to now
+        if (activityUpdate.getStatus() != null && 
+            (activityUpdate.getStatus().equals(ActivityStatus.PROCESSED) || 
+             activityUpdate.getStatus().equals(ActivityStatus.FAILED) || 
+             activityUpdate.getStatus().equals(ActivityStatus.ABORTED)) &&
+            existingActivity.getFinishedAt() == null) {
+            existingActivity.setFinishedAt(now());
+        }
+        
+        try {
+            existingActivity = saveActivity(existingActivity);
+            logger.info("Activity [" + existingActivity.getId() + "] successfully updated");
+        } catch (Throwable t) {
+            throw new InternalServerException(
+                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
+                    "An error occurred in the backend database while updating activity [" + id + "]",
+                    t);
+        }
+        
+        return existingActivity;
     }
 
     // -------------------------

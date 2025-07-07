@@ -60,6 +60,10 @@ public class TaskController extends AbstractTaskController {
 	@Override
 	public TaskStatusResource abortTask(Long id) {
 		Task task = taskService.abortTask(id);
+		
+		// Update activity status based on all task statuses
+		activityService.updateActivityStatusBasedOnTaskStatuses(task.getActivityId());
+		
 		TaskStatusResource statusRes = new TaskStatusResource();
 		statusRes.setStatus(task.getStatus());
 		return statusRes;

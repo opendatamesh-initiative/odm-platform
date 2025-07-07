@@ -385,4 +385,65 @@ public abstract class AbstractActivityController {
     }
 
     public abstract ActivityResource deleteActivity(Long id);
+
+    // ===============================================================================
+    // PATCH /activities/{id}
+    // ===============================================================================
+    @Operation(
+            summary = "Update the specified activity",
+            description = "Update the activity identified by the input `id` with the provided data. This allows forcing the activity status and other properties."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "The updated activity",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ActivityResource.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "[Bad Request](https://www.rfc-editor.org/rfc/rfc9110.html#name-400-bad-request)"
+                            + "\r\n - Error Code 40001 - Activity is invalid",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "[Not Found](https://www.rfc-editor.org/rfc/rfc9110.html#name-404-not-found)"
+                            + "\r\n - Error Code 40401 - Activity not found",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "[Internal Server Error](https://www.rfc-editor.org/rfc/rfc9110.html#name-500-internal-server-error)"
+                            + "\r\n - Error Code 50000 - Error in the backend database"
+                            + "\r\n - Error Code 50001 - Error in in the backend service",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorRes.class))}
+            )
+    })
+    @PatchMapping(
+            value = "/{id}",
+            consumes = {
+                    "application/vnd.odmp.v1+json",
+                    "application/vnd.odmp+json",
+                    "application/json"},
+            produces = {
+                    "application/vnd.odmp.v1+json",
+                    "application/vnd.odmp+json",
+                    "application/json"
+            }
+    )
+    public ActivityResource updateActivityEndpoint(
+            @Parameter(description = "Identifier of the activity")
+            @Valid @PathVariable(value = "id") Long id,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Activity data to update",
+                    required = true
+            )
+            @RequestBody ActivityResource activity) {
+        return updateActivity(id, activity);
+    }
+
+    public abstract ActivityResource updateActivity(Long id, ActivityResource activity);
 }

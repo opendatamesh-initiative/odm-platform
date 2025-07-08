@@ -287,7 +287,8 @@ public class ActivityService {
 
         if (success) {
             if(ActivityStatus.ABORTED.equals(activity.getStatus())){
-                throw new UnprocessableEntityException(DevOpsApiStandardErrors.SC422_04_ACTIVITY_ALREADY_STOPPED, "Activity already stoped");
+                logger.info("Trying to stop an Activity already ABORTED. Activity: {}", activity.getStage());
+                return activity;
             }
             activity.setStatus(ActivityStatus.PROCESSED);
             lifecycleService.createLifecycle(activity);
@@ -363,10 +364,10 @@ public class ActivityService {
     ) {
         Task task = taskService.stopTask(taskId, taskResultResource);
         updateActivityPartialResults(task, updateVariables);
-        
+
         // Always check and update activity status based on all task statuses
         updateActivityStatusBasedOnTaskStatuses(task.getActivityId());
-        
+
         if (Boolean.TRUE.equals(task.getStartedByActivity())) {
             // Check if the task failed - if so, stop the activity instead of continuing
             if (ActivityTaskStatus.FAILED.equals(task.getStatus())) {
@@ -387,22 +388,22 @@ public class ActivityService {
     public void updateActivityStatusBasedOnTaskStatuses(Long activityId) {
         Activity activity = readActivity(activityId);
         List<Task> allTasks = taskService.searchTasks(activityId, null, null);
-        
+
         // If activity is already in a final state, don't change it
-        if (activity.getStatus().equals(ActivityStatus.PROCESSED) || 
-            activity.getStatus().equals(ActivityStatus.FAILED) || 
+        if (activity.getStatus().equals(ActivityStatus.PROCESSED) ||
+            activity.getStatus().equals(ActivityStatus.FAILED) ||
             activity.getStatus().equals(ActivityStatus.ABORTED)) {
             return;
         }
-        
+
         // Check if all tasks have a status different from PLANNED
         boolean allTasksHaveNonPlannedStatus = allTasks.stream()
             .allMatch(task -> !task.getStatus().equals(ActivityTaskStatus.PLANNED));
-        
+
         if (!allTasksHaveNonPlannedStatus) {
             return; // Not all tasks have been processed yet
         }
-        
+
         // Count task statuses
         long processedCount = allTasks.stream()
             .filter(task -> task.getStatus().equals(ActivityTaskStatus.PROCESSED))
@@ -413,7 +414,7 @@ public class ActivityService {
         long abortedCount = allTasks.stream()
             .filter(task -> task.getStatus().equals(ActivityTaskStatus.ABORTED))
             .count();
-        
+
         // Apply the rules
         if (failedCount > 0) {
             // At least one task is FAILED -> activity should be FAILED
@@ -716,7 +717,7 @@ public class ActivityService {
 
     public Activity updateActivity(Long id, Activity activityUpdate) {
         Activity existingActivity = readActivity(id);
-        
+
         // Update allowed fields
         if (activityUpdate.getStatus() != null) {
             existingActivity.setStatus(activityUpdate.getStatus());
@@ -730,16 +731,16 @@ public class ActivityService {
         if (activityUpdate.getFinishedAt() != null) {
             existingActivity.setFinishedAt(activityUpdate.getFinishedAt());
         }
-        
+
         // If status is being set to a final state and finishedAt is not set, set it to now
-        if (activityUpdate.getStatus() != null && 
-            (activityUpdate.getStatus().equals(ActivityStatus.PROCESSED) || 
-             activityUpdate.getStatus().equals(ActivityStatus.FAILED) || 
+        if (activityUpdate.getStatus() != null &&
+            (activityUpdate.getStatus().equals(ActivityStatus.PROCESSED) ||
+             activityUpdate.getStatus().equals(ActivityStatus.FAILED) ||
              activityUpdate.getStatus().equals(ActivityStatus.ABORTED)) &&
             existingActivity.getFinishedAt() == null) {
             existingActivity.setFinishedAt(now());
         }
-        
+
         try {
             existingActivity = saveActivity(existingActivity);
             logger.info("Activity [" + existingActivity.getId() + "] successfully updated");
@@ -749,7 +750,7 @@ public class ActivityService {
                     "An error occurred in the backend database while updating activity [" + id + "]",
                     t);
         }
-        
+
         return existingActivity;
     }
 

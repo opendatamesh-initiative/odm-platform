@@ -62,11 +62,22 @@ public class PolicyEngineService extends GenericMappedAndFilteredCrudService<Pol
 
     @Override
     protected void beforeOverwrite(PolicyEngine objectToOverwrite) {
-       if(repository.existsByNameAndIdIsNot(objectToOverwrite.getName(), objectToOverwrite.getId())){
-           throw new UnprocessableEntityException(
-                   PolicyApiStandardErrors.SC422_05_POLICY_ENGINE_ALREADY_EXISTS,
-                   "PolicyEngine with name [" + objectToOverwrite.getName() + "] already exists"
-           );
+       if(objectToOverwrite.getId() == null) {
+           // If ID is null, check only for name existence
+           if(repository.existsByName(objectToOverwrite.getName())){
+               throw new UnprocessableEntityException(
+                       PolicyApiStandardErrors.SC422_05_POLICY_ENGINE_ALREADY_EXISTS,
+                       "PolicyEngine with name [" + objectToOverwrite.getName() + "] already exists"
+               );
+           }
+       } else {
+           // If ID is not null, check for name existence excluding current entity
+           if(repository.existsByNameAndIdIsNot(objectToOverwrite.getName(), objectToOverwrite.getId())){
+               throw new UnprocessableEntityException(
+                       PolicyApiStandardErrors.SC422_05_POLICY_ENGINE_ALREADY_EXISTS,
+                       "PolicyEngine with name [" + objectToOverwrite.getName() + "] already exists"
+               );
+           }
        }
     }
 

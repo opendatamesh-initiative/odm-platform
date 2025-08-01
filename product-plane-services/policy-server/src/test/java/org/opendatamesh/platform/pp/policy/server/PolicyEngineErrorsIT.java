@@ -5,9 +5,13 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineResource;
 import org.opendatamesh.platform.pp.policy.api.resources.exceptions.PolicyApiStandardErrors;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 public class PolicyEngineErrorsIT extends ODMPolicyIT {
@@ -188,6 +192,60 @@ public class PolicyEngineErrorsIT extends ODMPolicyIT {
                 PolicyApiStandardErrors.SC404_01_POLICY_ENGINE_NOT_FOUND,
                 "Resource with ID [2] not found"
         );
+
+    }
+
+    @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+    public void testUpdatePolicyEngineToExistingName() {
+
+        // Create first policy engine with name "policy-engine-1"
+        PolicyEngineResource policyEngine1 = new PolicyEngineResource();
+        policyEngine1.setName("opa-policy-checker");
+        policyEngine1.setDisplayName("OPA Policy Checker");
+        policyEngine1.setAdapterUrl("http://localhost:9009");
+
+        // Create first policy engine via REST
+        ResponseEntity<PolicyEngineResource> postResponse1 = rest.postForEntity(
+                apiUrl("/api/v1/pp/policy/policy-engines"),
+                policyEngine1,
+                PolicyEngineResource.class
+        );
+        policyEngine1 = postResponse1.getBody();
+
+        // Create second policy engine with name "policy-engine-2"
+        PolicyEngineResource policyEngine2 = new PolicyEngineResource();
+        policyEngine2.setName("opa-policy-checker1");
+        policyEngine2.setDisplayName("OPA Policy Checker");
+        policyEngine2.setAdapterUrl("http://localhost:9009");
+
+        ResponseEntity<PolicyEngineResource> postResponse2 = rest.postForEntity(
+                apiUrl("/api/v1/pp/policy/policy-engines"),
+                policyEngine2,
+                PolicyEngineResource.class
+        );
+        policyEngine2 = postResponse2.getBody();
+
+        // Modify the second policy engine to change its name to "policy-engine-1"
+        PolicyEngineResource policyEngine3 = new PolicyEngineResource();
+        policyEngine3.setName("opa-policy-checker");
+        policyEngine3.setDisplayName("OPA Policy Checker");
+        policyEngine3.setAdapterUrl("http://localhost:9009");
+
+        // Try to update the second policy engine with the same name as the first
+        ResponseEntity<ObjectNode> putResponse = rest.exchange(
+                apiUrl("/api/v1/pp/policy/policy-engines/" + policyEngine2.getId()),
+                HttpMethod.PUT,
+                new HttpEntity<>(policyEngine3),
+                ObjectNode.class
+        );
+
+        // Verify the error response using assertThat
+        assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
+        ObjectNode errorBody = putResponse.getBody();
+        assertThat(errorBody).isNotNull();
+        assertThat(errorBody.get("code").asText()).isEqualTo(PolicyApiStandardErrors.SC422_05_POLICY_ENGINE_ALREADY_EXISTS.code());
+        assertThat(errorBody.get("message").asText()).isEqualTo("PolicyEngine with name [opa-policy-checker] already exists");
 
     }
 

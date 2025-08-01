@@ -14,12 +14,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.web.util.DefaultUriBuilderFactory;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
@@ -38,6 +41,7 @@ public class ODMPolicyIT extends ODMIntegrationTest {
     protected String port;
 
     protected PolicyClientImpl policyClient;
+    protected TestRestTemplate rest;
 
     protected static final Logger logger = LoggerFactory.getLogger(ODMPolicyIT.class);
 
@@ -50,6 +54,17 @@ public class ODMPolicyIT extends ODMIntegrationTest {
         mapper = ObjectMapperFactory.JSON_MAPPER;
         resourceBuilder = new ODMResourceBuilder(mapper);
         policyClient = new PolicyClientImpl("http://localhost:" + port, mapper);
+        
+        // Initialize TestRestTemplate
+        rest = new TestRestTemplate();
+        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+        requestFactory.setConnectTimeout(30000);
+        requestFactory.setReadTimeout(30000);
+        rest.getRestTemplate().setRequestFactory(requestFactory);
+        // add uri template handler because '+' of iso date would not be encoded
+        DefaultUriBuilderFactory defaultUriBuilderFactory = new DefaultUriBuilderFactory();
+        defaultUriBuilderFactory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.TEMPLATE_AND_VALUES);
+        rest.setUriTemplateHandler(defaultUriBuilderFactory);
     }
 
     @BeforeEach
@@ -175,6 +190,10 @@ public class ODMPolicyIT extends ODMIntegrationTest {
             fail("Impossible to read policy evaluation request from file: " + t.getMessage());
             return null;
         }
+    }
+
+    protected String apiUrl(String path) {
+        return "http://localhost:" + port + path;
     }
 
 }

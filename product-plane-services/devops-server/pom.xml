@@ -25,7 +25,7 @@ License.
     <parent>
         <groupId>org.opendatamesh</groupId>
         <artifactId>odm-platform-pp-services</artifactId>
-        <version>1.0.25</version>
+        <version>1.0.26</version>
         <relativePath>../</relativePath>
     </parent>
 
@@ -33,7 +33,7 @@ License.
     <artifactId>odm-platform-pp-devops-server</artifactId>
     <name>ODM Platform DevOps Server</name>
     <description>Open Data Mesh Platform's DevOps service server</description>
-    <version>1.0.25</version>
+    <version>1.0.26</version>
     <url>https://github.com/opendatamesh-initiative/odm-platform</url>
 
 
@@ -241,37 +241,37 @@ License.
          <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-pp-registry-api</artifactId>
-            <version>1.0.25</version>
+            <version>1.0.26</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-pp-devops-api</artifactId>
-            <version>1.0.25</version>
+            <version>1.0.26</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-up-executor-api</artifactId>
-            <version>1.0.25</version>
+            <version>1.0.26</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-up-observer-api</artifactId>
-            <version>1.0.25</version>
+            <version>1.0.26</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-pp-policy-api</artifactId>
-            <version>1.0.25</version>
+            <version>1.0.26</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-pp-notification-api</artifactId>
-            <version>1.0.25</version>
+            <version>1.0.26</version>
             <scope>compile</scope>
         </dependency>
 

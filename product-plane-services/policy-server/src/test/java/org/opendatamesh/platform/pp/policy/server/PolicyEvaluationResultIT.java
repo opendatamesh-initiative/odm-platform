@@ -3,12 +3,10 @@ package org.opendatamesh.platform.pp.policy.server;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
-import org.opendatamesh.platform.core.commons.clients.resources.ErrorRes;
-import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineResource;
-import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
-import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultShortResource;
-import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
+import org.opendatamesh.platform.pp.policy.api.resources.*;
 import org.opendatamesh.platform.pp.policy.api.resources.exceptions.PolicyApiStandardErrors;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
@@ -136,6 +134,74 @@ public class PolicyEvaluationResultIT extends ODMPolicyIT {
 
     }
 
+    // ======================================================================================
+    // READ ALL PolicyEvaluationResults with Search Options
+    // ======================================================================================
+
+    @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+    public void testReadAllPolicyEvaluationResultsWithSearchOptions() throws JsonProcessingException {
+
+        // Resources + Creation
+        PolicyEngineResource parentEngineResource = createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);
+        PolicyResource parentPolicyResource = createPolicy(ODMPolicyResources.RESOURCE_POLICY_1, parentEngineResource.getId());
+        createPolicyEvaluationResult(ODMPolicyResources.RESOURCE_POLICY_EVALUATION_RESULT_1, parentPolicyResource.getId());
+        createPolicyEvaluationResult(ODMPolicyResources.RESOURCE_POLICY_EVALUATION_RESULT_2, parentPolicyResource.getId());
+
+        // Test with default search options (should return all results)
+        PolicyEvaluationResultSearchOptions searchOptions = new PolicyEvaluationResultSearchOptions();
+        Page<PolicyEvaluationResultShortResource> getResponse = policyClient.getPolicyEvaluationResults(Pageable.ofSize(100), searchOptions);
+
+        // Verification - should return all results with default daysFromLastCreated = 7
+        assertThat(getResponse).isNotNull();
+        assertThat(getResponse.getContent()).size().isEqualTo(2);
+
+        // Test with dataProductId filter
+        searchOptions.setDataProductId("abc123");
+        getResponse = policyClient.getPolicyEvaluationResults(Pageable.ofSize(100), searchOptions);
+
+        // Verification - should return only results with dataProductId = "abc123"
+        assertThat(getResponse).isNotNull();
+        assertThat(getResponse.getContent()).size().isEqualTo(1);
+        assertThat(getResponse.getContent().get(0).getDataProductId()).isEqualTo("abc123");
+
+    }
+
+    @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+    public void testReadAllPolicyEvaluationResultsWithDaysFromLastCreatedFilter() throws JsonProcessingException {
+
+        // Resources + Creation
+        PolicyEngineResource parentEngineResource = createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);
+        PolicyResource parentPolicyResource = createPolicy(ODMPolicyResources.RESOURCE_POLICY_1, parentEngineResource.getId());
+        createPolicyEvaluationResult(ODMPolicyResources.RESOURCE_POLICY_EVALUATION_RESULT_1, parentPolicyResource.getId());
+        createPolicyEvaluationResult(ODMPolicyResources.RESOURCE_POLICY_EVALUATION_RESULT_2, parentPolicyResource.getId());
+
+        // Test with daysFromLastCreated = 1 (should return all results since they were just created)
+        PolicyEvaluationResultSearchOptions searchOptions = new PolicyEvaluationResultSearchOptions();
+        searchOptions.setDaysFromLastCreated(1);
+        Page<PolicyEvaluationResultShortResource> getResponse = policyClient.getPolicyEvaluationResults(Pageable.ofSize(100), searchOptions);
+
+        // Verification - should return all results since they were created within 1 day
+        assertThat(getResponse).isNotNull();
+        assertThat(getResponse.getContent()).size().isEqualTo(2);
+
+        // Test with daysFromLastCreated = 0 (should return only one)
+        searchOptions.setDaysFromLastCreated(0);
+        getResponse = policyClient.getPolicyEvaluationResults(Pageable.ofSize(100), searchOptions);
+
+        assertThat(getResponse).isNotNull();
+        assertThat(getResponse.getContent()).size().isEqualTo(2); //Created on the same day
+
+        // Test with daysFromLastCreated = null (should return all results, same as default)
+        searchOptions.setDaysFromLastCreated(null);
+        getResponse = policyClient.getPolicyEvaluationResults(Pageable.ofSize(100), searchOptions);
+
+        // Verification - should return all results when daysFromLastCreated is null
+        assertThat(getResponse).isNotNull();
+        assertThat(getResponse.getContent()).size().isEqualTo(2);
+
+    }
 
     // ======================================================================================
     // READ ONE PolicyEvaluationResult
@@ -225,20 +291,6 @@ public class PolicyEvaluationResultIT extends ODMPolicyIT {
         assertThat(policyEvaluationResultResource.getOutputObject()).isEqualTo("{\"allow\":false}");
         assertThat(policyEvaluationResultResource.getCreatedAt()).isNotNull();
         assertThat(policyEvaluationResultResource.getUpdatedAt()).isAfter(policyEvaluationResultResource.getCreatedAt());
-
-    }
-
-    private void verifyResourcePolicyEvaluationResultTwo(PolicyEvaluationResultResource policyEvaluationResultResource) {
-
-        assertThat(policyEvaluationResultResource.getId()).isNotNull();
-        assertThat(policyEvaluationResultResource.getPolicyId()).isNotNull();
-        assertThat(policyEvaluationResultResource.getResult()).isEqualTo(true);
-        assertThat(policyEvaluationResultResource.getDataProductId()).isEqualTo("def456");
-        assertThat(policyEvaluationResultResource.getDataProductVersion()).isEqualTo("1.7.14");
-        assertThat(policyEvaluationResultResource.getInputObject().textValue()).isEqualTo("{\"name\":\"dp-1-7-14\",\"description\":\"DataProduct1714Draft\",\"domain\":\"Sales\"}");
-        assertThat(policyEvaluationResultResource.getOutputObject()).isEqualTo("{\"allow\":true}");
-        assertThat(policyEvaluationResultResource.getCreatedAt()).isNotNull();
-        assertThat(policyEvaluationResultResource.getUpdatedAt()).isEqualTo(policyEvaluationResultResource.getCreatedAt());
 
     }
 

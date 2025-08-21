@@ -1,11 +1,12 @@
 package org.opendatamesh.platform.pp.policy.server.services;
 
+import org.opendatamesh.platform.core.commons.database.utils.PagingAndSortingAndSpecificationExecutorRepository;
 import org.opendatamesh.platform.core.commons.database.utils.SpecsUtils;
 import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.UnprocessableEntityException;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
-import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultShortResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultSearchOptions;
+import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultShortResource;
 import org.opendatamesh.platform.pp.policy.api.resources.exceptions.PolicyApiStandardErrors;
 import org.opendatamesh.platform.pp.policy.server.database.entities.Policy;
 import org.opendatamesh.platform.pp.policy.server.database.entities.PolicyEvaluationResult;
@@ -14,7 +15,6 @@ import org.opendatamesh.platform.pp.policy.server.database.mappers.PolicyEvaluat
 import org.opendatamesh.platform.pp.policy.server.database.mappers.PolicyEvaluationResultShortMapper;
 import org.opendatamesh.platform.pp.policy.server.database.repositories.PolicyEvaluationResultRepository;
 import org.opendatamesh.platform.pp.policy.server.database.repositories.PolicyEvaluationResultShortRepository;
-import org.opendatamesh.platform.core.commons.database.utils.PagingAndSortingAndSpecificationExecutorRepository;
 import org.opendatamesh.platform.pp.policy.server.services.utils.GenericMappedAndFilteredCrudService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,6 +23,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -101,6 +102,17 @@ public class PolicyEvaluationResultService extends GenericMappedAndFilteredCrudS
         if (StringUtils.hasText(filters.getDataProductVersion())) {
             specifications.add(PolicyEvaluationResultRepository.Specs.hasDataProductVersion(filters.getDataProductVersion()));
         }
+        if (filters.getDaysFromLastCreated() != null && filters.getDaysFromLastCreated() >= 0) {
+            repository.findTopByOrderByCreatedAtDesc()
+                    .ifPresent(mostRecent -> {
+                        Timestamp cutoffDate = Timestamp.valueOf(
+                                mostRecent.getCreatedAt()
+                                        .toLocalDateTime()
+                                        .minusDays(filters.getDaysFromLastCreated())
+                        );
+                        specifications.add(PolicyEvaluationResultRepository.Specs.createdAtGreaterThanOrEqualTo(cutoffDate));
+                    });
+        }
         return SpecsUtils.combineWithAnd(specifications);
     }
 
@@ -119,6 +131,19 @@ public class PolicyEvaluationResultService extends GenericMappedAndFilteredCrudS
         List<Specification<PolicyEvaluationResultShort>> specifications = new ArrayList<>();
         if (StringUtils.hasText(filters.getDataProductId())) {
             specifications.add(PolicyEvaluationResultShortRepository.Specs.hasDataProductId(filters.getDataProductId()));
+        }
+        if (filters.getDaysFromLastCreated() != null && filters.getDaysFromLastCreated() > 0) {
+            repository.findTopByOrderByCreatedAtDesc()
+                    .ifPresent(mostRecent -> {
+                        Timestamp cutoffDate = Timestamp.valueOf(
+                                mostRecent.getCreatedAt()
+                                        .toLocalDateTime()
+                                        .minusDays(filters.getDaysFromLastCreated())
+                        );
+                        specifications.add(
+                                PolicyEvaluationResultShortRepository.Specs.createdAtGreaterThanOrEqualTo(cutoffDate)
+                        );
+                    });
         }
         return SpecsUtils.combineWithAnd(specifications);
     }

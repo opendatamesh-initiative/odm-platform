@@ -16,6 +16,9 @@ public class PolicyEvaluationResultShort extends TimestampedEntity {
     @Column(name = "DATA_PRODUCT_ID")
     private String dataProductId;
 
+    @Column(name = "DATA_PRODUCT_VERSION")
+    private String dataProductVersion;
+
     @Column(name = "RESULT")
     private Boolean result;
 
@@ -37,6 +40,14 @@ public class PolicyEvaluationResultShort extends TimestampedEntity {
 
     public void setDataProductId(String dataProductId) {
         this.dataProductId = dataProductId;
+    }
+
+    public String getDataProductVersion() {
+        return dataProductVersion;
+    }
+
+    public void setDataProductVersion(String dataProductVersion) {
+        this.dataProductVersion = dataProductVersion;
     }
 
     public Boolean getResult() {

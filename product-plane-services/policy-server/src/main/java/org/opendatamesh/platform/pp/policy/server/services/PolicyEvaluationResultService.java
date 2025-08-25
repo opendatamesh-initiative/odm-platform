@@ -23,7 +23,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -102,17 +101,6 @@ public class PolicyEvaluationResultService extends GenericMappedAndFilteredCrudS
         if (StringUtils.hasText(filters.getDataProductVersion())) {
             specifications.add(PolicyEvaluationResultRepository.Specs.hasDataProductVersion(filters.getDataProductVersion()));
         }
-        if (filters.getDaysFromLastCreated() != null && filters.getDaysFromLastCreated() >= 0) {
-            repository.findTopByOrderByCreatedAtDesc()
-                    .ifPresent(mostRecent -> {
-                        Timestamp cutoffDate = Timestamp.valueOf(
-                                mostRecent.getCreatedAt()
-                                        .toLocalDateTime()
-                                        .minusDays(filters.getDaysFromLastCreated())
-                        );
-                        specifications.add(PolicyEvaluationResultRepository.Specs.createdAtGreaterThanOrEqualTo(cutoffDate));
-                    });
-        }
         return SpecsUtils.combineWithAnd(specifications);
     }
 
@@ -132,18 +120,8 @@ public class PolicyEvaluationResultService extends GenericMappedAndFilteredCrudS
         if (StringUtils.hasText(filters.getDataProductId())) {
             specifications.add(PolicyEvaluationResultShortRepository.Specs.hasDataProductId(filters.getDataProductId()));
         }
-        if (filters.getDaysFromLastCreated() != null && filters.getDaysFromLastCreated() > 0) {
-            repository.findTopByOrderByCreatedAtDesc()
-                    .ifPresent(mostRecent -> {
-                        Timestamp cutoffDate = Timestamp.valueOf(
-                                mostRecent.getCreatedAt()
-                                        .toLocalDateTime()
-                                        .minusDays(filters.getDaysFromLastCreated())
-                        );
-                        specifications.add(
-                                PolicyEvaluationResultShortRepository.Specs.createdAtGreaterThanOrEqualTo(cutoffDate)
-                        );
-                    });
+        if (StringUtils.hasText(filters.getDataProductVersion())) {
+            specifications.add(PolicyEvaluationResultShortRepository.Specs.hasDataProductVersion(filters.getDataProductVersion()));
         }
         return SpecsUtils.combineWithAnd(specifications);
     }

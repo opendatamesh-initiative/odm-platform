@@ -1,14 +1,12 @@
 package org.opendatamesh.platform.pp.policy.server.database.repositories;
 
 import org.opendatamesh.platform.core.commons.database.utils.PagingAndSortingAndSpecificationExecutorRepository;
-import org.opendatamesh.platform.core.commons.database.utils.TimestampedEntity_;
 import org.opendatamesh.platform.pp.policy.server.database.entities.PolicyEvaluationResultShort;
+import org.opendatamesh.platform.pp.policy.server.database.entities.PolicyEvaluationResultShort_;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
-
-import java.sql.Timestamp;
 
 @Repository
 public interface PolicyEvaluationResultShortRepository extends PagingAndSortingRepository<PolicyEvaluationResultShort, Long>, JpaSpecificationExecutor<PolicyEvaluationResultShort>, PagingAndSortingAndSpecificationExecutorRepository<PolicyEvaluationResultShort, Long> {
@@ -23,8 +21,9 @@ public interface PolicyEvaluationResultShortRepository extends PagingAndSortingR
             };
         }
 
-        public static Specification<PolicyEvaluationResultShort> createdAtGreaterThanOrEqualTo(Timestamp date) {
-            return (root, query, criteriaBuilder) -> criteriaBuilder.greaterThanOrEqualTo(root.get(TimestampedEntity_.createdAt), date);
+        public static Specification<PolicyEvaluationResultShort> hasDataProductVersion(String dataProductVersion) {
+            return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(PolicyEvaluationResultShort_.dataProductVersion), dataProductVersion);
         }
+
     }
 } 

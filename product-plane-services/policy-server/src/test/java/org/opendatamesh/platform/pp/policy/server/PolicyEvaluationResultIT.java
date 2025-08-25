@@ -167,42 +167,6 @@ public class PolicyEvaluationResultIT extends ODMPolicyIT {
 
     }
 
-    @Test
-    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-    public void testReadAllPolicyEvaluationResultsWithDaysFromLastCreatedFilter() throws JsonProcessingException {
-
-        // Resources + Creation
-        PolicyEngineResource parentEngineResource = createPolicyEngine(ODMPolicyResources.RESOURCE_POLICY_ENGINE_1);
-        PolicyResource parentPolicyResource = createPolicy(ODMPolicyResources.RESOURCE_POLICY_1, parentEngineResource.getId());
-        createPolicyEvaluationResult(ODMPolicyResources.RESOURCE_POLICY_EVALUATION_RESULT_1, parentPolicyResource.getId());
-        createPolicyEvaluationResult(ODMPolicyResources.RESOURCE_POLICY_EVALUATION_RESULT_2, parentPolicyResource.getId());
-
-        // Test with daysFromLastCreated = 1 (should return all results since they were just created)
-        PolicyEvaluationResultSearchOptions searchOptions = new PolicyEvaluationResultSearchOptions();
-        searchOptions.setDaysFromLastCreated(1);
-        Page<PolicyEvaluationResultShortResource> getResponse = policyClient.getPolicyEvaluationResults(Pageable.ofSize(100), searchOptions);
-
-        // Verification - should return all results since they were created within 1 day
-        assertThat(getResponse).isNotNull();
-        assertThat(getResponse.getContent()).size().isEqualTo(2);
-
-        // Test with daysFromLastCreated = 0 (should return only one)
-        searchOptions.setDaysFromLastCreated(0);
-        getResponse = policyClient.getPolicyEvaluationResults(Pageable.ofSize(100), searchOptions);
-
-        assertThat(getResponse).isNotNull();
-        assertThat(getResponse.getContent()).size().isEqualTo(2); //Created on the same day
-
-        // Test with daysFromLastCreated = null (should return all results, same as default)
-        searchOptions.setDaysFromLastCreated(null);
-        getResponse = policyClient.getPolicyEvaluationResults(Pageable.ofSize(100), searchOptions);
-
-        // Verification - should return all results when daysFromLastCreated is null
-        assertThat(getResponse).isNotNull();
-        assertThat(getResponse.getContent()).size().isEqualTo(2);
-
-    }
-
     // ======================================================================================
     // READ ONE PolicyEvaluationResult
     // ======================================================================================

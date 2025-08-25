@@ -2,12 +2,10 @@ package org.opendatamesh.platform.pp.policy.server.database.repositories;
 
 import org.opendatamesh.platform.core.commons.database.utils.PagingAndSortingAndSpecificationExecutorRepository;
 import org.opendatamesh.platform.core.commons.database.utils.SpecsUtils;
-import org.opendatamesh.platform.core.commons.database.utils.TimestampedEntity_;
 import org.opendatamesh.platform.pp.policy.server.database.entities.PolicyEvaluationResult;
 import org.opendatamesh.platform.pp.policy.server.database.entities.PolicyEvaluationResult_;
 import org.springframework.data.jpa.domain.Specification;
 
-import java.sql.Timestamp;
 import java.util.Optional;
 
 public interface PolicyEvaluationResultRepository extends PagingAndSortingAndSpecificationExecutorRepository<PolicyEvaluationResult, Long> {
@@ -20,10 +18,6 @@ public interface PolicyEvaluationResultRepository extends PagingAndSortingAndSpe
 
         public static Specification<PolicyEvaluationResult> hasDataProductId(String dataProductIdentifier) {
             return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(PolicyEvaluationResult_.dataProductId), dataProductIdentifier));
-        }
-
-        public static Specification<PolicyEvaluationResult> createdAtGreaterThanOrEqualTo(Timestamp date) {
-            return (root, query, criteriaBuilder) -> criteriaBuilder.greaterThanOrEqualTo(root.get(TimestampedEntity_.createdAt), date);
         }
     }
 }

@@ -437,10 +437,12 @@ public class ActivityService {
             String partialActivityResults = parentActivity.getResults();
             ObjectNode activityOutputNode;
             String result = null;
+            // Use task name if available, otherwise use task ID as fallback
+            String taskKey = task.getName() != null ? task.getName() : "task" + task.getId();
             if(partialActivityResults == null) {
                 activityOutputNode = ObjectMapperFactory.JSON_MAPPER.createObjectNode();
                 try {
-                    activityOutputNode.put("task1", ObjectNodeUtils.toObjectNode(task.getResults()));
+                    activityOutputNode.put(taskKey, ObjectNodeUtils.toObjectNode(task.getResults()));
                     result = ObjectMapperFactory.JSON_MAPPER.writeValueAsString(activityOutputNode);
                 } catch (JsonProcessingException e) {
                     logger.warn("Impossible to serialize results aggregate", e);
@@ -448,8 +450,7 @@ public class ActivityService {
             } else {
                 try {
                     activityOutputNode = ObjectMapperFactory.JSON_MAPPER.readValue(partialActivityResults, ObjectNode.class);
-                    int progressiveTaskNumber = findMaxTaskNumber(activityOutputNode);
-                    activityOutputNode.put("task" + progressiveTaskNumber, ObjectNodeUtils.toObjectNode(task.getResults()));
+                    activityOutputNode.put(taskKey, ObjectNodeUtils.toObjectNode(task.getResults()));
                     result = ObjectMapperFactory.JSON_MAPPER.writeValueAsString(activityOutputNode);
                 } catch (JsonProcessingException e) {
                     logger.warn("Impossible to deserialize previous results aggregate and/or aggregate new results to it", e);

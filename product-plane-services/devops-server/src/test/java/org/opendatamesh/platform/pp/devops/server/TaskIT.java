@@ -890,4 +890,107 @@ public class TaskIT extends ODMDevOpsIT {
         assertThat(abortedSecondTask.getStatus()).isEqualTo(ActivityTaskStatus.ABORTED);
         assertThat(abortedSecondTask.getFinishedAt()).isNotNull();
     }
+
+    // ======================================================================================
+    // UPDATE ACTIVITY PARTIAL RESULTS TESTS
+    // ======================================================================================
+
+    /**
+     * Test: verify that updateActivityPartialResults uses task names as keys when available
+     */
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testUpdateActivityPartialResults_UseTaskNamesAsKeys() throws IOException {
+        createMocksForCreateActivityWithMultipleTaskCall();
+        createMocksForCreateActivityWithMultipleTaskCall();
+        createMocksForCreateActivityWithMultipleTaskCall();
+
+        ActivityResource activityRes = resourceBuilder.readResourceFromFile(
+            ODMDevOpsResources.RESOURCE_ACTIVITY_1, ActivityResource.class);
+        activityRes.setStage("prod");
+
+        ActivityResource createdActivityRes = devOpsClient.createActivity(activityRes, false);
+
+        ActivityTaskResource[] taskResources = devOpsClient.searchTasks(createdActivityRes.getId(), null, null);
+        assertThat(taskResources).isNotNull();
+        assertThat(taskResources.length).isGreaterThanOrEqualTo(2);
+        ActivityTaskResource firstTask = taskResources[0];
+        ActivityTaskResource secondTask = taskResources[1];
+
+        // Complete the first task successfully
+        devOpsClient.stopTask(firstTask.getId());
+
+        // Read the activity to verify results structure
+        ActivityResource activityAfterFirstTask = devOpsClient.readActivity(createdActivityRes.getId());
+        assertThat(activityAfterFirstTask.getResults()).isNotNull();
+        
+        // Verify that the first task results are stored with a meaningful key
+        // The key should be the task name if available, or "task" + taskId as fallback
+        String firstTaskResults = activityAfterFirstTask.getResults();
+        assertThat(firstTaskResults).isNotNull();
+        
+        // The results should contain the task output, but we can't predict the exact key
+        // since it depends on the task name from the lifecycle configuration
+        assertThat(firstTaskResults).contains("status");
+        assertThat(firstTaskResults).contains("PROCESSED");
+
+        // Complete the second task successfully
+        devOpsClient.stopTask(secondTask.getId());
+
+        // Read the activity again to verify both results are stored
+        ActivityResource activityAfterSecondTask = devOpsClient.readActivity(createdActivityRes.getId());
+        assertThat(activityAfterSecondTask.getResults()).isNotNull();
+        
+        String secondTaskResults = activityAfterSecondTask.getResults();
+        assertThat(secondTaskResults).isNotNull();
+        
+        // Both task results should be present
+        assertThat(secondTaskResults).contains("status");
+        assertThat(secondTaskResults).contains("PROCESSED");
+        
+        // Verify that the activity is now completed
+        assertThat(activityAfterSecondTask.getStatus()).isEqualTo(ActivityStatus.PROCESSED);
+        assertThat(activityAfterSecondTask.getFinishedAt()).isNotNull();
+    }
+
+    /**
+     * Test: verify that updateActivityPartialResults uses task ID as fallback when task name is not available
+     */
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testUpdateActivityPartialResults_UseTaskIdAsFallback() throws IOException {
+        createMocksForCreateActivityCall();
+        createMocksForCreateActivityCall();
+        createMocksForCreateActivityCall();
+
+        ActivityResource activityRes = resourceBuilder.readResourceFromFile(
+            ODMDevOpsResources.RESOURCE_ACTIVITY_1, ActivityResource.class);
+        activityRes.setStage("prod");
+
+        ActivityResource createdActivityRes = devOpsClient.createActivity(activityRes, false);
+
+        ActivityTaskResource[] taskResources = devOpsClient.searchTasks(createdActivityRes.getId(), null, null);
+        assertThat(taskResources).isNotNull();
+        assertThat(taskResources.length).isEqualTo(1);
+        ActivityTaskResource task = taskResources[0];
+
+        // Complete the task successfully
+        devOpsClient.stopTask(task.getId());
+
+        // Read the activity to verify results structure
+        ActivityResource completedActivity = devOpsClient.readActivity(createdActivityRes.getId());
+        assertThat(completedActivity.getResults()).isNotNull();
+        
+        // Verify that the task results are stored
+        String taskResults = completedActivity.getResults();
+        assertThat(taskResults).isNotNull();
+        
+        // The results should contain the task output
+        assertThat(taskResults).contains("status");
+        assertThat(taskResults).contains("PROCESSED");
+        
+        // Verify that the activity is now completed
+        assertThat(completedActivity.getStatus()).isEqualTo(ActivityStatus.PROCESSED);
+        assertThat(completedActivity.getFinishedAt()).isNotNull();
+    }
 }

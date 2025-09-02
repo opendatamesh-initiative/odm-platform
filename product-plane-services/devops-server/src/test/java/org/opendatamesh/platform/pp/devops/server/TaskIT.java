@@ -2,21 +2,20 @@ package org.opendatamesh.platform.pp.devops.server;
 
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.pp.devops.api.resources.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.annotation.DirtiesContext.MethodMode;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.fail;
 
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 public class TaskIT extends ODMDevOpsIT {
@@ -135,7 +134,7 @@ public class TaskIT extends ODMDevOpsIT {
         TaskResultResource taskResultResource = new TaskResultResource();
         taskResultResource.setStatus(TaskResultStatus.FAILED);
         taskResultResource.setErrors("Task execution failed due to timeout");
-        
+
         // Add some results that should be saved even for failed tasks
         Map<String, Object> results = new HashMap<>();
         results.put("partialOutput", "Some partial results were generated");
@@ -146,10 +145,10 @@ public class TaskIT extends ODMDevOpsIT {
         // Use REST API directly to send the TaskResultResource
         String url = "http://localhost:" + port + "/api/v1/pp/devops/tasks/" + targetTaskRes.getId() + "/status?action=STOP";
         ResponseEntity<TaskStatusResource> response = devOpsClient.rest.exchange(
-            url,
-            HttpMethod.PATCH,
-            new HttpEntity<>(taskResultResource),
-            TaskStatusResource.class
+                url,
+                HttpMethod.PATCH,
+                new HttpEntity<>(taskResultResource),
+                TaskStatusResource.class
         );
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -170,7 +169,7 @@ public class TaskIT extends ODMDevOpsIT {
         assertThat(stoppedTaskRes.getId()).isNotNull();
         assertThat(stoppedTaskRes.getStatus()).isEqualTo(ActivityTaskStatus.FAILED);
         assertThat(stoppedTaskRes.getErrors()).isEqualTo("Task execution failed due to timeout");
-        
+
         // This is the issue: results should be saved but they are not
         // The current implementation only saves results for PROCESSED status
         assertThat(stoppedTaskRes.getResults()).isNotNull();
@@ -188,7 +187,7 @@ public class TaskIT extends ODMDevOpsIT {
     // ======================================================================================
     // READ Task's status
     // ======================================================================================
-    
+
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testReadTaskStatusAfterCreate() {
@@ -284,7 +283,7 @@ public class TaskIT extends ODMDevOpsIT {
     // ======================================================================================
     // READ task
     // ======================================================================================
-    
+
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testReadTasks() {
@@ -511,9 +510,9 @@ public class TaskIT extends ODMDevOpsIT {
     // ======================================================================================
     // SEARCH task
     // ======================================================================================
-    
+
     // TODO create multiple activities to be sure that the search call properly filters results
-    
+
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testSearchTaskByActivityId() {
@@ -690,7 +689,7 @@ public class TaskIT extends ODMDevOpsIT {
 
         // Use the resource with multiple tasks
         ActivityResource activityRes = resourceBuilder.readResourceFromFile(
-            ODMDevOpsResources.RESOURCE_ACTIVITY_1, ActivityResource.class);
+                ODMDevOpsResources.RESOURCE_ACTIVITY_1, ActivityResource.class);
         activityRes.setStage("prod"); // This stage has multiple tasks in dpd-multiple-tasks.json
 
         ActivityResource createdActivityRes = null;
@@ -731,10 +730,10 @@ public class TaskIT extends ODMDevOpsIT {
         // Use REST API directly to send the failed TaskResultResource
         String url = "http://localhost:" + port + "/api/v1/pp/devops/tasks/" + firstTask.getId() + "/status?action=STOP";
         ResponseEntity<TaskStatusResource> response = devOpsClient.rest.exchange(
-            url,
-            HttpMethod.PATCH,
-            new HttpEntity<>(failedTaskResult),
-            TaskStatusResource.class
+                url,
+                HttpMethod.PATCH,
+                new HttpEntity<>(failedTaskResult),
+                TaskStatusResource.class
         );
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -774,7 +773,7 @@ public class TaskIT extends ODMDevOpsIT {
         createMocksForCreateActivityWithMultipleTaskCall();
 
         ActivityResource activityRes = resourceBuilder.readResourceFromFile(
-            ODMDevOpsResources.RESOURCE_ACTIVITY_1, ActivityResource.class);
+                ODMDevOpsResources.RESOURCE_ACTIVITY_1, ActivityResource.class);
         activityRes.setStage("prod");
 
         ActivityResource createdActivityRes = devOpsClient.createActivity(activityRes, false);
@@ -809,7 +808,7 @@ public class TaskIT extends ODMDevOpsIT {
         createMocksForCreateActivityWithMultipleTaskCall();
 
         ActivityResource activityRes = resourceBuilder.readResourceFromFile(
-            ODMDevOpsResources.RESOURCE_ACTIVITY_1, ActivityResource.class);
+                ODMDevOpsResources.RESOURCE_ACTIVITY_1, ActivityResource.class);
         activityRes.setStage("prod");
 
         ActivityResource createdActivityRes = devOpsClient.createActivity(activityRes, false);
@@ -832,10 +831,10 @@ public class TaskIT extends ODMDevOpsIT {
         failedTaskResult.setErrors("Task execution failed due to timeout");
         String url = "http://localhost:" + port + "/api/v1/pp/devops/tasks/" + secondTask.getId() + "/status?action=STOP";
         ResponseEntity<TaskStatusResource> response = devOpsClient.rest.exchange(
-            url,
-            HttpMethod.PATCH,
-            new HttpEntity<>(failedTaskResult),
-            TaskStatusResource.class
+                url,
+                HttpMethod.PATCH,
+                new HttpEntity<>(failedTaskResult),
+                TaskStatusResource.class
         );
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
@@ -856,7 +855,7 @@ public class TaskIT extends ODMDevOpsIT {
         createMocksForCreateActivityWithMultipleTaskCall();
 
         ActivityResource activityRes = resourceBuilder.readResourceFromFile(
-            ODMDevOpsResources.RESOURCE_ACTIVITY_1, ActivityResource.class);
+                ODMDevOpsResources.RESOURCE_ACTIVITY_1, ActivityResource.class);
         activityRes.setStage("prod");
 
         ActivityResource createdActivityRes = devOpsClient.createActivity(activityRes, false);
@@ -876,10 +875,10 @@ public class TaskIT extends ODMDevOpsIT {
         // Abort the second task using task endpoint
         String abortTaskUrl = "http://localhost:" + port + "/api/v1/pp/devops/tasks/" + secondTask.getId() + "/status?action=ABORT";
         ResponseEntity<TaskStatusResource> abortResponse = devOpsClient.rest.exchange(
-            abortTaskUrl,
-            HttpMethod.PATCH,
-            HttpEntity.EMPTY,
-            TaskStatusResource.class
+                abortTaskUrl,
+                HttpMethod.PATCH,
+                HttpEntity.EMPTY,
+                TaskStatusResource.class
         );
         assertThat(abortResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
@@ -890,4 +889,118 @@ public class TaskIT extends ODMDevOpsIT {
         assertThat(abortedSecondTask.getStatus()).isEqualTo(ActivityTaskStatus.ABORTED);
         assertThat(abortedSecondTask.getFinishedAt()).isNotNull();
     }
+
+    // ======================================================================================
+    // UPDATE ACTIVITY PARTIAL RESULTS TESTS
+    // ======================================================================================
+
+    /**
+     * Test: when a task has a name, the taskResult contains the correct key
+     */
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testWhenTaskHasNameThenTaskResultContainsCorrectKey() throws IOException {
+        // Given: Create an activity with a named task
+        createMocksForCreateActivityCall();
+
+        ActivityResource activityRes = resourceBuilder.readResourceFromFile(
+                ODMDevOpsResources.RESOURCE_ACTIVITY_1, ActivityResource.class);
+        activityRes.setStage("prod");
+
+        ActivityResource createdActivityRes = devOpsClient.createActivity(activityRes, false);
+
+        // When: Start the activity to create the task
+        devOpsClient.startActivity(createdActivityRes.getId());
+
+        // Then: Get the task and verify it has a name
+        ActivityTaskResource[] taskResources = devOpsClient.searchTasks(createdActivityRes.getId(), null, null);
+        assertThat(taskResources).isNotNull();
+        assertThat(taskResources.length).isEqualTo(1);
+        ActivityTaskResource taskRes = taskResources[0];
+        assertThat(taskRes.getName()).isNotNull();
+
+        // When: Complete the task successfully
+        devOpsClient.stopTask(taskRes.getId());
+
+        // Then: Fetch the activity and verify it contains the correct task result key
+        ActivityResource completedActivity = devOpsClient.readActivity(createdActivityRes.getId());
+        assertThat(completedActivity.getStatus()).isEqualTo(ActivityStatus.PROCESSED);
+        // The actual task name from the mock is "testPipeline_0"
+        assertThat(completedActivity.getResults())
+                .isEqualToIgnoringCase("{\"testPipeline_0\":{\"status\":\"PROCESSED\",\"results\":{\"message\":\"OK\"}}}");
+    }
+
+    /**
+     * Test: when a task has a name (from mock), the taskResult contains the correct key
+     */
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testWhenTaskHasNameFromMockThenTaskResultContainsCorrectKey() throws IOException {
+        // Given: Create an activity with a task that has no name
+        createMocksForCreateActivityCall();
+
+        ActivityResource activityRes = resourceBuilder.readResourceFromFile(
+                ODMDevOpsResources.RESOURCE_ACTIVITY_1, ActivityResource.class);
+        activityRes.setStage("prod");
+
+        ActivityResource createdActivityRes = devOpsClient.createActivity(activityRes, false);
+
+        // When: Start the activity to create the task
+        devOpsClient.startActivity(createdActivityRes.getId());
+
+        // Then: Get the task and verify it has a name (the mock creates named tasks)
+        ActivityTaskResource[] taskResources = devOpsClient.searchTasks(createdActivityRes.getId(), null, null);
+        assertThat(taskResources).isNotNull();
+        assertThat(taskResources.length).isEqualTo(1);
+        ActivityTaskResource taskRes = taskResources[0];
+        assertThat(taskRes.getName()).isNotNull(); // The mock creates named tasks
+
+        // When: Complete the task successfully
+        devOpsClient.stopTask(taskRes.getId());
+
+        // Then: Fetch the activity and verify it contains the correct task result key
+        ActivityResource completedActivity = devOpsClient.readActivity(createdActivityRes.getId());
+        assertThat(completedActivity.getStatus()).isEqualTo(ActivityStatus.PROCESSED);
+        // The actual task name from the mock is "testPipeline_0"
+        assertThat(completedActivity.getResults())
+                .isEqualToIgnoringCase("{\"testPipeline_0\":{\"status\":\"PROCESSED\",\"results\":{\"message\":\"OK\"}}}");
+    }
+
+    /**
+     * Test: taskResult contains correctly the result in case of multiple task executed
+     */
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testWhenActivityContainsMultipleTasksThenTaskResultsIsWellFormed() throws IOException {
+        // Given: Create an activity with multiple tasks
+        createMocksForCreateActivityWithMultipleTaskCall();
+        createMocksForCreateActivityWithMultipleTaskCall();
+        createMocksForCreateActivityWithMultipleTaskCall();
+
+        ActivityResource activityRes = resourceBuilder.readResourceFromFile(
+                ODMDevOpsResources.RESOURCE_ACTIVITY_1, ActivityResource.class);
+        activityRes.setStage("prod");
+
+        ActivityResource createdActivityRes = devOpsClient.createActivity(activityRes, false);
+
+        // When: Start the activity to create multiple tasks
+        devOpsClient.startActivity(createdActivityRes.getId());
+
+        // Then: Get all tasks and verify there are multiple tasks
+        ActivityTaskResource[] taskResources = devOpsClient.searchTasks(createdActivityRes.getId(), null, null);
+        assertThat(taskResources).isNotNull();
+        assertThat(taskResources.length).isGreaterThanOrEqualTo(2);
+
+        // When: Complete all tasks successfully
+        for (ActivityTaskResource task : taskResources) {
+            devOpsClient.stopTask(task.getId());
+        }
+
+        // Then: Fetch the activity and verify it contains the correct task results
+        ActivityResource completedActivity = devOpsClient.readActivity(createdActivityRes.getId());
+        assertThat(completedActivity.getStatus()).isEqualTo(ActivityStatus.PROCESSED);
+        assertThat(completedActivity.getResults())
+                .isEqualToIgnoringCase("{\"testPipeline_0\":{\"status\":\"PROCESSED\",\"results\":{\"message\":\"OK\"}},\"testPipeline_1\":{\"status\":\"PROCESSED\",\"results\":{\"message\":\"OK\"}}}");
+    }
+
 }

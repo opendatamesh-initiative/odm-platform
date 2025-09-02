@@ -5,6 +5,7 @@ import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatus;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Entity(name = "Activity")
@@ -46,6 +47,10 @@ public class Activity {
     @Column(name = "FINISHED_AT")
     //@Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime finishedAt;
+
+    @OneToMany(mappedBy = "activity", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Column(insertable = false, updatable = false)
+    private List<Task> tasks;
 
     @PrePersist
     protected void onCreate() {

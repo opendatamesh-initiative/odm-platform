@@ -18,6 +18,10 @@ public class Task  {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACTIVITY_ID", referencedColumnName = "ID", insertable = false, updatable = false)
+    private Activity activity;
+
     @Column(name = "ACTIVITY_ID")
     private Long activityId;
 

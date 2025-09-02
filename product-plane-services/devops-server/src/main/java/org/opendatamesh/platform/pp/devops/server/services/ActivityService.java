@@ -79,7 +79,7 @@ public class ActivityService {
 
         if (activity == null) {
             throw new InternalServerException(
-                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
+                    ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "Activity object cannot be null");
         }
 
@@ -126,7 +126,7 @@ public class ActivityService {
                     + "of product [" + activity.getDataProductId() + "] successfully created");
         } catch (Throwable t) {
             throw new InternalServerException(
-                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
+                    ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occurred in the backend database while saving activity [" + activity.getStage() + "] "
                             + "on version [" + activity.getDataProductVersion() + "] "
                             + "of product [" + activity.getDataProductId() + "]",
@@ -164,15 +164,15 @@ public class ActivityService {
 
     public Activity startActivity(Activity activity) {
 
-        if(activity.getStatus().equals(ActivityStatus.PLANNED) == false) {
-            if(activity.getStatus().equals(ActivityStatus.PROCESSING)) {
+        if (activity.getStatus().equals(ActivityStatus.PLANNED) == false) {
+            if (activity.getStatus().equals(ActivityStatus.PROCESSING)) {
                 throw new ConflictException(
-                DevOpsApiStandardErrors.SC409_01_CONCURRENT_ACTIVITIES,
-                "Activity with id [" + activity.getId() + "] is already started");
+                        DevOpsApiStandardErrors.SC409_01_CONCURRENT_ACTIVITIES,
+                        "Activity with id [" + activity.getId() + "] is already started");
             } else {
                 throw new UnprocessableEntityException(
-                DevOpsApiStandardErrors.SC422_01_ACTIVITY_IS_INVALID,
-                "Only activities in PLANNED state can be started. Activity with id [" + activity.getId() + "] is in state [" + activity.getStatus() + "]");
+                        DevOpsApiStandardErrors.SC422_01_ACTIVITY_IS_INVALID,
+                        "Only activities in PLANNED state can be started. Activity with id [" + activity.getId() + "] is in state [" + activity.getStatus() + "]");
             }
 
         }
@@ -183,10 +183,10 @@ public class ActivityService {
 
     public Activity startActivity(Activity activity, List<Task> plannedTasks) {
 
-        if(activity == null) {
-           throw new InternalServerException(
-                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
-                "Activity object cannot be null");
+        if (activity == null) {
+            throw new InternalServerException(
+                    ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
+                    "Activity object cannot be null");
         }
 
         // verify if there is an already running activity
@@ -222,9 +222,9 @@ public class ActivityService {
             activity = saveActivity(activity);
         } catch (Throwable t) {
             throw new InternalServerException(
-                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
-                   "An error occurred in the backend database while updating activity [" + activity.getId() + "]",
-                 t);
+                    ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
+                    "An error occurred in the backend database while updating activity [" + activity.getId() + "]",
+                    t);
         }
 
         DataProductVersionDPDS dataProductVersionDPDS = readDataProductVersion(activity);
@@ -241,14 +241,14 @@ public class ActivityService {
         return stopActivity(activity, success);
     }
 
-    public Activity abortActivity(Long activityId){
+    public Activity abortActivity(Long activityId) {
         Activity activity = readActivity(activityId);
         LocalDateTime finishedAt = now();
         activity.setFinishedAt(finishedAt);
 
         List<Task> tasks = taskService.searchTasks(activity.getId(), null, null);
-        for(Task task: tasks) {
-            if(task.getStatus().equals(ActivityTaskStatus.PLANNED)
+        for (Task task : tasks) {
+            if (task.getStatus().equals(ActivityTaskStatus.PLANNED)
                     || task.getStatus().equals(ActivityTaskStatus.PROCESSING)) {
                 task.setStatus(ActivityTaskStatus.ABORTED);
                 task.setFinishedAt(finishedAt);
@@ -272,9 +272,9 @@ public class ActivityService {
         activity.setFinishedAt(finishedAt);
 
         List<Task> tasks = taskService.searchTasks(activity.getId(), null, null);
-        for(Task task: tasks) {
-            if(task.getStatus().equals(ActivityTaskStatus.PLANNED)
-            || task.getStatus().equals(ActivityTaskStatus.PROCESSING)) {
+        for (Task task : tasks) {
+            if (task.getStatus().equals(ActivityTaskStatus.PLANNED)
+                    || task.getStatus().equals(ActivityTaskStatus.PROCESSING)) {
                 task.setStatus(ActivityTaskStatus.ABORTED);
                 task.setFinishedAt(finishedAt);
                 taskService.saveTask(task);
@@ -286,7 +286,7 @@ public class ActivityService {
 
 
         if (success) {
-            if(ActivityStatus.ABORTED.equals(activity.getStatus())){
+            if (ActivityStatus.ABORTED.equals(activity.getStatus())) {
                 logger.info("Trying to stop an Activity already ABORTED. Activity: {}", activity.getStage());
                 return activity;
             }
@@ -303,17 +303,17 @@ public class ActivityService {
             }
 
         } else {
-            for(Task task: tasks) {
-                if(task.getStatus().equals(ActivityTaskStatus.FAILED)) {
+            for (Task task : tasks) {
+                if (task.getStatus().equals(ActivityTaskStatus.FAILED)) {
                     activityOutputNode.put(task.getId().toString(), task.getErrors());
                 }
             }
             try {
-				String output = ObjectMapperFactory.JSON_MAPPER.writeValueAsString(activityOutputNode);
+                String output = ObjectMapperFactory.JSON_MAPPER.writeValueAsString(activityOutputNode);
                 activity.setErrors(output);
             } catch (JsonProcessingException e) {
-				logger.warn("Impossible to serialize errors aggregate", e);
-			}
+                logger.warn("Impossible to serialize errors aggregate", e);
+            }
             activity.setStatus(ActivityStatus.FAILED);
             activity = saveActivity(activity);
         }
@@ -333,7 +333,7 @@ public class ActivityService {
             Task actualTask = plannedTasks.get(0);
             try {
                 ObjectNode taskConfigs;
-                if(actualTask.getConfigurations() != null) {
+                if (actualTask.getConfigurations() != null) {
                     taskConfigs = ObjectMapperFactory.JSON_MAPPER.readValue(
                             actualTask.getConfigurations(),
                             ObjectNode.class
@@ -347,9 +347,9 @@ public class ActivityService {
                 logger.warn("Impossible to deserialize config attribute of task to append context", e);
             }
             startedTask = taskService.startTask(actualTask);
-            if(startedTask.getStatus().equals(ActivityTaskStatus.FAILED)) {
+            if (startedTask.getStatus().equals(ActivityTaskStatus.FAILED)) {
                 stopActivity(activityId, false);
-            } else if(plannedTasks.size() == 1 && startedTask.getStatus().equals(ActivityTaskStatus.PROCESSED)) {
+            } else if (plannedTasks.size() == 1 && startedTask.getStatus().equals(ActivityTaskStatus.PROCESSED)) {
                 stopActivity(activityId, true);
             }
         } else { // nothing more to do...
@@ -391,14 +391,14 @@ public class ActivityService {
 
         // If activity is already in a final state, don't change it
         if (activity.getStatus().equals(ActivityStatus.PROCESSED) ||
-            activity.getStatus().equals(ActivityStatus.FAILED) ||
-            activity.getStatus().equals(ActivityStatus.ABORTED)) {
+                activity.getStatus().equals(ActivityStatus.FAILED) ||
+                activity.getStatus().equals(ActivityStatus.ABORTED)) {
             return;
         }
 
         // Check if all tasks have a status different from PLANNED
         boolean allTasksHaveNonPlannedStatus = allTasks.stream()
-            .allMatch(task -> !task.getStatus().equals(ActivityTaskStatus.PLANNED));
+                .allMatch(task -> !task.getStatus().equals(ActivityTaskStatus.PLANNED));
 
         if (!allTasksHaveNonPlannedStatus) {
             return; // Not all tasks have been processed yet
@@ -406,14 +406,14 @@ public class ActivityService {
 
         // Count task statuses
         long processedCount = allTasks.stream()
-            .filter(task -> task.getStatus().equals(ActivityTaskStatus.PROCESSED))
-            .count();
+                .filter(task -> task.getStatus().equals(ActivityTaskStatus.PROCESSED))
+                .count();
         long failedCount = allTasks.stream()
-            .filter(task -> task.getStatus().equals(ActivityTaskStatus.FAILED))
-            .count();
+                .filter(task -> task.getStatus().equals(ActivityTaskStatus.FAILED))
+                .count();
         long abortedCount = allTasks.stream()
-            .filter(task -> task.getStatus().equals(ActivityTaskStatus.ABORTED))
-            .count();
+                .filter(task -> task.getStatus().equals(ActivityTaskStatus.ABORTED))
+                .count();
 
         // Apply the rules
         if (failedCount > 0) {
@@ -429,7 +429,7 @@ public class ActivityService {
     }
 
     public void updateActivityPartialResults(Task task, Boolean updateVariables) {
-        if(
+        if (
                 task.getStatus().equals(ActivityTaskStatus.PROCESSED)
                         && task.getResults() != null
         ) {
@@ -437,9 +437,8 @@ public class ActivityService {
             String partialActivityResults = parentActivity.getResults();
             ObjectNode activityOutputNode;
             String result = null;
-            // Use task name if available, otherwise use task ID as fallback
-            String taskKey = task.getName() != null ? task.getName() : "task" + task.getId();
-            if(partialActivityResults == null) {
+            String taskKey = buildTaskKeyForActivityResults(task, parentActivity);
+            if (partialActivityResults == null) {
                 activityOutputNode = ObjectMapperFactory.JSON_MAPPER.createObjectNode();
                 try {
                     activityOutputNode.put(taskKey, ObjectNodeUtils.toObjectNode(task.getResults()));
@@ -459,9 +458,20 @@ public class ActivityService {
             parentActivity.setResults(result);
             saveActivity(parentActivity);
 
-            if(updateVariables)
+            if (updateVariables)
                 updateDataProductVersionVariables(parentActivity);
         }
+    }
+
+    private String buildTaskKeyForActivityResults(Task task, Activity parentActivity) {
+        int taskOrdinalPosition = parentActivity.getTasks().stream()
+                .filter(t -> t.getId().equals(task.getId()))
+                .findFirst()
+                .map(t -> parentActivity.getTasks().indexOf(t))
+                .orElse(-1);
+        String taskKey = task.getName() != null ? task.getName() : "task";
+        taskKey = taskKey + "_" + taskOrdinalPosition;
+        return taskKey;
     }
 
     private void updateDataProductVersionVariables(Activity activity) {
@@ -475,7 +485,7 @@ public class ActivityService {
                             activity.getDataProductId(),
                             activity.getDataProductVersion()
                     );
-            if(variablesResponse.getStatusCode().is2xxSuccessful()) {
+            if (variablesResponse.getStatusCode().is2xxSuccessful()) {
                 dataProductVersionVariables = List.of(variablesResponse.getBody());
             }
         } catch (JsonProcessingException e) {
@@ -483,9 +493,9 @@ public class ActivityService {
         }
 
         if (dataProductVersionVariables != null) {
-            for(VariableResource var : dataProductVersionVariables) {
+            for (VariableResource var : dataProductVersionVariables) {
                 String[] varTree = var.getVariableName().split("\\.");
-                if(varTree[0].equalsIgnoreCase(activity.getStage()) && varTree[1].equals("results")) {
+                if (varTree[0].equalsIgnoreCase(activity.getStage()) && varTree[1].equals("results")) {
                     JsonNode contextResults = null;
                     try {
                         contextResults = ObjectMapperFactory.JSON_MAPPER.readTree(activity.getResults());
@@ -494,16 +504,16 @@ public class ActivityService {
                                 + "Skipped. ", e);
                     }
                     Boolean variableValueFound = true;
-                    if(contextResults != null) {
-                        for(int i=2; i < varTree.length; i++) {
+                    if (contextResults != null) {
+                        for (int i = 2; i < varTree.length; i++) {
                             contextResults = contextResults.get(varTree[i]);
-                            if(contextResults.isNull()) {
+                            if (contextResults.isNull()) {
                                 variableValueFound = false;
                                 break;
                             }
                         }
                     }
-                    if(variableValueFound && !contextResults.isNull()) {
+                    if (variableValueFound && !contextResults.isNull()) {
                         try {
                             clients.getRegistryClient().updateVariable(
                                     activity.getDataProductId(),
@@ -531,7 +541,7 @@ public class ActivityService {
             activities = loadAllActivities();
         } catch (Throwable t) {
             throw new InternalServerException(
-                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
+                    ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occurred in the backend database while loading activity",
                     t);
         }
@@ -545,7 +555,7 @@ public class ActivityService {
     public Activity readActivity(Activity activity) {
         if (activity == null) {
             throw new InternalServerException(
-                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
+                    ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "Activity object cannot be null");
         }
         return readActivity(activity.getId());
@@ -615,7 +625,7 @@ public class ActivityService {
                     null;
             activityContext.setFinishedAt(activityFinishedAt);
             Map<String, Object> contextualizedActivityResults = null;
-            if(activity.getResults() != null) {
+            if (activity.getResults() != null) {
                 try {
                     contextualizedActivityResults = ObjectMapperFactory.JSON_MAPPER.readValue(
                             activity.getResults(),
@@ -642,7 +652,7 @@ public class ActivityService {
     private boolean activityExists(Long activityId) {
         if (activityId == null) {
             throw new InternalServerException(
-                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
+                    ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "Activity object cannot be null");
         }
 
@@ -662,7 +672,7 @@ public class ActivityService {
             activitySearchResults = findActivities(dataProductId, dataProductVersion, stage, status);
         } catch (Throwable t) {
             throw new InternalServerException(
-                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
+                    ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occurred in the backend database while searching activities",
                     t);
         }
@@ -682,12 +692,12 @@ public class ActivityService {
                     "An error occurred in the backend database while searching activities",
                     t);
         }
-        if(activitySearchResults != null) {
+        if (activitySearchResults != null) {
             activitySearchResults = activitySearchResults.stream()
                     .filter(
                             activity ->
                                     activity.getStatus().equals(ActivityStatus.PROCESSED) ||
-                                    activity.getStatus().equals(ActivityStatus.PROCESSING)
+                                            activity.getStatus().equals(ActivityStatus.PROCESSING)
                     )
                     .collect(Collectors.toList());
             activitySearchResults.sort(Comparator.comparing(Activity::getId));
@@ -710,7 +720,7 @@ public class ActivityService {
         final Activity activity = activityRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(DevOpsApiStandardErrors.SC404_01_ACTIVITY_NOT_FOUND, "Activity not found"));
         if (activity.getStatus() != ActivityStatus.PLANNED) {
-            throw new UnprocessableEntityException(DevOpsApiStandardErrors.SC422_01_ACTIVITY_IS_INVALID ,"Cannot delete activities not planned");
+            throw new UnprocessableEntityException(DevOpsApiStandardErrors.SC422_01_ACTIVITY_IS_INVALID, "Cannot delete activities not planned");
         }
         activityRepository.deleteById(id);
         return mapper.toResource(activity);
@@ -735,10 +745,10 @@ public class ActivityService {
 
         // If status is being set to a final state and finishedAt is not set, set it to now
         if (activityUpdate.getStatus() != null &&
-            (activityUpdate.getStatus().equals(ActivityStatus.PROCESSED) ||
-             activityUpdate.getStatus().equals(ActivityStatus.FAILED) ||
-             activityUpdate.getStatus().equals(ActivityStatus.ABORTED)) &&
-            existingActivity.getFinishedAt() == null) {
+                (activityUpdate.getStatus().equals(ActivityStatus.PROCESSED) ||
+                        activityUpdate.getStatus().equals(ActivityStatus.FAILED) ||
+                        activityUpdate.getStatus().equals(ActivityStatus.ABORTED)) &&
+                existingActivity.getFinishedAt() == null) {
             existingActivity.setFinishedAt(now());
         }
 
@@ -747,7 +757,7 @@ public class ActivityService {
             logger.info("Activity [" + existingActivity.getId() + "] successfully updated");
         } catch (Throwable t) {
             throw new InternalServerException(
-                ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
+                    ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occurred in the backend database while updating activity [" + id + "]",
                     t);
         }
@@ -772,7 +782,7 @@ public class ActivityService {
 
         LifecycleInfoDPDS lifecycleInfo = dataProductVersion.getInternalComponents().getLifecycleInfo();
         List<LifecycleTaskInfoDPDS> stageTasksInfoRes = lifecycleInfo.getTasksInfo(activity.getStage());
-        if(stageTasksInfoRes != null) {
+        if (stageTasksInfoRes != null) {
             tasksInfoRes.addAll(stageTasksInfoRes);
         }
         return tasksInfoRes;
@@ -800,7 +810,7 @@ public class ActivityService {
                     activity.getDataProductVersion());
         } catch (Throwable t) {
             throw new InternalServerException(
-                ODMApiCommonErrors.SC500_50_REGISTRY_SERVICE_ERROR,
+                    ODMApiCommonErrors.SC500_50_REGISTRY_SERVICE_ERROR,
                     "An errror occurred while reading data product version from ODM Registry", t);
         }
 
@@ -834,7 +844,7 @@ public class ActivityService {
     private LocalDateTime now() {
         LocalDateTime now = LocalDateTime.now();
         now = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(),
-        now.getHour(), now.getMinute(), now.getSecond(), 0);
+                now.getHour(), now.getMinute(), now.getSecond(), 0);
         return now;
     }
 }

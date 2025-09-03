@@ -464,14 +464,21 @@ public class ActivityService {
     }
 
     private String buildTaskKeyForActivityResults(Task task, Activity parentActivity) {
-        int taskOrdinalPosition = parentActivity.getTasks().stream()
-                .filter(t -> t.getId().equals(task.getId()))
-                .findFirst()
-                .map(t -> parentActivity.getTasks().indexOf(t))
-                .orElse(-1);
+        // Sort tasks by sequenceId before computing ordinal position
+        List<Task> orderedTasks = parentActivity.getTasks().stream()
+                .sorted(Comparator.comparing(Task::getId))
+                .collect(Collectors.toList());
+
+        int taskOrdinalPosition = -1;
+        for (int i = 0; i < orderedTasks.size(); i++) {
+            if (orderedTasks.get(i).getId().equals(task.getId())) {
+                taskOrdinalPosition = i;
+                break;
+            }
+        }
+
         String taskKey = task.getName() != null ? task.getName() : "task";
-        taskKey = taskKey + "_" + taskOrdinalPosition;
-        return taskKey;
+        return taskKey + "_" + taskOrdinalPosition;
     }
 
     private void updateDataProductVersionVariables(Activity activity) {

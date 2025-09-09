@@ -735,6 +735,9 @@ public class ActivityService {
 
     public Activity updateActivity(Long id, Activity activityUpdate) {
         Activity existingActivity = readActivity(id);
+        
+        // Store original status to determine notification type
+        ActivityStatus originalStatus = existingActivity.getStatus();
 
         // Update allowed fields
         if (activityUpdate.getStatus() != null) {
@@ -767,6 +770,21 @@ public class ActivityService {
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occurred in the backend database while updating activity [" + id + "]",
                     t);
+        }
+
+        // Send notification if status changed
+        if (activityUpdate.getStatus() != null && !originalStatus.equals(activityUpdate.getStatus())) {
+            DataProductVersionDPDS dataProductVersion = readDataProductVersion(existingActivity);
+            
+            if (activityUpdate.getStatus().equals(ActivityStatus.PROCESSING)) {
+                // Status changed to PROCESSING -> notify start
+                devOpsNotificationServiceProxy.notifyActivityStart(mapper.toResource(existingActivity), dataProductVersion);
+            } else if (activityUpdate.getStatus().equals(ActivityStatus.PROCESSED) ||
+                       activityUpdate.getStatus().equals(ActivityStatus.FAILED) ||
+                       activityUpdate.getStatus().equals(ActivityStatus.ABORTED)) {
+                // Status changed to final state -> notify completion
+                devOpsNotificationServiceProxy.notifyActivityCompletion(mapper.toResource(existingActivity), dataProductVersion);
+            }
         }
 
         return existingActivity;

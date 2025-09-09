@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(
@@ -192,10 +193,12 @@ public abstract class AbstractActivityController {
             @Valid @PathVariable(value = "id") Long id,
 
             @Parameter(description = "Action to perform on the activity. Supported values: START, ABORT")
-            @RequestParam(required = true, name = "action") String action) {
+            @RequestParam(required = true, name = "action") String action,
+            
+            @RequestHeader(required = false) Map<String, String> headers) {
 
         if ("START".equalsIgnoreCase(action)) {
-            return startActivity(id);
+            return startActivity(id, headers);
         } else if ("ABORT".equalsIgnoreCase(action)) {
             return abortActivity(id);
         } else {
@@ -206,6 +209,8 @@ public abstract class AbstractActivityController {
     }
 
     public abstract ActivityStatusResource startActivity(Long id);
+
+    public abstract ActivityStatusResource startActivity(Long id, Map<String, String> headers);
 
     public abstract ActivityStatusResource abortActivity(Long activityId);
 

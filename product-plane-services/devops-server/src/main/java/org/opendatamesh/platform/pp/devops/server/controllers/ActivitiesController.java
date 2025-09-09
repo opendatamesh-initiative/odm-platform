@@ -9,8 +9,11 @@ import org.opendatamesh.platform.pp.devops.server.database.mappers.ActivityMappe
 import org.opendatamesh.platform.pp.devops.server.services.ActivityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpHeaders;
 
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 @RestController
 public class ActivitiesController extends AbstractActivityController {
@@ -30,9 +33,37 @@ public class ActivitiesController extends AbstractActivityController {
         return activityMapper.toResource(activity);
     }
 
+    /**
+     * Creates an activity with headers for executor secrets.
+     * This method extracts executor secrets from headers and passes them to the service.
+     */
+    public ActivityResource createActivity(
+        ActivityResource activityRes,
+        boolean startAfterCreation,
+        HttpHeaders headers)
+    {
+        // Convert HttpHeaders to Map<String, String>
+        Map<String, String> headersMap = new HashMap<>();
+        if (headers != null) {
+            headers.forEach((key, values) -> {
+                if (!values.isEmpty()) {
+                    headersMap.put(key, values.get(0)); // Take the first value
+                }
+            });
+        }
+
+        Activity activity = activityService.createActivity(activityMapper.toEntity(activityRes), startAfterCreation, headersMap);
+        return activityMapper.toResource(activity);
+    }
+
     @Override
     public ActivityStatusResource startActivity(Long id) {
-        Activity activity = activityService.startActivity(id);
+        return startActivity(id, null);
+    }
+
+    @Override
+    public ActivityStatusResource startActivity(Long id, Map<String, String> headers) {
+        Activity activity = activityService.startActivity(id, headers);
         ActivityStatusResource statusRes = new ActivityStatusResource();
         statusRes.setStatus(activity.getStatus());
         return statusRes;

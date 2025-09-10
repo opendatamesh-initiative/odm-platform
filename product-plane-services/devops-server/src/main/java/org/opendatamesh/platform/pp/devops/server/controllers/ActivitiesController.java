@@ -7,9 +7,11 @@ import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatusResource;
 import org.opendatamesh.platform.pp.devops.server.database.entities.Activity;
 import org.opendatamesh.platform.pp.devops.server.database.mappers.ActivityMapper;
 import org.opendatamesh.platform.pp.devops.server.services.ActivityService;
+import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsClients;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.http.HttpHeaders;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -17,6 +19,8 @@ import java.util.HashMap;
 
 @RestController
 public class ActivitiesController extends AbstractActivityController {
+
+    private static final Logger logger = LoggerFactory.getLogger(ActivitiesController.class);
 
     @Autowired
     ActivityService activityService;
@@ -27,43 +31,30 @@ public class ActivitiesController extends AbstractActivityController {
     @Override
     public ActivityResource createActivity(
         ActivityResource activityRes,
-        boolean startAfterCreation)
-    {
-        Activity activity = activityService.createActivity(activityMapper.toEntity(activityRes), startAfterCreation);
-        return activityMapper.toResource(activity);
-    }
-
-    /**
-     * Creates an activity with headers for executor secrets.
-     * This method extracts executor secrets from headers and passes them to the service.
-     */
-    public ActivityResource createActivity(
-        ActivityResource activityRes,
         boolean startAfterCreation,
-        HttpHeaders headers)
+        Map<String, String> headers)
     {
-        // Convert HttpHeaders to Map<String, String>
-        Map<String, String> headersMap = new HashMap<>();
-        if (headers != null) {
-            headers.forEach((key, values) -> {
-                if (!values.isEmpty()) {
-                    headersMap.put(key, values.get(0)); // Take the first value
-                }
-            });
+        // Create the activity first
+        Activity activity = activityService.createActivity(activityMapper.toEntity(activityRes), startAfterCreation);
+        
+        // Process executor secrets and store them in cache
+        processExecutorSecrets(headers, activity.getId());
+        
+        // Start the activity if requested (after secrets are processed)
+        if (startAfterCreation) {
+            activity = activityService.startActivity(activity);
         }
-
-        Activity activity = activityService.createActivity(activityMapper.toEntity(activityRes), startAfterCreation, headersMap);
+        
         return activityMapper.toResource(activity);
-    }
-
-    @Override
-    public ActivityStatusResource startActivity(Long id) {
-        return startActivity(id, null);
     }
 
     @Override
     public ActivityStatusResource startActivity(Long id, Map<String, String> headers) {
-        Activity activity = activityService.startActivity(id, headers);
+        // Process executor secrets and store them in cache
+        processExecutorSecrets(headers, id);
+        
+        // Start the activity
+        Activity activity = activityService.startActivity(id);
         ActivityStatusResource statusRes = new ActivityStatusResource();
         statusRes.setStatus(activity.getStatus());
         return statusRes;
@@ -119,5 +110,62 @@ public class ActivitiesController extends AbstractActivityController {
     public ActivityResource updateActivity(Long id, ActivityResource activityRes) {
         Activity activity = activityService.updateActivity(id, activityMapper.toEntity(activityRes));
         return activityMapper.toResource(activity);
+    }
+
+    // ======================================================================================
+    // EXECUTOR SECRETS PROCESSING
+    // ======================================================================================
+
+    /**
+     * Processes executor secrets from HTTP headers and stores them in the cache.
+     * This method extracts headers matching the pattern "x-odm-<executorName>-executor-secret-<secretType>"
+     * and transforms them to "x-odm-<secretType>" for storage in the cache.
+     * 
+     * @param headers The HTTP headers containing executor secrets
+     * @param activityId The activity ID to associate the secrets with
+     */
+    private void processExecutorSecrets(Map<String, String> headers, Long activityId) {
+        if (headers == null || activityId == null) {
+            return;
+        }
+
+        // Group secrets by executor name
+        Map<String, Map<String, String>> executorSecrets = new HashMap<>();
+
+        for (Map.Entry<String, String> header : headers.entrySet()) {
+            String headerName = header.getKey();
+            String headerValue = header.getValue();
+
+            // Filter headers that match the pattern: x-odm-<executorName>-executor-secret-<secretType>
+            if (headerName.startsWith("x-odm-") && headerName.contains("-executor-secret-")) {
+                // Extract executor name: between "x-odm-" and "-executor-secret-"
+                String executorSecretMarker = "-executor-secret-";
+                int executorSecretIndex = headerName.indexOf(executorSecretMarker);
+                
+                if (executorSecretIndex > 6) { // 6 is length of "x-odm-"
+                    String executorName = headerName.substring(6, executorSecretIndex); // 6 is length of "x-odm-"
+                    
+                    // Extract secret type: everything after "-executor-secret-"
+                    String secretType = headerName.substring(executorSecretIndex + executorSecretMarker.length());
+                    
+                    // Create transformed header name: x-odm-<secretType>
+                    String transformedHeaderName = "x-odm-" + secretType;
+
+                    // Store in executor secrets map
+                    executorSecrets.computeIfAbsent(executorName, k -> new HashMap<>())
+                            .put(transformedHeaderName, headerValue);
+                }
+            }
+        }
+
+        // Store secrets in cache for each executor
+        for (Map.Entry<String, Map<String, String>> executorEntry : executorSecrets.entrySet()) {
+            String executorName = executorEntry.getKey();
+            Map<String, String> secrets = executorEntry.getValue();
+            
+            DevOpsClients.storeSecrets(executorName, activityId, secrets);
+            logger.debug("Stored {} secrets for executor '{}' and activity {}", 
+                        secrets.size(), executorName, activityId);
+        }
     }
 }

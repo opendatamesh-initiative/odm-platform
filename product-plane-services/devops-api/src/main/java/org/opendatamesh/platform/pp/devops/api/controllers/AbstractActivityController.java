@@ -115,13 +115,15 @@ public abstract class AbstractActivityController {
             @RequestBody ActivityResource activity,
             @Parameter(
                     description = "Pass true to start the activity after creation")
-            @RequestParam(required = false, name = "startAfterCreation") boolean startAfterCreation) {
-        return createActivity(activity, startAfterCreation);
+            @RequestParam(required = false, name = "startAfterCreation") boolean startAfterCreation,
+            @RequestHeader(required = false) Map<String, String> headers) {
+        return createActivity(activity, startAfterCreation, headers);
     }
 
     public abstract ActivityResource createActivity(
             ActivityResource activity,
-            boolean startAfterCreation
+            boolean startAfterCreation,
+            Map<String, String> headers
     );
 
     // ===============================================================================
@@ -207,8 +209,6 @@ public abstract class AbstractActivityController {
                     "Action [" + action + "] cannot be performed on activity to change its status");
         }
     }
-
-    public abstract ActivityStatusResource startActivity(Long id);
 
     public abstract ActivityStatusResource startActivity(Long id, Map<String, String> headers);
 

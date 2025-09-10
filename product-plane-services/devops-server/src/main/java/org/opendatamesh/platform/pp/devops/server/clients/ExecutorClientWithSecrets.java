@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 @Data
@@ -23,12 +24,13 @@ public class ExecutorClientWithSecrets extends ODMClient {
     public ExecutorClientWithSecrets(String serverAddress, Boolean checkAfterCallback) {
         super(serverAddress, ObjectMapperFactory.JSON_MAPPER);
         this.checkAfterCallback = checkAfterCallback;
+        this.secretHeaders = new HashMap<>();
     }
 
     public ExecutorClientWithSecrets(String serverAddress, Boolean checkAfterCallback, Map<String, String> secretHeaders) {
         super(serverAddress, ObjectMapperFactory.JSON_MAPPER);
         this.checkAfterCallback = checkAfterCallback;
-        this.secretHeaders = secretHeaders;
+        this.secretHeaders = secretHeaders != null ? secretHeaders : new HashMap<>();
     }
 
     // ======================================================================================

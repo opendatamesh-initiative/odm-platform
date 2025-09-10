@@ -76,13 +76,6 @@ public class ActivityService {
     public Activity createActivity(
             Activity activity,
             boolean startAfterCreation) {
-        return createActivity(activity, startAfterCreation, null);
-    }
-
-    public Activity createActivity(
-            Activity activity,
-            boolean startAfterCreation,
-            Map<String, String> headers) {
 
         if (activity == null) {
             throw new InternalServerException(
@@ -140,17 +133,11 @@ public class ActivityService {
                     t);
         }
 
-        // Process executor secrets from headers and store them in cache
-        processExecutorSecrets(headers, activity.getId());
 
         // create tasks associated with the given activity
-        List<Task> tasks = taskService.createTasks(activity.getId(), activitiesInfo);
+        taskService.createTasks(activity.getId(), activitiesInfo);
 
         devOpsNotificationServiceProxy.notifyActivityCreation(mapper.toResource(activity), dataProductVersion);
-
-        if (startAfterCreation) {
-            activity = startActivity(activity, tasks);
-        }
 
         return activity;
     }
@@ -164,18 +151,9 @@ public class ActivityService {
     // START/STOP
     // ======================================================================================
     public Activity startActivity(Long activityId) {
-        return startActivity(activityId, null);
-    }
-
-    public Activity startActivity(Long activityId, Map<String, String> headers) {
         Activity activity = null;
 
         activity = readActivity(activityId);
-        
-        // Process executor secrets from headers and store them in cache
-        if (headers != null) {
-            processExecutorSecrets(headers, activityId);
-        }
         
         activity = startActivity(activity);
 
@@ -897,56 +875,5 @@ public class ActivityService {
         now = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(),
                 now.getHour(), now.getMinute(), now.getSecond(), 0);
         return now;
-    }
-
-    /**
-     * Processes request headers to extract executor secrets and store them in the cache.
-     * 
-     * @param headers Map of request headers
-     * @param activityId The ID of the activity
-     */
-    private void processExecutorSecrets(Map<String, String> headers, Long activityId) {
-        if (headers == null || activityId == null) {
-            return;
-        }
-
-        // Group secrets by executor name
-        Map<String, Map<String, String>> executorSecrets = new HashMap<>();
-
-        for (Map.Entry<String, String> header : headers.entrySet()) {
-            String headerName = header.getKey();
-            String headerValue = header.getValue();
-
-            // Filter headers that match the pattern: x-odm-<executorName>-executor-secret-<secretType>
-            if (headerName.startsWith("x-odm-") && headerName.contains("-executor-secret-")) {
-                // Extract executor name: between "x-odm-" and "-executor-secret-"
-                String executorSecretMarker = "-executor-secret-";
-                int executorSecretIndex = headerName.indexOf(executorSecretMarker);
-                
-                if (executorSecretIndex > 6) { // 6 is length of "x-odm-"
-                    String executorName = headerName.substring(6, executorSecretIndex); // 6 is length of "x-odm-"
-                    
-                    // Extract secret type: everything after "-executor-secret-"
-                    String secretType = headerName.substring(executorSecretIndex + executorSecretMarker.length());
-                    
-                    // Create transformed header name: x-odm-<secretType>
-                    String transformedHeaderName = "x-odm-" + secretType;
-
-                    // Store in executor secrets map
-                    executorSecrets.computeIfAbsent(executorName, k -> new HashMap<>())
-                            .put(transformedHeaderName, headerValue);
-                }
-            }
-        }
-
-        // Store secrets in cache for each executor
-        for (Map.Entry<String, Map<String, String>> executorEntry : executorSecrets.entrySet()) {
-            String executorName = executorEntry.getKey();
-            Map<String, String> secrets = executorEntry.getValue();
-            
-            DevOpsClients.storeSecrets(executorName, activityId, secrets);
-            logger.debug("Stored {} secrets for executor '{}' and activity {}", 
-                        secrets.size(), executorName, activityId);
-        }
     }
 }

@@ -19,7 +19,7 @@ import org.opendatamesh.platform.pp.devops.server.database.repositories.TaskRepo
 import org.opendatamesh.platform.pp.devops.server.services.proxies.DevOpsNotificationServiceProxy;
 import org.opendatamesh.platform.pp.devops.server.services.proxies.DevopsPolicyServiceProxy;
 import org.opendatamesh.platform.pp.registry.api.resources.ExternalComponentResource;
-import org.opendatamesh.platform.up.executor.api.clients.ExecutorClient;
+import org.opendatamesh.platform.pp.devops.server.clients.ExecutorClientWithSecrets;
 import org.opendatamesh.platform.up.executor.api.resources.TaskResource;
 import org.opendatamesh.platform.up.executor.api.resources.TaskStatus;
 import org.slf4j.Logger;
@@ -62,7 +62,7 @@ public class TaskService {
     @Lazy
     private ActivityService activityService;
 
-    private ExecutorClient odmExecutor;
+    private ExecutorClientWithSecrets odmExecutor;
 
     private static final Logger logger = LoggerFactory.getLogger(ActivityService.class);
 
@@ -218,7 +218,7 @@ public class TaskService {
             callbackRef += "/" + task.getId() + "/status?action=STOP";
             taskRes.setCallbackRef(callbackRef);
 
-            odmExecutor = clients.getExecutorClient(task.getExecutorRef());
+            odmExecutor = clients.getExecutorClient(task.getExecutorRef(), task.getActivityId());
             if (odmExecutor != null) {
                 taskRes = odmExecutor.createTask(taskRes);
             } else {
@@ -249,7 +249,7 @@ public class TaskService {
 
             // Ask to the DevOps provider the real status of the Task
             TaskStatus taskRealStatus = null;
-            odmExecutor = clients.getExecutorClient(task.getExecutorRef());
+            odmExecutor = clients.getExecutorClient(task.getExecutorRef(), task.getActivityId());
             if (odmExecutor != null && odmExecutor.getCheckAfterCallback()) {
                 taskRealStatus = odmExecutor.readTaskStatus(task.getId());
             }

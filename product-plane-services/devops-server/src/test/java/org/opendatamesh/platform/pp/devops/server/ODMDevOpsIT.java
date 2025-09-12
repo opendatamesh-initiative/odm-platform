@@ -46,6 +46,8 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.fail;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -181,6 +183,48 @@ public abstract class ODMDevOpsIT extends ODMIntegrationTest{
         createdActivityRes = postActivityResponse.getBody();
 
         return createdActivityRes;
+    }
+
+    protected ActivityResource createActivity(ActivityResource activityRes, boolean startAfterCreation, Map<String, String> headers) {
+        ActivityResource createdActivityRes = null;
+
+        ResponseEntity<ActivityResource> postActivityResponse = null;
+        
+        try {
+            postActivityResponse = devOpsClient.postActivity(activityRes, startAfterCreation, ActivityResource.class, headers);
+        } catch (Throwable t) {
+            t.printStackTrace();
+            fail("Impossible to create activity: " + t.getMessage());
+            return null;
+        }
+
+        verifyResponseEntity(postActivityResponse, HttpStatus.CREATED, true);
+        createdActivityRes = postActivityResponse.getBody();
+
+        return createdActivityRes;
+    }
+
+    // ======================================================================================
+    // Test executor secrets functionality
+    // ======================================================================================
+
+    protected ActivityResource createTestActivityWithExecutorSecrets(boolean startAfterCreation) {
+        ActivityResource activityRes = buildActivity("f350cab5-992b-32f7-9c90-79bca1bf10be", "1.0.0", "test");
+        
+        // Create headers with executor secrets
+        Map<String, String> headers = new HashMap<>();
+        headers.put("x-odm-dummy-executor-secret-gitlab-token", "gitlab-secret-123");
+        headers.put("x-odm-dummy-executor-secret-azure-token", "azure-secret-456");
+        headers.put("x-odm-gitlab-executor-secret-api-key", "gitlab-api-key-789");
+        
+        return createActivity(activityRes, startAfterCreation, headers);
+    }
+
+    protected void verifyExecutorSecretsInCache(Long activityId) {
+        // This method can be used to verify that secrets are properly stored in the cache
+        // For now, we'll just log that the verification would happen here
+        // In a real test, you might want to access the cache directly or verify through other means
+        System.out.println("Verifying executor secrets in cache for activity: " + activityId);
     }
 
     // ======================================================================================

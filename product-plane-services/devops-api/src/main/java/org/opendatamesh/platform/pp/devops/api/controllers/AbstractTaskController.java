@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -155,12 +156,14 @@ public abstract class AbstractTaskController {
             @RequestParam(required = true, name = "action") String action,
 
             @Parameter(description = "Set `updateVariables=false` to prevent variable extraction from the result. Applies only to STOP. Default is `true`.")
-            @RequestParam(required = false, name = "updateVariables") Boolean updateVariables
+            @RequestParam(required = false, name = "updateVariables") Boolean updateVariables,
+            
+            @RequestHeader(required = false) Map<String, String> headers
     ) {
         if (updateVariables == null)
             updateVariables = true;
         if ("START".equalsIgnoreCase(action)) {
-            return startTask(id);
+            return startTask(id, headers);
         } else if ("ABORT".equalsIgnoreCase(action)) {
             return abortTask(id);
         } else if ("STOP".equalsIgnoreCase(action)) {
@@ -173,7 +176,7 @@ public abstract class AbstractTaskController {
     }
     public abstract TaskStatusResource stopTask(Long id, TaskResultResource taskResultResource, Boolean updateVariables);
 
-    public abstract TaskStatusResource startTask( Long id);
+    public abstract TaskStatusResource startTask(Long id, Map<String, String> headers);
 
     public abstract TaskStatusResource abortTask( Long id);
     // ===============================================================================

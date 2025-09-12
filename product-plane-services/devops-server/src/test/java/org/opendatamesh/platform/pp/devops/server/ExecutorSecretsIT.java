@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityResource;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatus;
 import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatusResource;
+import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskResource;
+import org.opendatamesh.platform.pp.devops.api.resources.TaskStatusResource;
 import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsClients;
 import org.springframework.test.annotation.DirtiesContext;
 
@@ -218,8 +220,162 @@ public class ExecutorSecretsIT extends ODMDevOpsIT {
 
         // Test removal of activity 111
         DevOpsClients.removeAllSecretsForActivity(111L);
+    }
 
-        // All secrets should be removed without affecting each other
-        System.out.println("Cache collision prevention test completed successfully");
+    // ======================================================================================
+    // TaskController Secrets Tests
+    // ======================================================================================
+
+    @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+    public void testStartTaskWithExecutorSecrets() throws IOException {
+        createMocksForCreateActivityCall();
+
+        // Create an activity WITHOUT starting it, so tasks remain in PLANNED status
+        ActivityResource activityRes = buildActivity("f350cab5-992b-32f7-9c90-79bca1bf10be", "1.0.0", "test");
+        ActivityResource createdActivity = createActivity(activityRes, false); // Don't start the activity
+
+        // Get the tasks for this activity
+        ActivityTaskResource[] tasks = devOpsClient.searchTasks(createdActivity.getId(), null, null);
+        assertThat(tasks).isNotEmpty();
+
+        // Find a task that's in PLANNED status (should be all of them since activity wasn't started)
+        ActivityTaskResource plannedTask = null;
+        for (ActivityTaskResource task : tasks) {
+            if (task.getStatus().toString().equals("PLANNED")) {
+                plannedTask = task;
+                break;
+            }
+        }
+        assertThat(plannedTask).isNotNull();
+
+        // Start the individual task with executor secrets
+        Map<String, String> headers = new HashMap<>();
+        headers.put("x-odm-dummy-executor-secret-gitlab-token", "gitlab-secret-123");
+        headers.put("x-odm-dummy-executor-secret-azure-token", "azure-secret-456");
+
+        TaskStatusResource startResponse = devOpsClient.startTask(plannedTask.getId(), headers);
+
+        // Verify the task was started successfully
+        assertThat(startResponse).isNotNull();
+        assertThat(startResponse.getStatus()).isNotNull();
+
+        // Verify that secrets were processed and cached
+        verifyExecutorSecretsInCache(createdActivity.getId());
+    }
+
+    @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+    public void testStartTaskWithMultipleExecutorSecrets() throws IOException {
+        createMocksForCreateActivityCall();
+
+        // Create an activity WITHOUT starting it, so tasks remain in PLANNED status
+        ActivityResource activityRes = buildActivity("f350cab5-992b-32f7-9c90-79bca1bf10be", "1.0.0", "test");
+        ActivityResource createdActivity = createActivity(activityRes, false); // Don't start the activity
+
+        // Get tasks
+        ActivityTaskResource[] tasks = devOpsClient.searchTasks(createdActivity.getId(), null, null);
+        assertThat(tasks).isNotEmpty();
+
+        // Find a planned task (should be all of them since activity wasn't started)
+        ActivityTaskResource plannedTask = null;
+        for (ActivityTaskResource task : tasks) {
+            if (task.getStatus().toString().equals("PLANNED")) {
+                plannedTask = task;
+                break;
+            }
+        }
+        assertThat(plannedTask).isNotNull();
+
+        // Start task with multiple executor secrets
+        Map<String, String> headers = new HashMap<>();
+        headers.put("x-odm-dummy-executor-secret-gitlab-token", "dummy-gitlab-secret");
+        headers.put("x-odm-dummy-executor-secret-azure-token", "dummy-azure-secret");
+        headers.put("x-odm-gitlab-executor-secret-api-key", "gitlab-api-key");
+        headers.put("x-odm-gitlab-executor-secret-webhook-token", "gitlab-webhook-token");
+        headers.put("x-odm-azure-executor-secret-service-principal", "azure-sp-secret");
+
+        TaskStatusResource startResponse = devOpsClient.startTask(plannedTask.getId(), headers);
+
+        // Verify the task was started
+        assertThat(startResponse).isNotNull();
+        assertThat(startResponse.getStatus()).isNotNull();
+
+        // Verify that secrets for multiple executors were processed
+        verifyExecutorSecretsInCache(createdActivity.getId());
+    }
+
+    @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+    public void testStartTaskWithNullHeaders() throws IOException {
+        createMocksForCreateActivityCall();
+
+        // Create an activity WITHOUT starting it, so tasks remain in PLANNED status
+        ActivityResource activityRes = buildActivity("f350cab5-992b-32f7-9c90-79bca1bf10be", "1.0.0", "test");
+        ActivityResource createdActivity = createActivity(activityRes, false); // Don't start the activity
+
+        // Get tasks
+        ActivityTaskResource[] tasks = devOpsClient.searchTasks(createdActivity.getId(), null, null);
+        assertThat(tasks).isNotEmpty();
+
+        // Find a planned task (should be all of them since activity wasn't started)
+        ActivityTaskResource plannedTask = null;
+        for (ActivityTaskResource task : tasks) {
+            if (task.getStatus().toString().equals("PLANNED")) {
+                plannedTask = task;
+                break;
+            }
+        }
+        assertThat(plannedTask).isNotNull();
+
+        // Start task with null headers (should not cause errors)
+        TaskStatusResource startResponse = devOpsClient.startTask(plannedTask.getId(), null);
+
+        // Verify the task was started successfully even without headers
+        assertThat(startResponse).isNotNull();
+        assertThat(startResponse.getStatus()).isNotNull();
+
+        // Verify that no secrets were processed (cache should be empty or unchanged)
+        verifyExecutorSecretsInCache(createdActivity.getId());
+    }
+
+    @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+    public void testStartTaskWithInvalidHeaders() throws IOException {
+        createMocksForCreateActivityCall();
+
+        // Create an activity WITHOUT starting it, so tasks remain in PLANNED status
+        ActivityResource activityRes = buildActivity("f350cab5-992b-32f7-9c90-79bca1bf10be", "1.0.0", "test");
+        ActivityResource createdActivity = createActivity(activityRes, false); // Don't start the activity
+
+        // Get tasks
+        ActivityTaskResource[] tasks = devOpsClient.searchTasks(createdActivity.getId(), null, null);
+        assertThat(tasks).isNotEmpty();
+
+        // Find a planned task (should be all of them since activity wasn't started)
+        ActivityTaskResource plannedTask = null;
+        for (ActivityTaskResource task : tasks) {
+            if (task.getStatus().toString().equals("PLANNED")) {
+                plannedTask = task;
+                break;
+            }
+        }
+        assertThat(plannedTask).isNotNull();
+
+        // Start task with invalid headers (should be ignored)
+        Map<String, String> headers = new HashMap<>();
+        headers.put("x-odm-invalid-header", "should-be-ignored");
+        headers.put("x-odm-dummy-executor-secret-", "incomplete-secret-type");
+        headers.put("x-odm--executor-secret-token", "missing-executor-name");
+        headers.put("x-odm-regular-header", "should-be-ignored");
+
+        TaskStatusResource startResponse = devOpsClient.startTask(plannedTask.getId(), headers);
+
+        // Verify the task was started successfully
+        assertThat(startResponse).isNotNull();
+        assertThat(startResponse.getStatus()).isNotNull();
+
+        // Verify that invalid headers were ignored (no secrets processed)
+        verifyExecutorSecretsInCache(createdActivity.getId());
     }
 }

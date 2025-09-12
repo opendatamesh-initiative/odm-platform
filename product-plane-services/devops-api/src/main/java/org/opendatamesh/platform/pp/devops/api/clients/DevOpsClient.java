@@ -239,6 +239,28 @@ public class DevOpsClient extends ODMClient {
                 activityId.toString());
     }
 
+    public TaskStatusResource startTask(Long taskId, Map<String, String> headers) {
+        return patchTaskStart(taskId, headers).getBody();
+    }
+
+    public ResponseEntity<TaskStatusResource> patchTaskStart(Long taskId, Map<String, String> headers) {
+        return patchTaskStart(taskId, headers, TaskStatusResource.class);
+    }
+
+    public <T> ResponseEntity<T> patchTaskStart(Long taskId, Map<String, String> headers, Class<T> responseType) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        if (headers != null) {
+            headers.forEach(httpHeaders::set);
+        }
+        HttpEntity<?> entity = new HttpEntity<>(httpHeaders);
+        
+        return patchForEntity(
+                apiUrl(DevOpsAPIRoutes.TASKS, "/{id}/status?action=START"),
+                entity,
+                responseType,
+                taskId);
+    }
+
     public TaskStatusResource stopTask(Long taskId) {
         return patchTaskStop(taskId).getBody();
     }

@@ -9,10 +9,12 @@ import org.opendatamesh.platform.pp.devops.server.database.entities.Task;
 import org.opendatamesh.platform.pp.devops.server.database.mappers.ActivityTaskMapper;
 import org.opendatamesh.platform.pp.devops.server.services.ActivityService;
 import org.opendatamesh.platform.pp.devops.server.services.TaskService;
+import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsClients;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class TaskController extends AbstractTaskController {
@@ -50,10 +52,21 @@ public class TaskController extends AbstractTaskController {
 	}
 
 	@Override
-	public TaskStatusResource startTask(Long id) {
-		Task task = taskService.startSingleTask(id);
+	public TaskStatusResource startTask(Long id, Map<String, String> headers) {
+		// Get the task to retrieve its activity ID
+		Task task = taskService.readTask(id);
+		
+		// Process executor secrets and store them in cache
+		DevOpsClients.extractAndStoreExecutorSecrets(headers, task.getActivityId());
+		
+		// Start the task
+		task = taskService.startSingleTask(id);
 		TaskStatusResource statusRes = new TaskStatusResource();
 		statusRes.setStatus(task.getStatus());
+		
+		// Clean up secrets cache
+		DevOpsClients.removeAllSecretsForActivity(task.getActivityId());
+		
 		return statusRes;
     }
 

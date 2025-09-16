@@ -4,6 +4,7 @@ import org.opendatamesh.platform.core.commons.clients.ODMClient;
 import org.opendatamesh.platform.core.commons.ObjectMapperFactory;
 import org.opendatamesh.platform.pp.devops.api.resources.*;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
@@ -28,6 +29,10 @@ public class DevOpsClient extends ODMClient {
         return postActivity(payload, startAfterCreation).getBody();
     }
 
+    public ActivityResource createActivity(Object payload, boolean startAfterCreation, Map<String, String> headers) throws IOException {
+        return postActivity(payload, startAfterCreation, ActivityResource.class, headers).getBody();
+    }
+
     public ResponseEntity<ActivityResource> postActivity(
             Object payload, boolean startAfterCreation) throws IOException {
 
@@ -43,6 +48,25 @@ public class DevOpsClient extends ODMClient {
         return rest.postForEntity(
                 apiUrl(DevOpsAPIRoutes.ACTIVITIES, null, queryParams),
                 getHttpEntity(payload),
+                responseType,
+                queryParams.values().toArray(new Object[0]));
+    }
+
+    public <T> ResponseEntity<T> postActivity(
+            Object payload, boolean startAfterCreation, Class<T> responseType, Map<String, String> headers) throws IOException {
+
+        Map<String, Object> queryParams = new HashMap<String, Object>();
+        queryParams.put("startAfterCreation", startAfterCreation);
+
+        // Create HttpEntity with custom headers
+        HttpHeaders httpHeaders = getHeaders();
+        if (headers != null) {
+            headers.forEach(httpHeaders::set);
+        }
+
+        return rest.postForEntity(
+                apiUrl(DevOpsAPIRoutes.ACTIVITIES, null, queryParams),
+                new HttpEntity<>(payload, httpHeaders),
                 responseType,
                 queryParams.values().toArray(new Object[0]));
     }
@@ -213,6 +237,28 @@ public class DevOpsClient extends ODMClient {
                 apiUrlOfItem(DevOpsAPIRoutes.TASKS),
                 responseType,
                 activityId.toString());
+    }
+
+    public TaskStatusResource startTask(Long taskId, Map<String, String> headers) {
+        return patchTaskStart(taskId, headers).getBody();
+    }
+
+    public ResponseEntity<TaskStatusResource> patchTaskStart(Long taskId, Map<String, String> headers) {
+        return patchTaskStart(taskId, headers, TaskStatusResource.class);
+    }
+
+    public <T> ResponseEntity<T> patchTaskStart(Long taskId, Map<String, String> headers, Class<T> responseType) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        if (headers != null) {
+            headers.forEach(httpHeaders::set);
+        }
+        HttpEntity<?> entity = new HttpEntity<>(httpHeaders);
+        
+        return patchForEntity(
+                apiUrl(DevOpsAPIRoutes.TASKS, "/{id}/status?action=START"),
+                entity,
+                responseType,
+                taskId);
     }
 
     public TaskStatusResource stopTask(Long taskId) {

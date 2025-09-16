@@ -133,14 +133,11 @@ public class ActivityService {
                     t);
         }
 
+
         // create tasks associated with the given activity
-        List<Task> tasks = taskService.createTasks(activity.getId(), activitiesInfo);
+        taskService.createTasks(activity.getId(), activitiesInfo);
 
         devOpsNotificationServiceProxy.notifyActivityCreation(mapper.toResource(activity), dataProductVersion);
-
-        if (startAfterCreation) {
-            activity = startActivity(activity, tasks);
-        }
 
         return activity;
     }
@@ -157,6 +154,7 @@ public class ActivityService {
         Activity activity = null;
 
         activity = readActivity(activityId);
+        
         activity = startActivity(activity);
 
         return activity;
@@ -261,6 +259,9 @@ public class ActivityService {
         DataProductVersionDPDS dataProductVersion = readDataProductVersion(activity);
         devOpsNotificationServiceProxy.notifyActivityCompletion(mapper.toResource(activity), dataProductVersion);
 
+        // Clean up secrets cache for this activity
+        DevOpsClients.removeAllSecretsForActivity(activity.getId());
+
         return activity;
 
     }
@@ -319,6 +320,9 @@ public class ActivityService {
         }
 
         devOpsNotificationServiceProxy.notifyActivityCompletion(mapper.toResource(activity), dataProductVersion);
+
+        // Clean up secrets cache for this activity
+        DevOpsClients.removeAllSecretsForActivity(activity.getId());
 
         return activity;
     }

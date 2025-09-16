@@ -7,13 +7,16 @@ import org.opendatamesh.platform.pp.devops.api.resources.ActivityStatusResource;
 import org.opendatamesh.platform.pp.devops.server.database.entities.Activity;
 import org.opendatamesh.platform.pp.devops.server.database.mappers.ActivityMapper;
 import org.opendatamesh.platform.pp.devops.server.services.ActivityService;
+import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsClients;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class ActivitiesController extends AbstractActivityController {
+
 
     @Autowired
     ActivityService activityService;
@@ -24,14 +27,29 @@ public class ActivitiesController extends AbstractActivityController {
     @Override
     public ActivityResource createActivity(
         ActivityResource activityRes,
-        boolean startAfterCreation)
+        boolean startAfterCreation,
+        Map<String, String> headers)
     {
+        // Create the activity first
         Activity activity = activityService.createActivity(activityMapper.toEntity(activityRes), startAfterCreation);
+        
+        // Process executor secrets and store them in cache
+        DevOpsClients.extractAndStoreExecutorSecrets(headers, activity.getId());
+        
+        // Start the activity if requested (after secrets are processed)
+        if (startAfterCreation) {
+            activity = activityService.startActivity(activity);
+        }
+        
         return activityMapper.toResource(activity);
     }
 
     @Override
-    public ActivityStatusResource startActivity(Long id) {
+    public ActivityStatusResource startActivity(Long id, Map<String, String> headers) {
+        // Process executor secrets and store them in cache
+        DevOpsClients.extractAndStoreExecutorSecrets(headers, id);
+        
+        // Start the activity
         Activity activity = activityService.startActivity(id);
         ActivityStatusResource statusRes = new ActivityStatusResource();
         statusRes.setStatus(activity.getStatus());
@@ -89,4 +107,5 @@ public class ActivitiesController extends AbstractActivityController {
         Activity activity = activityService.updateActivity(id, activityMapper.toEntity(activityRes));
         return activityMapper.toResource(activity);
     }
+
 }

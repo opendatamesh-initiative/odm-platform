@@ -25,7 +25,7 @@ License.
     <parent>
         <groupId>org.opendatamesh</groupId>
         <artifactId>odm-platform</artifactId>
-        <version>1.0.29</version>
+        <version>1.0.30</version>
     </parent>
 
     <groupId>org.opendatamesh</groupId>
@@ -38,7 +38,7 @@ License.
             <artifactId>jackson-core</artifactId>
         </dependency>
     </dependencies>
-    <version>1.0.29</version>
+    <version>1.0.30</version>
     <url>https://github.com/opendatamesh-initiative/odm-platform-pp-services</url>
     <packaging>pom</packaging>
 

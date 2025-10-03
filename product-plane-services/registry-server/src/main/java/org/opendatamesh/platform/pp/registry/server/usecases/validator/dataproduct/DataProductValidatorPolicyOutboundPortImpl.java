@@ -70,13 +70,15 @@ class DataProductValidatorPolicyOutboundPortImpl implements DataProductValidator
                         return new DataProductValidatorResult(
                                 policyEvaluationResult.getPolicy().getName(),
                                 policyEvaluationResult.getResult(),
-                                new ObjectMapper().readTree(policyEvaluationResult.getOutputObject())
+                                new ObjectMapper().readTree(policyEvaluationResult.getOutputObject()),
+                                policyEvaluationResult.getPolicy().getBlockingFlag()
                         );
                     } catch (JsonProcessingException e) {
                         return new DataProductValidatorResult(
                                 policyEvaluationResult.getPolicy().getName(),
                                 policyEvaluationResult.getResult(),
-                                policyEvaluationResult.getOutputObject()
+                                policyEvaluationResult.getOutputObject(),
+                                policyEvaluationResult.getPolicy().getBlockingFlag()
                         );
                     }
                 })

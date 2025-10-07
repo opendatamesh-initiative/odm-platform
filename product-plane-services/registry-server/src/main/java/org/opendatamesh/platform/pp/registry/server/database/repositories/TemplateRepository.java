@@ -8,10 +8,13 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public interface TemplateRepository extends JpaRepository<Template, String>, JpaSpecificationExecutor<Template> {
 
     public boolean existsByNameAndVersion(String name, String version);
+    
+    public List<Template> findByOldId(String oldId);
 
     class Specs {
         static public Specification<Template> hasMatch(

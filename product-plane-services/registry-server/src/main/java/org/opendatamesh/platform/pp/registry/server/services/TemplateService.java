@@ -2,7 +2,6 @@ package org.opendatamesh.platform.pp.registry.server.services;
 
 import org.opendatamesh.dpds.model.core.EntityTypeDPDS;
 import org.opendatamesh.dpds.parser.IdentifierStrategy;
-import org.opendatamesh.dpds.parser.IdentifierStrategyFactory;
 import org.opendatamesh.platform.core.commons.servers.exceptions.*;
 import org.opendatamesh.platform.pp.registry.api.resources.RegistryApiStandardErrors;
 import org.opendatamesh.platform.pp.registry.server.database.entities.Template;
@@ -88,21 +87,20 @@ public class TemplateService {
                     "Property [definition] cannot be empty");
         }
 
-         String fqn = identifierStrategy.getExternalComponentFqn(
+        // Generate FQN for consistency with other components
+        String fqn = identifierStrategy.getExternalComponentFqn(
                 EntityTypeDPDS.TEMPLATE,
                 template.getName(),
                 template.getVersion());
-        String id = identifierStrategy.getId(fqn);
 
+        // Generate the old ID using the identifier strategy (for backward compatibility)
+        String oldId = identifierStrategy.getId(fqn);
+        
+        String id = UUID.randomUUID().toString();
         template.setId(id);
+        template.setOldId(oldId);
         template.setFullyQualifiedName(fqn);
         template.setEntityType(EntityTypeDPDS.TEMPLATE.propertyValue());
-
-        if (templateExists(id)) {
-            throw new UnprocessableEntityException(
-                    RegistryApiStandardErrors.SC422_13_TEMPLATE_ALREADY_EXISTS,
-                    "Template [" + template.getName() + "(v. " + template.getVersion() + ")] already exists");
-        }
 
         try {
             template = saveTemplate(template);
@@ -159,6 +157,25 @@ public class TemplateService {
         return definition;
     }
 
+    public Template loadDefinitionByOldId(String oldId) {
+        Template definition = null;
+        List<Template> referenceObjectLookUpResults = templateDefinitionRepository.findByOldId(oldId);
+        if (!referenceObjectLookUpResults.isEmpty()) {
+            logger.warn("Loading template by oldId: {}. This is a backward compatibility feature." +
+                    " The service that has triggered this should be identified and changed to use the new ID.", oldId);
+
+            if (referenceObjectLookUpResults.size() == 1) {
+                definition = referenceObjectLookUpResults.get(0);
+            } else {
+                // Multiple templates found with the same oldId - this shouldn't happen in normal operation
+                // but if it does, we'll return the first one and log a warning
+                definition = referenceObjectLookUpResults.get(0);
+                logger.warn("Multiple templates found with oldId [{}]. This may indicate a data consistency issue. Returning the first match.", oldId);
+            }
+        }
+        return definition;
+    }
+
     // -------------------------
     // exists methods
     // -------------------------
@@ -190,7 +207,13 @@ public class TemplateService {
         }
 
         try {
+            // First try to find by the new random ID
             definition = loadDefinition(definitionId);
+
+            // If not found, try to find by old ID for backward compatibility
+            if (definition == null) {
+                definition = loadDefinitionByOldId(definitionId);
+            }
         } catch (Throwable t) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,

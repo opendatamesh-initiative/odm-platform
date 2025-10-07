@@ -13,6 +13,9 @@ public class Template {
     @Column(name="ID")
     String id;
 
+    @Column(name="OLD_ID")
+    private String oldId;
+
     @Column(name="FQN")
     protected String fullyQualifiedName;
 

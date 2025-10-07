@@ -43,7 +43,8 @@ public class TemplateIT extends ODMRegistryIT {
 
         template1 = createTemplate(template);
 
-        assertThat(template1.getId()).isEqualTo(template.getId());
+        // Note: ID is now generated randomly, so we don't expect it to equal the input ID
+        // assertThat(template1.getId()).isEqualTo(template.getId()); // Removed - IDs are now random
         assertThat(template1.getFullyQualifiedName()).isEqualTo(template.getFullyQualifiedName());
         assertThat(template1.getEntityType()).isEqualTo(template.getEntityType());
         assertThat(template1.getName()).isEqualTo(template.getName());
@@ -115,7 +116,12 @@ public class TemplateIT extends ODMRegistryIT {
 
         template = resourceBuilder.buildTestTemplate();
         template1 = createTemplate(template);
-        assertThat(template1).isEqualTo(template);
+        // Note: template1 will have a different ID (random) than template, so we can't use isEqualTo
+        // Instead, verify the important properties are the same
+        assertThat(template1.getFullyQualifiedName()).isEqualTo(template.getFullyQualifiedName());
+        assertThat(template1.getName()).isEqualTo(template.getName());
+        assertThat(template1.getVersion()).isEqualTo(template.getVersion());
+        assertThat(template1.getDefinition()).isEqualTo(template.getDefinition());
 
         template.setVersion("2.0.0");
         template2 = createTemplate(template);
@@ -232,6 +238,34 @@ public class TemplateIT extends ODMRegistryIT {
 
     @Test
     @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testTemplateBackwardCompatibility() {
+        // Test that templates can still be found by their old IDs (backward compatibility)
+        
+        ExternalComponentResource template = null, createdTemplate = null;
+        
+        // Create a template with a specific name and version
+        template = resourceBuilder.buildTestTemplate();
+        createdTemplate = createTemplate(template);
+        
+        // Verify the template was created with a new random ID
+        assertThat(createdTemplate.getId()).isNotNull();
+        assertThat(createdTemplate.getId()).isNotEqualTo(template.getId()); // Should be different (random)
+        
+        // Test backward compatibility: should be able to find template by old ID
+        // This tests our implementation that stores oldId and searches by both id and oldId
+        ResponseEntity<ExternalComponentResource> response = registryClient.getTemplate(template.getId());
+        verifyResponseEntity(response, HttpStatus.OK, true);
+        ExternalComponentResource foundTemplate = response.getBody();
+        
+        // The found template should be the same as the created one
+        assertThat(foundTemplate.getId()).isEqualTo(createdTemplate.getId());
+        assertThat(foundTemplate.getName()).isEqualTo(createdTemplate.getName());
+        assertThat(foundTemplate.getVersion()).isEqualTo(createdTemplate.getVersion());
+        assertThat(foundTemplate.getDefinition()).isEqualTo(createdTemplate.getDefinition());
+    }
+
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
     public void testDeleteTemplate()  {
 
         ResponseEntity<ExternalComponentResource> response = null;
@@ -285,6 +319,70 @@ public class TemplateIT extends ODMRegistryIT {
         assertThat(errorResponse).isNotNull();
         assertThat(errorResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 
+    }
+
+    // ======================================================================================
+    // TEMPLATE SEPARATION TEST
+    // ======================================================================================
+
+    /**
+     * Test to verify that templates with the same name but different content
+     * get different UUIDs and are properly separated.
+     * 
+     * This test addresses the issue described in:
+     * https://github.com/opendatamesh-initiative/odm-platform/issues/274
+     * 
+     * The problem was that templates with the same name were sharing UUIDs,
+     * leading to shared template objects between data product versions.
+     * This prevented template updates when the name didn't change and caused
+     * sharing across objects with different lifecycles.
+     */
+    @Test
+    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+    public void testTemplateSeparationWithDifferentContent() {
+        // Step 1: Create first template with specific content
+        ExternalComponentResource template1 = resourceBuilder.buildTestTemplate();
+        template1.setName("test-task-1");
+        template1.setVersion("1.0.0");
+        template1.setDefinition("echo 'Hello from task 1'");
+        ExternalComponentResource createdTemplate1 = createTemplate(template1);
+        
+        // Step 2: Create second template with same name but different content
+        ExternalComponentResource template2 = resourceBuilder.buildTestTemplate();
+        template2.setName("test-task-1");  // Same name
+        template2.setVersion("1.0.0");     // Same version
+        template2.setDefinition("echo 'Hello from task 2 - different content'");  // Different content
+        ExternalComponentResource createdTemplate2 = createTemplate(template2);
+        
+        // Step 3: Verify that templates have different IDs (random UUIDs)
+        assertThat(createdTemplate1.getId()).isNotNull();
+        assertThat(createdTemplate2.getId()).isNotNull();
+        assertThat(createdTemplate1.getId()).isNotEqualTo(createdTemplate2.getId());
+        
+        // Step 4: Verify that templates have the same name but different content
+        assertThat(createdTemplate1.getName()).isEqualTo("test-task-1");
+        assertThat(createdTemplate2.getName()).isEqualTo("test-task-1");
+        assertThat(createdTemplate1.getDefinition()).isNotEqualTo(createdTemplate2.getDefinition());
+        
+        // Step 5: Verify the templates have different content
+        assertThat(createdTemplate1.getDefinition()).contains("Hello from task 1");
+        assertThat(createdTemplate2.getDefinition()).contains("Hello from task 2 - different content");
+        
+        // Step 6: Fetch both templates from the registry to verify they exist and are separate
+        ResponseEntity<ExternalComponentResource> response1 = registryClient.getTemplate(createdTemplate1.getId());
+        ResponseEntity<ExternalComponentResource> response2 = registryClient.getTemplate(createdTemplate2.getId());
+        
+        assertThat(response1.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response2.getStatusCode()).isEqualTo(HttpStatus.OK);
+        
+        ExternalComponentResource fetchedTemplate1 = response1.getBody();
+        ExternalComponentResource fetchedTemplate2 = response2.getBody();
+        
+        // Step 7: Verify the fetched templates are different and correct
+        assertThat(fetchedTemplate1.getId()).isEqualTo(createdTemplate1.getId());
+        assertThat(fetchedTemplate2.getId()).isEqualTo(createdTemplate2.getId());
+        assertThat(fetchedTemplate1.getDefinition()).isEqualTo(createdTemplate1.getDefinition());
+        assertThat(fetchedTemplate2.getDefinition()).isEqualTo(createdTemplate2.getDefinition());
     }
 
     

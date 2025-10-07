@@ -175,38 +175,6 @@ public class TemplateErrorsIT extends ODMRegistryIT {
         assertThat(errorRes.getStatus()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY.value());
         assertThat(errorRes.getTimestamp()).isNotNull();    
     }
-
-    @Test
-    @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
-    public void testCreateSameTemplateMultipleTime() {
-
-        ResponseEntity<ErrorRes> response = null;
-
-        ExternalComponentResource template = resourceBuilder.buildTestTemplate();
-        createTemplate(template);
-
-        try {
-            response = registryClient.postTemplate(template, ErrorRes.class);
-        } catch (Throwable t) {
-            t.printStackTrace();
-            fail("Impossible to post template: " + t.getMessage());
-            return;
-        }
-
-        assertThat(response).isNotNull();
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
-
-        ErrorRes errorRes = response.getBody();
-        assertThat(errorRes).isNotNull();
-        assertThat(errorRes.getCode())
-                .isEqualTo(RegistryApiStandardErrors.SC422_13_TEMPLATE_ALREADY_EXISTS.code());
-        assertThat(errorRes.getDescription())
-                .isEqualTo(RegistryApiStandardErrors.SC422_13_TEMPLATE_ALREADY_EXISTS.description());
-        assertThat(errorRes.getMessage()).isNotNull();
-        assertThat(errorRes.getPath()).isEqualTo(RegistryAPIRoutes.TEMPLATES.getPath());
-        assertThat(errorRes.getStatus()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY.value());
-        assertThat(errorRes.getTimestamp()).isNotNull();    
-    }
    
     // ----------------------------------------
     // DELETE Definition

@@ -91,7 +91,7 @@ public class RegistryNotificationServiceProxy {
     public void notifyDataProductVersionDeletion(DataProductVersionDPDS dataProductVersion) {
         if (Boolean.TRUE.equals(notificationServiceActive)) {
             EventResource eventResource = buildDataProductVersionEvent(
-                    EventType.DATA_PRODUCT_DELETED,
+                    EventType.DATA_PRODUCT_VERSION_DELETED,
                     dataProductVersion.getInfo().getDataProductId(),
                     dataProductVersion,
                     null

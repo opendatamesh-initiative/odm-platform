@@ -32,11 +32,13 @@ public class NotificationObserverClient {
         }
 
         RestUtils restUtils = RestUtilsFactory.getRestUtils(restTemplate);
-        logger.info("Dispatching event: {} to observer: {}", notificationToDispatch.getEvent().getType(), observer.getName());
 
         try {
+            String url = observer.getObserverServerBaseUrl() + ObserverAPIRoutes.CONSUME.getPath();
+            logger.info("Dispatching event: {} to observer: {} ({})", notificationToDispatch.getEvent().getType(), observer.getName(), url);
+
             restUtils.genericPost(
-                    observer.getObserverServerBaseUrl() + ObserverAPIRoutes.CONSUME.getPath(),
+                    url,
                     null,
                     notificationToDispatch,
                     JsonNode.class

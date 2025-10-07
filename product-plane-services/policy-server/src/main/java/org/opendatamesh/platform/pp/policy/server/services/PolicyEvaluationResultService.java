@@ -3,6 +3,8 @@ package org.opendatamesh.platform.pp.policy.server.services;
 import org.opendatamesh.platform.core.commons.database.utils.PagingAndSortingAndSpecificationExecutorRepository;
 import org.opendatamesh.platform.core.commons.database.utils.SpecsUtils;
 import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
+import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
 import org.opendatamesh.platform.core.commons.servers.exceptions.UnprocessableEntityException;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultSearchOptions;
@@ -16,6 +18,8 @@ import org.opendatamesh.platform.pp.policy.server.database.mappers.PolicyEvaluat
 import org.opendatamesh.platform.pp.policy.server.database.repositories.PolicyEvaluationResultRepository;
 import org.opendatamesh.platform.pp.policy.server.database.repositories.PolicyEvaluationResultShortRepository;
 import org.opendatamesh.platform.pp.policy.server.services.utils.GenericMappedAndFilteredCrudService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +32,8 @@ import java.util.List;
 
 @Service
 public class PolicyEvaluationResultService extends GenericMappedAndFilteredCrudService<PolicyEvaluationResultSearchOptions, PolicyEvaluationResultResource, PolicyEvaluationResult, Long> {
+
+    private static final Logger logger = LoggerFactory.getLogger(PolicyEvaluationResultService.class);
 
     @Autowired
     private PolicyEvaluationResultRepository repository;
@@ -134,6 +140,71 @@ public class PolicyEvaluationResultService extends GenericMappedAndFilteredCrudS
     @Override
     protected Class<PolicyEvaluationResult> getEntityClass() {
         return PolicyEvaluationResult.class;
+    }
+
+    // ======================================================================================
+    // CLEANUP METHODS FOR DATA PRODUCT DELETION
+    // ======================================================================================
+
+    /**
+     * Delete all policy evaluation results for a specific data product
+     * @param dataProductId the data product ID
+     */
+    public void deleteByDataProductId(String dataProductId) {
+        if (dataProductId == null || dataProductId.trim().isEmpty()) {
+            throw new BadRequestException(
+                    PolicyApiStandardErrors.SC400_03_POLICY_EVALUATION_RESULT_IS_EMPTY,
+                    "Data product ID cannot be null or empty"
+            );
+        }
+        
+        try {
+            int deletedCount = repository.deleteByDataProductId(dataProductId);
+            logger.info("Deleted {} policy evaluation results for data product: {}", 
+                       deletedCount, dataProductId);
+        } catch (Exception e) {
+            logger.error("Failed to delete policy evaluation results for data product: {}", dataProductId, e);
+            throw new InternalServerException(
+                    ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
+                    "An error occurred while deleting policy evaluation results for data product: " + dataProductId,
+                    e
+            );
+        }
+    }
+
+    /**
+     * Delete all policy evaluation results for a specific data product version
+     * @param dataProductId the data product ID
+     * @param version the version number
+     */
+    public void deleteByDataProductIdAndVersion(String dataProductId, String version) {
+        if (dataProductId == null || dataProductId.trim().isEmpty()) {
+            throw new BadRequestException(
+                    PolicyApiStandardErrors.SC400_03_POLICY_EVALUATION_RESULT_IS_EMPTY,
+                    "Data product ID cannot be null or empty"
+            );
+        }
+        
+        if (version == null || version.trim().isEmpty()) {
+            throw new BadRequestException(
+                    PolicyApiStandardErrors.SC400_03_POLICY_EVALUATION_RESULT_IS_EMPTY,
+                    "Version cannot be null or empty"
+            );
+        }
+        
+        try {
+            int deletedCount = repository.deleteByDataProductIdAndVersion(dataProductId, version);
+            logger.info("Deleted {} policy evaluation results for data product: {} version: {}", 
+                       deletedCount, dataProductId, version);
+        } catch (Exception e) {
+            logger.error("Failed to delete policy evaluation results for data product: {} version: {}", 
+                        dataProductId, version, e);
+            throw new InternalServerException(
+                    ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
+                    "An error occurred while deleting policy evaluation results for data product: " + dataProductId + " version: " + version,
+                    e
+            );
+        }
     }
 
 }

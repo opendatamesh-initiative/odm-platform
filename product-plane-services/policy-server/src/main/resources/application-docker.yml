@@ -66,3 +66,9 @@ odm:
     devopsService:
       active: true
       address: http://${DEVOPS_HOSTNAME}:${DEVOPS_PORT}
+    policyService:
+      active: true
+      address: http://${SPRING_HOSTNAME}:${SPRING_PORT}
+    notificationService:
+      active: ${NOTIFICATIONSERVICE_ACTIVE}
+      address: http://${NOTIFICATIONSERVICE_HOSTNAME}:${NOTIFICATIONSERVICE_PORT}

@@ -64,4 +64,7 @@ odm:
     notificationService:
       active: true
       address: http://localhost:8006
+    policyService:
+      active: true
+      address: http://localhost:8005
 

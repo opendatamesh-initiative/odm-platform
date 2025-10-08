@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.opendatamesh</groupId>
         <artifactId>odm-platform-up-services</artifactId>
-        <version>1.0.30</version>
+        <version>1.0.31</version>
         <relativePath>../</relativePath>
     </parent>
 
@@ -16,7 +16,7 @@
     <name>ODM Platform Validator Service API</name>
     <description>Open Data Mesh Platform Validator Service API</description>
     <url>https://github.com/opendatamesh-initiative/odm-platform</url>
-    <version>1.0.30</version>
+    <version>1.0.31</version>
 
     <properties>
         <java.version>11</java.version>
@@ -76,13 +76,13 @@
         <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-core-commons</artifactId>
-            <version>1.0.30</version>
+            <version>1.0.31</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-pp-policy-api</artifactId>
-            <version>1.0.30</version>
+            <version>1.0.31</version>
             <scope>compile</scope>
         </dependency>
 

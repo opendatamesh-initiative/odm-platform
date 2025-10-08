@@ -28,10 +28,20 @@ public class DataProductValidationResponseResource {
     public static class DataProductValidationResult {
         private boolean validated;
         private Object validationOutput;
+        private Boolean blockingFlag;
+
+        public DataProductValidationResult() {
+        }
 
         public DataProductValidationResult(boolean validated, Object validationOutput) {
             this.validated = validated;
             this.validationOutput = validationOutput;
+        }
+
+        public DataProductValidationResult(boolean validated, Object validationOutput, Boolean blockingFlag) {
+            this.validated = validated;
+            this.validationOutput = validationOutput;
+            this.blockingFlag = blockingFlag;
         }
 
         public boolean isValidated() {
@@ -48,6 +58,14 @@ public class DataProductValidationResponseResource {
 
         public void setValidationOutput(Object validationOutput) {
             this.validationOutput = validationOutput;
+        }
+
+        public Boolean getBlockingFlag() {
+            return blockingFlag;
+        }
+
+        public void setBlockingFlag(Boolean blockingFlag) {
+            this.blockingFlag = blockingFlag;
         }
     }
 }

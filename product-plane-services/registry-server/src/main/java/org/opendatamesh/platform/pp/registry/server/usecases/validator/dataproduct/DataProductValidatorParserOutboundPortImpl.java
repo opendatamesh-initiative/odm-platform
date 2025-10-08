@@ -34,6 +34,6 @@ class DataProductValidatorParserOutboundPortImpl implements DataProductValidator
     @Override
     public DataProductValidatorResult validateDescriptorSyntax(JsonNode dataProductVersion) {
         //Temporary mocked
-        return new DataProductValidatorResult("Syntax Validation", true, null);
+        return new DataProductValidatorResult("Syntax Validation", true, null, false);
     }
 }

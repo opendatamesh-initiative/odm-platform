@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.opendatamesh</groupId>
         <artifactId>odm-platform-pp-services</artifactId>
-        <version>1.0.32</version>
+        <version>1.0.33</version>
         <relativePath>../</relativePath>
     </parent>
 
@@ -15,7 +15,7 @@
     <artifactId>odm-platform-pp-blueprint-server</artifactId>
     <name>ODM Platform Blueprint Server</name>
     <description>Open Data Mesh Platform's Blueprint service server</description>
-    <version>1.0.32</version>
+    <version>1.0.33</version>
     <url>https://github.com/opendatamesh-initiative/odm-platform</url>
 
     <licenses>
@@ -242,7 +242,7 @@
         <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-pp-blueprint-api</artifactId>
-            <version>1.0.32</version>
+            <version>1.0.33</version>
             <scope>compile</scope>
         </dependency>
 

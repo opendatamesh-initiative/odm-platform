@@ -21,6 +21,7 @@ import org.opendatamesh.platform.pp.devops.server.resources.context.Context;
 import org.opendatamesh.platform.pp.devops.server.services.proxies.DevOpsNotificationServiceProxy;
 import org.opendatamesh.platform.pp.devops.server.services.proxies.DevopsPolicyServiceProxy;
 import org.opendatamesh.platform.pp.devops.server.utils.ObjectNodeUtils;
+import org.opendatamesh.platform.pp.devops.server.utils.VariableTemplateUtils;
 import org.opendatamesh.platform.pp.registry.api.resources.VariableResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -346,7 +347,9 @@ public class ActivityService {
                     taskConfigs = ObjectMapperFactory.JSON_MAPPER.createObjectNode();
                 }
                 taskConfigs.put("context", ObjectNodeUtils.toObjectNode(taskContext.getContext()));
-                actualTask.setConfigurations(taskConfigs.toString());
+                String serializedTaskConfigs = taskConfigs.toString();
+                String serializedTaskConfigsWithReplacedVariables = replaceVariables(serializedTaskConfigs, taskContext.getContext());
+                actualTask.setConfigurations(serializedTaskConfigsWithReplacedVariables);
             } catch (JsonProcessingException e) {
                 logger.warn("Impossible to deserialize config attribute of task to append context", e);
             }
@@ -361,6 +364,10 @@ public class ActivityService {
         }
 
         return startedTask;
+    }
+
+    private String replaceVariables(String serializedTaskConfigs, Map<String, ActivityContext> context) {
+        return VariableTemplateUtils.replaceVariables(serializedTaskConfigs, context);
     }
 
     public Task stopTaskAndUpdateParentActivity(
@@ -524,7 +531,7 @@ public class ActivityService {
                             }
                         }
                     }
-                    if (variableValueFound && !contextResults.isNull()) {
+                    if (variableValueFound && contextResults != null && !contextResults.isNull()) {
                         try {
                             clients.getRegistryClient().updateVariable(
                                     activity.getDataProductId(),
@@ -617,7 +624,7 @@ public class ActivityService {
     // CONTEXT methods
     // -------------------------
 
-    private Context createContext(Long activityId) {
+    public Context createContext(Long activityId) {
         Activity currentActivity = readActivity(activityId);
         List<Activity> previousAndCurrentActivities = searchOrderedActivities(
                 currentActivity.getDataProductId(),

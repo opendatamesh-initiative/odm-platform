@@ -525,7 +525,7 @@ public class ActivityService {
                     if (contextResults != null) {
                         for (int i = 2; i < varTree.length; i++) {
                             contextResults = contextResults.get(varTree[i]);
-                            if (contextResults.isNull()) {
+                            if (contextResults == null || contextResults.isNull()) {
                                 variableValueFound = false;
                                 break;
                             }
@@ -626,12 +626,14 @@ public class ActivityService {
 
     public Context createContext(Long activityId) {
         Activity currentActivity = readActivity(activityId);
-        List<Activity> previousAndCurrentActivities = searchOrderedActivities(
+        List<Activity> previousAndCurrentActivities = searchOrderedActivitiesWithCurrent(
+                currentActivity,
                 currentActivity.getDataProductId(),
                 currentActivity.getDataProductVersion()
         );
         Context context = new Context();
         ActivityContext activityContext;
+
         for (Activity activity : previousAndCurrentActivities) {
             activityContext = new ActivityContext();
             ActivityResultStatus activityResultStatus = activity.getStatus().equals(ActivityStatus.PROCESSED) ?
@@ -697,7 +699,8 @@ public class ActivityService {
         return activitySearchResults;
     }
 
-    public List<Activity> searchOrderedActivities(
+    private List<Activity> searchOrderedActivitiesWithCurrent(
+            Activity currentActivity,
             String dataProductId,
             String dataProductVersion
     ) {
@@ -710,16 +713,18 @@ public class ActivityService {
                     "An error occurred in the backend database while searching activities",
                     t);
         }
-        if (activitySearchResults != null) {
-            activitySearchResults = activitySearchResults.stream()
-                    .filter(
-                            activity ->
-                                    activity.getStatus().equals(ActivityStatus.PROCESSED) ||
-                                            activity.getStatus().equals(ActivityStatus.PROCESSING)
-                    )
-                    .collect(Collectors.toList());
-            activitySearchResults.sort(Comparator.comparing(Activity::getId));
+        activitySearchResults = activitySearchResults.stream()
+                .filter(
+                        activity ->
+                                activity.getStatus().equals(ActivityStatus.PROCESSED) ||
+                                        activity.getStatus().equals(ActivityStatus.PROCESSING)
+                )
+                .collect(Collectors.toList());
+        activitySearchResults = new ArrayList<Activity>(activitySearchResults);
+        if(activitySearchResults.stream().noneMatch(a-> Objects.equals(a.getId(), currentActivity.getId()))){
+            activitySearchResults.add(currentActivity);
         }
+        activitySearchResults.sort(Comparator.comparing(Activity::getId));
         return activitySearchResults;
     }
 

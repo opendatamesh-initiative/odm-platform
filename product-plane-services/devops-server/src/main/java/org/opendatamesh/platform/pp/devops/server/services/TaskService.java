@@ -1,6 +1,8 @@
 package org.opendatamesh.platform.pp.devops.server.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import org.opendatamesh.dpds.model.core.StandardDefinitionDPDS;
 import org.opendatamesh.dpds.model.internals.LifecycleTaskInfoDPDS;
 import org.opendatamesh.dpds.parser.IdentifierStrategy;
@@ -18,8 +20,11 @@ import org.opendatamesh.platform.pp.devops.server.database.mappers.TaskMapper;
 import org.opendatamesh.platform.pp.devops.server.database.repositories.TaskRepository;
 import org.opendatamesh.platform.pp.devops.server.services.proxies.DevOpsNotificationServiceProxy;
 import org.opendatamesh.platform.pp.devops.server.services.proxies.DevopsPolicyServiceProxy;
+import org.opendatamesh.platform.pp.devops.server.utils.ObjectNodeUtils;
+import org.opendatamesh.platform.pp.devops.server.utils.VariableTemplateUtils;
 import org.opendatamesh.platform.pp.registry.api.resources.ExternalComponentResource;
 import org.opendatamesh.platform.pp.devops.server.clients.ExecutorClientWithSecrets;
+import org.opendatamesh.platform.pp.devops.server.resources.context.Context;
 import org.opendatamesh.platform.up.executor.api.resources.TaskResource;
 import org.opendatamesh.platform.up.executor.api.resources.TaskStatus;
 import org.slf4j.Logger;
@@ -128,6 +133,24 @@ public class TaskService {
 
         Task task = readTask(taskId);
         task.setStartedByActivity(false);
+        Context taskContext = activityService.createContext(task.getActivityId());
+        try {
+            ObjectNode taskConfigs;
+            if (task.getConfigurations() != null) {
+                taskConfigs = ObjectMapperFactory.JSON_MAPPER.readValue(
+                        task.getConfigurations(),
+                        ObjectNode.class);
+            } else {
+                taskConfigs = ObjectMapperFactory.JSON_MAPPER.createObjectNode();
+            }
+            taskConfigs.put("context", ObjectNodeUtils.toObjectNode(taskContext.getContext()));
+            String serializedTaskConfigs = taskConfigs.toString();
+            String serializedTaskConfigsWithReplacedVariables = VariableTemplateUtils.replaceVariables(serializedTaskConfigs,
+                    taskContext.getContext());
+            task.setConfigurations(serializedTaskConfigsWithReplacedVariables);
+        } catch (JsonProcessingException e) {
+            logger.warn("Impossible to deserialize config attribute of task to append context", e);
+        }
         try {
             task.setStatus(ActivityTaskStatus.PROCESSING);
             task.setStartedAt(now());

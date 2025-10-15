@@ -24,14 +24,14 @@ License.
     <parent>
         <groupId>org.opendatamesh</groupId>
         <artifactId>odm-platform-pp-services</artifactId>
-        <version>1.0.31</version>
+        <version>1.0.32</version>
         <relativePath>../</relativePath>
     </parent>
 
     <artifactId>odm-platform-pp-params-api</artifactId>
     <name>ODM Platform Params API</name>
     <description>Open Data Mesh Platform's Params Service API</description>
-    <version>1.0.31</version>
+    <version>1.0.32</version>
 
     <licenses>
         <license>
@@ -83,7 +83,7 @@ License.
         <dependency>
             <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-core-commons</artifactId>
-            <version>1.0.31</version>
+            <version>1.0.32</version>
             <scope>compile</scope>
         </dependency>
 

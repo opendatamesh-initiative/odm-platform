@@ -6,6 +6,8 @@ import org.opendatamesh.platform.core.commons.ObjectMapperFactory;
 import org.opendatamesh.platform.core.commons.clients.ODMClient;
 import org.opendatamesh.platform.up.executor.api.resources.TaskResource;
 import org.opendatamesh.platform.up.executor.api.resources.TaskStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +22,8 @@ public class ExecutorClientWithSecrets extends ODMClient {
 
     private Boolean checkAfterCallback;
     private Map<String, String> secretHeaders;
-
+    private static final Logger logger = LoggerFactory.getLogger(ExecutorClientWithSecrets.class);
+    
     public ExecutorClientWithSecrets(String serverAddress, Boolean checkAfterCallback) {
         super(serverAddress, ObjectMapperFactory.JSON_MAPPER);
         this.checkAfterCallback = checkAfterCallback;
@@ -51,7 +54,7 @@ public class ExecutorClientWithSecrets extends ODMClient {
 
     public <T> ResponseEntity<T> postTask(Object payload, Class<T> responseType) throws IOException {
         HttpEntity<Object> httpEntity = getHttpEntityWithSecrets(payload);
-        
+        logger.info("Calling executor client - apiUrl={}", apiUrl(ExecutorAPIRoutes.TASKS));
         ResponseEntity<Object> response = rest.postForEntity(
                 apiUrl(ExecutorAPIRoutes.TASKS),
                 httpEntity,
@@ -59,6 +62,7 @@ public class ExecutorClientWithSecrets extends ODMClient {
         );
 
         if(response.getStatusCode().is2xxSuccessful()) {
+            logger.info("Executor client call successful - response status code={}", response.getStatusCodeValue());
             return ResponseEntity
                     .status(response.getStatusCode())
                     .headers(response.getHeaders())
@@ -67,6 +71,7 @@ public class ExecutorClientWithSecrets extends ODMClient {
                             responseType
                     ));
         } else {
+            logger.info("Executor client call failed - response status code={}", response.getStatusCodeValue());
             throw new RuntimeException(response.getBody().toString());
         }
     }

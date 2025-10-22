@@ -162,7 +162,7 @@ public class ActivityService {
     }
 
     public Activity startActivity(Activity activity) {
-
+        logger.info("Starting activity - activityId={}", activity.getId());
         if (activity.getStatus().equals(ActivityStatus.PLANNED) == false) {
             if (activity.getStatus().equals(ActivityStatus.PROCESSING)) {
                 throw new ConflictException(
@@ -205,12 +205,12 @@ public class ActivityService {
                 activity.getDataProductId(),
                 activity.getDataProductVersion()
         );
-        if (!policyServiceProxy.isStageTransitionValid(
-                lifecycleResource, mapper.toResource(activity), taskMapper.toResources(plannedTasks))
-        ) {
+        DevopsPolicyServiceProxy.PolicyValidationResult stageTransitionResult = policyServiceProxy.isStageTransitionValid(
+                lifecycleResource, mapper.toResource(activity), taskMapper.toResources(plannedTasks));
+        if (!stageTransitionResult.isValid()) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_73_POLICY_SERVICE_EVALUATION_ERROR,
-                    "Some blocking policy on Activity start has not passed evaluation"
+                    "Some blocking policies on stage transition have not passed evaluation: " + stageTransitionResult.getErrorMessage()
             );
         }
 
@@ -241,6 +241,7 @@ public class ActivityService {
     }
 
     public Activity abortActivity(Long activityId) {
+        logger.info("Aborting activity - activityId={}", activityId);
         Activity activity = readActivity(activityId);
         LocalDateTime finishedAt = now();
         activity.setFinishedAt(finishedAt);
@@ -270,6 +271,7 @@ public class ActivityService {
     // TODO set results or errors of activity while stopping it
     private Activity stopActivity(Activity activity, boolean success) {
 
+        logger.info("Stopping activity - activityId={}, success={}", activity.getId(), success);
         LocalDateTime finishedAt = now();
         activity.setFinishedAt(finishedAt);
 
@@ -296,11 +298,11 @@ public class ActivityService {
             lifecycleService.createLifecycle(activity);
             activity = saveActivity(activity);
 
-            if (!policyServiceProxy.isContextuallyCoherent(mapper.toResource(activity), dataProductVersion)) {
-                // TODO: replace this exception with something else
+            DevopsPolicyServiceProxy.PolicyValidationResult validationResult = policyServiceProxy.isContextuallyCoherent(mapper.toResource(activity), dataProductVersion);
+            if (!validationResult.isValid()) {
                 throw new InternalServerException(
                         ODMApiCommonErrors.SC500_73_POLICY_SERVICE_EVALUATION_ERROR,
-                        "Some blocking policy on Activity results has not passed evaluation"
+                        "Some blocking policy on Activity results has not passed evaluation: " + validationResult.getErrorMessage()
                 );
             }
 
@@ -325,17 +327,20 @@ public class ActivityService {
         // Clean up secrets cache for this activity
         DevOpsClients.removeAllSecretsForActivity(activity.getId());
 
+        logger.info("Activity stopped - activityId={}, status={}", activity.getId(), activity.getStatus());
         return activity;
     }
 
     public Task startNextPlannedTaskAndUpdateParentActivity(Long activityId) {
+        logger.info("Starting next planned task - activityId={}", activityId);
         Task startedTask = null;
 
         List<Task> plannedTasks = taskService.searchTasks(activityId, null, ActivityTaskStatus.PLANNED);
         if (plannedTasks != null && !plannedTasks.isEmpty()) {
+            Task actualTask = plannedTasks.get(0);
+            logger.info("Next planned task to start found- taskId={}", actualTask.getId());
             // Create context object for each Task
             Context taskContext = createContext(activityId);
-            Task actualTask = plannedTasks.get(0);
             try {
                 ObjectNode taskConfigs;
                 if (actualTask.getConfigurations() != null) {
@@ -360,6 +365,7 @@ public class ActivityService {
                 stopActivity(activityId, true);
             }
         } else { // nothing more to do...
+            logger.info("No more planned tasks to start - activityId={}", activityId);
             stopActivity(activityId, true);
         }
 
@@ -373,6 +379,7 @@ public class ActivityService {
     public Task stopTaskAndUpdateParentActivity(
             Long taskId, TaskResultResource taskResultResource, Boolean updateVariables
     ) {
+        logger.info("Task results received - taskId={}", taskId);
         Task task = taskService.stopTask(taskId, taskResultResource);
         updateActivityPartialResults(task, updateVariables);
 
@@ -382,8 +389,10 @@ public class ActivityService {
         if (Boolean.TRUE.equals(task.getStartedByActivity())) {
             // Check if the task failed - if so, stop the activity instead of continuing
             if (ActivityTaskStatus.FAILED.equals(task.getStatus())) {
+                logger.info("Task failed: stopping activity- taskId={}, activityId={}", taskId, task.getActivityId());
                 stopActivity(task.getActivityId(), false);
             } else {
+                logger.info("Task processed: continuing activity - taskId={}, activityId={}", taskId, task.getActivityId());
                 startNextPlannedTaskAndUpdateParentActivity(task.getActivityId());
             }
         }

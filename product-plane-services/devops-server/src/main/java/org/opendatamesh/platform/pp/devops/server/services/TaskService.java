@@ -69,7 +69,7 @@ public class TaskService {
 
     private ExecutorClientWithSecrets odmExecutor;
 
-    private static final Logger logger = LoggerFactory.getLogger(ActivityService.class);
+    private static final Logger logger = LoggerFactory.getLogger(TaskService.class);
 
 
     // ======================================================================================
@@ -130,7 +130,7 @@ public class TaskService {
     }
     
     public Task startSingleTask(Long taskId) {
-
+        logger.info("Starting single task - taskId={}", taskId);
         Task task = readTask(taskId);
         task.setStartedByActivity(false);
         Context taskContext = activityService.createContext(task.getActivityId());
@@ -191,6 +191,7 @@ public class TaskService {
     }
 
     public Task startTask(Task task) {
+        logger.info("Starting task - taskId={}", task.getId());
         try {
 
             task.setStatus(ActivityTaskStatus.PROCESSING);
@@ -220,7 +221,7 @@ public class TaskService {
                 // Update activity status when task completes successfully
                 activityService.updateActivityStatusBasedOnTaskStatuses(task.getActivityId());
             }
-            
+            logger.info("Task starting completed - taskId={}, status={}", task.getId(), task.getStatus());
         } catch(Throwable t) {
              throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
@@ -233,7 +234,7 @@ public class TaskService {
     }
 
     private Task submitTask(Task task) {
-    
+        logger.info("Submitting task to executor- taskId={}", task.getId());
         try {
             TaskResource taskRes = taskMapper.toResource(task);
             String callbackRef = configurations.getProductPlane().getDevopsService().getAddress();
@@ -258,7 +259,7 @@ public class TaskService {
             task.setFinishedAt(now());
             devOpsNotificationServiceProxy.notifyTaskCompletion(taskMapper.toResource(task));
         }
-       
+       logger.info("Task submission to executor completed - taskId={}, status={}", task.getId(), task.getStatus());
         return task;
     }
 
@@ -269,7 +270,7 @@ public class TaskService {
 
     public Task stopTask(Task task, TaskResultResource taskResultResource) {
 		try {
-
+            logger.info("Stopping task - taskId={}, status={}", task.getId(), task.getStatus());
             // Ask to the DevOps provider the real status of the Task
             TaskStatus taskRealStatus = null;
             odmExecutor = clients.getExecutorClient(task.getExecutorRef(), task.getActivityId());
@@ -315,10 +316,11 @@ public class TaskService {
                 }
 
                 // Interactions with PolicyService
-                if(!policyServiceProxy.isCallbackResultValid(taskMapper.toResource(task))){
+                DevopsPolicyServiceProxy.PolicyValidationResult callbackResult = policyServiceProxy.isCallbackResultValid(taskMapper.toResource(task));
+                if(!callbackResult.isValid()){
                     throw new InternalServerException(
                             ODMApiCommonErrors.SC500_73_POLICY_SERVICE_EVALUATION_ERROR,
-                            "Some blocking policy has not passed evaluation"
+                             "Some blocking policies on task result have not passed evaluation: " + callbackResult.getErrorMessage()
                     );
                 }
 
@@ -353,11 +355,12 @@ public class TaskService {
                 "An error occurred in the backend database while saving task",
                 t);
         }
-        
+        logger.info("Task stopped - taskId={}, status={}", task.getId(), task.getStatus());
         return task;
 	}
 
     public Task abortTask(Long taskId) {
+        logger.info("Aborting task - taskId={}", taskId);
         Task task = readTask(taskId);
         if (!task.getStatus().equals(ActivityTaskStatus.PROCESSING) && 
             !task.getStatus().equals(ActivityTaskStatus.PLANNED)) return task;
@@ -365,6 +368,7 @@ public class TaskService {
         task.setFinishedAt(now());
         task = saveTask(task);
         devOpsNotificationServiceProxy.notifyTaskCompletion(taskMapper.toResource(task));
+        logger.info("Task aborted - taskId={}, status={}", task.getId(), task.getStatus());
         return task;
     }
 

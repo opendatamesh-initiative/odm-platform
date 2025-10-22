@@ -12,17 +12,40 @@ import org.opendatamesh.platform.pp.policy.api.clients.PolicyClientImpl;
 import org.opendatamesh.platform.pp.policy.api.clients.PolicyValidationClient;
 import org.opendatamesh.platform.pp.policy.api.mappers.utils.JsonNodeUtils;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationRequestResource;
+import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationResultResource;
 import org.opendatamesh.platform.pp.policy.api.resources.ValidationResponseResource;
 import org.opendatamesh.platform.up.executor.api.resources.TaskResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
 @Service
 public class DevopsPolicyServiceProxy {
+
+    /**
+     * Result class to hold policy validation results with detailed error information
+     */
+    public static class PolicyValidationResult {
+        private final boolean valid;
+        private final String errorMessage;
+
+        public PolicyValidationResult(boolean valid, String errorMessage) {
+            this.valid = valid;
+            this.errorMessage = errorMessage;
+        }
+
+        public boolean isValid() {
+            return valid;
+        }
+
+        public String getErrorMessage() {
+            return errorMessage;
+        }
+    }
 
     private PolicyValidationClient policyValidationClient;
     private final boolean policyServiceActive;
@@ -45,14 +68,14 @@ public class DevopsPolicyServiceProxy {
         }
     }
 
-    public boolean isStageTransitionValid(
+    public PolicyValidationResult isStageTransitionValid(
             LifecycleResource currentLifecycle,
             ActivityResource activityToBeExecuted,
             List<TaskResource> activityTasksToBeExecuted
     ) {
         if (!policyServiceActive) {
             logger.info("Policy Service is not active;");
-            return true;
+            return new PolicyValidationResult(true, null);
         }
 
         try {
@@ -70,10 +93,7 @@ public class DevopsPolicyServiceProxy {
                     eventTypeMapper.toEventResource(currentLifecycle, activityToBeExecuted, activityTasksToBeExecuted)
             ));
             ValidationResponseResource evaluationResult = policyValidationClient.validateInputObject(evaluationRequest);
-            if (Boolean.FALSE.equals(evaluationResult.getResult())) {
-                logger.warn("Policy evaluation failed during stage transition.");
-            }
-            return evaluationResult.getResult();
+            return checkPoliciesValidationResults(evaluationResult, "stage transition");
         } catch (Exception e) {
             throw new BadGatewayException(
                     ODMApiCommonErrors.SC502_71_POLICY_SERVICE_ERROR,
@@ -84,10 +104,10 @@ public class DevopsPolicyServiceProxy {
     }
 
 
-    public boolean isCallbackResultValid(TaskResource taskResource) {
+    public PolicyValidationResult isCallbackResultValid(TaskResource taskResource) {
         if (!policyServiceActive) {
             logger.info("Policy Service is not active;");
-            return true;
+            return new PolicyValidationResult(true, null);
         }
         try {
             PolicyEvaluationRequestResource evaluationRequest = new PolicyEvaluationRequestResource();
@@ -97,10 +117,7 @@ public class DevopsPolicyServiceProxy {
                     eventTypeMapper.toEventResource(null, taskResource)
             ));
             ValidationResponseResource evaluationResult = policyValidationClient.validateInputObject(evaluationRequest);
-            if (Boolean.FALSE.equals(evaluationResult.getResult())) {
-                logger.warn("Policy evaluation failed on callback result validation.");
-            }
-            return evaluationResult.getResult();
+            return checkPoliciesValidationResults(evaluationResult, "callback result validation");
         } catch (Exception e) {
             throw new BadGatewayException(
                     ODMApiCommonErrors.SC502_71_POLICY_SERVICE_ERROR,
@@ -110,10 +127,10 @@ public class DevopsPolicyServiceProxy {
         }
     }
 
-    public boolean isContextuallyCoherent(ActivityResource activityResource, DataProductVersionDPDS dataProductVersionDPDS) {
+    public PolicyValidationResult isContextuallyCoherent(ActivityResource activityResource, DataProductVersionDPDS dataProductVersionDPDS) {
         if (!policyServiceActive) {
             logger.info("Policy Service is not active;");
-            return true;
+            return new PolicyValidationResult(true, null);
         }
         try {
             PolicyEvaluationRequestResource evaluationRequest = new PolicyEvaluationRequestResource();
@@ -125,10 +142,7 @@ public class DevopsPolicyServiceProxy {
                     eventTypeMapper.toEventResource(activityResource, dataProductVersionDPDS)
             ));
             ValidationResponseResource evaluationResult = policyValidationClient.validateInputObject(evaluationRequest);
-            if (Boolean.FALSE.equals(evaluationResult.getResult())) {
-                logger.warn("Policy evaluation failed during context coherence validation.");
-            }
-            return evaluationResult.getResult();
+            return checkPoliciesValidationResults(evaluationResult, "context coherence validation");
         } catch (Exception e) {
             throw new BadGatewayException(
                     ODMApiCommonErrors.SC502_71_POLICY_SERVICE_ERROR,
@@ -136,6 +150,47 @@ public class DevopsPolicyServiceProxy {
                     e
             );
         }
+    }
+
+    /**
+     * This method performs the check, returning false only if blocking policies fail.
+     * Non-blocking policy failures are logged but don't block the operation.
+     */
+    private PolicyValidationResult checkPoliciesValidationResults(ValidationResponseResource validationResults, String operation) {
+        String allFailedPoliciesIds = "";
+        String failedBlockingPolicies = validationResults.getPolicyResults()
+                .stream()
+                .filter(policyResult -> Boolean.FALSE.equals(policyResult.getResult()))
+                .filter(policyResult -> Boolean.TRUE.equals(policyResult.getPolicy().getBlockingFlag()))
+                .map(this::getPolicyIdentifier)
+                .reduce("", (first, second) -> StringUtils.hasText(first) ? first + ", " + second : second);
+        if (StringUtils.hasText(failedBlockingPolicies)) {
+            allFailedPoliciesIds = allFailedPoliciesIds + " Blocking Policies: [ " + failedBlockingPolicies + " ]";
+        }
+        String failedNonBlockingPolicies = validationResults.getPolicyResults()
+                .stream()
+                .filter(policyResult -> Boolean.FALSE.equals(policyResult.getResult()))
+                .filter(policyResult -> Boolean.FALSE.equals(policyResult.getPolicy().getBlockingFlag()))
+                .map(this::getPolicyIdentifier)
+                .reduce("", (first, second) -> StringUtils.hasText(first) ? first + ", " + second : second);
+        if (StringUtils.hasText(failedNonBlockingPolicies)) {
+            allFailedPoliciesIds = allFailedPoliciesIds + " Non-Blocking Policies: [ " + failedNonBlockingPolicies + " ]";
+        }
+        if (StringUtils.hasText(allFailedPoliciesIds)) {
+            logger.warn("Policy evaluation failed during {}: {}", operation, allFailedPoliciesIds);
+        }
+        // Only return false if there are failed blocking policies
+        boolean isValid = !StringUtils.hasText(failedBlockingPolicies);
+        String errorMessage = StringUtils.hasText(failedBlockingPolicies) ? 
+            "Blocking policies failed: " + failedBlockingPolicies : null;
+        return new PolicyValidationResult(isValid, errorMessage);
+    }
+
+    private String getPolicyIdentifier(PolicyEvaluationResultResource policyEvaluationResultResource) {
+        return String.format("{name: %s, rootId: %s, id: %s}",
+                policyEvaluationResultResource.getPolicy().getName(),
+                policyEvaluationResultResource.getPolicy().getRootId().toString(),
+                policyEvaluationResultResource.getPolicy().getId().toString());
     }
 
 }

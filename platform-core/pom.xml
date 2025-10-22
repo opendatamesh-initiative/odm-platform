@@ -25,7 +25,7 @@ License.
     <parent>
         <groupId>org.opendatamesh</groupId>
         <artifactId>odm-platform</artifactId>
-        <version>1.0.33</version>
+        <version>1.0.34</version>
     </parent>
 
     <groupId>org.opendatamesh</groupId>
@@ -33,7 +33,7 @@ License.
     <name>ODM Platform CORE MODULES</name>
 
     <description>Open Data Mesh Core Modules</description>
-    <version>1.0.33</version>
+    <version>1.0.34</version>
     <url>https://github.com/opendatamesh-initiative/odm-platform-pp-services</url>
     <packaging>pom</packaging>
 

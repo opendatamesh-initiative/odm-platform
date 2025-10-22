@@ -26,6 +26,7 @@ logging:
         platform.*: DEBUG
     httpclient:
       wire: INFO
+logging.level.org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
 
 ##########################
 # Doc configuration

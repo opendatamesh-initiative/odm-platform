@@ -26,7 +26,9 @@ import org.opendatamesh.platform.pp.registry.api.resources.VariableResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -63,6 +65,10 @@ public class ActivityService {
 
     @Autowired
     private ActivityMapper mapper;
+
+    @Autowired
+    @Lazy
+    private ActivityService self; // Self-injection for async method calls
 
     private static final Logger logger = LoggerFactory.getLogger(ActivityService.class);
 
@@ -372,6 +378,15 @@ public class ActivityService {
         return startedTask;
     }
 
+    @Async
+    public void startNextPlannedTaskAndUpdateParentActivityAsync(Long activityId) {
+        try {
+            startNextPlannedTaskAndUpdateParentActivity(activityId);
+        } catch (Exception e) {
+            logger.error("Error in async start next task execution for activityId={}", activityId, e);
+        }
+    }
+
     private String replaceVariables(String serializedTaskConfigs, Map<String, ActivityContext> context) {
         return VariableTemplateUtils.replaceVariables(serializedTaskConfigs, context);
     }
@@ -392,8 +407,16 @@ public class ActivityService {
                 logger.info("Task failed: stopping activity- taskId={}, activityId={}", taskId, task.getActivityId());
                 stopActivity(task.getActivityId(), false);
             } else {
-                logger.info("Task processed: continuing activity - taskId={}, activityId={}", taskId, task.getActivityId());
-                startNextPlannedTaskAndUpdateParentActivity(task.getActivityId());
+                // Check if there are more planned tasks before launching async
+                List<Task> plannedTasks = taskService.searchTasks(task.getActivityId(), null, ActivityTaskStatus.PLANNED);
+                if (plannedTasks != null && !plannedTasks.isEmpty()) {
+                    logger.info("Task processed: continuing activity - taskId={}, activityId={}", taskId,
+                            task.getActivityId());
+                    self.startNextPlannedTaskAndUpdateParentActivityAsync(task.getActivityId());
+                } else {
+                    logger.info("No more planned tasks to start - stopping activity with success - activityId={}", task.getActivityId());
+                    stopActivity(task.getActivityId(), true);
+                }
             }
         }
         return task;

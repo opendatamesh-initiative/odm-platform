@@ -38,7 +38,7 @@ class DataProductValidatorPolicyOutboundPortImpl implements DataProductValidator
 
     @Override
     public List<DataProductValidatorResult> validateDataProductVersionPublish(DataProductVersion mostRecentVersion, DataProductVersion newVersion) {
-        ValidationResponseResource validationResponseResource = policyServiceProxy.testValidateDataProductVersion(dataProductVersionMapper.toResource(mostRecentVersion), dataProductVersionMapper.toResource(mostRecentVersion));
+        ValidationResponseResource validationResponseResource = policyServiceProxy.testValidateDataProductVersion(dataProductVersionMapper.toResource(mostRecentVersion), dataProductVersionMapper.toResource(newVersion));
         if (validationResponseResource != null && validationResponseResource.getPolicyResults() != null) {
             return policyValidationResponseToDataProductValidationResult(validationResponseResource);
         }

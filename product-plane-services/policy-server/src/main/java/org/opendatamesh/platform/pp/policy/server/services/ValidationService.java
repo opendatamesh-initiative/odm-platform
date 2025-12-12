@@ -17,6 +17,7 @@ import org.opendatamesh.platform.up.validator.api.resources.EvaluationResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -42,6 +43,7 @@ public class ValidationService {
 
     private static final JsonNodeFactory jsonNodeFactory = ObjectMapperFactory.JSON_MAPPER.getNodeFactory();
 
+    @Transactional
     public ValidationResponseResource validateInput(PolicyEvaluationRequestResource policyEvaluationRequestResource, boolean storeResults) {
         policyEnricherService.enrichRequest(policyEvaluationRequestResource);
         JsonNode inputObject = buildInputObject(policyEvaluationRequestResource);

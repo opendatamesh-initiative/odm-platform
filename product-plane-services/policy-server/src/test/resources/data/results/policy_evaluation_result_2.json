@@ -1,8 +1,0 @@
-{
-  "dataProductId": "def456",
-  "dataProductVersion": "1.7.14",
-  "inputObject": "{\"name\":\"dp-1-7-14\",\"description\":\"DataProduct1714Draft\",\"domain\":\"Sales\"}",
-  "outputObject": "{\"allow\":true}",
-  "result":  true,
-  "policyId": 1
-}

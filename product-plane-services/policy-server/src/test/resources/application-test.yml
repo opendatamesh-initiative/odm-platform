@@ -1,0 +1,34 @@
+spring:
+  config:
+    activate:
+      on-profile: test
+  jpa:
+    hibernate:
+      ddl-auto: validate
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
+        dialect: org.hibernate.dialect.PostgreSQL95Dialect
+        globally_quoted_identifiers: true
+        default_schema: ODMPOLICY
+odm:
+  productPlane:
+    registryService:
+      active: false
+      address: http://localhost:8001
+    devopsService:
+      active: false
+      address: http://localhost:8002
+    notificationService:
+      active: true
+      address: http://localhost:8006
+    policy:
+      adapter:
+        active: true
+        observer:
+          name: policyAdapter
+          displayName: Policy Adapter

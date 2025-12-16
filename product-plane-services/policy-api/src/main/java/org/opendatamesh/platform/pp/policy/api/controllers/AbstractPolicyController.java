@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(
-        value = "/api/v1/pp/policy/policies"
+        value = "/policies"
 )
 @Validated
 @Tag(

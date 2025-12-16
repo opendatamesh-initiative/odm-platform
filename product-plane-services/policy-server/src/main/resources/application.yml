@@ -4,22 +4,18 @@
 spring:
   profiles:
     active: dev
-  flyway:
-    enabled: true
-    baseline-on-migrate: true
-    locations: classpath:db/migration/postgresql
-  jpa:
-    properties:
-      hibernate:
-        ddl-auto: validate
+    #testmysql 
+    #testpostgresql
+
 ##########################
 # Server configuration
 ##########################
 server:
   port: 8005
-  baseUrl: http://localhost:8005
   error:
     include-message: always
+  servlet:
+    context-path: /api/v1/pp/policy/
 
 ##########################
 # Logging configuration

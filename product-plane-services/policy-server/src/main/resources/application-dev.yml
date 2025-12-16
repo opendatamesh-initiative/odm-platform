@@ -4,6 +4,10 @@
 app:
   workdir:
 
+server:
+  error:
+    include-message: always
+
 ############################################
 # Spring configurations
 ############################################
@@ -60,9 +64,4 @@ odm:
     notificationService:
       active: true
       address: http://localhost:8006
-    policy:
-      adapter:
-        active: true
-        observer:
-          name: policyAdapter
-          displayName: Policy Adapter
+

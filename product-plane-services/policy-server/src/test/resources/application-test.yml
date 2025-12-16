@@ -15,6 +15,8 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQL95Dialect
         globally_quoted_identifiers: true
         default_schema: ODMPOLICY
+  flyway:
+    locations: classpath:db/migration/postgresql
 odm:
   productPlane:
     registryService:

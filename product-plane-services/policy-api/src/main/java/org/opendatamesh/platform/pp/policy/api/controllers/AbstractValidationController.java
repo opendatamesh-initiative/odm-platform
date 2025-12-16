@@ -68,7 +68,7 @@ public interface AbstractValidationController {
             )
     })
     @PostMapping(
-            path = "/api/v1/pp/policy/validation",
+            path = "/validation",
             consumes = "application/json",
             produces = "application/json"
     )
@@ -95,7 +95,7 @@ public interface AbstractValidationController {
             )
     })
     @PostMapping(
-            path = "/api/v1/pp/policy/validation-test",
+            path = "/validation-test",
             consumes = "application/json",
             produces = "application/json"
     )

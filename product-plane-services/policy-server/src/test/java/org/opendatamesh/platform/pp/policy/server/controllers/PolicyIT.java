@@ -1,6 +1,7 @@
 package org.opendatamesh.platform.pp.policy.server.controllers;
 
 import org.junit.jupiter.api.Test;
+import org.opendatamesh.platform.pp.policy.api.clients.PolicyAPIRoutes;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEngineResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyEvaluationEventResource;
 import org.opendatamesh.platform.pp.policy.api.resources.PolicyResource;
@@ -42,7 +43,7 @@ public class PolicyIT extends PolicyApplicationIT {
         policyEngine.setAdapterUrl("http://localhost:9001/api/v1/up/validator");
 
         ResponseEntity<PolicyEngineResource> engineResponse = rest.postForEntity(
-                apiUrl(Routes.POLICY_ENGINES),
+                apiUrl(PolicyAPIRoutes.ENGINES),
                 new HttpEntity<>(policyEngine),
                 PolicyEngineResource.class
         );
@@ -74,7 +75,7 @@ public class PolicyIT extends PolicyApplicationIT {
 
         // When
         ResponseEntity<PolicyResource> response = rest.postForEntity(
-                apiUrl(Routes.POLICIES),
+                apiUrl(PolicyAPIRoutes.POLICIES),
                 new HttpEntity<>(policy),
                 PolicyResource.class
         );
@@ -99,13 +100,13 @@ public class PolicyIT extends PolicyApplicationIT {
 
         // Cleanup
         rest.exchange(
-                apiUrl(Routes.POLICIES) + "/" + createdPolicy.getRootId(),
+                apiUrl(PolicyAPIRoutes.POLICIES) + "/" + createdPolicy.getRootId(),
                 HttpMethod.DELETE,
                 null,
                 Void.class
         );
         rest.exchange(
-                apiUrl(Routes.POLICY_ENGINES) + "/" + engineId,
+                apiUrl(PolicyAPIRoutes.ENGINES) + "/" + engineId,
                 HttpMethod.DELETE,
                 null,
                 Void.class
@@ -132,7 +133,7 @@ public class PolicyIT extends PolicyApplicationIT {
         policyEngine.setAdapterUrl("http://localhost:9001/api/v1/up/validator");
 
         ResponseEntity<PolicyEngineResource> engineResponse = rest.postForEntity(
-                apiUrl(Routes.POLICY_ENGINES),
+                apiUrl(PolicyAPIRoutes.ENGINES),
                 new HttpEntity<>(policyEngine),
                 PolicyEngineResource.class
         );
@@ -162,7 +163,7 @@ public class PolicyIT extends PolicyApplicationIT {
         policy.setEvaluationEvents(evaluationEvents);
 
         ResponseEntity<PolicyResource> createResponse = rest.postForEntity(
-                apiUrl(Routes.POLICIES),
+                apiUrl(PolicyAPIRoutes.POLICIES),
                 new HttpEntity<>(policy),
                 PolicyResource.class
         );
@@ -198,7 +199,7 @@ public class PolicyIT extends PolicyApplicationIT {
 
         // When
         ResponseEntity<PolicyResource> response = rest.exchange(
-                apiUrl(Routes.POLICIES) + "/" + rootId,
+                apiUrl(PolicyAPIRoutes.POLICIES) + "/" + rootId,
                 HttpMethod.PUT,
                 new HttpEntity<>(updatedPolicy),
                 PolicyResource.class
@@ -214,7 +215,7 @@ public class PolicyIT extends PolicyApplicationIT {
         assertThat(updatedPolicyResponse.getBlockingFlag()).isFalse();
 
         ResponseEntity<PolicyResource> oldVersionResponse = rest.getForEntity(
-                apiUrl(Routes.POLICIES) + "/versions/" + originalVersionId,
+                apiUrl(PolicyAPIRoutes.POLICIES) + "/versions/" + originalVersionId,
                 PolicyResource.class
         );
         assertThat(oldVersionResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -226,13 +227,13 @@ public class PolicyIT extends PolicyApplicationIT {
 
         // Cleanup
         rest.exchange(
-                apiUrl(Routes.POLICIES) + "/" + rootId,
+                apiUrl(PolicyAPIRoutes.POLICIES) + "/" + rootId,
                 HttpMethod.DELETE,
                 null,
                 Void.class
         );
         rest.exchange(
-                apiUrl(Routes.POLICY_ENGINES) + "/" + engineId,
+                apiUrl(PolicyAPIRoutes.ENGINES) + "/" + engineId,
                 HttpMethod.DELETE,
                 null,
                 Void.class
@@ -260,7 +261,7 @@ public class PolicyIT extends PolicyApplicationIT {
         policyEngine1.setAdapterUrl("http://localhost:9001/api/v1/up/validator-1");
 
         ResponseEntity<PolicyEngineResource> engineResponse1 = rest.postForEntity(
-                apiUrl(Routes.POLICY_ENGINES),
+                apiUrl(PolicyAPIRoutes.ENGINES),
                 new HttpEntity<>(policyEngine1),
                 PolicyEngineResource.class
         );
@@ -276,7 +277,7 @@ public class PolicyIT extends PolicyApplicationIT {
         policyEngine2.setAdapterUrl("http://localhost:9001/api/v1/up/validator-2");
 
         ResponseEntity<PolicyEngineResource> engineResponse2 = rest.postForEntity(
-                apiUrl(Routes.POLICY_ENGINES),
+                apiUrl(PolicyAPIRoutes.ENGINES),
                 new HttpEntity<>(policyEngine2),
                 PolicyEngineResource.class
         );
@@ -305,7 +306,7 @@ public class PolicyIT extends PolicyApplicationIT {
         policy1.setEvaluationEvents(evaluationEvents1);
 
         ResponseEntity<PolicyResource> createResponse1 = rest.postForEntity(
-                apiUrl(Routes.POLICIES),
+                apiUrl(PolicyAPIRoutes.POLICIES),
                 new HttpEntity<>(policy1),
                 PolicyResource.class
         );
@@ -334,7 +335,7 @@ public class PolicyIT extends PolicyApplicationIT {
         policy2.setEvaluationEvents(evaluationEvents2);
 
         ResponseEntity<PolicyResource> createResponse2 = rest.postForEntity(
-                apiUrl(Routes.POLICIES),
+                apiUrl(PolicyAPIRoutes.POLICIES),
                 new HttpEntity<>(policy2),
                 PolicyResource.class
         );
@@ -346,7 +347,7 @@ public class PolicyIT extends PolicyApplicationIT {
 
         // When
         ResponseEntity<PageUtility<PolicyResource>> response = rest.exchange(
-                apiUrl(Routes.POLICIES),
+                apiUrl(PolicyAPIRoutes.POLICIES),
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<PageUtility<PolicyResource>>() {
@@ -368,25 +369,25 @@ public class PolicyIT extends PolicyApplicationIT {
 
         // Cleanup
         rest.exchange(
-                apiUrl(Routes.POLICIES) + "/" + rootId1,
+                apiUrl(PolicyAPIRoutes.POLICIES) + "/" + rootId1,
                 HttpMethod.DELETE,
                 null,
                 Void.class
         );
         rest.exchange(
-                apiUrl(Routes.POLICIES) + "/" + rootId2,
+                apiUrl(PolicyAPIRoutes.POLICIES) + "/" + rootId2,
                 HttpMethod.DELETE,
                 null,
                 Void.class
         );
         rest.exchange(
-                apiUrl(Routes.POLICY_ENGINES) + "/" + engineId1,
+                apiUrl(PolicyAPIRoutes.ENGINES) + "/" + engineId1,
                 HttpMethod.DELETE,
                 null,
                 Void.class
         );
         rest.exchange(
-                apiUrl(Routes.POLICY_ENGINES) + "/" + engineId2,
+                apiUrl(PolicyAPIRoutes.ENGINES) + "/" + engineId2,
                 HttpMethod.DELETE,
                 null,
                 Void.class
@@ -411,7 +412,7 @@ public class PolicyIT extends PolicyApplicationIT {
         policyEngine.setAdapterUrl("http://localhost:9001/api/v1/up/validator");
 
         ResponseEntity<PolicyEngineResource> engineResponse = rest.postForEntity(
-                apiUrl(Routes.POLICY_ENGINES),
+                apiUrl(PolicyAPIRoutes.ENGINES),
                 new HttpEntity<>(policyEngine),
                 PolicyEngineResource.class
         );
@@ -441,7 +442,7 @@ public class PolicyIT extends PolicyApplicationIT {
         policy.setEvaluationEvents(evaluationEvents);
 
         ResponseEntity<PolicyResource> createResponse = rest.postForEntity(
-                apiUrl(Routes.POLICIES),
+                apiUrl(PolicyAPIRoutes.POLICIES),
                 new HttpEntity<>(policy),
                 PolicyResource.class
         );
@@ -453,7 +454,7 @@ public class PolicyIT extends PolicyApplicationIT {
 
         // When
         ResponseEntity<PolicyResource> response = rest.getForEntity(
-                apiUrl(Routes.POLICIES) + "/" + rootId,
+                apiUrl(PolicyAPIRoutes.POLICIES) + "/" + rootId,
                 PolicyResource.class
         );
 
@@ -474,13 +475,13 @@ public class PolicyIT extends PolicyApplicationIT {
 
         // Cleanup
         rest.exchange(
-                apiUrl(Routes.POLICIES) + "/" + rootId,
+                apiUrl(PolicyAPIRoutes.POLICIES) + "/" + rootId,
                 HttpMethod.DELETE,
                 null,
                 Void.class
         );
         rest.exchange(
-                apiUrl(Routes.POLICY_ENGINES) + "/" + engineId,
+                apiUrl(PolicyAPIRoutes.ENGINES) + "/" + engineId,
                 HttpMethod.DELETE,
                 null,
                 Void.class
@@ -506,7 +507,7 @@ public class PolicyIT extends PolicyApplicationIT {
         policyEngine.setAdapterUrl("http://localhost:9001/api/v1/up/validator");
 
         ResponseEntity<PolicyEngineResource> engineResponse = rest.postForEntity(
-                apiUrl(Routes.POLICY_ENGINES),
+                apiUrl(PolicyAPIRoutes.ENGINES),
                 new HttpEntity<>(policyEngine),
                 PolicyEngineResource.class
         );
@@ -535,7 +536,7 @@ public class PolicyIT extends PolicyApplicationIT {
         policy.setEvaluationEvents(evaluationEvents);
 
         ResponseEntity<PolicyResource> createResponse = rest.postForEntity(
-                apiUrl(Routes.POLICIES),
+                apiUrl(PolicyAPIRoutes.POLICIES),
                 new HttpEntity<>(policy),
                 PolicyResource.class
         );
@@ -567,7 +568,7 @@ public class PolicyIT extends PolicyApplicationIT {
         updatedPolicy.setEvaluationEvents(updatedEvaluationEvents);
 
         ResponseEntity<PolicyResource> updateResponse = rest.exchange(
-                apiUrl(Routes.POLICIES) + "/" + rootId,
+                apiUrl(PolicyAPIRoutes.POLICIES) + "/" + rootId,
                 HttpMethod.PUT,
                 new HttpEntity<>(updatedPolicy),
                 PolicyResource.class
@@ -578,7 +579,7 @@ public class PolicyIT extends PolicyApplicationIT {
 
         // When
         ResponseEntity<PolicyResource> response = rest.getForEntity(
-                apiUrl(Routes.POLICIES) + "/" + rootId,
+                apiUrl(PolicyAPIRoutes.POLICIES) + "/" + rootId,
                 PolicyResource.class
         );
 
@@ -592,13 +593,13 @@ public class PolicyIT extends PolicyApplicationIT {
 
         // Cleanup
         rest.exchange(
-                apiUrl(Routes.POLICIES) + "/" + rootId,
+                apiUrl(PolicyAPIRoutes.POLICIES) + "/" + rootId,
                 HttpMethod.DELETE,
                 null,
                 Void.class
         );
         rest.exchange(
-                apiUrl(Routes.POLICY_ENGINES) + "/" + engineId,
+                apiUrl(PolicyAPIRoutes.ENGINES) + "/" + engineId,
                 HttpMethod.DELETE,
                 null,
                 Void.class
@@ -625,7 +626,7 @@ public class PolicyIT extends PolicyApplicationIT {
         policyEngine.setAdapterUrl("http://localhost:9001/api/v1/up/validator");
 
         ResponseEntity<PolicyEngineResource> engineResponse = rest.postForEntity(
-                apiUrl(Routes.POLICY_ENGINES),
+                apiUrl(PolicyAPIRoutes.ENGINES),
                 new HttpEntity<>(policyEngine),
                 PolicyEngineResource.class
         );
@@ -654,7 +655,7 @@ public class PolicyIT extends PolicyApplicationIT {
         policy.setEvaluationEvents(evaluationEvents);
 
         ResponseEntity<PolicyResource> createResponse = rest.postForEntity(
-                apiUrl(Routes.POLICIES),
+                apiUrl(PolicyAPIRoutes.POLICIES),
                 new HttpEntity<>(policy),
                 PolicyResource.class
         );
@@ -688,7 +689,7 @@ public class PolicyIT extends PolicyApplicationIT {
         updatedPolicy.setEvaluationEvents(updatedEvaluationEvents);
 
         ResponseEntity<PolicyResource> updateResponse = rest.exchange(
-                apiUrl(Routes.POLICIES) + "/" + rootId,
+                apiUrl(PolicyAPIRoutes.POLICIES) + "/" + rootId,
                 HttpMethod.PUT,
                 new HttpEntity<>(updatedPolicy),
                 PolicyResource.class
@@ -698,7 +699,7 @@ public class PolicyIT extends PolicyApplicationIT {
 
         // When
         ResponseEntity<PolicyResource> response = rest.getForEntity(
-                apiUrl(Routes.POLICIES) + "/versions/" + originalVersionId,
+                apiUrl(PolicyAPIRoutes.POLICIES) + "/versions/" + originalVersionId,
                 PolicyResource.class
         );
 
@@ -716,13 +717,13 @@ public class PolicyIT extends PolicyApplicationIT {
 
         // Cleanup
         rest.exchange(
-                apiUrl(Routes.POLICIES) + "/" + rootId,
+                apiUrl(PolicyAPIRoutes.POLICIES) + "/" + rootId,
                 HttpMethod.DELETE,
                 null,
                 Void.class
         );
         rest.exchange(
-                apiUrl(Routes.POLICY_ENGINES) + "/" + engineId,
+                apiUrl(PolicyAPIRoutes.ENGINES) + "/" + engineId,
                 HttpMethod.DELETE,
                 null,
                 Void.class
@@ -747,7 +748,7 @@ public class PolicyIT extends PolicyApplicationIT {
         policyEngine.setAdapterUrl("http://localhost:9001/api/v1/up/validator");
 
         ResponseEntity<PolicyEngineResource> engineResponse = rest.postForEntity(
-                apiUrl(Routes.POLICY_ENGINES),
+                apiUrl(PolicyAPIRoutes.ENGINES),
                 new HttpEntity<>(policyEngine),
                 PolicyEngineResource.class
         );
@@ -776,7 +777,7 @@ public class PolicyIT extends PolicyApplicationIT {
         policy.setEvaluationEvents(evaluationEvents);
 
         ResponseEntity<PolicyResource> createResponse = rest.postForEntity(
-                apiUrl(Routes.POLICIES),
+                apiUrl(PolicyAPIRoutes.POLICIES),
                 new HttpEntity<>(policy),
                 PolicyResource.class
         );
@@ -788,7 +789,7 @@ public class PolicyIT extends PolicyApplicationIT {
 
         // When
         ResponseEntity<Void> deleteResponse = rest.exchange(
-                apiUrl(Routes.POLICIES) + "/" + rootId,
+                apiUrl(PolicyAPIRoutes.POLICIES) + "/" + rootId,
                 HttpMethod.DELETE,
                 null,
                 Void.class
@@ -797,14 +798,14 @@ public class PolicyIT extends PolicyApplicationIT {
         // Then
         assertThat(deleteResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         ResponseEntity<PolicyResource> getResponse = rest.getForEntity(
-                apiUrl(Routes.POLICIES) + "/" + rootId,
+                apiUrl(PolicyAPIRoutes.POLICIES) + "/" + rootId,
                 PolicyResource.class
         );
         assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 
         // Cleanup
         rest.exchange(
-                apiUrl(Routes.POLICY_ENGINES) + "/" + engineId,
+                apiUrl(PolicyAPIRoutes.ENGINES) + "/" + engineId,
                 HttpMethod.DELETE,
                 null,
                 Void.class
@@ -830,7 +831,7 @@ public class PolicyIT extends PolicyApplicationIT {
         policyEngine.setAdapterUrl("http://localhost:9001/api/v1/up/validator");
 
         ResponseEntity<PolicyEngineResource> engineResponse = rest.postForEntity(
-                apiUrl(Routes.POLICY_ENGINES),
+                apiUrl(PolicyAPIRoutes.ENGINES),
                 new HttpEntity<>(policyEngine),
                 PolicyEngineResource.class
         );
@@ -859,7 +860,7 @@ public class PolicyIT extends PolicyApplicationIT {
         policy.setEvaluationEvents(evaluationEvents);
 
         ResponseEntity<PolicyResource> createResponse = rest.postForEntity(
-                apiUrl(Routes.POLICIES),
+                apiUrl(PolicyAPIRoutes.POLICIES),
                 new HttpEntity<>(policy),
                 PolicyResource.class
         );
@@ -871,7 +872,7 @@ public class PolicyIT extends PolicyApplicationIT {
 
         // When
         rest.exchange(
-                apiUrl(Routes.POLICIES) + "/" + rootId,
+                apiUrl(PolicyAPIRoutes.POLICIES) + "/" + rootId,
                 HttpMethod.DELETE,
                 null,
                 Void.class
@@ -896,7 +897,7 @@ public class PolicyIT extends PolicyApplicationIT {
         newPolicy.setEvaluationEvents(newEvaluationEvents);
 
         ResponseEntity<PolicyResource> recreateResponse = rest.postForEntity(
-                apiUrl(Routes.POLICIES),
+                apiUrl(PolicyAPIRoutes.POLICIES),
                 new HttpEntity<>(newPolicy),
                 PolicyResource.class
         );
@@ -909,7 +910,7 @@ public class PolicyIT extends PolicyApplicationIT {
         assertThat(recreatedPolicy.getDescription()).isEqualTo("New description");
 
         ResponseEntity<PolicyResource> getResponse = rest.getForEntity(
-                apiUrl(Routes.POLICIES) + "/" + recreatedPolicy.getRootId(),
+                apiUrl(PolicyAPIRoutes.POLICIES) + "/" + recreatedPolicy.getRootId(),
                 PolicyResource.class
         );
         assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -917,13 +918,13 @@ public class PolicyIT extends PolicyApplicationIT {
 
         // Cleanup
         rest.exchange(
-                apiUrl(Routes.POLICIES) + "/" + recreatedPolicy.getRootId(),
+                apiUrl(PolicyAPIRoutes.POLICIES) + "/" + recreatedPolicy.getRootId(),
                 HttpMethod.DELETE,
                 null,
                 Void.class
         );
         rest.exchange(
-                apiUrl(Routes.POLICY_ENGINES) + "/" + engineId,
+                apiUrl(PolicyAPIRoutes.ENGINES) + "/" + engineId,
                 HttpMethod.DELETE,
                 null,
                 Void.class

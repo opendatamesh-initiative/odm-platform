@@ -17,6 +17,8 @@ spring:
         default_schema: ODMPOLICY
   flyway:
     locations: classpath:db/migration/postgresql
+    default-schema: ODMPOLICY
+    schemas: ODMPOLICY
 odm:
   productPlane:
     registryService:

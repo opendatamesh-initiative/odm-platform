@@ -1,5 +1,6 @@
 package org.opendatamesh.platform.pp.policy.server.controllers;
 
+import org.opendatamesh.platform.pp.policy.api.clients.PolicyAPIRoutes;
 import org.opendatamesh.platform.pp.policy.server.ODMPolicyApp;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -32,15 +33,15 @@ public abstract class PolicyApplicationIT {
         rest.setUriTemplateHandler(defaultUriBuilderFactory);
     }
 
-    protected String apiUrl(Routes route) {
+    protected String apiUrl(PolicyAPIRoutes route) {
         return apiUrl(route, "");
     }
 
-    protected String apiUrl(Routes route, String extension) {
+    protected String apiUrl(PolicyAPIRoutes route, String extension) {
         return apiUrlFromString(route.getPath() + extension);
     }
 
-    protected String apiUrlOfItem(Routes route) {
+    protected String apiUrlOfItem(PolicyAPIRoutes route) {
         return apiUrl(route, "/{id}");
     }
 

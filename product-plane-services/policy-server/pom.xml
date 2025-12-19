@@ -306,32 +306,9 @@ License.
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>2.3.3.RELEASE</version>
-                <configuration>
-                    <wait>1000</wait>
-                    <maxAttempts>180</maxAttempts>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>pre-integration-test</id>
-                        <goals>
-                            <goal>start</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>post-integration-test</id>
-                        <goals>
-                            <goal>stop</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <!--Integration tests-->
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
+                <version>3.3.1</version>
                 <executions>
                     <execution>
                         <goals>
@@ -340,19 +317,6 @@ License.
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            <!-- Test temp disabled -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <includes>
-                        <include>**/*IT.java</include>
-                    </includes>
-                    <excludes>
-                        <exclude>**/ODMPolicyIT.java</exclude>
-                    </excludes>
-                </configuration>
             </plugin>
         </plugins>
     </build>

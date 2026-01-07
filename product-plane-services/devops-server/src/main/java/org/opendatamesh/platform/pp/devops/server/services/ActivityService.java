@@ -161,7 +161,7 @@ public class ActivityService {
         Activity activity = null;
 
         activity = readActivity(activityId);
-        
+
         activity = startActivity(activity);
 
         return activity;
@@ -520,8 +520,7 @@ public class ActivityService {
             }
         }
 
-        String taskKey = task.getName() != null ? task.getName() : "task";
-        return taskKey + "_" + taskOrdinalPosition;
+        return task.getName() != null ? task.getName() : "task_" + (taskOrdinalPosition + 1);
     }
 
     private void updateDataProductVersionVariables(Activity activity) {
@@ -753,7 +752,7 @@ public class ActivityService {
                 )
                 .collect(Collectors.toList());
         activitySearchResults = new ArrayList<Activity>(activitySearchResults);
-        if(activitySearchResults.stream().noneMatch(a-> Objects.equals(a.getId(), currentActivity.getId()))){
+        if (activitySearchResults.stream().noneMatch(a -> Objects.equals(a.getId(), currentActivity.getId()))) {
             activitySearchResults.add(currentActivity);
         }
         activitySearchResults.sort(Comparator.comparing(Activity::getId));
@@ -783,7 +782,7 @@ public class ActivityService {
 
     public Activity updateActivity(Long id, Activity activityUpdate) {
         Activity existingActivity = readActivity(id);
-        
+
         // Store original status to determine notification type
         ActivityStatus originalStatus = existingActivity.getStatus();
 
@@ -823,13 +822,13 @@ public class ActivityService {
         // Send notification if status changed
         if (activityUpdate.getStatus() != null && !originalStatus.equals(activityUpdate.getStatus())) {
             DataProductVersionDPDS dataProductVersion = readDataProductVersion(existingActivity);
-            
+
             if (activityUpdate.getStatus().equals(ActivityStatus.PROCESSING)) {
                 // Status changed to PROCESSING -> notify start
                 devOpsNotificationServiceProxy.notifyActivityStart(mapper.toResource(existingActivity), dataProductVersion);
             } else if (activityUpdate.getStatus().equals(ActivityStatus.PROCESSED) ||
-                       activityUpdate.getStatus().equals(ActivityStatus.FAILED) ||
-                       activityUpdate.getStatus().equals(ActivityStatus.ABORTED)) {
+                    activityUpdate.getStatus().equals(ActivityStatus.FAILED) ||
+                    activityUpdate.getStatus().equals(ActivityStatus.ABORTED)) {
                 // Status changed to final state -> notify completion
                 devOpsNotificationServiceProxy.notifyActivityCompletion(mapper.toResource(existingActivity), dataProductVersion);
             }

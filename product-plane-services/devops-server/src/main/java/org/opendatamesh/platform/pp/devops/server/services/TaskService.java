@@ -507,8 +507,10 @@ public class TaskService {
         if (activityInfo.hasTemplate()) {
             ExternalComponentResource template = readTemplateDefinition(activityInfo.getTemplate());
             task.setTemplate(template.getDefinition());
-            if(StringUtils.hasText(template.getName())){
-                task.setName(template.getName());
+            if(StringUtils.hasText(activityInfo.getTemplate().getName())){
+                task.setName(activityInfo.getTemplate().getName());
+            } else {
+                task.setName("task_" + activityInfo.getOrder());
             }
             if(StringUtils.hasText(template.getDescription())){
                 task.setDescription(template.getDescription());

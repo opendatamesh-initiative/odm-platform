@@ -41,26 +41,22 @@ public class PolicyNotificationObserverConfiguration {
         public void registerObserver() {
             if (notificationServiceActive && notificationServiceAddress != null && !notificationServiceAddress.isEmpty()) {
                 NotificationClientImpl observerNotificationClient = new NotificationClientImpl(notificationServiceAddress);
-                try {
-                    if (observerNotificationClient != null) {
-                        // Construct the full URL including context path
-                        String fullObserverUrl = policyServiceAddress;
-                        if (contextPath != null && !contextPath.isEmpty()) {
-                            fullObserverUrl += contextPath.endsWith("/") ? contextPath.substring(0, contextPath.length() - 1) : contextPath;
-                        }
-                        
-                        ObserverResource observer = new ObserverResource();
-                        observer.setName(policyServiceName);
-                        observer.setDisplayName("Policy Server");
-                        observer.setObserverServerBaseUrl(fullObserverUrl);
-                        
-                        observerNotificationClient.addObserver(observer);
-                        logger.info("Successfully registered Policy Server as observer with name: {} and URL: {}", 
-                                   policyServiceName, fullObserverUrl);
-                    }
-                } catch (Exception e) {
-                    logger.error("Failed to register Policy Server as observer", e);
+                // Construct the full URL including context path
+                String fullObserverUrl = policyServiceAddress;
+                if (contextPath != null && !contextPath.isEmpty()) {
+                    fullObserverUrl += contextPath.endsWith("/") ? contextPath.substring(0, contextPath.length() - 1) : contextPath;
                 }
+
+                ObserverResource observer = new ObserverResource();
+                observer.setName(policyServiceName);
+                observer.setDisplayName("Policy Server");
+                observer.setObserverServerBaseUrl(fullObserverUrl);
+
+                observerNotificationClient.addObserver(observer);
+                logger.info("Successfully registered Policy Server as observer with name: {} and URL: {}",
+                        policyServiceName, fullObserverUrl);
+
+                // Failing application startup if observer is active but Policy can not reach the Notification Service
             } else {
                 logger.warn("Skipping observer registration - notification service is not active");
             }

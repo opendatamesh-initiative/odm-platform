@@ -25,6 +25,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -49,6 +50,10 @@ public class PolicyEvaluationResultService extends GenericMappedAndFilteredCrudS
 
     @Autowired
     private PolicyService policyService;
+
+    @Autowired
+    private TransactionTemplate transactionTemplate;
+
 
     protected PolicyEvaluationResultService() {
 
@@ -148,6 +153,7 @@ public class PolicyEvaluationResultService extends GenericMappedAndFilteredCrudS
 
     /**
      * Delete all policy evaluation results for a specific data product
+     *
      * @param dataProductId the data product ID
      */
     public void deleteByDataProductId(String dataProductId) {
@@ -157,11 +163,13 @@ public class PolicyEvaluationResultService extends GenericMappedAndFilteredCrudS
                     "Data product ID cannot be null or empty"
             );
         }
-        
+
         try {
-            int deletedCount = repository.deleteByDataProductId(dataProductId);
-            logger.info("Deleted {} policy evaluation results for data product: {}", 
-                       deletedCount, dataProductId);
+            transactionTemplate.executeWithoutResult(transactionStatus -> {
+                int deletedCount = repository.deleteByDataProductId(dataProductId);
+                logger.info("Deleted {} policy evaluation results for data product: {}",
+                        deletedCount, dataProductId);
+            });
         } catch (Exception e) {
             logger.error("Failed to delete policy evaluation results for data product: {}", dataProductId, e);
             throw new InternalServerException(
@@ -174,8 +182,9 @@ public class PolicyEvaluationResultService extends GenericMappedAndFilteredCrudS
 
     /**
      * Delete all policy evaluation results for a specific data product version
+     *
      * @param dataProductId the data product ID
-     * @param version the version number
+     * @param version       the version number
      */
     public void deleteByDataProductIdAndVersion(String dataProductId, String version) {
         if (dataProductId == null || dataProductId.trim().isEmpty()) {
@@ -184,21 +193,23 @@ public class PolicyEvaluationResultService extends GenericMappedAndFilteredCrudS
                     "Data product ID cannot be null or empty"
             );
         }
-        
+
         if (version == null || version.trim().isEmpty()) {
             throw new BadRequestException(
                     PolicyApiStandardErrors.SC400_03_POLICY_EVALUATION_RESULT_IS_EMPTY,
                     "Version cannot be null or empty"
             );
         }
-        
+
         try {
-            int deletedCount = repository.deleteByDataProductIdAndVersion(dataProductId, version);
-            logger.info("Deleted {} policy evaluation results for data product: {} version: {}", 
-                       deletedCount, dataProductId, version);
+            transactionTemplate.executeWithoutResult(transactionStatus -> {
+                int deletedCount = repository.deleteByDataProductIdAndVersion(dataProductId, version);
+                logger.info("Deleted {} policy evaluation results for data product: {} version: {}",
+                        deletedCount, dataProductId, version);
+            });
         } catch (Exception e) {
-            logger.error("Failed to delete policy evaluation results for data product: {} version: {}", 
-                        dataProductId, version, e);
+            logger.error("Failed to delete policy evaluation results for data product: {} version: {}",
+                    dataProductId, version, e);
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
                     "An error occurred while deleting policy evaluation results for data product: " + dataProductId + " version: " + version,

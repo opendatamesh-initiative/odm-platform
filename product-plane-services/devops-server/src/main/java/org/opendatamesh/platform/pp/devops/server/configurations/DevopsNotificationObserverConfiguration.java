@@ -36,29 +36,24 @@ public class DevopsNotificationObserverConfiguration {
     }
 
     public class DevopsNotificationObserverRegistrar {
-
         @PostConstruct
         public void registerObserver() {
             if (notificationServiceActive && notificationServiceAddress != null && !notificationServiceAddress.isEmpty()) {
                 NotificationClientImpl observerNotificationClient = new NotificationClientImpl(notificationServiceAddress);
-                try {
-                    // Construct the full URL including context path
-                    String fullObserverUrl = devopsServiceAddress;
-                    if (contextPath != null && !contextPath.isEmpty()) {
-                        fullObserverUrl += contextPath.endsWith("/") ? contextPath.substring(0, contextPath.length() - 1) : contextPath;
-                    }
-
-                    ObserverResource observer = new ObserverResource();
-                    observer.setName(devopsServiceName);
-                    observer.setDisplayName("DevOps Server");
-                    observer.setObserverServerBaseUrl(fullObserverUrl);
-
-                    observerNotificationClient.addObserver(observer);
-                    logger.info("Successfully registered DevOps Server as observer with name: {} and URL: {}",
-                               devopsServiceName, fullObserverUrl);
-                } catch (Exception e) {
-                    logger.error("Failed to register DevOps Server as observer", e);
+                String fullObserverUrl = devopsServiceAddress;
+                if (contextPath != null && !contextPath.isEmpty()) {
+                    fullObserverUrl += contextPath.endsWith("/") ? contextPath.substring(0, contextPath.length() - 1) : contextPath;
                 }
+
+                ObserverResource observer = new ObserverResource();
+                observer.setName(devopsServiceName);
+                observer.setDisplayName("DevOps Server");
+                observer.setObserverServerBaseUrl(fullObserverUrl);
+
+                observerNotificationClient.addObserver(observer);
+                logger.info("Successfully registered DevOps Server as observer with name: {} and URL: {}",
+                        devopsServiceName, fullObserverUrl);
+                // Failing application startup if observer is active but DevOps can not reach the Notification Service
             } else {
                 logger.warn("Skipping observer registration - notification service is not active");
             }

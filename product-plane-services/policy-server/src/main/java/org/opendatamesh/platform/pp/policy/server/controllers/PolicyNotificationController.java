@@ -8,8 +8,13 @@ import org.opendatamesh.platform.pp.policy.server.services.PolicyEvaluationResul
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/up/observer")
@@ -20,6 +25,10 @@ public class PolicyNotificationController {
     @Autowired
     private PolicyEvaluationResultService policyEvaluationResultService;
 
+    @Autowired
+    @Lazy
+    private PolicyNotificationController self;
+
     @PostMapping("/notifications")
     public ResponseEntity<Void> handleEventNotification(@RequestBody EventNotificationResource eventNotification) {
         EventResource event = eventNotification.getEvent();
@@ -28,9 +37,9 @@ public class PolicyNotificationController {
         logger.info("Received notification event: {} for entity: {}", eventType, event.getEntityId());
 
         if (EventType.DATA_PRODUCT_DELETED.name().equals(eventType)) {
-            handleDataProductDeletion(event);
+            self.handleDataProductDeletion(event);
         } else if (EventType.DATA_PRODUCT_VERSION_DELETED.name().equals(eventType)) {
-            handleDataProductVersionDeletion(event);
+            self.handleDataProductVersionDeletion(event);
         } else {
             logger.debug("Ignoring event type: {}", eventType);
         }
@@ -38,7 +47,8 @@ public class PolicyNotificationController {
         return ResponseEntity.ok().build();
     }
 
-    private void handleDataProductDeletion(EventResource event) {
+    @Async
+    public void handleDataProductDeletion(EventResource event) {
         String dataProductId = event.getEntityId();
         logger.info("Handling data product deletion for ID: {}", dataProductId);
 
@@ -48,11 +58,11 @@ public class PolicyNotificationController {
             logger.info("Successfully deleted policy evaluation results for data product: {}", dataProductId);
         } catch (Exception e) {
             logger.error("Failed to delete policy evaluation results for data product: {}", dataProductId, e);
-            throw e;
         }
     }
 
-    private void handleDataProductVersionDeletion(EventResource event) {
+    @Async
+    public void handleDataProductVersionDeletion(EventResource event) {
         String dataProductId = extractDataProductId(event);
         String version = extractVersion(event);
 
@@ -66,7 +76,6 @@ public class PolicyNotificationController {
         } catch (Exception e) {
             logger.error("Failed to delete policy evaluation results for data product: {} version: {}",
                     dataProductId, version, e);
-            throw e;
         }
     }
 

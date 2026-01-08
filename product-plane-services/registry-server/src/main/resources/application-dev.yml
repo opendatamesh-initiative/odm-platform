@@ -63,7 +63,7 @@ odm:
         max: null
   productPlane:
     policyService:
-      active: false
+      active: true
       address: http://localhost:8005
     notificationService:
       active: true

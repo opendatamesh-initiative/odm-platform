@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.opendatamesh.dpds.model.core.EntityTypeDPDS;
-import org.opendatamesh.platform.core.commons.ObjectMapperFactory;;
+import org.opendatamesh.platform.core.commons.ObjectMapperFactory;
 
 import java.util.regex.Pattern;
 

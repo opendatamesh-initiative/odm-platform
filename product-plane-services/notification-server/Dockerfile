@@ -1,4 +1,4 @@
-FROM openjdk:17-alpine
+FROM amazoncorretto:17-alpine-jdk
 
 VOLUME /tmp
 

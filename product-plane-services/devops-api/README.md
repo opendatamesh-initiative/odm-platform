@@ -109,3 +109,48 @@ x-odm-aws-executor-secret-aws-key: AKIAIOSFODNN7EXAMPLE
 ```
 
 Each executor will receive only the secrets intended for it, ensuring proper isolation and security.
+
+## Task Name Handling
+
+The task naming is handled through a hierarchical approach that prioritizes explicit template names while providing defaults.
+
+### Task Name Assignment
+
+When creating tasks from lifecycle activity information, the task name is determined as follows:
+
+1. **Template-based naming**: If the activity template specifies a name (`template.name`), this name is used as the task name
+2. **Default naming**: If no template name is provided, a default name is generated using the format `task_{order}`, where `{order}` is the task's position in the activity sequence (starting from 1)
+
+### Example Task Name Resolution
+
+```java
+// If template has a name
+{
+  "template": {
+    "name": "deploy-application",
+    "definition": { ... }
+  }
+}
+// Task name: "deploy-application"
+
+// If no template name (fallback)
+{
+  "order": 2,
+  "template": {
+    "definition": { ... }
+  }
+}
+// Task name: "task_2"
+```
+
+### Task Name Usage in Activity Results
+
+When building activity results, task names serve as keys for organizing execution outputs and constructing the task result context.
+
+The task result context is a structured mapping where each task's execution results are associated with its name, enabling downstream processes to reference specific task outputs by their logical identifiers rather than positional indices.
+
+### Best Practices
+
+- **Explicit naming**: Always specify meaningful names in your activity templates for better traceability
+- **Consistency**: Use consistent naming conventions across similar tasks
+- **Uniqueness**: Ensure task names are unique within an activity to avoid result key collisions

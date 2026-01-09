@@ -22,7 +22,7 @@ public class OpenApiConfig {
                                 "\r\n# Overview" +
                                 "\r\nThe Params Module of the Open Data Mesh platform manages the lifecycle of global or local configurations and parameters. Specifically, it handles the creation of a config/parameter, its update and allow other modules to retrieve the values"
                         )
-                        .version("v1.0.0")
+                        .version("1.0.37")
                         .license(new License().name("Apache 2.0").url("https://github.com/opendatamesh-initiative/odm-platform/blob/main/LICENSE"))
                         .contact(new Contact()
                                 .name("ODM Platform Team")

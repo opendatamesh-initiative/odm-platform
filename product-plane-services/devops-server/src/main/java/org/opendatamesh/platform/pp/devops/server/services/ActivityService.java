@@ -21,11 +21,14 @@ import org.opendatamesh.platform.pp.devops.server.resources.context.Context;
 import org.opendatamesh.platform.pp.devops.server.services.proxies.DevOpsNotificationServiceProxy;
 import org.opendatamesh.platform.pp.devops.server.services.proxies.DevopsPolicyServiceProxy;
 import org.opendatamesh.platform.pp.devops.server.utils.ObjectNodeUtils;
+import org.opendatamesh.platform.pp.devops.server.utils.VariableTemplateUtils;
 import org.opendatamesh.platform.pp.registry.api.resources.VariableResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -63,6 +66,10 @@ public class ActivityService {
 
     @Autowired
     private ActivityMapper mapper;
+
+    @Autowired
+    @Lazy
+    private ActivityService self; // Self-injection for async method calls
 
     private static final Logger logger = LoggerFactory.getLogger(ActivityService.class);
 
@@ -155,14 +162,14 @@ public class ActivityService {
         Activity activity = null;
 
         activity = readActivity(activityId);
-        
+
         activity = startActivity(activity);
 
         return activity;
     }
 
     public Activity startActivity(Activity activity) {
-
+        logger.info("Starting activity - activityId={}", activity.getId());
         if (activity.getStatus().equals(ActivityStatus.PLANNED) == false) {
             if (activity.getStatus().equals(ActivityStatus.PROCESSING)) {
                 throw new ConflictException(
@@ -205,12 +212,12 @@ public class ActivityService {
                 activity.getDataProductId(),
                 activity.getDataProductVersion()
         );
-        if (!policyServiceProxy.isStageTransitionValid(
-                lifecycleResource, mapper.toResource(activity), taskMapper.toResources(plannedTasks))
-        ) {
+        DevopsPolicyServiceProxy.PolicyValidationResult stageTransitionResult = policyServiceProxy.isStageTransitionValid(
+                lifecycleResource, mapper.toResource(activity), taskMapper.toResources(plannedTasks));
+        if (!stageTransitionResult.isValid()) {
             throw new InternalServerException(
                     ODMApiCommonErrors.SC500_73_POLICY_SERVICE_EVALUATION_ERROR,
-                    "Some blocking policy on Activity start has not passed evaluation"
+                    "Some blocking policies on stage transition have not passed evaluation: " + stageTransitionResult.getErrorMessage()
             );
         }
 
@@ -241,6 +248,7 @@ public class ActivityService {
     }
 
     public Activity abortActivity(Long activityId) {
+        logger.info("Aborting activity - activityId={}", activityId);
         Activity activity = readActivity(activityId);
         LocalDateTime finishedAt = now();
         activity.setFinishedAt(finishedAt);
@@ -270,6 +278,7 @@ public class ActivityService {
     // TODO set results or errors of activity while stopping it
     private Activity stopActivity(Activity activity, boolean success) {
 
+        logger.info("Stopping activity - activityId={}, success={}", activity.getId(), success);
         LocalDateTime finishedAt = now();
         activity.setFinishedAt(finishedAt);
 
@@ -296,11 +305,11 @@ public class ActivityService {
             lifecycleService.createLifecycle(activity);
             activity = saveActivity(activity);
 
-            if (!policyServiceProxy.isContextuallyCoherent(mapper.toResource(activity), dataProductVersion)) {
-                // TODO: replace this exception with something else
+            DevopsPolicyServiceProxy.PolicyValidationResult validationResult = policyServiceProxy.isContextuallyCoherent(mapper.toResource(activity), dataProductVersion);
+            if (!validationResult.isValid()) {
                 throw new InternalServerException(
                         ODMApiCommonErrors.SC500_73_POLICY_SERVICE_EVALUATION_ERROR,
-                        "Some blocking policy on Activity results has not passed evaluation"
+                        "Some blocking policy on Activity results has not passed evaluation: " + validationResult.getErrorMessage()
                 );
             }
 
@@ -325,17 +334,20 @@ public class ActivityService {
         // Clean up secrets cache for this activity
         DevOpsClients.removeAllSecretsForActivity(activity.getId());
 
+        logger.info("Activity stopped - activityId={}, status={}", activity.getId(), activity.getStatus());
         return activity;
     }
 
     public Task startNextPlannedTaskAndUpdateParentActivity(Long activityId) {
+        logger.info("Starting next planned task - activityId={}", activityId);
         Task startedTask = null;
 
         List<Task> plannedTasks = taskService.searchTasks(activityId, null, ActivityTaskStatus.PLANNED);
         if (plannedTasks != null && !plannedTasks.isEmpty()) {
+            Task actualTask = plannedTasks.get(0);
+            logger.info("Next planned task to start found- taskId={}", actualTask.getId());
             // Create context object for each Task
             Context taskContext = createContext(activityId);
-            Task actualTask = plannedTasks.get(0);
             try {
                 ObjectNode taskConfigs;
                 if (actualTask.getConfigurations() != null) {
@@ -347,7 +359,9 @@ public class ActivityService {
                     taskConfigs = ObjectMapperFactory.JSON_MAPPER.createObjectNode();
                 }
                 taskConfigs.put("context", ObjectNodeUtils.toObjectNode(taskContext.getContext()));
-                actualTask.setConfigurations(taskConfigs.toString());
+                String serializedTaskConfigs = taskConfigs.toString();
+                String serializedTaskConfigsWithReplacedVariables = replaceVariables(serializedTaskConfigs, taskContext.getContext());
+                actualTask.setConfigurations(serializedTaskConfigsWithReplacedVariables);
             } catch (JsonProcessingException e) {
                 logger.warn("Impossible to deserialize config attribute of task to append context", e);
             }
@@ -358,15 +372,30 @@ public class ActivityService {
                 stopActivity(activityId, true);
             }
         } else { // nothing more to do...
+            logger.info("No more planned tasks to start - activityId={}", activityId);
             stopActivity(activityId, true);
         }
 
         return startedTask;
     }
 
+    @Async
+    public void startNextPlannedTaskAndUpdateParentActivityAsync(Long activityId) {
+        try {
+            startNextPlannedTaskAndUpdateParentActivity(activityId);
+        } catch (Exception e) {
+            logger.error("Error in async start next task execution for activityId={}", activityId, e);
+        }
+    }
+
+    private String replaceVariables(String serializedTaskConfigs, Map<String, ActivityContext> context) {
+        return VariableTemplateUtils.replaceVariables(serializedTaskConfigs, context);
+    }
+
     public Task stopTaskAndUpdateParentActivity(
             Long taskId, TaskResultResource taskResultResource, Boolean updateVariables
     ) {
+        logger.info("Task results received - taskId={}", taskId);
         Task task = taskService.stopTask(taskId, taskResultResource);
         updateActivityPartialResults(task, updateVariables);
 
@@ -376,9 +405,19 @@ public class ActivityService {
         if (Boolean.TRUE.equals(task.getStartedByActivity())) {
             // Check if the task failed - if so, stop the activity instead of continuing
             if (ActivityTaskStatus.FAILED.equals(task.getStatus())) {
+                logger.info("Task failed: stopping activity- taskId={}, activityId={}", taskId, task.getActivityId());
                 stopActivity(task.getActivityId(), false);
             } else {
-                startNextPlannedTaskAndUpdateParentActivity(task.getActivityId());
+                // Check if there are more planned tasks before launching async
+                List<Task> plannedTasks = taskService.searchTasks(task.getActivityId(), null, ActivityTaskStatus.PLANNED);
+                if (plannedTasks != null && !plannedTasks.isEmpty()) {
+                    logger.info("Task processed: continuing activity - taskId={}, activityId={}", taskId,
+                            task.getActivityId());
+                    self.startNextPlannedTaskAndUpdateParentActivityAsync(task.getActivityId());
+                } else {
+                    logger.info("No more planned tasks to start - stopping activity with success - activityId={}", task.getActivityId());
+                    stopActivity(task.getActivityId(), true);
+                }
             }
         }
         return task;
@@ -482,8 +521,7 @@ public class ActivityService {
             }
         }
 
-        String taskKey = task.getName() != null ? task.getName() : "task";
-        return taskKey + "_" + taskOrdinalPosition;
+        return task.getName() != null ? task.getName() : "task_" + (taskOrdinalPosition + 1);
     }
 
     private void updateDataProductVersionVariables(Activity activity) {
@@ -519,13 +557,13 @@ public class ActivityService {
                     if (contextResults != null) {
                         for (int i = 2; i < varTree.length; i++) {
                             contextResults = contextResults.get(varTree[i]);
-                            if (contextResults.isNull()) {
+                            if (contextResults == null || contextResults.isNull()) {
                                 variableValueFound = false;
                                 break;
                             }
                         }
                     }
-                    if (variableValueFound && !contextResults.isNull()) {
+                    if (variableValueFound && contextResults != null && !contextResults.isNull()) {
                         try {
                             clients.getRegistryClient().updateVariable(
                                     activity.getDataProductId(),
@@ -618,14 +656,16 @@ public class ActivityService {
     // CONTEXT methods
     // -------------------------
 
-    private Context createContext(Long activityId) {
+    public Context createContext(Long activityId) {
         Activity currentActivity = readActivity(activityId);
-        List<Activity> previousAndCurrentActivities = searchOrderedActivities(
+        List<Activity> previousAndCurrentActivities = searchOrderedActivitiesWithCurrent(
+                currentActivity,
                 currentActivity.getDataProductId(),
                 currentActivity.getDataProductVersion()
         );
         Context context = new Context();
         ActivityContext activityContext;
+
         for (Activity activity : previousAndCurrentActivities) {
             activityContext = new ActivityContext();
             ActivityResultStatus activityResultStatus = activity.getStatus().equals(ActivityStatus.PROCESSED) ?
@@ -691,7 +731,8 @@ public class ActivityService {
         return activitySearchResults;
     }
 
-    public List<Activity> searchOrderedActivities(
+    private List<Activity> searchOrderedActivitiesWithCurrent(
+            Activity currentActivity,
             String dataProductId,
             String dataProductVersion
     ) {
@@ -704,16 +745,18 @@ public class ActivityService {
                     "An error occurred in the backend database while searching activities",
                     t);
         }
-        if (activitySearchResults != null) {
-            activitySearchResults = activitySearchResults.stream()
-                    .filter(
-                            activity ->
-                                    activity.getStatus().equals(ActivityStatus.PROCESSED) ||
-                                            activity.getStatus().equals(ActivityStatus.PROCESSING)
-                    )
-                    .collect(Collectors.toList());
-            activitySearchResults.sort(Comparator.comparing(Activity::getId));
+        activitySearchResults = activitySearchResults.stream()
+                .filter(
+                        activity ->
+                                activity.getStatus().equals(ActivityStatus.PROCESSED) ||
+                                        activity.getStatus().equals(ActivityStatus.PROCESSING)
+                )
+                .collect(Collectors.toList());
+        activitySearchResults = new ArrayList<Activity>(activitySearchResults);
+        if (activitySearchResults.stream().noneMatch(a -> Objects.equals(a.getId(), currentActivity.getId()))) {
+            activitySearchResults.add(currentActivity);
         }
+        activitySearchResults.sort(Comparator.comparing(Activity::getId));
         return activitySearchResults;
     }
 
@@ -740,7 +783,7 @@ public class ActivityService {
 
     public Activity updateActivity(Long id, Activity activityUpdate) {
         Activity existingActivity = readActivity(id);
-        
+
         // Store original status to determine notification type
         ActivityStatus originalStatus = existingActivity.getStatus();
 
@@ -780,13 +823,13 @@ public class ActivityService {
         // Send notification if status changed
         if (activityUpdate.getStatus() != null && !originalStatus.equals(activityUpdate.getStatus())) {
             DataProductVersionDPDS dataProductVersion = readDataProductVersion(existingActivity);
-            
+
             if (activityUpdate.getStatus().equals(ActivityStatus.PROCESSING)) {
                 // Status changed to PROCESSING -> notify start
                 devOpsNotificationServiceProxy.notifyActivityStart(mapper.toResource(existingActivity), dataProductVersion);
             } else if (activityUpdate.getStatus().equals(ActivityStatus.PROCESSED) ||
-                       activityUpdate.getStatus().equals(ActivityStatus.FAILED) ||
-                       activityUpdate.getStatus().equals(ActivityStatus.ABORTED)) {
+                    activityUpdate.getStatus().equals(ActivityStatus.FAILED) ||
+                    activityUpdate.getStatus().equals(ActivityStatus.ABORTED)) {
                 // Status changed to final state -> notify completion
                 devOpsNotificationServiceProxy.notifyActivityCompletion(mapper.toResource(existingActivity), dataProductVersion);
             }

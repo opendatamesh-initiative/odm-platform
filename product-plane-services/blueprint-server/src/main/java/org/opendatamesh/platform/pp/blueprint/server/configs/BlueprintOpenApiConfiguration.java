@@ -23,7 +23,7 @@ public class BlueprintOpenApiConfiguration {
                                 "\r\n# Overview" +
                                 "\r\nThe Blueprint Module of the Open Data Mesh platform manages the lifecycle of a blueprint. Specifically, it handles the creation of a blueprint, its update and the generation of a project from the blueprint given the right set of parameters"
                         )
-                        .version("0.9.0")
+                        .version("1.0.37")
                         .license(new License().name("Apache 2.0").url("https://github.com/opendatamesh-initiative/odm-platform/blob/main/LICENSE"))
                         .contact(new Contact()
                                 .name("ODM Platform Team")

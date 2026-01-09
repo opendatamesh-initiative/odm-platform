@@ -1,6 +1,8 @@
 package org.opendatamesh.platform.pp.devops.server.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import org.opendatamesh.dpds.model.core.StandardDefinitionDPDS;
 import org.opendatamesh.dpds.model.internals.LifecycleTaskInfoDPDS;
 import org.opendatamesh.dpds.parser.IdentifierStrategy;
@@ -18,8 +20,11 @@ import org.opendatamesh.platform.pp.devops.server.database.mappers.TaskMapper;
 import org.opendatamesh.platform.pp.devops.server.database.repositories.TaskRepository;
 import org.opendatamesh.platform.pp.devops.server.services.proxies.DevOpsNotificationServiceProxy;
 import org.opendatamesh.platform.pp.devops.server.services.proxies.DevopsPolicyServiceProxy;
+import org.opendatamesh.platform.pp.devops.server.utils.ObjectNodeUtils;
+import org.opendatamesh.platform.pp.devops.server.utils.VariableTemplateUtils;
 import org.opendatamesh.platform.pp.registry.api.resources.ExternalComponentResource;
 import org.opendatamesh.platform.pp.devops.server.clients.ExecutorClientWithSecrets;
+import org.opendatamesh.platform.pp.devops.server.resources.context.Context;
 import org.opendatamesh.platform.up.executor.api.resources.TaskResource;
 import org.opendatamesh.platform.up.executor.api.resources.TaskStatus;
 import org.slf4j.Logger;
@@ -65,7 +70,7 @@ public class TaskService {
 
     private ExecutorClientWithSecrets odmExecutor;
 
-    private static final Logger logger = LoggerFactory.getLogger(ActivityService.class);
+    private static final Logger logger = LoggerFactory.getLogger(TaskService.class);
 
 
     // ======================================================================================
@@ -126,9 +131,27 @@ public class TaskService {
     }
     
     public Task startSingleTask(Long taskId) {
-
+        logger.info("Starting single task - taskId={}", taskId);
         Task task = readTask(taskId);
         task.setStartedByActivity(false);
+        Context taskContext = activityService.createContext(task.getActivityId());
+        try {
+            ObjectNode taskConfigs;
+            if (task.getConfigurations() != null) {
+                taskConfigs = ObjectMapperFactory.JSON_MAPPER.readValue(
+                        task.getConfigurations(),
+                        ObjectNode.class);
+            } else {
+                taskConfigs = ObjectMapperFactory.JSON_MAPPER.createObjectNode();
+            }
+            taskConfigs.put("context", ObjectNodeUtils.toObjectNode(taskContext.getContext()));
+            String serializedTaskConfigs = taskConfigs.toString();
+            String serializedTaskConfigsWithReplacedVariables = VariableTemplateUtils.replaceVariables(serializedTaskConfigs,
+                    taskContext.getContext());
+            task.setConfigurations(serializedTaskConfigsWithReplacedVariables);
+        } catch (JsonProcessingException e) {
+            logger.warn("Impossible to deserialize config attribute of task to append context", e);
+        }
         try {
             task.setStatus(ActivityTaskStatus.PROCESSING);
             task.setStartedAt(now());
@@ -169,6 +192,7 @@ public class TaskService {
     }
 
     public Task startTask(Task task) {
+        logger.info("Starting task - taskId={}", task.getId());
         try {
 
             task.setStatus(ActivityTaskStatus.PROCESSING);
@@ -198,7 +222,7 @@ public class TaskService {
                 // Update activity status when task completes successfully
                 activityService.updateActivityStatusBasedOnTaskStatuses(task.getActivityId());
             }
-            
+            logger.info("Task starting completed - taskId={}, status={}", task.getId(), task.getStatus());
         } catch(Throwable t) {
              throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
@@ -211,7 +235,7 @@ public class TaskService {
     }
 
     private Task submitTask(Task task) {
-    
+        logger.info("Submitting task to executor- taskId={}", task.getId());
         try {
             TaskResource taskRes = taskMapper.toResource(task);
             String callbackRef = configurations.getProductPlane().getDevopsService().getAddress();
@@ -236,7 +260,7 @@ public class TaskService {
             task.setFinishedAt(now());
             devOpsNotificationServiceProxy.notifyTaskCompletion(taskMapper.toResource(task));
         }
-       
+       logger.info("Task submission to executor completed - taskId={}, status={}", task.getId(), task.getStatus());
         return task;
     }
 
@@ -247,7 +271,7 @@ public class TaskService {
 
     public Task stopTask(Task task, TaskResultResource taskResultResource) {
 		try {
-
+            logger.info("Stopping task - taskId={}, status={}", task.getId(), task.getStatus());
             // Ask to the DevOps provider the real status of the Task
             TaskStatus taskRealStatus = null;
             odmExecutor = clients.getExecutorClient(task.getExecutorRef(), task.getActivityId());
@@ -293,10 +317,11 @@ public class TaskService {
                 }
 
                 // Interactions with PolicyService
-                if(!policyServiceProxy.isCallbackResultValid(taskMapper.toResource(task))){
+                DevopsPolicyServiceProxy.PolicyValidationResult callbackResult = policyServiceProxy.isCallbackResultValid(taskMapper.toResource(task));
+                if(!callbackResult.isValid()){
                     throw new InternalServerException(
                             ODMApiCommonErrors.SC500_73_POLICY_SERVICE_EVALUATION_ERROR,
-                            "Some blocking policy has not passed evaluation"
+                             "Some blocking policies on task result have not passed evaluation: " + callbackResult.getErrorMessage()
                     );
                 }
 
@@ -331,11 +356,12 @@ public class TaskService {
                 "An error occurred in the backend database while saving task",
                 t);
         }
-        
+        logger.info("Task stopped - taskId={}, status={}", task.getId(), task.getStatus());
         return task;
 	}
 
     public Task abortTask(Long taskId) {
+        logger.info("Aborting task - taskId={}", taskId);
         Task task = readTask(taskId);
         if (!task.getStatus().equals(ActivityTaskStatus.PROCESSING) && 
             !task.getStatus().equals(ActivityTaskStatus.PLANNED)) return task;
@@ -343,6 +369,7 @@ public class TaskService {
         task.setFinishedAt(now());
         task = saveTask(task);
         devOpsNotificationServiceProxy.notifyTaskCompletion(taskMapper.toResource(task));
+        logger.info("Task aborted - taskId={}, status={}", task.getId(), task.getStatus());
         return task;
     }
 
@@ -481,8 +508,10 @@ public class TaskService {
         if (activityInfo.hasTemplate()) {
             ExternalComponentResource template = readTemplateDefinition(activityInfo.getTemplate());
             task.setTemplate(template.getDefinition());
-            if(StringUtils.hasText(template.getName())){
-                task.setName(template.getName());
+            if(StringUtils.hasText(activityInfo.getTemplate().getName())){
+                task.setName(activityInfo.getTemplate().getName());
+            } else {
+                task.setName("task_" + activityInfo.getOrder());
             }
             if(StringUtils.hasText(template.getDescription())){
                 task.setDescription(template.getDescription());

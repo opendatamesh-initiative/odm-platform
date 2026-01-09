@@ -28,7 +28,7 @@ public class PolicyOpenApiConfiguration {
                         "Specifically, it handles the creation, update and deletion of a policy for a specific policy executor, " +
                         "as well as managing the evaluation of the policies in different phases of the lifecycle of a Data Product object."
                 )
-                .version("0.9.0")
+                .version("1.0.37")
                 .license(new License().name("Apache 2.0").url("http://springdoc.org"))
                 .contact(new Contact()
                     .name("ODM Platform Team")

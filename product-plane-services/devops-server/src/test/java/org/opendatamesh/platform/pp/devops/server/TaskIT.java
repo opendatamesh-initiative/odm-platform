@@ -1,5 +1,6 @@
 package org.opendatamesh.platform.pp.devops.server;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.opendatamesh.platform.pp.devops.api.resources.*;
 import org.springframework.http.HttpEntity;
@@ -448,6 +449,13 @@ public class TaskIT extends ODMDevOpsIT {
         assertThat(stoppedFirstTask.getFinishedAt()).isNotNull();
 
         // Verify that the second Task has been automatically started
+        synchronized (this){ // task are started asynchronously
+            try {
+                wait(500);
+            } catch (InterruptedException e) {
+                Assertions.fail("Unexpected interrupted exception "+ e.getMessage());
+            }
+        }
         ActivityTaskResource updatedSecondTask = devOpsClient.readTask(secondTask.getId());
         assertThat(updatedSecondTask.getStatus()).isEqualTo(ActivityTaskStatus.PROCESSING);
         assertThat(updatedSecondTask.getStartedAt()).isNotNull();
@@ -927,7 +935,7 @@ public class TaskIT extends ODMDevOpsIT {
         assertThat(completedActivity.getStatus()).isEqualTo(ActivityStatus.PROCESSED);
         // The actual task name from the mock is "testPipeline_0"
         assertThat(completedActivity.getResults())
-                .isEqualToIgnoringCase("{\"testPipeline_0\":{\"status\":\"PROCESSED\",\"results\":{\"message\":\"OK\"}}}");
+                .isEqualToIgnoringCase("{\"testPipeline\":{\"status\":\"PROCESSED\",\"results\":{\"message\":\"OK\"}}}");
     }
 
     /**
@@ -963,7 +971,7 @@ public class TaskIT extends ODMDevOpsIT {
         assertThat(completedActivity.getStatus()).isEqualTo(ActivityStatus.PROCESSED);
         // The actual task name from the mock is "testPipeline_0"
         assertThat(completedActivity.getResults())
-                .isEqualToIgnoringCase("{\"testPipeline_0\":{\"status\":\"PROCESSED\",\"results\":{\"message\":\"OK\"}}}");
+                .isEqualToIgnoringCase("{\"testPipeline\":{\"status\":\"PROCESSED\",\"results\":{\"message\":\"OK\"}}}");
     }
 
     /**
@@ -1000,7 +1008,7 @@ public class TaskIT extends ODMDevOpsIT {
         ActivityResource completedActivity = devOpsClient.readActivity(createdActivityRes.getId());
         assertThat(completedActivity.getStatus()).isEqualTo(ActivityStatus.PROCESSED);
         assertThat(completedActivity.getResults())
-                .isEqualToIgnoringCase("{\"testPipeline_0\":{\"status\":\"PROCESSED\",\"results\":{\"message\":\"OK\"}},\"testPipeline_1\":{\"status\":\"PROCESSED\",\"results\":{\"message\":\"OK\"}}}");
+                .isEqualToIgnoringCase("{\"testPipeline\":{\"status\":\"PROCESSED\",\"results\":{\"message\":\"OK\"}},\"testPipeline2\":{\"status\":\"PROCESSED\",\"results\":{\"message\":\"OK\"}}}");
     }
 
 }

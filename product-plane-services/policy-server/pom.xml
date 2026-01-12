@@ -264,6 +264,12 @@ License.
         </dependency>
         <dependency>
             <groupId>org.opendatamesh</groupId>
+            <artifactId>odm-platform-pp-notification-api</artifactId>
+            <version>1.0.30</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.opendatamesh</groupId>
             <artifactId>odm-platform-up-validator-api</artifactId>
             <version>1.0.37</version>
             <scope>compile</scope>

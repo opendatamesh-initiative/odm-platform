@@ -33,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -575,6 +576,69 @@ public class TaskService {
         now = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), 
         now.getHour(), now.getMinute(), now.getSecond(), 0);
         return now;
+    }
+
+    // ======================================================================================
+    // CLEANUP METHODS FOR DATA PRODUCT DELETION
+    // ======================================================================================
+
+
+    /**
+     * Delete all tasks for a specific data product
+     * @param dataProductId the data product ID
+     */
+    @Transactional
+    public int deleteByDataProductId(String dataProductId) {
+        if (dataProductId == null || dataProductId.trim().isEmpty()) {
+            throw new BadRequestException(
+                    DevOpsApiStandardErrors.SC400_60_TASK_ID_IS_EMPTY,
+                    "Data product ID cannot be null or empty"
+            );
+        }
+        
+        try {
+            return taskRepository.deleteByDataProductId(dataProductId);
+        } catch (Exception e) {
+            logger.error("Failed to delete tasks for data product: {}", dataProductId, e);
+            throw new InternalServerException(
+                    ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
+                    "An error occurred while deleting tasks for data product: " + dataProductId,
+                    e
+            );
+        }
+    }
+
+    /**
+     * Delete all tasks for a specific data product version
+     * @param dataProductId the data product ID
+     * @param version the version number
+     */
+    @Transactional
+    public int deleteByDataProductIdAndVersion(String dataProductId, String version) {
+        if (dataProductId == null || dataProductId.trim().isEmpty()) {
+            throw new BadRequestException(
+                    DevOpsApiStandardErrors.SC400_60_TASK_ID_IS_EMPTY,
+                    "Data product ID cannot be null or empty"
+            );
+        }
+        
+        if (version == null || version.trim().isEmpty()) {
+            throw new BadRequestException(
+                    DevOpsApiStandardErrors.SC400_60_TASK_ID_IS_EMPTY,
+                    "Version cannot be null or empty"
+            );
+        }
+        
+        try {
+            return taskRepository.deleteByDataProductIdAndVersion(dataProductId, version);
+        } catch (Exception e) {
+            logger.error("Failed to delete tasks for data product: {} version: {}", dataProductId, version, e);
+            throw new InternalServerException(
+                    ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
+                    "An error occurred while deleting tasks for data product: " + dataProductId + " version: " + version,
+                    e
+            );
+        }
     }
 	
 }

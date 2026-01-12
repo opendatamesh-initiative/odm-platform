@@ -5,12 +5,23 @@ import org.opendatamesh.platform.pp.devops.server.database.entities.Activity;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.List;
 
 public interface ActivityRepository extends JpaRepository<Activity, Long>, JpaSpecificationExecutor<Activity> {
+
+    @Modifying
+    @Query("DELETE FROM Activity a WHERE a.dataProductId = :dataProductId")
+    int deleteByDataProductId(@Param("dataProductId") String dataProductId);
+
+    @Modifying
+    @Query("DELETE FROM Activity a WHERE a.dataProductId = :dataProductId AND a.dataProductVersion = :version")
+    int deleteByDataProductIdAndVersion(@Param("dataProductId") String dataProductId, @Param("version") String version);
 
     class Specs {
         static public Specification<Activity> hasMatch(

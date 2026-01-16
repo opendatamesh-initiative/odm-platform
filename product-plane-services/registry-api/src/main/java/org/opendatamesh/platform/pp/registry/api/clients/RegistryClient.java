@@ -1,6 +1,8 @@
 package org.opendatamesh.platform.pp.registry.api.clients;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.dpds.model.internals.ApplicationComponentDPDS;
 import org.opendatamesh.dpds.model.internals.InfrastructuralComponentDPDS;
@@ -221,6 +223,22 @@ public class RegistryClient extends ODMClient {
         // dataProductVersionNumber).getBody();
     }
 
+    public DataProductVersionDPDS readOneDataProductVersionNormalized(String dataProductId, String dataProductVersionNumber) {
+        String descriptorContent = getDataProductVersionNormalized(dataProductId, dataProductVersionNumber, String.class)
+                .getBody();
+        DataProductVersionDPDS dpv = null;
+        try {
+            dpv = new ObjectMapper()
+                    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                    .readValue(descriptorContent, DataProductVersionDPDS.class);
+            dpv.setRawContent(descriptorContent);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return dpv;
+
+    }
+
     public ResponseEntity<DataProductVersionDPDS> getDataProductVersion(String dataProductId,
             String dataProductVersionNumber) {
         return getDataProductVersion(dataProductId, dataProductVersionNumber, DataProductVersionDPDS.class);
@@ -235,6 +253,17 @@ public class RegistryClient extends ODMClient {
                 dataProductId,
                 dataProductVersionNumber);
     }
+
+    public <T> ResponseEntity<T> getDataProductVersionNormalized(
+            String dataProductId, String dataProductVersionNumber,
+            Class<T> responseType) {
+        return rest.getForEntity(
+                apiUrl(RegistryAPIRoutes.DATA_PRODUCTS, "/{id}/versions/{number}?format=normalized"),
+                responseType,
+                dataProductId,
+                dataProductVersionNumber);
+    }
+
 
     public <T> ResponseEntity<T> deleteDataProductVersion(
             String dataProductId, String dataProductVersionNumber,

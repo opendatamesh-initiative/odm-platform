@@ -1,6 +1,9 @@
 package org.opendatamesh.platform.pp.devops.server.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.opendatamesh.dpds.model.core.StandardDefinitionDPDS;
@@ -13,18 +16,18 @@ import org.opendatamesh.platform.pp.devops.api.resources.ActivityTaskStatus;
 import org.opendatamesh.platform.pp.devops.api.resources.DevOpsApiStandardErrors;
 import org.opendatamesh.platform.pp.devops.api.resources.TaskResultResource;
 import org.opendatamesh.platform.pp.devops.api.resources.TaskResultStatus;
+import org.opendatamesh.platform.pp.devops.server.clients.ExecutorClientWithSecrets;
 import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsClients;
 import org.opendatamesh.platform.pp.devops.server.configurations.DevOpsConfigurations;
 import org.opendatamesh.platform.pp.devops.server.database.entities.Task;
 import org.opendatamesh.platform.pp.devops.server.database.mappers.TaskMapper;
 import org.opendatamesh.platform.pp.devops.server.database.repositories.TaskRepository;
+import org.opendatamesh.platform.pp.devops.server.resources.context.Context;
 import org.opendatamesh.platform.pp.devops.server.services.proxies.DevOpsNotificationServiceProxy;
 import org.opendatamesh.platform.pp.devops.server.services.proxies.DevopsPolicyServiceProxy;
 import org.opendatamesh.platform.pp.devops.server.utils.ObjectNodeUtils;
 import org.opendatamesh.platform.pp.devops.server.utils.VariableTemplateUtils;
 import org.opendatamesh.platform.pp.registry.api.resources.ExternalComponentResource;
-import org.opendatamesh.platform.pp.devops.server.clients.ExecutorClientWithSecrets;
-import org.opendatamesh.platform.pp.devops.server.resources.context.Context;
 import org.opendatamesh.platform.up.executor.api.resources.TaskResource;
 import org.opendatamesh.platform.up.executor.api.resources.TaskStatus;
 import org.slf4j.Logger;
@@ -101,7 +104,7 @@ public class TaskService {
 
         // TODO (?) control if task already exists
         task.setStatus(ActivityTaskStatus.PLANNED);
-        
+
         try {
             task = saveTask(task);
             logger.info("Task [" + task.getId() + "] successfully created");
@@ -119,7 +122,7 @@ public class TaskService {
 
     public Task saveTask(Task task) {
         return taskRepository.saveAndFlush(task);
-    }    
+    }
 
     // ======================================================================================
     // START/STOP
@@ -129,7 +132,7 @@ public class TaskService {
         Task task = readTask(taskId);
         return startTask(task);
     }
-    
+
     public Task startSingleTask(Long taskId) {
         logger.info("Starting single task - taskId={}", taskId);
         Task task = readTask(taskId);
@@ -179,7 +182,7 @@ public class TaskService {
                 // Update activity status when task completes successfully
                 activityService.updateActivityStatusBasedOnTaskStatuses(task.getActivityId());
             }
-            
+
         } catch(Throwable t) {
              throw new InternalServerException(
                 ODMApiCommonErrors.SC500_01_DATABASE_ERROR,
@@ -187,7 +190,7 @@ public class TaskService {
                 t
              );
         }
-        
+
         return task;
     }
 
@@ -230,7 +233,7 @@ public class TaskService {
                 t
              );
         }
-        
+
         return task;
     }
 
@@ -363,7 +366,7 @@ public class TaskService {
     public Task abortTask(Long taskId) {
         logger.info("Aborting task - taskId={}", taskId);
         Task task = readTask(taskId);
-        if (!task.getStatus().equals(ActivityTaskStatus.PROCESSING) && 
+        if (!task.getStatus().equals(ActivityTaskStatus.PROCESSING) &&
             !task.getStatus().equals(ActivityTaskStatus.PLANNED)) return task;
         task.setStatus(ActivityTaskStatus.ABORTED);
         task.setFinishedAt(now());
@@ -467,8 +470,8 @@ public class TaskService {
     // -------------------------
     public List<Task> searchTasks(
         Long activityId,
-        String executorRef, 
-        ActivityTaskStatus status) 
+        String executorRef,
+        ActivityTaskStatus status)
     {
         List<Task> taskSearchResults = null;
         try {
@@ -484,8 +487,8 @@ public class TaskService {
 
     private List<Task> findTasks(
         Long activityId,
-        String executorRef, 
-        ActivityTaskStatus status) 
+        String executorRef,
+        ActivityTaskStatus status)
     {
         return taskRepository
             .findAll(TaskRepository.Specs.hasMatch(
@@ -505,15 +508,20 @@ public class TaskService {
         String executorServiceRef = activityInfo.getService() != null? activityInfo.getService().getHref(): null;
         task.setExecutorRef(executorServiceRef);
 
-        if (activityInfo.hasTemplate()) {
+        if (StringUtils.hasText(activityInfo.getTemplate().getName())) {
+            task.setName(activityInfo.getTemplate().getName());
+        } else {
+            task.setName("task_" + activityInfo.getOrder());
+        }
+
+        String templateRawContent = extractTaskTemplateFromRawContent(activityInfo);
+        task.setTemplate(templateRawContent);
+
+        //Fetching Template from Registry ONLY if Registry is old version
+        if (!StringUtils.hasText(templateRawContent) && activityInfo.hasTemplate()) {
             ExternalComponentResource template = readTemplateDefinition(activityInfo.getTemplate());
             task.setTemplate(template.getDefinition());
-            if(StringUtils.hasText(activityInfo.getTemplate().getName())){
-                task.setName(activityInfo.getTemplate().getName());
-            } else {
-                task.setName("task_" + activityInfo.getOrder());
-            }
-            if(StringUtils.hasText(template.getDescription())){
+            if (StringUtils.hasText(template.getDescription())) {
                 task.setDescription(template.getDescription());
             }
         }
@@ -525,7 +533,25 @@ public class TaskService {
         return task;
     }
 
+    private String extractTaskTemplateFromRawContent(LifecycleTaskInfoDPDS activityInfo) {
+        try {
+            JsonNode fullDescriptorTask = new ObjectMapper()
+                    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                    .readTree(activityInfo.getRawContent());
+            JsonNode templateDefinition = fullDescriptorTask.at("/template/definition");
+            if (!templateDefinition.isEmpty()) {
+                return templateDefinition.toString();
+            } else {
+                return null;
+            }
+        } catch (JsonProcessingException e) {
+            return null;
+        }
+    }
+
+    @Deprecated
     private ExternalComponentResource readTemplateDefinition(StandardDefinitionDPDS template) {
+        logger.warn("DataOps service is using a deprecated Registry API, which could not function as expected. API: GET /api/v1/pp/registry/templates/{id}");
         ExternalComponentResource templateDefinition = null;
 
         Objects.requireNonNull(template, "Template parameter cannot be null");
@@ -534,20 +560,20 @@ public class TaskService {
                 "Property [$ref] in template definition object cannot be null");
 
         String templateId = identifierStrategy.getId(
-             template.getFullyQualifiedName());
+                template.getFullyQualifiedName());
 
         try {
             templateDefinition = clients.getRegistryClient().readTemplate(templateId);
             logger.debug("Template definition [" + templateId + "] successfully read from ODM Registry");
         } catch (Throwable t) {
             throw new InternalServerException(
-                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
+                    ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "An error occurred in the backend service while loading template [" + templateId + "]",
                     t);
         }
         if (templateDefinition == null) {
             throw new NotFoundException(
-                ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
+                    ODMApiCommonErrors.SC500_00_SERVICE_ERROR,
                     "Template with id [" + templateId + "] does not existe");
         }
 
@@ -563,7 +589,7 @@ public class TaskService {
             serializedConfigurations = ObjectMapperFactory.JSON_MAPPER.writeValueAsString(configurations);
         } catch (JsonProcessingException t) {
             throw new InternalServerException(
-                ODMApiCommonErrors.SC500_02_DESCRIPTOR_ERROR,
+                    ODMApiCommonErrors.SC500_02_DESCRIPTOR_ERROR,
                     "An error occurred in the backend service while parsing configurations [" + configurations + "]",
                     t);
         }
@@ -573,8 +599,8 @@ public class TaskService {
 
     private LocalDateTime now() {
         LocalDateTime now = LocalDateTime.now();
-        now = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), 
-        now.getHour(), now.getMinute(), now.getSecond(), 0);
+        now = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(),
+                now.getHour(), now.getMinute(), now.getSecond(), 0);
         return now;
     }
 
@@ -585,6 +611,7 @@ public class TaskService {
 
     /**
      * Delete all tasks for a specific data product
+     *
      * @param dataProductId the data product ID
      */
     @Transactional
@@ -595,7 +622,7 @@ public class TaskService {
                     "Data product ID cannot be null or empty"
             );
         }
-        
+
         try {
             return taskRepository.deleteByDataProductId(dataProductId);
         } catch (Exception e) {
@@ -610,8 +637,9 @@ public class TaskService {
 
     /**
      * Delete all tasks for a specific data product version
+     *
      * @param dataProductId the data product ID
-     * @param version the version number
+     * @param version       the version number
      */
     @Transactional
     public int deleteByDataProductIdAndVersion(String dataProductId, String version) {
@@ -621,14 +649,14 @@ public class TaskService {
                     "Data product ID cannot be null or empty"
             );
         }
-        
+
         if (version == null || version.trim().isEmpty()) {
             throw new BadRequestException(
                     DevOpsApiStandardErrors.SC400_60_TASK_ID_IS_EMPTY,
                     "Version cannot be null or empty"
             );
         }
-        
+
         try {
             return taskRepository.deleteByDataProductIdAndVersion(dataProductId, version);
         } catch (Exception e) {
@@ -640,5 +668,5 @@ public class TaskService {
             );
         }
     }
-	
+
 }

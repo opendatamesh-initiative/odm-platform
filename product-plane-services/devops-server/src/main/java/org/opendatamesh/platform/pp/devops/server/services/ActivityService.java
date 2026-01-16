@@ -878,7 +878,7 @@ public class ActivityService {
         }
 
         try {
-            dataProductVersion = clients.getRegistryClient().readOneDataProductVersion(
+            dataProductVersion = clients.getRegistryClient().readOneDataProductVersionNormalized(
                     activity.getDataProductId(),
                     activity.getDataProductVersion());
         } catch (Throwable t) {

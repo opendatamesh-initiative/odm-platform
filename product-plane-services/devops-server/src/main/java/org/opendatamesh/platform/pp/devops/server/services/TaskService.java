@@ -520,7 +520,10 @@ public class TaskService {
             }
         }
 
-        if (activityInfo.getTemplate() != null && StringUtils.hasText(activityInfo.getTemplate().getName())) {
+        if (activityInfo.getTemplate() != null &&
+                StringUtils.hasText(activityInfo.getTemplate().getName()) &&
+                !isValidUUID(activityInfo.getTemplate().getName())
+        ) {
             task.setName(activityInfo.getTemplate().getName());
         } else {
             task.setName("task_" + activityInfo.getOrder());
@@ -534,13 +537,25 @@ public class TaskService {
         return task;
     }
 
+    private boolean isValidUUID(String value) {
+        if (value == null) {
+            return false;
+        }
+        try {
+            UUID.fromString(value);
+            return true;
+        } catch (IllegalArgumentException ex) {
+            return false;
+        }
+    }
+
     private String extractTaskTemplateFromRawContent(LifecycleTaskInfoDPDS activityInfo) {
         try {
             JsonNode fullDescriptorTask = new ObjectMapper()
                     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                     .readTree(activityInfo.getRawContent());
             JsonNode templateDefinition = fullDescriptorTask.at("/template/definition");
-            if (!templateDefinition.isEmpty()) {
+            if (!templateDefinition.isMissingNode()) {
                 return templateDefinition.toString();
             } else {
                 return null;

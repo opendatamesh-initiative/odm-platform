@@ -336,7 +336,7 @@ public abstract class ODMDevOpsIT extends ODMIntegrationTest{
             boolean mockRegistry, boolean mockExecutor) {
         try {
             if (mockRegistry) {
-                String apiResponse = resourceBuilder.readResourceFromFile(ODMDevOpsResources.RESOURCE_DPV_1_CANONICAL);
+                String apiResponse = resourceBuilder.readResourceFromFile(ODMDevOpsResources.RESOURCE_DPV_1_NORMALIZED);
                 mockReadOneDataProductVersion(apiResponse, "f350cab5-992b-32f7-9c90-79bca1bf10be", "1.0.0");
 
                 ExternalComponentResource templateRes = resourceBuilder.readResourceFromFile(
@@ -363,8 +363,8 @@ public abstract class ODMDevOpsIT extends ODMIntegrationTest{
             boolean mockRegistry, boolean mockExecutor) {
         try {
             if (mockRegistry) {
-                String apiResponse = resourceBuilder.readResourceFromFile(ODMDevOpsResources.RESOURCE_DPV_2_CANONICAL);
-                mockReadOneDataProductVersion(apiResponse, "f350cab5-992b-32f7-9c90-79bca1bf10be", "1.0.0");
+                String apiResponse = resourceBuilder.readResourceFromFile(ODMDevOpsResources.RESOURCE_DPV_2_NORMALIZED);
+                mockReadOneDataProductVersion(apiResponse, "f350cab5-992b-32f7-9c90-79bca1bf10bc", "1.0.0");
 
                 ExternalComponentResource templateRes = resourceBuilder.readResourceFromFile(
                         ODMDevOpsResources.TEMPLATE_DEF_1_CANONICAL,
@@ -391,7 +391,7 @@ public abstract class ODMDevOpsIT extends ODMIntegrationTest{
         logger.debug("  >>>  mockReadOneDataProductVersion");
 
         String apiUrl = clients.getRegistryClient().apiUrl(RegistryAPIRoutes.DATA_PRODUCTS,
-                "/" + dataProductId + "/versions/" + dataProductVersion);
+                "/" + dataProductId + "/versions/" + dataProductVersion + "?format=normalized");
 
         /*
          * String apiResponse = null;

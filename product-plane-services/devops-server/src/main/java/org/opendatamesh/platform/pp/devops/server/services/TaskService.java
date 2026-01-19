@@ -508,12 +508,6 @@ public class TaskService {
         String executorServiceRef = activityInfo.getService() != null? activityInfo.getService().getHref(): null;
         task.setExecutorRef(executorServiceRef);
 
-        if (StringUtils.hasText(activityInfo.getTemplate().getName())) {
-            task.setName(activityInfo.getTemplate().getName());
-        } else {
-            task.setName("task_" + activityInfo.getOrder());
-        }
-
         String templateRawContent = extractTaskTemplateFromRawContent(activityInfo);
         task.setTemplate(templateRawContent);
 
@@ -525,6 +519,13 @@ public class TaskService {
                 task.setDescription(template.getDescription());
             }
         }
+
+        if (activityInfo.getTemplate() != null && StringUtils.hasText(activityInfo.getTemplate().getName())) {
+            task.setName(activityInfo.getTemplate().getName());
+        } else {
+            task.setName("task_" + activityInfo.getOrder());
+        }
+
         if (activityInfo.hasConfigurations()) {
             String configurationsString = serializeCongigurations(activityInfo.getConfigurations());
             task.setConfigurations(configurationsString);

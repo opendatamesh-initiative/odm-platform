@@ -411,7 +411,8 @@ public class TaskIT extends ODMDevOpsIT {
 
         // Simulate the creation of an Activity with multiple Tasks
         createMocksForCreateActivityWithMultipleTaskCall();
-        ActivityResource activityRes = createTestActivity(false);
+        ActivityResource activityRes = buildActivity("f350cab5-992b-32f7-9c90-79bca1bf10bc", "1.0.0", "prod"); // Use ID from dpd-multiple-tasks.json
+        activityRes = createActivity(activityRes, false);
 
         // Start the Activity
         try {
@@ -698,6 +699,7 @@ public class TaskIT extends ODMDevOpsIT {
         // Use the resource with multiple tasks
         ActivityResource activityRes = resourceBuilder.readResourceFromFile(
                 ODMDevOpsResources.RESOURCE_ACTIVITY_1, ActivityResource.class);
+        activityRes.setDataProductId("f350cab5-992b-32f7-9c90-79bca1bf10bc"); // Use ID from dpd-multiple-tasks.json
         activityRes.setStage("prod"); // This stage has multiple tasks in dpd-multiple-tasks.json
 
         ActivityResource createdActivityRes = null;
@@ -782,6 +784,7 @@ public class TaskIT extends ODMDevOpsIT {
 
         ActivityResource activityRes = resourceBuilder.readResourceFromFile(
                 ODMDevOpsResources.RESOURCE_ACTIVITY_1, ActivityResource.class);
+        activityRes.setDataProductId("f350cab5-992b-32f7-9c90-79bca1bf10bc"); // Use ID from dpd-multiple-tasks.json
         activityRes.setStage("prod");
 
         ActivityResource createdActivityRes = devOpsClient.createActivity(activityRes, false);
@@ -817,6 +820,7 @@ public class TaskIT extends ODMDevOpsIT {
 
         ActivityResource activityRes = resourceBuilder.readResourceFromFile(
                 ODMDevOpsResources.RESOURCE_ACTIVITY_1, ActivityResource.class);
+        activityRes.setDataProductId("f350cab5-992b-32f7-9c90-79bca1bf10bc"); // Use ID from dpd-multiple-tasks.json
         activityRes.setStage("prod");
 
         ActivityResource createdActivityRes = devOpsClient.createActivity(activityRes, false);
@@ -864,6 +868,7 @@ public class TaskIT extends ODMDevOpsIT {
 
         ActivityResource activityRes = resourceBuilder.readResourceFromFile(
                 ODMDevOpsResources.RESOURCE_ACTIVITY_1, ActivityResource.class);
+        activityRes.setDataProductId("f350cab5-992b-32f7-9c90-79bca1bf10bc"); // Use ID from dpd-multiple-tasks.json
         activityRes.setStage("prod");
 
         ActivityResource createdActivityRes = devOpsClient.createActivity(activityRes, false);
@@ -987,6 +992,7 @@ public class TaskIT extends ODMDevOpsIT {
 
         ActivityResource activityRes = resourceBuilder.readResourceFromFile(
                 ODMDevOpsResources.RESOURCE_ACTIVITY_1, ActivityResource.class);
+        activityRes.setDataProductId("f350cab5-992b-32f7-9c90-79bca1bf10bc"); // Use ID from dpd-multiple-tasks.json
         activityRes.setStage("prod");
 
         ActivityResource createdActivityRes = devOpsClient.createActivity(activityRes, false);

@@ -593,6 +593,7 @@ public class ActivityErrorsIT extends ODMDevOpsIT {
         // Create the activity (do not start it)
         ActivityResource activityRes = resourceBuilder.readResourceFromFile(
             ODMDevOpsResources.RESOURCE_ACTIVITY_1, ActivityResource.class);
+        activityRes.setDataProductId("f350cab5-992b-32f7-9c90-79bca1bf10bc"); // Use ID from dpd-multiple-tasks.json
         activityRes.setStage("prod");
         ActivityResource createdActivity = devOpsClient.createActivity(activityRes, false);
         assertThat(createdActivity.getStatus()).isEqualTo(ActivityStatus.PLANNED);

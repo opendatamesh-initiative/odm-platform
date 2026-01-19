@@ -5,6 +5,8 @@ public class ODMDevOpsResources {
     public static final String RESOURCE_DP_1 = "src/test/resources/dp.json";
     public static final String RESOURCE_DPV_1 = "src/test/resources/dpd-core.json";
     public static final String RESOURCE_DPV_1_CANONICAL = "src/test/resources/dpd-core-canonical.json";
+    public static final String RESOURCE_DPV_1_NORMALIZED = "src/test/resources/dpd-core-normalized.json";
     public static final String RESOURCE_DPV_2_CANONICAL = "src/test/resources/dpd-multiple-tasks.json";
+    public static final String RESOURCE_DPV_2_NORMALIZED = "src/test/resources/dpd-multiple-tasks-normalized.json";
     public static final String TEMPLATE_DEF_1_CANONICAL = "src/test/resources/template-canonical.json";
 }

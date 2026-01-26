@@ -33,7 +33,7 @@ public class ValidationIT extends ODMPolicyIT {
         mockResponse.setPolicyEvaluationId(1L); // This value is not checked in assertions
         mockResponse.setEvaluationResult(true);
         mockResponse.setOutputObject("{\"message\": \"OK\"}");
-        Mockito.when(validatorProxy.validatePolicy(Mockito.any(), Mockito.any()))
+        Mockito.when(validatorProxy.validatePolicy(Mockito.any(), Mockito.any(), false))
                 .thenReturn(mockResponse);
 
         // Resources

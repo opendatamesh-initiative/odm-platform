@@ -12,11 +12,13 @@ public class ValidatorProxy {
 
     public EvaluationResource validatePolicy(
             PolicyResource policyToEvaluate,
-            JsonNode objectToEvaluate
+            JsonNode objectToEvaluate,
+            Boolean verbose
     ) {
         DocumentResource documentResource = new DocumentResource();
         documentResource.setPolicy(policyToEvaluate);
         documentResource.setObjectToEvaluate(objectToEvaluate);
+        documentResource.setVerbose(verbose);
 
         return new ValidatorClientImpl(policyToEvaluate.getPolicyEngine().getAdapterUrl())
                 .evaluateDocument(documentResource);

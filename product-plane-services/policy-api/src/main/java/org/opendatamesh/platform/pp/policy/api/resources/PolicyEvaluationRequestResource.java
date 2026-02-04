@@ -32,7 +32,7 @@ public class PolicyEvaluationRequestResource {
 
     @JsonProperty("verbose")
     @Schema(description = "If we want more info about the operation, the logging level will be debug.", defaultValue = "false")
-    private Boolean verbose = false;
+    private Boolean verbose = Boolean.TRUE;
 
     public enum EventType {
         DATA_PRODUCT_CREATION,

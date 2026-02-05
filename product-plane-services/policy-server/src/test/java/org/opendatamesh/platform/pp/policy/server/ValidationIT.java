@@ -48,7 +48,7 @@ public class ValidationIT extends ODMPolicyIT {
         evaluationRequestResource.setVerbose(Boolean.FALSE);
         ResponseEntity<ObjectNode> postResponse =
                 policyClient.validateInputObjectResponseEntity(evaluationRequestResource);
-        verifyResponseEntity(postResponse, HttpStatus.OK, false);
+        verifyResponseEntity(postResponse, HttpStatus.OK, true);
         ValidationResponseResource validationResponseResource = mapper.convertValue(
                 postResponse.getBody(), ValidationResponseResource.class
         );

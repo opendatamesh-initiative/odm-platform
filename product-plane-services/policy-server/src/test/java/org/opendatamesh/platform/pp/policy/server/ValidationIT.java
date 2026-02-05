@@ -33,7 +33,7 @@ public class ValidationIT extends ODMPolicyIT {
         mockResponse.setPolicyEvaluationId(1L); // This value is not checked in assertions
         mockResponse.setEvaluationResult(true);
         mockResponse.setOutputObject("{\"message\": \"OK\"}");
-        Mockito.when(validatorProxy.validatePolicy(Mockito.any(), Mockito.any(), false))
+        Mockito.when(validatorProxy.validatePolicy(Mockito.any(), Mockito.any(),  Mockito.eq(false)))
                 .thenReturn(mockResponse);
 
         // Resources
@@ -45,9 +45,10 @@ public class ValidationIT extends ODMPolicyIT {
         PolicyEvaluationRequestResource evaluationRequestResource = createPolicyEvaluationRequestResource(
                 ODMPolicyResources.RESOURCE_POLICY_EVALUATION_REQUEST
         );
+        evaluationRequestResource.setVerbose(Boolean.FALSE);
         ResponseEntity<ObjectNode> postResponse =
                 policyClient.validateInputObjectResponseEntity(evaluationRequestResource);
-        verifyResponseEntity(postResponse, HttpStatus.OK, true);
+        verifyResponseEntity(postResponse, HttpStatus.OK, false);
         ValidationResponseResource validationResponseResource = mapper.convertValue(
                 postResponse.getBody(), ValidationResponseResource.class
         );

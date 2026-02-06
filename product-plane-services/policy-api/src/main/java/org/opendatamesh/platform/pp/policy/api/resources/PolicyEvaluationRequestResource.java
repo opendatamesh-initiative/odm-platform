@@ -30,6 +30,10 @@ public class PolicyEvaluationRequestResource {
     @Schema(description = "The next state")
     private JsonNode afterState;
 
+    @JsonProperty("verbose")
+    @Schema(description = "If we want more info about the operation, the logging level will be debug.", defaultValue = "false")
+    private Boolean verbose = Boolean.TRUE;
+
     public enum EventType {
         DATA_PRODUCT_CREATION,
         DATA_PRODUCT_UPDATE,
@@ -92,5 +96,13 @@ public class PolicyEvaluationRequestResource {
 
     public void setAfterState(JsonNode afterState) {
         this.afterState = afterState;
+    }
+
+    public Boolean getVerbose() {
+        return verbose;
+    }
+
+    public void setVerbose(Boolean verbose) {
+        this.verbose = verbose;
     }
 }

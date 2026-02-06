@@ -67,7 +67,8 @@ public class ValidationService {
 
             EvaluationResource validationResponse = validatorProxy.validatePolicy(
                     policyMapper.toRes(policyToEvaluate),
-                    inputObject
+                    inputObject,
+                    policyEvaluationRequestResource.getVerbose()
             );
 
             if (Boolean.FALSE.equals(validationResponse.getEvaluationResult())) {

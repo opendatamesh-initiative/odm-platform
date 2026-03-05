@@ -2,9 +2,9 @@ package org.opendatamesh.platform.pp.notification.server.database.mappers;
 
 import com.google.common.collect.ImmutableMap;
 import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
-import org.opendatamesh.platform.pp.notification.api.resources.EventNotificationResource;
-import org.opendatamesh.platform.pp.notification.api.resources.EventResource;
-import org.opendatamesh.platform.pp.notification.api.resources.ObserverResource;
+import org.opendatamesh.platform.pp.notification.api.resources.v1.EventNotificationResource;
+import org.opendatamesh.platform.pp.notification.api.resources.v1.EventResource;
+import org.opendatamesh.platform.pp.notification.api.resources.v1.ObserverResource;
 import org.opendatamesh.platform.pp.notification.server.database.entities.Event;
 import org.opendatamesh.platform.pp.notification.server.database.entities.EventNotification;
 import org.opendatamesh.platform.pp.notification.server.database.entities.Observer;

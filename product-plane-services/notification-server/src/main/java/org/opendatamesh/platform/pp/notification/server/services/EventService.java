@@ -2,9 +2,9 @@ package org.opendatamesh.platform.pp.notification.server.services;
 
 import org.opendatamesh.platform.core.commons.database.utils.PagingAndSortingAndSpecificationExecutorRepository;
 import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
-import org.opendatamesh.platform.pp.notification.api.resources.EventResource;
-import org.opendatamesh.platform.pp.notification.api.resources.EventSearchOptions;
-import org.opendatamesh.platform.pp.notification.api.resources.exceptions.NotificationApiStandardErrors;
+import org.opendatamesh.platform.pp.notification.api.resources.v1.EventResource;
+import org.opendatamesh.platform.pp.notification.api.resources.v1.EventSearchOptions;
+import org.opendatamesh.platform.pp.notification.api.resources.v1.exceptions.NotificationApiStandardErrors;
 import org.opendatamesh.platform.pp.notification.server.database.entities.Event;
 import org.opendatamesh.platform.pp.notification.server.database.mappers.EventMapper;
 import org.opendatamesh.platform.pp.notification.server.database.repositories.EventRepository;

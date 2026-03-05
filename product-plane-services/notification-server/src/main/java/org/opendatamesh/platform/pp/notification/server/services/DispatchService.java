@@ -1,11 +1,11 @@
 package org.opendatamesh.platform.pp.notification.server.services;
 
 import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
-import org.opendatamesh.platform.pp.notification.api.resources.EventNotificationResource;
-import org.opendatamesh.platform.pp.notification.api.resources.EventResource;
-import org.opendatamesh.platform.pp.notification.api.resources.ObserverResource;
-import org.opendatamesh.platform.pp.notification.api.resources.enums.EventNotificationStatus;
-import org.opendatamesh.platform.pp.notification.api.resources.exceptions.NotificationApiStandardErrors;
+import org.opendatamesh.platform.pp.notification.api.resources.v1.EventNotificationResource;
+import org.opendatamesh.platform.pp.notification.api.resources.v1.EventResource;
+import org.opendatamesh.platform.pp.notification.api.resources.v1.ObserverResource;
+import org.opendatamesh.platform.pp.notification.api.resources.v1.enums.EventNotificationStatus;
+import org.opendatamesh.platform.pp.notification.api.resources.v1.exceptions.NotificationApiStandardErrors;
 import org.opendatamesh.platform.pp.notification.server.services.proxies.NotificationObserverClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;

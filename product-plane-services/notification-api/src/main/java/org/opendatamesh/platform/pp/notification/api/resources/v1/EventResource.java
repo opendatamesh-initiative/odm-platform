@@ -1,10 +1,10 @@
-package org.opendatamesh.platform.pp.notification.api.resources;
+package org.opendatamesh.platform.pp.notification.api.resources.v1;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.opendatamesh.platform.pp.notification.api.resources.enums.EventType;
+import org.opendatamesh.platform.pp.notification.api.resources.v1.enums.EventType;
 
 import java.util.Date;
 

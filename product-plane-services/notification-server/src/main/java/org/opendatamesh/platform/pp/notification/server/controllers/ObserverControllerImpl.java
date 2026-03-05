@@ -1,8 +1,8 @@
 package org.opendatamesh.platform.pp.notification.server.controllers;
 
 import org.opendatamesh.platform.pp.notification.api.controllers.AbstractObserverController;
-import org.opendatamesh.platform.pp.notification.api.resources.ObserverResource;
-import org.opendatamesh.platform.pp.notification.api.resources.ObserverSearchOptions;
+import org.opendatamesh.platform.pp.notification.api.resources.v1.ObserverResource;
+import org.opendatamesh.platform.pp.notification.api.resources.v1.ObserverSearchOptions;
 import org.opendatamesh.platform.pp.notification.server.services.ObserverService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

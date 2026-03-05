@@ -1,6 +1,6 @@
 package org.opendatamesh.platform.pp.notification.server.database.entities;
 
-import org.opendatamesh.platform.pp.notification.api.resources.enums.EventNotificationStatus;
+import org.opendatamesh.platform.pp.notification.api.resources.v1.enums.EventNotificationStatus;
 
 import javax.persistence.*;
 import java.util.Date;

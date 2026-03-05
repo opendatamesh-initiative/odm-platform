@@ -1,10 +1,9 @@
 package org.opendatamesh.platform.pp.notification.server;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
-import org.opendatamesh.platform.pp.notification.api.resources.ObserverResource;
-import org.opendatamesh.platform.pp.notification.api.resources.exceptions.NotificationApiStandardErrors;
+import org.opendatamesh.platform.pp.notification.api.resources.v1.ObserverResource;
+import org.opendatamesh.platform.pp.notification.api.resources.v1.exceptions.NotificationApiStandardErrors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;

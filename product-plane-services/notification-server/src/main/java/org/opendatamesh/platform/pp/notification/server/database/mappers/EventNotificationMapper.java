@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 import org.opendatamesh.platform.core.commons.database.mappers.BaseMapper;
-import org.opendatamesh.platform.pp.notification.api.resources.EventNotificationResource;
+import org.opendatamesh.platform.pp.notification.api.resources.v1.EventNotificationResource;
 import org.opendatamesh.platform.pp.notification.server.database.entities.EventNotification;
 
 @Mapper(componentModel = "spring")

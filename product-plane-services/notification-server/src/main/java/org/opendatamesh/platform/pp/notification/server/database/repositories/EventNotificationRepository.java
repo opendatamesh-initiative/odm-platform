@@ -2,8 +2,8 @@ package org.opendatamesh.platform.pp.notification.server.database.repositories;
 
 import org.opendatamesh.platform.core.commons.database.utils.PagingAndSortingAndSpecificationExecutorRepository;
 import org.opendatamesh.platform.core.commons.database.utils.SpecsUtils;
-import org.opendatamesh.platform.pp.notification.api.resources.enums.EventNotificationStatus;
-import org.opendatamesh.platform.pp.notification.api.resources.enums.EventType;
+import org.opendatamesh.platform.pp.notification.api.resources.v1.enums.EventNotificationStatus;
+import org.opendatamesh.platform.pp.notification.api.resources.v1.enums.EventType;
 import org.opendatamesh.platform.pp.notification.server.database.entities.EventNotification;
 import org.opendatamesh.platform.pp.notification.server.database.entities.EventNotification_;
 import org.opendatamesh.platform.pp.notification.server.database.entities.Event_;

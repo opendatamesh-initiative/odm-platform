@@ -1,8 +1,8 @@
 package org.opendatamesh.platform.pp.notification.server.controllers;
 
 import org.opendatamesh.platform.pp.notification.api.controllers.AbstractEventNotificationController;
-import org.opendatamesh.platform.pp.notification.api.resources.EventNotificationResource;
-import org.opendatamesh.platform.pp.notification.api.resources.EventNotificationSearchOptions;
+import org.opendatamesh.platform.pp.notification.api.resources.v1.EventNotificationResource;
+import org.opendatamesh.platform.pp.notification.api.resources.v1.EventNotificationSearchOptions;
 import org.opendatamesh.platform.pp.notification.server.services.EventNotificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

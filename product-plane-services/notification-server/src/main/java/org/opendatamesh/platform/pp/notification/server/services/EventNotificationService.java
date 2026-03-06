@@ -4,9 +4,9 @@ import org.opendatamesh.platform.core.commons.database.utils.PagingAndSortingAnd
 import org.opendatamesh.platform.core.commons.database.utils.SpecsUtils;
 import org.opendatamesh.platform.core.commons.servers.exceptions.BadRequestException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.UnprocessableEntityException;
-import org.opendatamesh.platform.pp.notification.api.resources.EventNotificationResource;
-import org.opendatamesh.platform.pp.notification.api.resources.EventNotificationSearchOptions;
-import org.opendatamesh.platform.pp.notification.api.resources.exceptions.NotificationApiStandardErrors;
+import org.opendatamesh.platform.pp.notification.api.resources.v1.EventNotificationResource;
+import org.opendatamesh.platform.pp.notification.api.resources.v1.EventNotificationSearchOptions;
+import org.opendatamesh.platform.pp.notification.api.resources.v1.exceptions.NotificationApiStandardErrors;
 import org.opendatamesh.platform.pp.notification.server.database.entities.EventNotification;
 import org.opendatamesh.platform.pp.notification.server.database.mappers.EventNotificationMapper;
 import org.opendatamesh.platform.pp.notification.server.database.repositories.EventNotificationRepository;

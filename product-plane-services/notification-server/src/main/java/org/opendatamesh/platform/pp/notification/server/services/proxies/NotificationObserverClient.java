@@ -1,8 +1,8 @@
 package org.opendatamesh.platform.pp.notification.server.services.proxies;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.opendatamesh.platform.pp.notification.api.resources.EventNotificationResource;
-import org.opendatamesh.platform.pp.notification.api.resources.ObserverResource;
+import org.opendatamesh.platform.pp.notification.api.resources.v1.EventNotificationResource;
+import org.opendatamesh.platform.pp.notification.api.resources.v1.ObserverResource;
 import org.opendatamesh.platform.pp.notification.server.services.utils.rest.RestUtils;
 import org.opendatamesh.platform.pp.notification.server.services.utils.rest.RestUtilsFactory;
 import org.opendatamesh.platform.pp.notification.server.services.utils.rest.exceptions.ClientException;

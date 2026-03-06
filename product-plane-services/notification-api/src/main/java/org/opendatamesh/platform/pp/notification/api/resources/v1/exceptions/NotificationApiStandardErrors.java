@@ -1,10 +1,10 @@
-package org.opendatamesh.platform.pp.notification.api.resources.exceptions;
+package org.opendatamesh.platform.pp.notification.api.resources.v1.exceptions;
 
 import com.google.common.collect.ImmutableMap;
 import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiStandardErrors;
-import org.opendatamesh.platform.pp.notification.api.resources.EventNotificationResource;
-import org.opendatamesh.platform.pp.notification.api.resources.EventResource;
-import org.opendatamesh.platform.pp.notification.api.resources.ObserverResource;
+import org.opendatamesh.platform.pp.notification.api.resources.v1.EventNotificationResource;
+import org.opendatamesh.platform.pp.notification.api.resources.v1.EventResource;
+import org.opendatamesh.platform.pp.notification.api.resources.v1.ObserverResource;
 
 import java.util.Map;
 

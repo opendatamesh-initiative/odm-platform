@@ -3,7 +3,7 @@ package org.opendatamesh.platform.pp.notification.server.services.utils;
 import org.opendatamesh.platform.core.commons.servers.exceptions.InternalServerException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.NotFoundException;
 import org.opendatamesh.platform.core.commons.servers.exceptions.ODMApiCommonErrors;
-import org.opendatamesh.platform.pp.notification.api.resources.exceptions.NotificationApiStandardErrors;
+import org.opendatamesh.platform.pp.notification.api.resources.v1.exceptions.NotificationApiStandardErrors;
 import org.opendatamesh.platform.pp.notification.server.database.mappers.EntitiesToResources;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

@@ -1,7 +1,7 @@
 package org.opendatamesh.platform.pp.notification.api.controllers;
 
-import org.opendatamesh.platform.pp.notification.api.resources.ObserverResource;
-import org.opendatamesh.platform.pp.notification.api.resources.ObserverSearchOptions;
+import org.opendatamesh.platform.pp.notification.api.resources.v1.ObserverResource;
+import org.opendatamesh.platform.pp.notification.api.resources.v1.ObserverSearchOptions;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

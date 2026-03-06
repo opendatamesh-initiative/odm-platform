@@ -1,21 +1,29 @@
 package org.opendatamesh.platform.pp.devops.server.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opendatamesh.platform.pp.devops.server.services.ActivityService;
-import org.opendatamesh.platform.pp.notification.api.resources.EventNotificationResource;
-import org.opendatamesh.platform.pp.notification.api.resources.EventResource;
-import org.opendatamesh.platform.pp.notification.api.resources.enums.EventType;
+import org.opendatamesh.platform.pp.notification.api.resources.v1.EventNotificationResource;
+import org.opendatamesh.platform.pp.notification.api.resources.v1.EventResource;
+import org.opendatamesh.platform.pp.notification.api.resources.v1.enums.EventType;
+import org.opendatamesh.platform.pp.notification.api.resources.v2.EventV2NotificationResource;
+import org.opendatamesh.platform.pp.notification.api.resources.v2.EventV2Resource;
+import org.opendatamesh.platform.pp.notification.api.resources.v2.enums.EventV2EventType;
+import org.opendatamesh.dpds.parser.IdentifierStrategy;
+import org.opendatamesh.platform.pp.notification.api.resources.v2.events.DataProductDeletedEventContent;
+import org.opendatamesh.platform.pp.notification.api.resources.v2.events.DataProductVersionDeletedEventContent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/up/observer")
+@RequestMapping("/api")
 public class DevOpsNotificationController {
 
     private static final Logger logger = LoggerFactory.getLogger(DevOpsNotificationController.class);
@@ -23,7 +31,13 @@ public class DevOpsNotificationController {
     @Autowired
     private ActivityService activityService;
 
-    @PostMapping("/notifications")
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Autowired
+    private IdentifierStrategy identifierStrategy;
+
+    @PostMapping("/v1/up/observer/notifications")
     public ResponseEntity<Void> handleEventNotification(@RequestBody EventNotificationResource eventNotification) {
         EventResource event = eventNotification.getEvent();
         String eventType = event.getType();
@@ -36,6 +50,29 @@ public class DevOpsNotificationController {
             handleDataProductVersionDeletion(event);
         } else {
             logger.debug("Ignoring event type: {}", eventType);
+        }
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/v2/up/observer/notifications")
+    public ResponseEntity<Void> handleEventNotificationV2(@RequestBody EventV2NotificationResource eventNotification) {
+        EventV2Resource event = eventNotification.getEvent();
+        if (event == null) {
+            logger.debug("Ignoring V2 notification with null event");
+            return ResponseEntity.ok().build();
+        }
+        EventV2EventType eventType = event.getType();
+        String resourceId = event.getResourceIdentifier();
+
+        logger.info("Received V2 notification event: {} for resource: {}", eventType, resourceId);
+
+        if (eventType == EventV2EventType.DATA_PRODUCT_DELETED) {
+            handleDataProductDeletionV2(event);
+        } else if (eventType == EventV2EventType.DATA_PRODUCT_VERSION_DELETED) {
+            handleDataProductVersionDeletionV2(event);
+        } else {
+            logger.debug("Ignoring V2 event type: {}", eventType);
         }
 
         return ResponseEntity.ok().build();
@@ -90,5 +127,66 @@ public class DevOpsNotificationController {
 
         logger.warn("Could not extract version from event beforeState, entityId: {}", event.getEntityId());
         throw new IllegalArgumentException("Could not extract version from data product version deletion event");
+    }
+
+    private void handleDataProductDeletionV2(EventV2Resource event) {
+        if (event.getEventContent() == null) {
+            logger.warn("Missing eventContent in V2 DATA_PRODUCT_DELETED event");
+            return;
+        }
+        DataProductDeletedEventContent content;
+        try {
+            content = objectMapper.treeToValue(
+                    event.getEventContent(), DataProductDeletedEventContent.class);
+        } catch (Exception e) {
+            logger.warn("Could not deserialize V2 DATA_PRODUCT_DELETED eventContent: {}", e.getMessage());
+            return;
+        }
+        if (content == null || !StringUtils.hasText(content.getDataProductFqn())) {
+            logger.warn("No dataProductFqn in V2 DATA_PRODUCT_DELETED event");
+            return;
+        }
+        String dataProductId = identifierStrategy.getId(content.getDataProductFqn());
+        logger.info("Handling V2 data product deletion for ID: {}", dataProductId);
+        try {
+            activityService.deleteByDataProductId(dataProductId);
+            logger.info("Successfully deleted activities and tasks for data product: {}", dataProductId);
+        } catch (Exception e) {
+            logger.error("Failed to delete activities and tasks for data product: {}", dataProductId, e);
+        }
+    }
+
+    private void handleDataProductVersionDeletionV2(EventV2Resource event) {
+        if (event.getEventContent() == null) {
+            logger.warn("Missing eventContent in V2 DATA_PRODUCT_VERSION_DELETED event");
+            return;
+        }
+        DataProductVersionDeletedEventContent content;
+        try {
+            content = objectMapper.treeToValue(
+                    event.getEventContent(), DataProductVersionDeletedEventContent.class);
+        } catch (Exception e) {
+            logger.warn("Could not deserialize V2 DATA_PRODUCT_VERSION_DELETED eventContent: {}", e.getMessage());
+            return;
+        }
+        if (content == null || !StringUtils.hasText(content.getDataProductFqn())) {
+            logger.warn("No dataProductFqn in V2 DATA_PRODUCT_VERSION_DELETED event");
+            return;
+        }
+        if (!StringUtils.hasText(content.getDataProductVersionNumber())) {
+            logger.warn("No dataProductVersionNumber in V2 DATA_PRODUCT_VERSION_DELETED event");
+            return;
+        }
+        String dataProductId = identifierStrategy.getId(content.getDataProductFqn());
+        String version = content.getDataProductVersionNumber();
+        logger.info("Handling V2 data product version deletion for ID: {} version: {}", dataProductId, version);
+        try {
+            activityService.deleteByDataProductIdAndVersion(dataProductId, version);
+            logger.info("Successfully deleted activities and tasks for data product: {} version: {}",
+                    dataProductId, version);
+        } catch (Exception e) {
+            logger.error("Failed to delete activities and tasks for data product: {} version: {}",
+                    dataProductId, version, e);
+        }
     }
 }

@@ -25,5 +25,10 @@ public interface PolicyEvaluationResultShortRepository extends PagingAndSortingR
             return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(PolicyEvaluationResultShort_.dataProductVersion), dataProductVersion);
         }
 
+        public static Specification<PolicyEvaluationResultShort> hasDataProductVersionNull() {
+            return (root, query, criteriaBuilder) ->
+                criteriaBuilder.isNull(root.get(PolicyEvaluationResultShort_.dataProductVersion));
+        }
+
     }
 } 

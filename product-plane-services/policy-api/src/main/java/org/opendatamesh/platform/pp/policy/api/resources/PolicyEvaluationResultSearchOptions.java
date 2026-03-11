@@ -13,6 +13,10 @@ public class PolicyEvaluationResultSearchOptions {
     @Schema(description = "The data product version of the evaluation result")
     private String dataProductVersion;
 
+    @JsonProperty("isDataProductVersionNull")
+    @Schema(description = "If true, only return evaluation results with null data product version")
+    private Boolean isDataProductVersionNull = false;
+
     public String getDataProductId() {
         return dataProductId;
     }
@@ -27,6 +31,14 @@ public class PolicyEvaluationResultSearchOptions {
 
     public void setDataProductVersion(String dataProductVersion) {
         this.dataProductVersion = dataProductVersion;
+    }
+
+    public Boolean getIsDataProductVersionNull() {
+        return isDataProductVersionNull;
+    }
+
+    public void setIsDataProductVersionNull(Boolean isDataProductVersionNull) {
+        this.isDataProductVersionNull = isDataProductVersionNull;
     }
 
 }

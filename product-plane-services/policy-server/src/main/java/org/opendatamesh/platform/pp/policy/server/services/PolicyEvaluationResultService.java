@@ -134,6 +134,9 @@ public class PolicyEvaluationResultService extends GenericMappedAndFilteredCrudS
         if (StringUtils.hasText(filters.getDataProductVersion())) {
             specifications.add(PolicyEvaluationResultShortRepository.Specs.hasDataProductVersion(filters.getDataProductVersion()));
         }
+        if (Boolean.TRUE.equals(filters.getIsDataProductVersionNull())) {
+            specifications.add(PolicyEvaluationResultShortRepository.Specs.hasDataProductVersionNull());
+        }
         return SpecsUtils.combineWithAnd(specifications);
     }
 

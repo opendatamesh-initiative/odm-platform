@@ -520,6 +520,13 @@ public class TaskService {
             }
         }
 
+        // Set description if not set
+        boolean descriptionSet = StringUtils.hasText(task.getDescription());
+        boolean templateHasDescription = activityInfo.getTemplate() != null && StringUtils.hasText(activityInfo.getTemplate().getDescription());
+        if (!descriptionSet && templateHasDescription) {
+            task.setDescription(activityInfo.getTemplate().getDescription());
+        }
+
         if (activityInfo.getTemplate() != null &&
                 StringUtils.hasText(activityInfo.getTemplate().getName()) &&
                 !isValidUUID(activityInfo.getTemplate().getName())

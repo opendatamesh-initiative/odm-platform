@@ -149,6 +149,14 @@ Each event has a `currentState` and an `afterState` fields, which contains resou
 
 It is possible to furter filter the events and activate a policy only if the 
 event content matches a SpeL expression, which can be defined inside the `filteringExpression` field of a Policy.
+The expression is evaluated on the JSON input exactly as it is received (`currentState` and `afterState`), so it uses
+the JSON field names: navigate with dots (`afterState.activity.name`) or with brackets (`afterState['activity']['name']`).
+A missing key reads as `null`. Navigating into a `null` value is an error, which leaves the policy out; use `?.` to
+navigate safely. Only JSON values are available (objects, arrays, strings, numbers, booleans, `null`), and methods of
+these values can be called, for example `afterState.activity.name.startsWith('pr')` or
+`afterState.otherActivities.?[name == 'dev' and status == 'SUCCEEDED'].size() > 0`. Type references (`T(...)`),
+constructors and bean references are not available. The expression must evaluate to a boolean; any other result leaves
+the policy out.
 If a policy is considered "blocking", if its validation fails, the operation within which it has computed is blocked.
 Finally, the `rawContent`
 rawContent;

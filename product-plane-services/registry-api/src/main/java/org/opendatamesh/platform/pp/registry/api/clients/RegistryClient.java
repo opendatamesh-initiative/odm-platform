@@ -2,7 +2,10 @@ package org.opendatamesh.platform.pp.registry.api.clients;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.opendatamesh.dpds.model.DataProductVersionDPDS;
 import org.opendatamesh.dpds.model.internals.ApplicationComponentDPDS;
 import org.opendatamesh.dpds.model.internals.InfrastructuralComponentDPDS;
@@ -228,15 +231,56 @@ public class RegistryClient extends ODMClient {
                 .getBody();
         DataProductVersionDPDS dpv = null;
         try {
-            dpv = new ObjectMapper()
-                    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                    .readValue(descriptorContent, DataProductVersionDPDS.class);
-            dpv.setRawContent(descriptorContent);
+            dpv = parseNormalizedDataProductVersion(descriptorContent);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
         return dpv;
 
+    }
+
+    /**
+     * Registries using the descriptor parser v2 return the descriptor as stored even when the
+     * normalized format is requested, so its lifecycle info is keyed by stage name
+     * ({@code {"dev": [...], "prod": [...]}}) instead of the normalized {@code tasksInfo} list.
+     * The stage-keyed form is converted to the normalized one before parsing.
+     */
+    static DataProductVersionDPDS parseNormalizedDataProductVersion(String descriptorContent) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        JsonNode descriptor = mapper.readTree(descriptorContent);
+        JsonNode lifecycleInfo = descriptor.at("/internalComponents/lifecycleInfo");
+        if (lifecycleInfo.isObject() && !lifecycleInfo.has("tasksInfo")) {
+            ArrayNode tasksInfo = mapper.createArrayNode();
+            lifecycleInfo.fields().forEachRemaining(stage -> {
+                if (!stage.getValue().isArray()) {
+                    return;
+                }
+                int position = 0;
+                for (JsonNode task : stage.getValue()) {
+                    position++;
+                    if (!task.isObject()) {
+                        continue;
+                    }
+                    ObjectNode taskInfo = task.deepCopy();
+                    taskInfo.put("stageName", stage.getKey());
+                    // Same defaults applied by the descriptor parser
+                    if (!taskInfo.hasNonNull("order")) {
+                        taskInfo.put("order", position);
+                    }
+                    if (!taskInfo.hasNonNull("name")) {
+                        taskInfo.put("name", stage.getKey() + ":task:" + taskInfo.get("order").asText());
+                    }
+                    // Task templates are read from the raw content (see DevOps TaskService)
+                    taskInfo.put("rawContent", task.toString());
+                    tasksInfo.add(taskInfo);
+                }
+            });
+            ((ObjectNode) lifecycleInfo).removeAll().set("tasksInfo", tasksInfo);
+        }
+        DataProductVersionDPDS dpv = mapper.treeToValue(descriptor, DataProductVersionDPDS.class);
+        dpv.setRawContent(descriptorContent);
+        return dpv;
     }
 
     public ResponseEntity<DataProductVersionDPDS> getDataProductVersion(String dataProductId,
